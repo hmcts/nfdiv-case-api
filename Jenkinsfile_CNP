@@ -3,8 +3,8 @@
 @Library("Infrastructure")
 
 def type = "java"
-def product = "rpe"
-def component = "demo"
+def product = "nfdiv"
+def component = "caseapi"
 
 withPipeline(type, product, component) {
     disableLegacyDeployment()
