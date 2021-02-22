@@ -9,4 +9,7 @@ def component = "caseapi"
 withPipeline(type, product, component) {
     enableAksStagingDeployment()
     disableLegacyDeployment()
+    after('test') {
+       builder.gradle('integration')
+    }
 }
