@@ -12,8 +12,6 @@ management:
         include: health, info, prometheus
 
 spring:
-  config:
-    import: "optional:configtree:/mnt/secrets/"
   application:
     name: NFDIV Case API
 azure:
