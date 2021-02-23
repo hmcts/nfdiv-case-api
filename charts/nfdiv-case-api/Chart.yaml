@@ -1,7 +1,7 @@
 apiVersion: v2
 appVersion: "1.0"
-description: A Helm chart for nfdiv-caseapi App
-name: nfdiv-nfdiv-caseapi
+description: A Helm chart for nfdiv-case-api App
+name: nfdiv-case-api
 home: https://github.com/hmcts/nfdiv-case-api
 version: 0.0.1
 maintainers:
