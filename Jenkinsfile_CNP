@@ -8,6 +8,8 @@ def type = "java"
 def product = "nfdiv"
 def component = "caseapi"
 
+GradleBuilder builder = new GradleBuilder(this, product)
+
 withPipeline(type, product, component) {
     enableAksStagingDeployment()
     disableLegacyDeployment()
