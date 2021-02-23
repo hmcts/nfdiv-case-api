@@ -86,7 +86,7 @@ There is no need to remove postgres and java or similar core images.
 To generate the CCD JSON files from the Java Model run the following from the root of the project:
 
 ```bash
-./gradlew ccd-case-generator:generateCCDConfig
+./gradlew ccd-definitions:generateCCDConfig
 ```
 
 ## License
