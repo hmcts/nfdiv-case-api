@@ -1,0 +1,3 @@
+[submodule "ccd-definition-processor"]
+	path = ccd-definition-processor
+	url = git@github.com:hmcts/ccd-definition-processor.git

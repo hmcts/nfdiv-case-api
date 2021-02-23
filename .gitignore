@@ -20,3 +20,9 @@ bin/main/application.yaml
 *.ipr
 
 .DS_Store
+
+.vscode/
+node_modules/
+*.xls
+*.xlsx
+yarn-error.log
