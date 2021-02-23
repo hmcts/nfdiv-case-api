@@ -214,7 +214,7 @@ mainClassName = 'uk.gov.hmcts.reform.divorce.caseapi.CaseApiApplication'
 
 bootJar {
     getArchiveFileName().set(provider {
-        'nfdiv-caseapi.jar'
+        'nfdiv-case-api.jar'
     })
 
     manifest {

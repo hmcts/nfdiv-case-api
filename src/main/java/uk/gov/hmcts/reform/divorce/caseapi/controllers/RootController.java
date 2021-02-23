@@ -23,6 +23,6 @@ public class RootController {
      */
     @GetMapping("/")
     public ResponseEntity<String> welcome() {
-        return ok("Welcome to nfdiv-caseapi");
+        return ok("Welcome to nfdiv-case-api");
     }
 }
