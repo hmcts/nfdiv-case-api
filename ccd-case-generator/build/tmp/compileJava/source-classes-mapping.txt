@@ -1,0 +1,8 @@
+uk/gov/hmcts/reform/ccd/ccd/model/UserRole.java
+ uk.gov.hmcts.reform.ccd.ccd.model.UserRole
+uk/gov/hmcts/reform/ccd/ccd/model/State.java
+ uk.gov.hmcts.reform.ccd.ccd.model.State
+uk/gov/hmcts/reform/ccd/ccd/model/CaseData.java
+ uk.gov.hmcts.reform.ccd.ccd.model.CaseData
+uk/gov/hmcts/reform/ccd/ccd/CcdConfig.java
+ uk.gov.hmcts.reform.ccd.ccd.CcdConfig
