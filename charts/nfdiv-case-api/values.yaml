@@ -1,7 +1,7 @@
 java:
   applicationPort: 4013
   image: 'hmctspublic.azurecr.io/nfdiv/caseapi:latest'
-  ingressHost: nfdiv-caseapi-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
+  ingressHost: nfdiv-case-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
   aadIdentityName: nfdiv
   keyVaults:
     nfdiv:
