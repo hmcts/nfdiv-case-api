@@ -6,7 +6,7 @@ import uk.gov.hmcts.contino.GradleBuilder
 
 def type = "java"
 def product = "nfdiv"
-def component = "caseapi"
+def component = "case-api"
 
 GradleBuilder builder = new GradleBuilder(this, product)
 
