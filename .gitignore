@@ -29,3 +29,4 @@ yarn-error.log
 
 ### Generated CCD Json Definition ###
 ccd-case-generator/ccd-definition
+ccd-case-generator/build
