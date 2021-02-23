@@ -112,8 +112,8 @@ project.tasks['sonarqube'].dependsOn jacocoTestReport
 
 sonarqube {
     properties {
-        property "sonar.projectName", "Reform :: nfdiv-caseapi"
-        property "sonar.projectKey", "uk.gov.hmcts.reform:nfdiv-caseapi"
+        property "sonar.projectName", "Reform :: nfdiv-case-api"
+        property "sonar.projectKey", "uk.gov.hmcts.reform:nfdiv-case-api"
         property "sonar.coverage.jacoco.xmlReportPaths", "${jacocoTestReport.reports.xml.destination.path}"
     }
 }

@@ -8,4 +8,4 @@ COPY lib/AI-Agent.xml /opt/app/
 COPY build/libs/nfdiv-caseapi.jar /opt/app/
 
 EXPOSE 4013
-CMD [ "nfdiv-caseapi.jar" ]
+CMD [ "nfdiv-case-api.jar" ]
