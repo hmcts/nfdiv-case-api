@@ -12,8 +12,8 @@
   "scripts": {
     "reset-ccd-submodule": "git submodule update --init --recursive && git submodule foreach --recursive git pull origin master && yarn --cwd ccd-definition-processor install",
     "setup": "git submodule update --init --recursive && yarn --cwd ccd-definition-processor install",
-    "generate-excel-dev": "yarn --cwd ccd-definition-processor json2xlsx -D ../ccd-case-generator/ccd-definition/development -o ../ccd-definitions/xlsx/ccd-config-dev.xlsx",
-    "generate-excel-aat": "yarn --cwd ccd-definition-processor json2xlsx -D ../ccd-case-generator/ccd-definition/aat -o ../ccd-definitions/xlsx/ccd-config-aat.xlsx",
+    "generate-excel-dev": "yarn --cwd ccd-definition-processor json2xlsx -D ../definitions/development -o ../definitions/xlsx/ccd-config-dev.xlsx",
+    "generate-excel-aat": "yarn --cwd ccd-definition-processor json2xlsx -D ../definitions/aat -o ../definitions/xlsx/ccd-config-aat.xlsx",
     "generate-excel-all": "yarn generate-excel-dev && yarn generate-excel-aat"
   }
 }
