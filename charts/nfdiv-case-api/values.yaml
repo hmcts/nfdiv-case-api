@@ -10,5 +10,4 @@ java:
   environment:
 ccd:
   enabled: false
-ccd-idam-pr:
-  enabled: false
+
