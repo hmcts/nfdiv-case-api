@@ -4,7 +4,6 @@ java:
   ingressHost: ${SERVICE_FQDN}
 
 ccd:
-  enabled: true
     ccd:
         definitionImporter:
             enabled: false
