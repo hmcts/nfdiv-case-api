@@ -1,10 +1,10 @@
-package uk.gov.hmcts.reform.ccd.event;
+package uk.gov.hmcts.reform.divorce.ccd.event;
 
 import uk.gov.hmcts.ccd.sdk.types.ConfigBuilder;
-import uk.gov.hmcts.reform.ccd.CcdBuilder;
-import uk.gov.hmcts.reform.ccd.model.CaseData;
-import uk.gov.hmcts.reform.ccd.model.State;
-import uk.gov.hmcts.reform.ccd.model.UserRole;
+import uk.gov.hmcts.reform.divorce.ccd.CcdBuilder;
+import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
+import uk.gov.hmcts.reform.divorce.ccd.model.State;
+import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 
 public class PatchCase implements CcdBuilder {
 

@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.ccd.model;
+package uk.gov.hmcts.reform.divorce.ccd.model;
 
 import uk.gov.hmcts.ccd.sdk.types.HasRole;
 

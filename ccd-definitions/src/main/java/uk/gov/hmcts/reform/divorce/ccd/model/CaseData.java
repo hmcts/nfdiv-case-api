@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.ccd.model;
+package uk.gov.hmcts.reform.divorce.ccd.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;

@@ -1,6 +1,5 @@
 plugins {
     id 'java'
-    id 'jacoco'
     id 'hmcts.ccd.sdk' version '0.8.1'
 }
 
@@ -39,12 +38,4 @@ tasks.withType(Test) {
 
 test {
     failFast = true
-}
-
-jacocoTestReport {
-    afterEvaluate {
-        classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: 'uk/gov/hmcts/reform/ccd/**')
-        }))
-    }
 }
