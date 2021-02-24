@@ -28,6 +28,14 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:${versions.lombok}")
 }
 
-test {
+tasks.withType(Test) {
     useJUnitPlatform()
+
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}
+
+test {
+    failFast = true
 }

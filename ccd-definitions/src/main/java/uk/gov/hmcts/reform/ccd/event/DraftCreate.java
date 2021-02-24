@@ -1,18 +1,18 @@
-package uk.gov.hmcts.reform.ccd.ccd.event;
+package uk.gov.hmcts.reform.ccd.event;
 
 import uk.gov.hmcts.ccd.sdk.types.ConfigBuilder;
-import uk.gov.hmcts.reform.ccd.ccd.CcdBuilder;
-import uk.gov.hmcts.reform.ccd.ccd.model.CaseData;
-import uk.gov.hmcts.reform.ccd.ccd.model.State;
-import uk.gov.hmcts.reform.ccd.ccd.model.UserRole;
+import uk.gov.hmcts.reform.ccd.CcdBuilder;
+import uk.gov.hmcts.reform.ccd.model.CaseData;
+import uk.gov.hmcts.reform.ccd.model.State;
+import uk.gov.hmcts.reform.ccd.model.UserRole;
 
-import static uk.gov.hmcts.reform.ccd.ccd.model.State.DRAFT;
-import static uk.gov.hmcts.reform.ccd.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
-import static uk.gov.hmcts.reform.ccd.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
-import static uk.gov.hmcts.reform.ccd.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_LA;
-import static uk.gov.hmcts.reform.ccd.ccd.model.UserRole.CASEWORKER_DIVORCE_SOLICITOR;
-import static uk.gov.hmcts.reform.ccd.ccd.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
-import static uk.gov.hmcts.reform.ccd.ccd.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.reform.ccd.model.State.DRAFT;
+import static uk.gov.hmcts.reform.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
+import static uk.gov.hmcts.reform.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
+import static uk.gov.hmcts.reform.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_LA;
+import static uk.gov.hmcts.reform.ccd.model.UserRole.CASEWORKER_DIVORCE_SOLICITOR;
+import static uk.gov.hmcts.reform.ccd.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
+import static uk.gov.hmcts.reform.ccd.model.UserRole.CITIZEN;
 
 public class DraftCreate implements CcdBuilder {
 

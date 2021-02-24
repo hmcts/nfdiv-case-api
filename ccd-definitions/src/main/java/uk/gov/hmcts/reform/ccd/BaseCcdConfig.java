@@ -1,11 +1,11 @@
-package uk.gov.hmcts.reform.ccd.ccd;
+package uk.gov.hmcts.reform.ccd;
 
 import uk.gov.hmcts.ccd.sdk.types.ConfigBuilder;
-import uk.gov.hmcts.reform.ccd.ccd.event.DraftCreate;
-import uk.gov.hmcts.reform.ccd.ccd.event.PatchCase;
-import uk.gov.hmcts.reform.ccd.ccd.model.CaseData;
-import uk.gov.hmcts.reform.ccd.ccd.model.State;
-import uk.gov.hmcts.reform.ccd.ccd.model.UserRole;
+import uk.gov.hmcts.reform.ccd.event.DraftCreate;
+import uk.gov.hmcts.reform.ccd.event.PatchCase;
+import uk.gov.hmcts.reform.ccd.model.CaseData;
+import uk.gov.hmcts.reform.ccd.model.State;
+import uk.gov.hmcts.reform.ccd.model.UserRole;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -36,6 +36,15 @@ sourceSets {
         }
         resources.srcDir file('src/integrationTest/resources')
     }
+
+    smokeTest {
+        java {
+            compileClasspath += main.output
+            runtimeClasspath += main.output
+            srcDir file('src/smokeTest/java')
+        }
+        resources.srcDir file('src/smokeTest/resources')
+    }
 }
 
 tasks.withType(JavaCompile) {
@@ -69,6 +78,12 @@ task integration(type: Test) {
     failFast = true
 }
 
+task smoke(type: Test) {
+    description = "Runs Smoke Tests"
+    testClassesDirs = sourceSets.smokeTest.output.classesDirs
+    classpath = sourceSets.smokeTest.runtimeClasspath
+}
+
 checkstyle {
     maxWarnings = 0
     toolVersion = '8.29'
@@ -77,7 +92,7 @@ checkstyle {
 
 pmd {
     toolVersion = "6.18.0"
-    sourceSets = [sourceSets.main, sourceSets.test, sourceSets.functionalTest, sourceSets.integrationTest]
+    sourceSets = [sourceSets.main, sourceSets.test, sourceSets.functionalTest, sourceSets.integrationTest, sourceSets.smokeTest]
     reportsDir = file("$project.buildDir/reports/pmd")
     // https://github.com/pmd/pmd/issues/876
     ruleSets = []
@@ -191,6 +206,8 @@ dependencies {
     integrationTestImplementation sourceSets.test.runtimeClasspath
 
     functionalTestImplementation sourceSets.main.runtimeClasspath
+
+    smokeTestImplementation sourceSets.main.runtimeClasspath
 }
 
 mainClassName = 'uk.gov.hmcts.reform.divorce.caseapi.CaseApiApplication'
