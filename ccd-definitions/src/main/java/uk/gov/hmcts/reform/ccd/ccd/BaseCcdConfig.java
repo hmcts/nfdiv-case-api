@@ -7,11 +7,23 @@ import uk.gov.hmcts.reform.ccd.ccd.model.CaseData;
 import uk.gov.hmcts.reform.ccd.ccd.model.State;
 import uk.gov.hmcts.reform.ccd.ccd.model.UserRole;
 
-public class BaseCcdConfig {
+import java.util.ArrayList;
+import java.util.List;
 
+public class BaseCcdConfig implements CcdBuilder {
+
+    private final List<CcdBuilder> ccdBuilders = new ArrayList<>();
+
+    public BaseCcdConfig() {
+        ccdBuilders.add(new DraftCreate());
+        ccdBuilders.add(new PatchCase());
+    }
+
+    @Override
     public void buildWith(final ConfigBuilder<CaseData, State, UserRole> builder) {
 
-        new DraftCreate().buildWith(builder);
-        new PatchCase().buildWith(builder);
+        for (final CcdBuilder ccdBuilder : ccdBuilders) {
+            ccdBuilder.buildWith(builder);
+        }
     }
 }
