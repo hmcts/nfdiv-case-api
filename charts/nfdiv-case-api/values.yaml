@@ -8,3 +8,5 @@ java:
       secrets:
         - AppInsightsInstrumentationKey
   environment:
+idam-pr:
+  enabled: false
