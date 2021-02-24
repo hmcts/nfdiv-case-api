@@ -13,6 +13,5 @@ dependencies:
   - name: ccd
     version: ~4.3.2
     repository: '@hmctspublic'
-    condition: ccd.enabled
     tags:
         - ccd-idam-pr
