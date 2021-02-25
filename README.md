@@ -95,6 +95,8 @@ To generate the CCD JSON files from the Java Model run the following from the ro
 ./gradlew generateTypeScript
 ```
 
+Note that any master build will automatically bump the @hmcts/nfdiv-case-defintions package and publish it.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
