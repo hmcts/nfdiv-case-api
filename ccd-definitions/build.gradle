@@ -1,7 +1,20 @@
+
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath group: 'cz.habarta.typescript-generator', name: 'typescript-generator-gradle-plugin', version: '2.29.814'
+    }
+}
+
 plugins {
     id 'java'
     id 'hmcts.ccd.sdk' version '0.8.1'
 }
+
+apply plugin: 'cz.habarta.typescript-generator'
 
 group 'uk.gov.hmcts.reform'
 version '0.0.1'
@@ -38,4 +51,14 @@ tasks.withType(Test) {
 
 test {
     failFast = true
+}
+
+generateTypeScript {
+    jsonLibrary = 'jackson2'
+    classPatterns = [
+        'uk.gov.hmcts.reform.divorce.ccd.model.*'
+    ]
+    outputFile = 'build/ts/index.d.ts'
+    outputKind = 'module'
+    mapEnum = 'asEnum'
 }
