@@ -32,6 +32,9 @@ withPipeline(type, product, component) {
     after('test') {
        builder.gradle('integration')
     }
+    onPR {
+        loadVaultSecrets(secrets)
+    }
     before('functionalTest:preview') {
        uploadCoreCaseDataDefinitions()
        steps.archiveArtifacts allowEmptyArchive: true, artifacts: 'ccd-definitions/build/ccd-config/*.xlsx'
