@@ -11,9 +11,9 @@ import static uk.gov.hmcts.reform.divorce.ccd.model.CaseEvent.PATCH_CASE;
 public class PatchCase implements CcdBuilder {
 
     @Override
-    public void buildWith(final ConfigBuilder<CaseData, State, UserRole> builder) {
+    public void buildWith(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
-        builder
+        configBuilder
             .event(PATCH_CASE.name)
             .forAllStates()
             .name("Patch case")
@@ -22,14 +22,10 @@ public class PatchCase implements CcdBuilder {
             .postState("*")
             .retries(120, 120)
             .grant("CRU", UserRole.CITIZEN)
-            .grant("CRU", UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA)
-            .grant("CRU", UserRole.CASEWORKER_DIVORCE_COURTADMIN)
-            .grant("CRU", UserRole.CASEWORKER_DIVORCE_SOLICITOR)
-            .grant("CRU", UserRole.CASEWORKER_DIVORCE_SUPERUSER)
-            .grant("CRU", UserRole.CASEWORKER_DIVORCE_COURTADMIN_LA)
-            .fields()
-            .optional(CaseData::getCreatedDate)
-            .optional(CaseData::getD8caseReference)
-            .optional(CaseData::getD8legalProcess);
+            .grant("R", UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA)
+            .grant("R", UserRole.CASEWORKER_DIVORCE_COURTADMIN)
+            .grant("R", UserRole.CASEWORKER_DIVORCE_SOLICITOR)
+            .grant("R", UserRole.CASEWORKER_DIVORCE_SUPERUSER)
+            .grant("R", UserRole.CASEWORKER_DIVORCE_COURTADMIN_LA);
     }
 }

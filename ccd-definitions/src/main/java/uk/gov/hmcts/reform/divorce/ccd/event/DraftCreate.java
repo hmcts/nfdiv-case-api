@@ -18,9 +18,9 @@ import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CITIZEN;
 public class DraftCreate implements CcdBuilder {
 
     @Override
-    public void buildWith(final ConfigBuilder<CaseData, State, UserRole> builder) {
+    public void buildWith(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
-        builder
+        configBuilder
             .event(DRAFT_CREATE.name)
             .initialState(DRAFT)
             .name("Create draft case")
@@ -29,14 +29,10 @@ public class DraftCreate implements CcdBuilder {
             .postState(DRAFT.getValue())
             .retries(120, 120)
             .grant("CRU", CITIZEN)
-            .grant("CRU", CASEWORKER_DIVORCE_COURTADMIN_BETA)
-            .grant("CRU", CASEWORKER_DIVORCE_COURTADMIN)
-            .grant("CRU", CASEWORKER_DIVORCE_SOLICITOR)
-            .grant("CRU", CASEWORKER_DIVORCE_SUPERUSER)
-            .grant("CRU", CASEWORKER_DIVORCE_COURTADMIN_LA)
-            .fields()
-            .optional(CaseData::getCreatedDate)
-            .optional(CaseData::getD8caseReference)
-            .optional(CaseData::getD8legalProcess);
+            .grant("R", CASEWORKER_DIVORCE_COURTADMIN_BETA)
+            .grant("R", CASEWORKER_DIVORCE_COURTADMIN)
+            .grant("R", CASEWORKER_DIVORCE_SOLICITOR)
+            .grant("R", CASEWORKER_DIVORCE_SUPERUSER)
+            .grant("R", CASEWORKER_DIVORCE_COURTADMIN_LA);
     }
 }
