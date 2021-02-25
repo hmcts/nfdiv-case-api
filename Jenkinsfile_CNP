@@ -60,10 +60,9 @@ withPipeline(type, product, component) {
 
 def uploadCoreCaseDataDefinitions() {
   dir("${WORKSPACE}/bin"){
-    ccdDefinitionFilePath="${WORKSPACE}/ccd-definitions/build/ccd-config/ccd-nfd-dev.xlsx"
+    ccdDefinitionFilePath="${WORKSPACE}/nfdiv-case-api/ccd-definitions/build/ccd-config/ccd-nfd-dev.xlsx"
     sh """
-      eval \$(./variables/load-${env}-environment-variables.sh)
-      ${WORKSPACE}/bin/process-and-import-ccd-definition.sh ${ccdDefinitionFilePath}
+      ${WORKSPACE}/nfdiv-case-api/bin/process-and-import-ccd-definition.sh ${ccdDefinitionFilePath}
     """
   }
 }
