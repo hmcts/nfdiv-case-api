@@ -40,6 +40,9 @@ withPipeline(type, product, component) {
        env.CCD_DATA_API_URL="http://ccd-data-store-api-nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
        env.CCD_WEB_URL="https://case-management-web-nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal/v2/case/"
        env.IMPORT_PROD_LIKE=true
+
+       env.IDAM_API_URL = "https://idam-api.aat.platform.hmcts.net"
+       env.SERVICE_AUTH_PROVIDER_API_BASE_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
      }
 }
 
