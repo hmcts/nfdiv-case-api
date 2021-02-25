@@ -26,6 +26,8 @@ jobs:
           node-version: 14
       - name: 'Automated Version Bump'
         uses: 'phips28/gh-action-bump-version@master'
+        with:
+          skip-tag: 'true'
         env:
           PACKAGEJSON_DIR: './ccd-definitions'
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
