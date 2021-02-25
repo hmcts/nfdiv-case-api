@@ -1,5 +1,5 @@
 {
-  "name": "nfdiv-case-definition",
+  "name": "@hmcts/nfdiv-case-definition",
   "version": "0.0.1",
   "description": "Utility to help creating CCD config definitions",
   "main": "build/ts/index.d.ts",
