@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Utility to help creating CCD config definitions",
   "main": "build/ts/index.d.ts",
+  "types": "build/ts/index.d.ts",
   "repository": "git@github.com:hmcts/nfdiv-case-api.git",
   "license": "MIT",
   "private": false,
