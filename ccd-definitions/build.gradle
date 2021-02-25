@@ -1,0 +1,41 @@
+plugins {
+    id 'java'
+    id 'hmcts.ccd.sdk' version '0.8.1'
+}
+
+group 'uk.gov.hmcts.reform'
+version '0.0.1'
+
+repositories {
+    mavenCentral()
+}
+
+ccd {
+    configDir = file('definitions')
+}
+
+def versions = [
+        jacksonDatabind: '2.12.0',
+        lombok         : '1.18.16',
+]
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+
+    compileOnly group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: versions.jacksonDatabind
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+    annotationProcessor("org.projectlombok:lombok:${versions.lombok}")
+}
+
+tasks.withType(Test) {
+    useJUnitPlatform()
+
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}
+
+test {
+    failFast = true
+}

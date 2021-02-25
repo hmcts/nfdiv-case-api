@@ -1,1 +1,3 @@
 rootProject.name = 'nfdiv-case-api'
+include 'ccd-definitions'
+

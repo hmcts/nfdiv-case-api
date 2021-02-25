@@ -110,11 +110,16 @@ jacocoTestReport {
 
 project.tasks['sonarqube'].dependsOn jacocoTestReport
 
+def sonarExclusions = [
+        '**/uk/gov/hmcts/reform/divorce/ccd/**'
+]
+
 sonarqube {
     properties {
         property "sonar.projectName", "Reform :: nfdiv-case-api"
         property "sonar.projectKey", "uk.gov.hmcts.reform:nfdiv-case-api"
         property "sonar.coverage.jacoco.xmlReportPaths", "${jacocoTestReport.reports.xml.destination.path}"
+        property "sonar.exclusions", sonarExclusions.join(', ')
     }
 }
 

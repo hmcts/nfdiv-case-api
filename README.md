@@ -81,6 +81,14 @@ docker image rm <image-id>
 
 There is no need to remove postgres and java or similar core images.
 
+### Generate CCD JSON files
+
+To generate the CCD JSON files from the Java Model run the following from the root of the project:
+
+```bash
+./gradlew ccd-definitions:generateCCDConfig
+```
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
