@@ -69,7 +69,6 @@ withPipeline(type, product, component) {
 
 def uploadCoreCaseDataDefinitions() {
   dir("${WORKSPACE}/bin"){
-    sh "./add-roles.sh"
     sh "./process-and-import-ccd-definition.sh"
   }
 }
