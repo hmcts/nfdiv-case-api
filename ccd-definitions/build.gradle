@@ -29,7 +29,7 @@ ccd {
 
 def versions = [
         jacksonDatabind: '2.12.0',
-        lombok         : '1.18.16',
+        lombok         : '1.18.18',
 ]
 
 dependencies {
