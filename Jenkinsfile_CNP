@@ -44,7 +44,6 @@ withPipeline(type, product, component) {
         loadVaultSecrets(secrets)
     }
     before('functionalTest:preview') {
-       uploadCoreCaseDataDefinitions()
        steps.archiveArtifacts allowEmptyArchive: true, artifacts: 'ccd-definitions/build/ccd-config/*.xlsx'
 
        env.CCD_ADMIN_URL="https://admin-web-nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
@@ -55,6 +54,8 @@ withPipeline(type, product, component) {
 
        env.IDAM_API_BASE_URL = "https://idam-api.aat.platform.hmcts.net"
        env.SERVICE_AUTH_PROVIDER_API_BASE_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+
+       uploadCoreCaseDataDefinitions()
      }
 }
 
