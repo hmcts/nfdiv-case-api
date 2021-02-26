@@ -57,6 +57,7 @@ withPipeline(type, product, component) {
        env.CCD_ADMIN_URL="https://admin-web-nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
        env.CCD_DATA_API_URL="http://ccd-data-store-api-nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
        env.CCD_DEFINITION_STORE_API_BASE_URL="https://ccd-definition-store-nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
+       env.CCD_IDAM_REDIRECT_URL=https://ccd-case-management-web-aat.service.core-compute-aat.internal/oauth2redirect
        env.IMPORT_PROD_LIKE=true
 
        env.IDAM_API_BASE_URL = "https://idam-api.aat.platform.hmcts.net"
