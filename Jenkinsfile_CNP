@@ -23,7 +23,10 @@ def secrets = [
                 secret('microservicekey-ccd-data', 'DATA_STORE_S2S_KEY'),
                 secret('microservicekey-ccd-definition', 'DEFINITION_STORE_S2S_KEY'),
                 secret('microservicekey-ccd-gw', 'API_GATEWAY_S2S_KEY'),
-                secret('microservicekey-ccd-admin', 'ADMIN_S2S_KEY')
+                secret('microservicekey-ccd-admin', 'ADMIN_S2S_KEY'),
+                secret('microservicekey-ccd-gw', 'CCD_API_GATEWAY_S2S_SECRET'),
+                secret('microservicekey-ccd-data', 'CCD_DATA_STORE_S2S_SECRET'),
+                secret('microservicekey-ccd-definition', 'CCD_DEFINITION_STORE_S2S_SECRET')
         ],
         'ccd-${env}'      : [
                 secret('ccd-api-gateway-oauth2-client-secret', 'API_GATEWAY_IDAM_SECRET'),
@@ -31,6 +34,10 @@ def secrets = [
                 secret('postcode-info-address-lookup-token', 'ADDRESS_LOOKUP_TOKEN'),
                 secret('AppInsightsInstrumentationKey', 'APPINSIGHTS_INSTRUMENTATIONKEY')
 
+        ],
+        'nfdiv-${env}'    :[
+                secret('ccd-importer-username', 'CCD_CONFIGURER_IMPORTER_USERNAME'),
+                secret('ccd-importer-password', 'CCD_CONFIGURER_IMPORTER_PASSWORD')
         ]
 ]
 
