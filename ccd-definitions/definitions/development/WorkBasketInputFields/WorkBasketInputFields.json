@@ -1,0 +1,10 @@
+[
+    {
+        "LiveFrom": "01/01/2017",
+        "CaseTypeID": "NO_FAULT_DIVORCE",
+        "CaseFieldID": "D8caseReference",
+        "Label": "RDC",
+        "DisplayOrder": 1
+    }
+
+]
