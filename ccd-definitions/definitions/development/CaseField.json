@@ -1,0 +1,38 @@
+[
+  {
+    "ID": "createdDate",
+    "FieldType": "Date",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "HintText": "Date case was created",
+    "LiveFrom": "01/01/2017",
+    "Label": "Created date",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ID": "D8caseReference",
+    "FieldType": "Text",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "HintText": "FamilyMan case reference",
+    "LiveFrom": "01/01/2017",
+    "Label": "FamilyMan reference",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ID": "D8legalProcess",
+    "FieldTypeParameter": "legalProcessEnum",
+    "FieldType": "FixedList",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "HintText": "Legal process (divorce, dissolution, judicial separation)",
+    "LiveFrom": "01/01/2017",
+    "Label": "Type",
+    "SecurityClassification": "Public"
+  },
+  {
+    "ID": "caseHistory",
+    "FieldType": "CaseHistoryViewer",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "LiveFrom": "01/01/2017",
+    "Label": " ",
+    "SecurityClassification": "Public"
+  }
+]

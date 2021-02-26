@@ -1,0 +1,30 @@
+[
+  {
+    "CRUD": "CRU",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "UserRole": "caseworker-divorce-superuser",
+    "LiveFrom": "01/01/2017",
+    "CaseFieldID": "createdDate"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "UserRole": "caseworker-divorce-superuser",
+    "LiveFrom": "01/01/2017",
+    "CaseFieldID": "D8caseReference"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "UserRole": "caseworker-divorce-superuser",
+    "LiveFrom": "01/01/2017",
+    "CaseFieldID": "D8legalProcess"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "UserRole": "caseworker-divorce-superuser",
+    "LiveFrom": "01/01/2017",
+    "CaseFieldID": "caseHistory"
+  }
+]

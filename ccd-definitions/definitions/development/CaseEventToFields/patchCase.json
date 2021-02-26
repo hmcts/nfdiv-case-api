@@ -1,0 +1,35 @@
+[
+  {
+    "PageID": 1,
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "CARE_SUPERVISION_EPO",
+    "CaseFieldID": "createdDate",
+    "CaseEventID": "patchCase",
+    "PageColumnNumber": 1,
+    "PageFieldDisplayOrder": 1,
+    "DisplayContext": "OPTIONAL",
+    "PageDisplayOrder": 1
+  },
+  {
+    "PageID": 1,
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "CARE_SUPERVISION_EPO",
+    "CaseFieldID": "D8caseReference",
+    "CaseEventID": "patchCase",
+    "PageColumnNumber": 1,
+    "PageFieldDisplayOrder": 2,
+    "DisplayContext": "OPTIONAL",
+    "PageDisplayOrder": 1
+  },
+  {
+    "PageID": 1,
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "CARE_SUPERVISION_EPO",
+    "CaseFieldID": "D8legalProcess",
+    "CaseEventID": "patchCase",
+    "PageColumnNumber": 1,
+    "PageFieldDisplayOrder": 3,
+    "DisplayContext": "OPTIONAL",
+    "PageDisplayOrder": 1
+  }
+]
