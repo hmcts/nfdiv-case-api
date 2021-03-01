@@ -7,5 +7,5 @@ import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 
 public interface CcdBuilder {
 
-    void buildWith(final ConfigBuilder<CaseData, State, UserRole> builder);
+    void buildWith(final ConfigBuilder<CaseData, State, UserRole> configBuilder);
 }

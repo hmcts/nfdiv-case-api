@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.divorce.ccd.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import uk.gov.hmcts.ccd.sdk.types.CCD;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -13,6 +14,9 @@ import java.util.stream.Stream;
 public enum State {
 
     @JsonProperty("Draft")
+    @CCD(
+        label = "Draft"
+    )
     DRAFT("Draft");
 
     private final String value;
