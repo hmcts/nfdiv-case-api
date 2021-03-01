@@ -2643,7 +2643,7 @@
     "CaseTypeID": "NO_FAULT_DIVORCE",
     "CaseStateID": "Draft",
     "UserRole": "caseworker-divorce-courtadmin_beta",
-    "CRUD": "CRUD"
+    "CRUD": "R"
   },
   {
     "LiveFrom": "02/02/2021",
@@ -2664,21 +2664,21 @@
     "CaseTypeID": "NO_FAULT_DIVORCE",
     "CaseStateID": "Draft",
     "UserRole": "caseworker-divorce-superuser",
-    "CRUD": "CRUD"
+    "CRUD": "R"
   },
   {
     "LiveFrom": "02/02/2021",
     "CaseTypeID": "NO_FAULT_DIVORCE",
     "CaseStateID": "Draft",
     "UserRole": "caseworker-divorce-courtadmin",
-    "CRUD": "CRUD"
+    "CRUD": "R"
   },
   {
     "LiveFrom": "02/02/2021",
     "CaseTypeID": "NO_FAULT_DIVORCE",
     "CaseStateID": "Draft",
     "UserRole": "caseworker-divorce-systemupdate",
-    "CRUD": "CRUD"
+    "CRUD": "R"
   },
   {
     "LiveFrom": "02/02/2021",

@@ -7,7 +7,6 @@ basePath=$(dirname $(dirname $scriptPath))
 ccdDefinitionsPath=$basePath/nfdiv-case-api/ccd-definitions/definitions/development
 
 definitionOutputFile=$basePath/nfdiv-case-api/ccd-definitions/build/ccd-config/ccd-nfd-dev.xlsx
-params="$@"
 
 cd $basePath
 
@@ -17,5 +16,5 @@ echo "Additional parameters: ${params}"
 
 mkdir -p $(dirname ${definitionOutputFile})
 
-${scriptPath}/generate-ccd-definition.sh $ccdDefinitionsPath $definitionOutputFile "${params}"
+${scriptPath}/generate-ccd-definition.sh $ccdDefinitionsPath $definitionOutputFile "-e *-nonprod.json,*-testing.json"
 ${scriptPath}/ccd-import-definition.sh $definitionOutputFile
