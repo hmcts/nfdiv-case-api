@@ -8,7 +8,7 @@ filename=$(basename ${filepath})
 uploadFilename="$(date +"%Y%m%d-%H%M%S")-${filename}"
 
 userToken=$(${dir}/idam-user-token.sh ${CCD_CONFIGURER_IMPORTER_USERNAME:-ccd.docker.default@hmcts.net} ${CCD_CONFIGURER_IMPORTER_PASSWORD:-Password12!})
-serviceToken=$(${dir}/s2s-token.sh ccd_gw
+serviceToken=$(${dir}/s2s-token.sh ccd_gw)
 
 uploadResponse=$(curl --insecure --silent -w "\n%{http_code}" --show-error -X POST \
   ${CCD_DEFINITION_STORE_API_BASE_URL:-http://localhost:4451}/import \
