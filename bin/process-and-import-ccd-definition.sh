@@ -12,7 +12,6 @@ cd $basePath
 
 echo "Definition directory: ${ccdDefinitionsPath}"
 echo "Definition spreadsheet ${definitionOutputFile}"
-echo "Additional parameters: ${params}"
 
 mkdir -p $(dirname ${definitionOutputFile})
 
