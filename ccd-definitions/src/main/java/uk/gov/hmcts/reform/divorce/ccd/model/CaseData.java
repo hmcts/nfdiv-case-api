@@ -6,9 +6,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import uk.gov.hmcts.ccd.sdk.types.CCD;
+import uk.gov.hmcts.reform.divorce.ccd.model.enums.DivorceOrDissolutionEnum;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.Gender;
 
 import static uk.gov.hmcts.ccd.sdk.types.FieldType.Date;
+import static uk.gov.hmcts.ccd.sdk.types.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.types.FieldType.YesOrNo;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -16,6 +18,14 @@ import static uk.gov.hmcts.ccd.sdk.types.FieldType.YesOrNo;
 @Data
 @EqualsAndHashCode()
 public class CaseData {
+
+    @JsonProperty("divorceOrDissolution")
+    @CCD(
+        label = "Divorce or Dissolution?",
+        type = FixedRadioList,
+        typeParameter = "DivorceOrDissolutionEnum"
+    )
+    private DivorceOrDissolutionEnum divorceOrDissolution;
 
     @JsonProperty("D8ScreenHasMarriageBroken")
     @CCD(
