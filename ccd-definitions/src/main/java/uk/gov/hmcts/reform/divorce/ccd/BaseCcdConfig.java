@@ -10,6 +10,9 @@ import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 import java.util.ArrayList;
 import java.util.List;
 
+import static uk.gov.hmcts.reform.divorce.ccd.model.State.DRAFT;
+import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CITIZEN;
+
 public class BaseCcdConfig implements CcdBuilder {
 
     private final List<CcdBuilder> ccdBuilders = new ArrayList<>();
@@ -20,10 +23,18 @@ public class BaseCcdConfig implements CcdBuilder {
     }
 
     @Override
-    public void buildWith(final ConfigBuilder<CaseData, State, UserRole> builder) {
+    public void buildWith(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+
+        configBuilder.grant(DRAFT, "CRU", CITIZEN);
+
+        configBuilder.workBasketResultFields()
+            .field("createdDate", "Created date");
+
+        configBuilder.workBasketInputFields()
+            .field("createdDate", "Created date");
 
         for (final CcdBuilder ccdBuilder : ccdBuilders) {
-            ccdBuilder.buildWith(builder);
+            ccdBuilder.buildWith(configBuilder);
         }
     }
 }
