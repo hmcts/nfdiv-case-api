@@ -1,0 +1,303 @@
+[
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "AosAwaiting",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "AosStarted",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "AosSubmittedAwaitingAnswer",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "AwaitingDecreeNisi",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "AosOverdue",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "AwaitingReissue",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "AwaitingLegalAdvisorReferral",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "AwaitingConsideration",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "AmendPetition",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "AwaitingClarification",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "DefendedDivorce",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "AwaitingPronouncement",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "AwaitingDecreeAbsolute",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "DivorceGranted",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "Withdrawn",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "AosCompleted",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "DNisRefused",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "AosAwaitingSol",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+  "LiveFrom": "01/02/2021",
+  "CaseTypeID": "NO_FAULT_DIVORCE",
+  "CaseStateID": "AosPreSubmit",
+  "UserRole": "caseworker-caa",
+  "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "DNPronounced",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "DARequested",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "DAOverdue",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "DNDrafted",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "AosDrafted",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "RemovedFromBulkCaseList",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "AwaitingService",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "ClarificationSubmitted",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "AwaitingAdminClarification",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "BOTranslationRequested",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "WelshResponseAwaitingReview",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "WelshLADecision",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "WelshDNReceived",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "AwaitingAmendCase",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "AwaitingGeneralReferralPayment",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "AwaitingGeneralConsideration",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "GeneralConsiderationComplete",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "AwaitingServicePayment",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "AwaitingServiceConsideration",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+  "LiveFrom": "01/02/2021",
+  "CaseTypeID": "NO_FAULT_DIVORCE",
+  "CaseStateID": "ServiceApplicationNotApproved",
+  "UserRole": "caseworker-caa",
+  "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "AwaitingBailiffService",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "AwaitingAlternativeService",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "AwaitingDWPResponse",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "01/02/2021",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseStateID": "AwaitingProcessServerService",
+    "UserRole": "caseworker-caa",
+    "CRUD": "R"
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "LiveFrom": "20/09/2019",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseEventID": "tempSuperUserTestEvent",
+    "UserRole": "caseworker-divorce-superuser",
+    "CRUD": "CRU"
+  },
+  {
+    "LiveFrom": "31/07/2020",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseEventID": "testMoveCaseFromAwaitingServicePaymentToAwaitingServiceConsideration",
+    "UserRole": "caseworker-divorce-superuser",
+    "CRUD": "CRU"
+  },
+  {
+    "LiveFrom": "03/08/2020",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseEventID": "testMoveCaseFromAwaitingServicePaymentToAwaitingServiceConsideration",
+    "UserRole": "caseworker-divorce-courtadmin_beta",
+    "CRUD": "R"
+  },
+  {
+    "LiveFrom": "03/08/2020",
+    "CaseTypeID": "NO_FAULT_DIVORCE",
+    "CaseEventID": "testMoveCaseFromAwaitingServicePaymentToAwaitingServiceConsideration",
+    "UserRole": "caseworker-divorce-courtadmin-la",
+    "CRUD": "R"
+  }
+]
