@@ -50,7 +50,7 @@ public class StubConfigBuilder<T, S, R extends HasRole> implements ConfigBuilder
     }
 
     @Override
-    public void caseType(final String caseType) {
+    public void caseType(String caseType, String name, String description) {
         this.caseType = caseType;
     }
 
