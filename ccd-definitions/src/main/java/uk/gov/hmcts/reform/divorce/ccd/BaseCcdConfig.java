@@ -6,10 +6,13 @@ import uk.gov.hmcts.reform.divorce.ccd.event.PatchCase;
 import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.reform.divorce.ccd.model.State;
 import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
+import uk.gov.hmcts.reform.divorce.ccd.tab.CaseTypeTab;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static uk.gov.hmcts.reform.divorce.ccd.model.Constants.CASE_TYPE;
+import static uk.gov.hmcts.reform.divorce.ccd.model.Constants.JURISDICTION;
 import static uk.gov.hmcts.reform.divorce.ccd.model.State.DRAFT;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CITIZEN;
 
@@ -20,21 +23,19 @@ public class BaseCcdConfig implements CcdBuilder {
     public BaseCcdConfig() {
         ccdBuilders.add(new DraftCreate());
         ccdBuilders.add(new PatchCase());
+        ccdBuilders.add(new CaseTypeTab());
     }
 
     @Override
     public void buildWith(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
+        configBuilder.caseType(CASE_TYPE);
+        configBuilder.jurisdiction(JURISDICTION, "Family Divorce", "Family Divorce: dissolution of marriage");
         configBuilder.grant(DRAFT, "CRU", CITIZEN);
-
-        configBuilder.workBasketResultFields()
-            .field("createdDate", "Created date");
-
-        configBuilder.workBasketInputFields()
-            .field("createdDate", "Created date");
 
         for (final CcdBuilder ccdBuilder : ccdBuilders) {
             ccdBuilder.buildWith(configBuilder);
         }
     }
+
 }
