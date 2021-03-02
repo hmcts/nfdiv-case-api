@@ -227,6 +227,6 @@ bootJar {
     }
 }
 
-wrapper {
-    distributionType = Wrapper.DistributionType.ALL
-}
+//wrapper {
+//    distributionType = Wrapper.DistributionType.ALL
+//}
