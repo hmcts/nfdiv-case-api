@@ -34,5 +34,21 @@ public class DraftCreate implements CcdBuilder {
                 CASEWORKER_DIVORCE_SOLICITOR,
                 CASEWORKER_DIVORCE_SUPERUSER,
                 CASEWORKER_DIVORCE_COURTADMIN_LA);
+
+        configBuilder
+            .workBasketInputFields()
+            .caseReferenceField();
+
+        configBuilder
+            .workBasketResultFields()
+            .caseReferenceField();
+
+        //configBuilder
+        //    .searchInputFields()
+        //    .caseReferenceField();
+
+        //configBuilder
+        //    .searchResultFields()
+        //    .caseReferenceField();
     }
 }
