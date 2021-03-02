@@ -131,14 +131,12 @@ public class StubConfigBuilder<T, S, R extends HasRole> implements ConfigBuilder
 
     @Override
     public Search.SearchBuilder searchResultFields() {
-        //TODO: return stub
-        return null;
+        return Search.builder().fields(new ArrayList<>());
     }
 
     @Override
     public Search.SearchBuilder searchInputFields() {
-        //TODO: return stub
-        return null;
+        return Search.builder().fields(new ArrayList<>());
     }
 
     @Override
