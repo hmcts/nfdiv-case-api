@@ -8,6 +8,7 @@ import uk.gov.hmcts.reform.divorce.ccd.model.State;
 import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 
 import static uk.gov.hmcts.reform.divorce.ccd.model.Constants.CASE_TYPE;
+import static uk.gov.hmcts.reform.divorce.ccd.model.Constants.JURISDICTION;
 
 public class DevelopmentCcdConfig implements CCDConfig<CaseData, State, UserRole> {
 
@@ -15,6 +16,7 @@ public class DevelopmentCcdConfig implements CCDConfig<CaseData, State, UserRole
     public void configure(final ConfigBuilder<CaseData, State, UserRole> builder) {
 
         builder.caseType(CASE_TYPE);
+        builder.jurisdiction(JURISDICTION, "Divorce", "Divorce");
         builder.setEnvironment("development");
         builder.setWebhookConvention(this::webhookConvention);
 

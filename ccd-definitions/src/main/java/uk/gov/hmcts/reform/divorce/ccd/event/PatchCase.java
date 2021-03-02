@@ -6,15 +6,15 @@ import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.reform.divorce.ccd.model.State;
 import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 
-import static uk.gov.hmcts.reform.divorce.ccd.model.CaseEvent.PATCH_CASE;
-
 public class PatchCase implements CcdBuilder {
+
+    public static final String PATCH_CASE = "patchCase";
 
     @Override
     public void buildWith(final ConfigBuilder<CaseData, State, UserRole> builder) {
 
         builder
-            .event(PATCH_CASE.name)
+            .event(PATCH_CASE)
             .forAllStates()
             .name("Patch case")
             .description("Patch a divorce or dissolution")

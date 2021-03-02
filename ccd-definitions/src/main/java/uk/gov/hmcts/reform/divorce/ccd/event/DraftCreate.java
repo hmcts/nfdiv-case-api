@@ -6,22 +6,18 @@ import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.reform.divorce.ccd.model.State;
 import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 
-import static uk.gov.hmcts.reform.divorce.ccd.model.CaseEvent.DRAFT_CREATE;
 import static uk.gov.hmcts.reform.divorce.ccd.model.State.DRAFT;
-import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
-import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
-import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_LA;
-import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_SOLICITOR;
-import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
-import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.*;
 
 public class DraftCreate implements CcdBuilder {
+
+    public static final String DRAFT_CREATE = "draftCreate";
 
     @Override
     public void buildWith(final ConfigBuilder<CaseData, State, UserRole> builder) {
 
         builder
-            .event(DRAFT_CREATE.name)
+            .event(DRAFT_CREATE)
             .initialState(DRAFT)
             .name("Create draft case")
             .description("Apply for a divorce or dissolution")

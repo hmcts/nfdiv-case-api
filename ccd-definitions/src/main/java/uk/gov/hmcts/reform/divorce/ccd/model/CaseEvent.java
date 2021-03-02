@@ -1,21 +1,25 @@
 package uk.gov.hmcts.reform.divorce.ccd.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import uk.gov.hmcts.reform.divorce.ccd.CcdBuilder;
+import uk.gov.hmcts.reform.divorce.ccd.event.DraftCreate;
+import uk.gov.hmcts.reform.divorce.ccd.event.PatchCase;
+import uk.gov.hmcts.reform.divorce.ccd.event.SaveAndClose;
 
 public enum CaseEvent {
-    @JsonProperty("draftCreate")
-    DRAFT_CREATE("draftCreate"),
+    @JsonProperty(DraftCreate.DRAFT_CREATE)
+    DRAFT_CREATE(new DraftCreate()),
 
-    @JsonProperty("patchCase")
-    PATCH_CASE("patchCase");
+    @JsonProperty(PatchCase.PATCH_CASE)
+    PATCH_CASE(new PatchCase()),
 
-    public final String name;
+    @JsonProperty(SaveAndClose.SAVE_AND_CLOSE)
+    SAVE_AND_CLOSE(new SaveAndClose()),
+    ;
 
-    CaseEvent(String value) {
-        this.name = value;
-    }
+    public final CcdBuilder builder;
 
-    public String toString() {
-        return this.name;
+    CaseEvent(CcdBuilder builder) {
+        this.builder = builder;
     }
 }

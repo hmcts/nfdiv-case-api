@@ -151,7 +151,8 @@ def versions = [
     junitPlatform   : '1.7.1',
     reformLogging   : '5.1.7',
     springBoot      : springBoot.class.package.implementationVersion,
-    springfoxSwagger: '3.0.0'
+    springfoxSwagger: '3.0.0',
+    lombok          : '1.18.18',
 ]
 
 ext.libraries = [
@@ -165,6 +166,8 @@ ext.libraries = [
 ]
 
 dependencies {
+    implementation project(':ccd-definitions')
+
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
@@ -182,6 +185,9 @@ dependencies {
 
     compile group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.40'
     compile group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '10.0.2'
+
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+    annotationProcessor("org.projectlombok:lombok:${versions.lombok}")
 
     testImplementation libraries.junit5
     testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', {
