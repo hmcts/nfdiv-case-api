@@ -29,7 +29,7 @@ public class BaseCcdConfig implements CcdBuilder {
     @Override
     public void buildWith(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
-        configBuilder.caseType(CASE_TYPE);
+        configBuilder.caseType(CASE_TYPE, "No Fault Divorce case", "Handling of the dissolution of marriage");
         configBuilder.jurisdiction(JURISDICTION, "Family Divorce", "Family Divorce: dissolution of marriage");
         configBuilder.grant(DRAFT, "CRU", CITIZEN);
 
