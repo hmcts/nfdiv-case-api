@@ -96,7 +96,7 @@ pmd {
     reportsDir = file("$project.buildDir/reports/pmd")
     // https://github.com/pmd/pmd/issues/876
     ruleSets = []
-    ruleSetFiles = files("config/pmd/ruleset.xml")
+    ruleSetFiles = files("../config/pmd/ruleset.xml")
 }
 
 jacocoTestReport {
@@ -226,7 +226,3 @@ bootJar {
         attributes('Implementation-Version': project.version.toString())
     }
 }
-
-//wrapper {
-//    distributionType = Wrapper.DistributionType.ALL
-//}
