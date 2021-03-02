@@ -15,7 +15,8 @@ public enum State {
 
     @JsonProperty("Draft")
     @CCD(
-        label = "Draft"
+        label = "Draft",
+        name = "Draft"
     )
     DRAFT("Draft");
 
