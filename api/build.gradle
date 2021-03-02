@@ -13,11 +13,6 @@ plugins {
 group = 'uk.gov.hmcts.reform'
 version = '0.0.1'
 
-allprojects {
-    sourceCompatibility = '11'
-    targetCompatibility = '11'
-}
-
 sourceSets {
     functionalTest {
         java {
