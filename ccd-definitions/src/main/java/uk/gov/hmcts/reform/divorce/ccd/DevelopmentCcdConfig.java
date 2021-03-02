@@ -15,10 +15,8 @@ public class DevelopmentCcdConfig implements CCDConfig<CaseData, State, UserRole
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
-        configBuilder.caseType(CASE_TYPE);
         configBuilder.setEnvironment("development");
         configBuilder.setWebhookConvention(this::webhookConvention);
-        configBuilder.jurisdiction(JURISDICTION, "Family Divorce", "Family Divorce: dissolution of marriage");
 
         new BaseCcdConfig().buildWith(configBuilder);
     }
