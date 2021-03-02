@@ -28,4 +28,15 @@ node_modules/
 yarn-error.log
 
 ### Generated CCD Json Definition ###
-definitions/development
+definitions/development/AuthorisationCaseEvent
+definitions/development/AuthorisationCaseField
+definitions/development/CaseEvent
+definitions/development/CaseTypeTab
+definitions/development/ComplexTypes
+definitions/development/FixedLists
+definitions/development/CaseField.json
+definitions/development/CaseType.json
+definitions/development/Jurisdiction.json
+definitions/development/State.json
+definitions/development/WorkBasketInputFields.json
+definitions/development/WorkBasketResultFields.json
