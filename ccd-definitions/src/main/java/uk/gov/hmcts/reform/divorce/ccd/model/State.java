@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 @Getter
 public enum State {
 
-    @JsonProperty("Draft")
+    @JsonProperty("DRAFT")
     @CCD(
         label = "Draft",
         name = "Draft"
