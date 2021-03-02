@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.types.EventTypeBuilder;
 import uk.gov.hmcts.ccd.sdk.types.Field;
 import uk.gov.hmcts.ccd.sdk.types.HasRole;
 import uk.gov.hmcts.ccd.sdk.types.RoleBuilder;
+import uk.gov.hmcts.ccd.sdk.types.Search;
 import uk.gov.hmcts.ccd.sdk.types.Tab.TabBuilder;
 import uk.gov.hmcts.ccd.sdk.types.WebhookConvention;
 import uk.gov.hmcts.ccd.sdk.types.WorkBasket;
@@ -126,6 +127,18 @@ public class StubConfigBuilder<T, S, R extends HasRole> implements ConfigBuilder
         final WorkBasket.WorkBasketBuilder result = WorkBasket.WorkBasketBuilder.builder(CaseData.class, new StubPropertyUtils());
         workBasketInputFields.add(result);
         return result;
+    }
+
+    @Override
+    public Search.SearchBuilder searchResultFields() {
+        //TODO: return stub
+        return null;
+    }
+
+    @Override
+    public Search.SearchBuilder searchInputFields() {
+        //TODO: return stub
+        return null;
     }
 
     @Override

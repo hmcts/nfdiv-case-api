@@ -43,12 +43,12 @@ public class DraftCreate implements CcdBuilder {
             .workBasketResultFields()
             .caseReferenceField();
 
-        //configBuilder
-        //    .searchInputFields()
-        //    .caseReferenceField();
+        configBuilder
+            .searchInputFields()
+            .caseReferenceField();
 
-        //configBuilder
-        //    .searchResultFields()
-        //    .caseReferenceField();
+        configBuilder
+            .searchResultFields()
+            .caseReferenceField();
     }
 }
