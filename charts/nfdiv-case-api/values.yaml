@@ -10,6 +10,7 @@ java:
       enabled: true
       maxReplicas: 9
       minReplicas: 6
+      targetCPUUtilizationPercentage: 50 # Default is 80% target CPU utilization
   keyVaults:
     nfdiv:
       secrets:
