@@ -27,13 +27,8 @@ public class DraftCreate implements CcdBuilder {
             .description("Apply for a divorce or dissolution")
             .displayOrder(1)
             .retries(120, 120)
-            .grant("CRU", CITIZEN)
-            .grant("R",
-                CASEWORKER_DIVORCE_COURTADMIN_BETA,
-                CASEWORKER_DIVORCE_COURTADMIN,
-                CASEWORKER_DIVORCE_SOLICITOR,
-                CASEWORKER_DIVORCE_SUPERUSER,
-                CASEWORKER_DIVORCE_COURTADMIN_LA);
+            .fields()
+            .optional(CaseData::getDivorceOrDissolution);
 
         configBuilder
             .workBasketInputFields()
