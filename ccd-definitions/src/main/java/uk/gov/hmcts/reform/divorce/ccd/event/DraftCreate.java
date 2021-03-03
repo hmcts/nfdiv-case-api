@@ -23,21 +23,5 @@ public class DraftCreate implements CcdBuilder {
             .retries(120, 120)
             .fields()
             .mandatory(CaseData::getDivorceOrDissolution);
-
-        configBuilder
-            .workBasketInputFields()
-            .caseReferenceField();
-
-        configBuilder
-            .workBasketResultFields()
-            .caseReferenceField();
-
-        configBuilder
-            .searchInputFields()
-            .caseReferenceField();
-
-        configBuilder
-            .searchResultFields()
-            .caseReferenceField();
     }
 }

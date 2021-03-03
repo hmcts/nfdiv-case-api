@@ -7,10 +7,9 @@ import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.reform.divorce.ccd.model.State;
 import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 
-import static uk.gov.hmcts.reform.divorce.ccd.model.Constants.CASE_TYPE;
-import static uk.gov.hmcts.reform.divorce.ccd.model.Constants.JURISDICTION;
-
 public class DevelopmentCcdConfig implements CCDConfig<CaseData, State, UserRole> {
+
+    CcdBuilderApplier ccdBuilderApplier = new CcdBuilderApplier(new DefaultCcdBuilderFactory());
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -18,7 +17,7 @@ public class DevelopmentCcdConfig implements CCDConfig<CaseData, State, UserRole
         configBuilder.setEnvironment("development");
         configBuilder.setWebhookConvention(this::webhookConvention);
 
-        new BaseCcdConfig().buildWith(configBuilder);
+        ccdBuilderApplier.applyWith(configBuilder);
     }
 
     private String webhookConvention(final Webhook webhook, final String eventId) {
