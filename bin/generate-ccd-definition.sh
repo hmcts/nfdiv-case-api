@@ -18,7 +18,7 @@ echo "Definition input directory: ${definition_input_dir}"
 echo "Definition output file: ${definition_output_file}"
 echo "Additional params: ${additionalParameters}"
 
-docker run --rm --name json2xlsx \
+docker run --user $UID --rm --name json2xlsx \
   -v ${definition_input_dir}:/tmp/ccd-definition \
   -v ${definition_output_file}:/tmp/ccd-definition.xlsx \
   hmctspublic.azurecr.io/ccd/definition-processor:${definition_processor_version} \
