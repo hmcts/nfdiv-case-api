@@ -7,7 +7,7 @@ import uk.gov.hmcts.reform.divorce.ccd.model.State;
 import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 
 import static uk.gov.hmcts.reform.divorce.ccd.model.CaseEvent.DRAFT_CREATE;
-import static uk.gov.hmcts.reform.divorce.ccd.model.State.DRAFT;
+import static uk.gov.hmcts.reform.divorce.ccd.model.State.Draft;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_LA;
@@ -22,7 +22,7 @@ public class DraftCreate implements CcdBuilder {
 
         configBuilder
             .event(DRAFT_CREATE.name)
-            .initialState(DRAFT)
+            .initialState(Draft)
             .name("Create draft case")
             .description("Apply for a divorce or dissolution")
             .displayOrder(1)

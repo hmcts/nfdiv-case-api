@@ -12,7 +12,7 @@ import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static uk.gov.hmcts.reform.divorce.ccd.model.State.DRAFT;
+import static uk.gov.hmcts.reform.divorce.ccd.model.State.Draft;
 
 class DraftCreateTest {
 
@@ -27,7 +27,7 @@ class DraftCreateTest {
         final Map<StubConfigBuilder.EventState, List<Event.EventBuilder<CaseData, UserRole, State>>> events = stubConfigBuilder.getEvents();
         assertThat(events.size(), is(1));
 
-        final List<Event.EventBuilder<CaseData, UserRole, State>> draftEvents = events.get(new StubConfigBuilder.EventState("", DRAFT.toString()));
+        final List<Event.EventBuilder<CaseData, UserRole, State>> draftEvents = events.get(new StubConfigBuilder.EventState("", Draft.toString()));
         assertThat(draftEvents.size(), is(1));
         final Event<CaseData, UserRole, State> event = draftEvents.get(0).build();
 

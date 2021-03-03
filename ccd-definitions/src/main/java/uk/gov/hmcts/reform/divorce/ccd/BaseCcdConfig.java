@@ -13,7 +13,7 @@ import java.util.List;
 
 import static uk.gov.hmcts.reform.divorce.ccd.model.Constants.CASE_TYPE;
 import static uk.gov.hmcts.reform.divorce.ccd.model.Constants.JURISDICTION;
-import static uk.gov.hmcts.reform.divorce.ccd.model.State.DRAFT;
+import static uk.gov.hmcts.reform.divorce.ccd.model.State.Draft;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CITIZEN;
 
 public class BaseCcdConfig implements CcdBuilder {
@@ -31,7 +31,7 @@ public class BaseCcdConfig implements CcdBuilder {
 
         configBuilder.caseType(CASE_TYPE, "No Fault Divorce case", "Handling of the dissolution of marriage");
         configBuilder.jurisdiction(JURISDICTION, "Family Divorce", "Family Divorce: dissolution of marriage");
-        configBuilder.grant(DRAFT, "CRU", CITIZEN);
+        configBuilder.grant(Draft, "CRU", CITIZEN);
 
         for (final CcdBuilder ccdBuilder : ccdBuilders) {
             ccdBuilder.buildWith(configBuilder);

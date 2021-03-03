@@ -18,7 +18,7 @@ public enum State {
         label = "Draft",
         name = "Draft"
     )
-    DRAFT("Draft");
+    Draft("Draft");
 
     private final String value;
     private final String label;
