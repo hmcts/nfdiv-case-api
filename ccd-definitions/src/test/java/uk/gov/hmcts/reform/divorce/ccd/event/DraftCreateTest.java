@@ -36,7 +36,7 @@ public class DraftCreateTest {
         fieldCollectionBuilder = eventBuildingMockUtil.getFieldCollectionBuilder();
 
     @Test
-    public void shouldBuildEventWithConfigBuilder() {
+    public void shouldBuildDraftCreateEventWithConfigBuilder() {
 
         draftCreate.buildWith(configBuilder);
 

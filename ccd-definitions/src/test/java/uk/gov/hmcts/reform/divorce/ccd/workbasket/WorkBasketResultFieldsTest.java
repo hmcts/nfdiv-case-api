@@ -19,7 +19,7 @@ public class WorkBasketResultFieldsTest {
     private final WorkBasket.WorkBasketBuilder<CaseData, UserRole> workBasketBuilder = workBasketBuildingMockUtil.getWorkBasketBuilder();
 
     @Test
-    public void shouldBuildWorkBasketWithConfigBuilder() {
+    public void shouldBuildWorkBasketResultFieldsWithConfigBuilder() {
 
         workBasketResultFields.buildWith(configBuilder);
 
