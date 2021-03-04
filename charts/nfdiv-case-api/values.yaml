@@ -6,6 +6,11 @@ java:
   image: 'hmctspublic.azurecr.io/nfdiv/case-api:latest'
   ingressHost: nfdiv-case-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
   aadIdentityName: nfdiv
+  autoscaling:
+      enabled: true
+      maxReplicas: 9
+      minReplicas: 6
+      targetCPUUtilizationPercentage: 50 # Default is 80% target CPU utilization
   keyVaults:
     nfdiv:
       secrets:

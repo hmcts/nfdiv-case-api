@@ -1,6 +1,6 @@
 {
   "name": "@hmcts/nfdiv-case-definition",
-  "version": "0.0.12",
+  "version": "0.0.15",
   "description": "Utility to help creating CCD config definitions",
   "main": "build/ts/index.d.ts",
   "types": "build/ts/index.d.ts",
