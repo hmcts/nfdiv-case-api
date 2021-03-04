@@ -48,35 +48,36 @@ withPipeline(type, product, component) {
     loadVaultSecrets(secrets)
 
     after('test') {
-       builder.gradle('integration')
+        builder.gradle('integration')
     }
 
     before('functionalTest:preview') {
         builder.gradle('generateCCDConfig')
-       setCommonEnvVariables()
+        setCommonEnvVariables()
 
-       //env.CCD_ADMIN_URL="https://admin-web-nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
-       env.CCD_DEFINITION_STORE_API_BASE_URL="https://ccd-definition-store-nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
+        //env.CCD_ADMIN_URL="https://admin-web-nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
+        env.CCD_DEFINITION_STORE_API_BASE_URL="https://ccd-definition-store-nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
 
-       uploadCoreCaseDataDefinitions()
-     }
+        uploadCoreCaseDataDefinitions()
+    }
 
-     before('functionalTest:aat') {
-       setCommonEnvVariables()
-       env.CCD_DEFINITION_STORE_API_BASE_URL="http://ccd-definition-store-api-aat.service.core-compute-aat.internal"
-       uploadCoreCaseDataDefinitions()
-     }
+    before('functionalTest:aat') {
+        builder.gradle('generateCCDConfig')
+        setCommonEnvVariables()
+        env.CCD_DEFINITION_STORE_API_BASE_URL="http://ccd-definition-store-api-aat.service.core-compute-aat.internal"
+        uploadCoreCaseDataDefinitions()
+    }
 }
 
 def setCommonEnvVariables(){
-       env.CCD_IDAM_REDIRECT_URL="https://ccd-case-management-web-aat.service.core-compute-aat.internal/oauth2redirect"
-       env.IDAM_API_BASE_URL = "https://idam-api.aat.platform.hmcts.net"
-       env.SERVICE_AUTH_PROVIDER_API_BASE_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+    env.CCD_IDAM_REDIRECT_URL="https://ccd-case-management-web-aat.service.core-compute-aat.internal/oauth2redirect"
+    env.IDAM_API_BASE_URL = "https://idam-api.aat.platform.hmcts.net"
+    env.SERVICE_AUTH_PROVIDER_API_BASE_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
 }
 
 def uploadCoreCaseDataDefinitions() {
-  dir("${WORKSPACE}/bin"){
-    sh "./add-roles.sh"
-    sh "./process-and-import-ccd-definition.sh"
-  }
+    dir("${WORKSPACE}/bin"){
+        sh "./add-roles.sh"
+        sh "./process-and-import-ccd-definition.sh"
+    }
 }
