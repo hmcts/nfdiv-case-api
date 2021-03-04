@@ -8,17 +8,17 @@ import uk.gov.hmcts.reform.divorce.ccd.model.State;
 import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 
 import static uk.gov.hmcts.reform.divorce.ccd.model.Constants.CASE_TYPE;
+import static uk.gov.hmcts.reform.divorce.ccd.model.Constants.JURISDICTION;
 
 public class DevelopmentCcdConfig implements CCDConfig<CaseData, State, UserRole> {
 
     @Override
-    public void configure(final ConfigBuilder<CaseData, State, UserRole> builder) {
+    public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
-        builder.caseType(CASE_TYPE);
-        builder.setEnvironment("development");
-        builder.setWebhookConvention(this::webhookConvention);
+        configBuilder.setEnvironment("development");
+        configBuilder.setWebhookConvention(this::webhookConvention);
 
-        new BaseCcdConfig().buildWith(builder);
+        new BaseCcdConfig().buildWith(configBuilder);
     }
 
     private String webhookConvention(final Webhook webhook, final String eventId) {
