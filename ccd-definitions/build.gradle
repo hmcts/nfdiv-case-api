@@ -11,7 +11,7 @@ buildscript {
 
 plugins {
     id 'java'
-    id 'hmcts.ccd.sdk' version '0.12.0'
+    id 'hmcts.ccd.sdk' version '0.13.0'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -67,4 +67,19 @@ generateTypeScript {
     outputFile = 'build/ts/index.d.ts'
     outputKind = 'module'
     mapEnum = 'asEnum'
+}
+
+def importCcdDefinition = tasks.register('importCcdDefinition') {
+    group = 'ccd tasks'
+    exec {
+        file('../../.env').readLines().each() {
+            def (key, value) = it.tokenize('=')
+            environment key, value
+        }
+        commandLine '../bin/process-and-import-ccd-definition.sh'
+    }
+}
+
+importCcdDefinition.configure {
+    dependsOn generateCCDConfig
 }
