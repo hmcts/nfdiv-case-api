@@ -70,13 +70,15 @@ generateTypeScript {
 }
 
 def importCcdDefinition = tasks.register('importCcdDefinition') {
-    group = 'ccd tasks'
-    exec {
-        file('../../.env').readLines().each() {
-            def (key, value) = it.tokenize('=')
-            environment key, value
+    doLast {
+        group = 'ccd tasks'
+        exec {
+            file('../../.env').readLines().each() {
+                def (key, value) = it.tokenize('=')
+                environment key, value
+            }
+            commandLine '../bin/process-and-import-ccd-definition.sh'
         }
-        commandLine '../bin/process-and-import-ccd-definition.sh'
     }
 }
 
