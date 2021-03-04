@@ -34,6 +34,12 @@ public class PatchCase implements CcdBuilder {
                 CASEWORKER_DIVORCE_SUPERUSER,
                 CASEWORKER_DIVORCE_COURTADMIN_LA)
             .fields()
-            .optional(CaseData::getDivorceOrDissolution);
+                .optional(CaseData::getD8HelpWithFeesReferenceNumber)
+                .optional(CaseData::getD8InferredPetitionerGender)
+                .optional(CaseData::getD8InferredRespondentGender)
+                .optional(CaseData::getD8MarriageDate)
+                .optional(CaseData::getD8MarriageIsSameSexCouple)
+                .optional(CaseData::getD8ScreenHasMarriageBroken)
+                .optional(CaseData::getDivorceOrDissolution);
     }
 }

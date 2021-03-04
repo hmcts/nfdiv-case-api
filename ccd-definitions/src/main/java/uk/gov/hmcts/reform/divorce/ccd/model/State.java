@@ -20,23 +20,7 @@ public enum State {
     )
     Draft("Draft");
 
-    private final String value;
-    private final String label;
+    private final String name;
 
-    State(String value) {
-        this.value = value;
-        this.label = value;
-    }
-
-    public static State fromValue(final String value) {
-        return tryFromValue(value)
-            .orElseThrow(() -> new NoSuchElementException("Unable to map " + value + " to a case state"));
-    }
-
-    public static Optional<State> tryFromValue(final String value) {
-        return Stream.of(values())
-            .filter(state -> state.value.equalsIgnoreCase(value))
-            .findFirst();
-    }
 }
 
