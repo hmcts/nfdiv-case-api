@@ -1,19 +1,35 @@
 server:
-  port: 4013
+    port: 4013
 
 management:
-  endpoint:
-    health:
-      show-details: "always"
-  endpoints:
-    web:
-      base-path: /
-      exposure:
-        include: health, info, prometheus
+    endpoint:
+        health:
+            show-details: "always"
+    endpoints:
+        web:
+            base-path: /
+            exposure:
+                include: health, info, prometheus
 
 spring:
-  application:
-    name: NFDIV Case API
+    application:
+        name: NFDIV Case API
 azure:
-  application-insights:
-    instrumentation-key: ${nfdiv.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
+    application-insights:
+        instrumentation-key: ${nfdiv.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
+
+uk:
+  gov:
+    notify:
+       api:
+         key: ${nfdiv.uk-gov-notify-api-key:dummy}
+         baseUrl: https://api.notifications.service.gov.uk
+       email:
+         templateVars:
+            SAVE_SIGN_OUT:
+              divorceUrl: ${DIVORCE_FRONT_END_URL:https://nfdiv.aat.platform.hmcts.net/}
+         templates:
+            english:
+              SAVE_SIGN_OUT: 'template-id'
+            welsh:
+              SAVE_SIGN_OUT: 'template-id'

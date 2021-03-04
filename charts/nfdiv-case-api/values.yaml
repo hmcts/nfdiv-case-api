@@ -15,6 +15,5 @@ java:
     nfdiv:
       secrets:
         - AppInsightsInstrumentationKey
+        - uk-gov-notify-api-key
   environment:
-
-

@@ -4,6 +4,3 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
-
-rootProject.name = 'nfdiv-case-api'
-include 'api', 'ccd-definitions'
