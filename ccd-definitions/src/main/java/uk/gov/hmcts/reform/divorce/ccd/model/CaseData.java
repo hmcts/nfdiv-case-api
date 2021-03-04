@@ -71,4 +71,46 @@ public class CaseData {
         regex = "([Hh][Ww][Ff]-?)?[0-9a-zA-Z]{3}-?[0-9a-zA-Z]{3}$"
     )
     private String d8HelpWithFeesReferenceNumber;
+
+    @JsonProperty("D8HelpWithFeesNeedHelp")
+    @CCD(
+        label = "Need help with fees?",
+        type = YesOrNo
+    )
+    private String d8HelpWithFeesNeedHelp;
+
+    @JsonProperty("D8ScreenHasMarriageCert")
+    @CCD(
+        label = "Petitioner got marriage cert.?",
+        type = YesOrNo
+    )
+    private String d8ScreenHasMarriageCert;
+
+    @JsonProperty("D8HelpWithFeesAppliedForFees")
+    @CCD(
+        label = "Applied for help with fees?",
+        type = YesOrNo
+    )
+    private String d8HelpWithFeesAppliedForFees;
+
+    @JsonProperty("D8MarriedInUk")
+    @CCD(
+        label = "Did the marriage take place in the UK?",
+        type = YesOrNo
+    )
+    private String d8MarriedInUk;
+
+    @JsonProperty("D8CertificateInEnglish")
+    @CCD(
+        label = "Marriage certificate in English?",
+        type = YesOrNo
+    )
+    private String d8CertificateInEnglish;
+
+    @JsonProperty("D8CertifiedTranslation")
+    @CCD(
+        label = "Marriage certificate translation",
+        type = YesOrNo
+    )
+    private String d8CertifiedTranslation;
 }
