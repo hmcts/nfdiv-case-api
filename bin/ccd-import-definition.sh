@@ -10,6 +10,9 @@ uploadFilename="$(date +"%Y%m%d-%H%M%S")-${filename}"
 userToken=$(${dir}/idam-user-token.sh ${CCD_DEFINITION_IMPORTER_USERNAME:-ccd.docker.default@hmcts.net} ${CCD_DEFINITION_IMPORTER_PASSWORD:-Password12!})
 serviceToken=$(${dir}/s2s-token.sh ccd_gw)
 
+[ -z "$serviceToken" ] && >&2 echo "No service token" && exit
+[ -z "$userToken" ] && >&2 echo "No user token" && exit
+
 uploadResponse=$(curl --insecure --silent -w "\n%{http_code}" --show-error -X POST \
   ${CCD_DEFINITION_STORE_API_BASE_URL:-http://localhost:4451}/import \
   -H "Authorization: Bearer ${userToken}" \
