@@ -7,13 +7,13 @@ filepath=${1}
 filename=$(basename ${filepath})
 uploadFilename="$(date +"%Y%m%d-%H%M%S")-${filename}"
 
-userToken=$(${dir}/idam-user-token.sh ${CCD_CONFIGURER_IMPORTER_USERNAME:-ccd.docker.default@hmcts.net} ${CCD_CONFIGURER_IMPORTER_PASSWORD:-Password12!})
+userToken=$(${dir}/idam-user-token.sh ${CCD_DEFINITION_IMPORTER_USERNAME:-ccd.docker.default@hmcts.net} ${CCD_DEFINITION_IMPORTER_PASSWORD:-Password12!})
 serviceToken=$(${dir}/s2s-token.sh ccd_gw)
 
 uploadResponse=$(curl --insecure --silent -w "\n%{http_code}" --show-error -X POST \
   ${CCD_DEFINITION_STORE_API_BASE_URL:-http://localhost:4451}/import \
   -H "Authorization: Bearer ${userToken}" \
-  -H "ServiceAuthorization: Bearer ${serviceToken}" \
+  -H "ServiceAuthorization: ${serviceToken}" \
   -F "file=@${filepath};filename=${uploadFilename}")
 
 upload_http_code=$(echo "$uploadResponse" | tail -n1)
@@ -27,7 +27,7 @@ if [[ "${upload_http_code}" == '504' ]]; then
     audit_response=$(curl --insecure --silent --show-error -X GET \
       ${CCD_DEFINITION_STORE_API_BASE_URL:-http://localhost:4451}/api/import-audits \
       -H "Authorization: Bearer ${userToken}" \
-      -H "ServiceAuthorization: Bearer ${serviceToken}")
+      -H "ServiceAuthorization: ${serviceToken}")
 
     if [[ ${audit_response} == *"${uploadFilename}"* ]]; then
       echo "${filename} (${uploadFilename}) uploaded"
