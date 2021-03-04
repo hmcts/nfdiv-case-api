@@ -19,7 +19,7 @@ public class CaseTypeTabTest {
     private final Tab.TabBuilder<CaseData, UserRole> tabBuilder = tabBuildingMockUtil.getTabBuilder();
 
     @Test
-    public void shouldBuildSearchInputFieldsWithConfigBuilder() {
+    public void shouldBuildCaseTypeTabWithConfigBuilder() {
 
         caseTypeTab.buildWith(configBuilder);
 

@@ -19,7 +19,7 @@ public class WorkBasketInputFieldsTest {
     private final WorkBasket.WorkBasketBuilder<CaseData, UserRole> workBasketBuilder = workBasketBuildingMockUtil.getWorkBasketBuilder();
 
     @Test
-    public void shouldBuildWorkBasketWithConfigBuilder() {
+    public void shouldBuildWorkBasketInputFieldsWithConfigBuilder() {
 
         workBasketInputFields.buildWith(configBuilder);
 

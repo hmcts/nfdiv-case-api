@@ -36,7 +36,7 @@ public class PatchCaseTest {
         fieldCollectionBuilder = eventBuildingMockUtil.getFieldCollectionBuilder();
 
     @Test
-    public void shouldBuildEventWithConfigBuilder() {
+    public void shouldBuildPatchCaseEventWithConfigBuilder() {
 
         patchCase.buildWith(configBuilder);
 

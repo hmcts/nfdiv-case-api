@@ -28,4 +28,5 @@ node_modules/
 yarn-error.log
 
 ### Generated CCD Json Definition ###
+definitions
 definitions/development

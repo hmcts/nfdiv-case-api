@@ -22,7 +22,7 @@ public class NoFaultDivorceTest {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Test
-    public void shouldBuildWithConfigBuilder() {
+    public void shouldBuildNoFaultDivorceCaseTypeWithConfigBuilder() {
 
         final ConfigBuilder configBuilder = mock(ConfigBuilder.class);
 
