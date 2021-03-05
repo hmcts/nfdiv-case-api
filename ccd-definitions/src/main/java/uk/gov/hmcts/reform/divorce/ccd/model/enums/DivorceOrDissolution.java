@@ -7,7 +7,7 @@ import uk.gov.hmcts.ccd.sdk.types.HasLabel;
 
 @Getter
 @AllArgsConstructor
-public enum DivorceOrDissolutionEnum implements HasLabel {
+public enum DivorceOrDissolution implements HasLabel {
 
     @JsonProperty("divorce")
     DIVORCE("Divorce"),
