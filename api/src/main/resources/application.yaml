@@ -25,8 +25,13 @@ uk:
          key: ${nfdiv.uk-gov-notify-api-key:dummy}
          baseUrl: https://api.notifications.service.gov.uk
        email:
+         templateVars:
+           SAVE_SIGN_OUT:
+             signInUrl: https://nfdiv.aat.platform.hmcts.net/
+             divCourtEmail: contactdivorce@justice.gov.uk
+             civilPartnershipCourtEmail: endcivilpartnership@justice.gov.uk
          templates:
             english:
-              SAVE_SIGN_OUT: '1b780a68-502f-4ccc-aa90-81266d7216cd'
+              SAVE_SIGN_OUT: '70dd0a1e-047f-4baa-993a-e722db17d8ac'
             welsh:
-              SAVE_SIGN_OUT: '1b780a68-502f-4ccc-aa90-81266d7216cd'
+              SAVE_SIGN_OUT: '70dd0a1e-047f-4baa-993a-e722db17d8ac'

@@ -14,8 +14,11 @@ import javax.validation.constraints.NotNull;
 @ConfigurationProperties(prefix = "uk.gov.notify.email")
 @Validated
 @Getter
+@SuppressWarnings("PMD") // UseConcurrentHashMap
 public class EmailTemplatesConfig {
     @NotNull
-    @SuppressWarnings("PMD") // UseConcurrentHashMap
     private Map<LanguagePreference, Map<String, String>> templates = new HashMap<>();
+
+    @NotNull
+    private Map<String, Map<String, String>> templateVars = new HashMap<>();
 }
