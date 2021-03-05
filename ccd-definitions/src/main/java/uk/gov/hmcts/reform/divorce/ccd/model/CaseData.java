@@ -23,7 +23,7 @@ public class CaseData {
     @CCD(
         label = "Divorce or Dissolution?",
         type = FixedRadioList,
-        typeParameter = "DivorceOrDissolutionEnum"
+        typeParameter = "DivorceOrDissolution"
     )
     private DivorceOrDissolution divorceOrDissolution;
 
