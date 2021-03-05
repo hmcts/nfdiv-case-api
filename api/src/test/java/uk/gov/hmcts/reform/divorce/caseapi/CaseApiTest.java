@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.rsecheck;
+package uk.gov.hmcts.reform.divorce.caseapi;
 
 import org.junit.jupiter.api.Test;
 

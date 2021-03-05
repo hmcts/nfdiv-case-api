@@ -25,11 +25,8 @@ uk:
          key: ${nfdiv.uk-gov-notify-api-key:dummy}
          baseUrl: https://api.notifications.service.gov.uk
        email:
-         templateVars:
-            SAVE_SIGN_OUT:
-              divorceUrl: ${DIVORCE_FRONT_END_URL:https://nfdiv.aat.platform.hmcts.net/}
          templates:
             english:
-              SAVE_SIGN_OUT: 'template-id'
+              SAVE_SIGN_OUT: '1b780a68-502f-4ccc-aa90-81266d7216cd'
             welsh:
-              SAVE_SIGN_OUT: 'template-id'
+              SAVE_SIGN_OUT: '1b780a68-502f-4ccc-aa90-81266d7216cd'

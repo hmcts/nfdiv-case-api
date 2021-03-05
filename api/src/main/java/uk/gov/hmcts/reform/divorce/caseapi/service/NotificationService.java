@@ -31,13 +31,16 @@ public class NotificationService {
     ) {
         String referenceId = UUID.randomUUID().toString();
         String templateId = emailTemplatesConfig.getTemplates().get(languagePreference).get(templateName);
-        Map<String, String> templateFields = emailTemplatesConfig.getTemplateVars().get(templateName);
 
         try {
-            notificationClient.sendEmail(templateId, destinationAddress, templateFields, referenceId);
+            log.info("Sending email for reference id : {} using template : {}", referenceId, templateName);
+            notificationClient.sendEmail(templateId, destinationAddress, templateVars, referenceId);
         } catch (NotificationClientException notificationClientException) {
-            log.warn("Failed to send email. Reference ID: {}. Reason: {}", "emailToSend.getReferenceId()",
-                notificationClientException.getMessage(), notificationClientException);
+            log.error("Failed to send email. Reference ID: {}. Reason: {}",
+                referenceId,
+                notificationClientException.getMessage(),
+                notificationClientException
+            );
             throw new NotificationException(notificationClientException);
         }
     }

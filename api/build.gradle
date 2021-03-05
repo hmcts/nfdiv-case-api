@@ -55,6 +55,7 @@ tasks.withType(Test) {
 
 test {
     failFast = true
+    useJUnitPlatform()
 }
 
 task functional(type: Test) {
@@ -189,6 +190,7 @@ dependencies {
     implementation group: 'uk.gov.hmcts.reform', name: 'logging-appinsights', version: versions.reformsJavaLogging
     implementation group: 'uk.gov.hmcts.reform', name: 'logging-httpcomponents', version: versions.reformsJavaLogging
     implementation group: 'uk.gov.hmcts.reform', name: 'logging-spring', version: versions.reformsJavaLogging
+    implementation 'junit:junit:4.12'
     compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.14.0'
     compile group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.14.0'
 
@@ -203,6 +205,11 @@ dependencies {
     testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', {
         exclude group: 'junit', module: 'junit'
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+
+    testImplementation(group: 'org.springframework.boot', name: 'spring-boot-starter-test') {
+        exclude(module: 'commons-logging')
+        exclude(module: 'android-json')
     }
 
     testCompile group: 'org.projectlombok', name: 'lombok',version: versions.lombok
