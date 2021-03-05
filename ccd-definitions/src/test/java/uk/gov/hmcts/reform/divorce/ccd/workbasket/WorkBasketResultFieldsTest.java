@@ -1,6 +1,8 @@
 package uk.gov.hmcts.reform.divorce.ccd.workbasket;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.types.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.types.WorkBasket;
 import uk.gov.hmcts.reform.divorce.ccd.mock.WorkBasketBuildingMockUtil;
@@ -11,6 +13,7 @@ import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+@ExtendWith(MockitoExtension.class)
 public class WorkBasketResultFieldsTest {
 
     private final WorkBasketResultFields workBasketResultFields = new WorkBasketResultFields();
@@ -21,7 +24,7 @@ public class WorkBasketResultFieldsTest {
     @Test
     public void shouldBuildWorkBasketResultFieldsWithConfigBuilder() {
 
-        workBasketResultFields.buildWith(configBuilder);
+        workBasketResultFields.applyTo(configBuilder);
 
         verify(configBuilder).workBasketResultFields();
         verify(workBasketBuilder).caseReferenceField();

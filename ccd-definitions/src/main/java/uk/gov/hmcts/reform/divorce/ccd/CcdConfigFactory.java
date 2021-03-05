@@ -2,7 +2,7 @@ package uk.gov.hmcts.reform.divorce.ccd;
 
 import java.util.stream.Stream;
 
-public interface CcdBuilderFactory {
+public interface CcdConfigFactory {
 
-    Stream<CcdBuilder> getCcdBuilders();
+    Stream<CcdConfig> getCcdConfig();
 }

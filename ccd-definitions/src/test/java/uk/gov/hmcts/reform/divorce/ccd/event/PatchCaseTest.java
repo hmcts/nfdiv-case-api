@@ -1,6 +1,8 @@
 package uk.gov.hmcts.reform.divorce.ccd.event;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.types.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.types.Event;
 import uk.gov.hmcts.ccd.sdk.types.EventTypeBuilder;
@@ -24,6 +26,7 @@ import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CITIZEN;
 
 @SuppressWarnings("unchecked")
+@ExtendWith(MockitoExtension.class)
 public class PatchCaseTest {
 
     private final PatchCase patchCase = new PatchCase();
@@ -38,7 +41,7 @@ public class PatchCaseTest {
     @Test
     public void shouldBuildPatchCaseEventWithConfigBuilder() {
 
-        patchCase.buildWith(configBuilder);
+        patchCase.applyTo(configBuilder);
 
         verify(configBuilder).event(PATCH_CASE.name);
         verify(eventTypeBuilder).forState(Draft);

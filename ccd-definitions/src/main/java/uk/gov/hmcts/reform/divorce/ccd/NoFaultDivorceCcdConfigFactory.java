@@ -11,10 +11,10 @@ import uk.gov.hmcts.reform.divorce.ccd.workbasket.WorkBasketResultFields;
 
 import java.util.stream.Stream;
 
-public class DefaultCcdBuilderFactory implements CcdBuilderFactory {
+public class NoFaultDivorceCcdConfigFactory implements CcdConfigFactory {
 
     @Override
-    public Stream<CcdBuilder> getCcdBuilders() {
+    public Stream<CcdConfig> getCcdConfig() {
         return Stream.of(
             new NoFaultDivorce(),
             new DraftCreate(),

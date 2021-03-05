@@ -12,6 +12,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 @SuppressWarnings("rawtypes")
 @Getter
@@ -22,11 +23,11 @@ public class TabBuildingMockUtil {
     private Tab.RestrictedFieldBuilder restrictedFieldBuilder;
 
     @SuppressWarnings("unchecked")
-    public TabBuildingMockUtil mockTabBuilding() {
+    public TabBuildingMockUtil mockTabBuildingWith(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
-        configBuilder = mock(ConfigBuilder.class);
-        tabBuilder = mock(Tab.TabBuilder.class);
-        restrictedFieldBuilder = mock(Tab.RestrictedFieldBuilder.class);
+        this.configBuilder = configBuilder;
+        tabBuilder = mock(Tab.TabBuilder.class, withSettings().lenient());
+        restrictedFieldBuilder = mock(Tab.RestrictedFieldBuilder.class, withSettings().lenient());
 
         when(configBuilder.tab(anyString(), anyString())).thenReturn(tabBuilder);
 
@@ -39,5 +40,10 @@ public class TabBuildingMockUtil {
         when(tabBuilder.collection(any())).thenReturn(tabBuilder);
 
         return this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public TabBuildingMockUtil mockTabBuilding() {
+        return mockTabBuildingWith(mock(ConfigBuilder.class, withSettings().lenient()));
     }
 }

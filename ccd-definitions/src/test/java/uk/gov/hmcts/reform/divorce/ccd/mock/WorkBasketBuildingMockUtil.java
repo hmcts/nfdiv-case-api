@@ -12,6 +12,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 @Getter
 public class WorkBasketBuildingMockUtil {
@@ -20,10 +21,10 @@ public class WorkBasketBuildingMockUtil {
     private WorkBasket.WorkBasketBuilder<CaseData, UserRole> workBasketBuilder;
 
     @SuppressWarnings("unchecked")
-    public WorkBasketBuildingMockUtil mockWorkBasketBuilding() {
+    public WorkBasketBuildingMockUtil mockWorkBasketBuildingWith(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
-        configBuilder = mock(ConfigBuilder.class);
-        workBasketBuilder = mock(WorkBasket.WorkBasketBuilder.class);
+        this.configBuilder = configBuilder;
+        workBasketBuilder = mock(WorkBasket.WorkBasketBuilder.class, withSettings().lenient());
 
         when(configBuilder.workBasketInputFields()).thenReturn(workBasketBuilder);
         when(configBuilder.workBasketResultFields()).thenReturn(workBasketBuilder);
@@ -35,5 +36,10 @@ public class WorkBasketBuildingMockUtil {
         when(workBasketBuilder.createdDateField()).thenReturn(workBasketBuilder);
 
         return this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public WorkBasketBuildingMockUtil mockWorkBasketBuilding() {
+        return mockWorkBasketBuildingWith(mock(ConfigBuilder.class, withSettings().lenient()));
     }
 }

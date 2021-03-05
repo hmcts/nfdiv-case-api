@@ -1,9 +1,11 @@
 package uk.gov.hmcts.reform.divorce.ccd.ccdcase;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.types.ConfigBuilder;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.reform.divorce.ccd.model.Constants.CASE_TYPE;
@@ -16,17 +18,20 @@ import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CITIZEN;
 
+@SuppressWarnings("rawtypes")
+@ExtendWith(MockitoExtension.class)
 public class NoFaultDivorceTest {
 
     private final NoFaultDivorce nofaultDivorce = new NoFaultDivorce();
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Mock
+    private ConfigBuilder configBuilder;
+
+    @SuppressWarnings("unchecked")
     @Test
     public void shouldBuildNoFaultDivorceCaseTypeWithConfigBuilder() {
 
-        final ConfigBuilder configBuilder = mock(ConfigBuilder.class);
-
-        nofaultDivorce.buildWith(configBuilder);
+        nofaultDivorce.applyTo(configBuilder);
 
         verify(configBuilder).caseType(CASE_TYPE, "No Fault Divorce case", "Handling of the dissolution of marriage");
         verify(configBuilder).jurisdiction(JURISDICTION, "Family Divorce", "Family Divorce: dissolution of marriage");

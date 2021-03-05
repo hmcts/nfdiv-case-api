@@ -1,6 +1,8 @@
 package uk.gov.hmcts.reform.divorce.ccd.event;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.types.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.types.Event;
 import uk.gov.hmcts.ccd.sdk.types.EventTypeBuilder;
@@ -16,14 +18,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.reform.divorce.ccd.model.CaseEvent.DRAFT_CREATE;
 import static uk.gov.hmcts.reform.divorce.ccd.model.State.Draft;
-import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
-import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
-import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_LA;
-import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_SOLICITOR;
-import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
-import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CITIZEN;
 
 @SuppressWarnings("unchecked")
+@ExtendWith(MockitoExtension.class)
 public class DraftCreateTest {
 
     private final DraftCreate draftCreate = new DraftCreate();
@@ -38,7 +35,7 @@ public class DraftCreateTest {
     @Test
     public void shouldBuildDraftCreateEventWithConfigBuilder() {
 
-        draftCreate.buildWith(configBuilder);
+        draftCreate.applyTo(configBuilder);
 
         verify(configBuilder).event(DRAFT_CREATE.name);
         verify(eventTypeBuilder).initialState(Draft);

@@ -1,7 +1,7 @@
 package uk.gov.hmcts.reform.divorce.ccd.event;
 
 import uk.gov.hmcts.ccd.sdk.types.ConfigBuilder;
-import uk.gov.hmcts.reform.divorce.ccd.CcdBuilder;
+import uk.gov.hmcts.reform.divorce.ccd.CcdConfig;
 import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.reform.divorce.ccd.model.State;
 import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
@@ -9,10 +9,10 @@ import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 import static uk.gov.hmcts.reform.divorce.ccd.model.CaseEvent.DRAFT_CREATE;
 import static uk.gov.hmcts.reform.divorce.ccd.model.State.Draft;
 
-public class DraftCreate implements CcdBuilder {
+public class DraftCreate implements CcdConfig {
 
     @Override
-    public void buildWith(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+    public void applyTo(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         configBuilder
             .event(DRAFT_CREATE.name)
