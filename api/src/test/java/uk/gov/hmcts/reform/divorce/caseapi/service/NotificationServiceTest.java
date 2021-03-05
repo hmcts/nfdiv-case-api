@@ -40,7 +40,7 @@ public class NotificationServiceTest {
     public void shouldInvokeNotificationClientToSendEmailInEnglish() throws NotificationClientException {
         notificationService.sendEmail(
             EMAIL_ADDRESS,
-            SAVE_SIGN_OUT.name(),
+            SAVE_SIGN_OUT,
             null,
             ENGLISH
         );
@@ -56,7 +56,7 @@ public class NotificationServiceTest {
     public void shouldInvokeNotificationClientToSendEmailInWelsh() throws NotificationClientException {
         notificationService.sendEmail(
             EMAIL_ADDRESS,
-            SAVE_SIGN_OUT.name(),
+            SAVE_SIGN_OUT,
             null,
             WELSH
         );
@@ -76,7 +76,7 @@ public class NotificationServiceTest {
 
         assertThatThrownBy(() -> notificationService.sendEmail(
             EMAIL_ADDRESS,
-            SAVE_SIGN_OUT.name(),
+            SAVE_SIGN_OUT,
             null,
             ENGLISH
             )
