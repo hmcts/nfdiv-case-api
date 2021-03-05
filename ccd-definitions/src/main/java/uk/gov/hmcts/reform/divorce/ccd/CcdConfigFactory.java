@@ -4,5 +4,5 @@ import java.util.stream.Stream;
 
 public interface CcdConfigFactory {
 
-    Stream<CcdConfig> getCcdConfig();
+    Stream<CcdConfiguration> getCcdConfig();
 }

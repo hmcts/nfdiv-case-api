@@ -24,9 +24,9 @@ public class NoFaultDivorceCcdConfigFactoryTest {
     @Test
     public void shouldReturnStreamOfCcdBuilders() {
 
-        final Stream<CcdConfig> ccdBuilders = new NoFaultDivorceCcdConfigFactory().getCcdConfig();
+        final Stream<CcdConfiguration> ccdBuilders = new NoFaultDivorceCcdConfigFactory().getCcdConfig();
 
-        final List<CcdConfig> builderList = ccdBuilders.collect(toList());
+        final List<CcdConfiguration> builderList = ccdBuilders.collect(toList());
         assertThat(builderList.size(), is(8));
         assertThat(builderList, contains(
             isA(NoFaultDivorce.class),

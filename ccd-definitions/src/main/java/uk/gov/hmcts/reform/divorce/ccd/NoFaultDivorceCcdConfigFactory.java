@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 public class NoFaultDivorceCcdConfigFactory implements CcdConfigFactory {
 
     @Override
-    public Stream<CcdConfig> getCcdConfig() {
+    public Stream<CcdConfiguration> getCcdConfig() {
         return Stream.of(
             new NoFaultDivorce(),
             new DraftCreate(),

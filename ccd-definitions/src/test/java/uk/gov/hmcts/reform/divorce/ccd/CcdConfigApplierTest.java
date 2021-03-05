@@ -22,9 +22,9 @@ public class CcdConfigApplierTest {
         final CcdConfigFactory ccdConfigFactory = mock(CcdConfigFactory.class);
         final ConfigBuilder configBuilder = mock(ConfigBuilder.class);
 
-        final CcdConfig ccdConfig1 = mock(CcdConfig.class);
-        final CcdConfig ccdConfig2 = mock(CcdConfig.class);
-        final Stream<CcdConfig> ccdBuilderStream = Stream.of(ccdConfig1, ccdConfig2);
+        final CcdConfiguration ccdConfig1 = mock(CcdConfiguration.class);
+        final CcdConfiguration ccdConfig2 = mock(CcdConfiguration.class);
+        final Stream<CcdConfiguration> ccdBuilderStream = Stream.of(ccdConfig1, ccdConfig2);
 
         when(ccdConfigFactory.getCcdConfig()).thenReturn(ccdBuilderStream);
 
