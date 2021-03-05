@@ -18,6 +18,7 @@ public class SaveAndSignOutNotificationHandler {
     private NotificationService notificationService;
 
     public void notifyApplicant(CaseData  caseData) {
+        @SuppressWarnings("PMD") // UseConcurrentHashMap
         Map<String, String> templateVars = new HashMap<>();
         templateVars.put(FIRST_NAME, caseData.getD8PetitionerFirstName());
         templateVars.put(LAST_NAME, caseData.getD8PetitionerLastName());
