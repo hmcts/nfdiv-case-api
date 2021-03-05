@@ -21,9 +21,7 @@ public class CaseData {
 
     @JsonProperty("divorceOrDissolution")
     @CCD(
-        label = "Divorce or Dissolution?",
-        type = FixedRadioList,
-        typeParameter = "DivorceOrDissolution"
+        label = "Divorce or Dissolution?"
     )
     private DivorceOrDissolution divorceOrDissolution;
 
@@ -45,16 +43,14 @@ public class CaseData {
     @JsonProperty("D8InferredPetitionerGender")
     @CCD(
         label = "What is the petitioner's gender?",
-        hint = "The petitioner’s gender is collected for statistical purposes only.",
-        typeParameter = "Gender"
+        hint = "The petitioner’s gender is collected for statistical purposes only."
     )
     private Gender d8InferredPetitionerGender;
 
     @JsonProperty("D8InferredRespondentGender")
     @CCD(
         label = "What is the respondent's gender?",
-        hint = "The respondent’s gender is collected for statistical purposes only.",
-        typeParameter = "Gender"
+        hint = "The respondent’s gender is collected for statistical purposes only."
     )
     private Gender d8InferredRespondentGender;
 
