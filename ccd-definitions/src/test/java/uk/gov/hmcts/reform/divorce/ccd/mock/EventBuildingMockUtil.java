@@ -15,6 +15,7 @@ import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 @SuppressWarnings("rawtypes")
 @Getter
@@ -27,13 +28,12 @@ public class EventBuildingMockUtil {
     private Field.FieldBuilder fieldBuilder;
 
     @SuppressWarnings("unchecked")
-    public EventBuildingMockUtil mockEventBuilding() {
-
-        configBuilder = mock(ConfigBuilder.class);
-        eventTypeBuilder = mock(EventTypeBuilder.class);
-        eventBuilder = mock(Event.EventBuilder.class);
-        fieldCollectionBuilder = mock(FieldCollection.FieldCollectionBuilder.class);
-        fieldBuilder = mock(Field.FieldBuilder.class);
+    public EventBuildingMockUtil mockEventBuildingWith(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        this.configBuilder = configBuilder;
+        eventTypeBuilder = mock(EventTypeBuilder.class, withSettings().lenient());
+        eventBuilder = mock(Event.EventBuilder.class, withSettings().lenient());
+        fieldCollectionBuilder = mock(FieldCollection.FieldCollectionBuilder.class, withSettings().lenient());
+        fieldBuilder = mock(Field.FieldBuilder.class, withSettings().lenient());
 
         mockConfigBuilderAndEventTypeBuilderMethods();
         mockEventBuilderMethods();
@@ -41,6 +41,11 @@ public class EventBuildingMockUtil {
         mockFieldBuilderMethods();
 
         return this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public EventBuildingMockUtil mockEventBuilding() {
+        return mockEventBuildingWith(mock(ConfigBuilder.class, withSettings().lenient()));
     }
 
     private void mockConfigBuilderAndEventTypeBuilderMethods() {

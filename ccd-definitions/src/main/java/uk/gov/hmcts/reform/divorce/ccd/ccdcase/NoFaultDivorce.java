@@ -1,7 +1,7 @@
 package uk.gov.hmcts.reform.divorce.ccd.ccdcase;
 
 import uk.gov.hmcts.ccd.sdk.types.ConfigBuilder;
-import uk.gov.hmcts.reform.divorce.ccd.CcdBuilder;
+import uk.gov.hmcts.reform.divorce.ccd.CcdConfig;
 import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.reform.divorce.ccd.model.State;
 import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
@@ -16,10 +16,10 @@ import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CITIZEN;
 
-public class NoFaultDivorce implements CcdBuilder {
+public class NoFaultDivorce implements CcdConfig {
 
     @Override
-    public void buildWith(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+    public void applyTo(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         configBuilder.caseType(CASE_TYPE, "No Fault Divorce case", "Handling of the dissolution of marriage");
         configBuilder.jurisdiction(JURISDICTION, "Family Divorce", "Family Divorce: dissolution of marriage");

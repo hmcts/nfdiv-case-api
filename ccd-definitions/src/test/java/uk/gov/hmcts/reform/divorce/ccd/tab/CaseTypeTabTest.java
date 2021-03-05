@@ -1,6 +1,8 @@
 package uk.gov.hmcts.reform.divorce.ccd.tab;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.types.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.types.Tab;
 import uk.gov.hmcts.reform.divorce.ccd.mock.TabBuildingMockUtil;
@@ -11,6 +13,7 @@ import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+@ExtendWith(MockitoExtension.class)
 public class CaseTypeTabTest {
 
     private final CaseTypeTab caseTypeTab = new CaseTypeTab();
@@ -21,7 +24,7 @@ public class CaseTypeTabTest {
     @Test
     public void shouldBuildCaseTypeTabWithConfigBuilder() {
 
-        caseTypeTab.buildWith(configBuilder);
+        caseTypeTab.applyTo(configBuilder);
 
         verify(configBuilder).tab("petitionDetails", "Petition");
         verify(tabBuilder).field("D8MarriageIsSameSexCouple");

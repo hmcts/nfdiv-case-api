@@ -19,14 +19,14 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isA;
 
-public class DefaultCcdBuilderFactoryTest {
+public class NoFaultDivorceCcdConfigFactoryTest {
 
     @Test
     public void shouldReturnStreamOfCcdBuilders() {
 
-        final Stream<CcdBuilder> ccdBuilders = new DefaultCcdBuilderFactory().getCcdBuilders();
+        final Stream<CcdConfig> ccdBuilders = new NoFaultDivorceCcdConfigFactory().getCcdConfig();
 
-        final List<CcdBuilder> builderList = ccdBuilders.collect(toList());
+        final List<CcdConfig> builderList = ccdBuilders.collect(toList());
         assertThat(builderList.size(), is(8));
         assertThat(builderList, contains(
             isA(NoFaultDivorce.class),

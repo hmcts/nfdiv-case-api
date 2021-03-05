@@ -31,7 +31,7 @@ def versions = [
         jacksonDatabind: '2.12.0',
         lombok         : '1.18.18',
         hamcrest       : '2.2',
-        mockito    : '3.8.0'
+        mockito        : '3.8.0'
 ]
 
 dependencies {
@@ -64,7 +64,7 @@ test {
 generateTypeScript {
     jsonLibrary = 'jackson2'
     classPatterns = [
-            'uk.gov.hmcts.reform.divorce.ccd.model.*'
+        'uk.gov.hmcts.reform.divorce.ccd.model.*'
     ]
     outputFile = 'build/ts/index.d.ts'
     outputKind = 'module'

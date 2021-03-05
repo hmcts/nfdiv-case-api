@@ -15,7 +15,7 @@ public class DevelopmentCcdConfig implements CCDConfig<CaseData, State, UserRole
         configBuilder.setEnvironment("development");
         configBuilder.setWebhookConvention(this::webhookConvention);
 
-        new CcdBuilderApplier(new DefaultCcdBuilderFactory()).applyWith(configBuilder);
+        new CcdConfigApplier(new NoFaultDivorceCcdConfigFactory()).applyTo(configBuilder);
     }
 
     private String webhookConvention(final Webhook webhook, final String eventId) {

@@ -1,6 +1,8 @@
 package uk.gov.hmcts.reform.divorce.ccd.search;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.types.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.types.Search;
 import uk.gov.hmcts.reform.divorce.ccd.mock.SearchBuildingMockUtil;
@@ -11,6 +13,7 @@ import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+@ExtendWith(MockitoExtension.class)
 public class SearchInputFieldsTest {
 
     private final SearchInputFields searchInputFields = new SearchInputFields();
@@ -21,7 +24,7 @@ public class SearchInputFieldsTest {
     @Test
     public void shouldBuildSearchInputFieldsWithConfigBuilder() {
 
-        searchInputFields.buildWith(configBuilder);
+        searchInputFields.applyTo(configBuilder);
 
         verify(configBuilder).searchInputFields();
         verify(searchBuilder).caseReferenceField();

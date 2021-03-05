@@ -9,6 +9,7 @@ import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 @Getter
 public class SearchBuildingMockUtil {
@@ -17,10 +18,10 @@ public class SearchBuildingMockUtil {
     private Search.SearchBuilder<CaseData, UserRole> searchBuilder;
 
     @SuppressWarnings("unchecked")
-    public SearchBuildingMockUtil mockSearchBuilding() {
+    public SearchBuildingMockUtil mockSearchBuildingWith(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
-        configBuilder = mock(ConfigBuilder.class);
-        searchBuilder = mock(Search.SearchBuilder.class);
+        this.configBuilder = configBuilder;
+        searchBuilder = mock(Search.SearchBuilder.class, withSettings().lenient());
 
         when(configBuilder.searchInputFields()).thenReturn(searchBuilder);
         when(configBuilder.searchResultFields()).thenReturn(searchBuilder);
@@ -28,6 +29,12 @@ public class SearchBuildingMockUtil {
         return this;
     }
 
+    @SuppressWarnings("unchecked")
+    public SearchBuildingMockUtil mockSearchBuilding() {
+        return mockSearchBuildingWith(mock(ConfigBuilder.class, withSettings().lenient()));
+    }
+
+    @SuppressWarnings("unchecked")
     private Search.SearchBuilder<CaseData, UserRole> createMockSearchBuilder() {
 
         final SearchBuilderAnswer searchBuilderAnswer = new SearchBuilderAnswer();
