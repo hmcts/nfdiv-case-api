@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import uk.gov.hmcts.reform.divorce.caseapi.config.EmailTemplatesConfig;
 import uk.gov.hmcts.reform.divorce.caseapi.service.NotificationService;
 import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
-import uk.gov.hmcts.reform.divorce.ccd.model.enums.DivorceOrDissolutionEnum;
+import uk.gov.hmcts.reform.divorce.ccd.model.enums.DivorceOrDissolution;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +39,7 @@ public class SaveAndSignOutNotificationHandler {
 
         Map<String, Map<String, String>> configTemplateVars = emailTemplatesConfig.getTemplateVars();
 
-        if (DivorceOrDissolutionEnum.DIVORCE.name().equalsIgnoreCase(caseData.getDivorceOrDissolution().name())) {
+        if (DivorceOrDissolution.DIVORCE.name().equalsIgnoreCase(caseData.getDivorceOrDissolution().name())) {
             templateVars.put(RELATIONSHIP, DIVORCE_APPLICATION);
             templateVars.put(RELATIONSHIP_COURT_HEADER, APPLY_FOR_DIVORCE);
 

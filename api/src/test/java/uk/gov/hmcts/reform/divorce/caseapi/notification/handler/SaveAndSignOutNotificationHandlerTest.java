@@ -8,7 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.reform.divorce.caseapi.config.EmailTemplatesConfig;
 import uk.gov.hmcts.reform.divorce.caseapi.service.NotificationService;
 import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
-import uk.gov.hmcts.reform.divorce.ccd.model.enums.DivorceOrDissolutionEnum;
+import uk.gov.hmcts.reform.divorce.ccd.model.enums.DivorceOrDissolution;
 
 import java.util.Map;
 
@@ -105,7 +105,7 @@ public class SaveAndSignOutNotificationHandlerTest {
         caseData.setD8PetitionerFirstName(TEST_FIRST_NAME);
         caseData.setD8PetitionerLastName(TEST_LAST_NAME);
         caseData.setD8PetitionerEmail(TEST_USER_EMAIL);
-        caseData.setDivorceOrDissolution(DivorceOrDissolutionEnum.DIVORCE);
+        caseData.setDivorceOrDissolution(DivorceOrDissolution.DIVORCE);
         return caseData;
     }
 }
