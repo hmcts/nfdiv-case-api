@@ -16,6 +16,8 @@ public final class NotificationConstants {
 
     public static final String SIGN_IN_URL = "signInUrl";
 
+    public static final String COURT_EMAIL = "court email";
+
     private NotificationConstants() {
     }
 }
