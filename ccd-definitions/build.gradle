@@ -40,7 +40,6 @@ dependencies {
     compileOnly group: 'org.projectlombok', name: 'lombok', version: versions.lombok
     annotationProcessor("org.projectlombok:lombok:${versions.lombok}")
 
-    testImplementation 'uk.gov.hmcts.reform:ccd-config-generator:0.15.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testImplementation group: 'org.hamcrest', name: 'hamcrest', version: versions.hamcrest
