@@ -96,26 +96,12 @@ pmd {
 }
 
 jacocoTestReport {
-    executionData(test, integration)
+    //TODO: Add integration when tests created
+    executionData(test)
     reports {
         xml.enabled = true
         csv.enabled = false
         xml.destination file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
-    }
-}
-
-project.tasks['sonarqube'].dependsOn jacocoTestReport
-
-def sonarExclusions = [
-        '**/uk/gov/hmcts/reform/divorce/ccd/model/**'
-]
-
-sonarqube {
-    properties {
-        property "sonar.projectName", "Reform :: nfdiv-case-api"
-        property "sonar.projectKey", "uk.gov.hmcts.reform:nfdiv-case-api"
-        property "sonar.coverage.jacoco.xmlReportPaths", "${jacocoTestReport.reports.xml.destination.path}"
-        property "sonar.exclusions", sonarExclusions.join(', ')
     }
 }
 
