@@ -3,7 +3,7 @@ package uk.gov.hmcts.reform.divorce.ccd.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import uk.gov.hmcts.ccd.sdk.types.CCD;
+import uk.gov.hmcts.ccd.sdk.api.CCD;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;

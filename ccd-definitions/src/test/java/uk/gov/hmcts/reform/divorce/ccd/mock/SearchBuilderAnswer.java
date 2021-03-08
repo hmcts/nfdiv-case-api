@@ -2,7 +2,7 @@ package uk.gov.hmcts.reform.divorce.ccd.mock;
 
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import uk.gov.hmcts.ccd.sdk.types.Search;
+import uk.gov.hmcts.ccd.sdk.api.Search;
 import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 
