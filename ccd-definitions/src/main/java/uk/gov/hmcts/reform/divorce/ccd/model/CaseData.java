@@ -11,6 +11,7 @@ import uk.gov.hmcts.reform.divorce.ccd.model.enums.DivorceOrDissolution;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.Gender;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -101,4 +102,22 @@ public class CaseData {
     )
     private YesOrNo d8CertifiedTranslation;
 
+    @JsonProperty("D8PetitionerFirstName")
+    @CCD(
+        label = "First name(s)",
+        hint = "Include all middle names here")
+    private String d8PetitionerFirstName;
+
+    @JsonProperty("D8PetitionerLastName")
+    @CCD(
+        label = "Last name"
+    )
+    private String d8PetitionerLastName;
+
+    @JsonProperty("D8PetitionerEmail")
+    @CCD(
+        label = "Petitioner's email address",
+        type = Email
+    )
+    private String d8PetitionerEmail;
 }

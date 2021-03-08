@@ -15,6 +15,6 @@ java:
     nfdiv:
       secrets:
         - AppInsightsInstrumentationKey
+        - uk-gov-notify-api-key
   environment:
-
-
+      NOTIFY_TEMPLATE_SIGN_IN_URL: https://nfdiv.{{ .Values.global.environment }}.platform.hmcts.net/
