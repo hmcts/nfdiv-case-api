@@ -6,12 +6,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.DivorceOrDissolution;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.Gender;
 
-import static uk.gov.hmcts.ccd.sdk.api.FieldType.Date;
-import static uk.gov.hmcts.ccd.sdk.api.FieldType.FixedRadioList;
-import static uk.gov.hmcts.ccd.sdk.api.FieldType.YesOrNo;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -28,17 +27,15 @@ public class CaseData {
     @JsonProperty("D8ScreenHasMarriageBroken")
     @CCD(
         label = "Marriage broken irretrievably?",
-        hint = "Has petitioner's marriage broken down irretrievably?",
-        type = YesOrNo
+        hint = "Has petitioner's marriage broken down irretrievably?"
     )
-    private String d8ScreenHasMarriageBroken;
+    private YesOrNo d8ScreenHasMarriageBroken;
 
     @JsonProperty("D8MarriageIsSameSexCouple")
     @CCD(
-        label = "Were the petitioner and the respondent a same-sex couple when they got married?",
-        type = YesOrNo
+        label = "Were the petitioner and the respondent a same-sex couple when they got married?"
     )
-    private String d8MarriageIsSameSexCouple;
+    private YesOrNo d8MarriageIsSameSexCouple;
 
     @JsonProperty("D8InferredPetitionerGender")
     @CCD(
@@ -70,43 +67,38 @@ public class CaseData {
 
     @JsonProperty("D8HelpWithFeesNeedHelp")
     @CCD(
-        label = "Need help with fees?",
-        type = YesOrNo
+        label = "Need help with fees?"
     )
-    private String d8HelpWithFeesNeedHelp;
+    private YesOrNo d8HelpWithFeesNeedHelp;
 
     @JsonProperty("D8ScreenHasMarriageCert")
     @CCD(
-        label = "Petitioner got marriage cert.?",
-        type = YesOrNo
+        label = "Petitioner got marriage cert.?"
     )
-    private String d8ScreenHasMarriageCert;
+    private YesOrNo d8ScreenHasMarriageCert;
 
     @JsonProperty("D8HelpWithFeesAppliedForFees")
     @CCD(
-        label = "Applied for help with fees?",
-        type = YesOrNo
+        label = "Applied for help with fees?"
     )
-    private String d8HelpWithFeesAppliedForFees;
+    private YesOrNo d8HelpWithFeesAppliedForFees;
 
     @JsonProperty("D8MarriedInUk")
     @CCD(
-        label = "Did the marriage take place in the UK?",
-        type = YesOrNo
+        label = "Did the marriage take place in the UK?"
     )
-    private String d8MarriedInUk;
+    private YesOrNo d8MarriedInUk;
 
     @JsonProperty("D8CertificateInEnglish")
     @CCD(
-        label = "Marriage certificate in English?",
-        type = YesOrNo
+        label = "Marriage certificate in English?"
     )
-    private String d8CertificateInEnglish;
+    private YesOrNo d8CertificateInEnglish;
 
     @JsonProperty("D8CertifiedTranslation")
     @CCD(
-        label = "Marriage certificate translation",
-        type = YesOrNo
+        label = "Marriage certificate translation"
     )
-    private String d8CertifiedTranslation;
+    private YesOrNo d8CertifiedTranslation;
+
 }
