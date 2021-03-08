@@ -214,6 +214,8 @@ dependencies {
         exclude(module: 'android-json')
     }
 
+    testImplementation 'uk.gov.hmcts.reform:ccd-config-generator:0.14.0'
+    
     testCompile group: 'org.projectlombok', name: 'lombok',version: versions.lombok
 
     testAnnotationProcessor group: 'org.projectlombok', name: 'lombok',version: versions.lombok
