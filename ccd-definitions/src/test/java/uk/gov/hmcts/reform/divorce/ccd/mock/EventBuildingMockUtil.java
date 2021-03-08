@@ -2,12 +2,12 @@ package uk.gov.hmcts.reform.divorce.ccd.mock;
 
 import de.cronn.reflection.util.TypedPropertyGetter;
 import lombok.Getter;
-import uk.gov.hmcts.ccd.sdk.types.ConfigBuilder;
-import uk.gov.hmcts.ccd.sdk.types.DisplayContext;
-import uk.gov.hmcts.ccd.sdk.types.Event;
-import uk.gov.hmcts.ccd.sdk.types.EventTypeBuilder;
-import uk.gov.hmcts.ccd.sdk.types.Field;
-import uk.gov.hmcts.ccd.sdk.types.FieldCollection;
+import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.ccd.sdk.api.DisplayContext;
+import uk.gov.hmcts.ccd.sdk.api.Event;
+import uk.gov.hmcts.ccd.sdk.api.EventTypeBuilder;
+import uk.gov.hmcts.ccd.sdk.api.Field;
+import uk.gov.hmcts.ccd.sdk.api.FieldCollection;
 import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.reform.divorce.ccd.model.State;
 import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;

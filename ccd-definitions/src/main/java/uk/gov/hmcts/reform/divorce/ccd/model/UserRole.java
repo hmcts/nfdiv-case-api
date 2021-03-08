@@ -2,7 +2,7 @@ package uk.gov.hmcts.reform.divorce.ccd.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import uk.gov.hmcts.ccd.sdk.types.HasRole;
+import uk.gov.hmcts.ccd.sdk.api.HasRole;
 
 @AllArgsConstructor
 @Getter

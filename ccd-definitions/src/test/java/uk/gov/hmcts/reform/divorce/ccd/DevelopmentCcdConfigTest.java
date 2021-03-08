@@ -6,8 +6,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.ccd.sdk.types.ConfigBuilder;
-import uk.gov.hmcts.ccd.sdk.types.WebhookConvention;
+import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.ccd.sdk.api.WebhookConvention;
 import uk.gov.hmcts.reform.divorce.ccd.mock.EventBuildingMockUtil;
 import uk.gov.hmcts.reform.divorce.ccd.mock.SearchBuildingMockUtil;
 import uk.gov.hmcts.reform.divorce.ccd.mock.TabBuildingMockUtil;
@@ -21,7 +21,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
-import static uk.gov.hmcts.ccd.sdk.types.Webhook.AboutToStart;
+import static uk.gov.hmcts.ccd.sdk.api.Webhook.AboutToStart;
 
 @ExtendWith(MockitoExtension.class)
 public class DevelopmentCcdConfigTest {
