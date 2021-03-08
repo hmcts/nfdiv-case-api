@@ -14,7 +14,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseTypeTabTest {
+class CaseTypeTabTest {
 
     private final CaseTypeTab caseTypeTab = new CaseTypeTab();
     private final TabBuildingMockUtil tabBuildingMockUtil = new TabBuildingMockUtil().mockTabBuilding();
@@ -22,7 +22,7 @@ public class CaseTypeTabTest {
     private final Tab.TabBuilder<CaseData, UserRole> tabBuilder = tabBuildingMockUtil.getTabBuilder();
 
     @Test
-    public void shouldBuildCaseTypeTabWithConfigBuilder() {
+    void shouldBuildCaseTypeTabWithConfigBuilder() {
 
         caseTypeTab.applyTo(configBuilder);
 

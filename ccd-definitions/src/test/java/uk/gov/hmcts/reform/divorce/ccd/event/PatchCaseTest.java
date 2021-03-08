@@ -27,7 +27,7 @@ import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CITIZEN;
 
 @SuppressWarnings("unchecked")
 @ExtendWith(MockitoExtension.class)
-public class PatchCaseTest {
+class PatchCaseTest {
 
     private final PatchCase patchCase = new PatchCase();
 
@@ -39,7 +39,7 @@ public class PatchCaseTest {
         fieldCollectionBuilder = eventBuildingMockUtil.getFieldCollectionBuilder();
 
     @Test
-    public void shouldBuildPatchCaseEventWithConfigBuilder() {
+    void shouldBuildPatchCaseEventWithConfigBuilder() {
 
         patchCase.applyTo(configBuilder);
 
