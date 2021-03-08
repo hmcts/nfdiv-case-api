@@ -10,7 +10,7 @@ buildscript {
 
 plugins {
     id 'java'
-    id 'hmcts.ccd.sdk' version '0.14.0'
+    id 'hmcts.ccd.sdk' version '0.15.0'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -40,7 +40,6 @@ dependencies {
     compileOnly group: 'org.projectlombok', name: 'lombok', version: versions.lombok
     annotationProcessor("org.projectlombok:lombok:${versions.lombok}")
 
-    testImplementation 'uk.gov.hmcts.reform:ccd-config-generator:0.14.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testImplementation group: 'org.hamcrest', name: 'hamcrest', version: versions.hamcrest
@@ -65,7 +64,8 @@ test {
 generateTypeScript {
     jsonLibrary = 'jackson2'
     classPatterns = [
-        'uk.gov.hmcts.reform.divorce.ccd.model.*'
+        'uk.gov.hmcts.reform.divorce.ccd.model.*',
+        'uk.gov.hmcts.ccd.sdk.type.*',
     ]
     outputFile = 'build/ts/index.d.ts'
     outputKind = 'module'
