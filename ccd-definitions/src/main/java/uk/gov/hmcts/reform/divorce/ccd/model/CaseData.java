@@ -5,13 +5,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import uk.gov.hmcts.ccd.sdk.types.CCD;
+import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.DivorceOrDissolution;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.Gender;
 
-import static uk.gov.hmcts.ccd.sdk.types.FieldType.Date;
-import static uk.gov.hmcts.ccd.sdk.types.FieldType.FixedRadioList;
-import static uk.gov.hmcts.ccd.sdk.types.FieldType.YesOrNo;
+import static uk.gov.hmcts.ccd.sdk.api.FieldType.Date;
+import static uk.gov.hmcts.ccd.sdk.api.FieldType.FixedRadioList;
+import static uk.gov.hmcts.ccd.sdk.api.FieldType.YesOrNo;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
