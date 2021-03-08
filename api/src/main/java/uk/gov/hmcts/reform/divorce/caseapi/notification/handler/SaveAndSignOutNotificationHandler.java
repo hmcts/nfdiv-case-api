@@ -31,7 +31,6 @@ public class SaveAndSignOutNotificationHandler {
     @Autowired
     private EmailTemplatesConfig emailTemplatesConfig;
 
-    @SuppressWarnings("PMD")
     public void notifyApplicant(CaseData caseData) {
         Map<String, String> templateVars = new HashMap<>();
         templateVars.put(FIRST_NAME, caseData.getD8PetitionerFirstName());
@@ -39,7 +38,7 @@ public class SaveAndSignOutNotificationHandler {
 
         Map<String, Map<String, String>> configTemplateVars = emailTemplatesConfig.getTemplateVars();
 
-        if (DivorceOrDissolution.DIVORCE.name().equalsIgnoreCase(caseData.getDivorceOrDissolution().name())) {
+        if (DivorceOrDissolution.isDivorce(caseData.getDivorceOrDissolution())) {
             templateVars.put(RELATIONSHIP, DIVORCE_APPLICATION);
             templateVars.put(RELATIONSHIP_COURT_HEADER, APPLY_FOR_DIVORCE);
 

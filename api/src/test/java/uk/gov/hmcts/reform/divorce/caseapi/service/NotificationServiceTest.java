@@ -1,11 +1,11 @@
 package uk.gov.hmcts.reform.divorce.caseapi.service;
 
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.reform.divorce.caseapi.exceptions.NotificationException;
 import uk.gov.service.notify.NotificationClient;
 import uk.gov.service.notify.NotificationClientException;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.reform.divorce.caseapi.enums.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.reform.divorce.caseapi.enums.LanguagePreference.WELSH;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
 public class NotificationServiceTest {
 

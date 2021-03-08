@@ -65,7 +65,9 @@
   <rule ref="category/java/errorprone.xml">
     <exclude name="BeanMembersShouldSerialize"/>
   </rule>
-  <rule ref="category/java/multithreading.xml"/>
+  <rule ref="category/java/multithreading.xml">
+      <exclude name="UseConcurrentHashMap"/>
+  </rule>
   <rule ref="category/java/performance.xml"/>
   <rule ref="category/java/security.xml"/>
 
