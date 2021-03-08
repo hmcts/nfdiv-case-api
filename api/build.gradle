@@ -6,7 +6,6 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'org.springframework.boot' version '2.4.3'
     id 'com.github.ben-manes.versions' version '0.38.0'
-    id 'org.sonarqube' version '3.1.1'
     id 'hmcts.ccd.sdk' version '0.15.1'
 }
 
@@ -40,6 +39,13 @@ sourceSets {
         }
         resources.srcDir file('src/smokeTest/resources')
     }
+}
+
+configurations {
+    functionalTestImplementation.extendsFrom testImplementation
+    functionalTestRuntime.extendsFrom testRuntime
+    integrationTestImplementation.extendsFrom testImplementation
+    integrationTestRuntime.extendsFrom testRuntime
 }
 
 tasks.withType(JavaCompile) {
@@ -96,8 +102,7 @@ pmd {
 }
 
 jacocoTestReport {
-    //TODO: Add integration when tests created
-    executionData(test)
+    executionData(test, integration)
     reports {
         xml.enabled = true
         csv.enabled = false

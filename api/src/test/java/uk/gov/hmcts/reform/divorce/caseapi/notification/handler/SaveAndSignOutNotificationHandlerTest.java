@@ -27,7 +27,7 @@ import static uk.gov.hmcts.reform.divorce.caseapi.enums.LanguagePreference.ENGLI
 import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.SIGN_IN_URL;
 
 @ExtendWith(MockitoExtension.class)
-public class SaveAndSignOutNotificationHandlerTest {
+class SaveAndSignOutNotificationHandlerTest {
     public static final String SOME_URL = "someurl";
     public static final String TEST_COURT_EMAIL = "testcourt@test.com";
     public static final String DIV_COURT_EMAIL = "divCourtEmail";
@@ -46,7 +46,7 @@ public class SaveAndSignOutNotificationHandlerTest {
     private SaveAndSignOutNotificationHandler saveAndSignOutNotificationHandler;
 
     @Test
-    public void shouldCallSendEmailWhenNotifyApplicantIsInvokedForGivenCaseData() {
+    void shouldCallSendEmailWhenNotifyApplicantIsInvokedForGivenCaseData() {
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
         when(emailTemplatesConfig.getTemplates()).thenReturn(
@@ -68,8 +68,7 @@ public class SaveAndSignOutNotificationHandlerTest {
     }
 
     @Test
-    @SuppressWarnings("PMD.JUnitAssertionsShouldIncludeMessage")
-    public void shouldThrowExceptionWhenExceptionIsThrownWhileSendingEmail() {
+    void shouldThrowExceptionWhenExceptionIsThrownWhileSendingEmail() {
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
         when(emailTemplatesConfig.getTemplates()).thenReturn(
@@ -80,8 +79,12 @@ public class SaveAndSignOutNotificationHandlerTest {
         doThrow(new RuntimeException("all template params not set"))
             .when(notificationService).sendEmail(any(), any(), anyMap(), any());
 
+        final CaseData caseData = caseData();
+
         Throwable thrown = assertThrows(RuntimeException.class,
-            () -> saveAndSignOutNotificationHandler.notifyApplicant(caseData())
+            () -> {
+                saveAndSignOutNotificationHandler.notifyApplicant(caseData);
+            }
         );
 
         assertThat(thrown.getMessage(), is("all template params not set"));

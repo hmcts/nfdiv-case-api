@@ -23,7 +23,7 @@ import static uk.gov.hmcts.reform.divorce.caseapi.enums.LanguagePreference.WELSH
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class NotificationServiceTest {
+class NotificationServiceTest {
 
     private static final String EMAIL_ADDRESS = "simulate-delivered@notifications.service.gov.uk";
 
@@ -34,7 +34,7 @@ public class NotificationServiceTest {
     private NotificationService notificationService;
 
     @Test
-    public void shouldInvokeNotificationClientToSendEmailInEnglish() throws NotificationClientException {
+    void shouldInvokeNotificationClientToSendEmailInEnglish() throws NotificationClientException {
         String templateId = UUID.randomUUID().toString();
 
         notificationService.sendEmail(
@@ -52,7 +52,7 @@ public class NotificationServiceTest {
     }
 
     @Test
-    public void shouldInvokeNotificationClientToSendEmailInWelsh() throws NotificationClientException {
+    void shouldInvokeNotificationClientToSendEmailInWelsh() throws NotificationClientException {
         String templateId = UUID.randomUUID().toString();
 
         notificationService.sendEmail(
@@ -70,7 +70,7 @@ public class NotificationServiceTest {
     }
 
     @Test
-    public void shouldThrowNotificationExceptionWhenClientFailsToSendEmail()
+    void shouldThrowNotificationExceptionWhenClientFailsToSendEmail()
         throws NotificationClientException {
         String templateId = UUID.randomUUID().toString();
 
