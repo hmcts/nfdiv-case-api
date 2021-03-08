@@ -10,6 +10,8 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.DivorceOrDissolution;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.Gender;
 
+import java.util.List;
+
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 
@@ -120,4 +122,53 @@ public class CaseData {
         type = Email
     )
     private String d8PetitionerEmail;
+
+    @JsonProperty("D8JurisdictionPetitionerResidence")
+    @CCD(
+        label = "Is petitioner resident?"
+    )
+    private String d8JurisdictionPetitionerResidence;
+
+    @JsonProperty("D8JurisdictionRespondentResidence")
+    @CCD(
+        label = "Is respondent resident?"
+    )
+    private String d8JurisdictionRespondentResidence;
+
+    @JsonProperty("D8JurisdictionPetitionerDomicile")
+    @CCD(
+        label = "Is petitioner domiciled?"
+    )
+    private String d8JurisdictionPetitionerDomicile;
+
+    @JsonProperty("D8JurisdictionRespondentDomicile")
+    @CCD(
+        label = "Is respondent domiciled?"
+    )
+    private String d8JurisdictionRespondentDomicile;
+
+    @JsonProperty("D8JurisdictionLastTwelveMonths")
+    @CCD(
+        label = "Last 12 months"
+    )
+    private String d8JurisdictionLastTwelveMonths;
+
+    @JsonProperty("D8JurisdictionHabituallyResLast6Months")
+    @CCD(
+        label = "Is habitually resident in the last six months?"
+    )
+    private String d8JurisdictionHabituallyResLast6Months;
+
+    @JsonProperty("D8ResidualJurisdictionEligible")
+    @CCD(
+        label = "Is residual jurisdiction eligible?"
+    )
+    private String d8ResidualJurisdictionEligible;
+
+    @JsonProperty("D8JurisdictionConnection")
+    @CCD(
+        label = "Legal connections made"
+    )
+    private List<String> d8JurisdictionConnection;
+
 }
