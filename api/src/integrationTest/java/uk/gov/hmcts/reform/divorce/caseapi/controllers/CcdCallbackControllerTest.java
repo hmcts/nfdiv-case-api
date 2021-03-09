@@ -70,15 +70,6 @@ public class CcdCallbackControllerTest {
     }
 
     @Test
-    public void givenAuthHeaderIsNullWhenEndpointIsInvokedThenReturnBadRequest() throws Exception {
-        mockMvc.perform(post(API_URL)
-            .content(objectMapper.writeValueAsString(ccdCallbackRequest()))
-            .contentType(APPLICATION_JSON)
-            .accept(APPLICATION_JSON))
-            .andExpect(status().isBadRequest());
-    }
-
-    @Test
     public void givenSendEmailThrowsExceptionWhenCallbackIsInvokedThenReturnBadRequest() throws Exception {
         doThrow(new NotificationException(new NotificationClientException("All template params not passed")))
             .when(notificationService).sendEmail(
