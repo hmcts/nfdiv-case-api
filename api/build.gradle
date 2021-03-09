@@ -182,6 +182,8 @@ dependencies {
     implementation group: 'uk.gov.hmcts.reform', name: 'logging', version: versions.reformsJavaLogging
     implementation group: 'uk.gov.hmcts.reform', name: 'logging-appinsights', version: versions.reformsJavaLogging
     implementation group: 'uk.gov.hmcts.reform', name: 'logging-spring', version: versions.reformsJavaLogging
+    implementation group: 'uk.gov.hmcts.reform', name: 'core-case-data-store-client', version: '4.7.6'
+
     compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.14.0'
     compile group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.14.0'
 
@@ -207,6 +209,8 @@ dependencies {
     testCompile group: 'org.projectlombok', name: 'lombok',version: versions.lombok
 
     testAnnotationProcessor group: 'org.projectlombok', name: 'lombok',version: versions.lombok
+
+    integrationTestImplementation group: 'com.jayway.jsonpath', name: 'json-path-assert', version: versions.jsonPathAssert
 
     integrationTestImplementation sourceSets.main.runtimeClasspath
     integrationTestImplementation sourceSets.test.runtimeClasspath
