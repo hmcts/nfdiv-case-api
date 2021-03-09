@@ -54,7 +54,6 @@ public class PatchCase implements CcdConfiguration {
             .optional(CaseData::getJurisdictionPetHabituallyResLastTwelveMonths)
             .optional(CaseData::getJurisdictionPetHabituallyResLastSixMonths)
             .optional(CaseData::getJurisdictionBothLastHabituallyResident)
-            .optional(CaseData::getJurisdictionResidualEligible)
-            .optional(CaseData::getD8JurisdictionConnection);
+            .optional(CaseData::getJurisdictionResidualEligible);
     }
 }

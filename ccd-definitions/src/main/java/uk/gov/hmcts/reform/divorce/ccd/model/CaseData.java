@@ -127,54 +127,48 @@ public class CaseData {
     @CCD(
         label = "Is the petitioner resident?"
     )
-    private String jurisdictionPetitionerResidence;
+    private YesOrNo jurisdictionPetitionerResidence;
 
     @JsonProperty("JurisdictionRespondentResidence")
     @CCD(
         label = "Is the respondent resident?"
     )
-    private String jurisdictionRespondentResidence;
+    private YesOrNo jurisdictionRespondentResidence;
 
     @JsonProperty("JurisdictionPetitionerDomicile")
     @CCD(
         label = "Is the petitioner domiciled?"
     )
-    private String jurisdictionPetitionerDomicile;
+    private YesOrNo jurisdictionPetitionerDomicile;
 
     @JsonProperty("JurisdictionRespondentDomicile")
     @CCD(
         label = "Is the respondent domiciled?"
     )
-    private String jurisdictionRespondentDomicile;
+    private YesOrNo jurisdictionRespondentDomicile;
 
     @JsonProperty("JurisdictionPetHabituallyResLastTwelveMonths")
     @CCD(
         label = "Has the petitioner been resident for the last twelve months?"
     )
-    private String jurisdictionPetHabituallyResLastTwelveMonths;
+    private YesOrNo jurisdictionPetHabituallyResLastTwelveMonths;
 
     @JsonProperty("JurisdictionPetHabituallyResLastSixMonths")
     @CCD(
         label = "Has the petitioner been resident for the last six months?"
     )
-    private String jurisdictionPetHabituallyResLastSixMonths;
+    private YesOrNo jurisdictionPetHabituallyResLastSixMonths;
 
     @JsonProperty("JurisdictionResidualEligible")
     @CCD(
         label = "Is residual jurisdiction eligible?"
     )
-    private String jurisdictionResidualEligible;
+    private YesOrNo jurisdictionResidualEligible;
 
     @JsonProperty("JurisdictionBothLastHabituallyResident")
     @CCD(
         label = "Were the both petitioner and respondent last habitually resident, and one still resides?"
     )
-    private String jurisdictionBothLastHabituallyResident;
-
-    @JsonProperty("D8JurisdictionConnection")
-    @CCD(
-        label = "Legal connections made"
-    )
-    private List<String> d8JurisdictionConnection;
+    private YesOrNo jurisdictionBothLastHabituallyResident;
 
 }
