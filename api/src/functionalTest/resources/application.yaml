@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: NFDIV Case API Functional Tests
+# because functional tests load up SpringBootTest
+azure:
+  application-insights:
+    instrumentation-key: functional-test
+
+test-url: ${TEST_URL:http://localhost:4013}
+
+uk:
+  gov:
+    notify:
+      api:
+        key: ${GOV_NOTIFY_API_KEY}
+        baseUrl: https://api.notifications.service.gov.uk

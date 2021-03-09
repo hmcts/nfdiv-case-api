@@ -8,6 +8,7 @@ import uk.gov.hmcts.reform.divorce.caseapi.enums.LanguagePreference;
 import uk.gov.hmcts.reform.divorce.caseapi.exceptions.NotificationException;
 import uk.gov.service.notify.NotificationClient;
 import uk.gov.service.notify.NotificationClientException;
+import uk.gov.service.notify.SendEmailResponse;
 
 import java.util.Map;
 import java.util.UUID;
@@ -29,7 +30,20 @@ public class NotificationService {
 
         try {
             log.info("Sending email for reference id : {} using template : {}", referenceId, templateId);
-            notificationClient.sendEmail(templateId, destinationAddress, templateVars, referenceId);
+
+            SendEmailResponse sendEmailResponse =
+                notificationClient.sendEmail(
+                    templateId,
+                    destinationAddress,
+                    templateVars,
+                    referenceId
+                );
+
+            log.info("Successfully sent email with notification id {} and reference {}",
+                sendEmailResponse.getNotificationId(),
+                sendEmailResponse.getReference().get()
+            );
+
         } catch (NotificationClientException notificationClientException) {
             log.error("Failed to send email. Reference ID: {}. Reason: {}",
                 referenceId,
