@@ -41,7 +41,7 @@ public class NotificationService {
 
             log.info("Successfully sent email with notification id {} and reference {}",
                 sendEmailResponse.getNotificationId(),
-                sendEmailResponse.getReference().get()
+                sendEmailResponse.getReference().orElse(referenceId)
             );
 
         } catch (NotificationClientException notificationClientException) {
