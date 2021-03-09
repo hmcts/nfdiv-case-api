@@ -14,6 +14,9 @@ management:
 spring:
   application:
     name: NFDIV Case API
+  config:
+    import: "optional:configtree:/mnt/secrets/"
+
 azure:
   application-insights:
     instrumentation-key: ${nfdiv.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
