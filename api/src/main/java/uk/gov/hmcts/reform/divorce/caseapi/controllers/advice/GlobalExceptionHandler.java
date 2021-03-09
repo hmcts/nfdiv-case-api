@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.divorce.caseapi.controllers;
+package uk.gov.hmcts.reform.divorce.caseapi.controllers.advice;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
