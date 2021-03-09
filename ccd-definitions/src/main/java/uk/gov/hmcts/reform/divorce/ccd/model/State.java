@@ -5,10 +5,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.stream.Stream;
-
 @RequiredArgsConstructor
 @Getter
 public enum State {

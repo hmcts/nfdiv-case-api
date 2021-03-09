@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import uk.gov.hmcts.reform.divorce.caseapi.enums.LanguagePreference;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
@@ -16,7 +17,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 public class EmailTemplatesConfig {
     @NotNull
-    private final Map<LanguagePreference, Map<String, String>> templates = new HashMap<>();
+    private final Map<LanguagePreference, Map<String, String>> templates = new EnumMap<>(LanguagePreference.class);
 
     @NotNull
     private final Map<String, Map<String, String>> templateVars = new HashMap<>();
