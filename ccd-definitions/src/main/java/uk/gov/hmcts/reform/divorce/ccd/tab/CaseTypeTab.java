@@ -12,12 +12,15 @@ public class CaseTypeTab implements CcdConfiguration {
     public void applyTo(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         configBuilder.tab("petitionDetails", "Petition")
-            .field("D8MarriageIsSameSexCouple")
-            .field("D8InferredPetitionerGender")
-            .field("D8InferredRespondentGender")
-            .field("D8MarriageDate");
+            .field(CaseData::getDivorceOrDissolution)
+            .field(CaseData::getD8InferredPetitionerGender)
+            .field(CaseData::getD8InferredRespondentGender)
+            .field(CaseData::getD8MarriageIsSameSexCouple)
+            .field(CaseData::getD8MarriageDate)
+            .field(CaseData::getD8MarriedInUk)
+            .field(CaseData::getD8CertificateInEnglish);
 
         configBuilder.tab("paymentDetailsCourtAdmin", "Payment")
-            .field("D8HelpWithFeesReferenceNumber");
+            .field(CaseData::getD8HelpWithFeesReferenceNumber);
     }
 }

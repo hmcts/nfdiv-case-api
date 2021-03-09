@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.divorce.ccd.tab;
 
+import de.cronn.reflection.util.TypedPropertyGetter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -10,6 +11,7 @@ import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.reform.divorce.ccd.model.State;
 import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
@@ -27,14 +29,6 @@ public class CaseTypeTabTest {
         caseTypeTab.applyTo(configBuilder);
 
         verify(configBuilder).tab("petitionDetails", "Petition");
-        verify(tabBuilder).field("D8MarriageIsSameSexCouple");
-        verify(tabBuilder).field("D8InferredPetitionerGender");
-        verify(tabBuilder).field("D8InferredRespondentGender");
-        verify(tabBuilder).field("D8MarriageDate");
-
         verify(configBuilder).tab("paymentDetailsCourtAdmin", "Payment");
-        verify(tabBuilder).field("D8HelpWithFeesReferenceNumber");
-
-        verifyNoMoreInteractions(configBuilder, tabBuilder);
     }
 }
