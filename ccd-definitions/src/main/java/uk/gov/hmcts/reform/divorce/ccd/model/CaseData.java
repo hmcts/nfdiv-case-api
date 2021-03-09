@@ -123,47 +123,53 @@ public class CaseData {
     )
     private String d8PetitionerEmail;
 
-    @JsonProperty("D8JurisdictionPetitionerResidence")
+    @JsonProperty("JurisdictionPetitionerResidence")
     @CCD(
-        label = "Is petitioner resident?"
+        label = "Is the petitioner resident?"
     )
-    private String d8JurisdictionPetitionerResidence;
+    private String jurisdictionPetitionerResidence;
 
-    @JsonProperty("D8JurisdictionRespondentResidence")
+    @JsonProperty("JurisdictionRespondentResidence")
     @CCD(
-        label = "Is respondent resident?"
+        label = "Is the respondent resident?"
     )
-    private String d8JurisdictionRespondentResidence;
+    private String jurisdictionRespondentResidence;
 
-    @JsonProperty("D8JurisdictionPetitionerDomicile")
+    @JsonProperty("JurisdictionPetitionerDomicile")
     @CCD(
-        label = "Is petitioner domiciled?"
+        label = "Is the petitioner domiciled?"
     )
-    private String d8JurisdictionPetitionerDomicile;
+    private String jurisdictionPetitionerDomicile;
 
-    @JsonProperty("D8JurisdictionRespondentDomicile")
+    @JsonProperty("JurisdictionRespondentDomicile")
     @CCD(
-        label = "Is respondent domiciled?"
+        label = "Is the respondent domiciled?"
     )
-    private String d8JurisdictionRespondentDomicile;
+    private String jurisdictionRespondentDomicile;
 
-    @JsonProperty("D8JurisdictionLastTwelveMonths")
+    @JsonProperty("JurisdictionPetHabituallyResLastTwelveMonths")
     @CCD(
-        label = "Last 12 months"
+        label = "Has the petitioner been resident for the last twelve months?"
     )
-    private String d8JurisdictionLastTwelveMonths;
+    private String jurisdictionPetHabituallyResLastTwelveMonths;
 
-    @JsonProperty("D8JurisdictionHabituallyResLast6Months")
+    @JsonProperty("JurisdictionPetHabituallyResLastSixMonths")
     @CCD(
-        label = "Is habitually resident in the last six months?"
+        label = "Has the petitioner been resident for the last six months?"
     )
-    private String d8JurisdictionHabituallyResLast6Months;
+    private String jurisdictionPetHabituallyResLastSixMonths;
 
-    @JsonProperty("D8ResidualJurisdictionEligible")
+    @JsonProperty("JurisdictionResidualEligible")
     @CCD(
         label = "Is residual jurisdiction eligible?"
     )
-    private String d8ResidualJurisdictionEligible;
+    private String jurisdictionResidualEligible;
+
+    @JsonProperty("JurisdictionBothLastHabituallyResident")
+    @CCD(
+        label = "Were the both petitioner and respondent last habitually resident, and one still resides?"
+    )
+    private String jurisdictionBothLastHabituallyResident;
 
     @JsonProperty("D8JurisdictionConnection")
     @CCD(
