@@ -73,8 +73,8 @@ generateTypeScript {
 }
 
 def importCcdDefinition = tasks.register('importCcdDefinition') {
+    group = 'ccd tasks'
     doLast {
-        group = 'ccd tasks'
         exec {
             file('../../.env').readLines().each() {
                 def (key, value) = it.tokenize('=')
