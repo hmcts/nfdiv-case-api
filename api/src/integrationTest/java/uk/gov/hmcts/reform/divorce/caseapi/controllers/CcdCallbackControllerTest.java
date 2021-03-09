@@ -43,7 +43,6 @@ import static uk.gov.hmcts.reform.divorce.caseapi.enums.LanguagePreference.ENGLI
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
 public class CcdCallbackControllerTest {
 
     private static final String API_URL = "/notify-applicant";
@@ -66,7 +65,7 @@ public class CcdCallbackControllerTest {
         mockMvc.perform(post(API_URL)
             .header(AUTHORIZATION, AUTH_TOKEN)
             .contentType(APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(getCcdCallbackRequest()))
+            .content(objectMapper.writeValueAsString(ccdCallbackRequest()))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
@@ -87,14 +86,14 @@ public class CcdCallbackControllerTest {
     @Test
     public void givenAuthHeaderIsNullWhenEndpointIsInvokedThenReturnBadRequest() throws Exception {
         mockMvc.perform(post(API_URL)
-            .content(objectMapper.writeValueAsString(getCcdCallbackRequest()))
+            .content(objectMapper.writeValueAsString(ccdCallbackRequest()))
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
             .andExpect(status().isBadRequest());
     }
 
     @Test
-    public void givenSendEmailThrowsExceptionWhenEndpointIsInvokedThenReturnBadRequest() throws Exception {
+    public void givenSendEmailThrowsExceptionWhenCallbackIsInvokedThenReturnBadRequest() throws Exception {
         doThrow(new NotificationException(new NotificationClientException("All template params not passed")))
             .when(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -105,14 +104,14 @@ public class CcdCallbackControllerTest {
         mockMvc.perform(post(API_URL)
             .header(AUTHORIZATION, AUTH_TOKEN)
             .contentType(APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(getCcdCallbackRequest()))
+            .content(objectMapper.writeValueAsString(ccdCallbackRequest()))
             .accept(APPLICATION_JSON))
             .andExpect(status().isBadRequest())
             .andExpect(content().string("All template params not passed"));
 
     }
 
-    private CcdCallbackRequest getCcdCallbackRequest() {
+    private CcdCallbackRequest ccdCallbackRequest() {
         Map<String, Object> caseData = Map.of(
             D8_PETITIONER_FIRST_NAME, TEST_FIRST_NAME,
             D8_PETITIONER_LAST_NAME, TEST_LAST_NAME,
