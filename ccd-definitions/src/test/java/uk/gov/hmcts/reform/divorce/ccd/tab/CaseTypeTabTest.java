@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.divorce.ccd.tab;
 
-import de.cronn.reflection.util.TypedPropertyGetter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -11,9 +10,7 @@ import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.reform.divorce.ccd.model.State;
 import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @ExtendWith(MockitoExtension.class)
 class CaseTypeTabTest {
