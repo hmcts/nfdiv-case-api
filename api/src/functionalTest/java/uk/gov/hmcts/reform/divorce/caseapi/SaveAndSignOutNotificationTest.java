@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.divorce.caseapi;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,6 +15,8 @@ import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
+import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.SAVE_AND_CLOSE;
+import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.SUBMITTED_WEBHOOK;
 import static uk.gov.hmcts.reform.divorce.ccd.model.enums.DivorceOrDissolution.DIVORCE;
 
 @SpringBootTest
@@ -22,7 +25,9 @@ public class SaveAndSignOutNotificationTest {
     public static final String TEST_FIRST_NAME = "John";
     public static final String TEST_LAST_NAME = "Smith";
 
-    public static final String NOTIFY_APPLICANT = "/notify-applicant";
+    public static final String SAVE_AND_SIGN_OUT_CALLBACK_URL = StringUtils.join(
+        "/,", SAVE_AND_CLOSE, SUBMITTED_WEBHOOK
+    );
 
     @Value("${test-url}")
     private String testUrl;
@@ -46,7 +51,7 @@ public class SaveAndSignOutNotificationTest {
                     .build()
             )
             .when()
-            .post(NOTIFY_APPLICANT);
+            .post(SAVE_AND_SIGN_OUT_CALLBACK_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
     }
@@ -74,7 +79,7 @@ public class SaveAndSignOutNotificationTest {
                     .build()
             )
             .when()
-            .post(NOTIFY_APPLICANT);
+            .post(SAVE_AND_SIGN_OUT_CALLBACK_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST.value());
         assertThat(response.getBody().asString())
@@ -106,7 +111,7 @@ public class SaveAndSignOutNotificationTest {
                     .build()
             )
             .when()
-            .post(NOTIFY_APPLICANT);
+            .post(SAVE_AND_SIGN_OUT_CALLBACK_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST.value());
         assertThat(response.getBody().asString())
