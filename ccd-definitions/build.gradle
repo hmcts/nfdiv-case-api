@@ -39,6 +39,7 @@ def versions = [
 
 dependencies {
 
+    compileOnly group: 'org.reflections', name: 'reflections', version: '0.9.12'
     compileOnly group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: versions.jacksonDatabind
     compileOnly group: 'org.projectlombok', name: 'lombok', version: versions.lombok
     annotationProcessor("org.projectlombok:lombok:${versions.lombok}")
