@@ -18,7 +18,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.reform.divorce.caseapi.caseapi.util.TestDataHelper.caseData;
-import static uk.gov.hmcts.reform.divorce.caseapi.caseapi.util.TestDataHelper.ccdCallbackRequest;
 
 
 @ExtendWith(SpringExtension.class)
@@ -33,7 +32,7 @@ public class CcdCallbackControllerTest {
 
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmail() {
-        ccdCallbackController.handleSaveAndSignOutCallback(ccdCallbackRequest());
+        ccdCallbackController.handleSaveAndSignOutCallback(caseData());
 
         verify(saveAndSignOutNotificationHandler).notifyApplicant(caseData());
         verifyNoMoreInteractions(saveAndSignOutNotificationHandler);
@@ -45,7 +44,7 @@ public class CcdCallbackControllerTest {
             .when(saveAndSignOutNotificationHandler).notifyApplicant(eq(caseData()));
 
         Throwable thrown = assertThrows(NotificationException.class,
-            () -> ccdCallbackController.handleSaveAndSignOutCallback(ccdCallbackRequest())
+            () -> ccdCallbackController.handleSaveAndSignOutCallback(caseData())
         );
 
         assertThat(thrown.getCause().getMessage(), is("All template params not passed"));

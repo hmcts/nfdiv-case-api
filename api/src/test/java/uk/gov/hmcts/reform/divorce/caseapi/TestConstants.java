@@ -10,6 +10,8 @@ public final class TestConstants {
     public static final String D8_PETITIONER_EMAIL = "D8PetitionerEmail";
     public static final String DIVORCE_OR_DISSOLUTION = "divorceOrDissolution";
 
+    public static final String API_URL = "/notify-applicant";
+
     private TestConstants() {
     }
 }

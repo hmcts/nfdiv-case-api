@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
-import uk.gov.hmcts.reform.divorce.caseapi.model.ccd.CcdCallbackRequest;
 
 import java.util.Map;
 
@@ -39,12 +37,13 @@ public class SaveAndSignOutNotificationTest {
             .relaxedHTTPSValidation()
             .baseUri(testUrl)
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-            .body(ccdCallbackRequestWithCaseData(
-                Map.of(
-                    D8_PETITIONER_FIRST_NAME, TEST_FIRST_NAME,
-                    D8_PETITIONER_LAST_NAME, TEST_LAST_NAME,
-                    D8_PETITIONER_EMAIL, TEST_USER_EMAIL,
-                    DIVORCE_OR_DISSOLUTION, DIVORCE)
+            .body(
+                Map.of("case_data",
+                    Map.of(
+                        D8_PETITIONER_FIRST_NAME, TEST_FIRST_NAME,
+                        D8_PETITIONER_LAST_NAME, TEST_LAST_NAME,
+                        D8_PETITIONER_EMAIL, TEST_USER_EMAIL,
+                        DIVORCE_OR_DISSOLUTION, DIVORCE)
                 )
             )
             .when()
@@ -60,10 +59,11 @@ public class SaveAndSignOutNotificationTest {
             .relaxedHTTPSValidation()
             .baseUri(testUrl)
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-            .body(ccdCallbackRequestWithCaseData(
-                Map.of(
-                    D8_PETITIONER_EMAIL, TEST_USER_EMAIL,
-                    DIVORCE_OR_DISSOLUTION, DIVORCE)
+            .body(
+                Map.of("case_data",
+                    Map.of(
+                        D8_PETITIONER_EMAIL, TEST_USER_EMAIL,
+                        DIVORCE_OR_DISSOLUTION, DIVORCE)
                 )
             )
             .when()
@@ -84,9 +84,10 @@ public class SaveAndSignOutNotificationTest {
             .relaxedHTTPSValidation()
             .baseUri(testUrl)
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-            .body(ccdCallbackRequestWithCaseData(
-                Map.of(
-                    DIVORCE_OR_DISSOLUTION, DIVORCE)
+            .body(
+                Map.of("case_data",
+                    Map.of(
+                        DIVORCE_OR_DISSOLUTION, DIVORCE)
                 )
             )
             .when()
@@ -97,16 +98,5 @@ public class SaveAndSignOutNotificationTest {
             .contains("{\"errors\":"
                 + "[{\"error\":\"ValidationError\","
                 + "\"message\":\"email_address is a required property\"}]");
-    }
-
-
-    private CcdCallbackRequest ccdCallbackRequestWithCaseData(Map<String, Object> caseData) {
-        return CcdCallbackRequest.builder()
-            .caseDetails(
-                CaseDetails.builder()
-                    .data(caseData)
-                    .build()
-            )
-            .build();
     }
 }

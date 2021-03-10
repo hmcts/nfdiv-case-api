@@ -23,8 +23,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.API_URL;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.TEST_USER_EMAIL;
-import static uk.gov.hmcts.reform.divorce.caseapi.caseapi.util.TestDataHelper.ccdCallbackRequest;
+import static uk.gov.hmcts.reform.divorce.caseapi.caseapi.util.TestDataHelper.caseData;
 import static uk.gov.hmcts.reform.divorce.caseapi.enums.LanguagePreference.ENGLISH;
 
 
@@ -32,8 +33,6 @@ import static uk.gov.hmcts.reform.divorce.caseapi.enums.LanguagePreference.ENGLI
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 public class CcdCallbackControllerTest {
-
-    private static final String API_URL = "/notify-applicant";
 
     @Autowired
     private MockMvc mockMvc;
@@ -52,7 +51,7 @@ public class CcdCallbackControllerTest {
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmail() throws Exception {
         mockMvc.perform(post(API_URL)
             .contentType(APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(ccdCallbackRequest()))
+            .content(objectMapper.writeValueAsString(caseData()))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
@@ -80,7 +79,7 @@ public class CcdCallbackControllerTest {
 
         mockMvc.perform(post(API_URL)
             .contentType(APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(ccdCallbackRequest()))
+            .content(objectMapper.writeValueAsString(caseData()))
             .accept(APPLICATION_JSON))
             .andExpect(status().isBadRequest())
             .andExpect(content().string("All template params not passed"));
