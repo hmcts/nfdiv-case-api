@@ -7,8 +7,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-
-import java.util.Map;
+import uk.gov.hmcts.reform.divorce.caseapi.model.CaseDetails;
+import uk.gov.hmcts.reform.divorce.caseapi.model.CcdCallbackRequest;
+import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -21,9 +22,6 @@ public class SaveAndSignOutNotificationTest {
     public static final String TEST_FIRST_NAME = "John";
     public static final String TEST_LAST_NAME = "Smith";
 
-    public static final String D8_PETITIONER_FIRST_NAME = "D8PetitionerFirstName";
-    public static final String D8_PETITIONER_LAST_NAME = "D8PetitionerLastName";
-    public static final String D8_PETITIONER_EMAIL = "D8PetitionerEmail";
     public static final String DIVORCE_OR_DISSOLUTION = "divorceOrDissolution";
     public static final String NOTIFY_APPLICANT = "/notify-applicant";
 
@@ -38,13 +36,14 @@ public class SaveAndSignOutNotificationTest {
             .baseUri(testUrl)
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .body(
-                Map.of("case_data",
-                    Map.of(
-                        D8_PETITIONER_FIRST_NAME, TEST_FIRST_NAME,
-                        D8_PETITIONER_LAST_NAME, TEST_LAST_NAME,
-                        D8_PETITIONER_EMAIL, TEST_USER_EMAIL,
-                        DIVORCE_OR_DISSOLUTION, DIVORCE)
-                )
+                CcdCallbackRequest
+                    .builder()
+                    .caseDetails(
+                        CaseDetails
+                            .builder()
+                            .caseData(caseData())
+                            .build()
+                    )
             )
             .when()
             .post(NOTIFY_APPLICANT);
@@ -54,17 +53,24 @@ public class SaveAndSignOutNotificationTest {
 
     @Test
     public void shouldFailWithBadRequestErrorWhenFirstAndLastNamesAreMissing() {
+        CaseData caseDataWithMissingParams = new CaseData();
+        caseDataWithMissingParams.setDivorceOrDissolution(DIVORCE);
+        caseDataWithMissingParams.setD8PetitionerEmail(TEST_USER_EMAIL);
+
         Response response = RestAssured
             .given()
             .relaxedHTTPSValidation()
             .baseUri(testUrl)
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .body(
-                Map.of("case_data",
-                    Map.of(
-                        D8_PETITIONER_EMAIL, TEST_USER_EMAIL,
-                        DIVORCE_OR_DISSOLUTION, DIVORCE)
-                )
+                CcdCallbackRequest
+                    .builder()
+                    .caseDetails(
+                        CaseDetails
+                            .builder()
+                            .caseData(caseDataWithMissingParams)
+                            .build()
+                    )
             )
             .when()
             .post(NOTIFY_APPLICANT);
@@ -79,16 +85,23 @@ public class SaveAndSignOutNotificationTest {
 
     @Test
     public void shouldFailValidationErrorWhenEmailIsMissing() {
+        CaseData caseDataWithMissingParams = new CaseData();
+        caseDataWithMissingParams.setDivorceOrDissolution(DIVORCE);
+
         Response response = RestAssured
             .given()
             .relaxedHTTPSValidation()
             .baseUri(testUrl)
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .body(
-                Map.of("case_data",
-                    Map.of(
-                        DIVORCE_OR_DISSOLUTION, DIVORCE)
-                )
+                CcdCallbackRequest
+                    .builder()
+                    .caseDetails(
+                        CaseDetails
+                            .builder()
+                            .caseData(caseDataWithMissingParams)
+                            .build()
+                    )
             )
             .when()
             .post(NOTIFY_APPLICANT);
@@ -98,5 +111,14 @@ public class SaveAndSignOutNotificationTest {
             .contains("{\"errors\":"
                 + "[{\"error\":\"ValidationError\","
                 + "\"message\":\"email_address is a required property\"}]");
+    }
+
+    private CaseData caseData() {
+        CaseData caseData = new CaseData();
+        caseData.setD8PetitionerFirstName(TEST_FIRST_NAME);
+        caseData.setD8PetitionerFirstName(TEST_LAST_NAME);
+        caseData.setDivorceOrDissolution(DIVORCE);
+        caseData.setD8PetitionerEmail(TEST_USER_EMAIL);
+        return caseData;
     }
 }
