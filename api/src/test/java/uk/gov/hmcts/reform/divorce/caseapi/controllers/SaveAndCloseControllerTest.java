@@ -17,6 +17,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static uk.gov.hmcts.reform.divorce.caseapi.caseapi.util.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.reform.divorce.caseapi.caseapi.util.TestDataHelper.caseData;
 
 
@@ -32,7 +33,7 @@ public class SaveAndCloseControllerTest {
 
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmail() {
-        saveAndCloseController.saveAndClose(caseData());
+        saveAndCloseController.saveAndClose(callbackRequest());
 
         verify(saveAndSignOutNotificationHandler).notifyApplicant(caseData());
         verifyNoMoreInteractions(saveAndSignOutNotificationHandler);
@@ -44,8 +45,7 @@ public class SaveAndCloseControllerTest {
             .when(saveAndSignOutNotificationHandler).notifyApplicant(eq(caseData()));
 
         Throwable thrown = assertThrows(NotificationException.class,
-            () -> saveAndCloseController.saveAndClose(caseData())
-        );
+            () -> saveAndCloseController.saveAndClose(callbackRequest()));
 
         assertThat(thrown.getCause().getMessage(), is("All template params not passed"));
     }

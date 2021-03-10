@@ -7,3 +7,10 @@ azure:
     instrumentation-key: functional-test
 
 test-url: ${TEST_URL:http://localhost:4013}
+
+uk:
+  gov:
+    notify:
+      api:
+        key: dummy
+        baseUrl: https://api.notifications.service.gov.uk

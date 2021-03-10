@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.API_URL;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.TEST_USER_EMAIL;
-import static uk.gov.hmcts.reform.divorce.caseapi.caseapi.util.TestDataHelper.caseData;
+import static uk.gov.hmcts.reform.divorce.caseapi.caseapi.util.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.reform.divorce.caseapi.enums.LanguagePreference.ENGLISH;
 
 
@@ -51,7 +51,7 @@ public class SaveAndCloseControllerTest {
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmail() throws Exception {
         mockMvc.perform(post(API_URL)
             .contentType(APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(caseData()))
+            .content(objectMapper.writeValueAsString(callbackRequest()))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
@@ -79,10 +79,9 @@ public class SaveAndCloseControllerTest {
 
         mockMvc.perform(post(API_URL)
             .contentType(APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(caseData()))
+            .content(objectMapper.writeValueAsString(callbackRequest()))
             .accept(APPLICATION_JSON))
             .andExpect(status().isBadRequest())
             .andExpect(content().string("All template params not passed"));
-
     }
 }
