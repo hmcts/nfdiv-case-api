@@ -22,17 +22,17 @@ import static uk.gov.hmcts.reform.divorce.caseapi.caseapi.util.TestDataHelper.ca
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class CcdCallbackControllerTest {
+public class SaveAndCloseControllerTest {
 
     @Autowired
-    private CcdCallbackController ccdCallbackController;
+    private SaveAndCloseController saveAndCloseController;
 
     @MockBean
     private SaveAndSignOutNotificationHandler saveAndSignOutNotificationHandler;
 
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmail() {
-        ccdCallbackController.handleSaveAndSignOutCallback(caseData());
+        saveAndCloseController.saveAndClose(caseData());
 
         verify(saveAndSignOutNotificationHandler).notifyApplicant(caseData());
         verifyNoMoreInteractions(saveAndSignOutNotificationHandler);
@@ -44,7 +44,7 @@ public class CcdCallbackControllerTest {
             .when(saveAndSignOutNotificationHandler).notifyApplicant(eq(caseData()));
 
         Throwable thrown = assertThrows(NotificationException.class,
-            () -> ccdCallbackController.handleSaveAndSignOutCallback(caseData())
+            () -> saveAndCloseController.saveAndClose(caseData())
         );
 
         assertThat(thrown.getCause().getMessage(), is("All template params not passed"));

@@ -16,7 +16,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Slf4j
 @RestController
-public class CcdCallbackController {
+public class SaveAndCloseController {
 
     @Autowired
     private SaveAndSignOutNotificationHandler saveAndSignOutNotificationHandler;
@@ -26,7 +26,7 @@ public class CcdCallbackController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Applicant was successfully notified"),
         @ApiResponse(code = 400, message = "Bad Request")})
-    public void handleSaveAndSignOutCallback(@RequestBody @ApiParam("case_data") CaseData caseData) {
+    public void saveAndClose(@RequestBody @ApiParam("case_data") CaseData caseData) {
         log.info("Save and sign out callback invoked");
 
         saveAndSignOutNotificationHandler.notifyApplicant(caseData);

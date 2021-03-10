@@ -32,7 +32,7 @@ import static uk.gov.hmcts.reform.divorce.caseapi.enums.LanguagePreference.ENGLI
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-public class CcdCallbackControllerTest {
+public class SaveAndCloseControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
