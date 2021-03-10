@@ -22,7 +22,6 @@ public class SaveAndSignOutNotificationTest {
     public static final String TEST_FIRST_NAME = "John";
     public static final String TEST_LAST_NAME = "Smith";
 
-    public static final String DIVORCE_OR_DISSOLUTION = "divorceOrDissolution";
     public static final String NOTIFY_APPLICANT = "/notify-applicant";
 
     @Value("${test-url}")
@@ -44,6 +43,7 @@ public class SaveAndSignOutNotificationTest {
                             .caseData(caseData())
                             .build()
                     )
+                    .build()
             )
             .when()
             .post(NOTIFY_APPLICANT);
@@ -71,6 +71,7 @@ public class SaveAndSignOutNotificationTest {
                             .caseData(caseDataWithMissingParams)
                             .build()
                     )
+                    .build()
             )
             .when()
             .post(NOTIFY_APPLICANT);
@@ -102,6 +103,7 @@ public class SaveAndSignOutNotificationTest {
                             .caseData(caseDataWithMissingParams)
                             .build()
                     )
+                    .build()
             )
             .when()
             .post(NOTIFY_APPLICANT);
@@ -116,7 +118,7 @@ public class SaveAndSignOutNotificationTest {
     private CaseData caseData() {
         CaseData caseData = new CaseData();
         caseData.setD8PetitionerFirstName(TEST_FIRST_NAME);
-        caseData.setD8PetitionerFirstName(TEST_LAST_NAME);
+        caseData.setD8PetitionerLastName(TEST_LAST_NAME);
         caseData.setDivorceOrDissolution(DIVORCE);
         caseData.setD8PetitionerEmail(TEST_USER_EMAIL);
         return caseData;
