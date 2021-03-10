@@ -6,4 +6,5 @@ pluginManagement {
 }
 
 rootProject.name = 'nfdiv-case-api'
-include 'api', 'ccd-definitions'
+include 'ccd-definitions'
+include 'api'

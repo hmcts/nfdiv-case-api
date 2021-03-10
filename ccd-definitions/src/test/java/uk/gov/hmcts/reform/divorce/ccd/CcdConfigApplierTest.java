@@ -13,11 +13,11 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class CcdConfigApplierTest {
+class CcdConfigApplierTest {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Test
-    public void shouldApplyCcdBuildersToConfigBuilder() {
+    void shouldApplyCcdBuildersToConfigBuilder() {
 
         final CcdConfigFactory ccdConfigFactory = mock(CcdConfigFactory.class);
         final ConfigBuilder configBuilder = mock(ConfigBuilder.class);

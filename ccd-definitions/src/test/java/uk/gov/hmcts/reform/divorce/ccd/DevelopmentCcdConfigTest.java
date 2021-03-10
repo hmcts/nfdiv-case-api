@@ -24,7 +24,7 @@ import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.ccd.sdk.api.Webhook.AboutToStart;
 
 @ExtendWith(MockitoExtension.class)
-public class DevelopmentCcdConfigTest {
+class DevelopmentCcdConfigTest {
 
     private final DevelopmentCcdConfig developmentCcdConfig = new DevelopmentCcdConfig();
 
@@ -32,7 +32,7 @@ public class DevelopmentCcdConfigTest {
     private ConfigBuilder<CaseData, State, UserRole> configBuilder;
 
     @BeforeEach
-    public void setupConfigBuilderMocks() {
+    void setupConfigBuilderMocks() {
         new EventBuildingMockUtil().mockEventBuildingWith(configBuilder);
         new SearchBuildingMockUtil().mockSearchBuildingWith(configBuilder);
         new TabBuildingMockUtil().mockTabBuildingWith(configBuilder);
@@ -40,7 +40,7 @@ public class DevelopmentCcdConfigTest {
     }
 
     @Test
-    public void shouldApplyAllCcdBuilders() {
+    void shouldApplyAllCcdBuilders() {
 
         final ArgumentCaptor<WebhookConvention> webhookConventionCaptor = ArgumentCaptor.forClass(WebhookConvention.class);
 

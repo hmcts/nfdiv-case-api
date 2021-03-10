@@ -19,6 +19,7 @@
     <exclude name="TooManyStaticImports"/>
     <exclude name="DefaultPackage"/>
     <exclude name="CommentDefaultAccessModifier"/>
+    <exclude name="FieldNamingConventions"/>
   </rule>
   <rule ref="category/java/codestyle.xml/ClassNamingConventions">
     <properties>
@@ -41,6 +42,7 @@
     <exclude name="UseUtilityClass"/>
     <exclude name="LoosePackageCoupling"/>
     <exclude name="DataClass"/>
+    <exclude name="TooManyFields"/>
   </rule>
   <rule ref="category/java/design.xml/ExcessiveImports">
     <properties>
@@ -64,6 +66,7 @@
   </rule>
   <rule ref="category/java/errorprone.xml">
     <exclude name="BeanMembersShouldSerialize"/>
+    <exclude name="AvoidDuplicateLiterals"/>
   </rule>
   <rule ref="category/java/multithreading.xml">
       <exclude name="UseConcurrentHashMap"/>

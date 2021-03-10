@@ -20,7 +20,7 @@ import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CITIZEN;
 
 @SuppressWarnings("rawtypes")
 @ExtendWith(MockitoExtension.class)
-public class NoFaultDivorceTest {
+class NoFaultDivorceTest {
 
     private final NoFaultDivorce nofaultDivorce = new NoFaultDivorce();
 
@@ -29,7 +29,7 @@ public class NoFaultDivorceTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void shouldBuildNoFaultDivorceCaseTypeWithConfigBuilder() {
+    void shouldBuildNoFaultDivorceCaseTypeWithConfigBuilder() {
 
         nofaultDivorce.applyTo(configBuilder);
 

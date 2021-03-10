@@ -19,10 +19,10 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isA;
 
-public class NoFaultDivorceCcdConfigFactoryTest {
+class NoFaultDivorceCcdConfigFactoryTest {
 
     @Test
-    public void shouldReturnStreamOfCcdBuilders() {
+    void shouldReturnStreamOfCcdBuilders() {
 
         final Stream<CcdConfiguration> ccdBuilders = new NoFaultDivorceCcdConfigFactory().getCcdConfig();
 

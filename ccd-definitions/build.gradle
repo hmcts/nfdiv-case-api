@@ -9,8 +9,11 @@ buildscript {
 }
 
 plugins {
+    id 'checkstyle'
+    id 'jacoco'
     id 'java'
     id 'hmcts.ccd.sdk' version '0.15.1'
+    id 'pmd'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -73,8 +76,8 @@ generateTypeScript {
 }
 
 def importCcdDefinition = tasks.register('importCcdDefinition') {
+    group = 'ccd tasks'
     doLast {
-        group = 'ccd tasks'
         exec {
             file('../../.env').readLines().each() {
                 def (key, value) = it.tokenize('=')
@@ -87,4 +90,28 @@ def importCcdDefinition = tasks.register('importCcdDefinition') {
 
 importCcdDefinition.configure {
     dependsOn generateCCDConfig
+}
+
+checkstyle {
+    maxWarnings = 0
+    toolVersion = '8.29'
+    getConfigDirectory().set(new File(rootDir, 'config/checkstyle'))
+}
+
+pmd {
+    toolVersion = "6.18.0"
+    sourceSets = [sourceSets.main]
+    reportsDir = file("$project.buildDir/reports/pmd")
+    // https://github.com/pmd/pmd/issues/876
+    ruleSets = []
+    ruleSetFiles = files("${rootDir}/config/pmd/ruleset.xml")
+}
+
+jacocoTestReport {
+    executionData(test)
+    reports {
+        xml.enabled = true
+        csv.enabled = false
+        xml.destination file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
+    }
 }

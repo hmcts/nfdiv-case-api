@@ -6,7 +6,6 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'org.springframework.boot' version '2.4.3'
     id 'com.github.ben-manes.versions' version '0.38.0'
-    id 'org.sonarqube' version '3.1.1'
     id 'hmcts.ccd.sdk' version '0.15.1'
 }
 
@@ -40,6 +39,13 @@ sourceSets {
         }
         resources.srcDir file('src/smokeTest/resources')
     }
+}
+
+configurations {
+    functionalTestImplementation.extendsFrom testImplementation
+    functionalTestRuntime.extendsFrom testRuntime
+    integrationTestImplementation.extendsFrom testImplementation
+    integrationTestRuntime.extendsFrom testRuntime
 }
 
 tasks.withType(JavaCompile) {
@@ -88,11 +94,11 @@ checkstyle {
 
 pmd {
     toolVersion = "6.18.0"
-    sourceSets = [sourceSets.main, sourceSets.test, sourceSets.functionalTest, sourceSets.integrationTest, sourceSets.smokeTest]
+    sourceSets = [sourceSets.main]
     reportsDir = file("$project.buildDir/reports/pmd")
     // https://github.com/pmd/pmd/issues/876
     ruleSets = []
-    ruleSetFiles = files("../config/pmd/ruleset.xml")
+    ruleSetFiles = files("${rootDir}/config/pmd/ruleset.xml")
 }
 
 jacocoTestReport {
@@ -101,21 +107,6 @@ jacocoTestReport {
         xml.enabled = true
         csv.enabled = false
         xml.destination file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
-    }
-}
-
-project.tasks['sonarqube'].dependsOn jacocoTestReport
-
-def sonarExclusions = [
-        '**/uk/gov/hmcts/reform/divorce/ccd/model/**'
-]
-
-sonarqube {
-    properties {
-        property "sonar.projectName", "Reform :: nfdiv-case-api"
-        property "sonar.projectKey", "uk.gov.hmcts.reform:nfdiv-case-api"
-        property "sonar.coverage.jacoco.xmlReportPaths", "${jacocoTestReport.reports.xml.destination.path}"
-        property "sonar.exclusions", sonarExclusions.join(', ')
     }
 }
 
