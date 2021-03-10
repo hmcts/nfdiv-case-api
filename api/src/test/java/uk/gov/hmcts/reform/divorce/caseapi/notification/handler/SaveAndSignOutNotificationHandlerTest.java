@@ -6,9 +6,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.reform.divorce.caseapi.config.EmailTemplatesConfig;
+import uk.gov.hmcts.reform.divorce.caseapi.exceptions.NotificationException;
 import uk.gov.hmcts.reform.divorce.caseapi.service.NotificationService;
-import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
-import uk.gov.hmcts.reform.divorce.ccd.model.enums.DivorceOrDissolution;
+import uk.gov.service.notify.NotificationClientException;
 
 import java.util.Map;
 
@@ -22,6 +22,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.reform.divorce.caseapi.caseapi.util.TestDataHelper.caseData;
 import static uk.gov.hmcts.reform.divorce.caseapi.enums.EmailTemplateNames.SAVE_SIGN_OUT;
 import static uk.gov.hmcts.reform.divorce.caseapi.enums.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.SIGN_IN_URL;
@@ -33,8 +34,6 @@ class SaveAndSignOutNotificationHandlerTest {
     public static final String DIV_COURT_EMAIL = "divCourtEmail";
 
     public static final String TEST_USER_EMAIL = "test@test.com";
-    public static final String TEST_FIRST_NAME = "test_first_name";
-    public static final String TEST_LAST_NAME = "test_last_name";
 
     @Mock
     private NotificationService notificationService;
@@ -76,18 +75,19 @@ class SaveAndSignOutNotificationHandlerTest {
                 ENGLISH, Map.of(SAVE_SIGN_OUT.name(), "70dd0a1e-047f-4baa-993a-e722db17d8ac")
             ));
 
-        doThrow(new RuntimeException("all template params not set"))
+        doThrow(new NotificationException(
+                new NotificationClientException("all template params not set")
+            )
+        )
             .when(notificationService).sendEmail(any(), any(), anyMap(), any());
 
-        final CaseData caseData = caseData();
-
-        Throwable thrown = assertThrows(RuntimeException.class,
+        Throwable thrown = assertThrows(NotificationException.class,
             () -> {
-                saveAndSignOutNotificationHandler.notifyApplicant(caseData);
+                saveAndSignOutNotificationHandler.notifyApplicant(caseData());
             }
         );
 
-        assertThat(thrown.getMessage(), is("all template params not set"));
+        assertThat(thrown.getCause().getMessage(), is("all template params not set"));
 
         verify(emailTemplatesConfig).getTemplateVars();
         verify(emailTemplatesConfig).getTemplates();
@@ -101,14 +101,5 @@ class SaveAndSignOutNotificationHandlerTest {
                 DIV_COURT_EMAIL, TEST_COURT_EMAIL
             )
         );
-    }
-
-    private CaseData caseData() {
-        CaseData caseData = new CaseData();
-        caseData.setD8PetitionerFirstName(TEST_FIRST_NAME);
-        caseData.setD8PetitionerLastName(TEST_LAST_NAME);
-        caseData.setD8PetitionerEmail(TEST_USER_EMAIL);
-        caseData.setDivorceOrDissolution(DivorceOrDissolution.DIVORCE);
-        return caseData;
     }
 }

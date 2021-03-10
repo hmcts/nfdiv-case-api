@@ -149,8 +149,11 @@ def versions = [
     springBoot         : springBoot.class.package.implementationVersion,
     springfoxSwagger   : '3.0.0',
     lombok             : '1.18.12',
-    reformsJavaLogging : '5.1.7'
+    reformsJavaLogging : '5.1.7',
+    assertJ: '3.19.0'
 ]
+
+ext["rest-assured.version"] = '4.3.0'
 
 ext.libraries = [
     junit5: [
@@ -161,6 +164,18 @@ ext.libraries = [
         "org.junit.platform:junit-platform-engine:${versions.junitPlatform}"
     ]
 ]
+
+// force junit5 deps to use groovy v3 which fixes reflective call errors for java 11
+// rest assured 4.2 -> 4.3 jumps to groovy v3. junit v5.6 still on v2.5
+dependencyManagement {
+  dependencies {
+    dependencySet(group: 'org.codehaus.groovy', version: '3.0.7') {
+      entry 'groovy'
+      entry 'groovy-json'
+      entry 'groovy-xml'
+    }
+  }
+}
 
 dependencies {
     implementation project(':ccd-definitions')
@@ -182,6 +197,7 @@ dependencies {
     implementation group: 'uk.gov.hmcts.reform', name: 'logging', version: versions.reformsJavaLogging
     implementation group: 'uk.gov.hmcts.reform', name: 'logging-appinsights', version: versions.reformsJavaLogging
     implementation group: 'uk.gov.hmcts.reform', name: 'logging-spring', version: versions.reformsJavaLogging
+
     compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.14.0'
     compile group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.14.0'
 
@@ -204,6 +220,9 @@ dependencies {
         exclude(module: 'android-json')
     }
 
+    testImplementation group: 'io.rest-assured', name: 'rest-assured'
+
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: versions.assertJ
     testCompile group: 'org.projectlombok', name: 'lombok',version: versions.lombok
 
     testAnnotationProcessor group: 'org.projectlombok', name: 'lombok',version: versions.lombok

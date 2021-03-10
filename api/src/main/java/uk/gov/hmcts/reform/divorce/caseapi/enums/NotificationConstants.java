@@ -18,6 +18,9 @@ public final class NotificationConstants {
 
     public static final String COURT_EMAIL = "court email";
 
+    public static final String SAVE_AND_CLOSE = "save-and-close";
+    public static final String SUBMITTED_WEBHOOK = "/submitted";
+
     private NotificationConstants() {
     }
 }
