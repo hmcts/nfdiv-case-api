@@ -26,7 +26,7 @@ public class SaveAndSignOutNotificationTest {
     public static final String TEST_LAST_NAME = "Smith";
 
     public static final String SAVE_AND_SIGN_OUT_CALLBACK_URL = StringUtils.join(
-        "/,", SAVE_AND_CLOSE, SUBMITTED_WEBHOOK
+        "/", SAVE_AND_CLOSE, SUBMITTED_WEBHOOK
     );
 
     @Value("${test-url}")
