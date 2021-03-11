@@ -105,21 +105,28 @@ public class EventBuildingMockUtil {
 
         when(fieldCollectionBuilder.done()).thenReturn(eventBuilder);
         when(fieldCollectionBuilder.optional(any(TypedPropertyGetter.class))).thenReturn(fieldCollectionBuilder);
-        when(fieldCollectionBuilder.optional(any(TypedPropertyGetter.class), any(String.class))).thenReturn(fieldCollectionBuilder);
+        when(fieldCollectionBuilder.optional(any(TypedPropertyGetter.class), any(String.class)))
+            .thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.mandatory(any(TypedPropertyGetter.class))).thenReturn(fieldCollectionBuilder);
-        when(fieldCollectionBuilder.mandatory(any(TypedPropertyGetter.class), any(String.class))).thenReturn(fieldCollectionBuilder);
+        when(fieldCollectionBuilder.mandatory(any(TypedPropertyGetter.class), any(String.class)))
+            .thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.readonly(any(TypedPropertyGetter.class))).thenReturn(fieldCollectionBuilder);
-        when(fieldCollectionBuilder.readonly(any(TypedPropertyGetter.class), any(String.class))).thenReturn(fieldCollectionBuilder);
+        when(fieldCollectionBuilder.readonly(any(TypedPropertyGetter.class), any(String.class)))
+            .thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.list(any(TypedPropertyGetter.class))).thenReturn(fieldBuilder);
         when(fieldCollectionBuilder.list(any(String.class))).thenReturn(fieldBuilder);
         when(fieldCollectionBuilder.immutableList(any(TypedPropertyGetter.class))).thenReturn(fieldBuilder);
         when(fieldCollectionBuilder.field(any(), any(), any(), any(), any(), any())).thenReturn(fieldCollectionBuilder);
-        when(fieldCollectionBuilder.field(any(String.class), any(DisplayContext.class), any(String.class))).thenReturn(fieldCollectionBuilder);
+        when(fieldCollectionBuilder.field(any(String.class), any(DisplayContext.class), any(String.class)))
+            .thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.field(any(String.class), any(DisplayContext.class))).thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.field(any(String.class))).thenReturn(fieldBuilder);
-        when(fieldCollectionBuilder.field(any(TypedPropertyGetter.class), any(DisplayContext.class))).thenReturn(fieldCollectionBuilder);
-        when(fieldCollectionBuilder.field(any(TypedPropertyGetter.class), any(DisplayContext.class), any(String.class))).thenReturn(fieldCollectionBuilder);
-        when(fieldCollectionBuilder.field(any(TypedPropertyGetter.class), any(DisplayContext.class), any(Boolean.class))).thenReturn(fieldCollectionBuilder);
+        when(fieldCollectionBuilder.field(any(TypedPropertyGetter.class), any(DisplayContext.class)))
+            .thenReturn(fieldCollectionBuilder);
+        when(fieldCollectionBuilder.field(any(TypedPropertyGetter.class), any(DisplayContext.class), any(String.class)))
+            .thenReturn(fieldCollectionBuilder);
+        when(fieldCollectionBuilder.field(any(TypedPropertyGetter.class), any(DisplayContext.class), any(Boolean.class)))
+            .thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.field(any(TypedPropertyGetter.class))).thenReturn(fieldBuilder);
         when(fieldCollectionBuilder.showCondition(any())).thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.midEventWebhook(any())).thenReturn(fieldCollectionBuilder);
@@ -127,8 +134,10 @@ public class EventBuildingMockUtil {
         when(fieldCollectionBuilder.complex(any(), any(), any(), any(Boolean.class))).thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.complex(any(), any(), any())).thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.complex(any(TypedPropertyGetter.class))).thenReturn(fieldCollectionBuilder);
-        when(fieldCollectionBuilder.complex(any(TypedPropertyGetter.class), any(Class.class), any(Boolean.class))).thenReturn(fieldCollectionBuilder);
-        when(fieldCollectionBuilder.complex(any(TypedPropertyGetter.class), any(Class.class))).thenReturn(fieldCollectionBuilder);
+        when(fieldCollectionBuilder.complex(any(TypedPropertyGetter.class), any(Class.class), any(Boolean.class)))
+            .thenReturn(fieldCollectionBuilder);
+        when(fieldCollectionBuilder.complex(any(TypedPropertyGetter.class), any(Class.class)))
+            .thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.label(any(), any())).thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.page(any(String.class))).thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.page(any(Integer.class))).thenReturn(fieldCollectionBuilder);

@@ -46,6 +46,17 @@ public class PatchCase implements CcdConfiguration {
             .optional(CaseData::getD8HelpWithFeesAppliedForFees)
             .optional(CaseData::getD8MarriedInUk)
             .optional(CaseData::getD8CertificateInEnglish)
-            .optional(CaseData::getD8CertifiedTranslation);
+            .optional(CaseData::getD8CertifiedTranslation)
+            .optional(CaseData::getD8PetitionerFirstName)
+            .optional(CaseData::getD8PetitionerLastName)
+            .optional(CaseData::getD8PetitionerEmail)
+            .optional(CaseData::getJurisdictionPetitionerResidence)
+            .optional(CaseData::getJurisdictionRespondentResidence)
+            .optional(CaseData::getJurisdictionPetitionerDomicile)
+            .optional(CaseData::getJurisdictionRespondentDomicile)
+            .optional(CaseData::getJurisdictionPetHabituallyResLastTwelveMonths)
+            .optional(CaseData::getJurisdictionPetHabituallyResLastSixMonths)
+            .optional(CaseData::getJurisdictionBothLastHabituallyResident)
+            .optional(CaseData::getJurisdictionResidualEligible);
     }
 }

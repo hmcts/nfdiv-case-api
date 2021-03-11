@@ -21,7 +21,7 @@ import static uk.gov.hmcts.reform.divorce.ccd.model.State.Draft;
 
 @SuppressWarnings("unchecked")
 @ExtendWith(MockitoExtension.class)
-public class DraftCreateTest {
+class DraftCreateTest {
 
     private final DraftCreate draftCreate = new DraftCreate();
 
@@ -33,7 +33,7 @@ public class DraftCreateTest {
         fieldCollectionBuilder = eventBuildingMockUtil.getFieldCollectionBuilder();
 
     @Test
-    public void shouldBuildDraftCreateEventWithConfigBuilder() {
+    void shouldBuildDraftCreateEventWithConfigBuilder() {
 
         draftCreate.applyTo(configBuilder);
 

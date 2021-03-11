@@ -14,15 +14,18 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @ExtendWith(MockitoExtension.class)
-public class WorkBasketResultFieldsTest {
+class WorkBasketResultFieldsTest {
 
     private final WorkBasketResultFields workBasketResultFields = new WorkBasketResultFields();
-    private final WorkBasketBuildingMockUtil workBasketBuildingMockUtil = new WorkBasketBuildingMockUtil().mockWorkBasketBuilding();
-    private final ConfigBuilder<CaseData, State, UserRole> configBuilder = workBasketBuildingMockUtil.getConfigBuilder();
-    private final WorkBasket.WorkBasketBuilder<CaseData, UserRole> workBasketBuilder = workBasketBuildingMockUtil.getWorkBasketBuilder();
+    private final WorkBasketBuildingMockUtil workBasketBuildingMockUtil =
+        new WorkBasketBuildingMockUtil().mockWorkBasketBuilding();
+    private final ConfigBuilder<CaseData, State, UserRole> configBuilder =
+        workBasketBuildingMockUtil.getConfigBuilder();
+    private final WorkBasket.WorkBasketBuilder<CaseData, UserRole> workBasketBuilder =
+        workBasketBuildingMockUtil.getWorkBasketBuilder();
 
     @Test
-    public void shouldBuildWorkBasketResultFieldsWithConfigBuilder() {
+    void shouldBuildWorkBasketResultFieldsWithConfigBuilder() {
 
         workBasketResultFields.applyTo(configBuilder);
 

@@ -1,6 +1,8 @@
 plugins {
+    id 'jacoco'
     id 'java'
     id 'org.owasp.dependencycheck' version '6.1.2'
+    id 'org.sonarqube' version '3.1.1'
 }
 
 allprojects {
@@ -23,3 +25,18 @@ dependencyCheck {
     }
 }
 
+project.tasks['sonarqube'].dependsOn jacocoTestReport
+
+def sonarExclusions = [
+        '**/uk/gov/hmcts/reform/divorce/ccd/model/**',
+        '**/uk/gov/hmcts/reform/divorce/caseapi/model/**'
+]
+
+sonarqube {
+    properties {
+        property "sonar.projectName", "Reform :: nfdiv-case-api"
+        property "sonar.projectKey", "uk.gov.hmcts.reform:nfdiv-case-api"
+        property "sonar.coverage.jacoco.xmlReportPaths", "${projectDir}/ccd-definitions/build/reports/jacoco/test/jacocoTestReport.xml,${projectDir}/api/build/reports/jacoco/test/jacocoTestReport.xml"
+        property "sonar.exclusions", sonarExclusions.join(', ')
+    }
+}

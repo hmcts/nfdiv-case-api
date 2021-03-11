@@ -14,7 +14,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @ExtendWith(MockitoExtension.class)
-public class SearchInputFieldsTest {
+class SearchInputFieldsTest {
 
     private final SearchInputFields searchInputFields = new SearchInputFields();
     private final SearchBuildingMockUtil searchBuildingMockUtil = new SearchBuildingMockUtil().mockSearchBuilding();
@@ -22,7 +22,7 @@ public class SearchInputFieldsTest {
     private final Search.SearchBuilder<CaseData, UserRole> searchBuilder = searchBuildingMockUtil.getSearchBuilder();
 
     @Test
-    public void shouldBuildSearchInputFieldsWithConfigBuilder() {
+    void shouldBuildSearchInputFieldsWithConfigBuilder() {
 
         searchInputFields.applyTo(configBuilder);
 
