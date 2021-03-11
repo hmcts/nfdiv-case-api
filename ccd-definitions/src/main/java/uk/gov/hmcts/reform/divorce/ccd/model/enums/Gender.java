@@ -9,9 +9,9 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 @AllArgsConstructor
 public enum Gender implements HasLabel {
 
-    MALE("Male"),
-    FEMALE("Female"),
-    NOT_GIVEN("Not given");
+    MALE("male"),
+    FEMALE("female"),
+    NOT_GIVEN("notGiven");
 
     @JsonValue
     private final String label;

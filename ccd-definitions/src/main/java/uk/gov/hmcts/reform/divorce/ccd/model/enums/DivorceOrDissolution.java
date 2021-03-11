@@ -9,8 +9,8 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 @AllArgsConstructor
 public enum DivorceOrDissolution implements HasLabel {
 
-    DIVORCE("Divorce"),
-    DISSOLUTION("Dissolution");
+    DIVORCE("divorce"),
+    DISSOLUTION("dissolution");
 
     @JsonValue
     private final String label;
