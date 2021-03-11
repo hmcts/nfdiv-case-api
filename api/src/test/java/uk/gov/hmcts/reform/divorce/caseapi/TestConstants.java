@@ -8,6 +8,7 @@ public final class TestConstants {
     public static final String API_URL = "/save-and-close/submitted";
 
     public static final String AUTH_HEADER_VALUE = "auth-header-value";
+    public static final String INVALID_AUTH_TOKEN = "invalid_token";
     public static final String SERVICE_AUTHORIZATION = "ServiceAuthorization";
 
     public static final String CCD_DATA = "ccd_data";

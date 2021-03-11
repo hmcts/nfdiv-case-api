@@ -52,7 +52,8 @@ public class SaveAndCloseController {
 
         String serviceName = tokenValidator.getServiceName(serviceAuthToken);
         if (!authorisedServices.contains(serviceName)) {
-            throw new UnAuthorisedServiceException(serviceName);
+            log.error("Service {} not allowed to trigger save and sign out callback ", serviceName);
+            throw new UnAuthorisedServiceException("Service " + serviceName + " not in configured list for accessing callback");
         }
 
         saveAndSignOutNotificationHandler.notifyApplicant(callbackRequest.getCaseDetails().getCaseData());
