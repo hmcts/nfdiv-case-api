@@ -36,9 +36,7 @@ class SearchTabTest {
         verify(searchBuilder).field(any(TypedPropertyGetter.class),Mockito.eq("LastName"));
         verify(searchBuilder).field(any(TypedPropertyGetter.class),Mockito.eq("Email"));
 
-
-
-        // fails
+       // fails
         //verify(configBuilder,times(1)).searchResultFields().field(anyString(),any());
 
         verifyNoMoreInteractions(searchBuilder,configBuilder);
