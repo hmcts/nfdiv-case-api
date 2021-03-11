@@ -44,4 +44,4 @@ s2s-authorised:
 
 idam:
   s2s-auth:
-    url: ${S2S_URL:http://localhost:4504}
+    url: ${S2S_URL:http://rpe-service-auth-provider-aat.service.core-compute-aat.internal}

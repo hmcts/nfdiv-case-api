@@ -14,3 +14,7 @@ uk:
       api:
         key: dummy
         baseUrl: https://api.notifications.service.gov.uk
+
+s2s-url: ${TEST_S2S_URL:http://rpe-service-auth-provider-aat.service.core-compute-aat.internal}
+s2s-name: ${TEST_S2S_NAME:ccd_data}
+s2s-secret: ${CCD_DATA_STORE_S2S_SECRET:}

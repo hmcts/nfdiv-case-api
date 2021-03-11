@@ -6,21 +6,22 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import uk.gov.hmcts.reform.divorce.caseapi.model.CaseDetails;
 import uk.gov.hmcts.reform.divorce.caseapi.model.CcdCallbackRequest;
 import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.SAVE_AND_CLOSE;
+import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.SUBMITTED_WEBHOOK;
 import static uk.gov.hmcts.reform.divorce.ccd.model.enums.DivorceOrDissolution.DIVORCE;
 
 @SpringBootTest
-public class SaveAndSignOutNotificationTest {
+public class SaveAndSignOutNotificationTest extends FunctionalTestSuite {
     public static final String TEST_USER_EMAIL = "simulate-delivered@notifications.service.gov.uk";
     public static final String TEST_FIRST_NAME = "John";
     public static final String TEST_LAST_NAME = "Smith";
@@ -38,7 +39,8 @@ public class SaveAndSignOutNotificationTest {
             .given()
             .relaxedHTTPSValidation()
             .baseUri(testUrl)
-            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+            .header(SERVICE_AUTHORIZATION, signIn())
             .body(
                 CcdCallbackRequest
                     .builder()
@@ -66,7 +68,8 @@ public class SaveAndSignOutNotificationTest {
             .given()
             .relaxedHTTPSValidation()
             .baseUri(testUrl)
-            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+            .header(SERVICE_AUTHORIZATION, signIn())
             .body(
                 CcdCallbackRequest
                     .builder()
@@ -98,7 +101,8 @@ public class SaveAndSignOutNotificationTest {
             .given()
             .relaxedHTTPSValidation()
             .baseUri(testUrl)
-            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+            .header(SERVICE_AUTHORIZATION, signIn())
             .body(
                 CcdCallbackRequest
                     .builder()
