@@ -1,8 +1,6 @@
 package uk.gov.hmcts.reform.divorce.ccd.event;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.EventTypeBuilder;
@@ -12,18 +10,13 @@ import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.reform.divorce.ccd.model.State;
 import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static uk.gov.hmcts.reform.divorce.ccd.model.CaseEvent.DRAFT_CREATE;
+import static org.mockito.Mockito.*;
+import static uk.gov.hmcts.reform.divorce.ccd.event.SaveAndClose.SAVE_AND_CLOSE;
 import static uk.gov.hmcts.reform.divorce.ccd.model.State.Draft;
 
-@SuppressWarnings("unchecked")
-@ExtendWith(MockitoExtension.class)
-class DraftCreateTest {
+public class SaveAndCloseTest {
 
-    private final DraftCreate draftCreate = new DraftCreate();
+    private final SaveAndClose saveAndClose = new SaveAndClose();
 
     private final EventBuildingMockUtil eventBuildingMockUtil = new EventBuildingMockUtil().mockEventBuilding();
     private final ConfigBuilder<CaseData, State, UserRole> configBuilder = eventBuildingMockUtil.getConfigBuilder();
@@ -33,18 +26,18 @@ class DraftCreateTest {
         fieldCollectionBuilder = eventBuildingMockUtil.getFieldCollectionBuilder();
 
     @Test
-    void shouldBuildDraftCreateEventWithConfigBuilder() {
+    void shouldBuildPatchCaseEventWithConfigBuilder() {
 
-        draftCreate.applyTo(configBuilder);
+        saveAndClose.applyTo(configBuilder);
 
-        verify(configBuilder).event(DRAFT_CREATE.name);
+        verify(configBuilder).event(SAVE_AND_CLOSE);
         verify(eventTypeBuilder).initialState(Draft);
-        verify(eventBuilder).name("Create draft case");
-        verify(eventBuilder).description("Apply for a divorce or dissolution");
+        verify(eventBuilder).name("Save and close application");
+        verify(eventBuilder).description("Save application and send email notification to petitioner");
         verify(eventBuilder).displayOrder(1);
         verify(eventBuilder).retries(120, 120);
-        verify(eventBuilder, times(1)).fields();
-        verify(fieldCollectionBuilder, times(1)).mandatory(any());
+        verify(eventBuilder).aboutToSubmitWebhook(SAVE_AND_CLOSE);
+        verify(eventBuilder, times(0)).fields();
 
         verifyNoMoreInteractions(configBuilder, eventTypeBuilder, eventBuilder, fieldCollectionBuilder);
     }

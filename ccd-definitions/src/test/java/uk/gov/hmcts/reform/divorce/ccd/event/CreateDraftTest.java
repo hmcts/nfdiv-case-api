@@ -16,20 +16,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static uk.gov.hmcts.reform.divorce.ccd.event.PatchCase.PATCH_CASE;
+import static uk.gov.hmcts.reform.divorce.ccd.event.CreateDraft.CREATE_DRAFT;
 import static uk.gov.hmcts.reform.divorce.ccd.model.State.Draft;
-import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
-import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
-import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_LA;
-import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_SOLICITOR;
-import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
-import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CITIZEN;
 
 @SuppressWarnings("unchecked")
 @ExtendWith(MockitoExtension.class)
-class PatchCaseTest {
+class CreateDraftTest {
 
-    private final PatchCase patchCase = new PatchCase();
+    private final CreateDraft createDraft = new CreateDraft();
 
     private final EventBuildingMockUtil eventBuildingMockUtil = new EventBuildingMockUtil().mockEventBuilding();
     private final ConfigBuilder<CaseData, State, UserRole> configBuilder = eventBuildingMockUtil.getConfigBuilder();
@@ -39,25 +33,18 @@ class PatchCaseTest {
         fieldCollectionBuilder = eventBuildingMockUtil.getFieldCollectionBuilder();
 
     @Test
-    void shouldBuildPatchCaseEventWithConfigBuilder() {
+    void shouldBuildDraftCreateEventWithConfigBuilder() {
 
-        patchCase.applyTo(configBuilder);
+        createDraft.applyTo(configBuilder);
 
-        verify(configBuilder).event(PATCH_CASE);
-        verify(eventTypeBuilder).forState(Draft);
-        verify(eventBuilder).name("Patch case");
-        verify(eventBuilder).description("Patch a divorce or dissolution");
-        verify(eventBuilder).displayOrder(2);
+        verify(configBuilder).event(CREATE_DRAFT);
+        verify(eventTypeBuilder).initialState(Draft);
+        verify(eventBuilder).name("Create draft case");
+        verify(eventBuilder).description("Apply for a divorce or dissolution");
+        verify(eventBuilder).displayOrder(1);
         verify(eventBuilder).retries(120, 120);
-        verify(eventBuilder).grant("CRU", CITIZEN);
-        verify(eventBuilder).grant("R",
-            CASEWORKER_DIVORCE_COURTADMIN_BETA,
-            CASEWORKER_DIVORCE_COURTADMIN,
-            CASEWORKER_DIVORCE_SOLICITOR,
-            CASEWORKER_DIVORCE_SUPERUSER,
-            CASEWORKER_DIVORCE_COURTADMIN_LA);
         verify(eventBuilder, times(1)).fields();
-        verify(fieldCollectionBuilder, times(24)).optional(any());
+        verify(fieldCollectionBuilder, times(1)).mandatory(any());
 
         verifyNoMoreInteractions(configBuilder, eventTypeBuilder, eventBuilder, fieldCollectionBuilder);
     }
