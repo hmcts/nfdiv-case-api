@@ -10,7 +10,9 @@ import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.reform.divorce.ccd.model.State;
 import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.reform.divorce.ccd.event.SaveAndClose.SAVE_AND_CLOSE;
 import static uk.gov.hmcts.reform.divorce.ccd.model.State.Draft;
 
@@ -26,7 +28,7 @@ public class SaveAndCloseTest {
         fieldCollectionBuilder = eventBuildingMockUtil.getFieldCollectionBuilder();
 
     @Test
-    void shouldBuildPatchCaseEventWithConfigBuilder() {
+    void shouldApplyConfigurationToBuilder() {
 
         saveAndClose.applyTo(configBuilder);
 
