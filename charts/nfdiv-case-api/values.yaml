@@ -19,4 +19,3 @@ java:
   environment:
       NOTIFY_TEMPLATE_SIGN_IN_URL: https://nfdiv.{{ .Values.global.environment }}.platform.hmcts.net/
       S2S_URL: http://rpe-service-auth-provider-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
-      S2S_AUTHORISED_SERVICES: ccd_data

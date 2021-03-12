@@ -5,18 +5,13 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gov.hmcts.reform.authorisation.validators.AuthTokenValidator;
-import uk.gov.hmcts.reform.divorce.caseapi.exceptions.UnAuthorisedServiceException;
 import uk.gov.hmcts.reform.divorce.caseapi.model.CcdCallbackRequest;
 import uk.gov.hmcts.reform.divorce.caseapi.notification.handler.SaveAndSignOutNotificationHandler;
-
-import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.SAVE_AND_CLOSE;
@@ -29,12 +24,6 @@ public class SaveAndCloseController {
 
     @Autowired
     private SaveAndSignOutNotificationHandler saveAndSignOutNotificationHandler;
-
-    @Autowired
-    private AuthTokenValidator tokenValidator;
-
-    @Value("#{'${s2s-authorised.services}'.split(',')}")
-    private List<String> authorisedServices;
 
     @PostMapping(path = SUBMITTED_WEBHOOK, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Notifies applicant by sending email using gov notify")
@@ -49,12 +38,6 @@ public class SaveAndCloseController {
         @RequestBody CcdCallbackRequest callbackRequest
     ) {
         log.info("Save and sign out callback invoked");
-
-        String serviceName = tokenValidator.getServiceName(serviceAuthToken);
-        if (!authorisedServices.contains(serviceName)) {
-            log.error("Service {} not allowed to trigger save and sign out callback ", serviceName);
-            throw new UnAuthorisedServiceException("Service " + serviceName + " not in configured list for accessing callback");
-        }
 
         saveAndSignOutNotificationHandler.notifyApplicant(callbackRequest.getCaseDetails().getCaseData());
     }
