@@ -17,11 +17,12 @@ public class SaveAndClose implements CcdConfiguration {
 
         configBuilder
             .event(SAVE_AND_CLOSE)
-            .initialState(Draft)
+            .forState(Draft)
             .name("Save and close application")
             .description("Save application and send email notification to petitioner")
             .displayOrder(1)
             .retries(120, 120)
+            .grant("CRU", UserRole.CITIZEN)
             .aboutToSubmitWebhook(SAVE_AND_CLOSE);
     }
 }
