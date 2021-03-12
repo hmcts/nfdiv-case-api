@@ -23,6 +23,6 @@ public class SaveAndClose implements CcdConfiguration {
             .displayOrder(1)
             .retries(120, 120)
             .grant("CRU", UserRole.CITIZEN)
-            .aboutToSubmitWebhook(SAVE_AND_CLOSE);
+            .submittedWebhook(SAVE_AND_CLOSE);
     }
 }
