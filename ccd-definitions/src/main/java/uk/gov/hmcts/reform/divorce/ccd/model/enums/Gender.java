@@ -1,6 +1,6 @@
 package uk.gov.hmcts.reform.divorce.ccd.model.enums;
 
-import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import uk.gov.hmcts.ccd.sdk.api.HasLabel;
@@ -9,10 +9,14 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 @AllArgsConstructor
 public enum Gender implements HasLabel {
 
-    MALE("male"),
-    FEMALE("female"),
-    NOT_GIVEN("notGiven");
+    @JsonProperty("male")
+    MALE("Male"),
 
-    @JsonValue
+    @JsonProperty("female")
+    FEMALE("Female"),
+
+    @JsonProperty("notGiven")
+    NOT_GIVEN("Not given");
+
     private final String label;
 }
