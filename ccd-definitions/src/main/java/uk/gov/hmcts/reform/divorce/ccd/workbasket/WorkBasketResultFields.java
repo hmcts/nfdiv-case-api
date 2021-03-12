@@ -12,7 +12,6 @@ public class WorkBasketResultFields implements CcdConfiguration {
     public void applyTo(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         configBuilder
-            .workBasketResultFields()
-            .caseReferenceField();
+            .workBasketResultFields().caseReferenceField();
     }
 }
