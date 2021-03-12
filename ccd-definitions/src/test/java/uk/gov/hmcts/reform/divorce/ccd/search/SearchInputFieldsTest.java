@@ -17,6 +17,12 @@ import static java.util.List.of;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static uk.gov.hmcts.reform.divorce.ccd.search.constants.SearchInputFieldsConstants.D_8_PETITIONER_EMAIL;
+import static uk.gov.hmcts.reform.divorce.ccd.search.constants.SearchInputFieldsConstants.D_8_PETITIONER_FIRST_NAME;
+import static uk.gov.hmcts.reform.divorce.ccd.search.constants.SearchInputFieldsConstants.D_8_PETITIONER_LAST_NAME;
+import static uk.gov.hmcts.reform.divorce.ccd.search.constants.SearchInputFieldsConstants.EMAIL;
+import static uk.gov.hmcts.reform.divorce.ccd.search.constants.SearchInputFieldsConstants.FIRSTNAME;
+import static uk.gov.hmcts.reform.divorce.ccd.search.constants.SearchInputFieldsConstants.LASTNAME;
 
 @ExtendWith(MockitoExtension.class)
 class SearchInputFieldsTest {
@@ -26,23 +32,15 @@ class SearchInputFieldsTest {
     private final ConfigBuilder<CaseData, State, UserRole> configBuilder = searchBuildingMockUtil.getConfigBuilder();
     private final Search.SearchBuilder<CaseData, UserRole> searchBuilder = searchBuildingMockUtil.getSearchBuilder();
 
-    public static final String D_8_PETITIONER_FIRST_NAME = "D8PetitionerFirstName";
-    public static final String D_8_PETITIONER_LAST_NAME = "D8PetitionerLastName";
-    public static final String D_8_PETITIONER_EMAIL = "D8PetitionerEmail";
-    public static final String FIRSTNAME = "FirstName";
-    public static final String LASTNAME = "LastName";
-    public static final String EMAIL = "Email";
 
     @Test
     void shouldBuildSearchInputFieldsWithConfigBuilder() {
 
         searchInputFields.applyTo(configBuilder);
 
-        final SearchField searchFieldFirstName = SearchField.builder().id(D_8_PETITIONER_FIRST_NAME).label(FIRSTNAME).build();
-        final SearchField searchFieldLastName = SearchField.builder().id(D_8_PETITIONER_LAST_NAME).label(LASTNAME).build();
-        final SearchField searchFieldEmail = SearchField.builder().id(D_8_PETITIONER_EMAIL).label(EMAIL).build();
-
-        final List<SearchField> searchFieldList = of(searchFieldFirstName,searchFieldLastName,searchFieldEmail);
+        final List<SearchField> searchFieldList = of(SearchField.builder().label(FIRSTNAME).id(D_8_PETITIONER_FIRST_NAME).build(),
+                                                    SearchField.builder().label(LASTNAME).id(D_8_PETITIONER_LAST_NAME).build(),
+                                                    SearchField.builder().label(EMAIL).id(D_8_PETITIONER_EMAIL).build());
 
         verify(searchBuilder).caseReferenceField();
         verify(searchBuilder).fields(searchFieldList);

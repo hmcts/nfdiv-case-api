@@ -10,24 +10,21 @@ import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 import java.util.List;
 
 import static java.util.List.of;
+import static uk.gov.hmcts.reform.divorce.ccd.search.constants.SearchInputFieldsConstants.D_8_PETITIONER_EMAIL;
+import static uk.gov.hmcts.reform.divorce.ccd.search.constants.SearchInputFieldsConstants.D_8_PETITIONER_FIRST_NAME;
+import static uk.gov.hmcts.reform.divorce.ccd.search.constants.SearchInputFieldsConstants.D_8_PETITIONER_LAST_NAME;
+import static uk.gov.hmcts.reform.divorce.ccd.search.constants.SearchInputFieldsConstants.EMAIL;
+import static uk.gov.hmcts.reform.divorce.ccd.search.constants.SearchInputFieldsConstants.FIRSTNAME;
+import static uk.gov.hmcts.reform.divorce.ccd.search.constants.SearchInputFieldsConstants.LASTNAME;
 
 public class SearchInputFields implements CcdConfiguration {
-
-    public static final String D_8_PETITIONER_FIRST_NAME = "D8PetitionerFirstName";
-    public static final String D_8_PETITIONER_LAST_NAME = "D8PetitionerLastName";
-    public static final String D_8_PETITIONER_EMAIL = "D8PetitionerEmail";
-    public static final String FIRSTNAME = "FirstName";
-    public static final String LASTNAME = "LastName";
-    public static final String EMAIL = "Email";
 
     @Override
     public void applyTo(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
-        SearchField firstName = SearchField.builder().id(D_8_PETITIONER_FIRST_NAME).label(FIRSTNAME).build();
-        SearchField lastName = SearchField.builder().id(D_8_PETITIONER_LAST_NAME).label(LASTNAME).build();
-        SearchField email = SearchField.builder().id(D_8_PETITIONER_EMAIL).label(EMAIL).build();
-
-        final List<SearchField> searchFieldList = of(firstName,lastName,email);
+        final List<SearchField> searchFieldList = of(SearchField.builder().label(FIRSTNAME).id(D_8_PETITIONER_FIRST_NAME).build(),
+                                                     SearchField.builder().label(LASTNAME).id(D_8_PETITIONER_LAST_NAME).build(),
+                                                     SearchField.builder().label(EMAIL).id(D_8_PETITIONER_EMAIL).build());
 
         configBuilder.searchInputFields().caseReferenceField();
         configBuilder.searchInputFields().fields(searchFieldList);
