@@ -38,3 +38,10 @@ uk:
             SAVE_SIGN_OUT: '70dd0a1e-047f-4baa-993a-e722db17d8ac'
           welsh:
             SAVE_SIGN_OUT: '70dd0a1e-047f-4baa-993a-e722db17d8ac'
+
+s2s-authorised:
+  services: ${S2S_AUTHORISED_SERVICES:ccd_data}
+
+idam:
+  s2s-auth:
+    url: ${S2S_URL:http://rpe-service-auth-provider-aat.service.core-compute-aat.internal}
