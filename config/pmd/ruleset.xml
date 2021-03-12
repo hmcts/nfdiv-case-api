@@ -9,6 +9,13 @@
   <rule ref="category/java/bestpractices.xml">
     <exclude name="GuardLogStatement"/>
     <exclude name="JUnitTestContainsTooManyAsserts"/>
+    <exclude name="JUnitAssertionsShouldIncludeMessage"/>
+    <exclude name="JUnitTestsShouldIncludeAssert"/>
+  </rule>
+  <rule ref="category/java/bestpractices.xml/UnusedPrivateField">
+    <properties>
+      <property name="ignoredAnnotations" value="Autowired" />
+    </properties>
   </rule>
   <rule ref="category/java/codestyle.xml">
     <exclude name="AtLeastOneConstructor"/>
@@ -20,6 +27,7 @@
     <exclude name="DefaultPackage"/>
     <exclude name="CommentDefaultAccessModifier"/>
     <exclude name="FieldNamingConventions"/>
+    <exclude name="UnnecessaryAnnotationValueElement"/>
   </rule>
   <rule ref="category/java/codestyle.xml/ClassNamingConventions">
     <properties>
@@ -44,11 +52,6 @@
     <exclude name="DataClass"/>
     <exclude name="TooManyFields"/>
   </rule>
-  <rule ref="category/java/design.xml/ExcessiveImports">
-    <properties>
-      <property name="minimum" value="35"/><!-- should be reduced -->
-    </properties>
-  </rule>
   <rule ref="category/java/design.xml/LawOfDemeter">
     <properties>
       <property name="violationSuppressRegex" value="(.*method chain calls.*|.*object not created locally.*)"/>
@@ -67,9 +70,10 @@
   <rule ref="category/java/errorprone.xml">
     <exclude name="BeanMembersShouldSerialize"/>
     <exclude name="AvoidDuplicateLiterals"/>
+    <exclude name="DataflowAnomalyAnalysis"/>
   </rule>
   <rule ref="category/java/multithreading.xml">
-      <exclude name="UseConcurrentHashMap"/>
+    <exclude name="UseConcurrentHashMap"/>
   </rule>
   <rule ref="category/java/performance.xml"/>
   <rule ref="category/java/security.xml"/>

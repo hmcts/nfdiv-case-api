@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.divorce.caseapi.notification.handler;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import uk.gov.hmcts.reform.divorce.caseapi.config.EmailTemplatesConfig;
 import uk.gov.hmcts.reform.divorce.caseapi.service.NotificationService;
 import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
@@ -23,6 +24,7 @@ import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.RE
 import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.SIGN_IN_URL;
 import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.SIGN_IN_URL_NOTIFY_KEY;
 
+@Component
 public class SaveAndSignOutNotificationHandler {
 
     @Autowired

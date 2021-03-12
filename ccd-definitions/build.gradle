@@ -39,11 +39,12 @@ def versions = [
 
 dependencies {
 
+    compileOnly group: 'org.reflections', name: 'reflections', version: '0.9.12'
     compileOnly group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: versions.jacksonDatabind
     compileOnly group: 'org.projectlombok', name: 'lombok', version: versions.lombok
     annotationProcessor("org.projectlombok:lombok:${versions.lombok}")
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testImplementation group: 'org.hamcrest', name: 'hamcrest', version: versions.hamcrest
     testImplementation group: 'org.mockito', name: 'mockito-core', version: versions.mockito
