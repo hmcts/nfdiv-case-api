@@ -21,6 +21,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.ccd.sdk.api.DisplayContext.Mandatory;
 import static uk.gov.hmcts.ccd.sdk.api.DisplayContext.Optional;
+import static uk.gov.hmcts.reform.divorce.ccd.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.reform.divorce.ccd.Permissions.READ;
+import static uk.gov.hmcts.reform.divorce.ccd.Permissions.READ_UPDATE;
 import static uk.gov.hmcts.reform.divorce.ccd.event.SolicitorUpdate.SOLICITOR_UPDATE;
 import static uk.gov.hmcts.reform.divorce.ccd.model.State.SOTAgreementPayAndSubmitRequired;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
@@ -56,10 +59,10 @@ class SolicitorUpdateTest {
         verify(eventBuilder).showSummary();
         verify(eventBuilder).endButtonLabel("Save Petition");
         verify(eventBuilder).explicitGrants();
-        verify(eventBuilder).grant("CRU", CASEWORKER_DIVORCE_SOLICITOR);
-        verify(eventBuilder).grant("RU", CASEWORKER_DIVORCE_SUPERUSER);
+        verify(eventBuilder).grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_SOLICITOR);
+        verify(eventBuilder).grant(READ_UPDATE, CASEWORKER_DIVORCE_SUPERUSER);
         verify(eventBuilder).grant(
-            "R",
+            READ,
             CASEWORKER_DIVORCE_COURTADMIN_BETA,
             CASEWORKER_DIVORCE_COURTADMIN,
             CASEWORKER_DIVORCE_COURTADMIN_LA);

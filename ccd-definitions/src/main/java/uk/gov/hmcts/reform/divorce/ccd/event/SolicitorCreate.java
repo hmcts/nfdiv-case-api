@@ -8,6 +8,9 @@ import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 
 import static uk.gov.hmcts.ccd.sdk.api.DisplayContext.Mandatory;
 import static uk.gov.hmcts.ccd.sdk.api.DisplayContext.Optional;
+import static uk.gov.hmcts.reform.divorce.ccd.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.reform.divorce.ccd.Permissions.READ;
+import static uk.gov.hmcts.reform.divorce.ccd.Permissions.READ_UPDATE;
 import static uk.gov.hmcts.reform.divorce.ccd.model.State.SOTAgreementPayAndSubmitRequired;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
@@ -30,9 +33,9 @@ public class SolicitorCreate implements CcdConfiguration {
             .showSummary()
             .endButtonLabel("Save Petition")
             .explicitGrants()
-            .grant("CRU", CASEWORKER_DIVORCE_SOLICITOR)
-            .grant("RU", CASEWORKER_DIVORCE_SUPERUSER)
-            .grant("R", CASEWORKER_DIVORCE_COURTADMIN_BETA, CASEWORKER_DIVORCE_COURTADMIN, CASEWORKER_DIVORCE_COURTADMIN_LA)
+            .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_SOLICITOR)
+            .grant(READ_UPDATE, CASEWORKER_DIVORCE_SUPERUSER)
+            .grant(READ, CASEWORKER_DIVORCE_COURTADMIN_BETA, CASEWORKER_DIVORCE_COURTADMIN, CASEWORKER_DIVORCE_COURTADMIN_LA)
             .fields()
 
             .page("SolAboutTheSolicitor")
