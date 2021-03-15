@@ -11,11 +11,13 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.reform.divorce.ccd.ccdcase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.reform.divorce.ccd.ccdcase.NoFaultDivorce.JURISDICTION;
 import static uk.gov.hmcts.reform.divorce.ccd.model.State.Draft;
+import static uk.gov.hmcts.reform.divorce.ccd.model.State.SOTAgreementPayAndSubmitRequired;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_LA;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_SOLICITOR;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
+import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_SYSTEMUPDATE;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CITIZEN;
 
 @SuppressWarnings("rawtypes")
@@ -41,6 +43,11 @@ class NoFaultDivorceTest {
         verify(configBuilder).grant(Draft, "R", CASEWORKER_DIVORCE_SOLICITOR);
         verify(configBuilder).grant(Draft, "R", CASEWORKER_DIVORCE_SUPERUSER);
         verify(configBuilder).grant(Draft, "R", CASEWORKER_DIVORCE_COURTADMIN_LA);
+
+        verify(configBuilder).grant(SOTAgreementPayAndSubmitRequired, "CRU", CASEWORKER_DIVORCE_SOLICITOR);
+        verify(configBuilder).grant(SOTAgreementPayAndSubmitRequired, "CRU", CASEWORKER_DIVORCE_SUPERUSER);
+        verify(configBuilder).grant(SOTAgreementPayAndSubmitRequired, "CRU", CASEWORKER_DIVORCE_SYSTEMUPDATE);
+        verify(configBuilder).grant(SOTAgreementPayAndSubmitRequired, "R", CASEWORKER_DIVORCE_COURTADMIN_LA);
 
         verifyNoMoreInteractions(configBuilder);
     }
