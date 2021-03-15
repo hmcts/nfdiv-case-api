@@ -38,7 +38,8 @@ class SearchInputFieldsTest {
 
         searchInputFields.applyTo(configBuilder);
 
-        final List<SearchField> searchFieldList = of(SearchField.builder().label(FIRSTNAME).id(D_8_PETITIONER_FIRST_NAME).build(),
+        final List<SearchField> searchFieldList = of(
+                                                    SearchField.builder().label(FIRSTNAME).id(D_8_PETITIONER_FIRST_NAME).build(),
                                                     SearchField.builder().label(LASTNAME).id(D_8_PETITIONER_LAST_NAME).build(),
                                                     SearchField.builder().label(EMAIL).id(D_8_PETITIONER_EMAIL).build());
 
