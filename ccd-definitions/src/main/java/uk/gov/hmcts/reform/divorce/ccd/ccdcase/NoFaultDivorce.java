@@ -6,8 +6,6 @@ import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.reform.divorce.ccd.model.State;
 import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 
-import static uk.gov.hmcts.reform.divorce.ccd.model.Constants.CASE_TYPE;
-import static uk.gov.hmcts.reform.divorce.ccd.model.Constants.JURISDICTION;
 import static uk.gov.hmcts.reform.divorce.ccd.model.State.Draft;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
@@ -17,6 +15,8 @@ import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CITIZEN;
 
 public class NoFaultDivorce implements CcdConfiguration {
+    public static final String CASE_TYPE = "NO_FAULT_DIVORCE";
+    public static final String JURISDICTION = "DIVORCE";
 
     @Override
     public void applyTo(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

@@ -8,8 +8,8 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static uk.gov.hmcts.reform.divorce.ccd.model.Constants.CASE_TYPE;
-import static uk.gov.hmcts.reform.divorce.ccd.model.Constants.JURISDICTION;
+import static uk.gov.hmcts.reform.divorce.ccd.ccdcase.NoFaultDivorce.CASE_TYPE;
+import static uk.gov.hmcts.reform.divorce.ccd.ccdcase.NoFaultDivorce.JURISDICTION;
 import static uk.gov.hmcts.reform.divorce.ccd.model.State.Draft;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;

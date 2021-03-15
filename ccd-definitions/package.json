@@ -2,13 +2,14 @@
   "name": "@hmcts/nfdiv-case-definition",
   "version": "0.0.46",
   "description": "Utility to help creating CCD config definitions",
-  "main": "build/ts/index.d.ts",
-  "types": "build/ts/index.d.ts",
+  "main": "build/ts/index.ts",
   "repository": "git@github.com:hmcts/nfdiv-case-api.git",
   "license": "MIT",
   "private": false,
   "engines": {
     "node": ">=12.0.0"
   },
-  "scripts": {}
+  "scripts": {
+    "prepublishOnly": "grep -rh \"public static final String\" ./src/main/ | sed \"s/    public static final String/export const/\" >> ./build/ts/index.ts"
+  }
 }
