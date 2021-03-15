@@ -33,12 +33,13 @@ public class SaveAndCloseTest {
         saveAndClose.applyTo(configBuilder);
 
         verify(configBuilder).event(SAVE_AND_CLOSE);
-        verify(eventTypeBuilder).initialState(Draft);
+        verify(eventTypeBuilder).forState(Draft);
         verify(eventBuilder).name("Save and close application");
         verify(eventBuilder).description("Save application and send email notification to petitioner");
         verify(eventBuilder).displayOrder(1);
         verify(eventBuilder).retries(120, 120);
-        verify(eventBuilder).aboutToSubmitWebhook(SAVE_AND_CLOSE);
+        verify(eventBuilder).grant("CRU", UserRole.CITIZEN);
+        verify(eventBuilder).submittedWebhook(SAVE_AND_CLOSE);
         verify(eventBuilder, times(0)).fields();
 
         verifyNoMoreInteractions(configBuilder, eventTypeBuilder, eventBuilder, fieldCollectionBuilder);
