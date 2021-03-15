@@ -150,7 +150,8 @@ def versions = [
     springfoxSwagger   : '3.0.0',
     lombok             : '1.18.12',
     reformsJavaLogging : '5.1.7',
-    assertJ: '3.19.0'
+    assertJ            : '3.19.0',
+    s2sClient          : '4.0.0'
 ]
 
 ext["rest-assured.version"] = '4.3.0'
@@ -198,15 +199,18 @@ dependencies {
     implementation group: 'uk.gov.hmcts.reform', name: 'logging-appinsights', version: versions.reformsJavaLogging
     implementation group: 'uk.gov.hmcts.reform', name: 'logging-spring', version: versions.reformsJavaLogging
 
-    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.14.0'
-    compile group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.14.0'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.14.1'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.14.1'
 
     compile group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.43'
-    compile group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '10.0.2'
+    compile group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '10.0.4'
 
     compile group: 'org.projectlombok', name: 'lombok',version: versions.lombok
 
     compile 'uk.gov.hmcts.reform:ccd-config-generator:0.15.0'
+
+    compile group: 'uk.gov.hmcts.reform', name: 'service-auth-provider-client', version: versions.s2sClient
+
     annotationProcessor group: 'org.projectlombok', name: 'lombok',version: versions.lombok
 
     testImplementation libraries.junit5

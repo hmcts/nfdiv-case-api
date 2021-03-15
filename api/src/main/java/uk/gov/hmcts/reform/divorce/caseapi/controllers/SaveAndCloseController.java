@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.reform.divorce.caseapi.model.CcdCallbackRequest;
@@ -28,8 +29,14 @@ public class SaveAndCloseController {
     @ApiOperation(value = "Notifies applicant by sending email using gov notify")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Applicant was successfully notified"),
-        @ApiResponse(code = 400, message = "Bad Request")})
-    public void saveAndClose(@RequestBody CcdCallbackRequest callbackRequest) {
+        @ApiResponse(code = 400, message = "Bad Request"),
+        @ApiResponse(code = 401, message = "Invalid service authorization token"),
+        @ApiResponse(code = 403, message = "Service not configured to invoke callback")
+    })
+    public void saveAndClose(
+        @RequestHeader("ServiceAuthorization") String serviceAuthToken,
+        @RequestBody CcdCallbackRequest callbackRequest
+    ) {
         log.info("Save and sign out callback invoked");
 
         saveAndSignOutNotificationHandler.notifyApplicant(callbackRequest.getCaseDetails().getCaseData());

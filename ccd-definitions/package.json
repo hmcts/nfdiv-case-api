@@ -1,6 +1,6 @@
 {
   "name": "@hmcts/nfdiv-case-definition",
-  "version": "0.0.39",
+  "version": "0.0.44",
   "description": "Utility to help creating CCD config definitions",
   "main": "build/ts/index.ts",
   "repository": "git@github.com:hmcts/nfdiv-case-api.git",
