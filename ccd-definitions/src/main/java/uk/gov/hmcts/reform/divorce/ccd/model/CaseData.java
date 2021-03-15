@@ -290,7 +290,8 @@ public class CaseData {
 
     @JsonProperty("SolicitorAgreeToReceiveEmails")
     @CCD(
-        label = "I confirm I am willing to accept service of all correspondence and orders by email at the email address stated above."
+        label = "I confirm I am willing to accept service of all correspondence and orders by email at the email address "
+            + "stated above."
     )
     private YesOrNo solicitorAgreeToReceiveEmails;
 

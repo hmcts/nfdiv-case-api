@@ -41,11 +41,17 @@ public class SolicitorCreate implements CcdConfiguration {
                     .readOnly()
                     .label("You can make changes at the end of your application.")
                     .showSummary(false)
-                    .blacklist(CASEWORKER_DIVORCE_SUPERUSER, CASEWORKER_DIVORCE_COURTADMIN_BETA, CASEWORKER_DIVORCE_COURTADMIN, CASEWORKER_DIVORCE_COURTADMIN_LA)
+                    .blacklist(
+                        CASEWORKER_DIVORCE_SUPERUSER,
+                        CASEWORKER_DIVORCE_COURTADMIN_BETA,
+                        CASEWORKER_DIVORCE_COURTADMIN,
+                        CASEWORKER_DIVORCE_COURTADMIN_LA)
                     .done()
                 .field("LabelSolAboutTheSolPara-1")
                     .readOnly()
-                    .label("Please note that the information provided will be used as evidence by the court to decide if the petitioner is entitled to legally end their marriage. **A copy of this form is sent to the respondent**")
+                    .label("Please note that the information provided will be used as evidence by the court to decide if "
+                        + "the petitioner is entitled to legally end their marriage. **A copy of this form is sent to the "
+                        + "respondent**")
                     .showSummary(false)
                     .done()
                 .field(CaseData::getPetitionerSolicitorName, Mandatory, true)
@@ -61,7 +67,11 @@ public class SolicitorCreate implements CcdConfiguration {
                     .readOnly()
                     .label("You can make changes at the end of your application.")
                     .showSummary(false)
-                    .blacklist(CASEWORKER_DIVORCE_SUPERUSER, CASEWORKER_DIVORCE_COURTADMIN_BETA, CASEWORKER_DIVORCE_COURTADMIN, CASEWORKER_DIVORCE_COURTADMIN_LA)
+                    .blacklist(
+                        CASEWORKER_DIVORCE_SUPERUSER,
+                        CASEWORKER_DIVORCE_COURTADMIN_BETA,
+                        CASEWORKER_DIVORCE_COURTADMIN,
+                        CASEWORKER_DIVORCE_COURTADMIN_LA)
                     .done()
                 .field(CaseData::getD8PetitionerFirstName, Mandatory, true)
                 .field(CaseData::getD8PetitionerLastName, Mandatory, true)

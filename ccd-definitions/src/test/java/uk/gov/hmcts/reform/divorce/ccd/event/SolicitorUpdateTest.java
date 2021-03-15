@@ -78,7 +78,9 @@ class SolicitorUpdateTest {
             CASEWORKER_DIVORCE_COURTADMIN_LA);
         verify(fieldBuilder, times(7)).done();
         verify(fieldCollectionBuilder).field("LabelSolAboutTheSolPara-1");
-        verify(fieldBuilder).label("Please note that the information provided will be used as evidence by the court to decide if the petitioner is entitled to legally end their marriage. **A copy of this form is sent to the respondent**");
+        verify(fieldBuilder).label("Please note that the information provided will be used as evidence by the court to "
+            + "decide if the petitioner is entitled to legally end their marriage. **A copy of this form is sent to the "
+            + "respondent**");
         verify(fieldCollectionBuilder, times(18)).field(any(TypedPropertyGetter.class), eq(Mandatory), eq(true));
 
         verify(fieldCollectionBuilder).page("SolAboutThePetitioner");
