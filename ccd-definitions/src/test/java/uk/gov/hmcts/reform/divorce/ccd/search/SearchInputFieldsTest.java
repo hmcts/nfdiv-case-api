@@ -17,12 +17,12 @@ import static java.util.List.of;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static uk.gov.hmcts.reform.divorce.ccd.search.constants.SearchInputFieldsConstants.D_8_PETITIONER_EMAIL;
-import static uk.gov.hmcts.reform.divorce.ccd.search.constants.SearchInputFieldsConstants.D_8_PETITIONER_FIRST_NAME;
-import static uk.gov.hmcts.reform.divorce.ccd.search.constants.SearchInputFieldsConstants.D_8_PETITIONER_LAST_NAME;
-import static uk.gov.hmcts.reform.divorce.ccd.search.constants.SearchInputFieldsConstants.EMAIL;
-import static uk.gov.hmcts.reform.divorce.ccd.search.constants.SearchInputFieldsConstants.FIRSTNAME;
-import static uk.gov.hmcts.reform.divorce.ccd.search.constants.SearchInputFieldsConstants.LASTNAME;
+import static uk.gov.hmcts.reform.divorce.ccd.search.constants.CaseFieldsConstants.D_8_PETITIONER_EMAIL;
+import static uk.gov.hmcts.reform.divorce.ccd.search.constants.CaseFieldsConstants.D_8_PETITIONER_FIRST_NAME;
+import static uk.gov.hmcts.reform.divorce.ccd.search.constants.CaseFieldsConstants.D_8_PETITIONER_LAST_NAME;
+import static uk.gov.hmcts.reform.divorce.ccd.search.constants.CaseFieldsConstants.EMAIL;
+import static uk.gov.hmcts.reform.divorce.ccd.search.constants.CaseFieldsConstants.FIRSTNAME;
+import static uk.gov.hmcts.reform.divorce.ccd.search.constants.CaseFieldsConstants.LASTNAME;
 
 @ExtendWith(MockitoExtension.class)
 class SearchInputFieldsTest {
