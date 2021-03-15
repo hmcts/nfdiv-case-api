@@ -169,4 +169,10 @@ public class CaseData {
     )
     private YesOrNo jurisdictionBothLastHabituallyResident;
 
+    @JsonProperty("LanguagePreferenceWelsh")
+    @CCD(
+        label = "What language do you want to receive emails and documents in?"
+    )
+    private YesOrNo languagePreferenceWelsh;
+
 }
