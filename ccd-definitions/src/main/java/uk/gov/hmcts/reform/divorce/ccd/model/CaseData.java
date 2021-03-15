@@ -13,6 +13,9 @@ import uk.gov.hmcts.reform.divorce.ccd.model.enums.DivorceOrDissolution;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.Gender;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.WhoDivorcing;
 
+import java.util.List;
+import java.util.Set;
+
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
@@ -195,7 +198,7 @@ public class CaseData {
     @CCD(
         label = "How did the petitioner change their name?"
     )
-    private ChangedNameHow d8PetitionerNameChangedHow;
+    private Set<ChangedNameHow> d8PetitionerNameChangedHow;
 
     @JsonProperty("D8PetitionerNameChangedHowOtherDetails")
     @CCD(
