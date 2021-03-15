@@ -13,7 +13,6 @@ import uk.gov.hmcts.reform.divorce.ccd.model.enums.DivorceOrDissolution;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.Gender;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.WhoDivorcing;
 
-import java.util.List;
 import java.util.Set;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;

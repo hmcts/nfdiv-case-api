@@ -68,15 +68,10 @@ class SolicitorUpdateTest {
         verify(fieldCollectionBuilder).page("SolAboutTheSolicitor");
         verify(fieldCollectionBuilder).pageLabel("About the Solicitor");
         verify(fieldCollectionBuilder).field("LabelSolAboutEditingApplication-AboutSolicitor");
-        verify(fieldBuilder, times(4)).readOnly();
-        verify(fieldBuilder, times(2)).label("You can make changes at the end of your application.");
-        verify(fieldBuilder, times(3)).showSummary(false);
-        verify(fieldBuilder, times(2)).blacklist(
-            CASEWORKER_DIVORCE_SUPERUSER,
-            CASEWORKER_DIVORCE_COURTADMIN_BETA,
-            CASEWORKER_DIVORCE_COURTADMIN,
-            CASEWORKER_DIVORCE_COURTADMIN_LA);
-        verify(fieldBuilder, times(7)).done();
+        verify(fieldBuilder, times(5)).readOnly();
+        verify(fieldBuilder, times(3)).label("You can make changes at the end of your application.");
+        verify(fieldBuilder, times(4)).showSummary(false);
+        verify(fieldBuilder, times(8)).done();
         verify(fieldCollectionBuilder).field("LabelSolAboutTheSolPara-1");
         verify(fieldBuilder).label("Please note that the information provided will be used as evidence by the court to "
             + "decide if the petitioner is entitled to legally end their marriage. **A copy of this form is sent to the "
@@ -97,6 +92,7 @@ class SolicitorUpdateTest {
 
         verify(fieldCollectionBuilder).page("SolAboutTheRespondent");
         verify(fieldCollectionBuilder).pageLabel("About the respondent");
+        verify(fieldCollectionBuilder).field("LabelSolAboutEditingApplication-AboutRespondent");
         verify(fieldBuilder).optional();
         verify(fieldBuilder).showCondition("D8RespondentNameAsOnMarriageCertificate=\"Yes\"");
 

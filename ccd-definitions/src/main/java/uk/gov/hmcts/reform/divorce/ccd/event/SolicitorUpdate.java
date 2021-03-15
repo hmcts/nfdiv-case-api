@@ -41,11 +41,6 @@ public class SolicitorUpdate implements CcdConfiguration {
                     .readOnly()
                     .label("You can make changes at the end of your application.")
                     .showSummary(false)
-                    .blacklist(
-                        CASEWORKER_DIVORCE_SUPERUSER,
-                        CASEWORKER_DIVORCE_COURTADMIN_BETA,
-                        CASEWORKER_DIVORCE_COURTADMIN,
-                        CASEWORKER_DIVORCE_COURTADMIN_LA)
                     .done()
                 .field("LabelSolAboutTheSolPara-1")
                     .readOnly()
@@ -67,11 +62,6 @@ public class SolicitorUpdate implements CcdConfiguration {
                     .readOnly()
                     .label("You can make changes at the end of your application.")
                     .showSummary(false)
-                    .blacklist(
-                        CASEWORKER_DIVORCE_SUPERUSER,
-                        CASEWORKER_DIVORCE_COURTADMIN_BETA,
-                        CASEWORKER_DIVORCE_COURTADMIN,
-                        CASEWORKER_DIVORCE_COURTADMIN_LA)
                     .done()
                 .field(CaseData::getD8PetitionerFirstName, Mandatory, true)
                 .field(CaseData::getD8PetitionerLastName, Mandatory, true)
@@ -101,6 +91,11 @@ public class SolicitorUpdate implements CcdConfiguration {
 
             .page("SolAboutTheRespondent")
                 .pageLabel("About the respondent")
+                .field("LabelSolAboutEditingApplication-AboutRespondent")
+                    .readOnly()
+                    .label("You can make changes at the end of your application.")
+                    .showSummary(false)
+                    .done()
                 .field(CaseData::getD8RespondentFirstName, Mandatory, true)
                 .field(CaseData::getD8RespondentLastName, Mandatory, true)
                 .field(CaseData::getD8RespondentNameAsOnMarriageCertificate, Mandatory, true)

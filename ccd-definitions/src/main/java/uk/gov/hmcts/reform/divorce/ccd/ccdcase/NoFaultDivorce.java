@@ -13,7 +13,6 @@ import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_LA;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_SOLICITOR;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
-import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_SYSTEMUPDATE;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CITIZEN;
 
 public class NoFaultDivorce implements CcdConfiguration {
@@ -35,7 +34,6 @@ public class NoFaultDivorce implements CcdConfiguration {
 
         configBuilder.grant(SOTAgreementPayAndSubmitRequired, "CRU", CASEWORKER_DIVORCE_SOLICITOR);
         configBuilder.grant(SOTAgreementPayAndSubmitRequired, "CRU", CASEWORKER_DIVORCE_SUPERUSER);
-        configBuilder.grant(SOTAgreementPayAndSubmitRequired, "CRU", CASEWORKER_DIVORCE_SYSTEMUPDATE);
         configBuilder.grant(SOTAgreementPayAndSubmitRequired, "R", CASEWORKER_DIVORCE_COURTADMIN_LA);
     }
 }

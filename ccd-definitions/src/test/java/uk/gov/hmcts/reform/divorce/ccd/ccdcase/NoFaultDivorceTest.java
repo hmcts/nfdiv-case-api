@@ -17,7 +17,6 @@ import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_LA;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_SOLICITOR;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
-import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_SYSTEMUPDATE;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CITIZEN;
 
 @SuppressWarnings("rawtypes")
@@ -46,7 +45,6 @@ class NoFaultDivorceTest {
 
         verify(configBuilder).grant(SOTAgreementPayAndSubmitRequired, "CRU", CASEWORKER_DIVORCE_SOLICITOR);
         verify(configBuilder).grant(SOTAgreementPayAndSubmitRequired, "CRU", CASEWORKER_DIVORCE_SUPERUSER);
-        verify(configBuilder).grant(SOTAgreementPayAndSubmitRequired, "CRU", CASEWORKER_DIVORCE_SYSTEMUPDATE);
         verify(configBuilder).grant(SOTAgreementPayAndSubmitRequired, "R", CASEWORKER_DIVORCE_COURTADMIN_LA);
 
         verifyNoMoreInteractions(configBuilder);
