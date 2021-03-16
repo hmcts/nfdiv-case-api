@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 IDAM_API_BASE_URL=https://idam-api.aat.platform.hmcts.net
 SERVICE_AUTH_PROVIDER_API_BASE_URL=http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
+CCD_BASE_URL=http://ccd-data-store-api-aat.service.core-compute-aat.internal
 OAUTH2_CLIENT_SECRET=$(az keyvault secret show --vault-name nfdiv-aat -o tsv --query value --name idam-secret)
 REDIRECT_URI=http://localhost:3001/oauth2/callback
 
@@ -44,8 +45,8 @@ for user in $users; do
   userId=$(echo "$userDetails" | docker run --rm --interactive stedolan/jq -r .id)
 
   echo "Retrieving ccd case with user id $userId"
-  caseId=$(curl --insecure --fail --show-error --silent -X GET http://ccd-data-store-api-aat.service.core-compute-aat.internal/citizens/$userId/jurisdictions/DIVORCE/case-types/NO_FAULT_DIVORCE/cases -H "Authorization: Bearer $idamToken" -H "Content-Type: application/json" -H "ServiceAuthorization: Bearer $serviceToken" | docker run --rm --interactive stedolan/jq '.[0].id')
-  eventToken=$(curl --insecure --fail --show-error --silent -X GET http://ccd-data-store-api-aat.service.core-compute-aat.internal/cases/$caseId/event-triggers/patchCase -H "Authorization: Bearer $idamToken" -H "Content-Type: application/json" -H "ServiceAuthorization: Bearer $serviceToken" | docker run --rm --interactive stedolan/jq -r .token)
+  caseId=$(curl --insecure --fail --show-error --silent -X GET ${CCD_BASE_URL}/citizens/$userId/jurisdictions/DIVORCE/case-types/NO_FAULT_DIVORCE/cases -H "Authorization: Bearer $idamToken" -H "Content-Type: application/json" -H "ServiceAuthorization: Bearer $serviceToken" | docker run --rm --interactive stedolan/jq '.[0].id')
+  eventToken=$(curl --insecure --fail --show-error --silent -X GET ${CCD_BASE_URL}/cases/$caseId/event-triggers/patchCase -H "Authorization: Bearer $idamToken" -H "Content-Type: application/json" -H "ServiceAuthorization: Bearer $serviceToken" | docker run --rm --interactive stedolan/jq -r .token)
 
   echo "Patching ccd case $caseId for $userId"
 
