@@ -71,10 +71,17 @@ generateTypeScript {
     'uk.gov.hmcts.reform.divorce.ccd.model.*',
     'uk.gov.hmcts.ccd.sdk.type.*',
   ]
-  outputFile = 'build/ts/index.d.ts'
+  outputFile = 'build/ts/index.ts'
   outputKind = 'module'
+  outputFileType = 'implementationFile'
   mapEnum = 'asEnum'
   group = 'ccd tasks'
+
+  doLast {
+    exec {
+      commandLine 'yarn', 'prepublishOnly'
+    }
+  }
 }
 
 tasks.register('publishTypeScriptLocal', {
