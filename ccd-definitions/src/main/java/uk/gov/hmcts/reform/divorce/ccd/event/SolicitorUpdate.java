@@ -26,12 +26,11 @@ public class SolicitorUpdate implements CcdConfiguration {
     public void applyTo(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         configBuilder.event(SOLICITOR_UPDATE)
-            .initialState(SOTAgreementPayAndSubmitRequired)
-            .name("Apply for a divorce")
-            .description("Apply for a divorce")
-            .displayOrder(1)
+            .forState(SOTAgreementPayAndSubmitRequired)
+            .name("Amend divorce application")
+            .description("Amend divorce application")
+            .displayOrder(2)
             .showSummary()
-            .endButtonLabel("Save Petition")
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_SOLICITOR)
             .grant(READ_UPDATE, CASEWORKER_DIVORCE_SUPERUSER)

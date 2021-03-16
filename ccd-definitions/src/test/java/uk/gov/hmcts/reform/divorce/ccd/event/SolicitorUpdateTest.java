@@ -52,12 +52,11 @@ class SolicitorUpdateTest {
         solicitorUpdate.applyTo(configBuilder);
 
         verify(configBuilder).event(SOLICITOR_UPDATE);
-        verify(eventTypeBuilder).initialState(SOTAgreementPayAndSubmitRequired);
-        verify(eventBuilder).name("Apply for a divorce");
-        verify(eventBuilder).description("Apply for a divorce");
-        verify(eventBuilder).displayOrder(1);
+        verify(eventTypeBuilder).forState(SOTAgreementPayAndSubmitRequired);
+        verify(eventBuilder).name("Amend divorce application");
+        verify(eventBuilder).description("Amend divorce application");
+        verify(eventBuilder).displayOrder(2);
         verify(eventBuilder).showSummary();
-        verify(eventBuilder).endButtonLabel("Save Petition");
         verify(eventBuilder).explicitGrants();
         verify(eventBuilder).grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_SOLICITOR);
         verify(eventBuilder).grant(READ_UPDATE, CASEWORKER_DIVORCE_SUPERUSER);
