@@ -49,7 +49,7 @@ class DevelopmentCcdConfigTest {
         developmentCcdConfig.configure(configBuilder);
 
         final WebhookConvention webhookConvention = webhookConventionCaptor.getValue();
-        assertThat(webhookConvention.buildUrl(AboutToStart, "eventId"), is("localhost:4013/eventId/AboutToStart"));
+        assertThat(webhookConvention.buildUrl(AboutToStart, "eventId"), is("http://nfdiv-case-api:4013/eventId/AboutToStart"));
 
         verify(configBuilder).setEnvironment("development");
         verify(configBuilder).setWebhookConvention(any());

@@ -13,7 +13,8 @@ public enum UserRole implements HasRole {
     CITIZEN("citizen", "CRU"),
     CASEWORKER_DIVORCE_SOLICITOR("caseworker-divorce-solicitor", "CRU"),
     CASEWORKER_DIVORCE_SUPERUSER("caseworker-divorce-superuser", "CRU"),
-    CASEWORKER_DIVORCE_COURTADMIN_LA("caseworker-divorce-courtadmin-la", "CRU");
+    CASEWORKER_DIVORCE_COURTADMIN_LA("caseworker-divorce-courtadmin-la", "CRU"),
+    CASEWORKER_DIVORCE_SYSTEMUPDATE("caseworker-divorce-systemupdate", "CRU");
 
     private final String role;
     private final String caseTypePermissions;

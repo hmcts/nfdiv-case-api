@@ -17,12 +17,10 @@ public class SearchBuildingMockUtil {
     private ConfigBuilder<CaseData, State, UserRole> configBuilder;
     private Search.SearchBuilder<CaseData, UserRole> searchBuilder;
 
-    @SuppressWarnings("unchecked")
     public SearchBuildingMockUtil mockSearchBuildingWith(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         this.configBuilder = configBuilder;
-        searchBuilder = mock(Search.SearchBuilder.class, withSettings().lenient());
-
+        searchBuilder  =  createMockSearchBuilder();
         when(configBuilder.searchInputFields()).thenReturn(searchBuilder);
         when(configBuilder.searchResultFields()).thenReturn(searchBuilder);
 
