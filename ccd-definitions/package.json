@@ -10,6 +10,5 @@
     "node": ">=12.0.0"
   },
   "scripts": {
-    "prepublishOnly": "grep -rh \"public static final String\" ./src/main/ | sed \"s/    public static final String/export const/\" >> ./build/ts/index.ts"
   }
 }
