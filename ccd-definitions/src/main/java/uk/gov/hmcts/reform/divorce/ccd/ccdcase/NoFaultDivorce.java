@@ -19,7 +19,7 @@ import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CITIZEN;
 
 public class NoFaultDivorce implements CcdConfiguration {
 
-    public static final String CASE_TYPE = "NO_FAULT_DIVORCE";
+    public static final String CASE_TYPE = "NO_FAULT_DIVORCE2";
     public static final String JURISDICTION = "DIVORCE";
 
     @Override
