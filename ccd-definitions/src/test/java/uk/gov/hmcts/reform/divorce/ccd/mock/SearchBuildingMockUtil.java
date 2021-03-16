@@ -17,7 +17,6 @@ public class SearchBuildingMockUtil {
     private ConfigBuilder<CaseData, State, UserRole> configBuilder;
     private Search.SearchBuilder<CaseData, UserRole> searchBuilder;
 
-    @SuppressWarnings("unchecked")
     public SearchBuildingMockUtil mockSearchBuildingWith(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         this.configBuilder = configBuilder;

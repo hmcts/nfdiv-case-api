@@ -14,7 +14,14 @@ public enum State {
         label = "Draft",
         name = "Draft"
     )
-    Draft("Draft");
+    Draft("Draft"),
+
+    @JsonProperty("SOTAgreementPayAndSubmitRequired")
+    @CCD(
+        label = "Statement of Truth, Pay and Submit Required",
+        name = "Statement of Truth, Pay and Submit Required"
+    )
+    SOTAgreementPayAndSubmitRequired("SOTAgreementPayAndSubmitRequired");
 
     private final String name;
 

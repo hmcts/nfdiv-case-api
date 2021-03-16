@@ -13,6 +13,7 @@ import uk.gov.hmcts.reform.divorce.ccd.model.State;
 import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
@@ -160,6 +161,9 @@ public class EventBuildingMockUtil {
         when(fieldBuilder.complex(any(), any())).thenReturn(fieldCollectionBuilder);
         when(fieldBuilder.complexWithParent(any())).thenReturn(fieldCollectionBuilder);
         when(fieldBuilder.readOnly()).thenReturn(fieldBuilder);
+        when(fieldBuilder.context(any())).thenReturn(fieldBuilder);
+        when(fieldBuilder.label(anyString())).thenReturn(fieldBuilder);
+        when(fieldBuilder.showCondition(anyString())).thenReturn(fieldBuilder);
         when(fieldBuilder.done()).thenReturn(fieldCollectionBuilder);
     }
 }

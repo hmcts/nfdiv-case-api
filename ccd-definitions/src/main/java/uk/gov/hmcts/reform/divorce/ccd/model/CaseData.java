@@ -7,11 +7,18 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.reform.divorce.ccd.model.enums.ChangedNameHow;
+import uk.gov.hmcts.reform.divorce.ccd.model.enums.ConfidentialAddress;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.DivorceOrDissolution;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.Gender;
+import uk.gov.hmcts.reform.divorce.ccd.model.enums.WhoDivorcing;
+
+import java.util.Set;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -41,14 +48,18 @@ public class CaseData {
     @JsonProperty("D8InferredPetitionerGender")
     @CCD(
         label = "What is the petitioner's gender?",
-        hint = "The petitioner’s gender is collected for statistical purposes only."
+        hint = "The petitioner’s gender is collected for statistical purposes only.",
+        type = FixedList,
+        typeParameter = "Gender"
     )
     private Gender d8InferredPetitionerGender;
 
     @JsonProperty("D8InferredRespondentGender")
     @CCD(
         label = "What is the respondent's gender?",
-        hint = "The respondent’s gender is collected for statistical purposes only."
+        hint = "The respondent’s gender is collected for statistical purposes only.",
+        type = FixedList,
+        typeParameter = "Gender"
     )
     private Gender d8InferredRespondentGender;
 
@@ -175,4 +186,127 @@ public class CaseData {
     )
     private YesOrNo languagePreferenceWelsh;
 
+    @JsonProperty("D8PetitionerNameDifferentToMarriageCert")
+    @CCD(
+        label = "Has the petitioner changed their name since they got married?",
+        hint = "Is the respondent’s current name different to their married name or the name shown on their marriage certificate?"
+    )
+    private YesOrNo d8PetitionerNameDifferentToMarriageCert;
+
+    @JsonProperty("D8PetitionerNameChangedHow")
+    @CCD(
+        label = "How did the petitioner change their name?"
+    )
+    private Set<ChangedNameHow> d8PetitionerNameChangedHow;
+
+    @JsonProperty("D8PetitionerNameChangedHowOtherDetails")
+    @CCD(
+        label = "Provide details of how they changed their name",
+        type = TextArea
+    )
+    private String d8PetitionerNameChangedHowOtherDetails;
+
+    @JsonProperty("D8DivorceWho")
+    @CCD(
+        label = "Who is petitioner divorcing?",
+        hint = "Husband or Wife?",
+        type = FixedList,
+        typeParameter = "WhoDivorcing"
+    )
+    private WhoDivorcing d8DivorceWho;
+
+    @JsonProperty("D8DerivedPetitionerHomeAddress")
+    @CCD(
+        label = "The Petitioner's home address",
+        type = TextArea
+    )
+    private String d8DerivedPetitionerHomeAddress;
+
+    @JsonProperty("D8PetitionerPhoneNumber")
+    @CCD(
+        label = "Petitioner's phone number",
+        regex = "^[0-9 +().-]{9,}$"
+    )
+    private String d8PetitionerPhoneNumber;
+
+    @JsonProperty("D8PetitionerContactDetailsConfidential")
+    @CCD(
+        label = "Keep the petitioner's contact details private from the respondent?",
+        type = FixedList,
+        typeParameter = "ConfidentialAddress"
+    )
+    private ConfidentialAddress d8PetitionerContactDetailsConfidential;
+
+    @JsonProperty("D8RespondentFirstName")
+    @CCD(
+        label = "Respondent's First name(s)",
+        hint = "Include all middle names here"
+    )
+    private String d8RespondentFirstName;
+
+    @JsonProperty("D8RespondentLastName")
+    @CCD(
+        label = "Respondent's Last name"
+    )
+    private String d8RespondentLastName;
+
+    @JsonProperty("D8RespondentNameAsOnMarriageCertificate")
+    @CCD(
+        label = "Name changed since marriage?",
+        hint = "Is the respondent’s current name different to their married name or the name shown on their marriage certificate?"
+    )
+    private YesOrNo d8RespondentNameAsOnMarriageCertificate;
+
+    @JsonProperty("RespNameDifferentToMarriageCertExplain")
+    @CCD(
+        label = "Please explain, if known, how their name has changed since they were married.",
+        type = TextArea
+    )
+    private String respNameDifferentToMarriageCertExplain;
+
+    @JsonProperty("PetitionerSolicitorName")
+    @CCD(
+        label = "Petitioner Solicitor’s name"
+    )
+    private String petitionerSolicitorName;
+
+    @JsonProperty("D8SolicitorReference")
+    @CCD(
+        label = "Your reference number"
+    )
+    private String d8SolicitorReference;
+
+    @JsonProperty("PetitionerSolicitorPhone")
+    @CCD(
+        label = "Petitioner Solicitor Phone number",
+        regex = "^[0-9 +().-]{9,}$"
+    )
+    private String petitionerSolicitorPhone;
+
+    @JsonProperty("PetitionerSolicitorEmail")
+    @CCD(
+        label = "Petitioner Solicitor Email",
+        type = Email
+    )
+    private String petitionerSolicitorEmail;
+
+    @JsonProperty("SolicitorAgreeToReceiveEmails")
+    @CCD(
+        label = "I confirm I am willing to accept service of all correspondence and orders by email at the email address "
+            + "stated above."
+    )
+    private YesOrNo solicitorAgreeToReceiveEmails;
+
+    @JsonProperty("DerivedPetitionerSolicitorAddr")
+    @CCD(
+        label = "Firm address/DX address",
+        type = TextArea
+    )
+    private String derivedPetitionerSolicitorAddr;
+
+    @JsonProperty("PetitionerOrganisationPolicy")
+    @CCD(
+        label = "Firm address/DX address"
+    )
+    private String petitionerOrganisationPolicy;
 }

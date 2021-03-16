@@ -16,6 +16,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static uk.gov.hmcts.reform.divorce.ccd.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.reform.divorce.ccd.Permissions.READ;
 import static uk.gov.hmcts.reform.divorce.ccd.event.PatchCase.PATCH_CASE;
 import static uk.gov.hmcts.reform.divorce.ccd.model.State.Draft;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
@@ -49,8 +51,8 @@ class PatchCaseTest {
         verify(eventBuilder).description("Patch a divorce or dissolution");
         verify(eventBuilder).displayOrder(2);
         verify(eventBuilder).retries(120, 120);
-        verify(eventBuilder).grant("CRU", CITIZEN);
-        verify(eventBuilder).grant("R",
+        verify(eventBuilder).grant(CREATE_READ_UPDATE, CITIZEN);
+        verify(eventBuilder).grant(READ,
             CASEWORKER_DIVORCE_COURTADMIN_BETA,
             CASEWORKER_DIVORCE_COURTADMIN,
             CASEWORKER_DIVORCE_SOLICITOR,

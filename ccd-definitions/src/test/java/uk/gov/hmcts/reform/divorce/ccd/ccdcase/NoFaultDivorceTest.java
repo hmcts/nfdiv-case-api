@@ -8,9 +8,12 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static uk.gov.hmcts.reform.divorce.ccd.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.reform.divorce.ccd.Permissions.READ;
 import static uk.gov.hmcts.reform.divorce.ccd.ccdcase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.reform.divorce.ccd.ccdcase.NoFaultDivorce.JURISDICTION;
 import static uk.gov.hmcts.reform.divorce.ccd.model.State.Draft;
+import static uk.gov.hmcts.reform.divorce.ccd.model.State.SOTAgreementPayAndSubmitRequired;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_LA;
@@ -35,12 +38,16 @@ class NoFaultDivorceTest {
 
         verify(configBuilder).caseType(CASE_TYPE, "No Fault Divorce case", "Handling of the dissolution of marriage");
         verify(configBuilder).jurisdiction(JURISDICTION, "Family Divorce", "Family Divorce: dissolution of marriage");
-        verify(configBuilder).grant(Draft, "CRU", CITIZEN);
-        verify(configBuilder).grant(Draft, "R", CASEWORKER_DIVORCE_COURTADMIN_BETA);
-        verify(configBuilder).grant(Draft, "R", CASEWORKER_DIVORCE_COURTADMIN);
-        verify(configBuilder).grant(Draft, "R", CASEWORKER_DIVORCE_SOLICITOR);
-        verify(configBuilder).grant(Draft, "R", CASEWORKER_DIVORCE_SUPERUSER);
-        verify(configBuilder).grant(Draft, "R", CASEWORKER_DIVORCE_COURTADMIN_LA);
+        verify(configBuilder).grant(Draft, CREATE_READ_UPDATE, CITIZEN);
+        verify(configBuilder).grant(Draft, READ, CASEWORKER_DIVORCE_COURTADMIN_BETA);
+        verify(configBuilder).grant(Draft, READ, CASEWORKER_DIVORCE_COURTADMIN);
+        verify(configBuilder).grant(Draft, READ, CASEWORKER_DIVORCE_SOLICITOR);
+        verify(configBuilder).grant(Draft, READ, CASEWORKER_DIVORCE_SUPERUSER);
+        verify(configBuilder).grant(Draft, READ, CASEWORKER_DIVORCE_COURTADMIN_LA);
+
+        verify(configBuilder).grant(SOTAgreementPayAndSubmitRequired, CREATE_READ_UPDATE, CASEWORKER_DIVORCE_SOLICITOR);
+        verify(configBuilder).grant(SOTAgreementPayAndSubmitRequired, CREATE_READ_UPDATE, CASEWORKER_DIVORCE_SUPERUSER);
+        verify(configBuilder).grant(SOTAgreementPayAndSubmitRequired, READ, CASEWORKER_DIVORCE_COURTADMIN_LA);
 
         verifyNoMoreInteractions(configBuilder);
     }
