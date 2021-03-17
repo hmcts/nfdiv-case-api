@@ -13,9 +13,12 @@ import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static uk.gov.hmcts.reform.divorce.ccd.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.reform.divorce.ccd.event.SaveAndClose.SAVE_AND_CLOSE;
 import static uk.gov.hmcts.reform.divorce.ccd.model.State.Draft;
+import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CITIZEN;
 
+@SuppressWarnings("unchecked")
 public class SaveAndCloseTest {
 
     private final SaveAndClose saveAndClose = new SaveAndClose();
@@ -38,7 +41,7 @@ public class SaveAndCloseTest {
         verify(eventBuilder).description("Save application and send email notification to petitioner");
         verify(eventBuilder).displayOrder(1);
         verify(eventBuilder).retries(120, 120);
-        verify(eventBuilder).grant("CRU", UserRole.CITIZEN);
+        verify(eventBuilder).grant(CREATE_READ_UPDATE, CITIZEN);
         verify(eventBuilder).submittedWebhook(SAVE_AND_CLOSE);
         verify(eventBuilder, times(0)).fields();
 

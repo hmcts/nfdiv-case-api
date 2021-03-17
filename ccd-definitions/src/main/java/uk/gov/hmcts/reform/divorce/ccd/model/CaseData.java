@@ -49,8 +49,8 @@ public class CaseData {
     @CCD(
         label = "What is the petitioner's gender?",
         hint = "The petitioner’s gender is collected for statistical purposes only.",
-        type = FixedList,
-        typeParameter = "Gender"
+        typeOverride = FixedList,
+        typeParameterOverride = "Gender"
     )
     private Gender d8InferredPetitionerGender;
 
@@ -58,15 +58,15 @@ public class CaseData {
     @CCD(
         label = "What is the respondent's gender?",
         hint = "The respondent’s gender is collected for statistical purposes only.",
-        type = FixedList,
-        typeParameter = "Gender"
+        typeOverride = FixedList,
+        typeParameterOverride = "Gender"
     )
     private Gender d8InferredRespondentGender;
 
     @JsonProperty("D8MarriageDate")
     @CCD(
         label = "Marriage date",
-        type = Date
+        typeOverride = Date
     )
     private String d8MarriageDate;
 
@@ -140,7 +140,7 @@ public class CaseData {
     @JsonProperty("D8PetitionerEmail")
     @CCD(
         label = "Petitioner's email address",
-        type = Email
+        typeOverride = Email
     )
     private String d8PetitionerEmail;
 
@@ -214,7 +214,7 @@ public class CaseData {
     @JsonProperty("D8PetitionerNameChangedHowOtherDetails")
     @CCD(
         label = "Provide details of how they changed their name",
-        type = TextArea
+        typeOverride = TextArea
     )
     private String d8PetitionerNameChangedHowOtherDetails;
 
@@ -222,15 +222,15 @@ public class CaseData {
     @CCD(
         label = "Who is petitioner divorcing?",
         hint = "Husband or Wife?",
-        type = FixedList,
-        typeParameter = "WhoDivorcing"
+        typeOverride = FixedList,
+        typeParameterOverride = "WhoDivorcing"
     )
     private WhoDivorcing d8DivorceWho;
 
     @JsonProperty("D8DerivedPetitionerHomeAddress")
     @CCD(
         label = "The Petitioner's home address",
-        type = TextArea
+        typeOverride = TextArea
     )
     private String d8DerivedPetitionerHomeAddress;
 
@@ -244,8 +244,8 @@ public class CaseData {
     @JsonProperty("D8PetitionerContactDetailsConfidential")
     @CCD(
         label = "Keep the petitioner's contact details private from the respondent?",
-        type = FixedList,
-        typeParameter = "ConfidentialAddress"
+        typeOverride = FixedList,
+        typeParameterOverride = "ConfidentialAddress"
     )
     private ConfidentialAddress d8PetitionerContactDetailsConfidential;
 
@@ -272,7 +272,7 @@ public class CaseData {
     @JsonProperty("RespNameDifferentToMarriageCertExplain")
     @CCD(
         label = "Please explain, if known, how their name has changed since they were married.",
-        type = TextArea
+        typeOverride = TextArea
     )
     private String respNameDifferentToMarriageCertExplain;
 
@@ -298,7 +298,7 @@ public class CaseData {
     @JsonProperty("PetitionerSolicitorEmail")
     @CCD(
         label = "Petitioner Solicitor Email",
-        type = Email
+        typeOverride = Email
     )
     private String petitionerSolicitorEmail;
 
@@ -312,7 +312,7 @@ public class CaseData {
     @JsonProperty("DerivedPetitionerSolicitorAddr")
     @CCD(
         label = "Firm address/DX address",
-        type = TextArea
+        typeOverride = TextArea
     )
     private String derivedPetitionerSolicitorAddr;
 
