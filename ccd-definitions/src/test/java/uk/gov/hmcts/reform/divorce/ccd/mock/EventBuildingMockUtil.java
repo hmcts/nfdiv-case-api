@@ -8,9 +8,12 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.EventTypeBuilder;
 import uk.gov.hmcts.ccd.sdk.api.Field;
 import uk.gov.hmcts.ccd.sdk.api.FieldCollection;
+import uk.gov.hmcts.ccd.sdk.api.Permission;
 import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.reform.divorce.ccd.model.State;
 import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
+
+import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -82,8 +85,10 @@ public class EventBuildingMockUtil {
         when(eventBuilder.displayOrder(any(Integer.class))).thenReturn(eventBuilder);
         when(eventBuilder.endButtonLabel(any())).thenReturn(eventBuilder);
         when(eventBuilder.explicitGrants()).thenReturn(eventBuilder);
-        when(eventBuilder.grant(any())).thenReturn(eventBuilder);
-        when(eventBuilder.grant(any(), any())).thenReturn(eventBuilder);
+        when(eventBuilder.grant(any(Permission.class))).thenReturn(eventBuilder);
+        when(eventBuilder.grant(any(Permission.class), any())).thenReturn(eventBuilder);
+        when(eventBuilder.grant(any(Set.class))).thenReturn(eventBuilder);
+        when(eventBuilder.grant(any(Set.class), any())).thenReturn(eventBuilder);
         when(eventBuilder.grantHistoryOnly()).thenReturn(eventBuilder);
         when(eventBuilder.grantHistoryOnly(any())).thenReturn(eventBuilder);
         when(eventBuilder.grants(any())).thenReturn(eventBuilder);
