@@ -59,7 +59,7 @@ class PatchCaseTest {
             CASEWORKER_DIVORCE_SUPERUSER,
             CASEWORKER_DIVORCE_COURTADMIN_LA);
         verify(eventBuilder, times(1)).fields();
-        verify(fieldCollectionBuilder, times(25)).optional(any());
+        verify(fieldCollectionBuilder, times(27)).optional(any());
 
         verifyNoMoreInteractions(configBuilder, eventTypeBuilder, eventBuilder, fieldCollectionBuilder);
     }
