@@ -6,7 +6,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'org.springframework.boot' version '2.4.3'
     id 'com.github.ben-manes.versions' version '0.38.0'
-    id 'hmcts.ccd.sdk' version '0.15.1'
+    id 'hmcts.ccd.sdk' version '0.15.2'
 }
 
 group = 'uk.gov.hmcts.reform'
@@ -207,7 +207,7 @@ dependencies {
 
     compile group: 'org.projectlombok', name: 'lombok',version: versions.lombok
 
-    compile 'uk.gov.hmcts.reform:ccd-config-generator:0.15.0'
+    compile 'uk.gov.hmcts.reform:ccd-config-generator:0.15.2'
 
     compile group: 'uk.gov.hmcts.reform', name: 'service-auth-provider-client', version: versions.s2sClient
 

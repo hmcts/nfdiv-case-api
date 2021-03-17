@@ -6,7 +6,9 @@ import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.reform.divorce.ccd.model.State;
 import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 
+import static uk.gov.hmcts.reform.divorce.ccd.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.reform.divorce.ccd.model.State.Draft;
+import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CITIZEN;
 
 public class SaveAndClose implements CcdConfiguration {
 
@@ -22,7 +24,7 @@ public class SaveAndClose implements CcdConfiguration {
             .description("Save application and send email notification to petitioner")
             .displayOrder(1)
             .retries(120, 120)
-            .grant("CRU", UserRole.CITIZEN)
+            .grant(CREATE_READ_UPDATE, CITIZEN)
             .submittedWebhook(SAVE_AND_CLOSE);
     }
 }
