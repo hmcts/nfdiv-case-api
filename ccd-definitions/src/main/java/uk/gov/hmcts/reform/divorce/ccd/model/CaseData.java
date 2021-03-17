@@ -309,4 +309,16 @@ public class CaseData {
         label = "Firm address/DX address"
     )
     private String petitionerOrganisationPolicy;
+
+    @JsonProperty("D8MarriagePetitionerName")
+    @CCD(
+        label = "Petitioner's full name as on marriage certificate"
+    )
+    private String d8MarriagePetitionerName;
+
+    @JsonProperty("D8MarriageRespondentName")
+    @CCD(
+        label = "Respondent's full name as on marriage certificate"
+    )
+    private String d8MarriageRespondentName;
 }
