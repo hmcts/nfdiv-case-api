@@ -26,6 +26,6 @@ public class DevelopmentCcdConfig implements CCDConfig<CaseData, State, UserRole
     }
 
     private String webhookConvention(final Webhook webhook, final String eventId) {
-        return "http://nfdiv-case-api:4013/" + eventId + "/" + webhook;
+        return System.getProperty("CASE_API_URL", "http://nfdiv-case-api:4013")  + "/" + eventId + "/" + webhook;
     }
 }
