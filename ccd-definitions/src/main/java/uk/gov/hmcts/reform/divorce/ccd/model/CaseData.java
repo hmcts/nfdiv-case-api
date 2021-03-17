@@ -112,6 +112,18 @@ public class CaseData {
         label = "Marriage certificate translation"
     )
     private YesOrNo d8CertifiedTranslation;
+    
+    @JsonProperty("D8CountryName")
+    @CCD(
+        label = "Country where marriage took place"
+    )
+    private String d8CountryName;
+    
+    @JsonProperty("D8MarriagePlaceOfMarriage")
+    @CCD(
+        label = "Place of marriage"
+    )
+    private String d8MarriagePlaceOfMarriage;
 
     @JsonProperty("D8PetitionerFirstName")
     @CCD(
