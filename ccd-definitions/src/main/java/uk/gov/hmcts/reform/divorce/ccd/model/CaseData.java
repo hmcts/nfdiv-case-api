@@ -339,4 +339,8 @@ public class CaseData {
         label = "Respondent's full name as on marriage certificate"
     )
     private String d8MarriageRespondentName;
+
+    @JsonProperty("solApplicationFeeOrderSummary")
+    @CCD(label = "Here are your order details")
+    private OrderSummary orderSummary;
 }

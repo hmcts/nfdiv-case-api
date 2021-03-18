@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.hmcts.reform.divorce.caseapi.clients.FeesAndPaymentsClient;
 import uk.gov.hmcts.reform.divorce.caseapi.config.WebMvcConfig;
 import uk.gov.hmcts.reform.divorce.caseapi.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.reform.divorce.caseapi.exceptions.NotificationException;
@@ -56,6 +57,9 @@ public class SaveAndCloseControllerTest {
 
     @MockBean
     private WebMvcConfig webMvcConfig;
+
+    @MockBean
+    private FeesAndPaymentsClient feesAndPaymentsClient;
 
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmail() throws Exception {
