@@ -112,13 +112,13 @@ public class CaseData {
         label = "Marriage certificate translation"
     )
     private YesOrNo d8CertifiedTranslation;
-    
+
     @JsonProperty("D8CountryName")
     @CCD(
         label = "Country where marriage took place"
     )
     private String d8CountryName;
-    
+
     @JsonProperty("D8MarriagePlaceOfMarriage")
     @CCD(
         label = "Place of marriage"
@@ -143,6 +143,12 @@ public class CaseData {
         typeOverride = Email
     )
     private String d8PetitionerEmail;
+
+    @JsonProperty("PetitionerAgreedToReceiveEmails")
+    @CCD(
+        label = "Petitioner has agreed to receive notifications and be served (delivered) court documents by email"
+    )
+    private YesOrNo PetitionerAgreedToReceiveEmails;
 
     @JsonProperty("JurisdictionPetitionerResidence")
     @CCD(
