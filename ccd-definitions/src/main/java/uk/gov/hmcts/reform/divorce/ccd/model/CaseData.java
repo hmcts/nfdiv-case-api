@@ -148,7 +148,7 @@ public class CaseData {
     @CCD(
         label = "Petitioner has agreed to receive notifications and be served (delivered) court documents by email"
     )
-    private YesOrNo PetitionerAgreedToReceiveEmails;
+    private YesOrNo petitionerAgreedToReceiveEmails;
 
     @JsonProperty("JurisdictionPetitionerResidence")
     @CCD(
