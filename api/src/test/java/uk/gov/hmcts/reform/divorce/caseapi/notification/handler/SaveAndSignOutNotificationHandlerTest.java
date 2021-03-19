@@ -96,6 +96,7 @@ class SaveAndSignOutNotificationHandlerTest {
         verify(emailTemplatesConfig).getTemplates();
         verifyNoMoreInteractions(emailTemplatesConfig, notificationService);
     }
+
     @Test
     void shouldThrowExceptionWhenExceptionIsThrownWhileSendingEmail() {
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
