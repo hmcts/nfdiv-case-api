@@ -89,7 +89,7 @@ class SaveAndSignOutNotificationHandlerTest {
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq("70dd0a1e-047f-4baa-993a-e722db17d8ac"),
-            argThat(allOf(hasEntry("signin url", SOME_OTHER_URL))),
+            argThat(allOf(hasEntry("signin url", SOME_OTHER_URL))), // NOSONAR
             eq(ENGLISH)
         );
         verify(emailTemplatesConfig).getTemplateVars();
