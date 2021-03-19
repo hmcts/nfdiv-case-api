@@ -21,10 +21,12 @@ import uk.gov.hmcts.reform.divorce.ccd.model.OrderSummary;
 import java.util.Map;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.ABOUT_TO_START_WEBHOOK;
+import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.SUBMIT_PETITION;
 
 @Slf4j
 @RestController
-@RequestMapping("submit-petition")
+@RequestMapping(SUBMIT_PETITION)
 public class SolicitorSubmitPetitionController {
 
     @Autowired
@@ -33,7 +35,7 @@ public class SolicitorSubmitPetitionController {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @PostMapping(path = "AboutToStart", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @PostMapping(path = ABOUT_TO_START_WEBHOOK, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Sets fees for issue petition and roles for solicitor")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Fees was successfully set in Case Data and roles updated in CCD"),

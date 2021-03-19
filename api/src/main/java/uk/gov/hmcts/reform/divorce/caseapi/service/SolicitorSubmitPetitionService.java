@@ -10,6 +10,11 @@ import uk.gov.hmcts.reform.divorce.ccd.model.FeeValue;
 import uk.gov.hmcts.reform.divorce.ccd.model.OrderSummary;
 
 import static java.util.Collections.singletonList;
+import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.DEFAULT_CHANNEL;
+import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.DIVORCE;
+import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.FAMILY;
+import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.FAMILY_COURT;
+import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.ISSUE_EVENT;
 import static uk.gov.hmcts.reform.divorce.ccd.model.FeeValue.getValueInPence;
 
 @Service
@@ -20,11 +25,11 @@ public class SolicitorSubmitPetitionService {
 
     public OrderSummary getOrderSummary() {
         FeeResponse feeResponse = feesAndPaymentsClient.getPetitionIssueFee(
-            "default",
-            "issue",
-            "family",
-            "family court",
-            "divorce",
+            DEFAULT_CHANNEL,
+            ISSUE_EVENT,
+            FAMILY,
+            FAMILY_COURT,
+            DIVORCE,
             null
         );
 

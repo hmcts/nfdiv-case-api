@@ -18,8 +18,6 @@ import uk.gov.hmcts.reform.divorce.caseapi.TestAuthConfiguration;
 import uk.gov.hmcts.reform.divorce.caseapi.model.CcdCallbackResponse;
 import uk.gov.hmcts.reform.divorce.caseapi.service.SolicitorSubmitPetitionService;
 import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
-import uk.gov.hmcts.reform.divorce.ccd.model.FeeItem;
-import uk.gov.hmcts.reform.divorce.ccd.model.FeeValue;
 import uk.gov.hmcts.reform.divorce.ccd.model.OrderSummary;
 
 import java.util.Collections;
@@ -27,7 +25,6 @@ import java.util.Map;
 
 import static feign.Request.HttpMethod.GET;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,7 +41,7 @@ import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.SERVICE_AUTHORIZ
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.SUBMIT_PETITION_API_URL;
 import static uk.gov.hmcts.reform.divorce.caseapi.caseapi.util.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.reform.divorce.caseapi.caseapi.util.TestDataHelper.caseData;
-import static uk.gov.hmcts.reform.divorce.ccd.model.FeeValue.getValueInPence;
+import static uk.gov.hmcts.reform.divorce.caseapi.caseapi.util.TestDataHelper.getDefaultOrderSummary;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = SolicitorSubmitPetitionController.class)
@@ -62,7 +59,7 @@ public class SolicitorSubmitPetitionControllerTest {
 
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenOrderSummaryIsSet() throws Exception {
-        OrderSummary orderSummary = getOrderSummary();
+        OrderSummary orderSummary = getDefaultOrderSummary();
 
         CaseData updatedCaseDate = caseData();
         updatedCaseDate.setOrderSummary(orderSummary);
@@ -122,27 +119,5 @@ public class SolicitorSubmitPetitionControllerTest {
             result -> assertThat(requireNonNull(result.getResolvedException()).getMessage())
                 .contains("404 Fee Not found")
         );
-    }
-
-    private OrderSummary getOrderSummary() {
-        return OrderSummary
-            .builder()
-            .fees(singletonList(getFeeItem()))
-            .build();
-    }
-
-    private FeeItem getFeeItem() {
-        return FeeItem
-            .builder()
-            .value(
-                FeeValue
-                    .builder()
-                    .feeAmount(getValueInPence(10.50))
-                    .feeCode("FEECODE1")
-                    .feeDescription("Issue Petition Fee")
-                    .feeVersion(String.valueOf(1))
-                    .build()
-            )
-            .build();
     }
 }
