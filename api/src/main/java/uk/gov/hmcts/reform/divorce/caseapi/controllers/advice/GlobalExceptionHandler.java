@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.divorce.caseapi.controllers.advice;
 
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -40,6 +41,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(
             unAuthorisedServiceException.getMessage(),
             HttpStatus.FORBIDDEN
+        );
+    }
+
+    @ExceptionHandler(FeignException.class)
+    ResponseEntity<Object> handleFeignException(FeignException exception) {
+        log.error(exception.getMessage(), exception);
+
+        return ResponseEntity.status(exception.status()).body(
+            String.format("%s - %s", exception.getMessage(), exception.contentUTF8())
         );
     }
 }

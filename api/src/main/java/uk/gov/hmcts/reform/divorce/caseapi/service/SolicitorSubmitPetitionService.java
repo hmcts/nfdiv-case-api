@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.divorce.caseapi.clients.FeesAndPaymentsClient;
 import uk.gov.hmcts.reform.divorce.caseapi.model.payments.FeeResponse;
-import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.reform.divorce.ccd.model.FeeItem;
 import uk.gov.hmcts.reform.divorce.ccd.model.FeeValue;
 import uk.gov.hmcts.reform.divorce.ccd.model.OrderSummary;
@@ -19,7 +18,7 @@ public class SolicitorSubmitPetitionService {
     @Autowired
     private FeesAndPaymentsClient feesAndPaymentsClient;
 
-    public void setFeesAndRolesForSubmitPetition(CaseData caseData) {
+    public OrderSummary getOrderSummary() {
         FeeResponse feeResponse = feesAndPaymentsClient.getPetitionIssueFee(
             "default",
             "issue",
@@ -29,14 +28,11 @@ public class SolicitorSubmitPetitionService {
             null
         );
 
-        // Fees Item is a list as it may have multiple fees but for now it is only one
-        caseData.setOrderSummary(
-            OrderSummary
-                .builder()
-                .fees(singletonList(getFeeItem(feeResponse)))
-                .paymentTotal(getValueInPence(feeResponse.getAmount()))
-                .build()
-        );
+        return OrderSummary
+            .builder()
+            .fees(singletonList(getFeeItem(feeResponse)))
+            .paymentTotal(getValueInPence(feeResponse.getAmount()))
+            .build();
     }
 
     private FeeItem getFeeItem(FeeResponse feeResponse) {
