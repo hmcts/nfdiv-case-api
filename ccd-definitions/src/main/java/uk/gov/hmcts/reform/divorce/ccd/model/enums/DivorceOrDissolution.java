@@ -17,7 +17,7 @@ public enum DivorceOrDissolution implements HasLabel {
 
     private final String label;
 
-    public static boolean isDivorce(DivorceOrDissolution divorceOrDissolution) {
-        return DIVORCE.name().equalsIgnoreCase(divorceOrDissolution.name());
+    public boolean isDivorce() {
+        return DIVORCE.name().equalsIgnoreCase(this.name());
     }
 }

@@ -30,7 +30,8 @@ uk:
       email:
         templateVars:
           SAVE_SIGN_OUT:
-            signInUrl: ${NOTIFY_TEMPLATE_SIGN_IN_URL:https://nfdiv.aat.platform.hmcts.net/}
+            signInDivorceUrl: ${NOTIFY_TEMPLATE_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/}
+            signInDissolutionUrl: ${NOTIFY_TEMPLATE_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/}
             divCourtEmail: contactdivorce@justice.gov.uk
             civilPartnershipCourtEmail: endcivilpartnership@justice.gov.uk
         templates:

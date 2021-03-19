@@ -17,5 +17,6 @@ java:
         - AppInsightsInstrumentationKey
         - uk-gov-notify-api-key
   environment:
-      NOTIFY_TEMPLATE_SIGN_IN_URL: https://nfdiv.{{ .Values.global.environment }}.platform.hmcts.net/
+      NOTIFY_TEMPLATE_SIGN_IN_DIVORCE_URL: https://nfdiv-apply-for-divorce.{{ .Values.global.environment }}.platform.hmcts.net/
+      NOTIFY_TEMPLATE_SIGN_IN_DISSOLUTION_URL: https://nfdiv-end-civil-partnership.{{ .Values.global.environment }}.platform.hmcts.net/
       S2S_URL: http://rpe-service-auth-provider-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
