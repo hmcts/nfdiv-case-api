@@ -15,7 +15,7 @@ import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.JU
 import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.KEYWORD;
 import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.SERVICE;
 
-@FeignClient(name = "fees-and-payments-client", url = "${fee.api.baseurl}")
+@FeignClient(name = "fees-and-payments-client", url = "${fee.api.baseUrl}")
 @SuppressWarnings("PMD.UseObjectForClearerAPI")
 public interface FeesAndPaymentsClient {
 
