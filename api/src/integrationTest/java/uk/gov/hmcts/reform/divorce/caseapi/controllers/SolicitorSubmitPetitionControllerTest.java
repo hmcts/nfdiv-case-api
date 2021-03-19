@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.divorce.caseapi.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.WireMock;
+import feign.FeignException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.ResourceUtils;
@@ -26,6 +28,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static java.util.Objects.requireNonNull;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -93,6 +97,39 @@ public class SolicitorSubmitPetitionControllerTest {
             )
             .andExpect(
                 content().json(expectedCcdCallbackResponse())
+            );
+    }
+
+    @Test
+    public void givenValidCaseDataWhenCallbackIsInvokedThenOrderSummaryIsSet1() throws Exception {
+        stubFor(
+            get(
+                urlEqualTo(
+                    "/fees-register/fees/lookup"
+                        + "?channel=default&event=issue&jurisdiction1=family&jurisdiction2=family%20court&service=divorce"
+                )
+            ).willReturn(
+                aResponse()
+                    .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                    .withStatus(HttpStatus.NOT_FOUND.value())
+                    .withStatusMessage("Fee event not found")
+            )
+        );
+
+        mockMvc.perform(post(SUBMIT_PETITION_API_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .content(objectMapper.writeValueAsString(callbackRequest()))
+            .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isNotFound()
+            )
+            .andExpect(
+                result -> assertThat(result.getResolvedException()).isExactlyInstanceOf(FeignException.NotFound.class)
+            )
+            .andExpect(
+                result -> assertThat(requireNonNull(result.getResolvedException()).getMessage())
+                    .contains("404 Fee event not found")
             );
     }
 
