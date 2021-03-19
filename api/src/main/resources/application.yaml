@@ -50,3 +50,6 @@ idam:
 fee:
   api:
     baseUrl: ${FEE_API_URL:http://test-proxy.fees-register.reform.hmcts.net}
+
+s2s:
+  stub: false

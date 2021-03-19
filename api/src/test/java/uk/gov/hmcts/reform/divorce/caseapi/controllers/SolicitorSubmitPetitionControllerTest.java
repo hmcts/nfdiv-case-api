@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.reform.divorce.caseapi.TestAuthConfiguration;
@@ -47,11 +46,6 @@ import static uk.gov.hmcts.reform.divorce.caseapi.caseapi.util.TestDataHelper.ge
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = SolicitorSubmitPetitionController.class)
 @Import(TestAuthConfiguration.class)
-@TestPropertySource(
-    properties = {
-        "s2s.stub=true"
-    }
-)
 public class SolicitorSubmitPetitionControllerTest {
 
     @MockBean

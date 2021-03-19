@@ -1,0 +1,32 @@
+uk:
+  gov:
+    notify:
+      api:
+        key: dummy
+        baseUrl: https://api.notifications.service.gov.uk
+      email:
+        templateVars:
+          SAVE_SIGN_OUT:
+            signInDivorceUrl: ${NOTIFY_TEMPLATE_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/}
+            signInDissolutionUrl: ${NOTIFY_TEMPLATE_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/}
+            divCourtEmail: contactdivorce@justice.gov.uk
+            civilPartnershipCourtEmail: endcivilpartnership@justice.gov.uk
+        templates:
+          english:
+            SAVE_SIGN_OUT: '70dd0a1e-047f-4baa-993a-e722db17d8ac'
+          welsh:
+            SAVE_SIGN_OUT: '70dd0a1e-047f-4baa-993a-e722db17d8ac'
+
+idam:
+  s2s-auth:
+    url: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
+
+s2s-authorised:
+  services: ccd_data
+
+fee:
+  api:
+    baseUrl: http://localhost:${wiremock.server.port}
+
+s2s:
+  stub: true
