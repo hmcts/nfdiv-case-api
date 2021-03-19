@@ -13,7 +13,7 @@ import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.CCD_DATA;
 @Configuration
 public class TestAuthConfiguration {
     @Bean
-    @ConditionalOnProperty(name = "s2s.stub", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(name = "s2s.stub", havingValue = "true")
     public AuthTokenValidator tokenValidatorStub() {
         return new AuthTokenValidator() {
             public void validate(String token) {
