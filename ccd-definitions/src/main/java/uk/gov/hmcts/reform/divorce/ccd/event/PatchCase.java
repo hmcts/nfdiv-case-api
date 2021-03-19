@@ -56,6 +56,8 @@ public class PatchCase implements CcdConfiguration {
             .optional(CaseData::getD8PetitionerFirstName)
             .optional(CaseData::getD8PetitionerLastName)
             .optional(CaseData::getD8PetitionerEmail)
+            .optional(CaseData::getPetitionerAgreedToReceiveEmails)
+            .optional(CaseData::getD8PetitionerPhoneNumber)
             .optional(CaseData::getJurisdictionPetitionerResidence)
             .optional(CaseData::getJurisdictionRespondentResidence)
             .optional(CaseData::getJurisdictionPetitionerDomicile)
