@@ -13,6 +13,8 @@ public final class TestConstants {
     public static final String SERVICE_AUTHORIZATION = "ServiceAuthorization";
 
     public static final String CCD_DATA = "ccd_data";
+    public static final String FEE_CODE = "FEECODE1";
+    public static final String ISSUE_FEE = "Issue Fee";
 
     private TestConstants() {
     }

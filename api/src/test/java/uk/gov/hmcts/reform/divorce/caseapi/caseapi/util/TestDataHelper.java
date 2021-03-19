@@ -10,12 +10,15 @@ import uk.gov.hmcts.reform.divorce.ccd.model.OrderSummary;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.DivorceOrDissolution;
 
 import static java.util.Collections.singletonList;
+import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.FEE_CODE;
+import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.ISSUE_FEE;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.reform.divorce.ccd.model.FeeValue.getValueInPence;
 
 public class TestDataHelper {
+
     private TestDataHelper() {
 
     }
@@ -44,9 +47,9 @@ public class TestDataHelper {
     public static FeeResponse getFeeResponse() {
         return FeeResponse
             .builder()
-            .feeCode("FEECODE1")
+            .feeCode(FEE_CODE)
             .amount(10.0)
-            .description("Issue Fee")
+            .description(ISSUE_FEE)
             .version(1)
             .build();
     }
@@ -84,7 +87,7 @@ public class TestDataHelper {
     }
 
     public static FeeItem getDefaultFeeItem() {
-        return getFeeItem(10.50, "FEECODE1", "Issue Petition Fee", 1);
+        return getFeeItem(10.50, FEE_CODE, "Issue Petition Fee", 1);
     }
 
 }
