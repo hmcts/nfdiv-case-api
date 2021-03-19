@@ -14,7 +14,8 @@ public final class NotificationConstants {
     public static final String APPLY_FOR_DIVORCE = "Apply for a divorce";
     public static final String END_CIVIL_PARTNERSHIP = "End a civil partnership";
 
-    public static final String SIGN_IN_URL = "signInUrl";
+    public static final String SIGN_IN_DIVORCE_URL = "signInDivorceUrl";
+    public static final String SIGN_IN_DISSOLUTION_URL = "signInDissolutionUrl";
 
     public static final String COURT_EMAIL = "court email";
 

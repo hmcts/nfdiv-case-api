@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.reform.divorce.caseapi.caseapi.util.TestDataHelper.caseData;
 import static uk.gov.hmcts.reform.divorce.caseapi.enums.EmailTemplateNames.SAVE_SIGN_OUT;
 import static uk.gov.hmcts.reform.divorce.caseapi.enums.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.SIGN_IN_URL;
+import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.SIGN_IN_DIVORCE_URL;
 
 @ExtendWith(MockitoExtension.class)
 class SaveAndSignOutNotificationHandlerTest {
@@ -97,7 +97,7 @@ class SaveAndSignOutNotificationHandlerTest {
 
     private Map<String, Map<String, String>> getConfigTemplateVars() {
         return Map.of(
-            SAVE_SIGN_OUT.name(), Map.of(SIGN_IN_URL, SOME_URL,
+            SAVE_SIGN_OUT.name(), Map.of(SIGN_IN_DIVORCE_URL, SOME_URL,
                 DIV_COURT_EMAIL, TEST_COURT_EMAIL
             )
         );
