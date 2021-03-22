@@ -1,0 +1,33 @@
+package uk.gov.hmcts.reform.divorce.ccd.model.enums;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import uk.gov.hmcts.ccd.sdk.api.HasLabel;
+
+@Getter
+@AllArgsConstructor
+public enum JurisdictionConnections implements HasLabel {
+    @JsonProperty("A")
+    A("A"),
+
+    @JsonProperty("B")
+    B("B"),
+
+    @JsonProperty("C")
+    C("C"),
+
+    @JsonProperty("D")
+    D("D"),
+
+    @JsonProperty("E")
+    E("E"),
+
+    @JsonProperty("F")
+    F("F"),
+
+    @JsonProperty("G")
+    G("G");
+
+    private final String label;
+}

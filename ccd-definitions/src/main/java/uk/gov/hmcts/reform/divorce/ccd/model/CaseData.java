@@ -11,6 +11,7 @@ import uk.gov.hmcts.reform.divorce.ccd.model.enums.ChangedNameHow;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.ConfidentialAddress;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.DivorceOrDissolution;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.Gender;
+import uk.gov.hmcts.reform.divorce.ccd.model.enums.JurisdictionConnections;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.WhoDivorcing;
 
 import java.util.Set;
@@ -339,4 +340,10 @@ public class CaseData {
         label = "Respondent's full name as on marriage certificate"
     )
     private String d8MarriageRespondentName;
+
+    @JsonProperty("Connections")
+    @CCD(
+        label = "Jurisdiction connections"
+    )
+    private Set<JurisdictionConnections> connections;
 }
