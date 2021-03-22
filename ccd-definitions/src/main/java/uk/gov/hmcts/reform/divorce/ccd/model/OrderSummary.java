@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import uk.gov.hmcts.ccd.sdk.api.CCD;
 
 import java.util.List;
 
@@ -16,11 +17,20 @@ import java.util.List;
 @Builder
 public class OrderSummary {
     @JsonProperty("PaymentReference")
+    @CCD(
+        label = "Payment Reference"
+    )
     private String paymentReference;
 
     @JsonProperty("PaymentTotal")
+    @CCD(
+        label = "Payment Total"
+    )
     private String paymentTotal;
 
     @JsonProperty("Fees")
+    @CCD(
+        label = "Fees"
+    )
     private List<FeeItem> fees;
 }
