@@ -37,6 +37,4 @@ public class FeeValue {
     public static String getValueInPence(double value) {
         return BigDecimal.valueOf(value).movePointRight(2).toPlainString();
     }
-
-
 }
