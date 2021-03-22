@@ -57,14 +57,14 @@ class SaveAndSignOutNotificationHandlerTest {
 
         when(emailTemplatesConfig.getTemplates()).thenReturn(
             Map.of(
-                ENGLISH, Map.of(SAVE_SIGN_OUT.name(), "70dd0a1e-047f-4baa-993a-e722db17d8ac")
+                ENGLISH, Map.of(SAVE_SIGN_OUT.name(), "3aff9dc0-0188-42f6-a0be-fc5daa404d9a")
             ));
 
         saveAndSignOutNotificationHandler.notifyApplicant(caseData());
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
-            eq("70dd0a1e-047f-4baa-993a-e722db17d8ac"),
+            eq("3aff9dc0-0188-42f6-a0be-fc5daa404d9a"),
             anyMap(),
             eq(ENGLISH)
         );
@@ -79,7 +79,7 @@ class SaveAndSignOutNotificationHandlerTest {
 
         when(emailTemplatesConfig.getTemplates()).thenReturn(
             Map.of(
-                ENGLISH, Map.of(SAVE_SIGN_OUT.name(), "70dd0a1e-047f-4baa-993a-e722db17d8ac")
+                ENGLISH, Map.of(SAVE_SIGN_OUT.name(), "3aff9dc0-0188-42f6-a0be-fc5daa404d9a")
             ));
 
         CaseData caseData = caseData();
@@ -88,7 +88,7 @@ class SaveAndSignOutNotificationHandlerTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
-            eq("70dd0a1e-047f-4baa-993a-e722db17d8ac"),
+            eq("3aff9dc0-0188-42f6-a0be-fc5daa404d9a"),
             argThat(allOf(hasEntry("signin url", SOME_OTHER_URL))), // NOSONAR
             eq(ENGLISH)
         );
@@ -103,7 +103,7 @@ class SaveAndSignOutNotificationHandlerTest {
 
         when(emailTemplatesConfig.getTemplates()).thenReturn(
             Map.of(
-                ENGLISH, Map.of(SAVE_SIGN_OUT.name(), "70dd0a1e-047f-4baa-993a-e722db17d8ac")
+                ENGLISH, Map.of(SAVE_SIGN_OUT.name(), "3aff9dc0-0188-42f6-a0be-fc5daa404d9a")
             ));
 
         doThrow(new NotificationException(
