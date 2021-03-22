@@ -11,10 +11,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.hmcts.reform.divorce.caseapi.TestAuthConfiguration;
+import uk.gov.hmcts.reform.divorce.caseapi.config.WebMvcConfig;
+import uk.gov.hmcts.reform.divorce.caseapi.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.reform.divorce.caseapi.model.CcdCallbackResponse;
 import uk.gov.hmcts.reform.divorce.caseapi.service.SolicitorSubmitPetitionService;
 import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
@@ -45,7 +45,6 @@ import static uk.gov.hmcts.reform.divorce.caseapi.caseapi.util.TestDataHelper.ge
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = SolicitorSubmitPetitionController.class)
-@Import(TestAuthConfiguration.class)
 public class SolicitorSubmitPetitionControllerTest {
 
     @MockBean
@@ -57,6 +56,12 @@ public class SolicitorSubmitPetitionControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @MockBean
+    private RequestInterceptor requestInterceptor;
+
+    @MockBean
+    private WebMvcConfig webMvcConfig;
+    
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenOrderSummaryIsSet() throws Exception {
         OrderSummary orderSummary = getDefaultOrderSummary();

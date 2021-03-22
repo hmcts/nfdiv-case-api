@@ -318,7 +318,7 @@ public class CaseData {
     @JsonProperty("DerivedPetitionerSolicitorAddr")
     @CCD(
         label = "Firm address/DX address",
-        typeOverride = TextArea
+        typeOverride = Date
     )
     private String derivedPetitionerSolicitorAddr;
 

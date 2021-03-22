@@ -6,10 +6,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.hmcts.reform.divorce.caseapi.TestAuthConfiguration;
+import uk.gov.hmcts.reform.divorce.caseapi.config.WebMvcConfig;
+import uk.gov.hmcts.reform.divorce.caseapi.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.reform.divorce.caseapi.exceptions.NotificationException;
 import uk.gov.hmcts.reform.divorce.caseapi.notification.handler.SaveAndSignOutNotificationHandler;
 import uk.gov.service.notify.NotificationClientException;
@@ -31,7 +31,6 @@ import static uk.gov.hmcts.reform.divorce.caseapi.caseapi.util.TestDataHelper.ca
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = SaveAndCloseController.class)
-@Import(TestAuthConfiguration.class)
 public class SaveAndCloseControllerTest {
     @MockBean
     private SaveAndSignOutNotificationHandler saveAndSignOutNotificationHandler;
@@ -41,6 +40,12 @@ public class SaveAndCloseControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockBean
+    private RequestInterceptor requestInterceptor;
+
+    @MockBean
+    private WebMvcConfig webMvcConfig;
 
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmail() throws Exception {

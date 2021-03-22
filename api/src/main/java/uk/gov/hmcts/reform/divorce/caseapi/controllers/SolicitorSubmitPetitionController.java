@@ -1,7 +1,5 @@
 package uk.gov.hmcts.reform.divorce.caseapi.controllers;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -18,11 +16,10 @@ import uk.gov.hmcts.reform.divorce.caseapi.service.SolicitorSubmitPetitionServic
 import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.reform.divorce.ccd.model.OrderSummary;
 
-import java.util.Map;
-
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.ABOUT_TO_START_WEBHOOK;
 import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.SUBMIT_PETITION;
+import static uk.gov.hmcts.reform.divorce.caseapi.model.CcdCallbackResponse.convertToCcdFormat;
 
 @Slf4j
 @RestController
@@ -31,9 +28,6 @@ public class SolicitorSubmitPetitionController {
 
     @Autowired
     private SolicitorSubmitPetitionService solicitorSubmitPetitionService;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @PostMapping(path = ABOUT_TO_START_WEBHOOK, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Sets fees for issue petition and roles for solicitor")
@@ -55,8 +49,7 @@ public class SolicitorSubmitPetitionController {
 
         return CcdCallbackResponse
             .builder()
-            .data(objectMapper.convertValue(caseData, new TypeReference<Map<String, Object>>() {
-            }))
+            .data(convertToCcdFormat(caseData))
             .build();
     }
 }
