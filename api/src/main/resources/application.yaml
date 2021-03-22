@@ -36,9 +36,9 @@ uk:
             civilPartnershipCourtEmail: endcivilpartnership@justice.gov.uk
         templates:
           english:
-            SAVE_SIGN_OUT: '70dd0a1e-047f-4baa-993a-e722db17d8ac'
+            SAVE_SIGN_OUT: '3aff9dc0-0188-42f6-a0be-fc5daa404d9a'
           welsh:
-            SAVE_SIGN_OUT: '70dd0a1e-047f-4baa-993a-e722db17d8ac'
+            SAVE_SIGN_OUT: '3aff9dc0-0188-42f6-a0be-fc5daa404d9a'
 
 s2s-authorised:
   services: ${S2S_AUTHORISED_SERVICES:ccd_data}
