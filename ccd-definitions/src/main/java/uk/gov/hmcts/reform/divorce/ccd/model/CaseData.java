@@ -341,9 +341,9 @@ public class CaseData {
     )
     private String d8MarriageRespondentName;
 
-    @JsonProperty("Connections")
+    @JsonProperty("JurisdictionConnections")
     @CCD(
         label = "Jurisdiction connections"
     )
-    private Set<JurisdictionConnections> connections;
+    private Set<JurisdictionConnections> jurisdictionConnections;
 }
