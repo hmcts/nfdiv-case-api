@@ -71,7 +71,7 @@ public class SaveAndCloseControllerTest {
             .andExpect(status().isOk());
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq("3aff9dc0-0188-42f6-a0be-fc5daa404d9a"), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq("70dd0a1e-047f-4baa-993a-e722db17d8ac"), anyMap(), eq(ENGLISH));
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -90,7 +90,7 @@ public class SaveAndCloseControllerTest {
         doThrow(new NotificationException(new NotificationClientException("All template params not passed")))
             .when(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
-            eq("3aff9dc0-0188-42f6-a0be-fc5daa404d9a"),
+            eq("70dd0a1e-047f-4baa-993a-e722db17d8ac"),
             anyMap(),
             eq(ENGLISH));
 
