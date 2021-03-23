@@ -15,17 +15,17 @@ spring:
   application:
     name: NFDIV Case API
   config:
-    import: "optional:configtree:/mnt/secrets/"
+    import: "optional:configtree:/mnt/secrets/nfdiv/"
 
 azure:
   application-insights:
-    instrumentation-key: ${nfdiv.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
+    instrumentation-key: ${APP_INSIGHTS_KEY:00000000-0000-0000-0000-000000000000}
 
 uk:
   gov:
     notify:
       api:
-        key: ${nfdiv.uk-gov-notify-api-key:dummy}
+        key: ${UK_GOV_NOTIY_API_KEY:dummy}
         baseUrl: https://api.notifications.service.gov.uk
       email:
         templateVars:
@@ -36,9 +36,9 @@ uk:
             civilPartnershipCourtEmail: endcivilpartnership@justice.gov.uk
         templates:
           english:
-            SAVE_SIGN_OUT: '70dd0a1e-047f-4baa-993a-e722db17d8ac'
+            SAVE_SIGN_OUT: '3aff9dc0-0188-42f6-a0be-fc5daa404d9a'
           welsh:
-            SAVE_SIGN_OUT: '70dd0a1e-047f-4baa-993a-e722db17d8ac'
+            SAVE_SIGN_OUT: '3aff9dc0-0188-42f6-a0be-fc5daa404d9a'
 
 s2s-authorised:
   services: ${S2S_AUTHORISED_SERVICES:ccd_data}
@@ -46,3 +46,10 @@ s2s-authorised:
 idam:
   s2s-auth:
     url: ${S2S_URL:http://rpe-service-auth-provider-aat.service.core-compute-aat.internal}
+
+fee:
+  api:
+    baseUrl: ${FEE_API_URL:http://fees-register-api-aat.service.core-compute-aat.internal}
+
+s2s:
+  stub: false

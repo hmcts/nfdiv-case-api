@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.divorce.ccd.event;
+package uk.gov.hmcts.reform.divorce.ccd.event.solicitor;
 
 import de.cronn.reflection.util.TypedPropertyGetter;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ import static uk.gov.hmcts.ccd.sdk.api.DisplayContext.Optional;
 import static uk.gov.hmcts.reform.divorce.ccd.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.reform.divorce.ccd.Permissions.READ;
 import static uk.gov.hmcts.reform.divorce.ccd.Permissions.READ_UPDATE;
-import static uk.gov.hmcts.reform.divorce.ccd.event.SolicitorCreate.SOLICITOR_CREATE;
+import static uk.gov.hmcts.reform.divorce.ccd.event.solicitor.SolicitorCreate.SOLICITOR_CREATE;
 import static uk.gov.hmcts.reform.divorce.ccd.model.State.SOTAgreementPayAndSubmitRequired;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;

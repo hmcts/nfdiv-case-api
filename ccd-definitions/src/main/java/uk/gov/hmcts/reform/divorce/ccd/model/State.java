@@ -21,7 +21,21 @@ public enum State {
         label = "Statement of Truth, Pay and Submit Required",
         name = "Statement of Truth, Pay and Submit Required"
     )
-    SOTAgreementPayAndSubmitRequired("SOTAgreementPayAndSubmitRequired");
+    SOTAgreementPayAndSubmitRequired("SOTAgreementPayAndSubmitRequired"),
+
+    @JsonProperty("Submitted")
+    @CCD(
+        label = "Petition paid and submitted",
+        name = "Petition submitted"
+    )
+    Submitted("Submitted"),
+
+    @JsonProperty("SolicitorAwaitingPaymentConfirmation")
+    @CCD(
+        label = "Solicitor - Awaiting Payment Confirmation",
+        name = "Solicitor - Awaiting Payment Confirmation"
+    )
+    SolicitorAwaitingPaymentConfirmation("SolicitorAwaitingPaymentConfirmation");
 
     private final String name;
 

@@ -24,3 +24,7 @@ idam:
 
 s2s-authorised:
   services: ccd_data
+
+fee:
+  api:
+    baseUrl: ${FEE_API_URL:http://fees-register-api-aat.service.core-compute-aat.internal}

@@ -1,0 +1,25 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "D8PetitionerFirstName": "John",
+    "D8PetitionerLastName": "Smith",
+    "D8PetitionerEmail": "simulate-delivered@notifications.service.gov.uk",
+    "solApplicationFeeOrderSummary": {
+      "PaymentTotal": "55000",
+      "Fees": [
+        {
+          "id": null,
+          "value": {
+            "FeeDescription": "Filing an application for a divorce, nullity or civil partnership dissolution – fees order 1.2.",
+            "FeeVersion": "4",
+            "FeeCode": "FEE0002",
+            "FeeAmount": "55000"
+          }
+        }
+      ]
+    }
+  },
+  "errors": null,
+  "warnings": null,
+  "state": null
+}
