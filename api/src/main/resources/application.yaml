@@ -49,7 +49,7 @@ idam:
 
 fee:
   api:
-    baseUrl: ${FEE_API_URL:http://test-proxy.fees-register.reform.hmcts.net}
+    baseUrl: ${FEE_API_URL:http://fees-register-api-aat.service.core-compute-aat.internal}
 
 s2s:
   stub: false

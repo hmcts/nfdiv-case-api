@@ -101,7 +101,8 @@ public class SolicitorSubmitPetitionControllerTest {
     }
 
     @Test
-    public void givenValidCaseDataWhenCallbackIsInvokedThenOrderSummaryIsSet1() throws Exception {
+    public void givenFeeEventIsNotAvailableWhenCallbackIsInvokedThenReturn404FeeEventNotFound()
+        throws Exception {
         stubFor(
             get(
                 urlEqualTo(
