@@ -6,7 +6,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'org.springframework.boot' version '2.4.4'
     id 'com.github.ben-manes.versions' version '0.38.0'
-    id 'hmcts.ccd.sdk' version '0.15.2'
+    id 'hmcts.ccd.sdk' version '0.15.3'
 }
 
 group = 'uk.gov.hmcts.reform'
@@ -144,7 +144,7 @@ repositories {
 
 def versions = [
     assertJ           : '3.19.0',
-    ccdConfigGenerator: '0.15.2',
+    ccdConfigGenerator: '0.15.3',
     junit             : '5.7.1',
     junitPlatform     : '1.7.1',
     lombok            : '1.18.12',

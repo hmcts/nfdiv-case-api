@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.divorce.ccd.event;
+package uk.gov.hmcts.reform.divorce.ccd.event.solicitor;
 
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.reform.divorce.ccd.CcdConfiguration;
@@ -18,20 +18,19 @@ import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_SOLICITOR;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
 
-public class SolicitorCreate implements CcdConfiguration {
+public class SolicitorUpdate implements CcdConfiguration {
 
-    public static final String SOLICITOR_CREATE = "solicitorCreate";
+    public static final String SOLICITOR_UPDATE = "solicitor-update";
 
     @Override
     public void applyTo(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
-        configBuilder.event(SOLICITOR_CREATE)
-            .initialState(SOTAgreementPayAndSubmitRequired)
-            .name("Apply for a divorce")
-            .description("Apply for a divorce")
-            .displayOrder(1)
+        configBuilder.event(SOLICITOR_UPDATE)
+            .forState(SOTAgreementPayAndSubmitRequired)
+            .name("Amend divorce application")
+            .description("Amend divorce application")
+            .displayOrder(2)
             .showSummary()
-            .endButtonLabel("Save Petition")
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_SOLICITOR)
             .grant(READ_UPDATE, CASEWORKER_DIVORCE_SUPERUSER)

@@ -113,11 +113,20 @@ public class EventBuildingMockUtil {
         when(fieldCollectionBuilder.optional(any(TypedPropertyGetter.class))).thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.optional(any(TypedPropertyGetter.class), any(String.class)))
             .thenReturn(fieldCollectionBuilder);
+        when(fieldCollectionBuilder.optionalNoSummary(any(TypedPropertyGetter.class))).thenReturn(fieldCollectionBuilder);
+        when(fieldCollectionBuilder.optionalNoSummary(any(TypedPropertyGetter.class), any(String.class)))
+            .thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.mandatory(any(TypedPropertyGetter.class))).thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.mandatory(any(TypedPropertyGetter.class), any(String.class)))
             .thenReturn(fieldCollectionBuilder);
+        when(fieldCollectionBuilder.mandatoryNoSummary(any(TypedPropertyGetter.class))).thenReturn(fieldCollectionBuilder);
+        when(fieldCollectionBuilder.mandatoryNoSummary(any(TypedPropertyGetter.class), any(String.class)))
+            .thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.readonly(any(TypedPropertyGetter.class))).thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.readonly(any(TypedPropertyGetter.class), any(String.class)))
+            .thenReturn(fieldCollectionBuilder);
+        when(fieldCollectionBuilder.readonlyNoSummary(any(TypedPropertyGetter.class))).thenReturn(fieldCollectionBuilder);
+        when(fieldCollectionBuilder.readonlyNoSummary(any(TypedPropertyGetter.class), any(String.class)))
             .thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.list(any(TypedPropertyGetter.class))).thenReturn(fieldBuilder);
         when(fieldCollectionBuilder.list(any(String.class))).thenReturn(fieldBuilder);
@@ -144,7 +153,8 @@ public class EventBuildingMockUtil {
             .thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.complex(any(TypedPropertyGetter.class), any(Class.class)))
             .thenReturn(fieldCollectionBuilder);
-        when(fieldCollectionBuilder.label(any(), any())).thenReturn(fieldCollectionBuilder);
+        when(fieldCollectionBuilder.label(anyString(), anyString())).thenReturn(fieldCollectionBuilder);
+        when(fieldCollectionBuilder.label(anyString(), anyString(), anyString())).thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.page(any(String.class))).thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.page(any(Integer.class))).thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.previousPage()).thenReturn(fieldCollectionBuilder);
