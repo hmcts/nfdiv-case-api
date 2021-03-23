@@ -1,0 +1,25 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "D8PetitionerFirstName": "test_first_name",
+    "D8PetitionerLastName": "test_last_name",
+    "D8PetitionerEmail": "test@test.com",
+    "solApplicationFeeOrderSummary": {
+      "PaymentTotal": "1000",
+      "Fees": [
+        {
+          "id": null,
+          "value": {
+            "FeeDescription": "Issue Fee",
+            "FeeVersion": "1",
+            "FeeCode": "FEECODE1",
+            "FeeAmount": "1000"
+          }
+        }
+      ]
+    }
+  },
+  "errors": null,
+  "warnings": null,
+  "state": null
+}

@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.divorce.caseapi.config.interceptors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import uk.gov.hmcts.reform.authorisation.validators.AuthTokenValidator;
@@ -19,6 +20,7 @@ import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.SE
 public class RequestInterceptor implements HandlerInterceptor {
 
     @Autowired
+    @Lazy
     private AuthTokenValidator tokenValidator;
 
     @Value("#{'${s2s-authorised.services}'.split(',')}")

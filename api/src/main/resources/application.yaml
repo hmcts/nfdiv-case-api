@@ -46,3 +46,10 @@ s2s-authorised:
 idam:
   s2s-auth:
     url: ${S2S_URL:http://rpe-service-auth-provider-aat.service.core-compute-aat.internal}
+
+fee:
+  api:
+    baseUrl: ${FEE_API_URL:http://test-proxy.fees-register.reform.hmcts.net}
+
+s2s:
+  stub: false

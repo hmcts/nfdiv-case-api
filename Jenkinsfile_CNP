@@ -75,6 +75,7 @@ def setCommonEnvVariables(){
     env.CCD_IDAM_REDIRECT_URL="https://ccd-case-management-web-aat.service.core-compute-aat.internal/oauth2redirect"
     env.IDAM_API_BASE_URL = "https://idam-api.aat.platform.hmcts.net"
     env.SERVICE_AUTH_PROVIDER_API_BASE_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+    env.FEE_API_URL = "http://fees-register-api-aat.service.core-compute-aat.internal"
 }
 
 def uploadCoreCaseDataDefinitions() {

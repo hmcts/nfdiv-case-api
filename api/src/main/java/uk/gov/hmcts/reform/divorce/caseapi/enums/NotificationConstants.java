@@ -22,7 +22,22 @@ public final class NotificationConstants {
     public static final String SAVE_AND_CLOSE = "save-and-close";
     public static final String SUBMITTED_WEBHOOK = "/Submitted";
 
+    public static final String SUBMIT_PETITION = "submit-petition";
+    public static final String ABOUT_TO_START_WEBHOOK = "/AboutToStart";
+
     public static final String SERVICE_AUTHORIZATION = "ServiceAuthorization";
+
+    public static final String CHANNEL = "channel";
+    public static final String EVENT = "event";
+    public static final String JURISDICTION_1 = "jurisdiction1";
+    public static final String JURISDICTION_2 = "jurisdiction2";
+    public static final String SERVICE = "service";
+    public static final String KEYWORD = "keyword";
+    public static final String DEFAULT_CHANNEL = "default";
+    public static final String ISSUE_EVENT = "issue";
+    public static final String FAMILY = "family";
+    public static final String FAMILY_COURT = "family court";
+    public static final String DIVORCE = "divorce";
 
     private NotificationConstants() {
     }

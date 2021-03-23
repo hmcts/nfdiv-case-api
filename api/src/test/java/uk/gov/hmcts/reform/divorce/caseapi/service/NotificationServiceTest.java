@@ -2,11 +2,9 @@ package uk.gov.hmcts.reform.divorce.caseapi.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.reform.divorce.caseapi.exceptions.NotificationException;
 import uk.gov.service.notify.NotificationClient;
 import uk.gov.service.notify.NotificationClientException;
@@ -20,7 +18,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -28,16 +25,15 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.reform.divorce.caseapi.enums.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.reform.divorce.caseapi.enums.LanguagePreference.WELSH;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class NotificationServiceTest {
 
     private static final String EMAIL_ADDRESS = "simulate-delivered@notifications.service.gov.uk";
 
-    @MockBean
+    @Mock
     private NotificationClient notificationClient;
 
-    @Autowired
+    @InjectMocks
     private NotificationService notificationService;
 
     @Mock
@@ -50,14 +46,12 @@ class NotificationServiceTest {
         when(sendEmailResponse.getReference()).thenReturn(Optional.of(randomUUID().toString()));
         when(sendEmailResponse.getNotificationId()).thenReturn(UUID.randomUUID());
 
-        doReturn(sendEmailResponse)
-            .when(notificationClient)
-            .sendEmail(
-                eq(templateId),
-                eq(EMAIL_ADDRESS),
-                isNull(),
-                anyString()
-            );
+        when(notificationClient.sendEmail(
+            eq(templateId),
+            eq(EMAIL_ADDRESS),
+            isNull(),
+            anyString()
+        )).thenReturn(sendEmailResponse);
 
         notificationService.sendEmail(
             EMAIL_ADDRESS,
@@ -85,14 +79,12 @@ class NotificationServiceTest {
         when(sendEmailResponse.getReference()).thenReturn(Optional.of(randomUUID().toString()));
         when(sendEmailResponse.getNotificationId()).thenReturn(UUID.randomUUID());
 
-        doReturn(sendEmailResponse)
-            .when(notificationClient)
-            .sendEmail(
-                eq(templateId),
-                eq(EMAIL_ADDRESS),
-                isNull(),
-                anyString()
-            );
+        when(notificationClient.sendEmail(
+            eq(templateId),
+            eq(EMAIL_ADDRESS),
+            isNull(),
+            anyString()
+        )).thenReturn(sendEmailResponse);
 
         notificationService.sendEmail(
             EMAIL_ADDRESS,

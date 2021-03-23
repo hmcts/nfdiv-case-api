@@ -224,6 +224,8 @@ dependencies {
     testImplementation group: 'io.rest-assured', name: 'rest-assured'
 
     testImplementation group: 'org.assertj', name: 'assertj-core', version: versions.assertJ
+    testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '3.0.2'
+
     testCompile group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
     testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
