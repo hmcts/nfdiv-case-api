@@ -13,12 +13,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.reform.divorce.caseapi.config.WebMvcConfig;
 import uk.gov.hmcts.reform.divorce.caseapi.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.reform.divorce.caseapi.model.CcdCallbackResponse;
 import uk.gov.hmcts.reform.divorce.caseapi.service.SolicitorSubmitPetitionService;
 import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
-import uk.gov.hmcts.reform.divorce.ccd.model.OrderSummary;
 
 import java.util.Collections;
 import java.util.Map;
@@ -61,7 +61,7 @@ public class SolicitorSubmitPetitionControllerTest {
 
     @MockBean
     private WebMvcConfig webMvcConfig;
-    
+
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenOrderSummaryIsSet() throws Exception {
         OrderSummary orderSummary = getDefaultOrderSummary();

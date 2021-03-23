@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.reform.divorce.caseapi.model.CcdCallbackRequest;
 import uk.gov.hmcts.reform.divorce.caseapi.model.CcdCallbackResponse;
 import uk.gov.hmcts.reform.divorce.caseapi.service.SolicitorSubmitPetitionService;
 import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
-import uk.gov.hmcts.reform.divorce.ccd.model.OrderSummary;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.ABOUT_TO_START_WEBHOOK;
