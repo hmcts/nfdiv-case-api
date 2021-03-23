@@ -31,6 +31,8 @@ public class SolicitorStatementOfTruthPaySubmit implements CcdConfiguration {
 
     public static final String SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT = "solicitor-statement-of-truth-pay-submit";
 
+    public static final String SUBMIT_PETITION = "submit-petition";
+
     private final List<CcdPageConfiguration> pages = asList(
         new SolStatementOfTruth(),
         new SolPayment(),
@@ -58,7 +60,7 @@ public class SolicitorStatementOfTruthPaySubmit implements CcdConfiguration {
             .displayOrder(1)
             .showSummary()
             .endButtonLabel("Submit Petition")
-            //.aboutToStartWebhook(120, 120)
+            .aboutToStartWebhook(SUBMIT_PETITION)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_SOLICITOR)
             .grant(READ,
