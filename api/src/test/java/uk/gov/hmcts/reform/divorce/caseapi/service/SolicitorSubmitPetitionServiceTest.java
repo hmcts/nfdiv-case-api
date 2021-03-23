@@ -8,9 +8,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.Fee;
+import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.reform.divorce.caseapi.clients.FeesAndPaymentsClient;
-import uk.gov.hmcts.reform.divorce.ccd.model.FeeValue;
-import uk.gov.hmcts.reform.divorce.ccd.model.OrderSummary;
 
 import java.util.Collections;
 import java.util.Map;
@@ -57,8 +57,8 @@ public class SolicitorSubmitPetitionServiceTest {
         assertThat(orderSummary.getPaymentReference()).isNull();
         assertThat(orderSummary.getPaymentTotal()).isEqualTo(String.valueOf(1000));// in pence
         assertThat(orderSummary.getFees())
-            .extracting("value", FeeValue.class)
-            .extracting("feeDescription", "feeVersion", "feeCode", "feeAmount")
+            .extracting("value", Fee.class)
+            .extracting("description", "version", "code", "amount")
             .contains(tuple(ISSUE_FEE, "1", FEE_CODE, "1000")
             );
 

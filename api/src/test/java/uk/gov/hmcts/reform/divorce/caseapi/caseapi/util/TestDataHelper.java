@@ -1,21 +1,21 @@
 package uk.gov.hmcts.reform.divorce.caseapi.caseapi.util;
 
+import uk.gov.hmcts.ccd.sdk.type.Fee;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.reform.divorce.caseapi.model.CaseDetails;
 import uk.gov.hmcts.reform.divorce.caseapi.model.CcdCallbackRequest;
 import uk.gov.hmcts.reform.divorce.caseapi.model.payments.FeeResponse;
 import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
-import uk.gov.hmcts.reform.divorce.ccd.model.FeeItem;
-import uk.gov.hmcts.reform.divorce.ccd.model.FeeValue;
-import uk.gov.hmcts.reform.divorce.ccd.model.OrderSummary;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.DivorceOrDissolution;
 
 import static java.util.Collections.singletonList;
+import static uk.gov.hmcts.ccd.sdk.type.Fee.getValueInPence;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.ISSUE_FEE;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.TEST_USER_EMAIL;
-import static uk.gov.hmcts.reform.divorce.ccd.model.FeeValue.getValueInPence;
 
 public class TestDataHelper {
 
@@ -61,33 +61,22 @@ public class TestDataHelper {
             .build();
     }
 
-
-    public static OrderSummary getOrderSummary(FeeItem feeItem) {
-        return OrderSummary
-            .builder()
-            .fees(singletonList(feeItem))
-            .paymentTotal(feeItem.getValue().getFeeAmount())
-            .build();
-    }
-
-
-    public static FeeItem getFeeItem(double feeAmount, String feeCode, String description, int version) {
-        return FeeItem
-            .builder()
+    public static ListValue<Fee> getFeeItem(double feeAmount, String feeCode, String description, int version) {
+        return ListValue
+            .<Fee>builder()
             .value(
-                FeeValue
+                Fee
                     .builder()
-                    .feeAmount(getValueInPence(feeAmount))
-                    .feeCode(feeCode)
-                    .feeDescription(description)
-                    .feeVersion(String.valueOf(version))
+                    .amount(getValueInPence(feeAmount))
+                    .code(feeCode)
+                    .description(description)
+                    .version(String.valueOf(version))
                     .build()
             )
             .build();
     }
 
-    public static FeeItem getDefaultFeeItem() {
+    public static ListValue<Fee> getDefaultFeeItem() {
         return getFeeItem(10.50, FEE_CODE, "Issue Petition Fee", 1);
     }
-
 }
