@@ -14,8 +14,10 @@ java:
   keyVaults:
     nfdiv:
       secrets:
-        - AppInsightsInstrumentationKey
-        - uk-gov-notify-api-key
+        - name: AppInsightsInstrumentationKey
+          alias: APP_INSIGHTS_KEY
+        - name: uk-gov-notify-api-key
+          alias: UK_GOV_NOTIY_API_KEY
   environment:
       NOTIFY_TEMPLATE_SIGN_IN_DIVORCE_URL: https://nfdiv-apply-for-divorce.{{ .Values.global.environment }}.platform.hmcts.net/
       NOTIFY_TEMPLATE_SIGN_IN_DISSOLUTION_URL: https://nfdiv-end-civil-partnership.{{ .Values.global.environment }}.platform.hmcts.net/
