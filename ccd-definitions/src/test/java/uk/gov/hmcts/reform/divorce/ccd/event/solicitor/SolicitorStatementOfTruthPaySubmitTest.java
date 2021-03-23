@@ -57,5 +57,6 @@ class SolicitorStatementOfTruthPaySubmitTest {
             CASEWORKER_DIVORCE_COURTADMIN,
             CASEWORKER_DIVORCE_SUPERUSER,
             CASEWORKER_DIVORCE_COURTADMIN_LA);
+        verify(eventBuilder).aboutToStartWebhook("submit-petition");
     }
 }
