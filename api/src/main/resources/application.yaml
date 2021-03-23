@@ -15,7 +15,7 @@ spring:
   application:
     name: NFDIV Case API
   config:
-    import: "optional:configtree:/mnt/secrets/"
+    import: "optional:configtree:/mnt/secrets/nfdiv/"
 
 azure:
   application-insights:
