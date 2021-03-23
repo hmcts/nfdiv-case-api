@@ -6,11 +6,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.ChangedNameHow;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.ConfidentialAddress;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.DivorceOrDissolution;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.Gender;
+import uk.gov.hmcts.reform.divorce.ccd.model.enums.SolServiceMethod;
+import uk.gov.hmcts.reform.divorce.ccd.model.enums.SolToPay;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.WhoDivorcing;
 
 import java.util.Set;
@@ -343,4 +346,115 @@ public class CaseData {
     @JsonProperty("solApplicationFeeOrderSummary")
     @CCD(label = "Here are your order details")
     private OrderSummary orderSummary;
+
+    @JsonProperty("SolUrgentCase")
+    @CCD(
+        label = "Is this an urgent jurisdiction case?"
+    )
+    private YesOrNo solUrgentCase;
+
+    @JsonProperty("SolUrgentCaseSupportingInformation")
+    @CCD(
+        label = "Any supporting information or instructions?",
+        typeOverride = TextArea
+    )
+    private String solUrgentCaseSupportingInformation;
+
+    @JsonProperty("D8DivorceCostsClaim")
+    @CCD(
+        label = "Does the petitioner want to claim costs?"
+    )
+    private YesOrNo d8DivorceCostsClaim;
+
+    @JsonProperty("D8FinancialOrder")
+    @CCD(
+        label = "Does the petitioner wish to apply for a financial order?",
+        hint = "The court will not start processing your request for a financial order until you submit the separate "
+            + "application and pay the fee."
+    )
+    private YesOrNo d8FinancialOrder;
+
+    @JsonProperty("SolServiceMethod")
+    @CCD(
+        label = "How would you like the respondent to be served?"
+    )
+    private SolServiceMethod solServiceMethod;
+
+    @JsonProperty("SolStatementOfReconciliationCertify")
+    @CCD(
+        label = "I have discussed the possibility of a reconciliation with the petitioner."
+    )
+    private YesOrNo solStatementOfReconciliationCertify;
+
+    @JsonProperty("SolStatementOfReconciliationDiscussed")
+    @CCD(
+        label = "I have given the petitioner the names and addresses of persons qualified to help effect a reconciliation."
+    )
+    private YesOrNo solStatementOfReconciliationDiscussed;
+
+    @JsonProperty("D8StatementOfTruth")
+    @CCD(
+        label = "The petitioner believes that the facts stated in this application are true."
+    )
+    private YesOrNo d8StatementOfTruth;
+
+    @JsonProperty("SolSignStatementOfTruth")
+    @CCD(
+        label = "I am duly authorised by the petitioner to sign this statement."
+    )
+    private YesOrNo solSignStatementOfTruth;
+
+    @JsonProperty("SolStatementOfReconciliationName")
+    @CCD(
+        label = "Your name"
+    )
+    private String solStatementOfReconciliationName;
+
+    @JsonProperty("SolStatementOfReconciliationFirm")
+    @CCD(
+        label = "Name of your firm"
+    )
+    private String solStatementOfReconciliationFirm;
+
+    @JsonProperty("StatementOfReconciliationComments")
+    @CCD(
+        label = "Additional comments",
+        hint = "For the attention of court staff. These comments will not form part of the petition",
+        typeOverride = TextArea
+    )
+    private String statementOfReconciliationComments;
+
+    @JsonProperty("SolApplicationFeeInPounds")
+    @CCD(
+        label = "Solicitor application fee (in pounds)"
+    )
+    private String solApplicationFeeInPounds;
+
+    @JsonProperty("SolPaymentHowToPay")
+    @CCD(
+        label = "How will payment be made?",
+        typeOverride = FixedList,
+        typeParameterOverride = "SolToPay"
+    )
+    private SolToPay solPaymentHowToPay;
+
+    @JsonProperty("PbaNumbers")
+    @CCD(
+        label = "Account number"
+    )
+    private DynamicList pbaNumbers;
+
+    @JsonProperty("FeeAccountReference")
+    @CCD(
+        label = "Enter your reference",
+        hint = "This will appear on your statement to help you identify this payment"
+    )
+    private String feeAccountReference;
+
+    @JsonProperty("SolApplicationFeeOrderSummary")
+    @CCD(
+        label = "Here are your order details"
+    )
+    private OrderSummary solApplicationFeeOrderSummary;
+
 }
