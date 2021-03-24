@@ -45,7 +45,7 @@ public class SolicitorSubmitPetitionController {
 
         OrderSummary orderSummary = solicitorSubmitPetitionService.getOrderSummary();
         CaseData caseData = callbackRequest.getCaseDetails().getCaseData();
-        caseData.setOrderSummary(orderSummary);
+        caseData.setSolApplicationFeeOrderSummary(orderSummary);
 
         return CcdCallbackResponse
             .builder()

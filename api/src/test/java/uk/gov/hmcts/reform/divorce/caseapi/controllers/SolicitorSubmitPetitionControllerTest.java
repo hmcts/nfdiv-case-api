@@ -67,7 +67,7 @@ public class SolicitorSubmitPetitionControllerTest {
         OrderSummary orderSummary = getDefaultOrderSummary();
 
         CaseData updatedCaseDate = caseData();
-        updatedCaseDate.setOrderSummary(orderSummary);
+        updatedCaseDate.setSolApplicationFeeOrderSummary(orderSummary);
 
         when(solicitorSubmitPetitionService.getOrderSummary())
             .thenReturn(orderSummary);
