@@ -20,8 +20,12 @@ java:
           alias: UK_GOV_NOTIY_API_KEY
         - name: s2s-case-api-secret
           alias: S2S_SECRET
+        - name: idam-secret
+          alias: IDAM_CLIENT_SECRET
   environment:
       NOTIFY_TEMPLATE_SIGN_IN_DIVORCE_URL: https://nfdiv-apply-for-divorce.{{ .Values.global.environment }}.platform.hmcts.net/
       NOTIFY_TEMPLATE_SIGN_IN_DISSOLUTION_URL: https://nfdiv-end-civil-partnership.{{ .Values.global.environment }}.platform.hmcts.net/
       S2S_URL: http://rpe-service-auth-provider-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
       FEE_API_URL: http://fees-register-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
+      IDAM_API_REDIRECT_URL: https://div-pfe-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal/authenticated
+      IDAM_API_BASEURL: "https://idam-api.{{ .Values.global.environment }}.platform.hmcts.net"
