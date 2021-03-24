@@ -6,8 +6,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.EventTypeBuilder;
-import uk.gov.hmcts.ccd.sdk.api.Field;
-import uk.gov.hmcts.ccd.sdk.api.FieldCollection;
 import uk.gov.hmcts.reform.divorce.ccd.mock.EventBuildingMockUtil;
 import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.reform.divorce.ccd.model.State;
@@ -35,9 +33,6 @@ class SolicitorStatementOfTruthPaySubmitTest {
     private final ConfigBuilder<CaseData, State, UserRole> configBuilder = eventBuildingMockUtil.getConfigBuilder();
     private final EventTypeBuilder<CaseData, UserRole, State> eventTypeBuilder = eventBuildingMockUtil.getEventTypeBuilder();
     private final Event.EventBuilder<CaseData, UserRole, State> eventBuilder = eventBuildingMockUtil.getEventBuilder();
-    private final FieldCollection.FieldCollectionBuilder<CaseData, Event.EventBuilder<CaseData, UserRole, State>>
-        fieldCollectionBuilder = eventBuildingMockUtil.getFieldCollectionBuilder();
-    private final Field.FieldBuilder fieldBuilder = eventBuildingMockUtil.getFieldBuilder();
 
     @Test
     void shouldBuildSolicitorCreateEventWithConfigBuilder() {
