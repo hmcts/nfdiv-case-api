@@ -458,4 +458,10 @@ public class CaseData {
     )
     private OrderSummary solApplicationFeeOrderSummary;
 
+    @JsonProperty("LastNameChangedWhenMarried")
+    @CCD(
+        label = "Did you change your last name when you got married?"
+    )
+    private YesOrNo lastNameChangedWhenMarried;
+
 }
