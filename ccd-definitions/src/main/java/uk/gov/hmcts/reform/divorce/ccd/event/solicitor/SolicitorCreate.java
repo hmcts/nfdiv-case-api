@@ -54,6 +54,7 @@ public class SolicitorCreate implements CcdConfiguration {
             .displayOrder(1)
             .showSummary()
             .endButtonLabel("Save Petition")
+            .aboutToStartWebhook()
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_SOLICITOR)
             .grant(READ_UPDATE, CASEWORKER_DIVORCE_SUPERUSER)
