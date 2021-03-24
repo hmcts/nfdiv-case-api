@@ -11,31 +11,31 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 public enum JurisdictionConnections implements HasLabel {
     @JsonProperty("A")
     @JsonPropertyDescription("The Petitioner and Respondent are habitually resident")
-    A("A"),
+    PET_RESP_RESIDENT("A"),
 
     @JsonProperty("B")
     @JsonPropertyDescription("The Petitioner and Respondent were last habitually resident in England and Wales")
-    B("B"),
+    PET_RESP_LAST_RESIDENT("B"),
 
     @JsonProperty("C")
     @JsonPropertyDescription("The Respondent habitually resides in England and Wales")
-    C("C"),
+    RESP_RESIDENT("C"),
 
     @JsonProperty("D")
     @JsonPropertyDescription("The Petitioner is habitually resident in England and Wales and has been for 12 months")
-    D("D"),
+    PET_RESIDENT_TWELVE_MONTHS("D"),
 
     @JsonProperty("E")
     @JsonPropertyDescription("The Petitioner is habitually resident in England and Wales and has been for 6 months")
-    E("E"),
+    PET_RESIDENT_SIX_MONTHS("E"),
 
     @JsonProperty("F")
     @JsonPropertyDescription("The Petitioner and Respondent are both domiciled in England and Wales")
-    F("F"),
+    PET_RESP_DOMICILED("F"),
 
     @JsonProperty("G")
     @JsonPropertyDescription("Eligible for Residual Jurisdiction")
-    G("G");
+    RESIDUAL_JURISDICTION("G");
 
     private final String label;
 }
