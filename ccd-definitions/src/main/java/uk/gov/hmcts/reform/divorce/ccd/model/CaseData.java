@@ -344,10 +344,6 @@ public class CaseData {
     )
     private String d8MarriageRespondentName;
 
-    @JsonProperty("solApplicationFeeOrderSummary")
-    @CCD(label = "Here are your order details")
-    private OrderSummary orderSummary;
-
     @JsonProperty("SolUrgentCase")
     @CCD(
         label = "Is this an urgent jurisdiction case?"

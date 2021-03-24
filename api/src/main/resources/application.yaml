@@ -16,7 +16,9 @@ spring:
     name: NFDIV Case API
   config:
     import: "optional:configtree:/mnt/secrets/nfdiv/"
-
+  jackson:
+    mapper:
+      accept_case_insensitive_enums: true
 azure:
   application-insights:
     instrumentation-key: ${APP_INSIGHTS_KEY:00000000-0000-0000-0000-000000000000}
