@@ -4,7 +4,7 @@
     "D8PetitionerFirstName": "John",
     "D8PetitionerLastName": "Smith",
     "D8PetitionerEmail": "simulate-delivered@notifications.service.gov.uk",
-    "solApplicationFeeOrderSummary": {
+    "SolApplicationFeeOrderSummary": {
       "PaymentTotal": "55000",
       "Fees": [
         {

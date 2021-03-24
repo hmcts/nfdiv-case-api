@@ -4,7 +4,7 @@
     "D8PetitionerFirstName": "test_first_name",
     "D8PetitionerLastName": "test_last_name",
     "D8PetitionerEmail": "test@test.com",
-    "solApplicationFeeOrderSummary": {
+    "SolApplicationFeeOrderSummary": {
       "PaymentTotal": "1000",
       "Fees": [
         {
