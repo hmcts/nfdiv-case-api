@@ -13,6 +13,7 @@ import uk.gov.hmcts.reform.divorce.ccd.model.enums.ChangedNameHow;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.ConfidentialAddress;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.DivorceOrDissolution;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.Gender;
+import uk.gov.hmcts.reform.divorce.ccd.model.enums.JurisdictionConnections;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.SolServiceMethod;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.SolToPay;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.WhoDivorcing;
@@ -460,4 +461,10 @@ public class CaseData {
     )
     private YesOrNo lastNameChangedWhenMarried;
 
+
+    @JsonProperty("JurisdictionConnections")
+    @CCD(
+        label = "Jurisdiction connections"
+    )
+    private Set<JurisdictionConnections> jurisdictionConnections;
 }
