@@ -145,6 +145,8 @@ repositories {
 def versions = [
     assertJ           : '3.19.0',
     ccdConfigGenerator: '0.15.6',
+    ccdStoreClient    : '4.7.6',
+    idamClient        : '2.0.0',
     junit             : '5.7.1',
     junitPlatform     : '1.7.1',
     lombok            : '1.18.12',
@@ -196,6 +198,9 @@ dependencies {
     implementation group: 'uk.gov.hmcts.reform', name: 'logging', version: versions.reformsJavaLogging
     implementation group: 'uk.gov.hmcts.reform', name: 'logging-appinsights', version: versions.reformsJavaLogging
     implementation group: 'uk.gov.hmcts.reform', name: 'logging-spring', version: versions.reformsJavaLogging
+
+    implementation group: 'uk.gov.hmcts.reform', name: 'idam-client', version: versions.idamClient
+    implementation (group: 'uk.gov.hmcts.reform', name: 'core-case-data-store-client', version: versions.ccdStoreClient)
 
     compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.14.1'
     compile group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.14.1'
