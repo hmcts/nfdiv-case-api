@@ -8,10 +8,10 @@ import uk.gov.hmcts.reform.idam.client.IdamClient;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
+import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.BEARER_PREFIX;
+
 @Service
 public class IdamService {
-    private static final String BEARER = "Bearer" + " ";
-
     @Value("${idam.caseworker.username}")
     private String caseworkerUserName;
 
@@ -40,6 +40,6 @@ public class IdamService {
         if (StringUtils.isBlank(token)) {
             return token;
         }
-        return token.startsWith(BEARER) ? token : BEARER.concat(token);
+        return token.startsWith(BEARER_PREFIX) ? token : BEARER_PREFIX.concat(token);
     }
 }

@@ -10,11 +10,12 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.Set;
 
+import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.CREATOR_ROLE;
+import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.PET_SOL_ROLE;
+
 @Service
 @Slf4j
 public class CcdAccessService {
-    public static final String CREATOR_ROLE = "[CREATOR]";
-    public static final String PET_SOL_ROLE = "[PETSOLICITOR]";
     @Autowired
     private CaseUserApi caseUserApi;
 

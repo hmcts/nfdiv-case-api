@@ -39,6 +39,11 @@ public final class NotificationConstants {
     public static final String FAMILY_COURT = "family court";
     public static final String DIVORCE = "divorce";
 
+    public static final String CREATOR_ROLE = "[CREATOR]";
+    public static final String PET_SOL_ROLE = "[PETSOLICITOR]";
+
+    public static final String BEARER_PREFIX = "Bearer" + " ";
+
     private NotificationConstants() {
     }
 }
