@@ -46,6 +46,8 @@ import static java.net.URLEncoder.encode;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -76,6 +78,8 @@ public class SolicitorSubmitPetitionControllerTest {
     private static final String CASEWORKER_ROLE = "caseworker-divorce";
 
     private static final String SERVICE_AUTH_TOKEN = "test-service-auth-token";
+
+    private static final String BEARER = "Bearer ";
 
     @Autowired
     private MockMvc mockMvc;
@@ -125,7 +129,8 @@ public class SolicitorSubmitPetitionControllerTest {
 
 
     @Test
-    public void givenValidCaseDataWhenCallbackIsInvokedThenOrderSummaryIsSet() throws Exception {
+    public void givenValidCaseDataWhenCallbackIsInvokedThenOrderSummaryAndSolicitorRolesAreSet()
+        throws Exception {
         stubForFeesLookup();
 
         when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTH_TOKEN);
@@ -150,6 +155,9 @@ public class SolicitorSubmitPetitionControllerTest {
             .andExpect(
                 content().json(expectedCcdCallbackResponse())
             );
+
+        verify(serviceTokenGenerator).generate();
+        verifyNoMoreInteractions(serviceTokenGenerator);
     }
 
     @Test
@@ -175,9 +183,34 @@ public class SolicitorSubmitPetitionControllerTest {
             );
     }
 
+    @Test
+    public void givenValidCaseDataWhenCallbackIsInvokedAndIdamUserRetrievalFailsThen401IsReturned()
+        throws Exception {
+        stubForFeesLookup();
+
+        stubForIdamFailure();
+
+        mockMvc.perform(MockMvcRequestBuilders.post(SUBMIT_PETITION_API_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(TestConstants.AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(callbackRequest()))
+            .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isUnauthorized()
+            )
+            .andExpect(
+                result -> assertThat(result.getResolvedException()).isExactlyInstanceOf(FeignException.Unauthorized.class)
+            )
+            .andExpect(
+                result -> assertThat(requireNonNull(result.getResolvedException()).getMessage())
+                    .contains("Invalid idam credentials")
+            );
+    }
+
     private void stubForCcdCaseRoles() {
         CASE_DATA_SERVER.stubFor(put(urlMatching("/cases/[0-9]+/users/[0-9]+"))
-            .withHeader(AUTHORIZATION, new EqualToPattern("Bearer " + CASE_WORKER_TOKEN))
+            .withHeader(AUTHORIZATION, new EqualToPattern(BEARER + CASE_WORKER_TOKEN))
             .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(SERVICE_AUTH_TOKEN))
             .withRequestBody(new EqualToJsonPattern(
                 "{\"user_id\" : \"1\", \"case_roles\":[\"[CREATOR]\",\"[PETSOLICITOR]\"]}",
@@ -200,11 +233,21 @@ public class SolicitorSubmitPetitionControllerTest {
 
     private void stubForIdamDetails(String testAuthorizationToken, String solicitorUserId, String solicitorRole) {
         IDAM_SERVER.stubFor(get("/details")
-            .withHeader(AUTHORIZATION, new EqualToPattern("Bearer " + testAuthorizationToken))
+            .withHeader(AUTHORIZATION, new EqualToPattern(BEARER + testAuthorizationToken))
             .willReturn(aResponse()
                 .withStatus(HttpStatus.OK.value())
                 .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .withBody(getUserDetailsForRole(solicitorUserId, solicitorRole)))
+        );
+    }
+
+    private void stubForIdamFailure() {
+        IDAM_SERVER.stubFor(get("/details")
+            .withHeader(AUTHORIZATION, new EqualToPattern(BEARER + TEST_AUTHORIZATION_TOKEN))
+            .willReturn(aResponse()
+                .withStatus(HttpStatus.UNAUTHORIZED.value())
+                .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                .withBody("Invalid idam credentials"))
         );
     }
 
@@ -216,7 +259,7 @@ public class SolicitorSubmitPetitionControllerTest {
                 .withBody(objectMapper.writeValueAsString(getFeeResponse())))
         );
     }
-    
+
     private void stubForFeesNotFound() {
         FEES_SERVER.stubFor(get(urlEqualTo(
             "/fees-register/fees/lookup"
