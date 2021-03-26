@@ -220,7 +220,7 @@ public class CaseData {
     @CCD(
         label = "How did the petitioner change their name?"
     )
-    private Set<ChangedNameHow> d8PetitionerNameChangedHow;
+    private ChangedNameHow d8PetitionerNameChangedHow;
 
     @JsonProperty("D8PetitionerNameChangedHowOtherDetails")
     @CCD(
