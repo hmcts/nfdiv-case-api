@@ -19,6 +19,8 @@ spring:
   jackson:
     mapper:
       accept_case_insensitive_enums: true
+  main:
+    allow-bean-definition-overriding: true
 azure:
   application-insights:
     instrumentation-key: ${APP_INSIGHTS_KEY:00000000-0000-0000-0000-000000000000}
@@ -49,17 +51,25 @@ idam:
   s2s-auth:
     url: ${S2S_URL:http://rpe-service-auth-provider-aat.service.core-compute-aat.internal}
     secret: ${S2S_SECRET:AAAAAAAAAAAAAAAA}
+    microservice: nfdiv_case_api
   api:
     url: ${IDAM_API_BASEURL:http://localhost:5000}
+  caseworker:
+    username: ${IDAM_CASEWORKER_USERNAME:dummycaseworker@test.com}
+    password: ${IDAM_CASEWORKER_PASSWORD:dummy}
   client:
     id: 'divorce'
     secret: ${IDAM_CLIENT_SECRET:123456}
     redirect_uri: ${IDAM_API_REDIRECT_URL:http://localhost:3001/oauth2/callback}
-    cache:
-      refresh-before-expire-in-sec: 300
+
 fee:
   api:
     baseUrl: ${FEE_API_URL:http://fees-register-api-aat.service.core-compute-aat.internal}
 
 s2s:
   stub: false
+
+core_case_data:
+  api:
+    url: ${CASE_DATA_STORE_BASEURL:http://ccd-data-store-api-aat.service.core-compute-aat.internal}
+

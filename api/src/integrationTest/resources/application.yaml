@@ -20,13 +20,33 @@ uk:
 idam:
   s2s-auth:
     url: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
+    secret: AAAAAAAAAAAAAAAA
+    microservice: nfdiv_case_api
+  api:
+    url: http://localhost:5000
+  caseworker:
+    username: dummycaseworker@test.com
+    password: dummy
+  client:
+    id: 'divorce'
+    secret: BBBBBBBBBBBBBBBB
+    redirect_uri: http://localhost:3001/oauth2/callback
 
 s2s-authorised:
   services: ccd_data
 
 fee:
   api:
-    baseUrl: http://localhost:${wiremock.server.port}
+    baseUrl: http://localhost:4010
 
 s2s:
   stub: true
+
+core_case_data:
+  api:
+    url: http://localhost:4012
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+
