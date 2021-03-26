@@ -133,13 +133,13 @@ public class SolicitorSubmitPetitionControllerTest {
         throws Exception {
         stubForFeesLookup();
 
-        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTH_TOKEN);
-
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, SOLICITOR_USER_ID, SOLICITOR_ROLE);
 
         stubForIdamDetails(CASE_WORKER_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
 
         stubForIdamToken();
+
+        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTH_TOKEN);
 
         stubForCcdCaseRoles();
 
@@ -184,7 +184,7 @@ public class SolicitorSubmitPetitionControllerTest {
     }
 
     @Test
-    public void givenValidCaseDataWhenCallbackIsInvokedAndIdamUserRetrievalFailsThen401IsReturned()
+    public void givenValidCaseDataWhenCallbackIsInvokedAndIdamUserRetrievalThrowsUnauthorizedThen401IsReturned()
         throws Exception {
         stubForFeesLookup();
 
@@ -208,6 +208,36 @@ public class SolicitorSubmitPetitionControllerTest {
             );
     }
 
+    @Test
+    public void givenValidCaseDataWhenCallbackIsInvokedAndCcdCaseRolesUpdateThrowsForbiddenExceptionThen403IsReturned()
+        throws Exception {
+        stubForFeesLookup();
+
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, SOLICITOR_USER_ID, SOLICITOR_ROLE);
+
+        stubForIdamDetails(CASE_WORKER_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+
+        stubForIdamToken();
+
+        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTH_TOKEN);
+
+        stubForCcdCaseRolesUpdateFailure();
+
+        mockMvc.perform(MockMvcRequestBuilders.post(SUBMIT_PETITION_API_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(TestConstants.AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(callbackRequest()))
+            .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isForbidden()
+            )
+            .andExpect(
+                result -> assertThat(result.getResolvedException()).isExactlyInstanceOf(FeignException.Forbidden.class)
+            );
+    }
+
+
     private void stubForCcdCaseRoles() {
         CASE_DATA_SERVER.stubFor(put(urlMatching("/cases/[0-9]+/users/[0-9]+"))
             .withHeader(AUTHORIZATION, new EqualToPattern(BEARER + CASE_WORKER_TOKEN))
@@ -218,6 +248,19 @@ public class SolicitorSubmitPetitionControllerTest {
                 true)
             )
             .willReturn(aResponse().withStatus(200))
+        );
+    }
+
+    private void stubForCcdCaseRolesUpdateFailure() {
+        CASE_DATA_SERVER.stubFor(put(urlMatching("/cases/[0-9]+/users/[0-9]+"))
+            .withHeader(AUTHORIZATION, new EqualToPattern(BEARER + CASE_WORKER_TOKEN))
+            .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(SERVICE_AUTH_TOKEN))
+            .withRequestBody(new EqualToJsonPattern(
+                "{\"user_id\" : \"1\", \"case_roles\":[\"[CREATOR]\",\"[PETSOLICITOR]\"]}",
+                true,
+                true)
+            )
+            .willReturn(aResponse().withStatus(403))
         );
     }
 
