@@ -3,9 +3,11 @@ package uk.gov.hmcts.reform.divorce.caseapi;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.TestPropertySource;
 import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
+import uk.gov.hmcts.reform.idam.client.IdamClient;
 
 import java.util.Map;
 
@@ -35,6 +37,15 @@ abstract class FunctionalTestSuite {
     @Value("${s2s.name}")
     protected String s2sName;
 
+    @Value("${idam.solicitor.username}")
+    protected String solicitorUsername;
+
+    @Value("${idam.solicitor.password")
+    protected String solicitorPassword;
+
+    @Autowired
+    private IdamClient idamClient;
+
     protected CaseData caseData() {
         CaseData caseData = new CaseData();
         caseData.setD8PetitionerFirstName(TEST_FIRST_NAME);
@@ -58,5 +69,9 @@ abstract class FunctionalTestSuite {
         assertThat(response.getStatusCode()).isEqualTo(200);
 
         return "Bearer " + response.getBody().print();
+    }
+
+    protected String generateIdamTokenForSolicitor() {
+        return idamClient.getAccessToken(solicitorUsername,solicitorPassword);
     }
 }

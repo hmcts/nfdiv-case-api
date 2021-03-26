@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.util.ResourceUtils;
 import uk.gov.hmcts.reform.divorce.caseapi.model.CaseDetails;
 import uk.gov.hmcts.reform.divorce.caseapi.model.CcdCallbackRequest;
@@ -37,6 +38,7 @@ public class SolicitorSubmitPetitionTest extends FunctionalTestSuite {
             .baseUri(testUrl)
             .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
             .header(SERVICE_AUTHORIZATION, generateServiceAuthTokenFor(s2sName))
+            .header(HttpHeaders.AUTHORIZATION,generateIdamTokenForSolicitor())
             .body(
                 CcdCallbackRequest
                     .builder()

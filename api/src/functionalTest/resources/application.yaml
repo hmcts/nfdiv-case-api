@@ -21,6 +21,9 @@ s2s:
 idam:
   s2s-auth:
     url: ${TEST_S2S_URL:http://rpe-service-auth-provider-aat.service.core-compute-aat.internal}
+  solicitor:
+    username: ${IDAM_SOLICITOR_USERNAME}
+    password: ${IDAM_SOLICITOR_PASSWORD}
 
 s2s-authorised:
   services: ccd_data
