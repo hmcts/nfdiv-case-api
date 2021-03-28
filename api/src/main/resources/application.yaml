@@ -51,7 +51,7 @@ idam:
   s2s-auth:
     url: ${S2S_URL:http://rpe-service-auth-provider-aat.service.core-compute-aat.internal}
     secret: ${S2S_SECRET:AAAAAAAAAAAAAAAA}
-    microservice: nfdiv_case_api
+    microservice: nfdiv_cms # Temporarily use cms secret till ccd whitelists case api
   api:
     url: ${IDAM_API_BASEURL:http://localhost:5000}
   caseworker:

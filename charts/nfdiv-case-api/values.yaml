@@ -18,7 +18,7 @@ java:
           alias: APP_INSIGHTS_KEY
         - name: uk-gov-notify-api-key
           alias: UK_GOV_NOTIY_API_KEY
-        - name: s2s-case-api-secret
+        - name: s2s-cms-secret # Temporarily use cms secret till ccd whitelists case api
           alias: S2S_SECRET
         - name: idam-secret
           alias: IDAM_CLIENT_SECRET

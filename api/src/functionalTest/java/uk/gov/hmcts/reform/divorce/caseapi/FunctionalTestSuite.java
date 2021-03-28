@@ -40,7 +40,7 @@ abstract class FunctionalTestSuite {
     @Value("${idam.solicitor.username}")
     protected String solicitorUsername;
 
-    @Value("${idam.solicitor.password")
+    @Value("${idam.solicitor.password}")
     protected String solicitorPassword;
 
     @Autowired
@@ -72,6 +72,7 @@ abstract class FunctionalTestSuite {
     }
 
     protected String generateIdamTokenForSolicitor() {
+        System.out.println("solicitorPassword"+solicitorPassword);
         return idamClient.getAccessToken(solicitorUsername,solicitorPassword);
     }
 }

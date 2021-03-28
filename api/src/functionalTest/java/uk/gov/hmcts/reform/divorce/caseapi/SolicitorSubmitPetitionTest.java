@@ -31,20 +31,22 @@ public class SolicitorSubmitPetitionTest extends FunctionalTestSuite {
     );
 
     @Test
-    public void shouldUpdateCaseDataWithOrderSummaryWhenIssueFeeIsSuccessfullyRetrieved() throws Exception {
+    public void shouldUpdateCaseDataWithOrderSummaryAndAddSolCaseRolesWhenIssueFeeIsSuccessfullyRetrieved()
+        throws Exception {
         Response response = RestAssured
             .given()
             .relaxedHTTPSValidation()
             .baseUri(testUrl)
             .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
             .header(SERVICE_AUTHORIZATION, generateServiceAuthTokenFor(s2sName))
-            .header(HttpHeaders.AUTHORIZATION,generateIdamTokenForSolicitor())
+            .header(HttpHeaders.AUTHORIZATION, generateIdamTokenForSolicitor())
             .body(
                 CcdCallbackRequest
                     .builder()
                     .caseDetails(
                         CaseDetails
                             .builder()
+                            .caseId("1616591401473378")
                             .caseData(caseData())
                             .build()
                     )
