@@ -72,7 +72,6 @@ abstract class FunctionalTestSuite {
     }
 
     protected String generateIdamTokenForSolicitor() {
-        System.out.println("solicitorPassword"+solicitorPassword);
-        return idamClient.getAccessToken(solicitorUsername,solicitorPassword);
+        return idamClient.getAccessToken(solicitorUsername, solicitorPassword);
     }
 }
