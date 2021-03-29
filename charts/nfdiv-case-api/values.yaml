@@ -18,8 +18,19 @@ java:
           alias: APP_INSIGHTS_KEY
         - name: uk-gov-notify-api-key
           alias: UK_GOV_NOTIY_API_KEY
+        - name: s2s-cms-secret # Temporarily use cms secret till ccd whitelists case api
+          alias: S2S_SECRET
+        - name: idam-secret
+          alias: IDAM_CLIENT_SECRET
+        - name: idam-caseworker-username
+          alias: IDAM_CASEWORKER_USERNAME
+        - name: idam-caseworker-password
+          alias: IDAM_CASEWORKER_PASSWORD
   environment:
       NOTIFY_TEMPLATE_SIGN_IN_DIVORCE_URL: https://nfdiv-apply-for-divorce.{{ .Values.global.environment }}.platform.hmcts.net/
       NOTIFY_TEMPLATE_SIGN_IN_DISSOLUTION_URL: https://nfdiv-end-civil-partnership.{{ .Values.global.environment }}.platform.hmcts.net/
       S2S_URL: http://rpe-service-auth-provider-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
       FEE_API_URL: http://fees-register-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
+      IDAM_API_REDIRECT_URL: https://div-pfe-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal/authenticated
+      IDAM_API_BASEURL: "https://idam-api.{{ .Values.global.environment }}.platform.hmcts.net"
+      CASE_DATA_STORE_BASEURL: "http://ccd-data-store-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal"

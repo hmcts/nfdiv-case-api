@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.reform.divorce.caseapi.model.CcdCallbackRequest;
 import uk.gov.hmcts.reform.divorce.caseapi.model.CcdCallbackResponse;
+import uk.gov.hmcts.reform.divorce.caseapi.service.CcdAccessService;
 import uk.gov.hmcts.reform.divorce.caseapi.service.SolicitorSubmitPetitionService;
 import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 
@@ -29,6 +30,9 @@ public class SolicitorSubmitPetitionController {
     @Autowired
     private SolicitorSubmitPetitionService solicitorSubmitPetitionService;
 
+    @Autowired
+    private CcdAccessService ccdAccessService;
+
     @PostMapping(path = ABOUT_TO_START_WEBHOOK, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Sets fees for issue petition and roles for solicitor")
     @ApiResponses(value = {
@@ -39,13 +43,21 @@ public class SolicitorSubmitPetitionController {
     })
     public CcdCallbackResponse retrieveFeesAndSetRolesForSubmitPetition(
         @RequestHeader("ServiceAuthorization") String serviceAuthToken,
+        @RequestHeader("Authorization") String idamAuthToken,
         @RequestBody CcdCallbackRequest callbackRequest
     ) {
         log.info("Submit petition about to start callback invoked");
 
+        log.info("Retrieving order summary");
         OrderSummary orderSummary = solicitorSubmitPetitionService.getOrderSummary();
         CaseData caseData = callbackRequest.getCaseDetails().getCaseData();
         caseData.setSolApplicationFeeOrderSummary(orderSummary);
+
+        log.info("Adding Petitioner solicitor case roles");
+        ccdAccessService.addPetitionerSolicitorRole(
+            idamAuthToken,
+            callbackRequest.getCaseDetails().getCaseId()
+        );
 
         return CcdCallbackResponse
             .builder()

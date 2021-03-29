@@ -1,6 +1,9 @@
 spring:
   application:
     name: NFDIV Case API Functional Tests
+
+  main:
+    allow-bean-definition-overriding: true
 # because functional tests load up SpringBootTest
 azure:
   application-insights:
@@ -19,8 +22,22 @@ s2s:
  name: ccd_data
 
 idam:
+  api:
+    url: ${IDAM_API_BASEURL:https://idam-api.aat.platform.hmcts.net}
   s2s-auth:
     url: ${TEST_S2S_URL:http://rpe-service-auth-provider-aat.service.core-compute-aat.internal}
+    secret: dummy
+    microservice: divorce
+  solicitor:
+    username: ${IDAM_SOLICITOR_USERNAME:dummysolicitor@test.com}
+    password: ${IDAM_SOLICITOR_PASSWORD:dummy}
+  caseworker:
+    username: dummy@test.com
+    password: dummy
+  client:
+    id: 'divorce'
+    secret: ${OAUTH2_CLIENT_SECRET:dummy}
+    redirect_uri: ${IDAM_API_REDIRECT_URL:http://localhost:3001/oauth2/callback}
 
 s2s-authorised:
   services: ccd_data
@@ -28,3 +45,7 @@ s2s-authorised:
 fee:
   api:
     baseUrl: ${FEE_API_URL:http://fees-register-api-aat.service.core-compute-aat.internal}
+
+core_case_data:
+  api:
+    url: ${CASE_DATA_STORE_BASEURL:http://ccd-data-store-api-aat.service.core-compute-aat.internal}
