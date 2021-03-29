@@ -21,8 +21,8 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.SAVE_AND_CLOSE;
 import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.SUBMITTED_WEBHOOK;
-import static uk.gov.hmcts.reform.divorce.ccd.ccdcase.NoFaultDivorce.CASE_TYPE;
-import static uk.gov.hmcts.reform.divorce.ccd.ccdcase.NoFaultDivorce.JURISDICTION;
+import static uk.gov.hmcts.reform.divorce.ccd.NoFaultDivorce.CASE_TYPE;
+import static uk.gov.hmcts.reform.divorce.ccd.NoFaultDivorce.JURISDICTION;
 import static uk.gov.hmcts.reform.divorce.ccd.event.solicitor.SolicitorCreate.SOLICITOR_CREATE;
 import static uk.gov.hmcts.reform.divorce.ccd.model.enums.DivorceOrDissolution.DIVORCE;
 

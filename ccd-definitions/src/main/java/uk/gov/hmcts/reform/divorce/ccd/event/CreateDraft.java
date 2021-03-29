@@ -21,8 +21,6 @@ public class CreateDraft implements CcdConfiguration {
             .name("Create draft case")
             .description("Apply for a divorce or dissolution")
             .displayOrder(1)
-            .retries(120, 120)
-            .fields()
-            .mandatory(CaseData::getDivorceOrDissolution);
+            .retries(120, 120);
     }
 }
