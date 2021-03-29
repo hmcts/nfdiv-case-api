@@ -68,6 +68,7 @@ public class PatchCase implements CcdConfiguration {
             .optional(CaseData::getJurisdictionBothLastHabituallyResident)
             .optional(CaseData::getJurisdictionResidualEligible)
             .optional(CaseData::getLanguagePreferenceWelsh)
+            .optional(CaseData::getD8PetitionerNameDifferentToMarriageCert)
             .optional(CaseData::getD8MarriagePetitionerName)
             .optional(CaseData::getLastNameChangedWhenMarried)
             .optional(CaseData::getD8MarriageRespondentName)
