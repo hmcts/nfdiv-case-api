@@ -1,7 +1,6 @@
 package uk.gov.hmcts.reform.divorce.ccd;
 
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
