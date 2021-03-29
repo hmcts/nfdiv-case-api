@@ -12,8 +12,6 @@ import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.reform.divorce.ccd.model.State;
 import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.reform.divorce.ccd.event.CreateDraft.CREATE_DRAFT;
@@ -43,8 +41,6 @@ class CreateDraftTest {
         verify(eventBuilder).description("Apply for a divorce or dissolution");
         verify(eventBuilder).displayOrder(1);
         verify(eventBuilder).retries(120, 120);
-        verify(eventBuilder, times(1)).fields();
-        verify(fieldCollectionBuilder, times(1)).mandatory(any());
 
         verifyNoMoreInteractions(configBuilder, eventTypeBuilder, eventBuilder, fieldCollectionBuilder);
     }

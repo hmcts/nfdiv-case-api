@@ -8,7 +8,12 @@ import uk.gov.hmcts.ccd.sdk.api.Permission;
 
 import static uk.gov.hmcts.reform.divorce.ccd.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.reform.divorce.ccd.Permissions.READ;
-import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.*;
+import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
+import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
+import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_LA;
+import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_SOLICITOR;
+import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
+import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CITIZEN;
 
 public class PetitionerOwned implements HasAccessControl {
     @Override

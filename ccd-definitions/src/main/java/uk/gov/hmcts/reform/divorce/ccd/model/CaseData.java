@@ -242,7 +242,8 @@ public class CaseData {
     @JsonProperty("D8PetitionerNameDifferentToMarriageCert")
     @CCD(
         label = "Has the petitioner changed their name since they got married?",
-        hint = "Is the respondent’s current name different to their married name or the name shown on their marriage certificate?",
+        hint = "Is the respondent’s current name different to their married name or the name shown on their "
+            + "marriage certificate?",
         access = { PetitionerOwned.class }
     )
     private YesOrNo d8PetitionerNameDifferentToMarriageCert;
@@ -315,7 +316,8 @@ public class CaseData {
     @JsonProperty("D8RespondentNameAsOnMarriageCertificate")
     @CCD(
         label = "Name changed since marriage?",
-        hint = "Is the respondent’s current name different to their married name or the name shown on their marriage certificate?",
+        hint = "Is the respondent’s current name different to their married name or the name shown on their "
+            + "marriage certificate?",
         access = { PetitionerOwned.class }
     )
     private YesOrNo d8RespondentNameAsOnMarriageCertificate;
