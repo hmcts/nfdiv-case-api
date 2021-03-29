@@ -22,13 +22,12 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.ABOUT_TO_START_WEBHOOK;
 import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.SUBMIT_PETITION;
+import static uk.gov.hmcts.reform.divorce.ccd.event.solicitor.SolicitorCreate.SOLICITOR_CREATE;
 
 @SpringBootTest
-public class SolicitorSubmitPetitionTest extends FunctionalTestSuite {
-
-    private static final String SUBMIT_PETITION_ABOUT_TO_START_CALLBACK_URL = StringUtils.join(
-        "/", SUBMIT_PETITION, ABOUT_TO_START_WEBHOOK
+public class DefaultLanguagePreferenceSettingTest extends FunctionalTestSuite {
+    private static final String SOLICITOR_CREATE_ABOUT_TO_START_CALLBACK_URL = StringUtils.join(
+        "/", SOLICITOR_CREATE, ABOUT_TO_START_WEBHOOK
     );
 
     @Test
@@ -54,7 +53,7 @@ public class SolicitorSubmitPetitionTest extends FunctionalTestSuite {
                     .build()
             )
             .when()
-            .post(SUBMIT_PETITION_ABOUT_TO_START_CALLBACK_URL);
+            .post(SOLICITOR_CREATE_ABOUT_TO_START_CALLBACK_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
@@ -66,7 +65,7 @@ public class SolicitorSubmitPetitionTest extends FunctionalTestSuite {
     }
 
     private String expectedCcdCallbackResponse() throws IOException {
-        File issueFeesResponseJsonFile = ResourceUtils.getFile("classpath:responses/ccd-callback-submit-petition.json");
+        File issueFeesResponseJsonFile = ResourceUtils.getFile("classpath:responses/ccd-callback-set-language-preference.json");
         return new String(Files.readAllBytes(issueFeesResponseJsonFile.toPath()));
     }
 }
