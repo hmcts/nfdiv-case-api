@@ -46,7 +46,7 @@ public class SolicitorSubmitPetitionTest extends FunctionalTestSuite {
                     .caseDetails(
                         CaseDetails
                             .builder()
-                            .caseId("1616591401473378")
+                            .caseId(String.valueOf(createCaseInCcd().getId()))
                             .caseData(caseData())
                             .build()
                     )
