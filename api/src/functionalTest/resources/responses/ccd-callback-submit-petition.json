@@ -6,6 +6,7 @@
     "D8PetitionerEmail": "simulate-delivered@notifications.service.gov.uk",
     "SolApplicationFeeOrderSummary": {
       "PaymentTotal": "55000",
+      "PaymentReference": null,
       "Fees": [
         {
           "id": null,
