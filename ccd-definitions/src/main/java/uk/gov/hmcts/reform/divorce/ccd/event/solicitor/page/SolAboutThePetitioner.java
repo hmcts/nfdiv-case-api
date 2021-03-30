@@ -33,6 +33,6 @@ public class SolAboutThePetitioner implements CcdPageConfiguration {
             .mandatory(CaseData::getD8DerivedPetitionerHomeAddress)
             .optional(CaseData::getD8PetitionerPhoneNumber)
             .optional(CaseData::getD8PetitionerEmail)
-            .mandatory(CaseData::getD8PetitionerContactDetailsConfidential);
+            .mandatory(CaseData::getPetitionerContactDetailsConfidential);
     }
 }
