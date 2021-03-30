@@ -1,10 +1,10 @@
 {
   "data": {
     "divorceOrDissolution": "divorce",
-    "D8PetitionerFirstName": "test_first_name",
-    "D8PetitionerLastName": "test_last_name",
-    "D8PetitionerEmail": "test@test.com",
-    "SolApplicationFeeOrderSummary": {
+    "petitionerFirstName": "test_first_name",
+    "petitionerLastName": "test_last_name",
+    "petitionerEmail": "test@test.com",
+    "solApplicationFeeOrderSummary": {
       "PaymentTotal": "1000",
       "Fees": [
         {

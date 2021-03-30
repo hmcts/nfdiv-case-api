@@ -44,7 +44,7 @@ class SolPaymentSummaryTest {
             "SolPaymentHowToPay=\"feesHelpWith\"");
         verify(fieldCollectionBuilder).label(
             "LabelHelpWithFeesReferenceNumber",
-            "Help with fee reference: **${D8HelpWithFeesReferenceNumber}**",
+            "Help with fee reference: **${helpWithFeesReferenceNumber}**",
             "SolPaymentHowToPay=\"feesHelpWith\"");
 
         verifyNoMoreInteractions(fieldCollectionBuilder);

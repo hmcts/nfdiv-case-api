@@ -35,9 +35,9 @@ public class TestDataHelper {
 
     public static CaseData caseData() {
         CaseData caseData = new CaseData();
-        caseData.setD8PetitionerFirstName(TEST_FIRST_NAME);
-        caseData.setD8PetitionerLastName(TEST_LAST_NAME);
-        caseData.setD8PetitionerEmail(TEST_USER_EMAIL);
+        caseData.setPetitionerFirstName(TEST_FIRST_NAME);
+        caseData.setPetitionerLastName(TEST_LAST_NAME);
+        caseData.setPetitionerEmail(TEST_USER_EMAIL);
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DIVORCE);
         return caseData;
     }
