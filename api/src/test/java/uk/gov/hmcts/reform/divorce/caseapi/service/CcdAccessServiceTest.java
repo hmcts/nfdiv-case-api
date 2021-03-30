@@ -31,8 +31,8 @@ import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.TEST_SOL_USER_EMAIL;
 import static uk.gov.hmcts.reform.divorce.caseapi.caseapi.util.TestDataHelper.feignException;
-import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.CREATOR_ROLE;
-import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.PET_SOL_ROLE;
+import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CREATOR;
+import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.PETITIONER_SOLICITOR;
 
 @ExtendWith(MockitoExtension.class)
 public class CcdAccessServiceTest {
@@ -71,7 +71,7 @@ public class CcdAccessServiceTest {
                 TEST_SERVICE_AUTH_TOKEN,
                 TEST_CASE_ID,
                 SOLICITOR_USER_ID,
-                new CaseUser(SOLICITOR_USER_ID, Set.of(CREATOR_ROLE, PET_SOL_ROLE))
+                new CaseUser(SOLICITOR_USER_ID, Set.of(CREATOR.getRole(), PETITIONER_SOLICITOR.getRole()))
             );
 
         assertThatCode(() -> ccdAccessService.addPetitionerSolicitorRole(PET_SOL_AUTH_TOKEN, TEST_CASE_ID))
@@ -86,7 +86,7 @@ public class CcdAccessServiceTest {
                 TEST_SERVICE_AUTH_TOKEN,
                 TEST_CASE_ID,
                 SOLICITOR_USER_ID,
-                new CaseUser(SOLICITOR_USER_ID, Set.of(CREATOR_ROLE, PET_SOL_ROLE))
+                new CaseUser(SOLICITOR_USER_ID, Set.of(CREATOR.getRole(), PETITIONER_SOLICITOR.getRole()))
             );
 
         verifyNoMoreInteractions(idamService, authTokenGenerator, caseUserApi);
@@ -168,7 +168,7 @@ public class CcdAccessServiceTest {
                 TEST_SERVICE_AUTH_TOKEN,
                 TEST_CASE_ID,
                 SOLICITOR_USER_ID,
-                new CaseUser(SOLICITOR_USER_ID, Set.of(CREATOR_ROLE, PET_SOL_ROLE))
+                new CaseUser(SOLICITOR_USER_ID, Set.of(CREATOR.getRole(), PETITIONER_SOLICITOR.getRole()))
             );
 
         assertThatThrownBy(() -> ccdAccessService.addPetitionerSolicitorRole(PET_SOL_AUTH_TOKEN, TEST_CASE_ID))
