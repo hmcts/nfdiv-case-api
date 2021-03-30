@@ -32,7 +32,7 @@ public class SolicitorCreateController {
         @ApiResponse(code = 401, message = "Invalid service authorization token"),
         @ApiResponse(code = 403, message = "Service not configured to invoke callback")
     })
-    public CcdCallbackResponse aboutToStart(
+    public CcdCallbackResponse assignLanguagePreference(
         @RequestHeader("ServiceAuthorization") final String serviceAuthToken,
         @RequestBody final CcdCallbackRequest callbackRequest
     ) {
