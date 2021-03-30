@@ -12,8 +12,6 @@ import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.reform.divorce.ccd.model.State;
 import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.reform.divorce.ccd.Permissions.CREATE_READ_UPDATE;
@@ -58,8 +56,6 @@ class PatchCaseTest {
             CASEWORKER_DIVORCE_SOLICITOR,
             CASEWORKER_DIVORCE_SUPERUSER,
             CASEWORKER_DIVORCE_COURTADMIN_LA);
-        verify(eventBuilder, times(1)).fields();
-        verify(fieldCollectionBuilder, times(37)).optional(any());
 
         verifyNoMoreInteractions(configBuilder, eventTypeBuilder, eventBuilder, fieldCollectionBuilder);
     }
