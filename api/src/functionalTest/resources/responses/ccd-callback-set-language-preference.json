@@ -1,9 +1,9 @@
 {
   "data": {
     "divorceOrDissolution": "divorce",
-    "D8PetitionerFirstName": "test_first_name",
-    "D8PetitionerLastName": "test_last_name",
-    "D8PetitionerEmail": "test@test.com",
+    "D8PetitionerFirstName": "John",
+    "D8PetitionerLastName": "Smith",
+    "D8PetitionerEmail": "simulate-delivered@notifications.service.gov.uk",
     "LanguagePreferenceWelsh": "NO"
   },
   "errors": null,

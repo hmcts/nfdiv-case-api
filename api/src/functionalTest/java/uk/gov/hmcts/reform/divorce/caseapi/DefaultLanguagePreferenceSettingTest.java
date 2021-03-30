@@ -27,7 +27,7 @@ public class DefaultLanguagePreferenceSettingTest extends FunctionalTestSuite {
     );
 
     @Test
-    public void shouldUpdateCaseDataWithOrderSummaryAndAddSolCaseRolesWhenIssueFeeIsSuccessfullyRetrieved()
+    public void shouldUpdateLanguagePreferenceSuccessfullyWhenAboutToStartCallbackIsInvoked()
         throws Exception {
         Response response = RestAssured
             .given()
