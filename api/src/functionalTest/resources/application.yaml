@@ -48,4 +48,4 @@ fee:
 
 core_case_data:
   api:
-    url: ${CASE_DATA_STORE_BASEURL:http://ccd-data-store-api-aat.service.core-compute-aat.internal}
+    url: ${CASE_API_URL:http://ccd-data-store-api-aat.service.core-compute-aat.internal}
