@@ -252,13 +252,12 @@ public class CaseData {
     )
     private String d8PetitionerPhoneNumber;
 
-    @JsonProperty("D8PetitionerContactDetailsConfidential")
     @CCD(
         label = "Keep the petitioner's contact details private from the respondent?",
         typeOverride = FixedList,
         typeParameterOverride = "ConfidentialAddress"
     )
-    private ConfidentialAddress d8PetitionerContactDetailsConfidential;
+    private ConfidentialAddress petitionerContactDetailsConfidential;
 
     @JsonProperty("D8RespondentFirstName")
     @CCD(
