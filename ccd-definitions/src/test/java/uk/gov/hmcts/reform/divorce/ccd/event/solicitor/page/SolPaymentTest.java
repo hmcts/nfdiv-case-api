@@ -32,7 +32,7 @@ class SolPaymentTest {
         verify(fieldCollectionBuilder).pageLabel("Payment");
         verify(fieldCollectionBuilder).label(
             "LabelSolPaymentPara-1",
-            "Amount to pay: **£${SolApplicationFeeInPounds}**");
+            "Amount to pay: **£${solApplicationFeeInPounds}**");
         verify(fieldCollectionBuilder).mandatory(any(TypedPropertyGetter.class));
 
         verifyNoMoreInteractions(fieldCollectionBuilder);

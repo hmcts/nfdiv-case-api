@@ -30,7 +30,7 @@ class HelpWithFeesTest {
 
         verify(fieldCollectionBuilder).page("HelpWithFees");
         verify(fieldCollectionBuilder).pageLabel("Help with fees");
-        verify(fieldCollectionBuilder).showCondition("SolPaymentHowToPay=\"feesHelpWith\"");
+        verify(fieldCollectionBuilder).showCondition("solPaymentHowToPay=\"feesHelpWith\"");
         verify(fieldCollectionBuilder).mandatory(any(TypedPropertyGetter.class));
 
         verifyNoMoreInteractions(fieldCollectionBuilder);

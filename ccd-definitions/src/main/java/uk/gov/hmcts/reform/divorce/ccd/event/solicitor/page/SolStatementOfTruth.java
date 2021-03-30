@@ -26,7 +26,7 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
                 "LabelSolStatementOfTruthPara-1.3",
                 "That a financial order may be granted.")
             .mandatory(CaseData::getSolUrgentCase)
-            .optional(CaseData::getSolUrgentCaseSupportingInformation, "SolUrgentCase=\"Yes\"")
+            .optional(CaseData::getSolUrgentCaseSupportingInformation, "solUrgentCase=\"Yes\"")
             .mandatoryNoSummary(CaseData::getDivorceCostsClaim, "statementOfTruth=\"ALWAYS_HIDE\"")
             .mandatoryNoSummary(CaseData::getFinancialOrder, "statementOfTruth=\"ALWAYS_HIDE\"")
             .label("LabelSolServiceMethod", "## Service method")
@@ -35,7 +35,7 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
                 "LabelSolPersonalService",
                 "After service is complete you must notify the court by completing the 'Confirm Service' form "
                     + "in CCD. Refer to the information pack for further instruction on how to do this",
-                "SolServiceMethod=\"personalService\"")
+                "solServiceMethod=\"personalService\"")
             .label("LabelSolStatementOTruthPara-3", "## Statement of reconciliation")
             .mandatory(CaseData::getSolStatementOfReconciliationCertify)
             .mandatory(CaseData::getSolStatementOfReconciliationDiscussed)
