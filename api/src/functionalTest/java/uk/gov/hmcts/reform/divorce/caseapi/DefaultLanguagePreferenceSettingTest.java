@@ -18,17 +18,16 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestResourceUtil.expectedCcdCallbackResponse;
 import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.ABOUT_TO_START_WEBHOOK;
 import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.SUBMIT_PETITION;
+import static uk.gov.hmcts.reform.divorce.ccd.event.solicitor.SolicitorCreate.SOLICITOR_CREATE;
 
 @SpringBootTest
-public class SolicitorSubmitPetitionTest extends FunctionalTestSuite {
-
-    private static final String SUBMIT_PETITION_ABOUT_TO_START_CALLBACK_URL = StringUtils.join(
-        "/", SUBMIT_PETITION, ABOUT_TO_START_WEBHOOK
+public class DefaultLanguagePreferenceSettingTest extends FunctionalTestSuite {
+    private static final String SOLICITOR_CREATE_ABOUT_TO_START_CALLBACK_URL = StringUtils.join(
+        "/", SOLICITOR_CREATE, ABOUT_TO_START_WEBHOOK
     );
 
     @Test
-    public void shouldUpdateCaseDataWithOrderSummaryAndAddSolCaseRolesWhenIssueFeeIsSuccessfullyRetrieved()
+    public void shouldUpdateLanguagePreferenceSuccessfullyWhenAboutToStartCallbackIsInvoked()
         throws Exception {
         Response response = RestAssured
             .given()
@@ -50,12 +49,12 @@ public class SolicitorSubmitPetitionTest extends FunctionalTestSuite {
                     .build()
             )
             .when()
-            .post(SUBMIT_PETITION_ABOUT_TO_START_CALLBACK_URL);
+            .post(SOLICITOR_CREATE_ABOUT_TO_START_CALLBACK_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
         assertEquals(
-            expectedCcdCallbackResponse("classpath:responses/ccd-callback-submit-petition.json"),
+            expectedCcdCallbackResponse("classpath:responses/ccd-callback-set-language-preference.json"),
             response.asString(),
             STRICT
         );

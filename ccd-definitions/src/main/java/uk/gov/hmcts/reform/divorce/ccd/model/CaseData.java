@@ -235,7 +235,8 @@ public class CaseData {
     @JsonProperty("LanguagePreferenceWelsh")
     @CCD(
         label = "What language do you want to receive emails and documents in?",
-        access = { DefaultAccess.class }
+        access = { DefaultAccess.class },
+        hint = "Select \"No\" for English or \"Yes\" for bilingual"
     )
     private YesOrNo languagePreferenceWelsh;
 
