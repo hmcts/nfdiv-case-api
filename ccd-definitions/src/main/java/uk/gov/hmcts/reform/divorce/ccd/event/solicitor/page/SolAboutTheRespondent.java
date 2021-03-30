@@ -18,12 +18,12 @@ public class SolAboutTheRespondent implements CcdPageConfiguration {
             .label(
                 "LabelSolAboutEditingApplication-AboutRespondent",
                 "You can make changes at the end of your application.")
-            .mandatory(CaseData::getD8RespondentFirstName)
-            .mandatory(CaseData::getD8RespondentLastName)
-            .mandatory(CaseData::getD8RespondentNameAsOnMarriageCertificate)
+            .mandatory(CaseData::getRespondentFirstName)
+            .mandatory(CaseData::getRespondentLastName)
+            .mandatory(CaseData::getRespondentNameAsOnMarriageCertificate)
             .optional(
                 CaseData::getRespNameDifferentToMarriageCertExplain,
-                "D8RespondentNameAsOnMarriageCertificate=\"Yes\"")
-            .mandatory(CaseData::getD8InferredRespondentGender);
+                "respondentNameAsOnMarriageCertificate=\"Yes\"")
+            .mandatory(CaseData::getInferredRespondentGender);
     }
 }

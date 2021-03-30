@@ -16,6 +16,6 @@ public class HelpWithFees implements CcdPageConfiguration {
             .page("HelpWithFees")
             .pageLabel("Help with fees")
             .showCondition("SolPaymentHowToPay=\"feesHelpWith\"")
-            .mandatory(CaseData::getD8HelpWithFeesReferenceNumber);
+            .mandatory(CaseData::getHelpWithFeesReferenceNumber);
     }
 }

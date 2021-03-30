@@ -49,7 +49,7 @@ public class SolStatementOfTruthTest {
         verify(fieldCollectionBuilder)
             .optional(any(TypedPropertyGetter.class), eq("SolUrgentCase=\"Yes\""));
         verify(fieldCollectionBuilder, times(2))
-            .mandatoryNoSummary(any(TypedPropertyGetter.class), eq("D8StatementOfTruth=\"Banana\""));
+            .mandatoryNoSummary(any(TypedPropertyGetter.class), eq("statementOfTruth=\"ALWAYS_HIDE\""));
         verify(fieldCollectionBuilder).label("LabelSolServiceMethod", "## Service method");
         verify(fieldCollectionBuilder).label(
             "LabelSolPersonalService",

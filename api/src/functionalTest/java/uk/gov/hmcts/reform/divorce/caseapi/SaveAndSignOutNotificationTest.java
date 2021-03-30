@@ -47,7 +47,7 @@ public class SaveAndSignOutNotificationTest extends FunctionalTestSuite {
     public void shouldFailWithBadRequestErrorWhenFirstAndLastNamesAreMissing() {
         CaseData caseDataWithMissingParams = new CaseData();
         caseDataWithMissingParams.setDivorceOrDissolution(DIVORCE);
-        caseDataWithMissingParams.setD8PetitionerEmail(TEST_USER_EMAIL);
+        caseDataWithMissingParams.setPetitionerEmail(TEST_USER_EMAIL);
 
         Response response = RestAssured
             .given()

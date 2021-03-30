@@ -38,7 +38,7 @@ class SolAboutTheRespondentTest {
         verify(fieldCollectionBuilder, times(4)).mandatory(any(TypedPropertyGetter.class));
         verify(fieldCollectionBuilder).optional(
             any(TypedPropertyGetter.class),
-            eq("D8RespondentNameAsOnMarriageCertificate=\"Yes\""));
+            eq("respondentNameAsOnMarriageCertificate=\"Yes\""));
 
         verifyNoMoreInteractions(fieldCollectionBuilder);
     }

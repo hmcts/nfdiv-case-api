@@ -17,12 +17,12 @@ import static java.util.List.of;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static uk.gov.hmcts.reform.divorce.ccd.search.constants.CaseFieldsConstants.D_8_PETITIONER_EMAIL;
-import static uk.gov.hmcts.reform.divorce.ccd.search.constants.CaseFieldsConstants.D_8_PETITIONER_FIRST_NAME;
-import static uk.gov.hmcts.reform.divorce.ccd.search.constants.CaseFieldsConstants.D_8_PETITIONER_LAST_NAME;
 import static uk.gov.hmcts.reform.divorce.ccd.search.constants.CaseFieldsConstants.EMAIL;
 import static uk.gov.hmcts.reform.divorce.ccd.search.constants.CaseFieldsConstants.FIRSTNAME;
 import static uk.gov.hmcts.reform.divorce.ccd.search.constants.CaseFieldsConstants.LASTNAME;
+import static uk.gov.hmcts.reform.divorce.ccd.search.constants.CaseFieldsConstants.PETITIONER_EMAIL;
+import static uk.gov.hmcts.reform.divorce.ccd.search.constants.CaseFieldsConstants.PETITIONER_FIRST_NAME;
+import static uk.gov.hmcts.reform.divorce.ccd.search.constants.CaseFieldsConstants.PETITIONER_LAST_NAME;
 
 @ExtendWith(MockitoExtension.class)
 class SearchInputFieldsTest {
@@ -39,9 +39,9 @@ class SearchInputFieldsTest {
         searchInputFields.applyTo(configBuilder);
 
         final List<SearchField> searchFieldList = of(
-                                                    SearchField.builder().label(FIRSTNAME).id(D_8_PETITIONER_FIRST_NAME).build(),
-                                                    SearchField.builder().label(LASTNAME).id(D_8_PETITIONER_LAST_NAME).build(),
-                                                    SearchField.builder().label(EMAIL).id(D_8_PETITIONER_EMAIL).build());
+                                                    SearchField.builder().label(FIRSTNAME).id(PETITIONER_FIRST_NAME).build(),
+                                                    SearchField.builder().label(LASTNAME).id(PETITIONER_LAST_NAME).build(),
+                                                    SearchField.builder().label(EMAIL).id(PETITIONER_EMAIL).build());
 
         verify(searchBuilder).caseReferenceField();
         verify(searchBuilder).fields(searchFieldList);
