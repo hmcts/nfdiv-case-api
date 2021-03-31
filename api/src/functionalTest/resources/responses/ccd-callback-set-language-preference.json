@@ -1,0 +1,12 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "petitionerFirstName": "John",
+    "petitionerLastName": "Smith",
+    "petitionerEmail": "simulate-delivered@notifications.service.gov.uk",
+    "languagePreferenceWelsh": "NO"
+  },
+  "errors": null,
+  "warnings": null,
+  "state": null
+}

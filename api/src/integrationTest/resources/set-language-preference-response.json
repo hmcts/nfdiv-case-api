@@ -1,0 +1,12 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "petitionerFirstName": "test_first_name",
+    "petitionerLastName": "test_last_name",
+    "petitionerEmail": "test@test.com",
+    "languagePreferenceWelsh": "NO"
+  },
+  "errors": null,
+  "warnings": null,
+  "state": null
+}

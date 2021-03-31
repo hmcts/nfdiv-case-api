@@ -10,8 +10,8 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.Set;
 
-import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.CREATOR_ROLE;
-import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.PET_SOL_ROLE;
+import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CREATOR;
+import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.PETITIONER_SOLICITOR;
 
 @Service
 @Slf4j
@@ -29,7 +29,7 @@ public class CcdAccessService {
         User solicitorUser = idamService.retrieveUser(solicitorIdamToken);
         User caseworkerUser = idamService.retrieveCaseWorkerDetails();
 
-        Set<String> caseRoles = Set.of(CREATOR_ROLE, PET_SOL_ROLE);
+        Set<String> caseRoles = Set.of(CREATOR.getRole(), PETITIONER_SOLICITOR.getRole());
 
         String solicitorUserId = solicitorUser.getUserDetails().getId();
 

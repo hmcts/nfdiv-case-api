@@ -7,15 +7,14 @@ import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.reform.divorce.ccd.model.State;
 import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 
-public class HelpWithFees implements CcdPageConfiguration {
+public class LanguagePreference implements CcdPageConfiguration {
 
     @Override
     public void addTo(final FieldCollectionBuilder<CaseData, EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder) {
 
         fieldCollectionBuilder
-            .page("HelpWithFees")
-            .pageLabel("Help with fees")
-            .showCondition("solPaymentHowToPay=\"feesHelpWith\"")
-            .mandatory(CaseData::getHelpWithFeesReferenceNumber);
+            .page("langPref")
+            .pageLabel("Select Language")
+            .mandatory(CaseData::getLanguagePreferenceWelsh);
     }
 }

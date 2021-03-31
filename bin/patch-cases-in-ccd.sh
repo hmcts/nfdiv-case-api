@@ -50,5 +50,5 @@ for user in $users; do
 
   echo "Patching ccd case $caseId for $userId"
 
-  curl --insecure --fail --show-error --silent -X POST http://ccd-data-store-api-aat.service.core-compute-aat.internal/citizens/$userId/jurisdictions/DIVORCE/case-types/NO_FAULT_DIVORCE/cases/$caseId/events -H "Authorization: Bearer $idamToken" -H "Content-Type: application/json" -H "ServiceAuthorization: Bearer $serviceToken" -d '{"event_token" : "'${eventToken}'","data":{"D8PetitionerFirstName": "'${firstName}'","D8PetitionerLastName":"'${lastName}'","D8PetitionerEmail" : "'${email}'"},"event" :{"id" :"patchCase"}}'
+  curl --insecure --fail --show-error --silent -X POST http://ccd-data-store-api-aat.service.core-compute-aat.internal/citizens/$userId/jurisdictions/DIVORCE/case-types/NO_FAULT_DIVORCE/cases/$caseId/events -H "Authorization: Bearer $idamToken" -H "Content-Type: application/json" -H "ServiceAuthorization: Bearer $serviceToken" -d '{"event_token" : "'${eventToken}'","data":{"petitionerFirstName": "'${firstName}'","petitionerLastName":"'${lastName}'","petitionerEmail" : "'${email}'"},"event" :{"id" :"patchCase"}}'
 done

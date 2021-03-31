@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.ccd.sdk.api.FieldCollection.FieldCollectionBuilder;
+import uk.gov.hmcts.ccd.sdk.api.FieldCollection;
 import uk.gov.hmcts.reform.divorce.ccd.mock.EventBuildingMockUtil;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -14,23 +14,21 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @SuppressWarnings("rawtypes")
 @ExtendWith(MockitoExtension.class)
-class HelpWithFeesTest {
-
-    private final FieldCollectionBuilder fieldCollectionBuilder =
+public class LanguagePreferenceTest {
+    private final FieldCollection.FieldCollectionBuilder fieldCollectionBuilder =
         new EventBuildingMockUtil().mockEventBuilding().getFieldCollectionBuilder();
 
     @InjectMocks
-    private HelpWithFees helpWithFees;
+    private LanguagePreference languagePreference;
 
     @SuppressWarnings("unchecked")
     @Test
-    void shouldAddHelpWithFeesPageConfiguration() {
+    void shouldAddLanguagePreferencePageConfiguration() {
 
-        helpWithFees.addTo(fieldCollectionBuilder);
+        languagePreference.addTo(fieldCollectionBuilder);
 
-        verify(fieldCollectionBuilder).page("HelpWithFees");
-        verify(fieldCollectionBuilder).pageLabel("Help with fees");
-        verify(fieldCollectionBuilder).showCondition("solPaymentHowToPay=\"feesHelpWith\"");
+        verify(fieldCollectionBuilder).page("langPref");
+        verify(fieldCollectionBuilder).pageLabel("Select Language");
         verify(fieldCollectionBuilder).mandatory(any(TypedPropertyGetter.class));
 
         verifyNoMoreInteractions(fieldCollectionBuilder);

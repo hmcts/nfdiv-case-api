@@ -1,11 +1,12 @@
 {
   "data": {
     "divorceOrDissolution": "divorce",
-    "D8PetitionerFirstName": "John",
-    "D8PetitionerLastName": "Smith",
-    "D8PetitionerEmail": "simulate-delivered@notifications.service.gov.uk",
-    "SolApplicationFeeOrderSummary": {
+    "petitionerFirstName": "John",
+    "petitionerLastName": "Smith",
+    "petitionerEmail": "simulate-delivered@notifications.service.gov.uk",
+    "solApplicationFeeOrderSummary": {
       "PaymentTotal": "55000",
+      "PaymentReference": null,
       "Fees": [
         {
           "id": null,

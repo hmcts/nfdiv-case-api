@@ -38,14 +38,14 @@ class SolAboutThePetitionerTest {
         verify(fieldCollectionBuilder).label(
             "LabelSolAboutThePetPara-2",
             "About the petitioner",
-            "D8PetitionerNameDifferentToMarriageCert=\"Yes\"");
+            "petitionerNameDifferentToMarriageCertificate=\"Yes\"");
         verify(fieldCollectionBuilder, times(8)).mandatory(any(TypedPropertyGetter.class));
         verify(fieldCollectionBuilder).mandatory(
             any(TypedPropertyGetter.class),
-            eq("D8PetitionerNameDifferentToMarriageCert=\"Yes\""));
+            eq("petitionerNameDifferentToMarriageCertificate=\"Yes\""));
         verify(fieldCollectionBuilder).mandatory(
             any(TypedPropertyGetter.class),
-            eq("D8PetitionerNameChangedHow=\"other\""));
+            eq("petitionerNameChangedHow=\"other\""));
         verify(fieldCollectionBuilder, times(2)).optional(any(TypedPropertyGetter.class));
 
         verifyNoMoreInteractions(fieldCollectionBuilder);

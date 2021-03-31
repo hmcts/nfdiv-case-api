@@ -24,10 +24,10 @@ public class SolAboutTheSolicitor implements CcdPageConfiguration {
                     + "the petitioner is entitled to legally end their marriage. **A copy of this form is sent to the "
                     + "respondent**")
             .mandatory(CaseData::getPetitionerSolicitorName)
-            .mandatory(CaseData::getD8SolicitorReference)
+            .mandatory(CaseData::getSolicitorReference)
             .mandatory(CaseData::getPetitionerSolicitorPhone)
             .mandatory(CaseData::getPetitionerSolicitorEmail)
             .mandatory(CaseData::getSolicitorAgreeToReceiveEmails)
-            .mandatory(CaseData::getDerivedPetitionerSolicitorAddr);
+            .mandatory(CaseData::getDerivedPetitionerSolicitorAddress);
     }
 }
