@@ -471,15 +471,12 @@ public class CaseData {
     )
     private Set<JurisdictionConnections> jurisdictionConnections;
 
-    @JsonProperty("RespondentEmailAddress")
     @CCD(
         label = "Your partner's email address",
         access = { DefaultAccess.class }
     )
     private YesOrNo respondentEmailAddress;
 
-
-    @JsonProperty("PetitionerKnowsRespondentsAddress")
     @CCD(
         label = "Do you know their email address",
         access = { DefaultAccess.class }
