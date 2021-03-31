@@ -470,4 +470,16 @@ public class CaseData {
         access = { DefaultAccess.class }
     )
     private Set<JurisdictionConnections> jurisdictionConnections;
+
+    @CCD(
+        label = "Your partner's email address",
+        access = { DefaultAccess.class }
+    )
+    private String respondentEmailAddress;
+
+    @CCD(
+        label = "Do you know their email address",
+        access = { DefaultAccess.class }
+    )
+    private YesOrNo petitionerKnowsRespondentsAddress;
 }
