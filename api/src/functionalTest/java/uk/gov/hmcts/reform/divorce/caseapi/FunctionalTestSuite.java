@@ -102,7 +102,7 @@ abstract class FunctionalTestSuite {
                 .description("Create draft case for functional tests")
                 .build())
             .data(Map.of(
-                "PetitionerSolicitorName", "functional test"
+                "petitionerSolicitorName", "functional test"
             ))
             .build();
 
