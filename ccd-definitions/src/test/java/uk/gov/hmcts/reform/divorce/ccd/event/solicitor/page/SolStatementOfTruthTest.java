@@ -47,15 +47,15 @@ public class SolStatementOfTruthTest {
         verify(fieldCollectionBuilder, times(8))
             .mandatory(any(TypedPropertyGetter.class));
         verify(fieldCollectionBuilder)
-            .optional(any(TypedPropertyGetter.class), eq("SolUrgentCase=\"Yes\""));
+            .optional(any(TypedPropertyGetter.class), eq("solUrgentCase=\"Yes\""));
         verify(fieldCollectionBuilder, times(2))
-            .mandatoryNoSummary(any(TypedPropertyGetter.class), eq("D8StatementOfTruth=\"Banana\""));
+            .mandatoryNoSummary(any(TypedPropertyGetter.class), eq("statementOfTruth=\"ALWAYS_HIDE\""));
         verify(fieldCollectionBuilder).label("LabelSolServiceMethod", "## Service method");
         verify(fieldCollectionBuilder).label(
             "LabelSolPersonalService",
             "After service is complete you must notify the court by completing the 'Confirm Service' form "
                 + "in CCD. Refer to the information pack for further instruction on how to do this",
-            "SolServiceMethod=\"personalService\"");
+            "solServiceMethod=\"personalService\"");
         verify(fieldCollectionBuilder).label(
             "LabelSolStatementOTruthPara-3",
             "## Statement of reconciliation");

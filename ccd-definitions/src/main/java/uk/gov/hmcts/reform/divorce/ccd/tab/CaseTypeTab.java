@@ -13,14 +13,14 @@ public class CaseTypeTab implements CcdConfiguration {
 
         configBuilder.tab("petitionDetails", "Petition")
             .field(CaseData::getDivorceOrDissolution)
-            .field(CaseData::getD8InferredPetitionerGender)
-            .field(CaseData::getD8InferredRespondentGender)
-            .field(CaseData::getD8MarriageIsSameSexCouple)
-            .field(CaseData::getD8MarriageDate)
-            .field(CaseData::getD8MarriedInUk)
-            .field(CaseData::getD8CertificateInEnglish);
+            .field(CaseData::getInferredPetitionerGender)
+            .field(CaseData::getInferredRespondentGender)
+            .field(CaseData::getMarriageIsSameSexCouple)
+            .field(CaseData::getMarriageDate)
+            .field(CaseData::getMarriedInUk)
+            .field(CaseData::getCertificateInEnglish);
 
         configBuilder.tab("paymentDetailsCourtAdmin", "Payment")
-            .field(CaseData::getD8HelpWithFeesReferenceNumber);
+            .field(CaseData::getHelpWithFeesReferenceNumber);
     }
 }

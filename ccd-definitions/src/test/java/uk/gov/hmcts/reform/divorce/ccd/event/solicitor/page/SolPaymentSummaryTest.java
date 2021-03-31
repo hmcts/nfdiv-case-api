@@ -33,19 +33,19 @@ class SolPaymentSummaryTest {
         verify(fieldCollectionBuilder).label(
             "LabelSolPaySummaryFeeAccountPara-1",
             "Payment Method: Fee Account",
-            "SolPaymentHowToPay=\"feePayByAccount\"");
+            "solPaymentHowToPay=\"feePayByAccount\"");
         verify(fieldCollectionBuilder).label(
             "LabelSolicitorReference",
-            "Your fee account reference: **${FeeAccountReference}**",
-            "SolPaymentHowToPay=\"feePayByAccount\"");
+            "Your fee account reference: **${feeAccountReference}**",
+            "solPaymentHowToPay=\"feePayByAccount\"");
         verify(fieldCollectionBuilder).label(
             "LabelSolPaySummaryHWFPara-1",
             "Payment Method: Help with fees",
-            "SolPaymentHowToPay=\"feesHelpWith\"");
+            "solPaymentHowToPay=\"feesHelpWith\"");
         verify(fieldCollectionBuilder).label(
             "LabelHelpWithFeesReferenceNumber",
-            "Help with fee reference: **${D8HelpWithFeesReferenceNumber}**",
-            "SolPaymentHowToPay=\"feesHelpWith\"");
+            "Help with fee reference: **${helpWithFeesReferenceNumber}**",
+            "solPaymentHowToPay=\"feesHelpWith\"");
 
         verifyNoMoreInteractions(fieldCollectionBuilder);
     }

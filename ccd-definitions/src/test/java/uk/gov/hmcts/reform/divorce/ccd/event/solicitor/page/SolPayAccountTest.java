@@ -31,7 +31,7 @@ class SolPayAccountTest {
 
         verify(fieldCollectionBuilder).page("SolPayAccount");
         verify(fieldCollectionBuilder).pageLabel("Pay account");
-        verify(fieldCollectionBuilder).showCondition("SolPaymentHowToPay=\"feePayByAccount\"");
+        verify(fieldCollectionBuilder).showCondition("solPaymentHowToPay=\"feePayByAccount\"");
         verify(fieldCollectionBuilder, times(2))
             .mandatory(any(TypedPropertyGetter.class));
 

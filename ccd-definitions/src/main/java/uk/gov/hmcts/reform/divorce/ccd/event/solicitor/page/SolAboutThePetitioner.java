@@ -18,21 +18,21 @@ public class SolAboutThePetitioner implements CcdPageConfiguration {
             .label(
                 "LabelSolAboutEditingApplication-AboutPetitioner",
                 "You can make changes at the end of your application.")
-            .mandatory(CaseData::getD8PetitionerFirstName)
-            .mandatory(CaseData::getD8PetitionerLastName)
-            .mandatory(CaseData::getD8PetitionerNameDifferentToMarriageCert)
+            .mandatory(CaseData::getPetitionerFirstName)
+            .mandatory(CaseData::getPetitionerLastName)
+            .mandatory(CaseData::getPetitionerNameDifferentToMarriageCertificate)
             .label(
                 "LabelSolAboutThePetPara-2",
                 "About the petitioner",
-                "D8PetitionerNameDifferentToMarriageCert=\"Yes\"")
-            .mandatory(CaseData::getD8PetitionerNameChangedHow, "D8PetitionerNameDifferentToMarriageCert=\"Yes\"")
-            .mandatory(CaseData::getD8PetitionerNameChangedHowOtherDetails, "D8PetitionerNameChangedHow=\"other\"")
-            .mandatory(CaseData::getD8DivorceWho)
-            .mandatory(CaseData::getD8InferredPetitionerGender)
-            .mandatory(CaseData::getD8MarriageIsSameSexCouple)
-            .mandatory(CaseData::getD8DerivedPetitionerHomeAddress)
-            .optional(CaseData::getD8PetitionerPhoneNumber)
-            .optional(CaseData::getD8PetitionerEmail)
-            .mandatory(CaseData::getD8PetitionerContactDetailsConfidential);
+                "petitionerNameDifferentToMarriageCertificate=\"Yes\"")
+            .mandatory(CaseData::getPetitionerNameChangedHow, "petitionerNameDifferentToMarriageCertificate=\"Yes\"")
+            .mandatory(CaseData::getPetitionerNameChangedHowOtherDetails, "petitionerNameChangedHow=\"other\"")
+            .mandatory(CaseData::getDivorceWho)
+            .mandatory(CaseData::getInferredPetitionerGender)
+            .mandatory(CaseData::getMarriageIsSameSexCouple)
+            .mandatory(CaseData::getDerivedPetitionerHomeAddress)
+            .optional(CaseData::getPetitionerPhoneNumber)
+            .optional(CaseData::getPetitionerEmail)
+            .mandatory(CaseData::getPetitionerContactDetailsConfidential);
     }
 }

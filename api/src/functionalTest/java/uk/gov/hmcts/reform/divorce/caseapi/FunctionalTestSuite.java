@@ -59,10 +59,10 @@ abstract class FunctionalTestSuite {
 
     protected CaseData caseData() {
         CaseData caseData = new CaseData();
-        caseData.setD8PetitionerFirstName(TEST_FIRST_NAME);
-        caseData.setD8PetitionerLastName(TEST_LAST_NAME);
+        caseData.setPetitionerFirstName(TEST_FIRST_NAME);
+        caseData.setPetitionerLastName(TEST_LAST_NAME);
         caseData.setDivorceOrDissolution(DIVORCE);
-        caseData.setD8PetitionerEmail(TEST_USER_EMAIL);
+        caseData.setPetitionerEmail(TEST_USER_EMAIL);
         return caseData;
     }
 
@@ -102,7 +102,7 @@ abstract class FunctionalTestSuite {
                 .description("Create draft case for functional tests")
                 .build())
             .data(Map.of(
-                "PetitionerSolicitorName", "functional test"
+                "petitionerSolicitorName", "functional test"
             ))
             .build();
 
