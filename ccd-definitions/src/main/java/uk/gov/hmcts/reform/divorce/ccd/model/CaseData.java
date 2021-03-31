@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.reform.divorce.ccd.access.DefaultAccess;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.ChangedNameHow;
+import uk.gov.hmcts.reform.divorce.ccd.model.enums.ClaimsCostFrom;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.ConfidentialAddress;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.DivorceOrDissolution;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.Gender;
@@ -509,4 +510,9 @@ public class CaseData {
         access = { DefaultAccess.class }
     )
     private Set<LegalProceedingsRelated> legalProceedingsRelated;
+
+    @CCD(
+        label = "Claim costs from"
+    )
+    private Set<ClaimsCostFrom> divorceClaimFrom;
 }
