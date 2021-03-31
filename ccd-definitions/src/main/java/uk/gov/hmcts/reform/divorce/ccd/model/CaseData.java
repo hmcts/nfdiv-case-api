@@ -475,7 +475,7 @@ public class CaseData {
         label = "Your partner's email address",
         access = { DefaultAccess.class }
     )
-    private YesOrNo respondentEmailAddress;
+    private String respondentEmailAddress;
 
     @CCD(
         label = "Do you know their email address",
