@@ -481,5 +481,5 @@ public class CaseData {
         label = "Do you know their email address",
         access = { DefaultAccess.class }
     )
-    private YesOrNo PetitionerKnowsRespondentsAddress;
+    private YesOrNo petitionerKnowsRespondentsAddress;
 }
