@@ -14,6 +14,7 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.reform.divorce.caseapi.config.WebMvcConfig;
 import uk.gov.hmcts.reform.divorce.caseapi.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.reform.divorce.caseapi.model.CcdCallbackResponse;
+import uk.gov.hmcts.reform.divorce.caseapi.service.solicitor.SolicitorCreatePetitionService;
 import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -30,6 +31,9 @@ import static uk.gov.hmcts.reform.divorce.caseapi.util.TestDataHelper.getDefault
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = SolicitorCreateController.class)
 class SolicitorCreateControllerTest {
+
+    @MockBean
+    private SolicitorCreatePetitionService solicitorCreatePetitionService;
 
     @Autowired
     private ObjectMapper objectMapper;
