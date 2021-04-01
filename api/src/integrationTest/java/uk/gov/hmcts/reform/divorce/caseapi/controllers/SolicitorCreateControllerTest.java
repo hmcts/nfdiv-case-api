@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.SOLICITOR_CREATE_API_URL;
+import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.SOLICITOR_CREATE_ABOUT_TO_START_URL;
 import static uk.gov.hmcts.reform.divorce.caseapi.util.TestDataHelper.callbackRequest;
 
 @ExtendWith(SpringExtension.class)
@@ -51,7 +51,7 @@ public class SolicitorCreateControllerTest {
     public void givenValidCaseDataWhenCallbackIsInvokedLanguagePreferenceIsSet()
         throws Exception {
 
-        String jsonStringResponse = mockMvc.perform(post(SOLICITOR_CREATE_API_URL)
+        String jsonStringResponse = mockMvc.perform(post(SOLICITOR_CREATE_ABOUT_TO_START_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .content(objectMapper.writeValueAsString(callbackRequest()))

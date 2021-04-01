@@ -11,10 +11,6 @@ import java.util.Set;
 import static java.util.Collections.emptySet;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.reform.divorce.ccd.model.enums.ClaimsCostFrom.CORRESPONDENT;
@@ -29,43 +25,36 @@ class ClaimsCostTest {
     @Test
     void shouldSetClaimsCostFromRespondentIfPetitionerClaimingCostsAndClaimsCostFromIsEmpty() {
 
-        final CaseData caseData = mock(CaseData.class);
+        final CaseData caseData = new CaseData();
+        caseData.setD8DivorceCostsClaim(YES);
+        caseData.setDivorceClaimFrom(null);
 
-        when(caseData.getD8DivorceCostsClaim()).thenReturn(YES);
-        when(caseData.getDivorceClaimFrom()).thenReturn(null);
+        claimsCost.handle(caseData);
 
-        final CaseData result = claimsCost.handle(caseData);
-
-        assertThat(result, is(caseData));
-        verify(caseData).setDivorceClaimFrom(Set.of(RESPONDENT));
-        verifyNoMoreInteractions(caseData);
+        assertThat(caseData.getDivorceClaimFrom(), is(Set.of(RESPONDENT)));
     }
 
     @Test
     void shouldNotSetClaimsCostFromRespondentIfPetitionerClaimingCostsAndClaimsCostFromIsNotEmpty() {
 
-        final CaseData caseData = mock(CaseData.class);
+        final CaseData caseData = new CaseData();
+        caseData.setD8DivorceCostsClaim(YES);
+        caseData.setDivorceClaimFrom(Set.of(CORRESPONDENT));
 
-        when(caseData.getD8DivorceCostsClaim()).thenReturn(YES);
-        when(caseData.getDivorceClaimFrom()).thenReturn(Set.of(CORRESPONDENT));
+        claimsCost.handle(caseData);
 
-        final CaseData result = claimsCost.handle(caseData);
-
-        assertThat(result, is(caseData));
-        verifyNoMoreInteractions(caseData);
+        assertThat(caseData.getDivorceClaimFrom(), is(Set.of(CORRESPONDENT)));
     }
 
     @Test
     void shouldNotSetClaimsCostFromRespondentIfPetitionerNotClaimingCosts() {
 
-        final CaseData caseData = mock(CaseData.class);
+        final CaseData caseData = new CaseData();
+        caseData.setD8DivorceCostsClaim(NO);
+        caseData.setDivorceClaimFrom(emptySet());
 
-        when(caseData.getD8DivorceCostsClaim()).thenReturn(NO);
-        when(caseData.getDivorceClaimFrom()).thenReturn(emptySet());
+        claimsCost.handle(caseData);
 
-        final CaseData result = claimsCost.handle(caseData);
-
-        assertThat(result, is(caseData));
-        verifyNoMoreInteractions(caseData);
+        assertThat(caseData.getDivorceClaimFrom(), is(emptySet()));
     }
 }

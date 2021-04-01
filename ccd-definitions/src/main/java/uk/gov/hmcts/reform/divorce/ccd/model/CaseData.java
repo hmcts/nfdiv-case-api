@@ -12,6 +12,7 @@ import uk.gov.hmcts.reform.divorce.ccd.access.DefaultAccess;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.ChangedNameHow;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.ClaimsCostFrom;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.ConfidentialAddress;
+import uk.gov.hmcts.reform.divorce.ccd.model.enums.Court;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.DivorceOrDissolution;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.Gender;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.JurisdictionConnections;
@@ -20,6 +21,7 @@ import uk.gov.hmcts.reform.divorce.ccd.model.enums.SolServiceMethod;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.SolToPay;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.WhoDivorcing;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
@@ -515,4 +517,21 @@ public class CaseData {
         label = "Claim costs from"
     )
     private Set<ClaimsCostFrom> divorceClaimFrom;
+
+    @CCD(
+        label = "Created date",
+        hint = "Date case was created"
+    )
+    private LocalDate createdDate;
+
+    @CCD(
+        label = "RDC",
+        hint = "Regional divorce unit"
+    )
+    private Court divorceUnit;
+
+    @CCD(
+        label = "Site ID for selected court"
+    )
+    private String selectedDivorceCentreSiteId;
 }
