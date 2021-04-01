@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.divorce.caseapi.service.solicitor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.reform.divorce.caseapi.util.Handler;
 import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 
 import java.util.List;

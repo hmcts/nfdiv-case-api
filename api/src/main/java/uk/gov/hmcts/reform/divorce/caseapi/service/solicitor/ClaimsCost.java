@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.divorce.caseapi.service.solicitor;
 
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.reform.divorce.caseapi.util.Handler;
 import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.ClaimsCostFrom;
 
@@ -13,7 +14,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 public class ClaimsCost implements Handler<CaseData> {
 
     @Override
-    public CaseData handle(final CaseData caseData) {
+    public void handle(final CaseData caseData) {
 
         final boolean isPetitionerClaimingCosts = YES.equals(caseData.getD8DivorceCostsClaim());
         final boolean claimsCostFromIsEmpty = isEmpty(caseData.getDivorceClaimFrom());
@@ -21,7 +22,5 @@ public class ClaimsCost implements Handler<CaseData> {
         if (isPetitionerClaimingCosts && claimsCostFromIsEmpty) {
             caseData.setDivorceClaimFrom(Set.of(ClaimsCostFrom.RESPONDENT));
         }
-
-        return caseData;
     }
 }
