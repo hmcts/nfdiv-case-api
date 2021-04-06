@@ -16,9 +16,9 @@ import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static uk.gov.hmcts.reform.divorce.ccd.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.reform.divorce.ccd.Permissions.READ;
-import static uk.gov.hmcts.reform.divorce.ccd.Permissions.READ_UPDATE;
+import static uk.gov.hmcts.reform.divorce.ccd.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.reform.divorce.ccd.access.Permissions.READ;
+import static uk.gov.hmcts.reform.divorce.ccd.access.Permissions.READ_UPDATE;
 import static uk.gov.hmcts.reform.divorce.ccd.model.State.SOTAgreementPayAndSubmitRequired;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;

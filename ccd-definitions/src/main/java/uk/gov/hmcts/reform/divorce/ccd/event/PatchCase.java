@@ -6,8 +6,8 @@ import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.reform.divorce.ccd.model.State;
 import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 
-import static uk.gov.hmcts.reform.divorce.ccd.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.reform.divorce.ccd.Permissions.READ;
+import static uk.gov.hmcts.reform.divorce.ccd.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.reform.divorce.ccd.access.Permissions.READ;
 import static uk.gov.hmcts.reform.divorce.ccd.model.State.Draft;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;

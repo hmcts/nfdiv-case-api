@@ -13,7 +13,7 @@ import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static uk.gov.hmcts.reform.divorce.ccd.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.reform.divorce.ccd.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.reform.divorce.ccd.event.SaveAndClose.SAVE_AND_CLOSE;
 import static uk.gov.hmcts.reform.divorce.ccd.model.State.Draft;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CITIZEN;
