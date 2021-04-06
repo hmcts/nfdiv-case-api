@@ -338,7 +338,7 @@ public class CaseData {
         label = "Firm address/DX address",
         access = { DefaultAccess.class }
     )
-    private String petitionerOrganisationPolicy;
+    private OrganisationPolicy petitionerOrganisationPolicy;
 
     @CCD(
         label = "Petitioner's full name as on marriage certificate",
@@ -487,24 +487,40 @@ public class CaseData {
     private YesOrNo petitionerKnowsRespondentsAddress;
 
     @CCD(
-        label = "Claim costs from"
+        label = "Claim costs from",
+        access = { DefaultAccess.class }
     )
     private Set<ClaimsCostFrom> divorceClaimFrom;
 
     @CCD(
         label = "Created date",
-        hint = "Date case was created"
+        hint = "Date case was created",
+        access = { DefaultAccess.class }
     )
     private LocalDate createdDate;
 
     @CCD(
         label = "RDC",
-        hint = "Regional divorce unit"
+        hint = "Regional divorce unit",
+        access = { DefaultAccess.class }
     )
     private Court divorceUnit;
 
     @CCD(
-        label = "Site ID for selected court"
+        label = "Site ID for selected court",
+        access = { DefaultAccess.class }
     )
     private String selectedDivorceCentreSiteId;
+
+    @CCD(
+        label = "Respondent's solicitor's reference",
+        access = { DefaultAccess.class }
+    )
+    private String respondentSolicitorReference;
+
+    @CCD(
+        label = "",
+        access = { DefaultAccess.class }
+    )
+    private OrganisationPolicy respondentOrganisationPolicy;
 }

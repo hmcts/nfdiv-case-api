@@ -26,7 +26,7 @@ class ClaimsCostTest {
     void shouldSetClaimsCostFromRespondentIfPetitionerClaimingCostsAndClaimsCostFromIsEmpty() {
 
         final CaseData caseData = new CaseData();
-        caseData.setD8DivorceCostsClaim(YES);
+        caseData.setDivorceCostsClaim(YES);
         caseData.setDivorceClaimFrom(null);
 
         claimsCost.handle(caseData);
@@ -38,7 +38,7 @@ class ClaimsCostTest {
     void shouldNotSetClaimsCostFromRespondentIfPetitionerClaimingCostsAndClaimsCostFromIsNotEmpty() {
 
         final CaseData caseData = new CaseData();
-        caseData.setD8DivorceCostsClaim(YES);
+        caseData.setDivorceCostsClaim(YES);
         caseData.setDivorceClaimFrom(Set.of(CORRESPONDENT));
 
         claimsCost.handle(caseData);
@@ -50,7 +50,7 @@ class ClaimsCostTest {
     void shouldNotSetClaimsCostFromRespondentIfPetitionerNotClaimingCosts() {
 
         final CaseData caseData = new CaseData();
-        caseData.setD8DivorceCostsClaim(NO);
+        caseData.setDivorceCostsClaim(NO);
         caseData.setDivorceClaimFrom(emptySet());
 
         claimsCost.handle(caseData);
