@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.divorce.caseapi.caseapi.util;
+package uk.gov.hmcts.reform.divorce.caseapi.util;
 
 import feign.FeignException;
 import feign.Request;

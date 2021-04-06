@@ -44,9 +44,9 @@ import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.AUTH_HEADER_VALU
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.SUBMIT_PETITION_API_URL;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.TEST_AUTHORIZATION_TOKEN;
-import static uk.gov.hmcts.reform.divorce.caseapi.caseapi.util.TestDataHelper.callbackRequest;
-import static uk.gov.hmcts.reform.divorce.caseapi.caseapi.util.TestDataHelper.caseData;
-import static uk.gov.hmcts.reform.divorce.caseapi.caseapi.util.TestDataHelper.getDefaultOrderSummary;
+import static uk.gov.hmcts.reform.divorce.caseapi.util.TestDataHelper.callbackRequest;
+import static uk.gov.hmcts.reform.divorce.caseapi.util.TestDataHelper.caseData;
+import static uk.gov.hmcts.reform.divorce.caseapi.util.TestDataHelper.getDefaultOrderSummary;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = SolicitorSubmitPetitionController.class)

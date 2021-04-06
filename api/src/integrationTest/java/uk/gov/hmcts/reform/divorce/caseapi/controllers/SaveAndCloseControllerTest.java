@@ -30,8 +30,8 @@ import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.AUTH_HEADER_VALU
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.SAVE_AND_CLOSE_API_URL;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.TEST_USER_EMAIL;
-import static uk.gov.hmcts.reform.divorce.caseapi.caseapi.util.TestDataHelper.callbackRequest;
-import static uk.gov.hmcts.reform.divorce.caseapi.enums.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.reform.divorce.caseapi.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.reform.divorce.caseapi.util.TestDataHelper.callbackRequest;
 
 
 @ExtendWith(SpringExtension.class)

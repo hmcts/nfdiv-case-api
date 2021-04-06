@@ -15,7 +15,7 @@ import uk.gov.hmcts.reform.divorce.caseapi.model.CcdCallbackResponse;
 import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.ABOUT_TO_START_WEBHOOK;
+import static uk.gov.hmcts.reform.divorce.caseapi.controllers.constants.ControllerConstants.ABOUT_TO_START_WEBHOOK;
 import static uk.gov.hmcts.reform.divorce.caseapi.model.CcdCallbackResponse.convertToCcdFormat;
 import static uk.gov.hmcts.reform.divorce.ccd.event.solicitor.SolicitorCreate.SOLICITOR_CREATE;
 

@@ -11,15 +11,18 @@ import uk.gov.hmcts.reform.divorce.caseapi.model.payments.FeeResponse;
 
 import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.ccd.sdk.type.Fee.getValueInPence;
-import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.DEFAULT_CHANNEL;
-import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.DIVORCE;
-import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.FAMILY;
-import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.FAMILY_COURT;
-import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.ISSUE_EVENT;
 
 @Service
 @Slf4j
 public class SolicitorSubmitPetitionService {
+
+    private static final String DEFAULT_CHANNEL = "default";
+    private static final String ISSUE_EVENT = "issue";
+    private static final String FAMILY = "family";
+    private static final String FAMILY_COURT = "family court";
+    private static final String DIVORCE = "divorce";
+
+
     @Autowired
     private FeesAndPaymentsClient feesAndPaymentsClient;
 

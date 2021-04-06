@@ -62,8 +62,8 @@ import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.SOLICITOR_USER_I
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.SUBMIT_PETITION_API_URL;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.TEST_USER_EMAIL;
-import static uk.gov.hmcts.reform.divorce.caseapi.caseapi.util.TestDataHelper.callbackRequest;
-import static uk.gov.hmcts.reform.divorce.caseapi.caseapi.util.TestDataHelper.getFeeResponse;
+import static uk.gov.hmcts.reform.divorce.caseapi.util.TestDataHelper.callbackRequest;
+import static uk.gov.hmcts.reform.divorce.caseapi.util.TestDataHelper.getFeeResponse;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

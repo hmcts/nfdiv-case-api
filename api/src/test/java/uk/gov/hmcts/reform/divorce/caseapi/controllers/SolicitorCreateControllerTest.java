@@ -23,9 +23,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.SOLICITOR_CREATE_API_URL;
-import static uk.gov.hmcts.reform.divorce.caseapi.caseapi.util.TestDataHelper.callbackRequest;
-import static uk.gov.hmcts.reform.divorce.caseapi.caseapi.util.TestDataHelper.caseData;
-import static uk.gov.hmcts.reform.divorce.caseapi.caseapi.util.TestDataHelper.getDefaultOrderSummary;
+import static uk.gov.hmcts.reform.divorce.caseapi.util.TestDataHelper.callbackRequest;
+import static uk.gov.hmcts.reform.divorce.caseapi.util.TestDataHelper.caseData;
+import static uk.gov.hmcts.reform.divorce.caseapi.util.TestDataHelper.getDefaultOrderSummary;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = SolicitorCreateController.class)
