@@ -1,0 +1,30 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "petitionerFirstName": "test_first_name",
+    "petitionerLastName": "test_last_name",
+    "petitionerEmail": "test@test.com",
+    "divorceCostsClaim": "YES",
+    "divorceClaimFrom": [
+      "respondent"
+    ],
+    "createdDate": "2021-04-06",
+    "divorceUnit": "serviceCentre",
+    "selectedDivorceCentreSiteId": "AA07",
+    "solicitorReference": "SOL-REF",
+    "petitionerOrganisationPolicy": {
+      "Organisation": null,
+      "OrgPolicyCaseAssignedRole": null,
+      "orgPolicyReference": "SOL-REF"
+    },
+    "respondentSolicitorReference": "REP-SOL-REF",
+    "respondentOrganisationPolicy": {
+      "Organisation": null,
+      "OrgPolicyCaseAssignedRole": null,
+      "orgPolicyReference": "REP-SOL-REF"
+    }
+  },
+  "errors": null,
+  "warnings": null,
+  "state": null
+}

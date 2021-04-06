@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.ToString;
 
 @Data
-@Builder
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Organisation {

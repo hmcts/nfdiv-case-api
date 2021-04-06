@@ -22,8 +22,8 @@ class SolicitorOrganisationPolicyReferenceTest {
 
         final String solicitorReference = "Solicitor Reference";
         final String respondentSolicitorReference = "Respondent Solicitor Reference";
-        final OrganisationPolicy petitionerOrganisationPolicy = OrganisationPolicy.builder().build();
-        final OrganisationPolicy respondentOrganisationPolicy = OrganisationPolicy.builder().build();
+        final OrganisationPolicy petitionerOrganisationPolicy = new OrganisationPolicy();
+        final OrganisationPolicy respondentOrganisationPolicy = new OrganisationPolicy();
 
         final CaseData caseData = new CaseData();
         caseData.setSolicitorReference(solicitorReference);
@@ -40,7 +40,7 @@ class SolicitorOrganisationPolicyReferenceTest {
     @Test
     void shouldNotSetSolicitorOrganisationPolicyReferenceIfNoSolicitorReference() {
 
-        final OrganisationPolicy organisationPolicy = OrganisationPolicy.builder().build();
+        final OrganisationPolicy organisationPolicy = new OrganisationPolicy();
 
         final CaseData caseData = new CaseData();
         caseData.setPetitionerOrganisationPolicy(organisationPolicy);
@@ -66,7 +66,7 @@ class SolicitorOrganisationPolicyReferenceTest {
     @Test
     void shouldSetRespondentSolicitorOrganisationPolicyReferenceIfThereIsNoRespondentSolicitorReference() {
 
-        final OrganisationPolicy organisationPolicy = OrganisationPolicy.builder().build();
+        final OrganisationPolicy organisationPolicy = new OrganisationPolicy();
 
         final CaseData caseData = new CaseData();
         caseData.setRespondentOrganisationPolicy(organisationPolicy);
