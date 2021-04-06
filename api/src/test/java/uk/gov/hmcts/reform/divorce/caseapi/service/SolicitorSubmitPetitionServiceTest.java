@@ -29,7 +29,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.ISSUE_FEE;
-import static uk.gov.hmcts.reform.divorce.caseapi.caseapi.util.TestDataHelper.getFeeResponse;
+import static uk.gov.hmcts.reform.divorce.caseapi.util.TestDataHelper.getFeeResponse;
 
 @ExtendWith(MockitoExtension.class)
 public class SolicitorSubmitPetitionServiceTest {

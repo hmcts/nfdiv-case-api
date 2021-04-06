@@ -16,9 +16,9 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestResourceUtil.expectedCcdCallbackResponse;
-import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.ABOUT_TO_START_WEBHOOK;
-import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.SUBMIT_PETITION;
+import static uk.gov.hmcts.reform.divorce.caseapi.controllers.constants.ControllerConstants.ABOUT_TO_START_WEBHOOK;
+import static uk.gov.hmcts.reform.divorce.caseapi.controllers.constants.ControllerConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.reform.divorce.ccd.event.solicitor.SolicitorStatementOfTruthPaySubmit.SUBMIT_PETITION;
 
 @SpringBootTest
 public class SolicitorSubmitPetitionTest extends FunctionalTestSuite {

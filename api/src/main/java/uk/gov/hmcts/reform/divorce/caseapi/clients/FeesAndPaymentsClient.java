@@ -8,12 +8,12 @@ import uk.gov.hmcts.reform.divorce.caseapi.model.payments.FeeResponse;
 
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.CHANNEL;
-import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.EVENT;
-import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.JURISDICTION_1;
-import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.JURISDICTION_2;
-import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.KEYWORD;
-import static uk.gov.hmcts.reform.divorce.caseapi.enums.NotificationConstants.SERVICE;
+import static uk.gov.hmcts.reform.divorce.caseapi.clients.FeesAndPayConstants.CHANNEL;
+import static uk.gov.hmcts.reform.divorce.caseapi.clients.FeesAndPayConstants.EVENT;
+import static uk.gov.hmcts.reform.divorce.caseapi.clients.FeesAndPayConstants.JURISDICTION_1;
+import static uk.gov.hmcts.reform.divorce.caseapi.clients.FeesAndPayConstants.JURISDICTION_2;
+import static uk.gov.hmcts.reform.divorce.caseapi.clients.FeesAndPayConstants.KEYWORD;
+import static uk.gov.hmcts.reform.divorce.caseapi.clients.FeesAndPayConstants.SERVICE;
 
 @FeignClient(name = "fees-and-payments-client", url = "${fee.api.baseUrl}")
 @SuppressWarnings("PMD.UseObjectForClearerAPI")

@@ -30,7 +30,7 @@ import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.TEST_CASEWORKER_
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.TEST_SOL_USER_EMAIL;
-import static uk.gov.hmcts.reform.divorce.caseapi.caseapi.util.TestDataHelper.feignException;
+import static uk.gov.hmcts.reform.divorce.caseapi.util.TestDataHelper.feignException;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.CREATOR;
 import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.PETITIONER_SOLICITOR;
 

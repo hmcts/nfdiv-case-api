@@ -22,7 +22,7 @@ import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.SOLICITOR_USER_I
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.TEST_CASEWORKER_USER_EMAIL;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.TEST_CASEWORKER_USER_PASSWORD;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.TEST_SOL_USER_EMAIL;
-import static uk.gov.hmcts.reform.divorce.caseapi.caseapi.util.TestDataHelper.feignException;
+import static uk.gov.hmcts.reform.divorce.caseapi.util.TestDataHelper.feignException;
 
 @ExtendWith(MockitoExtension.class)
 public class IdamServiceTest {

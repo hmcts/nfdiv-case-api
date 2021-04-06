@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.divorce.caseapi.enums;
+package uk.gov.hmcts.reform.divorce.caseapi.model;
 
 public enum LanguagePreference {
     ENGLISH("english"),
