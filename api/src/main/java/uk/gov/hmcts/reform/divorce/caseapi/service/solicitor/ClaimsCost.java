@@ -16,7 +16,7 @@ public class ClaimsCost implements Handler<CaseData> {
     @Override
     public void handle(final CaseData caseData) {
 
-        final boolean isPetitionerClaimingCosts = YES.equals(caseData.getD8DivorceCostsClaim());
+        final boolean isPetitionerClaimingCosts = YES.equals(caseData.getDivorceCostsClaim());
         final boolean claimsCostFromIsEmpty = isEmpty(caseData.getDivorceClaimFrom());
 
         if (isPetitionerClaimingCosts && claimsCostFromIsEmpty) {
