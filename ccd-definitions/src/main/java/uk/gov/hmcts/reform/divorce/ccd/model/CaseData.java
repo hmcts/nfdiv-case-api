@@ -2,6 +2,10 @@ package uk.gov.hmcts.reform.divorce.ccd.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,6 +29,7 @@ import uk.gov.hmcts.reform.divorce.ccd.model.enums.SolToPay;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.WhoDivorcing;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
@@ -530,6 +535,8 @@ public class CaseData {
         hint = "Date case was created",
         access = { DefaultAccess.class }
     )
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     private LocalDate createdDate;
 
     @CCD(
@@ -556,4 +563,11 @@ public class CaseData {
         access = { DefaultAccess.class }
     )
     private OrganisationPolicy respondentOrganisationPolicy;
+
+    @CCD(
+        label = "Documents generated",
+        // typeOverride = FieldType.Collection
+        access = {DefaultAccess.class}
+    )
+    private List<DivorceDocument> documentsGenerated;
 }

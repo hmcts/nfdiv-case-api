@@ -16,8 +16,8 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestResourceUtil.expectedCcdCallbackResponse;
-import static uk.gov.hmcts.reform.divorce.caseapi.controllers.constants.ControllerConstants.ABOUT_TO_START_WEBHOOK;
-import static uk.gov.hmcts.reform.divorce.caseapi.controllers.constants.ControllerConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.reform.divorce.caseapi.constants.ControllerConstants.ABOUT_TO_START_WEBHOOK;
+import static uk.gov.hmcts.reform.divorce.caseapi.constants.ControllerConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.reform.divorce.ccd.event.solicitor.SolicitorStatementOfTruthPaySubmit.SUBMIT_PETITION;
 
 @SpringBootTest

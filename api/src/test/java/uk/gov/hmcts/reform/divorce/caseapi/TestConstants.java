@@ -32,6 +32,9 @@ public final class TestConstants {
     public static final String TEST_CASE_ID = "1616591401473378";
     public static final String TEST_SERVICE_AUTH_TOKEN = "Bearer TestServiceAuth";
 
+    public static final String ENGLISH_TEMPLATE_ID = "divorceminipetition";
+    public static final String WELSH_TEMPLATE_ID = "FL-DIV-GNO-WEL-00256.docx";
+
     private TestConstants() {
     }
 }

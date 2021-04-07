@@ -19,8 +19,12 @@ import uk.gov.hmcts.reform.divorce.ccd.model.enums.DivorceOrDissolution;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
 
 import static java.nio.file.Files.readAllBytes;
+import static org.mockito.Mockito.when;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 import static org.skyscreamer.jsonassert.JSONCompareMode.STRICT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -43,6 +47,9 @@ import static uk.gov.hmcts.reform.divorce.caseapi.util.TestDataHelper.callbackRe
 @AutoConfigureMockMvc
 class SolicitorCreateControllerTest {
 
+    private static final Instant INSTANT = Instant.parse("2021-04-06T16:00:00.00Z");
+    private static final ZoneId ZONE_ID = ZoneId.systemDefault();
+
     private static final String SET_LANGUAGE_PREFERENCE = "classpath:set-language-preference-response.json";
     private static final String SOLICITOR_CREATE_ABOUT_TO_SUBMIT = "classpath:solicitor-create-about-to-submit-response.json";
 
@@ -60,6 +67,9 @@ class SolicitorCreateControllerTest {
 
     @MockBean
     private WebMvcConfig webMvcConfig;
+
+    @MockBean
+    private Clock clock;
 
     @Test
     void givenValidCaseDataWhenAboutToStartCallbackIsInvokedLanguagePreferenceIsSet()
@@ -84,6 +94,8 @@ class SolicitorCreateControllerTest {
     void givenValidCaseDataWhenAboutToSubmitCallbackIsInvokedCaseDataIsSetCorrectly()
         throws Exception {
 
+        when(clock.instant()).thenReturn(INSTANT);
+        when(clock.getZone()).thenReturn(ZONE_ID);
 
         final String jsonStringResponse = mockMvc.perform(post(SOLICITOR_CREATE_ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -97,8 +109,7 @@ class SolicitorCreateControllerTest {
             .getResponse()
             .getContentAsString();
 
-        //TODO: Make this work
-        //assertEquals(jsonStringResponse, expectedResponse(SOLICITOR_CREATE_ABOUT_TO_SUBMIT), STRICT);
+        assertEquals(jsonStringResponse, expectedResponse(SOLICITOR_CREATE_ABOUT_TO_SUBMIT), STRICT);
     }
 
     private String expectedResponse(final String jsonFile) throws IOException {

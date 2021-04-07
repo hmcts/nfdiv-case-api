@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.divorce.caseapi.controllers.constants;
+package uk.gov.hmcts.reform.divorce.caseapi.constants;
 
 public final class ControllerConstants {
     public static final String SUBMITTED_WEBHOOK = "/Submitted";

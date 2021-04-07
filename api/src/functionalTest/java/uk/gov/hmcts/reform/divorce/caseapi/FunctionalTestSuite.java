@@ -19,7 +19,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static uk.gov.hmcts.reform.divorce.caseapi.controllers.constants.ControllerConstants.SUBMITTED_WEBHOOK;
+import static uk.gov.hmcts.reform.divorce.caseapi.constants.ControllerConstants.SUBMITTED_WEBHOOK;
 import static uk.gov.hmcts.reform.divorce.ccd.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.reform.divorce.ccd.NoFaultDivorce.JURISDICTION;
 import static uk.gov.hmcts.reform.divorce.ccd.event.SaveAndClose.SAVE_AND_CLOSE;

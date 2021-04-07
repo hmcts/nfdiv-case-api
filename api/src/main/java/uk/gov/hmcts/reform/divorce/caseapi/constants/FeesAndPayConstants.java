@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.divorce.caseapi.clients;
+package uk.gov.hmcts.reform.divorce.caseapi.constants;
 
 public final class FeesAndPayConstants {
 

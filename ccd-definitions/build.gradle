@@ -42,6 +42,7 @@ dependencies {
   compileOnly group: 'org.reflections', name: 'reflections', version: '0.9.12'
   compileOnly group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: versions.jacksonDatabind
   compileOnly group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  compileOnly group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: versions.jacksonDatabind
   annotationProcessor("org.projectlombok:lombok:${versions.lombok}")
 
   testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'

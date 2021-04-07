@@ -11,18 +11,18 @@ import java.util.Map;
 
 import static uk.gov.hmcts.reform.divorce.caseapi.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.reform.divorce.caseapi.notification.EmailTemplateNames.SAVE_SIGN_OUT;
-import static uk.gov.hmcts.reform.divorce.caseapi.notification.NotificationConstants.APPLICATION_TO_END_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.reform.divorce.caseapi.notification.NotificationConstants.APPLY_FOR_DIVORCE;
-import static uk.gov.hmcts.reform.divorce.caseapi.notification.NotificationConstants.COURT_EMAIL;
-import static uk.gov.hmcts.reform.divorce.caseapi.notification.NotificationConstants.DIVORCE_APPLICATION;
-import static uk.gov.hmcts.reform.divorce.caseapi.notification.NotificationConstants.END_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.reform.divorce.caseapi.notification.NotificationConstants.FIRST_NAME;
-import static uk.gov.hmcts.reform.divorce.caseapi.notification.NotificationConstants.LAST_NAME;
-import static uk.gov.hmcts.reform.divorce.caseapi.notification.NotificationConstants.RELATIONSHIP;
-import static uk.gov.hmcts.reform.divorce.caseapi.notification.NotificationConstants.RELATIONSHIP_COURT_HEADER;
-import static uk.gov.hmcts.reform.divorce.caseapi.notification.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
-import static uk.gov.hmcts.reform.divorce.caseapi.notification.NotificationConstants.SIGN_IN_DIVORCE_URL;
-import static uk.gov.hmcts.reform.divorce.caseapi.notification.NotificationConstants.SIGN_IN_URL_NOTIFY_KEY;
+import static uk.gov.hmcts.reform.divorce.caseapi.constants.NotificationConstants.APPLICATION_TO_END_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.reform.divorce.caseapi.constants.NotificationConstants.APPLY_FOR_DIVORCE;
+import static uk.gov.hmcts.reform.divorce.caseapi.constants.NotificationConstants.COURT_EMAIL;
+import static uk.gov.hmcts.reform.divorce.caseapi.constants.NotificationConstants.DIVORCE_APPLICATION;
+import static uk.gov.hmcts.reform.divorce.caseapi.constants.NotificationConstants.END_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.reform.divorce.caseapi.constants.NotificationConstants.FIRST_NAME;
+import static uk.gov.hmcts.reform.divorce.caseapi.constants.NotificationConstants.LAST_NAME;
+import static uk.gov.hmcts.reform.divorce.caseapi.constants.NotificationConstants.RELATIONSHIP;
+import static uk.gov.hmcts.reform.divorce.caseapi.constants.NotificationConstants.RELATIONSHIP_COURT_HEADER;
+import static uk.gov.hmcts.reform.divorce.caseapi.constants.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
+import static uk.gov.hmcts.reform.divorce.caseapi.constants.NotificationConstants.SIGN_IN_DIVORCE_URL;
+import static uk.gov.hmcts.reform.divorce.caseapi.constants.NotificationConstants.SIGN_IN_URL_NOTIFY_KEY;
 
 @Component
 public class SaveAndSignOutNotificationHandler {
