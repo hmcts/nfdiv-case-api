@@ -22,10 +22,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.SOLICITOR_CREATE_ABOUT_TO_START_URL;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.SOLICITOR_CREATE_ABOUT_TO_SUBMIT_URL;
+import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.reform.divorce.caseapi.util.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.reform.divorce.caseapi.util.TestDataHelper.caseData;
 
@@ -75,7 +77,12 @@ class SolicitorCreateControllerTest {
 
         final CaseData updatedCaseData = caseData();
 
-        when(solicitorCreatePetitionService.aboutToSubmit(any(CaseData.class))).thenReturn(updatedCaseData);
+        when(solicitorCreatePetitionService.aboutToSubmit(
+            any(CaseData.class),
+            any(String.class),
+            any(String.class)
+        ))
+            .thenReturn(updatedCaseData);
 
         final CcdCallbackResponse ccdCallbackResponse = CcdCallbackResponse
             .builder()
@@ -88,6 +95,7 @@ class SolicitorCreateControllerTest {
                 post(SOLICITOR_CREATE_ABOUT_TO_SUBMIT_URL)
                     .contentType(APPLICATION_JSON)
                     .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                    .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                     .content(objectMapper.writeValueAsBytes(callbackRequest())))
             .andExpect(status().isOk())
             .andExpect(content().string(objectMapper.writeValueAsString(ccdCallbackResponse)));

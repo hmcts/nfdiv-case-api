@@ -27,7 +27,11 @@ public class SolicitorCreatePetitionService {
     @Autowired
     private uk.gov.hmcts.reform.divorce.caseapi.util.CaseDataUpdaterChainFactory caseDataUpdaterChainFactory;
 
-    public CaseData aboutToSubmit(final CaseData caseData) {
+    public CaseData aboutToSubmit(
+        final CaseData caseData,
+        final String caseId,
+        final String idamAuthToken
+    ) {
 
         final List<CaseDataUpdater> caseDataUpdaters = asList(
             claimsCost,
@@ -36,6 +40,8 @@ public class SolicitorCreatePetitionService {
 
         final CaseDataContext caseDataContext = CaseDataContext.builder()
             .caseData(caseData)
+            .caseId(caseId)
+            .userAuthToken(idamAuthToken)
             .build();
 
         return caseDataUpdaterChainFactory

@@ -69,9 +69,15 @@ public class SolicitorCreateController {
 
         final CaseData caseData = callbackRequest.getCaseDetails().getCaseData();
 
+        CaseData updatedCaseData = solicitorCreatePetitionService.aboutToSubmit(
+            caseData,
+            callbackRequest.getCaseDetails().getCaseId(),
+            idamAuthToken
+        );
+
         return CcdCallbackResponse
             .builder()
-            .data(convertToCcdFormat(solicitorCreatePetitionService.aboutToSubmit(caseData)))
+            .data(convertToCcdFormat(updatedCaseData))
             .build();
     }
 }

@@ -79,3 +79,6 @@ docmosis:
       DIVORCE_MINI_PETITION: divorceminipetition
     welsh:
       DIVORCE_MINI_PETITION: FL-DIV-GNO-WEL-00256.docx
+
+doc_assembly:
+  url: ${DOC_ASSEMBLY_URL:http://dg-docassembly-aat.service.core-compute-aat.internal}

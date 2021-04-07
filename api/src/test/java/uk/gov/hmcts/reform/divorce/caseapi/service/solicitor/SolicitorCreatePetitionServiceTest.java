@@ -20,6 +20,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.TEST_AUTHORIZATION_TOKEN;
+import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class SolicitorCreatePetitionServiceTest {
@@ -52,12 +54,18 @@ class SolicitorCreatePetitionServiceTest {
 
         final CaseDataContext caseDataContext = CaseDataContext.builder()
             .caseData(caseData)
+            .caseId(TEST_CASE_ID)
+            .userAuthToken(TEST_AUTHORIZATION_TOKEN)
             .build();
 
         when(caseDataUpdaterChainFactory.createWith(caseDataUpdaters)).thenReturn(caseDataUpdaterChain);
         when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
 
-        final CaseData actualCaseData = solicitorCreatePetitionService.aboutToSubmit(caseData);
+        final CaseData actualCaseData = solicitorCreatePetitionService.aboutToSubmit(
+            caseData,
+            TEST_CASE_ID,
+            TEST_AUTHORIZATION_TOKEN
+        );
 
         assertThat(actualCaseData, is(caseData));
 
