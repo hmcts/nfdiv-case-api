@@ -9,14 +9,7 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.reform.divorce.ccd.access.DefaultAccess;
-import uk.gov.hmcts.reform.divorce.ccd.model.enums.ChangedNameHow;
-import uk.gov.hmcts.reform.divorce.ccd.model.enums.ConfidentialAddress;
-import uk.gov.hmcts.reform.divorce.ccd.model.enums.DivorceOrDissolution;
-import uk.gov.hmcts.reform.divorce.ccd.model.enums.Gender;
-import uk.gov.hmcts.reform.divorce.ccd.model.enums.JurisdictionConnections;
-import uk.gov.hmcts.reform.divorce.ccd.model.enums.SolServiceMethod;
-import uk.gov.hmcts.reform.divorce.ccd.model.enums.SolToPay;
-import uk.gov.hmcts.reform.divorce.ccd.model.enums.WhoDivorcing;
+import uk.gov.hmcts.reform.divorce.ccd.model.enums.*;
 
 import java.util.Set;
 
@@ -482,4 +475,16 @@ public class CaseData {
         access = { DefaultAccess.class }
     )
     private YesOrNo petitionerKnowsRespondentsAddress;
+
+    @CCD(
+        label = "Are there, or have there ever been, any other legal proceedings relating to your civil partnership, property or children?",
+        access = { DefaultAccess.class }
+    )
+    private YesOrNo legalProceedings;
+
+    @CCD(
+        label = "What do the legal proceedings relate to?",
+        access = { DefaultAccess.class }
+    )
+    private LegalProceedingsRelated legalProceedingsRelated;
 }
