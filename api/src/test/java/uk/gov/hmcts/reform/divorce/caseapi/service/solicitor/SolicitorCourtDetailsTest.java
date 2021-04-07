@@ -6,6 +6,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.reform.divorce.caseapi.util.CaseDataContext;
+import uk.gov.hmcts.reform.divorce.caseapi.util.CaseDataUpdaterChain;
 import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 
 import java.time.Clock;
@@ -25,6 +27,12 @@ class SolicitorCourtDetailsTest {
     private static final ZoneId ZONE_ID = ZoneId.systemDefault();
 
     @Mock
+    private CaseDataContext caseDataContext;
+
+    @Mock
+    private CaseDataUpdaterChain caseDataUpdaterChain;
+
+    @Mock
     private Clock clock;
 
     @InjectMocks
@@ -39,10 +47,16 @@ class SolicitorCourtDetailsTest {
     @Test
     void shouldSetSolictorCourtDetailsInGivenCaseData() {
 
-        final CaseData caseData = new CaseData();
+        final CaseData caseData = CaseData.builder().build();
         final LocalDate expected = LocalDate.ofInstant(INSTANT, ZONE_ID);
 
-        solicitorCourtDetails.handle(caseData);
+        when(caseDataContext.copyOfCaseData()).thenReturn(caseData);
+        when(caseDataContext.handlerContextWith(caseData)).thenReturn(caseDataContext);
+        when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
+
+        final CaseDataContext result = solicitorCourtDetails.updateCaseData(this.caseDataContext, caseDataUpdaterChain);
+
+        assertThat(result, is(caseDataContext));
 
         assertThat(caseData.getCreatedDate(), is(expected));
         assertThat(caseData.getDivorceUnit(), is(SERVICE_CENTRE));

@@ -3,7 +3,8 @@ package uk.gov.hmcts.reform.divorce.caseapi.service.solicitor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.reform.divorce.caseapi.util.Handler;
+import uk.gov.hmcts.reform.divorce.caseapi.util.CaseDataContext;
+import uk.gov.hmcts.reform.divorce.caseapi.util.CaseDataUpdater;
 import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 
 import java.util.List;
@@ -21,21 +22,25 @@ public class SolicitorCreatePetitionService {
     private SolicitorCourtDetails solicitorCourtDetails;
 
     @Autowired
-    private MiniPetitionDraft miniPetitionDraft;
+    private SolicitorOrganisationPolicyReference solicitorOrganisationPolicyReference;
 
     @Autowired
-    private SolicitorOrganisationPolicyReference solicitorOrganisationPolicyReference;
+    private uk.gov.hmcts.reform.divorce.caseapi.util.CaseDataUpdaterChainFactory caseDataUpdaterChainFactory;
 
     public CaseData aboutToSubmit(final CaseData caseData) {
 
-        final List<Handler<CaseData>> handlers = asList(
+        final List<CaseDataUpdater> caseDataUpdaters = asList(
             claimsCost,
             solicitorCourtDetails,
-            miniPetitionDraft,
             solicitorOrganisationPolicyReference);
 
-        handlers.forEach(caseDataHandler -> caseDataHandler.handle(caseData));
+        final CaseDataContext caseDataContext = CaseDataContext.builder()
+            .caseData(caseData)
+            .build();
 
-        return caseData;
+        return caseDataUpdaterChainFactory
+            .createWith(caseDataUpdaters)
+            .processNext(caseDataContext)
+            .getCaseData();
     }
 }
