@@ -15,13 +15,13 @@
     "petitionerOrganisationPolicy": {
       "Organisation": null,
       "OrgPolicyCaseAssignedRole": null,
-      "orgPolicyReference": "SOL-REF"
+      "OrgPolicyReference": "SOL-REF"
     },
-    "respondentSolicitorReference": "REP-SOL-REF",
+    "respondentSolicitorReference": "RESP-SOL-REF",
     "respondentOrganisationPolicy": {
       "Organisation": null,
       "OrgPolicyCaseAssignedRole": null,
-      "orgPolicyReference": "REP-SOL-REF"
+      "OrgPolicyReference": "RESP-SOL-REF"
     }
   },
   "errors": null,
