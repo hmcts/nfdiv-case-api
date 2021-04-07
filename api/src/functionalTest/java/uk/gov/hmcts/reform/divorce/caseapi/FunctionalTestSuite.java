@@ -58,12 +58,12 @@ abstract class FunctionalTestSuite {
     private CoreCaseDataApi coreCaseDataApi;
 
     protected CaseData caseData() {
-        CaseData caseData = new CaseData();
-        caseData.setPetitionerFirstName(TEST_FIRST_NAME);
-        caseData.setPetitionerLastName(TEST_LAST_NAME);
-        caseData.setDivorceOrDissolution(DIVORCE);
-        caseData.setPetitionerEmail(TEST_USER_EMAIL);
-        return caseData;
+        return CaseData.builder()
+            .petitionerFirstName(TEST_FIRST_NAME)
+            .petitionerLastName(TEST_LAST_NAME)
+            .divorceOrDissolution(DIVORCE)
+            .petitionerEmail(TEST_USER_EMAIL)
+            .build();
     }
 
     protected String generateServiceAuthTokenFor(String s2sName) {

@@ -2,6 +2,8 @@ package uk.gov.hmcts.reform.divorce.ccd.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
@@ -33,6 +35,8 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 @EqualsAndHashCode()
+@AllArgsConstructor
+@Builder(toBuilder = true)
 public class CaseData {
 
     @CCD(

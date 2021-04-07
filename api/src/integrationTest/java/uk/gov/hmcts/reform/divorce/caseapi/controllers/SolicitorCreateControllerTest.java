@@ -7,10 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.hmcts.reform.divorce.caseapi.config.JacksonSerializerConfiguration;
 import uk.gov.hmcts.reform.divorce.caseapi.config.WebMvcConfig;
 import uk.gov.hmcts.reform.divorce.caseapi.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.reform.divorce.caseapi.model.CaseDetails;
@@ -108,17 +106,17 @@ class SolicitorCreateControllerTest {
     }
 
     private CaseData caseData() {
-        CaseData caseData = new CaseData();
-        caseData.setPetitionerFirstName(TEST_FIRST_NAME);
-        caseData.setPetitionerLastName(TEST_LAST_NAME);
-        caseData.setPetitionerEmail(TEST_USER_EMAIL);
-        caseData.setDivorceOrDissolution(DivorceOrDissolution.DIVORCE);
-        caseData.setDivorceCostsClaim(YES);
-        caseData.setSolicitorReference("SOL-REF");
-        caseData.setPetitionerOrganisationPolicy(new OrganisationPolicy());
-        caseData.setRespondentSolicitorReference("RESP-SOL-REF");
-        caseData.setRespondentOrganisationPolicy(new OrganisationPolicy());
-        return caseData;
+        return CaseData.builder()
+            .petitionerFirstName(TEST_FIRST_NAME)
+            .petitionerLastName(TEST_LAST_NAME)
+            .petitionerEmail(TEST_USER_EMAIL)
+            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
+            .divorceCostsClaim(YES)
+            .solicitorReference("SOL-REF")
+            .petitionerOrganisationPolicy(OrganisationPolicy.builder().build())
+            .respondentSolicitorReference("RESP-SOL-REF")
+            .respondentOrganisationPolicy(OrganisationPolicy.builder().build())
+            .build();
     }
 
     private CcdCallbackRequest aboutToSubmitRequest() {
