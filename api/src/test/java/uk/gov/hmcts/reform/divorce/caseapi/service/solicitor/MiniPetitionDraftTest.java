@@ -23,7 +23,6 @@ import static feign.Request.HttpMethod.POST;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -85,12 +84,13 @@ public class MiniPetitionDraftTest {
         DivorceDocument divorceDocument = result.getCaseData().getDocumentsGenerated().get(0);
 
         assertThat(divorceDocument.getDocumentType()).isEqualTo(Petition);
-        assertThat(divorceDocument.getDocumentLink()).extracting(URL, FILENAME, BINARY_URL)
+        assertThat(divorceDocument
+            .getDocumentLink())
+            .extracting(URL, FILENAME, BINARY_URL)
             .contains(
                 DOC_URL,
                 PDF_FILENAME,
-                DOC_BINARY_URL
-            );
+                DOC_BINARY_URL);
     }
 
     @Test
@@ -102,12 +102,13 @@ public class MiniPetitionDraftTest {
 
         DocumentInfo documentInfo = documentInfo();
 
-        when(docAssemblyService.generateAndStoreDraftPetition(
-            caseData,
-            TEST_CASE_ID,
-            TEST_AUTHORIZATION_TOKEN,
-            WELSH_TEMPLATE_ID
-        )).thenReturn(documentInfo);
+        when(docAssemblyService
+            .generateAndStoreDraftPetition(
+                caseData,
+                TEST_CASE_ID,
+                TEST_AUTHORIZATION_TOKEN,
+                WELSH_TEMPLATE_ID))
+            .thenReturn(documentInfo);
 
         mockDocmosisTemplateConfig();
 
@@ -119,12 +120,13 @@ public class MiniPetitionDraftTest {
         DivorceDocument divorceDocument = updatedCaseDataContext.getCaseData().getDocumentsGenerated().get(0);
 
         assertThat(divorceDocument.getDocumentType()).isEqualTo(Petition);
-        assertThat(divorceDocument.getDocumentLink()).extracting(URL, FILENAME, BINARY_URL)
+        assertThat(divorceDocument
+            .getDocumentLink())
+            .extracting(URL, FILENAME, BINARY_URL)
             .contains(
                 DOC_URL,
                 PDF_FILENAME,
-                DOC_BINARY_URL
-            );
+                DOC_BINARY_URL);
     }
 
     @Test

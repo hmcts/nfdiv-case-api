@@ -27,10 +27,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
-import static uk.gov.hmcts.reform.divorce.caseapi.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.reform.divorce.caseapi.notification.EmailTemplateNames.SAVE_SIGN_OUT;
 import static uk.gov.hmcts.reform.divorce.caseapi.constants.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.reform.divorce.caseapi.constants.NotificationConstants.SIGN_IN_DIVORCE_URL;
+import static uk.gov.hmcts.reform.divorce.caseapi.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.reform.divorce.caseapi.notification.EmailTemplateNames.SAVE_SIGN_OUT;
 import static uk.gov.hmcts.reform.divorce.caseapi.util.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)

@@ -124,20 +124,22 @@ public class DocAssemblyServiceTest {
                 .build();
 
         doThrow(feignException)
-            .when(docAssemblyClient).generateAndStoreDraftPetition(
-            TEST_AUTHORIZATION_TOKEN,
-            TEST_SERVICE_AUTH_TOKEN,
-            docAssemblyRequest
-        );
+            .when(docAssemblyClient)
+            .generateAndStoreDraftPetition(
+                TEST_AUTHORIZATION_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN,
+                docAssemblyRequest
+            );
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        assertThatThrownBy(() -> docAssemblyService.generateAndStoreDraftPetition(
-            caseData(),
-            TEST_CASE_ID,
-            TEST_AUTHORIZATION_TOKEN,
-            ENGLISH_TEMPLATE_ID
-        ))
+        assertThatThrownBy(() -> docAssemblyService
+            .generateAndStoreDraftPetition(
+                caseData(),
+                TEST_CASE_ID,
+                TEST_AUTHORIZATION_TOKEN,
+                ENGLISH_TEMPLATE_ID
+            ))
             .isExactlyInstanceOf(FeignException.Unauthorized.class)
             .hasMessageContaining("s2s service not whitelisted");
     }

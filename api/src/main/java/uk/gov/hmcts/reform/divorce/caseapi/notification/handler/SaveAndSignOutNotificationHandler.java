@@ -9,8 +9,6 @@ import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 import java.util.HashMap;
 import java.util.Map;
 
-import static uk.gov.hmcts.reform.divorce.caseapi.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.reform.divorce.caseapi.notification.EmailTemplateNames.SAVE_SIGN_OUT;
 import static uk.gov.hmcts.reform.divorce.caseapi.constants.NotificationConstants.APPLICATION_TO_END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.reform.divorce.caseapi.constants.NotificationConstants.APPLY_FOR_DIVORCE;
 import static uk.gov.hmcts.reform.divorce.caseapi.constants.NotificationConstants.COURT_EMAIL;
@@ -23,6 +21,8 @@ import static uk.gov.hmcts.reform.divorce.caseapi.constants.NotificationConstant
 import static uk.gov.hmcts.reform.divorce.caseapi.constants.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.reform.divorce.caseapi.constants.NotificationConstants.SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.reform.divorce.caseapi.constants.NotificationConstants.SIGN_IN_URL_NOTIFY_KEY;
+import static uk.gov.hmcts.reform.divorce.caseapi.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.reform.divorce.caseapi.notification.EmailTemplateNames.SAVE_SIGN_OUT;
 
 @Component
 public class SaveAndSignOutNotificationHandler {

@@ -6,9 +6,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import uk.gov.hmcts.reform.divorce.caseapi.model.LanguagePreference;
 
-import javax.validation.constraints.NotNull;
 import java.util.EnumMap;
 import java.util.Map;
+import javax.validation.constraints.NotNull;
 
 @Component
 @ConfigurationProperties(prefix = "docmosis")
