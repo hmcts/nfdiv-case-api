@@ -22,5 +22,8 @@ public class CaseTypeTab implements CcdConfiguration {
 
         configBuilder.tab("paymentDetailsCourtAdmin", "Payment")
             .field(CaseData::getHelpWithFeesReferenceNumber);
+
+        configBuilder.tab("documents","Documents")
+            .field(CaseData:: getDocumentsGenerated);
     }
 }
