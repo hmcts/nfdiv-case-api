@@ -500,5 +500,5 @@ public class CaseData {
         label = "What do the legal proceedings relate to?",
         access = { DefaultAccess.class }
     )
-    private LegalProceedingsRelated legalProceedingsRelated;
+    private Set<LegalProceedingsRelated> legalProceedingsRelated;
 }
