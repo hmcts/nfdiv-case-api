@@ -14,6 +14,7 @@ import uk.gov.hmcts.reform.divorce.ccd.model.enums.ConfidentialAddress;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.DivorceOrDissolution;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.Gender;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.JurisdictionConnections;
+import uk.gov.hmcts.reform.divorce.ccd.model.enums.LegalProceedingsRelated;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.SolServiceMethod;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.SolToPay;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.WhoDivorcing;
@@ -482,4 +483,16 @@ public class CaseData {
         access = { DefaultAccess.class }
     )
     private YesOrNo petitionerKnowsRespondentsAddress;
+
+    @CCD(
+        label = "Any other legal proceedings relating to your civil partnership, property or children?",
+        access = { DefaultAccess.class }
+    )
+    private YesOrNo legalProceedings;
+
+    @CCD(
+        label = "What do the legal proceedings relate to?",
+        access = { DefaultAccess.class }
+    )
+    private LegalProceedingsRelated legalProceedingsRelated;
 }
