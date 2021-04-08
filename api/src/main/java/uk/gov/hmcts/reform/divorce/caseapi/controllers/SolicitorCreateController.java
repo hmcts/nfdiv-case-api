@@ -69,7 +69,7 @@ public class SolicitorCreateController {
 
         final CaseData caseData = callbackRequest.getCaseDetails().getCaseData();
 
-        CaseData updatedCaseData = solicitorCreatePetitionService.aboutToSubmit(
+        final CaseData updatedCaseData = solicitorCreatePetitionService.aboutToSubmit(
             caseData,
             callbackRequest.getCaseDetails().getCaseId(),
             idamAuthToken

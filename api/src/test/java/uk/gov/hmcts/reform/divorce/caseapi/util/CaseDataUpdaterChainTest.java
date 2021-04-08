@@ -8,6 +8,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 class CaseDataUpdaterChainTest {
@@ -41,5 +42,7 @@ class CaseDataUpdaterChainTest {
 
         verify(caseDataUpdater1).updateCaseData(initial, caseDataUpdaterChain);
         verify(caseDataUpdater2).updateCaseData(caseDataContext1, caseDataUpdaterChain);
+
+        verifyNoMoreInteractions(caseDataUpdater1, caseDataUpdater2);
     }
 }
