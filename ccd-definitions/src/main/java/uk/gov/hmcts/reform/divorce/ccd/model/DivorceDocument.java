@@ -3,7 +3,6 @@ package uk.gov.hmcts.reform.divorce.ccd.model;
 import lombok.Builder;
 import lombok.Data;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
-import uk.gov.hmcts.ccd.sdk.api.ComplexType;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.reform.divorce.ccd.access.DefaultAccess;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.DocumentType;
@@ -14,7 +13,6 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 
 @Data
-@ComplexType(name = "DivorceDocument")
 @Builder
 public class DivorceDocument {
 
