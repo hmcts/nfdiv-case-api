@@ -570,6 +570,7 @@ public class CaseData {
     @CCD(
         label = "Documents generated",
         typeOverride = Collection,
+        typeParameterOverride = "DivorceDocument",
         access = {DefaultAccess.class}
     )
     private List<DivorceDocument> documentsGenerated;
