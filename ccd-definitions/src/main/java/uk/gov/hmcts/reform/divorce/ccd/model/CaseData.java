@@ -378,6 +378,14 @@ public class CaseData {
     private YesOrNo financialOrder;
 
     @CCD(
+        label = "Petitioner wants/will to apply to have the papers served to the respondent another way.",
+        hint = "For example by email, text message or social media. This is a separate application with "
+            + "an additional fee, which will need to be reviewed by a judge.",
+        access = { DefaultAccess.class }
+    )
+    private YesOrNo petitionerWantsToHavePapersServedAnotherWay;
+
+    @CCD(
         label = "How would you like the respondent to be served?",
         access = { DefaultAccess.class }
     )
