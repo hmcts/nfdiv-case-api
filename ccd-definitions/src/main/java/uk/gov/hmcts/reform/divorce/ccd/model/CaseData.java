@@ -481,5 +481,11 @@ public class CaseData {
         label = "Do you know their email address",
         access = { DefaultAccess.class }
     )
+    private YesOrNo petitionerKnowsRespondentsEmailAddress;
+
+    @CCD(
+        label = "Do you know their address",
+        access = { DefaultAccess.class }
+    )
     private YesOrNo petitionerKnowsRespondentsAddress;
 }
