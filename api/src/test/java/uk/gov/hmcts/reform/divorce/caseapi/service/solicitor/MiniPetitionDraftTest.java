@@ -184,11 +184,10 @@ public class MiniPetitionDraftTest {
     }
 
     private DocumentInfo documentInfo() {
-        return DocumentInfo
-            .builder()
-            .url(DOC_URL)
-            .binaryUrl(DOC_BINARY_URL)
-            .filename(PDF_FILENAME)
-            .build();
+        return new DocumentInfo(
+            DOC_URL,
+            PDF_FILENAME,
+            DOC_BINARY_URL
+        );
     }
 }

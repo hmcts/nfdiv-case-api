@@ -67,11 +67,9 @@ public class DocAssemblyServiceTest {
 
         String documentUuid = UUID.randomUUID().toString();
 
-        DocAssemblyResponse docAssemblyResponse =
-            DocAssemblyResponse
-                .builder()
-                .renditionOutputLocation(DOC_STORE_BASE_URL_PATH + documentUuid)
-                .build();
+        DocAssemblyResponse docAssemblyResponse = new DocAssemblyResponse(
+            DOC_STORE_BASE_URL_PATH + documentUuid
+        );
 
         when(docAssemblyClient.generateAndStoreDraftPetition(
             TEST_AUTHORIZATION_TOKEN,

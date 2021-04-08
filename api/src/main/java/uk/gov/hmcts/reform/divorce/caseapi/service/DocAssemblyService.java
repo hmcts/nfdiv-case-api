@@ -57,11 +57,10 @@ public class DocAssemblyService {
             docAssemblyResponse.getRenditionOutputLocation()
         );
 
-        return DocumentInfo
-            .builder()
-            .url(docAssemblyResponse.getRenditionOutputLocation())
-            .binaryUrl(docAssemblyResponse.getBinaryFilePath())
-            .filename(format(DOCUMENT_FILENAME_FMT, DOCUMENT_NAME, caseId) + ".pdf")
-            .build();
+        return new DocumentInfo(
+            docAssemblyResponse.getRenditionOutputLocation(),
+            format(DOCUMENT_FILENAME_FMT, DOCUMENT_NAME, caseId) + ".pdf",
+            docAssemblyResponse.getBinaryFilePath()
+        );
     }
 }
