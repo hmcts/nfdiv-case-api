@@ -562,12 +562,6 @@ public class CaseData {
     private String respondentSolicitorReference;
 
     @CCD(
-        label = "Respondent's organisation policy",
-        access = {DefaultAccess.class}
-    )
-    private OrganisationPolicy respondentOrganisationPolicy;
-
-    @CCD(
         label = "Documents generated",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",

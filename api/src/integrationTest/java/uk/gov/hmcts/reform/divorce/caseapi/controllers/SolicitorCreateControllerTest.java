@@ -11,10 +11,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.reform.divorce.caseapi.config.WebMvcConfig;
 import uk.gov.hmcts.reform.divorce.caseapi.config.interceptors.RequestInterceptor;
-import uk.gov.hmcts.reform.divorce.caseapi.model.CaseDetails;
-import uk.gov.hmcts.reform.divorce.caseapi.model.CcdCallbackRequest;
 import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
-import uk.gov.hmcts.reform.divorce.ccd.model.OrganisationPolicy;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.DivorceOrDissolution;
 
 import java.io.File;
@@ -38,7 +35,6 @@ import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.SERVICE_AUTHORIZ
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.SOLICITOR_CREATE_ABOUT_TO_START_URL;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.SOLICITOR_CREATE_ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.TEST_AUTHORIZATION_TOKEN;
-import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestConstants.TEST_USER_EMAIL;
@@ -104,7 +100,7 @@ class SolicitorCreateControllerTest {
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(aboutToSubmitRequest()))
+            .content(objectMapper.writeValueAsString(callbackRequest(caseData())))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
@@ -129,23 +125,6 @@ class SolicitorCreateControllerTest {
             .petitionerEmail(TEST_USER_EMAIL)
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .divorceCostsClaim(YES)
-            .solicitorReference("SOL-REF")
-            .petitionerOrganisationPolicy(OrganisationPolicy.builder().build())
-            .respondentSolicitorReference("RESP-SOL-REF")
-            .respondentOrganisationPolicy(OrganisationPolicy.builder().build())
-            .build();
-    }
-
-    private CcdCallbackRequest aboutToSubmitRequest() {
-        return CcdCallbackRequest
-            .builder()
-            .caseDetails(
-                CaseDetails
-                    .builder()
-                    .caseData(caseData())
-                    .caseId(TEST_CASE_ID)
-                    .build()
-            )
             .build();
     }
 }

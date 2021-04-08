@@ -43,12 +43,16 @@ public class TestDataHelper {
     }
 
     public static CcdCallbackRequest callbackRequest() {
+        return callbackRequest(caseData());
+    }
+
+    public static CcdCallbackRequest callbackRequest(final CaseData caseData) {
         return CcdCallbackRequest
             .builder()
             .caseDetails(
                 CaseDetails
                     .builder()
-                    .caseData(caseData())
+                    .caseData(caseData)
                     .caseId(TEST_CASE_ID)
                     .build()
             )

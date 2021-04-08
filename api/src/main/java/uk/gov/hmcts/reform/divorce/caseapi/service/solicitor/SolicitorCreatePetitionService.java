@@ -22,9 +22,6 @@ public class SolicitorCreatePetitionService {
     private SolicitorCourtDetails solicitorCourtDetails;
 
     @Autowired
-    private SolicitorOrganisationPolicyReference solicitorOrganisationPolicyReference;
-
-    @Autowired
     private uk.gov.hmcts.reform.divorce.caseapi.util.CaseDataUpdaterChainFactory caseDataUpdaterChainFactory;
 
     public CaseData aboutToSubmit(
@@ -35,8 +32,7 @@ public class SolicitorCreatePetitionService {
 
         final List<CaseDataUpdater> caseDataUpdaters = asList(
             claimsCost,
-            solicitorCourtDetails,
-            solicitorOrganisationPolicyReference);
+            solicitorCourtDetails);
 
         final CaseDataContext caseDataContext = CaseDataContext.builder()
             .caseData(caseData)

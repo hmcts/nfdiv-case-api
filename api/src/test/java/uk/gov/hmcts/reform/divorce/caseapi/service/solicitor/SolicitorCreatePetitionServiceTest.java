@@ -33,9 +33,6 @@ class SolicitorCreatePetitionServiceTest {
     private SolicitorCourtDetails solicitorCourtDetails;
 
     @Mock
-    private SolicitorOrganisationPolicyReference solicitorOrganisationPolicyReference;
-
-    @Mock
     private CaseDataUpdaterChainFactory caseDataUpdaterChainFactory;
 
     @InjectMocks
@@ -49,8 +46,7 @@ class SolicitorCreatePetitionServiceTest {
 
         final List<CaseDataUpdater> caseDataUpdaters = asList(
             claimsCost,
-            solicitorCourtDetails,
-            solicitorOrganisationPolicyReference);
+            solicitorCourtDetails);
 
         final CaseDataContext caseDataContext = CaseDataContext.builder()
             .caseData(caseData)

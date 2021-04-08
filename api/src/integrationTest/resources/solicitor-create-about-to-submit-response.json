@@ -10,19 +10,7 @@
     ],
     "createdDate": "2021-04-06",
     "divorceUnit": "serviceCentre",
-    "selectedDivorceCentreSiteId": "AA07",
-    "solicitorReference": "SOL-REF",
-    "petitionerOrganisationPolicy": {
-      "Organisation": null,
-      "OrgPolicyCaseAssignedRole": null,
-      "OrgPolicyReference": "SOL-REF"
-    },
-    "respondentSolicitorReference": "RESP-SOL-REF",
-    "respondentOrganisationPolicy": {
-      "Organisation": null,
-      "OrgPolicyCaseAssignedRole": null,
-      "OrgPolicyReference": "RESP-SOL-REF"
-    }
+    "selectedDivorceCentreSiteId": "AA07"
   },
   "errors": null,
   "warnings": null,
