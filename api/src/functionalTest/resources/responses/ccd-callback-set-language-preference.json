@@ -4,7 +4,12 @@
     "petitionerFirstName": "John",
     "petitionerLastName": "Smith",
     "petitionerEmail": "simulate-delivered@notifications.service.gov.uk",
-    "languagePreferenceWelsh": "NO"
+    "languagePreferenceWelsh": "NO",
+    "petitionerOrganisationPolicy": {
+      "Organisation": null,
+      "OrgPolicyReference": null,
+      "OrgPolicyCaseAssignedRole": "[PETSOLICITOR]"
+    }
   },
   "errors": null,
   "warnings": null,

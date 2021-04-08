@@ -6,8 +6,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
+import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.reform.divorce.caseapi.model.CaseDetails;
 import uk.gov.hmcts.reform.divorce.caseapi.model.CcdCallbackRequest;
+import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
+import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
@@ -21,7 +24,7 @@ import static uk.gov.hmcts.reform.divorce.caseapi.constants.ControllerConstants.
 import static uk.gov.hmcts.reform.divorce.ccd.event.solicitor.SolicitorCreate.SOLICITOR_CREATE;
 
 @SpringBootTest
-public class DefaultLanguagePreferenceSettingTest extends FunctionalTestSuite {
+public class SolicitorCreateAboutToStartTest extends FunctionalTestSuite {
     private static final String SOLICITOR_CREATE_ABOUT_TO_START_CALLBACK_URL = StringUtils.join(
         "/", SOLICITOR_CREATE, ABOUT_TO_START_WEBHOOK
     );
@@ -29,6 +32,16 @@ public class DefaultLanguagePreferenceSettingTest extends FunctionalTestSuite {
     @Test
     public void shouldUpdateLanguagePreferenceSuccessfullyWhenAboutToStartCallbackIsInvoked()
         throws Exception {
+        CaseData caseDataWithOrganisationPolicy = caseData()
+            .toBuilder()
+            .petitionerOrganisationPolicy(
+                OrganisationPolicy
+                    .<UserRole>builder()
+                    .orgPolicyCaseAssignedRole(UserRole.PETITIONER_SOLICITOR)
+                    .build()
+            )
+            .build();
+
         Response response = RestAssured
             .given()
             .relaxedHTTPSValidation()
@@ -43,7 +56,7 @@ public class DefaultLanguagePreferenceSettingTest extends FunctionalTestSuite {
                         CaseDetails
                             .builder()
                             .caseId(String.valueOf(createCaseInCcd().getId()))
-                            .caseData(caseData())
+                            .caseData(caseDataWithOrganisationPolicy)
                             .build()
                     )
                     .build()

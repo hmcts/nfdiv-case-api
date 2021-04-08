@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.divorce.ccd.model;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import uk.gov.hmcts.ccd.sdk.api.HasRole;
@@ -19,6 +20,7 @@ public enum UserRole implements HasRole {
     PETITIONER_SOLICITOR("[PETSOLICITOR]", "CRU"),
     CREATOR("[CREATOR]", "CRU");
 
+    @JsonValue
     private final String role;
     private final String caseTypePermissions;
 

@@ -37,7 +37,7 @@ def secrets = [
         'nfdiv-${env}'    :[
                 secret('ccd-importer-username', 'CCD_DEFINITION_IMPORTER_USERNAME'),
                 secret('ccd-importer-password', 'CCD_DEFINITION_IMPORTER_PASSWORD'),
-                secret('idam-secret', 'OAUTH2_CLIENT_SECRET'),
+                secret('idam-secret', 'IDAM_CLIENT_SECRET'),
                 secret('idam-solicitor-username', 'IDAM_SOLICITOR_USERNAME'),
                 secret('idam-solicitor-password', 'IDAM_SOLICITOR_PASSWORD'),
         ]
@@ -75,7 +75,6 @@ withPipeline(type, product, component) {
 }
 
 def setCommonEnvVariables(){
-    env.CCD_IDAM_REDIRECT_URL="https://ccd-case-management-web-aat.service.core-compute-aat.internal/oauth2redirect"
     env.IDAM_API_BASE_URL = "https://idam-api.aat.platform.hmcts.net"
     env.SERVICE_AUTH_PROVIDER_API_BASE_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
     env.FEE_API_URL = "http://fees-register-api-aat.service.core-compute-aat.internal"
