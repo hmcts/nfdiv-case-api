@@ -562,7 +562,7 @@ public class CaseData {
     private String respondentSolicitorReference;
 
     @CCD(
-        label = "",
+        label = "Respondent's organisation policy",
         access = {DefaultAccess.class}
     )
     private OrganisationPolicy respondentOrganisationPolicy;
