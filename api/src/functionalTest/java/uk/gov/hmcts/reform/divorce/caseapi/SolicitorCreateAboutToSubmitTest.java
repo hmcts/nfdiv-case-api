@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.reform.divorce.caseapi.model.CaseDetails;
 import uk.gov.hmcts.reform.divorce.caseapi.model.CcdCallbackRequest;
+import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
@@ -15,6 +16,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.reform.divorce.caseapi.TestResourceUtil.expectedCcdCallbackResponse;
 import static uk.gov.hmcts.reform.divorce.caseapi.constants.ControllerConstants.ABOUT_TO_SUBMIT_WEBHOOK;
 import static uk.gov.hmcts.reform.divorce.caseapi.constants.ControllerConstants.SERVICE_AUTHORIZATION;
@@ -31,6 +33,9 @@ public class SolicitorCreateAboutToSubmitTest extends FunctionalTestSuite {
     @Test
     public void shouldUpdateCaseDataWithClaimCostsAndCourtDetailsWhenAboutToSubmitCallbackIsSuccessful()
         throws Exception {
+        CaseData caseData = caseData();
+        caseData.setDivorceCostsClaim(YES);
+
         Response response = RestAssured
             .given()
             .relaxedHTTPSValidation()
@@ -45,7 +50,7 @@ public class SolicitorCreateAboutToSubmitTest extends FunctionalTestSuite {
                         CaseDetails
                             .builder()
                             .caseId(String.valueOf(createCaseInCcd().getId()))
-                            .caseData(caseData())
+                            .caseData(caseData)
                             .build()
                     )
                     .build()
