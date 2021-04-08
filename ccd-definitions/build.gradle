@@ -12,7 +12,7 @@ plugins {
   id 'checkstyle'
   id 'jacoco'
   id 'java'
-  id 'hmcts.ccd.sdk' version '0.16.4'
+  id 'hmcts.ccd.sdk' version '0.17.1'
   id 'pmd'
 }
 
