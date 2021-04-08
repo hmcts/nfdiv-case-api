@@ -19,6 +19,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.reform.divorce.caseapi.constants.ControllerConstants.SUBMITTED_WEBHOOK;
 import static uk.gov.hmcts.reform.divorce.ccd.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.reform.divorce.ccd.NoFaultDivorce.JURISDICTION;
@@ -63,6 +64,7 @@ abstract class FunctionalTestSuite {
             .petitionerLastName(TEST_LAST_NAME)
             .divorceOrDissolution(DIVORCE)
             .petitionerEmail(TEST_USER_EMAIL)
+            .divorceCostsClaim(YES)
             .build();
     }
 
