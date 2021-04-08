@@ -13,7 +13,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static uk.gov.hmcts.reform.divorce.caseapi.controllers.constants.ControllerConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.reform.divorce.caseapi.constants.ControllerConstants.SERVICE_AUTHORIZATION;
 
 @Slf4j
 @Component

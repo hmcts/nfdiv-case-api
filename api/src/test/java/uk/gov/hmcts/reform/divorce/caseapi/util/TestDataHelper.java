@@ -34,21 +34,25 @@ public class TestDataHelper {
     }
 
     public static CaseData caseData() {
-        CaseData caseData = new CaseData();
-        caseData.setPetitionerFirstName(TEST_FIRST_NAME);
-        caseData.setPetitionerLastName(TEST_LAST_NAME);
-        caseData.setPetitionerEmail(TEST_USER_EMAIL);
-        caseData.setDivorceOrDissolution(DivorceOrDissolution.DIVORCE);
-        return caseData;
+        return CaseData.builder()
+            .petitionerFirstName(TEST_FIRST_NAME)
+            .petitionerLastName(TEST_LAST_NAME)
+            .petitionerEmail(TEST_USER_EMAIL)
+            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
+            .build();
     }
 
     public static CcdCallbackRequest callbackRequest() {
+        return callbackRequest(caseData());
+    }
+
+    public static CcdCallbackRequest callbackRequest(final CaseData caseData) {
         return CcdCallbackRequest
             .builder()
             .caseDetails(
                 CaseDetails
                     .builder()
-                    .caseData(caseData())
+                    .caseData(caseData)
                     .caseId(TEST_CASE_ID)
                     .build()
             )

@@ -1,0 +1,18 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "petitionerFirstName": "John",
+    "petitionerLastName": "Smith",
+    "petitionerEmail": "simulate-delivered@notifications.service.gov.uk",
+    "divorceCostsClaim": "YES",
+    "divorceClaimFrom": [
+      "respondent"
+    ],
+    "createdDate": "2021-04-08",
+    "divorceUnit": "serviceCentre",
+    "selectedDivorceCentreSiteId": "AA07"
+  },
+  "errors": null,
+  "warnings": null,
+  "state": null
+}

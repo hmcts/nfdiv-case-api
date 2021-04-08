@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.divorce.caseapi.notification;
+package uk.gov.hmcts.reform.divorce.caseapi.constants;
 
 public final class NotificationConstants {
     public static final String FIRST_NAME = "first name";

@@ -1,0 +1,18 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "petitionerFirstName": "test_first_name",
+    "petitionerLastName": "test_last_name",
+    "petitionerEmail": "test@test.com",
+    "divorceCostsClaim": "YES",
+    "divorceClaimFrom": [
+      "respondent"
+    ],
+    "createdDate": "2021-04-06",
+    "divorceUnit": "serviceCentre",
+    "selectedDivorceCentreSiteId": "AA07"
+  },
+  "errors": null,
+  "warnings": null,
+  "state": null
+}

@@ -8,12 +8,12 @@ import uk.gov.hmcts.reform.divorce.caseapi.model.payments.FeeResponse;
 
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static uk.gov.hmcts.reform.divorce.caseapi.clients.FeesAndPayConstants.CHANNEL;
-import static uk.gov.hmcts.reform.divorce.caseapi.clients.FeesAndPayConstants.EVENT;
-import static uk.gov.hmcts.reform.divorce.caseapi.clients.FeesAndPayConstants.JURISDICTION_1;
-import static uk.gov.hmcts.reform.divorce.caseapi.clients.FeesAndPayConstants.JURISDICTION_2;
-import static uk.gov.hmcts.reform.divorce.caseapi.clients.FeesAndPayConstants.KEYWORD;
-import static uk.gov.hmcts.reform.divorce.caseapi.clients.FeesAndPayConstants.SERVICE;
+import static uk.gov.hmcts.reform.divorce.caseapi.constants.FeesAndPayConstants.CHANNEL;
+import static uk.gov.hmcts.reform.divorce.caseapi.constants.FeesAndPayConstants.EVENT;
+import static uk.gov.hmcts.reform.divorce.caseapi.constants.FeesAndPayConstants.JURISDICTION_1;
+import static uk.gov.hmcts.reform.divorce.caseapi.constants.FeesAndPayConstants.JURISDICTION_2;
+import static uk.gov.hmcts.reform.divorce.caseapi.constants.FeesAndPayConstants.KEYWORD;
+import static uk.gov.hmcts.reform.divorce.caseapi.constants.FeesAndPayConstants.SERVICE;
 
 @FeignClient(name = "fees-and-payments-client", url = "${fee.api.baseUrl}")
 @SuppressWarnings("PMD.UseObjectForClearerAPI")

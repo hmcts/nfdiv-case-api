@@ -7,7 +7,8 @@ public final class TestConstants {
 
     public static final String SAVE_AND_CLOSE_API_URL = "/save-and-close/Submitted";
     public static final String SUBMIT_PETITION_API_URL = "/submit-petition/AboutToStart";
-    public static final String SOLICITOR_CREATE_API_URL = "/solicitor-create/AboutToStart";
+    public static final String SOLICITOR_CREATE_ABOUT_TO_START_URL = "/solicitor-create/AboutToStart";
+    public static final String SOLICITOR_CREATE_ABOUT_TO_SUBMIT_URL = "/solicitor-create/AboutToSubmit";
 
     public static final String AUTH_HEADER_VALUE = "auth-header-value";
     public static final String INVALID_AUTH_TOKEN = "invalid_token";
@@ -30,6 +31,9 @@ public final class TestConstants {
 
     public static final String TEST_CASE_ID = "1616591401473378";
     public static final String TEST_SERVICE_AUTH_TOKEN = "Bearer TestServiceAuth";
+
+    public static final String ENGLISH_TEMPLATE_ID = "divorceminipetition";
+    public static final String WELSH_TEMPLATE_ID = "FL-DIV-GNO-WEL-00256.docx";
 
     private TestConstants() {
     }

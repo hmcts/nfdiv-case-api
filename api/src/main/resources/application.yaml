@@ -73,3 +73,12 @@ core_case_data:
   api:
     url: ${CASE_DATA_STORE_BASEURL:http://ccd-data-store-api-aat.service.core-compute-aat.internal}
 
+docmosis:
+  templates:
+    english:
+      DIVORCE_MINI_PETITION: divorceminipetition
+    welsh:
+      DIVORCE_MINI_PETITION: FL-DIV-GNO-WEL-00256.docx
+
+doc_assembly:
+  url: ${DOC_ASSEMBLY_URL:http://dg-docassembly-aat.service.core-compute-aat.internal}

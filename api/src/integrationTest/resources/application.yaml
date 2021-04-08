@@ -50,3 +50,5 @@ spring:
   main:
     allow-bean-definition-overriding: true
 
+doc_assembly:
+  url: ${DOC_ASSEMBLY_URL:http://dg-docassembly-aat.service.core-compute-aat.internal}
