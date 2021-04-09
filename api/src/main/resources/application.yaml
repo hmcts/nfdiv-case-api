@@ -16,9 +16,6 @@ spring:
     name: NFDIV Case API
   config:
     import: "optional:configtree:/mnt/secrets/nfdiv/"
-  jackson:
-    mapper:
-      accept_case_insensitive_enums: true
   main:
     allow-bean-definition-overriding: true
 azure:

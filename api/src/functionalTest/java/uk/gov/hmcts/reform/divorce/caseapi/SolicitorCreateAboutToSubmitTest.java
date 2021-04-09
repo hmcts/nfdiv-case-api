@@ -30,7 +30,6 @@ public class SolicitorCreateAboutToSubmitTest extends FunctionalTestSuite {
     );
 
 
-    @Test
     public void shouldUpdateCaseDataWithClaimCostsAndCourtDetailsWhenAboutToSubmitCallbackIsSuccessful()
         throws Exception {
         CaseData caseData = caseData();
