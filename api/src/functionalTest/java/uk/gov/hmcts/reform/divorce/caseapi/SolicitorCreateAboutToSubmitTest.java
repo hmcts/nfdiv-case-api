@@ -1,5 +1,8 @@
 package uk.gov.hmcts.reform.divorce.caseapi;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.apache.commons.lang3.StringUtils;
@@ -7,6 +10,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.reform.divorce.caseapi.model.CaseDetails;
 import uk.gov.hmcts.reform.divorce.caseapi.model.CcdCallbackRequest;
 import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
+
+import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
@@ -23,6 +28,8 @@ import static uk.gov.hmcts.reform.divorce.ccd.event.solicitor.SolicitorCreate.SO
 
 @SpringBootTest
 public class SolicitorCreateAboutToSubmitTest extends FunctionalTestSuite {
+
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private static final String SOLICITOR_CREATE_ABOUT_TO_SUBMIT_CALLBACK_URL = StringUtils.join(
         "/", SOLICITOR_CREATE, ABOUT_TO_SUBMIT_WEBHOOK
@@ -58,8 +65,14 @@ public class SolicitorCreateAboutToSubmitTest extends FunctionalTestSuite {
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
+        String expectedResponse = expectedCcdCallbackResponse("classpath:responses/ccd-callback-solicitor-create-about-to-submit.json");
+        //replace created date with current date as the handler sets current date
+        JsonNode jsonNode = OBJECT_MAPPER.readTree(expectedResponse);
+        JsonNode dataNode = jsonNode.get("data");
+        ((ObjectNode) dataNode).put("createdDate", LocalDate.now().toString());
+
         assertEquals(
-            expectedCcdCallbackResponse("classpath:responses/ccd-callback-solicitor-create-about-to-submit.json"),
+            jsonNode.toString(),
             response.asString(),
             STRICT
         );
