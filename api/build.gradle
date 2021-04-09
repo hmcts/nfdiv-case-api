@@ -138,7 +138,7 @@ repositories {
     jcenter()
     mavenCentral()
     maven {
-        url "https://dl.bintray.com/gov-uk-notify/maven"
+      url "https://jitpack.io"
     }
 }
 
