@@ -66,7 +66,9 @@ public class SolicitorCreateAboutToSubmitTest extends FunctionalTestSuite {
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
-        String expectedResponse = expectedCcdCallbackResponse("classpath:responses/ccd-callback-solicitor-create-about-to-submit.json");
+        String expectedResponse = expectedCcdCallbackResponse(
+            "classpath:responses/ccd-callback-solicitor-create-about-to-submit.json"
+        );
         //replace created date with current date as the handler sets current date
         JsonNode jsonNode = OBJECT_MAPPER.readTree(expectedResponse);
         JsonNode dataNode = jsonNode.get("data");
