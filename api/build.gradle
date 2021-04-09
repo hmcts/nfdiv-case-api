@@ -6,7 +6,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'org.springframework.boot' version '2.4.4'
     id 'com.github.ben-manes.versions' version '0.38.0'
-    id 'hmcts.ccd.sdk' version '0.17.1'
+    id 'hmcts.ccd.sdk' version '0.17.2'
 }
 
 group = 'uk.gov.hmcts.reform'
@@ -144,7 +144,7 @@ repositories {
 
 def versions = [
     assertJ           : '3.19.0',
-    ccdConfigGenerator: '0.17.1',
+    ccdConfigGenerator: '0.17.2',
     ccdStoreClient    : '4.7.6',
     idamClient        : '2.0.0',
     junit             : '5.7.1',
@@ -245,6 +245,33 @@ dependencies {
 
 mainClassName = 'uk.gov.hmcts.reform.divorce.caseapi.CaseApiApplication'
 
+ext.getVaultSecret = { String secretName ->
+  new ByteArrayOutputStream().withStream { os ->
+    exec {
+      commandLine 'az', 'keyvault', 'secret', 'show', '--vault-name', 'nfdiv-aat', '-o', 'tsv', '--query', 'value', '--name', secretName
+      standardOutput = os
+    }
+    return os.toString().replace('\n', '')
+  }
+}
+
+bootRun {
+  doFirst() {
+    if (System.getenv("IDAM_API_BASEURL") == null) {
+      println("Loading secrets from vault")
+
+      systemProperty 'IDAM_API_BASEURL', 'https://idam-api.aat.platform.hmcts.net'
+
+      systemProperty 'UK_GOV_NOTIFY_API_KEY', getVaultSecret('uk-gov-notify-api-key')
+      systemProperty 'S2S_SECRET', getVaultSecret('s2s-cms-secret')
+      systemProperty 'IDAM_CASEWORKER_USERNAME', getVaultSecret('idam-caseworker-username')
+      systemProperty 'IDAM_CASEWORKER_PASSWORD', getVaultSecret('idam-caseworker-password')
+      systemProperty 'IDAM_SOLICITOR_USERNAME', getVaultSecret('idam-solicitor-username')
+      systemProperty 'IDAM_SOLICITOR_PASSWORD', getVaultSecret('idam-solicitor-password')
+      systemProperty 'IDAM_CLIENT_SECRET', getVaultSecret('idam-secret')    }
+  }
+}
+
 bootJar {
     getArchiveFileName().set(provider {
         'nfdiv-case-api.jar'
@@ -253,4 +280,21 @@ bootJar {
     manifest {
         attributes('Implementation-Version': project.version.toString())
     }
+}
+
+functional {
+  doFirst() {
+    if (System.getenv("OAUTH2_CLIENT_SECRET") == null) {
+      println("Loading secrets from vault")
+
+      systemProperty 'IDAM_API_BASEURL', 'https://idam-api.aat.platform.hmcts.net'
+
+      systemProperty 'UK_GOV_NOTIFY_API_KEY', getVaultSecret('uk-gov-notify-api-key')
+      systemProperty 'S2S_SECRET', getVaultSecret('s2s-cms-secret')
+      systemProperty 'IDAM_CASEWORKER_USERNAME', getVaultSecret('idam-caseworker-username')
+      systemProperty 'IDAM_CASEWORKER_PASSWORD', getVaultSecret('idam-caseworker-password')
+      systemProperty 'IDAM_SOLICITOR_USERNAME', getVaultSecret('idam-solicitor-username')
+      systemProperty 'IDAM_SOLICITOR_PASSWORD', getVaultSecret('idam-solicitor-password')
+      systemProperty 'OAUTH2_CLIENT_SECRET', getVaultSecret('idam-secret')    }
+  }
 }

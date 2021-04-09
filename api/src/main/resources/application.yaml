@@ -16,9 +16,6 @@ spring:
     name: NFDIV Case API
   config:
     import: "optional:configtree:/mnt/secrets/nfdiv/"
-  jackson:
-    mapper:
-      accept_case_insensitive_enums: true
   main:
     allow-bean-definition-overriding: true
 azure:
@@ -29,7 +26,7 @@ uk:
   gov:
     notify:
       api:
-        key: ${UK_GOV_NOTIY_API_KEY:dummy}
+        key: ${UK_GOV_NOTIFY_API_KEY:dummy}
         baseUrl: https://api.notifications.service.gov.uk
       email:
         templateVars:

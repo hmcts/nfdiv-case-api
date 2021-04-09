@@ -10,11 +10,11 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.reform.divorce.ccd.access.DefaultAccess;
 import uk.gov.hmcts.reform.divorce.ccd.model.enums.ChangedNameHow;
@@ -42,7 +42,6 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
-@EqualsAndHashCode()
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
@@ -358,7 +357,7 @@ public class CaseData {
         label = "Firm address/DX address",
         access = {DefaultAccess.class}
     )
-    private String petitionerOrganisationPolicy;
+    private OrganisationPolicy<UserRole> petitionerOrganisationPolicy;
 
     @CCD(
         label = "Petitioner's full name as on marriage certificate",

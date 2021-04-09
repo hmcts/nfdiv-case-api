@@ -2,10 +2,14 @@ package uk.gov.hmcts.reform.divorce.ccd.event.solicitor.page;
 
 import uk.gov.hmcts.ccd.sdk.api.Event.EventBuilder;
 import uk.gov.hmcts.ccd.sdk.api.FieldCollection.FieldCollectionBuilder;
+import uk.gov.hmcts.ccd.sdk.type.Organisation;
+import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.reform.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.reform.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.reform.divorce.ccd.model.State;
 import uk.gov.hmcts.reform.divorce.ccd.model.UserRole;
+
+import static uk.gov.hmcts.reform.divorce.ccd.model.UserRole.PETITIONER_SOLICITOR;
 
 public class SolAboutTheSolicitor implements CcdPageConfiguration {
 
@@ -28,6 +32,14 @@ public class SolAboutTheSolicitor implements CcdPageConfiguration {
             .mandatory(CaseData::getPetitionerSolicitorPhone)
             .mandatory(CaseData::getPetitionerSolicitorEmail)
             .mandatory(CaseData::getSolicitorAgreeToReceiveEmails)
-            .mandatory(CaseData::getDerivedPetitionerSolicitorAddress);
+            .mandatory(CaseData::getDerivedPetitionerSolicitorAddress)
+            .complex(CaseData::getPetitionerOrganisationPolicy)
+                .complex(OrganisationPolicy::getOrganisation)
+                    .mandatory(Organisation::getOrganisationId)
+                    .done()
+                .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole,
+                    "petitionerNameChanged=\"NeverShow\"",
+                    PETITIONER_SOLICITOR)
+                .optional(OrganisationPolicy::getOrgPolicyReference, "petitionerNameChanged=\"NeverShow\"");
     }
 }

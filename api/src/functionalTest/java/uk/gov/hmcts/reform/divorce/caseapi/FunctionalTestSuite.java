@@ -79,7 +79,7 @@ abstract class FunctionalTestSuite {
 
         assertThat(response.getStatusCode()).isEqualTo(200);
 
-        return "Bearer " + response.getBody().print();
+        return "Bearer " + response.getBody().asString();
     }
 
     protected String generateIdamTokenForSolicitor() {

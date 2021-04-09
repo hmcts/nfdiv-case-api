@@ -38,7 +38,7 @@ public class SolicitorCreateController {
         @ApiResponse(code = 401, message = "Invalid service authorization token"),
         @ApiResponse(code = 403, message = "Service not configured to invoke callback")
     })
-    public CcdCallbackResponse assignLanguagePreference(@RequestBody final CcdCallbackRequest callbackRequest) {
+    public CcdCallbackResponse aboutToStart(@RequestBody final CcdCallbackRequest callbackRequest) {
 
         log.info("Solicitor create petition about to start callback invoked");
 
