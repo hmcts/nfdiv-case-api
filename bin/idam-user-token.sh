@@ -8,7 +8,7 @@ password=${2}
 IDAM_API_URL=${IDAM_API_BASE_URL:-http://localhost:5000}
 IDAM_URL=${IDAM_STUB_LOCALHOST:-$IDAM_API_URL}
 
-clientSecret=${OAUTH2_CLIENT_SECRET}
+clientSecret=${IDAM_CLIENT_SECRET}
 redirectUri=http://localhost:3001/oauth2/callback
 
 if [ -z "$IDAM_STUB_LOCALHOST" ]; then
