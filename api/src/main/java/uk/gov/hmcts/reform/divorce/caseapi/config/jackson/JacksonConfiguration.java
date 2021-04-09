@@ -10,18 +10,17 @@ import uk.gov.hmcts.ccd.sdk.api.HasRole;
 
 @Configuration
 public class JacksonConfiguration {
-    private final ObjectMapper mapper = new ObjectMapper();
 
     @Bean
     public ObjectMapper getMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+
         SimpleModule deserialization = new SimpleModule();
         deserialization.addDeserializer(HasRole.class, new HasRoleDeserializer());
-
         mapper.registerModule(deserialization);
 
         JavaTimeModule datetime = new JavaTimeModule();
         datetime.addSerializer(LocalDateSerializer.INSTANCE);
-
         mapper.registerModule(datetime);
 
         return mapper;
