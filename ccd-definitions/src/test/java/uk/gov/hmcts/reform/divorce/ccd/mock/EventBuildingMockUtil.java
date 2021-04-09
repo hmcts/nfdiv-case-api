@@ -108,16 +108,22 @@ public class EventBuildingMockUtil {
 
     @SuppressWarnings("unchecked")
     private void mockFieldCollectionBuilderMethods() {
-
+        // reference https://github.com/hmcts/ccd-config-generator/commit/c7d8fca59382bb1de5ed50eeb5485a40d362e85f
         when(fieldCollectionBuilder.done()).thenReturn(eventBuilder);
         when(fieldCollectionBuilder.optional(any(TypedPropertyGetter.class))).thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.optional(any(TypedPropertyGetter.class), any(String.class)))
+            .thenReturn(fieldCollectionBuilder);
+        // new
+        when(fieldCollectionBuilder.optional(any(TypedPropertyGetter.class), any(String.class), any(Object.class)))
             .thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.optionalNoSummary(any(TypedPropertyGetter.class))).thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.optionalNoSummary(any(TypedPropertyGetter.class), any(String.class)))
             .thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.mandatory(any(TypedPropertyGetter.class))).thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.mandatory(any(TypedPropertyGetter.class), any(String.class)))
+            .thenReturn(fieldCollectionBuilder);
+        // new
+        when(fieldCollectionBuilder.mandatory(any(TypedPropertyGetter.class), any(String.class), any(Object.class)))
             .thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.mandatoryNoSummary(any(TypedPropertyGetter.class))).thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.mandatoryNoSummary(any(TypedPropertyGetter.class), any(String.class)))
@@ -131,7 +137,8 @@ public class EventBuildingMockUtil {
         when(fieldCollectionBuilder.list(any(TypedPropertyGetter.class))).thenReturn(fieldBuilder);
         when(fieldCollectionBuilder.list(any(String.class))).thenReturn(fieldBuilder);
         when(fieldCollectionBuilder.immutableList(any(TypedPropertyGetter.class))).thenReturn(fieldBuilder);
-        when(fieldCollectionBuilder.field(any(), any(), any(), any(), any(), any())).thenReturn(fieldCollectionBuilder);
+        // made a bit stricter
+        when(fieldCollectionBuilder.field(anyString(), any(DisplayContext.class), anyString(), anyString(), anyString(), anyString())).thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.field(any(String.class), any(DisplayContext.class), any(String.class)))
             .thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.field(any(String.class), any(DisplayContext.class))).thenReturn(fieldCollectionBuilder);
@@ -142,6 +149,9 @@ public class EventBuildingMockUtil {
             .thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.field(any(TypedPropertyGetter.class), any(DisplayContext.class), any(Boolean.class)))
             .thenReturn(fieldCollectionBuilder);
+        // new
+        when(fieldCollectionBuilder.field(any(TypedPropertyGetter.class), any(DisplayContext.class), any(String.class),
+            any(Boolean.class), any(Object.class))).thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.field(any(TypedPropertyGetter.class))).thenReturn(fieldBuilder);
         when(fieldCollectionBuilder.showCondition(any())).thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.midEventWebhook(any())).thenReturn(fieldCollectionBuilder);
@@ -179,6 +189,7 @@ public class EventBuildingMockUtil {
         when(fieldBuilder.context(any())).thenReturn(fieldBuilder);
         when(fieldBuilder.label(anyString())).thenReturn(fieldBuilder);
         when(fieldBuilder.showCondition(anyString())).thenReturn(fieldBuilder);
+        when(fieldBuilder.defaultValue(any())).thenReturn(fieldBuilder);
         when(fieldBuilder.done()).thenReturn(fieldCollectionBuilder);
     }
 }
