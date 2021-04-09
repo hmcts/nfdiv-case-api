@@ -284,7 +284,7 @@ bootJar {
 
 functional {
   doFirst() {
-    if (System.getenv("IDAM_API_BASEURL") == null) {
+    if (System.getenv("OAUTH2_CLIENT_SECRET") == null) {
       println("Loading secrets from vault")
 
       systemProperty 'IDAM_API_BASEURL', 'https://idam-api.aat.platform.hmcts.net'
@@ -295,6 +295,6 @@ functional {
       systemProperty 'IDAM_CASEWORKER_PASSWORD', getVaultSecret('idam-caseworker-password')
       systemProperty 'IDAM_SOLICITOR_USERNAME', getVaultSecret('idam-solicitor-username')
       systemProperty 'IDAM_SOLICITOR_PASSWORD', getVaultSecret('idam-solicitor-password')
-      systemProperty 'IDAM_CLIENT_SECRET', getVaultSecret('idam-secret')    }
+      systemProperty 'OAUTH2_CLIENT_SECRET', getVaultSecret('idam-secret')    }
   }
 }

@@ -36,7 +36,7 @@ idam:
     password: dummy
   client:
     id: 'divorce'
-    secret: ${IDAM_CLIENT_SECRET:dummy}
+    secret: ${OAUTH2_CLIENT_SECRET:dummy}
     redirect_uri: ${IDAM_API_REDIRECT_URL:http://localhost:3001/oauth2/callback}
 
 s2s-authorised:
