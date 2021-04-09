@@ -66,12 +66,21 @@ withPipeline(type, product, component) {
     }
 
     before('functionalTest:aat') {
+        env.CASE_API_URL="http://nfdiv-case-api-aat-staging.service.core-compute-aat.internal"
+        builder.gradle('generateCCDConfig')
+        setCommonEnvVariables()
+        env.CCD_DEFINITION_STORE_API_BASE_URL="http://ccd-data-store-api-nfdiv-case-api-aat-staging.service.core-compute-aat.internal"
+        uploadCoreCaseDataDefinitions()
+    }
+
+    after('functionalTest:aat') {
         env.CASE_API_URL="http://nfdiv-case-api-aat.service.core-compute-aat.internal"
         builder.gradle('generateCCDConfig')
         setCommonEnvVariables()
         env.CCD_DEFINITION_STORE_API_BASE_URL="http://ccd-definition-store-api-aat.service.core-compute-aat.internal"
         uploadCoreCaseDataDefinitions()
     }
+
 }
 
 def setCommonEnvVariables(){
