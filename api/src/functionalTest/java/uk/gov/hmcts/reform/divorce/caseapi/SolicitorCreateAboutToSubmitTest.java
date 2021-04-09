@@ -3,7 +3,6 @@ package uk.gov.hmcts.reform.divorce.caseapi;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.reform.divorce.caseapi.model.CaseDetails;
 import uk.gov.hmcts.reform.divorce.caseapi.model.CcdCallbackRequest;
