@@ -266,6 +266,12 @@ public class CaseData {
     private String derivedPetitionerHomeAddress;
 
     @CCD(
+        label = "Is petitioners home address an international address?",
+        access = { DefaultAccess.class }
+    )
+    private YesOrNo petitionerHomeAddressIsInternational;
+
+    @CCD(
         label = "Petitioner's phone number",
         regex = "^[0-9 +().-]{9,}$",
         access = {DefaultAccess.class}
@@ -513,6 +519,19 @@ public class CaseData {
         access = { DefaultAccess.class }
     )
     private YesOrNo petitionerKnowsRespondentsAddress;
+
+    @CCD(
+        label = "Respondents home address",
+        typeOverride = TextArea,
+        access = { DefaultAccess.class }
+    )
+    private String derivedRespondentHomeAddress;
+
+    @CCD(
+        label = "Is respondents home address an international address?",
+        access = { DefaultAccess.class }
+    )
+    private YesOrNo respondentHomeAddressIsInternational;
 
     @CCD(
         label = "Any other legal proceedings relating to your civil partnership, property or children?",
