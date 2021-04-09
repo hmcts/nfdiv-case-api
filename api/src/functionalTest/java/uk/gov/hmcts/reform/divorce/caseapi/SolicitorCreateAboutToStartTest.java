@@ -55,7 +55,6 @@ public class SolicitorCreateAboutToStartTest extends FunctionalTestSuite {
                     .caseDetails(
                         CaseDetails
                             .builder()
-                            .caseId(String.valueOf(createCaseInCcd().getId()))
                             .caseData(caseDataWithOrganisationPolicy)
                             .build()
                     )
