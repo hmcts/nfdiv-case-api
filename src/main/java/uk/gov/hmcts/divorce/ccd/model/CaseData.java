@@ -135,13 +135,15 @@ public class CaseData {
     private YesOrNo certifiedTranslation;
 
     @CCD(
-        label = "Country where marriage took place",
+        label = "Country of marriage",
+        hint = "Enter the country in which the marriage took place",
         access = {DefaultAccess.class}
     )
     private String countryName;
 
     @CCD(
         label = "Place of marriage",
+        hint = "Enter the place of marriage as it appears on the marriage certificate",
         access = {DefaultAccess.class}
     )
     private String marriagePlaceOfMarriage;
@@ -266,7 +268,7 @@ public class CaseData {
 
     @CCD(
         label = "Is petitioners home address an international address?",
-        access = { DefaultAccess.class }
+        access = {DefaultAccess.class}
     )
     private YesOrNo petitionerHomeAddressIsInternational;
 
@@ -361,12 +363,16 @@ public class CaseData {
 
     @CCD(
         label = "Petitioner's full name as on marriage certificate",
+        hint = "Enter the petitioner's name exactly as it appears on the marriage certificate. "
+            + " Include any extra text such as \"formerly known as\"",
         access = {DefaultAccess.class}
     )
     private String marriagePetitionerName;
 
     @CCD(
         label = "Respondent's full name as on marriage certificate",
+        hint = "Enter the respondent's name exactly as it appears on the marriage certificate. "
+            + " Include any extra text such as \"formerly known as\"",
         access = {DefaultAccess.class}
     )
     private String marriageRespondentName;
@@ -402,7 +408,7 @@ public class CaseData {
         label = "Petitioner wants/will to apply to have the papers served to the respondent another way.",
         hint = "For example by email, text message or social media. This is a separate application with "
             + "an additional fee, which will need to be reviewed by a judge.",
-        access = { DefaultAccess.class }
+        access = {DefaultAccess.class}
     )
     private YesOrNo petitionerWantsToHavePapersServedAnotherWay;
 
@@ -515,7 +521,7 @@ public class CaseData {
 
     @CCD(
         label = "Do you know their address",
-        access = { DefaultAccess.class }
+        access = {DefaultAccess.class}
     )
     private YesOrNo petitionerKnowsRespondentsAddress;
 
@@ -524,13 +530,13 @@ public class CaseData {
         hint = "If the respondent is to be served at their home address, enter the home address here and as the service "
             + "address below",
         typeOverride = TextArea,
-        access = { DefaultAccess.class }
+        access = {DefaultAccess.class}
     )
     private String derivedRespondentHomeAddress;
 
     @CCD(
         label = "Is respondents home address an international address?",
-        access = { DefaultAccess.class }
+        access = {DefaultAccess.class}
     )
     private YesOrNo respondentHomeAddressIsInternational;
 
