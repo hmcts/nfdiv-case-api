@@ -24,7 +24,7 @@ public class NoFaultDivorce implements CcdConfiguration {
     @Override
     public void applyTo(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
-        configBuilder.caseType(CASE_TYPE, "No Fault Divorce case", "Handling of the dissolution of marriage");
+        configBuilder.caseType(CASE_TYPE, CASE_TYPE, "Handling of the dissolution of marriage");
         configBuilder.jurisdiction(JURISDICTION, "Family Divorce", "Family Divorce: dissolution of marriage");
 
         configBuilder.grant(Draft, CREATE_READ_UPDATE, CITIZEN);
