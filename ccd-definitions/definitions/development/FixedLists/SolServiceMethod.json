@@ -1,0 +1,16 @@
+[
+  {
+    "LiveFrom": "01/01/2017",
+    "DisplayOrder": 1,
+    "ListElementCode": "personalService",
+    "ListElement": "Personal Service",
+    "ID": "SolServiceMethod"
+  },
+  {
+    "LiveFrom": "01/01/2017",
+    "DisplayOrder": 2,
+    "ListElementCode": "courtService",
+    "ListElement": "Court Service",
+    "ID": "SolServiceMethod"
+  }
+]

@@ -1,0 +1,13 @@
+[
+  {
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "PostConditionState": "Draft",
+    "Description": "Apply for a divorce or dissolution",
+    "DisplayOrder": 1,
+    "EndButtonLabel": "Save and continue",
+    "ID": "create-draft",
+    "SecurityClassification": "Public",
+    "Name": "Create draft case"
+  }
+]

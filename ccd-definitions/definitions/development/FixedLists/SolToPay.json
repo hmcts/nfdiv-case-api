@@ -1,0 +1,16 @@
+[
+  {
+    "LiveFrom": "01/01/2017",
+    "DisplayOrder": 1,
+    "ListElementCode": "feePayByAccount",
+    "ListElement": "Fee account",
+    "ID": "SolToPay"
+  },
+  {
+    "LiveFrom": "01/01/2017",
+    "DisplayOrder": 2,
+    "ListElementCode": "feesHelpWith",
+    "ListElement": "Help with fees",
+    "ID": "SolToPay"
+  }
+]

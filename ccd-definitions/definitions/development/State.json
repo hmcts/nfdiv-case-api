@@ -1,0 +1,34 @@
+[
+  {
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "Description": "Draft",
+    "DisplayOrder": 1,
+    "ID": "Draft",
+    "Name": "Draft"
+  },
+  {
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "Description": "Statement of Truth, Pay and Submit Required",
+    "DisplayOrder": 2,
+    "ID": "SOTAgreementPayAndSubmitRequired",
+    "Name": "Statement of Truth, Pay and Submit Required"
+  },
+  {
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "Description": "Petition paid and submitted",
+    "DisplayOrder": 3,
+    "ID": "Submitted",
+    "Name": "Petition submitted"
+  },
+  {
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "Description": "Solicitor - Awaiting Payment Confirmation",
+    "DisplayOrder": 4,
+    "ID": "SolicitorAwaitingPaymentConfirmation",
+    "Name": "Solicitor - Awaiting Payment Confirmation"
+  }
+]

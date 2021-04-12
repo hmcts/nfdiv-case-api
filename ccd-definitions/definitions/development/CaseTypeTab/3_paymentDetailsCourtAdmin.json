@@ -1,0 +1,12 @@
+[
+  {
+    "TabDisplayOrder": 3,
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseFieldID": "D8HelpWithFeesReferenceNumber",
+    "Channel": "CaseWorker",
+    "TabFieldDisplayOrder": 1,
+    "TabLabel": "Payment",
+    "TabID": "paymentDetailsCourtAdmin"
+  }
+]

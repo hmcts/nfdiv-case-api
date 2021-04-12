@@ -1,0 +1,233 @@
+[
+  {
+    "CRUD": "CRU",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "create-draft",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "R",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "create-draft",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "R",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "create-draft",
+    "UserRole": "caseworker-divorce-courtadmin"
+  },
+  {
+    "CRUD": "R",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "create-draft",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "create-draft",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "R",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "create-draft",
+    "UserRole": "caseworker-divorce-courtadmin-la"
+  },
+  {
+    "CRUD": "R",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "solicitor-create",
+    "UserRole": "caseworker-divorce-courtadmin"
+  },
+  {
+    "CRUD": "R",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "solicitor-create",
+    "UserRole": "caseworker-divorce-courtadmin-la"
+  },
+  {
+    "CRUD": "R",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "solicitor-create",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "solicitor-create",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "RU",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "solicitor-create",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRU",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "patch-case",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "R",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "patch-case",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "R",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "patch-case",
+    "UserRole": "caseworker-divorce-courtadmin"
+  },
+  {
+    "CRUD": "R",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "patch-case",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "patch-case",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "R",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "patch-case",
+    "UserRole": "caseworker-divorce-courtadmin-la"
+  },
+  {
+    "CRUD": "R",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "solicitor-update",
+    "UserRole": "caseworker-divorce-courtadmin"
+  },
+  {
+    "CRUD": "R",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "solicitor-update",
+    "UserRole": "caseworker-divorce-courtadmin-la"
+  },
+  {
+    "CRUD": "R",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "solicitor-update",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "solicitor-update",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "RU",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "solicitor-update",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "CRU",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "save-and-close",
+    "UserRole": "citizen"
+  },
+  {
+    "CRUD": "R",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "save-and-close",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "R",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "save-and-close",
+    "UserRole": "caseworker-divorce-courtadmin"
+  },
+  {
+    "CRUD": "R",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "save-and-close",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "save-and-close",
+    "UserRole": "caseworker-divorce-superuser"
+  },
+  {
+    "CRUD": "R",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "save-and-close",
+    "UserRole": "caseworker-divorce-courtadmin-la"
+  },
+  {
+    "CRUD": "R",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "solicitor-statement-of-truth-pay-submit",
+    "UserRole": "caseworker-divorce-courtadmin"
+  },
+  {
+    "CRUD": "R",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "solicitor-statement-of-truth-pay-submit",
+    "UserRole": "caseworker-divorce-courtadmin-la"
+  },
+  {
+    "CRUD": "R",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "solicitor-statement-of-truth-pay-submit",
+    "UserRole": "caseworker-divorce-courtadmin_beta"
+  },
+  {
+    "CRUD": "CRU",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "solicitor-statement-of-truth-pay-submit",
+    "UserRole": "caseworker-divorce-solicitor"
+  },
+  {
+    "CRUD": "R",
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseEventID": "solicitor-statement-of-truth-pay-submit",
+    "UserRole": "caseworker-divorce-superuser"
+  }
+]

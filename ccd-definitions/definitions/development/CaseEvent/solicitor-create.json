@@ -1,0 +1,15 @@
+[
+  {
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "PostConditionState": "SOTAgreementPayAndSubmitRequired",
+    "Description": "Apply for a divorce",
+    "DisplayOrder": 1,
+    "EndButtonLabel": "Save Petition",
+    "ShowSummary": "Y",
+    "ID": "solicitor-create",
+    "CallBackURLAboutToStartEvent": "http://nfdiv-case-api:4013/solicitor-create/AboutToStart",
+    "SecurityClassification": "Public",
+    "Name": "Apply for a divorce"
+  }
+]

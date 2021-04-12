@@ -6,6 +6,7 @@ import uk.gov.hmcts.ccd.sdk.api.FieldCollection.FieldCollectionBuilder;
 import uk.gov.hmcts.divorce.ccd.CcdConfiguration;
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.event.solicitor.page.LanguagePreference;
+import uk.gov.hmcts.divorce.ccd.event.solicitor.page.OtherLegalProceedings;
 import uk.gov.hmcts.divorce.ccd.event.solicitor.page.RespondentServiceDetails;
 import uk.gov.hmcts.divorce.ccd.event.solicitor.page.SolAboutThePetitioner;
 import uk.gov.hmcts.divorce.ccd.event.solicitor.page.SolAboutTheRespondent;
@@ -36,7 +37,9 @@ public class SolicitorCreate implements CcdConfiguration {
         new SolAboutThePetitioner(),
         new SolAboutTheRespondent(),
         new RespondentServiceDetails(),
-        new LanguagePreference());
+        new LanguagePreference(),
+        new OtherLegalProceedings()
+    );
 
     @Override
     public void applyTo(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

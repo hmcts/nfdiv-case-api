@@ -1,0 +1,37 @@
+[
+  {
+    "CRUD": "CRU",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "citizen",
+    "CaseStateID": "Draft"
+  },
+  {
+    "CRUD": "R",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor",
+    "CaseStateID": "Draft"
+  },
+  {
+    "CRUD": "CRU",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor",
+    "CaseStateID": "SOTAgreementPayAndSubmitRequired"
+  },
+  {
+    "CRUD": "R",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor",
+    "CaseStateID": "SolicitorAwaitingPaymentConfirmation"
+  },
+  {
+    "CRUD": "R",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "LiveFrom": "01/01/2017",
+    "UserRole": "caseworker-divorce-solicitor",
+    "CaseStateID": "Submitted"
+  }
+]

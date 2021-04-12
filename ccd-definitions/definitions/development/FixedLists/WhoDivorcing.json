@@ -1,0 +1,16 @@
+[
+  {
+    "LiveFrom": "01/01/2017",
+    "DisplayOrder": 1,
+    "ListElementCode": "husband",
+    "ListElement": "Husband",
+    "ID": "WhoDivorcing"
+  },
+  {
+    "LiveFrom": "01/01/2017",
+    "DisplayOrder": 2,
+    "ListElementCode": "wife",
+    "ListElement": "Wife",
+    "ID": "WhoDivorcing"
+  }
+]

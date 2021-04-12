@@ -1,0 +1,9 @@
+[
+  {
+    "LiveFrom": "01/01/2017",
+    "CaseTypeID": "NO_FAULT_DIVORCE4",
+    "CaseFieldID": "[CASE_REFERENCE]",
+    "DisplayOrder": 1,
+    "Label": "CCD Case Number"
+  }
+]
