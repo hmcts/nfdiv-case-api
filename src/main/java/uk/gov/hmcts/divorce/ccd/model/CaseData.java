@@ -535,14 +535,24 @@ public class CaseData {
     private YesOrNo respondentHomeAddressIsInternational;
 
     @CCD(
-        label = "Any other legal proceedings relating to your civil partnership, property or children?",
-        access = { DefaultAccess.class }
+        label = "Any there any existing or previous court proceedings relating to the petitioner's marriage, "
+            + "property or children?",
+        access = {DefaultAccess.class}
     )
     private YesOrNo legalProceedings;
 
     @CCD(
+        label = "Legal proceeding details",
+        hint = "Include the case number(s), if known.",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
+    )
+    private String legalProceedingsDetails;
+
+
+    @CCD(
         label = "What do the legal proceedings relate to?",
-        access = { DefaultAccess.class }
+        access = {DefaultAccess.class}
     )
     private Set<LegalProceedingsRelated> legalProceedingsRelated;
 
