@@ -27,7 +27,7 @@ plugins {
 
 apply plugin: 'cz.habarta.typescript-generator'
 
-group = 'uk.gov.hmcts.reform'
+group = 'uk.gov.hmcts'
 version = '0.0.1'
 
 sourceSets {
