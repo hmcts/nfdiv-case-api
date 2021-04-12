@@ -85,7 +85,7 @@ def uploadCoreCaseDataDefinitions() {
         sh "./add-roles.sh"
         sh "./process-and-import-ccd-definition.sh"
     }
-    dir("${WORKSPACE}/ccd-definitions") {
+    dir("${WORKSPACE}") {
         steps.archiveArtifacts artifacts: "build/ccd-config/ccd-nfd-dev.xlsx"
     }
 }
