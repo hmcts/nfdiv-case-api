@@ -6,6 +6,8 @@ import uk.gov.hmcts.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.divorce.ccd.model.State;
 import uk.gov.hmcts.divorce.ccd.model.UserRole;
 
+import static uk.gov.hmcts.divorce.ccd.model.State.Draft;
+
 public class CreateDraft implements CcdConfiguration {
 
     public static final String CREATE_DRAFT = "create-draft";
@@ -15,7 +17,7 @@ public class CreateDraft implements CcdConfiguration {
 
         configBuilder
             .event(CREATE_DRAFT)
-            .initialState(State.Draft)
+            .initialState(Draft)
             .name("Create draft case")
             .description("Apply for a divorce or dissolution")
             .displayOrder(1)

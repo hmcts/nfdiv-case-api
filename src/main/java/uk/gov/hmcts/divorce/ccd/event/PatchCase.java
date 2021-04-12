@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.ccd.model.UserRole;
 
 import static uk.gov.hmcts.divorce.ccd.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.ccd.access.Permissions.READ;
+import static uk.gov.hmcts.divorce.ccd.model.State.Draft;
 import static uk.gov.hmcts.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
 import static uk.gov.hmcts.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_LA;
@@ -24,7 +25,7 @@ public class PatchCase implements CcdConfiguration {
 
         configBuilder
             .event(PATCH_CASE)
-            .forState(State.Draft)
+            .forState(Draft)
             .name("Patch case")
             .description("Patch a divorce or dissolution")
             .displayOrder(2)

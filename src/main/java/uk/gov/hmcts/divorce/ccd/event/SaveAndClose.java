@@ -7,6 +7,7 @@ import uk.gov.hmcts.divorce.ccd.model.State;
 import uk.gov.hmcts.divorce.ccd.model.UserRole;
 
 import static uk.gov.hmcts.divorce.ccd.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.ccd.model.State.Draft;
 import static uk.gov.hmcts.divorce.ccd.model.UserRole.CITIZEN;
 
 public class SaveAndClose implements CcdConfiguration {
@@ -18,7 +19,7 @@ public class SaveAndClose implements CcdConfiguration {
 
         configBuilder
             .event(SAVE_AND_CLOSE)
-            .forState(State.Draft)
+            .forState(Draft)
             .name("Save and close application")
             .description("Save application and send email notification to petitioner")
             .displayOrder(1)
