@@ -9,10 +9,6 @@ import uk.gov.hmcts.divorce.ccd.model.UserRole;
 import static uk.gov.hmcts.divorce.ccd.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.ccd.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.ccd.model.State.Draft;
-import static uk.gov.hmcts.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
-import static uk.gov.hmcts.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
-import static uk.gov.hmcts.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_LA;
-import static uk.gov.hmcts.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_SOLICITOR;
 import static uk.gov.hmcts.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
 import static uk.gov.hmcts.divorce.ccd.model.UserRole.CITIZEN;
 
@@ -31,11 +27,6 @@ public class PatchCase implements CcdConfiguration {
             .displayOrder(2)
             .retries(120, 120)
             .grant(CREATE_READ_UPDATE, CITIZEN)
-            .grant(READ,
-                CASEWORKER_DIVORCE_COURTADMIN_BETA,
-                CASEWORKER_DIVORCE_COURTADMIN,
-                CASEWORKER_DIVORCE_SOLICITOR,
-                CASEWORKER_DIVORCE_SUPERUSER,
-                CASEWORKER_DIVORCE_COURTADMIN_LA);
+            .grant(READ, CASEWORKER_DIVORCE_SUPERUSER);
     }
 }

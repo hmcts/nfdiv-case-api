@@ -6,7 +6,9 @@ import uk.gov.hmcts.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.divorce.ccd.model.State;
 import uk.gov.hmcts.divorce.ccd.model.UserRole;
 
+import static uk.gov.hmcts.divorce.ccd.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.ccd.model.State.Draft;
+import static uk.gov.hmcts.divorce.ccd.model.UserRole.CITIZEN;
 
 public class CreateDraft implements CcdConfiguration {
 
@@ -20,6 +22,7 @@ public class CreateDraft implements CcdConfiguration {
             .initialState(Draft)
             .name("Create draft case")
             .description("Apply for a divorce or dissolution")
+            .grant(CREATE_READ_UPDATE, CITIZEN)
             .displayOrder(1)
             .retries(120, 120);
     }
