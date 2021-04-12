@@ -17,7 +17,7 @@ public class DevelopmentCcdConfig implements CCDConfig<CaseData, State, UserRole
         configBuilder.setEnvironment("development");
         configBuilder.setWebhookConvention(this::webhookConvention);
 
-        Reflections reflections = new Reflections("uk.gov.hmcts.reform.divorce.ccd");
+        Reflections reflections = new Reflections("uk.gov.hmcts.divorce.ccd");
 
         for (Class<? extends CcdConfiguration> configClass : reflections.getSubTypesOf(CcdConfiguration.class)) {
             CcdConfiguration inst = configClass.getDeclaredConstructor().newInstance();
