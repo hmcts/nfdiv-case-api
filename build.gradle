@@ -3,6 +3,9 @@ buildscript {
   repositories {
     mavenCentral()
     jcenter()
+    maven {
+      url "https://jitpack.io"
+    }
   }
   dependencies {
     classpath group: 'cz.habarta.typescript-generator', name: 'typescript-generator-gradle-plugin', version: '2.30.840'
