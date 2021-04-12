@@ -145,15 +145,15 @@ dependencyCheck {
 project.tasks['sonarqube'].dependsOn jacocoTestReport
 
 def sonarExclusions = [
-  '**/uk/gov/hmcts/reform/divorce/ccd/**',
-  '**/uk/gov/hmcts/reform/divorce/caseapi/model/**',
-  '**/uk/gov/hmcts/reform/divorce/caseapi/config/**'
+  '**/uk/gov/hmcts/divorce/ccd/**',
+  '**/uk/gov/hmcts/divorce/api/model/**',
+  '**/uk/gov/hmcts/divorce/api/config/**'
 ]
 
 sonarqube {
   properties {
-    property "sonar.projectName", "Reform :: nfdiv-case-api"
-    property "sonar.projectKey", "uk.gov.hmcts.reform:nfdiv-case-api"
+    property "sonar.projectName", "Divorce :: nfdiv-case-api"
+    property "sonar.projectKey", "uk.gov.hmcts:nfdiv-case-api"
     property "sonar.coverage.jacoco.xmlReportPaths", "${projectDir}/build/reports/jacoco/test/jacocoTestReport.xml"
     property "sonar.exclusions", sonarExclusions.join(', ')
   }
@@ -292,7 +292,7 @@ dependencies {
   smokeTestImplementation sourceSets.main.runtimeClasspath
 }
 
-mainClassName = 'uk.gov.hmcts.reform.divorce.caseapi.CaseApiApplication'
+mainClassName = 'uk.gov.hmcts.divorce.api.CaseApiApplication'
 
 ext.getVaultSecret = { String secretName ->
   new ByteArrayOutputStream().withStream { os ->
@@ -351,7 +351,7 @@ functional {
 generateTypeScript {
   jsonLibrary = 'jackson2'
   classPatterns = [
-    'uk.gov.hmcts.reform.divorce.ccd.model.*',
+    'uk.gov.hmcts.divorce.ccd.model.*',
     'uk.gov.hmcts.ccd.sdk.type.*',
   ]
   outputFile = 'build/ts/index.ts'
