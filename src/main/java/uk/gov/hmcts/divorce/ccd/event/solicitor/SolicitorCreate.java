@@ -5,6 +5,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event.EventBuilder;
 import uk.gov.hmcts.ccd.sdk.api.FieldCollection.FieldCollectionBuilder;
 import uk.gov.hmcts.divorce.ccd.CcdConfiguration;
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
+import uk.gov.hmcts.divorce.ccd.event.solicitor.page.FinancialOrders;
 import uk.gov.hmcts.divorce.ccd.event.solicitor.page.LanguagePreference;
 import uk.gov.hmcts.divorce.ccd.event.solicitor.page.MarriageCertificateDetails;
 import uk.gov.hmcts.divorce.ccd.event.solicitor.page.OtherLegalProceedings;
@@ -40,6 +41,7 @@ public class SolicitorCreate implements CcdConfiguration {
         new RespondentServiceDetails(),
         new MarriageCertificateDetails(),
         new OtherLegalProceedings(),
+        new FinancialOrders(),
         new LanguagePreference()
     );
 

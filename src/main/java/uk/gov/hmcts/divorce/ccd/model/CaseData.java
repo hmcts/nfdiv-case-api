@@ -22,6 +22,7 @@ import uk.gov.hmcts.divorce.ccd.model.enums.ClaimsCostFrom;
 import uk.gov.hmcts.divorce.ccd.model.enums.ConfidentialAddress;
 import uk.gov.hmcts.divorce.ccd.model.enums.Court;
 import uk.gov.hmcts.divorce.ccd.model.enums.DivorceOrDissolution;
+import uk.gov.hmcts.divorce.ccd.model.enums.FinancialOrderFor;
 import uk.gov.hmcts.divorce.ccd.model.enums.Gender;
 import uk.gov.hmcts.divorce.ccd.model.enums.JurisdictionConnections;
 import uk.gov.hmcts.divorce.ccd.model.enums.LegalProceedingsRelated;
@@ -659,4 +660,10 @@ public class CaseData {
         access = {DefaultAccess.class}
     )
     private String derivedRespondentCorrespondenceAddr;
+
+    @CCD(
+        label = "Who is the financial order for?",
+        access = {DefaultAccess.class}
+    )
+    private Set<FinancialOrderFor> financialOrderFor;
 }
