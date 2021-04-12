@@ -520,7 +520,9 @@ public class CaseData {
     private YesOrNo petitionerKnowsRespondentsAddress;
 
     @CCD(
-        label = "Respondents home address",
+        label = "The Respondent's home address",
+        hint = "If the respondent is to be served at their home address, enter the home address here and as the service "
+            + "address below",
         typeOverride = TextArea,
         access = { DefaultAccess.class }
     )
@@ -586,4 +588,59 @@ public class CaseData {
         access = {DefaultAccess.class}
     )
     private List<DivorceDocument> documentsGenerated;
+
+    @CCD(
+        label = "Is the respondent represented by a solicitor?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo respondentSolicitorRepresented;
+
+    @CCD(
+        label = "Respondent's solicitor's name",
+        access = {DefaultAccess.class}
+    )
+    private String respondentSolicitorName;
+
+    @CCD(
+        label = "Respondent's solicitor's Phone number",
+        regex = "^[0-9 +().-]{9,}$",
+        access = {DefaultAccess.class}
+    )
+    private String respondentSolicitorPhone;
+
+    @CCD(
+        label = "Respondent's solicitor's Email",
+        typeOverride = Email,
+        access = {DefaultAccess.class}
+    )
+    private String respondentSolicitorEmail;
+
+    @CCD(
+        label = "Respondent's solicitor's firm/ DX address",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
+    )
+    private String derivedRespondentSolicitorAddr;
+
+    @CCD(
+        label = "Digital respondent case",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo respSolDigital;
+
+    @CCD(
+        label = "Respondent solicitor's firm",
+        hint = "Respondent Organisation Details",
+        access = {DefaultAccess.class}
+    )
+    private OrganisationPolicy<UserRole> respondentOrganisationPolicy;
+
+    @CCD(
+        label = "The Respondent's service address",
+        hint = "If the respondent is to be served at their home address, enter the home address here and as the service "
+            + "address below",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
+    )
+    private String derivedRespondentCorrespondenceAddr;
 }
