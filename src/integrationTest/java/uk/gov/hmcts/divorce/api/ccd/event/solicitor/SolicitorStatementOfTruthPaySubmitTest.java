@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.api.controllers;
+package uk.gov.hmcts.divorce.api.ccd.event.solicitor;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -70,8 +70,8 @@ import static uk.gov.hmcts.divorce.api.util.TestDataHelper.getFeeResponse;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-@ContextConfiguration(initializers = {SolicitorSubmitPetitionTest.PropertiesInitializer.class})
-public class SolicitorSubmitPetitionTest {
+@ContextConfiguration(initializers = {SolicitorStatementOfTruthPaySubmitTest.PropertiesInitializer.class})
+public class SolicitorStatementOfTruthPaySubmitTest {
 
     private static final String CASE_WORKER_TOKEN = "test-caseworker-token";
 

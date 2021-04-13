@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.api.controllers;
+package uk.gov.hmcts.divorce.api.ccd.event;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ import static uk.gov.hmcts.divorce.api.util.TestDataHelper.callbackRequest;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-public class SaveAndCloseControllerTest {
+public class SaveAndCloseTest {
 
     @Autowired
     private MockMvc mockMvc;

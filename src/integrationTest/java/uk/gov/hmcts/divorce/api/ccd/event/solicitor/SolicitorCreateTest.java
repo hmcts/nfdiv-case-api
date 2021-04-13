@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.api.controllers;
+package uk.gov.hmcts.divorce.api.ccd.event.solicitor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -54,9 +54,6 @@ class SolicitorCreateTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private SolicitorCreateController solicitorCreateController;
 
     @Autowired
     private ObjectMapper objectMapper;
