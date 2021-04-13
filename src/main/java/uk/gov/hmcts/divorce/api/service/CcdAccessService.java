@@ -25,7 +25,7 @@ public class CcdAccessService {
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
-    public void addPetitionerSolicitorRole(String solicitorIdamToken, String caseId) {
+    public void addPetitionerSolicitorRole(String solicitorIdamToken, Long caseId) {
         User solicitorUser = idamService.retrieveUser(solicitorIdamToken);
         User caseworkerUser = idamService.retrieveCaseWorkerDetails();
 
@@ -42,7 +42,7 @@ public class CcdAccessService {
         caseUserApi.updateCaseRolesForUser(
             caseworkerUser.getAuthToken(),
             authTokenGenerator.generate(),
-            caseId,
+            String.valueOf(caseId),
             solicitorUserId,
             new CaseUser(solicitorUserId, caseRoles)
         );

@@ -27,7 +27,7 @@ public class SolicitorCreatePetitionService {
 
     public CaseData aboutToSubmit(
         final CaseData caseData,
-        final String caseId,
+        final Long caseId,
         final String idamAuthToken
     ) {
 

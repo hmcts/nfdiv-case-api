@@ -13,13 +13,14 @@ import uk.gov.hmcts.divorce.ccd.model.CaseData;
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
+// TODO remove in favour of CCD generator lib
 public class CaseDetails {
 
     @JsonProperty("case_data")
     private CaseData caseData;
 
     @JsonProperty("id")
-    private String caseId;
+    private Long caseId;
 
     private String state;
 }

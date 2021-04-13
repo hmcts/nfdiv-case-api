@@ -69,7 +69,7 @@ public class CcdAccessServiceTest {
             .updateCaseRolesForUser(
                 CASEWORKER_AUTH_TOKEN,
                 TEST_SERVICE_AUTH_TOKEN,
-                TEST_CASE_ID,
+                String.valueOf(TEST_CASE_ID),
                 SOLICITOR_USER_ID,
                 new CaseUser(SOLICITOR_USER_ID, Set.of(CREATOR.getRole(), PETITIONER_SOLICITOR.getRole()))
             );
@@ -84,7 +84,7 @@ public class CcdAccessServiceTest {
             .updateCaseRolesForUser(
                 CASEWORKER_AUTH_TOKEN,
                 TEST_SERVICE_AUTH_TOKEN,
-                TEST_CASE_ID,
+                String.valueOf(TEST_CASE_ID),
                 SOLICITOR_USER_ID,
                 new CaseUser(SOLICITOR_USER_ID, Set.of(CREATOR.getRole(), PETITIONER_SOLICITOR.getRole()))
             );
@@ -166,7 +166,7 @@ public class CcdAccessServiceTest {
             .updateCaseRolesForUser(
                 CASEWORKER_AUTH_TOKEN,
                 TEST_SERVICE_AUTH_TOKEN,
-                TEST_CASE_ID,
+                String.valueOf(TEST_CASE_ID),
                 SOLICITOR_USER_ID,
                 new CaseUser(SOLICITOR_USER_ID, Set.of(CREATOR.getRole(), PETITIONER_SOLICITOR.getRole()))
             );

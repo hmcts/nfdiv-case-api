@@ -31,7 +31,7 @@ public class DocAssemblyService {
 
     public DocumentInfo generateAndStoreDraftPetition(
         CaseData caseData,
-        String caseId,
+        Long caseId,
         String authorisation,
         String templateId
     ) {

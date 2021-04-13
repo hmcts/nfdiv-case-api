@@ -1,9 +1,10 @@
 package uk.gov.hmcts.divorce.ccd.event.solicitor;
 
+import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.Event.EventBuilder;
 import uk.gov.hmcts.ccd.sdk.api.FieldCollection.FieldCollectionBuilder;
-import uk.gov.hmcts.divorce.ccd.CcdConfiguration;
+import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.event.solicitor.page.LanguagePreference;
 import uk.gov.hmcts.divorce.ccd.event.solicitor.page.SolAboutThePetitioner;
@@ -26,7 +27,8 @@ import static uk.gov.hmcts.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTAD
 import static uk.gov.hmcts.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_SOLICITOR;
 import static uk.gov.hmcts.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
 
-public class SolicitorUpdate implements CcdConfiguration {
+@Component
+public class SolicitorUpdate implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SOLICITOR_UPDATE = "solicitor-update";
 
@@ -37,7 +39,7 @@ public class SolicitorUpdate implements CcdConfiguration {
         new LanguagePreference());
 
     @Override
-    public void applyTo(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+    public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         final FieldCollectionBuilder<CaseData, EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder =
             addEventConfig(configBuilder);

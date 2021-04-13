@@ -15,7 +15,7 @@ import uk.gov.hmcts.divorce.ccd.model.CaseData;
 public class CaseDataContext {
 
     private CaseData caseData;
-    private String caseId;
+    private Long caseId;
     private String userAuthToken;
 
     public CaseData copyOfCaseData() {

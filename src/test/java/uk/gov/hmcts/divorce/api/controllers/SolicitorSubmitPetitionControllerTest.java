@@ -29,6 +29,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
@@ -85,7 +86,7 @@ public class SolicitorSubmitPetitionControllerTest {
             .when(ccdAccessService)
             .addPetitionerSolicitorRole(
                 anyString(),
-                anyString()
+                anyLong()
             );
 
         CcdCallbackResponse ccdCallbackResponse = CcdCallbackResponse
@@ -109,7 +110,7 @@ public class SolicitorSubmitPetitionControllerTest {
         verify(solicitorSubmitPetitionService).getOrderSummary();
         verify(ccdAccessService).addPetitionerSolicitorRole(
             anyString(),
-            anyString()
+            anyLong()
         );
         verifyNoMoreInteractions(solicitorSubmitPetitionService, ccdAccessService);
     }
@@ -166,7 +167,7 @@ public class SolicitorSubmitPetitionControllerTest {
 
         doThrow(feignException).when(ccdAccessService).addPetitionerSolicitorRole(
             anyString(),
-            anyString()
+            anyLong()
         );
 
         mockMvc.perform(

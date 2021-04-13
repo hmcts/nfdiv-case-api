@@ -29,7 +29,7 @@ public final class TestConstants {
     public static final String TEST_CASEWORKER_USER_EMAIL = "testcw@test.com";
     public static final String TEST_CASEWORKER_USER_PASSWORD = "testpassword";
 
-    public static final String TEST_CASE_ID = "1616591401473378";
+    public static final Long TEST_CASE_ID = 1616591401473378L;
     public static final String TEST_SERVICE_AUTH_TOKEN = "Bearer TestServiceAuth";
 
     public static final String ENGLISH_TEMPLATE_ID = "divorceminipetition";

@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Builder
+// TODO remove in favour of CCD generator lib
 public class CcdCallbackRequest {
     private String token;
     @JsonProperty("event_id")

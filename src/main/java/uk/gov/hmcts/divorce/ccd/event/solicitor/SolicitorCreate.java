@@ -1,9 +1,15 @@
 package uk.gov.hmcts.divorce.ccd.event.solicitor;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.Event.EventBuilder;
 import uk.gov.hmcts.ccd.sdk.api.FieldCollection.FieldCollectionBuilder;
-import uk.gov.hmcts.divorce.ccd.CcdConfiguration;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.api.service.solicitor.SolicitorCreatePetitionService;
+import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.event.solicitor.page.LanguagePreference;
 import uk.gov.hmcts.divorce.ccd.event.solicitor.page.OtherLegalProceedings;
@@ -15,9 +21,12 @@ import uk.gov.hmcts.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.divorce.ccd.model.State;
 import uk.gov.hmcts.divorce.ccd.model.UserRole;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static org.reflections.Reflections.log;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.ccd.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.ccd.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.ccd.access.Permissions.READ_UPDATE;
@@ -28,7 +37,8 @@ import static uk.gov.hmcts.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTAD
 import static uk.gov.hmcts.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_SOLICITOR;
 import static uk.gov.hmcts.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
 
-public class SolicitorCreate implements CcdConfiguration {
+@Component
+public class SolicitorCreate implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SOLICITOR_CREATE = "solicitor-create";
 
@@ -41,8 +51,14 @@ public class SolicitorCreate implements CcdConfiguration {
         new OtherLegalProceedings()
     );
 
+    @Autowired
+    private SolicitorCreatePetitionService solicitorCreatePetitionService;
+
+    @Autowired
+    HttpServletRequest request;
+
     @Override
-    public void applyTo(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+    public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         final FieldCollectionBuilder<CaseData, EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder =
             addEventConfig(configBuilder);
@@ -61,11 +77,38 @@ public class SolicitorCreate implements CcdConfiguration {
             .displayOrder(1)
             .showSummary()
             .endButtonLabel("Save Petition")
-            .aboutToStartWebhook(SOLICITOR_CREATE)
+            .aboutToStartCallback(this::aboutToStart)
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_SOLICITOR)
             .grant(READ_UPDATE, CASEWORKER_DIVORCE_SUPERUSER)
             .grant(READ, CASEWORKER_DIVORCE_COURTADMIN_BETA, CASEWORKER_DIVORCE_COURTADMIN, CASEWORKER_DIVORCE_COURTADMIN_LA)
             .fields();
+    }
+
+    private AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(CaseDetails<CaseData, State> details) {
+        log.info("Solicitor create petition about to start callback invoked");
+
+        CaseData data = details.getData();
+        data.setLanguagePreferenceWelsh(YesOrNo.NO);
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(data)
+            .build();
+    }
+
+    private AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
+                                                                        CaseDetails<CaseData, State> beforeDetails) {
+        log.info("Solicitor create petition about to submit callback invoked");
+
+        final CaseData data = solicitorCreatePetitionService.aboutToSubmit(
+            details.getData(),
+            details.getId(),
+            request.getHeader(AUTHORIZATION)
+        );
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(data)
+            .build();
     }
 }

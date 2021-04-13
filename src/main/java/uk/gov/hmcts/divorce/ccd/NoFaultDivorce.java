@@ -1,5 +1,7 @@
 package uk.gov.hmcts.divorce.ccd;
 
+import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.divorce.ccd.model.State;
@@ -16,13 +18,16 @@ import static uk.gov.hmcts.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_SOLICIT
 import static uk.gov.hmcts.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
 import static uk.gov.hmcts.divorce.ccd.model.UserRole.CITIZEN;
 
-public class NoFaultDivorce implements CcdConfiguration {
+@Component
+public class NoFaultDivorce implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASE_TYPE = "NO_FAULT_DIVORCE6";
     public static final String JURISDICTION = "DIVORCE";
 
     @Override
-    public void applyTo(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+    public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.setEnvironment("development");
+        configBuilder.setCallbackHost(System.getenv().getOrDefault("CASE_API_URL", "http://nfdiv-case-api:4013"));
 
         configBuilder.caseType(CASE_TYPE, CASE_TYPE, "Handling of the dissolution of marriage");
         configBuilder.jurisdiction(JURISDICTION, "Family Divorce", "Family Divorce: dissolution of marriage");

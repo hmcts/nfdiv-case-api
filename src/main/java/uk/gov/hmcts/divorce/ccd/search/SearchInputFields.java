@@ -1,8 +1,9 @@
 package uk.gov.hmcts.divorce.ccd.search;
 
+import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.SearchField;
-import uk.gov.hmcts.divorce.ccd.CcdConfiguration;
+import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.divorce.ccd.model.State;
 import uk.gov.hmcts.divorce.ccd.model.UserRole;
@@ -17,10 +18,11 @@ import static uk.gov.hmcts.divorce.ccd.search.constants.CaseFieldsConstants.PETI
 import static uk.gov.hmcts.divorce.ccd.search.constants.CaseFieldsConstants.PETITIONER_FIRST_NAME;
 import static uk.gov.hmcts.divorce.ccd.search.constants.CaseFieldsConstants.PETITIONER_LAST_NAME;
 
-public class SearchInputFields implements CcdConfiguration {
+@Component
+public class SearchInputFields implements CCDConfig<CaseData, State, UserRole> {
 
     @Override
-    public void applyTo(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+    public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         final List<SearchField> searchFieldList = of(
                                                     SearchField.builder().label(FIRSTNAME).id(

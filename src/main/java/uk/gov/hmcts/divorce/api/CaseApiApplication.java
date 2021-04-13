@@ -11,7 +11,10 @@ import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataClientAutoConfiguration;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
 
-@SpringBootApplication(exclude = { CoreCaseDataClientAutoConfiguration.class })
+@SpringBootApplication(
+    exclude = { CoreCaseDataClientAutoConfiguration.class },
+    scanBasePackages = { "uk.gov.hmcts.ccd.sdk", "uk.gov.hmcts.divorce" }
+)
 @EnableFeignClients(
     clients = {
         IdamApi.class,

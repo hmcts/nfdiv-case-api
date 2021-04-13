@@ -1,7 +1,8 @@
 package uk.gov.hmcts.divorce.ccd.event;
 
+import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
-import uk.gov.hmcts.divorce.ccd.CcdConfiguration;
+import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.divorce.ccd.model.State;
 import uk.gov.hmcts.divorce.ccd.model.UserRole;
@@ -10,12 +11,13 @@ import static uk.gov.hmcts.divorce.ccd.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.ccd.model.State.Draft;
 import static uk.gov.hmcts.divorce.ccd.model.UserRole.CITIZEN;
 
-public class CreateDraft implements CcdConfiguration {
+@Component
+public class CreateDraft implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CREATE_DRAFT = "create-draft";
 
     @Override
-    public void applyTo(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+    public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         configBuilder
             .event(CREATE_DRAFT)

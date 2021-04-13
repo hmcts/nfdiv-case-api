@@ -1,9 +1,10 @@
 package uk.gov.hmcts.divorce.ccd.event.solicitor;
 
+import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.Event.EventBuilder;
 import uk.gov.hmcts.ccd.sdk.api.FieldCollection.FieldCollectionBuilder;
-import uk.gov.hmcts.divorce.ccd.CcdConfiguration;
+import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.event.solicitor.page.HelpWithFees;
 import uk.gov.hmcts.divorce.ccd.event.solicitor.page.SolPayAccount;
@@ -27,7 +28,8 @@ import static uk.gov.hmcts.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_COURTAD
 import static uk.gov.hmcts.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_SOLICITOR;
 import static uk.gov.hmcts.divorce.ccd.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
 
-public class SolicitorStatementOfTruthPaySubmit implements CcdConfiguration {
+@Component
+public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT = "solicitor-statement-of-truth-pay-submit";
 
@@ -42,7 +44,7 @@ public class SolicitorStatementOfTruthPaySubmit implements CcdConfiguration {
         new SolSummary());
 
     @Override
-    public void applyTo(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+    public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         final FieldCollectionBuilder<CaseData, EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder =
             addEventConfig(configBuilder);
@@ -60,7 +62,7 @@ public class SolicitorStatementOfTruthPaySubmit implements CcdConfiguration {
             .displayOrder(1)
             .showSummary()
             .endButtonLabel("Submit Petition")
-            .aboutToStartWebhook(SUBMIT_PETITION)
+//            .aboutToStartWebhook(SUBMIT_PETITION)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_SOLICITOR)
             .grant(READ,

@@ -33,7 +33,7 @@ import static uk.gov.hmcts.divorce.api.util.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = SolicitorCreateController.class)
-class SolicitorCreateControllerTest {
+class   SolicitorCreateControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -79,7 +79,7 @@ class SolicitorCreateControllerTest {
 
         when(solicitorCreatePetitionService.aboutToSubmit(
             any(CaseData.class),
-            any(String.class),
+            any(Long.class),
             any(String.class)
         ))
             .thenReturn(updatedCaseData);

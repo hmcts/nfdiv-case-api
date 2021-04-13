@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 public final class TestResourceUtil {
+    public static final String ABOUT_TO_START_CALLBACK_URL = "/callbacks/about-to-start";
+    public static final String ABOUT_TO_SUBMIT_CALLBACK_URL = "/callbacks/about-to-submit";
+
     private TestResourceUtil() {
 
     }
