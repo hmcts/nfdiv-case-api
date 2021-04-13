@@ -17,6 +17,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -55,21 +56,23 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.hmcts.divorce.api.TestConstants.ABOUT_TO_START_URL;
 import static uk.gov.hmcts.divorce.api.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.api.TestConstants.CASEWORKER_USER_ID;
 import static uk.gov.hmcts.divorce.api.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.api.TestConstants.SOLICITOR_USER_ID;
-import static uk.gov.hmcts.divorce.api.TestConstants.SUBMIT_PETITION_API_URL;
 import static uk.gov.hmcts.divorce.api.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.api.TestConstants.TEST_USER_EMAIL;
+import static uk.gov.hmcts.divorce.api.ccd.event.solicitor.SolicitorStatementOfTruthPaySubmit.SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT;
 import static uk.gov.hmcts.divorce.api.util.TestDataHelper.callbackRequest;
+import static uk.gov.hmcts.divorce.api.util.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.api.util.TestDataHelper.getFeeResponse;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-@ContextConfiguration(initializers = {SolicitorSubmitPetitionControllerTest.PropertiesInitializer.class})
-public class SolicitorSubmitPetitionControllerTest {
+@ContextConfiguration(initializers = {SolicitorSubmitPetitionTest.PropertiesInitializer.class})
+public class SolicitorSubmitPetitionTest {
 
     private static final String CASE_WORKER_TOKEN = "test-caseworker-token";
 
@@ -143,11 +146,11 @@ public class SolicitorSubmitPetitionControllerTest {
 
         stubForCcdCaseRoles();
 
-        mockMvc.perform(MockMvcRequestBuilders.post(SUBMIT_PETITION_API_URL)
+        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_START_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(TestConstants.AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest()))
+            .content(objectMapper.writeValueAsString(callbackRequest(caseData(), SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
@@ -165,11 +168,11 @@ public class SolicitorSubmitPetitionControllerTest {
         throws Exception {
         stubForFeesNotFound();
 
-        mockMvc.perform(MockMvcRequestBuilders.post(SUBMIT_PETITION_API_URL)
+        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_START_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(TestConstants.AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest()))
+            .content(objectMapper.writeValueAsString(callbackRequest(caseData(), SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isNotFound()
@@ -190,11 +193,11 @@ public class SolicitorSubmitPetitionControllerTest {
 
         stubForIdamFailure();
 
-        mockMvc.perform(MockMvcRequestBuilders.post(SUBMIT_PETITION_API_URL)
+        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_START_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(TestConstants.AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest()))
+            .content(objectMapper.writeValueAsString(callbackRequest(caseData(), SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isUnauthorized()
@@ -223,11 +226,11 @@ public class SolicitorSubmitPetitionControllerTest {
 
         stubForCcdCaseRolesUpdateFailure();
 
-        mockMvc.perform(MockMvcRequestBuilders.post(SUBMIT_PETITION_API_URL)
+        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_START_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(TestConstants.AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest()))
+            .content(objectMapper.writeValueAsString(callbackRequest(caseData(), SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isForbidden()
@@ -236,7 +239,6 @@ public class SolicitorSubmitPetitionControllerTest {
                 result -> assertThat(result.getResolvedException()).isExactlyInstanceOf(FeignException.Forbidden.class)
             );
     }
-
 
     private void stubForCcdCaseRoles() {
         CASE_DATA_SERVER.stubFor(put(urlMatching("/cases/[0-9]+/users/[0-9]+"))

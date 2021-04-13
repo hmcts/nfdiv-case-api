@@ -1,10 +1,14 @@
 package uk.gov.hmcts.divorce.api.ccd.event.solicitor;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.Event.EventBuilder;
 import uk.gov.hmcts.ccd.sdk.api.FieldCollection.FieldCollectionBuilder;
-import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.api.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.api.ccd.event.solicitor.page.HelpWithFees;
 import uk.gov.hmcts.divorce.api.ccd.event.solicitor.page.SolPayAccount;
@@ -15,10 +19,15 @@ import uk.gov.hmcts.divorce.api.ccd.event.solicitor.page.SolSummary;
 import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
 import uk.gov.hmcts.divorce.api.ccd.model.State;
 import uk.gov.hmcts.divorce.api.ccd.model.UserRole;
+import uk.gov.hmcts.divorce.api.service.CcdAccessService;
+import uk.gov.hmcts.divorce.api.service.SolicitorSubmitPetitionService;
 
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Arrays.asList;
+import static org.reflections.Reflections.log;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.api.ccd.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.api.ccd.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.api.ccd.model.State.SOTAgreementPayAndSubmitRequired;
@@ -32,8 +41,16 @@ import static uk.gov.hmcts.divorce.api.ccd.model.UserRole.CASEWORKER_DIVORCE_SUP
 public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT = "solicitor-statement-of-truth-pay-submit";
-
     public static final String SUBMIT_PETITION = "submit-petition";
+
+    @Autowired
+    private SolicitorSubmitPetitionService solicitorSubmitPetitionService;
+
+    @Autowired
+    private CcdAccessService ccdAccessService;
+
+    @Autowired
+    private HttpServletRequest httpServletRequest;
 
     private final List<CcdPageConfiguration> pages = asList(
         new SolStatementOfTruth(),
@@ -52,6 +69,26 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
         pages.forEach(page -> page.addTo(fieldCollectionBuilder));
     }
 
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+
+        log.info("Submit petition about to start callback invoked");
+
+        log.info("Retrieving order summary");
+        final OrderSummary orderSummary = solicitorSubmitPetitionService.getOrderSummary();
+        final CaseData caseData = details.getData();
+        caseData.setSolApplicationFeeOrderSummary(orderSummary);
+
+        log.info("Adding Petitioner solicitor case roles");
+        ccdAccessService.addPetitionerSolicitorRole(
+            httpServletRequest.getHeader(AUTHORIZATION),
+            details.getId()
+        );
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .build();
+    }
+
     private FieldCollectionBuilder<CaseData, EventBuilder<CaseData, UserRole, State>> addEventConfig(
         final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
@@ -62,7 +99,7 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
             .displayOrder(1)
             .showSummary()
             .endButtonLabel("Submit Petition")
-//            .aboutToStartWebhook(SUBMIT_PETITION)
+            .aboutToStartCallback(this::aboutToStart)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_SOLICITOR)
             .grant(READ,
