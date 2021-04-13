@@ -402,3 +402,7 @@ importCcdDefinition.configure {
 ccd {
   configDir = file('ccd-definitions/definitions/development')
 }
+
+configurations.all {
+  resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
