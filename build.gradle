@@ -2,13 +2,13 @@
 buildscript {
   repositories {
     mavenCentral()
-    jcenter()
     maven {
       url "https://jitpack.io"
     }
   }
   dependencies {
     classpath group: 'cz.habarta.typescript-generator', name: 'typescript-generator-gradle-plugin', version: '2.30.840'
+    classpath group: 'com.github.hmcts.ccd-config-generator', name: 'hmcts.ccd.sdk.gradle.plugin', version: '0.17.5'
   }
 }
 
@@ -22,10 +22,10 @@ plugins {
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'org.springframework.boot' version '2.4.4'
   id 'com.github.ben-manes.versions' version '0.38.0'
-  id 'hmcts.ccd.sdk' version '0.17.3'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
+apply plugin: 'hmcts.ccd.sdk'
 
 group = 'uk.gov.hmcts'
 version = '0.0.1'
@@ -185,7 +185,6 @@ dependencyManagement {
 
 repositories {
   mavenLocal()
-  jcenter()
   mavenCentral()
   maven {
     url "https://jitpack.io"
@@ -194,7 +193,7 @@ repositories {
 
 def versions = [
   assertJ           : '3.19.0',
-  ccdConfigGenerator: '0.17.3',
+  ccdConfigGenerator: '0.17.5',
   ccdStoreClient    : '4.7.6',
   idamClient        : '2.0.0',
   junit             : '5.7.1',
@@ -259,7 +258,7 @@ dependencies {
 
   compile group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
-  compile group: 'uk.gov.hmcts.reform', name: 'ccd-config-generator', version: versions.ccdConfigGenerator
+  compile group: 'com.github.hmcts', name: 'ccd-config-generator', version: versions.ccdConfigGenerator
   compile group: 'uk.gov.hmcts.reform', name: 'service-auth-provider-client', version: versions.s2sClient
 
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
@@ -278,7 +277,9 @@ dependencies {
   testImplementation group: 'io.rest-assured', name: 'rest-assured'
 
   testImplementation group: 'org.assertj', name: 'assertj-core', version: versions.assertJ
-  testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '3.0.2'
+  testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '3.0.2', {
+    exclude group: 'com.github.jknack.handlebars.java'
+  }
 
   testCompile group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
@@ -396,4 +397,8 @@ def importCcdDefinition = tasks.register('importCcdDefinition') {
 
 importCcdDefinition.configure {
   dependsOn generateCCDConfig
+}
+
+ccd {
+  configDir = file('ccd-definitions/definitions/development')
 }
