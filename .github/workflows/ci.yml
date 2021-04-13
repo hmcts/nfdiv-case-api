@@ -18,4 +18,4 @@ jobs:
         with:
           java-version: 11
       - name: Build
-        run: ./gradlew check
+        run: ./gradlew check --refresh-dependencies
