@@ -33,14 +33,14 @@ public class RespondentServiceDetails implements CcdPageConfiguration {
                 "respondentSolicitorRepresented=\"Yes\"")
             .mandatory(CaseData::getRespSolDigital, "respondentSolicitorRepresented=\"Yes\"")
             .complex(CaseData::getRespondentOrganisationPolicy, "respSolDigital=\"Yes\"")
-                .complex(OrganisationPolicy::getOrganisation)
-                    .mandatory(Organisation::getOrganisationId)
-                    .done()
-                .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole,
-                    "petitionerNameChanged=\"NeverShow\"",
-                    PETITIONER_SOLICITOR)
-                .optional(OrganisationPolicy::getOrgPolicyReference, "petitionerNameChanged=\"NeverShow\"")
-                .done()
+            .complex(OrganisationPolicy::getOrganisation)
+            .mandatory(Organisation::getOrganisationId)
+            .done()
+            .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole,
+                "petitionerNameChanged=\"NeverShow\"",
+                PETITIONER_SOLICITOR)
+            .optional(OrganisationPolicy::getOrgPolicyReference, "petitionerNameChanged=\"NeverShow\"")
+            .done()
             .optional(CaseData::getDerivedRespondentHomeAddress, "respondentSolicitorRepresented=\"No\"")
             .mandatory(CaseData::getDerivedRespondentCorrespondenceAddr, "respondentSolicitorRepresented=\"No\"");
     }

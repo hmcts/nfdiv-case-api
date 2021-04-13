@@ -10,7 +10,7 @@ public final class CaseFieldsConstants {
     public static final String EMAIL = "Email";
 
     // required for Checkstyle
-    private CaseFieldsConstants(){
+    private CaseFieldsConstants() {
     }
 
 }

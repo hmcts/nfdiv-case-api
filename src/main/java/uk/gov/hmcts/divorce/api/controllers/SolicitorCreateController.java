@@ -1,10 +1,8 @@
 package uk.gov.hmcts.divorce.api.controllers;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gov.hmcts.divorce.api.service.solicitor.SolicitorCreatePetitionService;
 
 import static uk.gov.hmcts.divorce.api.ccd.event.solicitor.SolicitorCreate.SOLICITOR_CREATE;
 
@@ -13,8 +11,8 @@ import static uk.gov.hmcts.divorce.api.ccd.event.solicitor.SolicitorCreate.SOLIC
 @RequestMapping(SOLICITOR_CREATE)
 public class SolicitorCreateController {
 
-    @Autowired
-    private SolicitorCreatePetitionService solicitorCreatePetitionService;
+//    @Autowired
+//    private SolicitorCreatePetitionService solicitorCreatePetitionService;
 
 //    @PostMapping(path = ABOUT_TO_START_WEBHOOK, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 //    @ApiOperation(value = "Set default values for solicitor create petition")

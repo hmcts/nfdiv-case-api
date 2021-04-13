@@ -19,12 +19,12 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static uk.gov.hmcts.divorce.api.constants.ControllerConstants.SUBMITTED_WEBHOOK;
 import static uk.gov.hmcts.divorce.api.ccd.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.api.ccd.NoFaultDivorce.JURISDICTION;
 import static uk.gov.hmcts.divorce.api.ccd.event.SaveAndClose.SAVE_AND_CLOSE;
 import static uk.gov.hmcts.divorce.api.ccd.event.solicitor.SolicitorCreate.SOLICITOR_CREATE;
 import static uk.gov.hmcts.divorce.api.ccd.model.enums.DivorceOrDissolution.DIVORCE;
+import static uk.gov.hmcts.divorce.api.constants.ControllerConstants.SUBMITTED_WEBHOOK;
 
 @TestPropertySource("classpath:application.yaml")
 abstract class FunctionalTestSuite {

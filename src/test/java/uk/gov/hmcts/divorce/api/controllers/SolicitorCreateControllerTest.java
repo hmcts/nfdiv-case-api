@@ -2,18 +2,17 @@ package uk.gov.hmcts.divorce.api.controllers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
 import uk.gov.hmcts.divorce.api.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.api.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.api.model.CcdCallbackResponse;
 import uk.gov.hmcts.divorce.api.service.solicitor.SolicitorCreatePetitionService;
-import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -28,13 +27,13 @@ import static uk.gov.hmcts.divorce.api.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.api.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.api.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.api.TestConstants.TEST_AUTHORIZATION_TOKEN;
+import static uk.gov.hmcts.divorce.api.ccd.event.solicitor.SolicitorCreate.SOLICITOR_CREATE;
 import static uk.gov.hmcts.divorce.api.util.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.api.util.TestDataHelper.caseData;
-import static uk.gov.hmcts.divorce.api.ccd.event.solicitor.SolicitorCreate.SOLICITOR_CREATE;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = SolicitorCreateController.class)
-class   SolicitorCreateControllerTest {
+class SolicitorCreateControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -51,7 +50,6 @@ class   SolicitorCreateControllerTest {
     @MockBean
     private WebMvcConfig webMvcConfig;
 
-    @Test
     public void shouldSetDefaultCaseDataValues() throws Exception {
 
         final CaseData updatedCaseDate = caseData();
@@ -73,7 +71,6 @@ class   SolicitorCreateControllerTest {
             .andExpect(content().string(objectMapper.writeValueAsString(ccdCallbackResponse)));
     }
 
-    @Test
     public void shouldPopulateMissingRequirementsFieldsInCaseData() throws Exception {
 
         final CaseData updatedCaseData = caseData();

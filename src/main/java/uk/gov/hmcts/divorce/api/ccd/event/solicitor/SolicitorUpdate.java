@@ -1,10 +1,10 @@
 package uk.gov.hmcts.divorce.api.ccd.event.solicitor;
 
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.Event.EventBuilder;
 import uk.gov.hmcts.ccd.sdk.api.FieldCollection.FieldCollectionBuilder;
-import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.divorce.api.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.api.ccd.event.solicitor.page.LanguagePreference;
 import uk.gov.hmcts.divorce.api.ccd.event.solicitor.page.SolAboutThePetitioner;

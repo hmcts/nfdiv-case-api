@@ -34,12 +34,12 @@ public class SolAboutTheSolicitor implements CcdPageConfiguration {
             .mandatory(CaseData::getSolicitorAgreeToReceiveEmails)
             .mandatory(CaseData::getDerivedPetitionerSolicitorAddress)
             .complex(CaseData::getPetitionerOrganisationPolicy)
-                .complex(OrganisationPolicy::getOrganisation)
-                    .mandatory(Organisation::getOrganisationId)
-                    .done()
-                .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole,
-                    "petitionerNameChanged=\"NeverShow\"",
-                    PETITIONER_SOLICITOR)
-                .optional(OrganisationPolicy::getOrgPolicyReference, "petitionerNameChanged=\"NeverShow\"");
+            .complex(OrganisationPolicy::getOrganisation)
+            .mandatory(Organisation::getOrganisationId)
+            .done()
+            .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole,
+                "petitionerNameChanged=\"NeverShow\"",
+                PETITIONER_SOLICITOR)
+            .optional(OrganisationPolicy::getOrgPolicyReference, "petitionerNameChanged=\"NeverShow\"");
     }
 }

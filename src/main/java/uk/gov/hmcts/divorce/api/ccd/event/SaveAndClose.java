@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.api.ccd.event;
 
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
+import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
 import uk.gov.hmcts.divorce.api.ccd.model.State;
 import uk.gov.hmcts.divorce.api.ccd.model.UserRole;
@@ -27,6 +27,6 @@ public class SaveAndClose implements CCDConfig<CaseData, State, UserRole> {
             .displayOrder(1)
             .retries(120, 120)
             .grant(CREATE_READ_UPDATE, CITIZEN);
-//            .submittedWebhook(SAVE_AND_CLOSE);
+        //  .submittedWebhook(SAVE_AND_CLOSE);
     }
 }

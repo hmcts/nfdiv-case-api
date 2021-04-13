@@ -266,7 +266,7 @@ public class CaseData {
 
     @CCD(
         label = "Is petitioners home address an international address?",
-        access = { DefaultAccess.class }
+        access = {DefaultAccess.class}
     )
     private YesOrNo petitionerHomeAddressIsInternational;
 
@@ -402,7 +402,7 @@ public class CaseData {
         label = "Petitioner wants/will to apply to have the papers served to the respondent another way.",
         hint = "For example by email, text message or social media. This is a separate application with "
             + "an additional fee, which will need to be reviewed by a judge.",
-        access = { DefaultAccess.class }
+        access = {DefaultAccess.class}
     )
     private YesOrNo petitionerWantsToHavePapersServedAnotherWay;
 
@@ -515,7 +515,7 @@ public class CaseData {
 
     @CCD(
         label = "Do you know their address",
-        access = { DefaultAccess.class }
+        access = {DefaultAccess.class}
     )
     private YesOrNo petitionerKnowsRespondentsAddress;
 
@@ -524,13 +524,13 @@ public class CaseData {
         hint = "If the respondent is to be served at their home address, enter the home address here and as the service "
             + "address below",
         typeOverride = TextArea,
-        access = { DefaultAccess.class }
+        access = {DefaultAccess.class}
     )
     private String derivedRespondentHomeAddress;
 
     @CCD(
         label = "Is respondents home address an international address?",
-        access = { DefaultAccess.class }
+        access = {DefaultAccess.class}
     )
     private YesOrNo respondentHomeAddressIsInternational;
 

@@ -2,14 +2,13 @@ package uk.gov.hmcts.divorce.api.ccd.event.solicitor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.Event.EventBuilder;
 import uk.gov.hmcts.ccd.sdk.api.FieldCollection.FieldCollectionBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.api.service.solicitor.SolicitorCreatePetitionService;
-import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.divorce.api.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.api.ccd.event.solicitor.page.LanguagePreference;
 import uk.gov.hmcts.divorce.api.ccd.event.solicitor.page.OtherLegalProceedings;
@@ -20,9 +19,10 @@ import uk.gov.hmcts.divorce.api.ccd.event.solicitor.page.SolAboutTheSolicitor;
 import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
 import uk.gov.hmcts.divorce.api.ccd.model.State;
 import uk.gov.hmcts.divorce.api.ccd.model.UserRole;
+import uk.gov.hmcts.divorce.api.service.solicitor.SolicitorCreatePetitionService;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Arrays.asList;
 import static org.reflections.Reflections.log;
@@ -86,7 +86,7 @@ public class SolicitorCreate implements CCDConfig<CaseData, State, UserRole> {
             .fields();
     }
 
-    private AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(CaseDetails<CaseData, State> details) {
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(CaseDetails<CaseData, State> details) {
         log.info("Solicitor create petition about to start callback invoked");
 
         CaseData data = details.getData();
@@ -97,7 +97,7 @@ public class SolicitorCreate implements CCDConfig<CaseData, State, UserRole> {
             .build();
     }
 
-    private AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                         CaseDetails<CaseData, State> beforeDetails) {
         log.info("Solicitor create petition about to submit callback invoked");
 

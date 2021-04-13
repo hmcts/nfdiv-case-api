@@ -18,19 +18,19 @@ public class DivorceDocument {
 
     @CCD(
         label = "Date added",
-        access = { DefaultAccess.class }
+        access = {DefaultAccess.class}
     )
     private final Date documentDateAdded;
 
     @CCD(
         label = "DocumentComment",
-        access = { DefaultAccess.class }
+        access = {DefaultAccess.class}
     )
     private final String documentComment;
 
     @CCD(
         label = "File name",
-        access = { DefaultAccess.class }
+        access = {DefaultAccess.class}
     )
     private final String documentFileName;
 
@@ -38,20 +38,20 @@ public class DivorceDocument {
         label = "Type",
         typeOverride = FixedList,
         typeParameterOverride = "DocumentType",
-        access = { DefaultAccess.class }
+        access = {DefaultAccess.class}
     )
     private final DocumentType documentType;
 
     @CCD(
         label = "Email content",
         typeOverride = TextArea,
-        access = { DefaultAccess.class }
+        access = {DefaultAccess.class}
     )
     private String documentEmailContent;
 
     @CCD(
         label = "Document Url",
-        access = { DefaultAccess.class }
+        access = {DefaultAccess.class}
     )
     private final Document documentLink;
 }

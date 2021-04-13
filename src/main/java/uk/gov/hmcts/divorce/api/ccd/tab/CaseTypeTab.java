@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.api.ccd.tab;
 
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
+import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
 import uk.gov.hmcts.divorce.api.ccd.model.State;
 import uk.gov.hmcts.divorce.api.ccd.model.UserRole;
@@ -25,7 +25,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("paymentDetailsCourtAdmin", "Payment")
             .field(CaseData::getHelpWithFeesReferenceNumber);
 
-        configBuilder.tab("documents","Documents")
-            .field(CaseData:: getDocumentsGenerated);
+        configBuilder.tab("documents", "Documents")
+            .field(CaseData::getDocumentsGenerated);
     }
 }

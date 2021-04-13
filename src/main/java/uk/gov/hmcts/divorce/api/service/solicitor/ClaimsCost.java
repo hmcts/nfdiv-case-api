@@ -1,10 +1,10 @@
 package uk.gov.hmcts.divorce.api.service.solicitor;
 
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
 import uk.gov.hmcts.divorce.api.util.CaseDataContext;
 import uk.gov.hmcts.divorce.api.util.CaseDataUpdater;
 import uk.gov.hmcts.divorce.api.util.CaseDataUpdaterChain;
-import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
 
 import java.util.Set;
 

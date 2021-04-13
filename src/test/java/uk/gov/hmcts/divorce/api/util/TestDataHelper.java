@@ -6,11 +6,11 @@ import feign.Response;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
+import uk.gov.hmcts.divorce.api.ccd.model.enums.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.api.model.CaseDetails;
 import uk.gov.hmcts.divorce.api.model.CcdCallbackRequest;
 import uk.gov.hmcts.divorce.api.model.payments.FeeResponse;
-import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
-import uk.gov.hmcts.divorce.api.ccd.model.enums.DivorceOrDissolution;
 
 import java.util.Collections;
 import java.util.Map;

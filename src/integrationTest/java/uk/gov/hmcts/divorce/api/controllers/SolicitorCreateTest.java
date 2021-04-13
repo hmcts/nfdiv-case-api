@@ -9,10 +9,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.hmcts.divorce.api.config.WebMvcConfig;
-import uk.gov.hmcts.divorce.api.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
 import uk.gov.hmcts.divorce.api.ccd.model.enums.DivorceOrDissolution;
+import uk.gov.hmcts.divorce.api.config.WebMvcConfig;
+import uk.gov.hmcts.divorce.api.config.interceptors.RequestInterceptor;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,8 +38,8 @@ import static uk.gov.hmcts.divorce.api.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.api.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.api.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.api.TestConstants.TEST_USER_EMAIL;
-import static uk.gov.hmcts.divorce.api.util.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.api.ccd.event.solicitor.SolicitorCreate.SOLICITOR_CREATE;
+import static uk.gov.hmcts.divorce.api.util.TestDataHelper.callbackRequest;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

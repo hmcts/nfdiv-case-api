@@ -6,9 +6,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
 import uk.gov.hmcts.divorce.api.util.CaseDataContext;
 import uk.gov.hmcts.divorce.api.util.CaseDataUpdaterChain;
-import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
 
 import java.time.Clock;
 import java.time.Instant;

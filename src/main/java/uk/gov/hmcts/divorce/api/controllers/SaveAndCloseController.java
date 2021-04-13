@@ -14,8 +14,8 @@ import uk.gov.hmcts.divorce.api.model.CcdCallbackRequest;
 import uk.gov.hmcts.divorce.api.notification.handler.SaveAndSignOutNotificationHandler;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static uk.gov.hmcts.divorce.api.constants.ControllerConstants.SUBMITTED_WEBHOOK;
 import static uk.gov.hmcts.divorce.api.ccd.event.SaveAndClose.SAVE_AND_CLOSE;
+import static uk.gov.hmcts.divorce.api.constants.ControllerConstants.SUBMITTED_WEBHOOK;
 
 @Slf4j
 @RestController

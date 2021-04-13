@@ -5,11 +5,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
+import uk.gov.hmcts.divorce.api.ccd.model.enums.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.api.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.api.exceptions.NotificationException;
 import uk.gov.hmcts.divorce.api.service.NotificationService;
-import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
-import uk.gov.hmcts.divorce.api.ccd.model.enums.DivorceOrDissolution;
 import uk.gov.service.notify.NotificationClientException;
 
 import java.util.Map;
