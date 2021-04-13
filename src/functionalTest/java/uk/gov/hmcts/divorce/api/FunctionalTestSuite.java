@@ -6,7 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.TestPropertySource;
-import uk.gov.hmcts.divorce.ccd.model.CaseData;
+import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
@@ -20,11 +20,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.divorce.api.constants.ControllerConstants.SUBMITTED_WEBHOOK;
-import static uk.gov.hmcts.divorce.ccd.NoFaultDivorce.CASE_TYPE;
-import static uk.gov.hmcts.divorce.ccd.NoFaultDivorce.JURISDICTION;
-import static uk.gov.hmcts.divorce.ccd.event.SaveAndClose.SAVE_AND_CLOSE;
-import static uk.gov.hmcts.divorce.ccd.event.solicitor.SolicitorCreate.SOLICITOR_CREATE;
-import static uk.gov.hmcts.divorce.ccd.model.enums.DivorceOrDissolution.DIVORCE;
+import static uk.gov.hmcts.divorce.api.ccd.NoFaultDivorce.CASE_TYPE;
+import static uk.gov.hmcts.divorce.api.ccd.NoFaultDivorce.JURISDICTION;
+import static uk.gov.hmcts.divorce.api.ccd.event.SaveAndClose.SAVE_AND_CLOSE;
+import static uk.gov.hmcts.divorce.api.ccd.event.solicitor.SolicitorCreate.SOLICITOR_CREATE;
+import static uk.gov.hmcts.divorce.api.ccd.model.enums.DivorceOrDissolution.DIVORCE;
 
 @TestPropertySource("classpath:application.yaml")
 abstract class FunctionalTestSuite {

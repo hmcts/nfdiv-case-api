@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.api.util.CaseDataContext;
 import uk.gov.hmcts.divorce.api.util.CaseDataUpdaterChain;
-import uk.gov.hmcts.divorce.ccd.model.CaseData;
+import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
 
 import java.util.Set;
 
@@ -17,8 +17,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.ccd.model.enums.ClaimsCostFrom.CORRESPONDENT;
-import static uk.gov.hmcts.divorce.ccd.model.enums.ClaimsCostFrom.RESPONDENT;
+import static uk.gov.hmcts.divorce.api.ccd.model.enums.ClaimsCostFrom.CORRESPONDENT;
+import static uk.gov.hmcts.divorce.api.ccd.model.enums.ClaimsCostFrom.RESPONDENT;
 
 @ExtendWith(MockitoExtension.class)
 class ClaimsCostTest {

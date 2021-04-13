@@ -19,7 +19,7 @@ import uk.gov.hmcts.divorce.api.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.api.model.CcdCallbackResponse;
 import uk.gov.hmcts.divorce.api.service.CcdAccessService;
 import uk.gov.hmcts.divorce.api.service.SolicitorSubmitPetitionService;
-import uk.gov.hmcts.divorce.ccd.model.CaseData;
+import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
 
 import java.util.Collections;
 import java.util.Map;

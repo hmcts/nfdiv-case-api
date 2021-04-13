@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import uk.gov.hmcts.divorce.ccd.model.CaseData;
+import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)

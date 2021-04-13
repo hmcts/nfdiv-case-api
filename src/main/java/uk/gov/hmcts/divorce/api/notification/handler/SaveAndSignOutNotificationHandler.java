@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.api.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.api.service.NotificationService;
-import uk.gov.hmcts.divorce.ccd.model.CaseData;
+import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
 
 import java.util.HashMap;
 import java.util.Map;

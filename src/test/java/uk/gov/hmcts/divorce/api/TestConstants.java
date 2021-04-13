@@ -7,8 +7,8 @@ public final class TestConstants {
 
     public static final String SAVE_AND_CLOSE_API_URL = "/save-and-close/Submitted";
     public static final String SUBMIT_PETITION_API_URL = "/submit-petition/AboutToStart";
-    public static final String SOLICITOR_CREATE_ABOUT_TO_START_URL = "/solicitor-create/AboutToStart";
-    public static final String SOLICITOR_CREATE_ABOUT_TO_SUBMIT_URL = "/solicitor-create/AboutToSubmit";
+    public static final String ABOUT_TO_START_URL = "/callbacks/about-to-start";
+    public static final String ABOUT_TO_SUBMIT_URL = "/callbacks/about-to-submit";
 
     public static final String AUTH_HEADER_VALUE = "auth-header-value";
     public static final String INVALID_AUTH_TOKEN = "invalid_token";

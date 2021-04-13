@@ -15,12 +15,12 @@ import uk.gov.hmcts.divorce.api.model.CcdCallbackRequest;
 import uk.gov.hmcts.divorce.api.model.CcdCallbackResponse;
 import uk.gov.hmcts.divorce.api.service.CcdAccessService;
 import uk.gov.hmcts.divorce.api.service.SolicitorSubmitPetitionService;
-import uk.gov.hmcts.divorce.ccd.model.CaseData;
+import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.divorce.api.constants.ControllerConstants.ABOUT_TO_START_WEBHOOK;
 import static uk.gov.hmcts.divorce.api.model.CcdCallbackResponse.convertToCcdFormat;
-import static uk.gov.hmcts.divorce.ccd.event.solicitor.SolicitorStatementOfTruthPaySubmit.SUBMIT_PETITION;
+import static uk.gov.hmcts.divorce.api.ccd.event.solicitor.SolicitorStatementOfTruthPaySubmit.SUBMIT_PETITION;
 
 @Slf4j
 @RestController

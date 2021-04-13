@@ -8,7 +8,7 @@ import uk.gov.hmcts.divorce.api.clients.DocAssemblyClient;
 import uk.gov.hmcts.divorce.api.model.DocumentInfo;
 import uk.gov.hmcts.divorce.api.model.docassembly.DocAssemblyRequest;
 import uk.gov.hmcts.divorce.api.model.docassembly.DocAssemblyResponse;
-import uk.gov.hmcts.divorce.ccd.model.CaseData;
+import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import static java.lang.String.format;

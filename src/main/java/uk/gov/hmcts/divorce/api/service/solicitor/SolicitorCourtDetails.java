@@ -5,12 +5,12 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.api.util.CaseDataContext;
 import uk.gov.hmcts.divorce.api.util.CaseDataUpdater;
 import uk.gov.hmcts.divorce.api.util.CaseDataUpdaterChain;
-import uk.gov.hmcts.divorce.ccd.model.CaseData;
+import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
 
 import java.time.Clock;
 
 import static java.time.LocalDate.now;
-import static uk.gov.hmcts.divorce.ccd.model.enums.Court.SERVICE_CENTRE;
+import static uk.gov.hmcts.divorce.api.ccd.model.enums.Court.SERVICE_CENTRE;
 
 @Component
 public class SolicitorCourtDetails implements CaseDataUpdater {

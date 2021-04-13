@@ -9,7 +9,7 @@ import uk.gov.hmcts.divorce.api.util.CaseDataContext;
 import uk.gov.hmcts.divorce.api.util.CaseDataUpdater;
 import uk.gov.hmcts.divorce.api.util.CaseDataUpdaterChain;
 import uk.gov.hmcts.divorce.api.util.CaseDataUpdaterChainFactory;
-import uk.gov.hmcts.divorce.ccd.model.CaseData;
+import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
 
 import java.util.List;
 

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.api.model.CaseDetails;
 import uk.gov.hmcts.divorce.api.model.CcdCallbackRequest;
-import uk.gov.hmcts.divorce.ccd.model.CaseData;
+import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -14,7 +14,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.divorce.api.constants.ControllerConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.divorce.ccd.model.enums.DivorceOrDissolution.DIVORCE;
+import static uk.gov.hmcts.divorce.api.ccd.model.enums.DivorceOrDissolution.DIVORCE;
 
 @SpringBootTest
 public class SaveAndSignOutNotificationTest extends FunctionalTestSuite {

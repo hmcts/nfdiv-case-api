@@ -1,26 +1,12 @@
 package uk.gov.hmcts.divorce.api.controllers;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.api.model.CcdCallbackRequest;
-import uk.gov.hmcts.divorce.api.model.CcdCallbackResponse;
 import uk.gov.hmcts.divorce.api.service.solicitor.SolicitorCreatePetitionService;
-import uk.gov.hmcts.divorce.ccd.model.CaseData;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static uk.gov.hmcts.divorce.api.constants.ControllerConstants.ABOUT_TO_START_WEBHOOK;
-import static uk.gov.hmcts.divorce.api.constants.ControllerConstants.ABOUT_TO_SUBMIT_WEBHOOK;
-import static uk.gov.hmcts.divorce.api.model.CcdCallbackResponse.convertToCcdFormat;
-import static uk.gov.hmcts.divorce.ccd.event.solicitor.SolicitorCreate.SOLICITOR_CREATE;
+import static uk.gov.hmcts.divorce.api.ccd.event.solicitor.SolicitorCreate.SOLICITOR_CREATE;
 
 @Slf4j
 @RestController

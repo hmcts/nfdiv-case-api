@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.api.util;
 
 import org.junit.jupiter.api.Test;
-import uk.gov.hmcts.divorce.ccd.model.CaseData;
+import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
 
 import static java.lang.System.identityHashCode;
 import static org.hamcrest.CoreMatchers.is;

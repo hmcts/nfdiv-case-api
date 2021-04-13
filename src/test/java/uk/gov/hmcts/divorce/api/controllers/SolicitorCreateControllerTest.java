@@ -13,7 +13,7 @@ import uk.gov.hmcts.divorce.api.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.api.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.api.model.CcdCallbackResponse;
 import uk.gov.hmcts.divorce.api.service.solicitor.SolicitorCreatePetitionService;
-import uk.gov.hmcts.divorce.ccd.model.CaseData;
+import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -22,14 +22,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.divorce.api.TestConstants.ABOUT_TO_START_URL;
+import static uk.gov.hmcts.divorce.api.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.api.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.api.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.api.TestConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.divorce.api.TestConstants.SOLICITOR_CREATE_ABOUT_TO_START_URL;
-import static uk.gov.hmcts.divorce.api.TestConstants.SOLICITOR_CREATE_ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.api.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.api.util.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.api.util.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.api.ccd.event.solicitor.SolicitorCreate.SOLICITOR_CREATE;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = SolicitorCreateController.class)
@@ -64,10 +65,10 @@ class   SolicitorCreateControllerTest {
 
         mockMvc
             .perform(
-                post(SOLICITOR_CREATE_ABOUT_TO_START_URL)
+                post(ABOUT_TO_START_URL)
                     .contentType(APPLICATION_JSON)
                     .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-                    .content(objectMapper.writeValueAsBytes(callbackRequest())))
+                    .content(objectMapper.writeValueAsBytes(callbackRequest(caseData(), SOLICITOR_CREATE))))
             .andExpect(status().isOk())
             .andExpect(content().string(objectMapper.writeValueAsString(ccdCallbackResponse)));
     }
@@ -92,11 +93,11 @@ class   SolicitorCreateControllerTest {
 
         mockMvc
             .perform(
-                post(SOLICITOR_CREATE_ABOUT_TO_SUBMIT_URL)
+                post(ABOUT_TO_SUBMIT_URL)
                     .contentType(APPLICATION_JSON)
                     .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                     .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                    .content(objectMapper.writeValueAsBytes(callbackRequest())))
+                    .content(objectMapper.writeValueAsBytes(callbackRequest(caseData(), SOLICITOR_CREATE))))
             .andExpect(status().isOk())
             .andExpect(content().string(objectMapper.writeValueAsString(ccdCallbackResponse)));
     }

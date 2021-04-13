@@ -10,8 +10,8 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.Set;
 
-import static uk.gov.hmcts.divorce.ccd.model.UserRole.CREATOR;
-import static uk.gov.hmcts.divorce.ccd.model.UserRole.PETITIONER_SOLICITOR;
+import static uk.gov.hmcts.divorce.api.ccd.model.UserRole.CREATOR;
+import static uk.gov.hmcts.divorce.api.ccd.model.UserRole.PETITIONER_SOLICITOR;
 
 @Service
 @Slf4j

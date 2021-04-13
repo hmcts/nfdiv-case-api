@@ -12,8 +12,8 @@ import org.springframework.http.HttpHeaders;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.api.model.CaseDetails;
 import uk.gov.hmcts.divorce.api.model.CcdCallbackRequest;
-import uk.gov.hmcts.divorce.ccd.model.CaseData;
-import uk.gov.hmcts.divorce.ccd.model.UserRole;
+import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
+import uk.gov.hmcts.divorce.api.ccd.model.UserRole;
 
 import java.time.LocalDate;
 
@@ -29,7 +29,7 @@ import static uk.gov.hmcts.divorce.api.TestResourceUtil.ABOUT_TO_START_CALLBACK_
 import static uk.gov.hmcts.divorce.api.TestResourceUtil.ABOUT_TO_SUBMIT_CALLBACK_URL;
 import static uk.gov.hmcts.divorce.api.TestResourceUtil.expectedCcdCallbackResponse;
 import static uk.gov.hmcts.divorce.api.constants.ControllerConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.divorce.ccd.event.solicitor.SolicitorCreate.SOLICITOR_CREATE;
+import static uk.gov.hmcts.divorce.api.ccd.event.solicitor.SolicitorCreate.SOLICITOR_CREATE;
 
 @SpringBootTest
 public class SolicitorCreateTest extends FunctionalTestSuite {
