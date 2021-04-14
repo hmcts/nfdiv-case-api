@@ -243,7 +243,7 @@ public class SolicitorSubmitPetitionControllerTest {
             .withHeader(AUTHORIZATION, new EqualToPattern(BEARER + CASE_WORKER_TOKEN))
             .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(SERVICE_AUTH_TOKEN))
             .withRequestBody(new EqualToJsonPattern(
-                "{\"user_id\" : \"1\", \"case_roles\":[\"[CREATOR]\",\"[PETSOLICITOR]\"]}",
+                "{\"user_id\" : \"1\", \"case_roles\":[\"[CREATOR]\",\"[APPSOLICITOR]\"]}",
                 true,
                 true)
             )
@@ -256,7 +256,7 @@ public class SolicitorSubmitPetitionControllerTest {
             .withHeader(AUTHORIZATION, new EqualToPattern(BEARER + CASE_WORKER_TOKEN))
             .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(SERVICE_AUTH_TOKEN))
             .withRequestBody(new EqualToJsonPattern(
-                "{\"user_id\" : \"1\", \"case_roles\":[\"[CREATOR]\",\"[PETSOLICITOR]\"]}",
+                "{\"user_id\" : \"1\", \"case_roles\":[\"[CREATOR]\",\"[APPSOLICITOR]\"]}",
                 true,
                 true)
             )

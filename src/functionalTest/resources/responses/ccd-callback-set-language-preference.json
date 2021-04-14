@@ -8,7 +8,7 @@
     "applicantOrganisationPolicy": {
       "Organisation": null,
       "OrgPolicyReference": null,
-      "OrgPolicyCaseAssignedRole": "[PETSOLICITOR]"
+      "OrgPolicyCaseAssignedRole": "[APPSOLICITOR]"
     }
   },
   "errors": null,
