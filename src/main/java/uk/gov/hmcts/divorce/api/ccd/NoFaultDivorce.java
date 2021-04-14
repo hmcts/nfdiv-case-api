@@ -26,7 +26,6 @@ public class NoFaultDivorce implements CCDConfig<CaseData, State, UserRole> {
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        configBuilder.setEnvironment("development");
         configBuilder.setCallbackHost(System.getenv().getOrDefault("CASE_API_URL", "http://nfdiv-case-api:4013"));
 
         configBuilder.caseType(CASE_TYPE, CASE_TYPE, "Handling of the dissolution of marriage");
