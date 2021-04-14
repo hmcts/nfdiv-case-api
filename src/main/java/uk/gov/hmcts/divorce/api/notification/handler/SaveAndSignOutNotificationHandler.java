@@ -35,8 +35,8 @@ public class SaveAndSignOutNotificationHandler {
 
     public void notifyApplicant(CaseData caseData) {
         Map<String, String> templateVars = new HashMap<>();
-        templateVars.put(FIRST_NAME, caseData.getPetitionerFirstName());
-        templateVars.put(LAST_NAME, caseData.getPetitionerLastName());
+        templateVars.put(FIRST_NAME, caseData.getApplicantFirstName());
+        templateVars.put(LAST_NAME, caseData.getApplicantLastName());
 
         Map<String, Map<String, String>> configTemplateVars = emailTemplatesConfig.getTemplateVars();
 
@@ -61,7 +61,7 @@ public class SaveAndSignOutNotificationHandler {
         }
 
         notificationService.sendEmail(
-            caseData.getPetitionerEmail(),
+            caseData.getApplicantEmail(),
             emailTemplatesConfig.getTemplates().get(ENGLISH).get(SAVE_SIGN_OUT.name()),
             templateVars,
             ENGLISH // to be updated later based on language preference

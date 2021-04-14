@@ -11,7 +11,7 @@ import uk.gov.hmcts.divorce.ccd.event.solicitor.page.LanguagePreference;
 import uk.gov.hmcts.divorce.ccd.event.solicitor.page.MarriageCertificateDetails;
 import uk.gov.hmcts.divorce.ccd.event.solicitor.page.OtherLegalProceedings;
 import uk.gov.hmcts.divorce.ccd.event.solicitor.page.RespondentServiceDetails;
-import uk.gov.hmcts.divorce.ccd.event.solicitor.page.SolAboutThePetitioner;
+import uk.gov.hmcts.divorce.ccd.event.solicitor.page.SolAboutTheApplicant;
 import uk.gov.hmcts.divorce.ccd.event.solicitor.page.SolAboutTheRespondent;
 import uk.gov.hmcts.divorce.ccd.event.solicitor.page.SolAboutTheSolicitor;
 import uk.gov.hmcts.divorce.ccd.model.CaseData;
@@ -37,7 +37,7 @@ public class SolicitorCreate implements CcdConfiguration {
 
     private final List<CcdPageConfiguration> pages = asList(
         new SolAboutTheSolicitor(),
-        new SolAboutThePetitioner(),
+        new SolAboutTheApplicant(),
         new SolAboutTheRespondent(),
         new RespondentServiceDetails(),
         new MarriageCertificateDetails(),

@@ -9,7 +9,7 @@ import uk.gov.hmcts.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.divorce.ccd.model.State;
 import uk.gov.hmcts.divorce.ccd.model.UserRole;
 
-import static uk.gov.hmcts.divorce.ccd.model.UserRole.PETITIONER_SOLICITOR;
+import static uk.gov.hmcts.divorce.ccd.model.UserRole.APPLICANT_SOLICITOR;
 
 public class SolAboutTheSolicitor implements CcdPageConfiguration {
 
@@ -25,21 +25,21 @@ public class SolAboutTheSolicitor implements CcdPageConfiguration {
             .label(
                 "LabelSolAboutTheSolPara-1",
                 "Please note that the information provided will be used as evidence by the court to decide if "
-                    + "the petitioner is entitled to legally end their marriage. **A copy of this form is sent to the "
+                    + "the applicant is entitled to legally end their marriage. **A copy of this form is sent to the "
                     + "respondent**")
-            .mandatory(CaseData::getPetitionerSolicitorName)
+            .mandatory(CaseData::getApplicantSolicitorName)
             .mandatory(CaseData::getSolicitorReference)
-            .mandatory(CaseData::getPetitionerSolicitorPhone)
-            .mandatory(CaseData::getPetitionerSolicitorEmail)
+            .mandatory(CaseData::getApplicantSolicitorPhone)
+            .mandatory(CaseData::getApplicantSolicitorEmail)
             .mandatory(CaseData::getSolicitorAgreeToReceiveEmails)
-            .mandatory(CaseData::getDerivedPetitionerSolicitorAddress)
-            .complex(CaseData::getPetitionerOrganisationPolicy)
-                .complex(OrganisationPolicy::getOrganisation)
-                    .mandatory(Organisation::getOrganisationId)
-                    .done()
-                .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole,
-                    "petitionerNameChanged=\"NeverShow\"",
-                    PETITIONER_SOLICITOR)
-                .optional(OrganisationPolicy::getOrgPolicyReference, "petitionerNameChanged=\"NeverShow\"");
+            .mandatory(CaseData::getDerivedApplicantSolicitorAddress)
+            .complex(CaseData::getApplicantOrganisationPolicy)
+            .complex(OrganisationPolicy::getOrganisation)
+            .mandatory(Organisation::getOrganisationId)
+            .done()
+            .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole,
+                "applicantNameChanged=\"NeverShow\"",
+                APPLICANT_SOLICITOR)
+            .optional(OrganisationPolicy::getOrgPolicyReference, "applicantNameChanged=\"NeverShow\"");
     }
 }

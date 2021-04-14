@@ -1,9 +1,9 @@
 {
   "data": {
     "divorceOrDissolution": "divorce",
-    "petitionerFirstName": "test_first_name",
-    "petitionerLastName": "test_last_name",
-    "petitionerEmail": "test@test.com",
+    "applicantFirstName": "test_first_name",
+    "applicantLastName": "test_last_name",
+    "applicantEmail": "test@test.com",
     "divorceCostsClaim": "YES",
     "divorceClaimFrom": [
       "respondent"

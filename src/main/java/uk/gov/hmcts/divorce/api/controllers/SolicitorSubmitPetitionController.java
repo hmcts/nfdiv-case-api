@@ -53,8 +53,8 @@ public class SolicitorSubmitPetitionController {
         CaseData caseData = callbackRequest.getCaseDetails().getCaseData();
         caseData.setSolApplicationFeeOrderSummary(orderSummary);
 
-        log.info("Adding Petitioner solicitor case roles");
-        ccdAccessService.addPetitionerSolicitorRole(
+        log.info("Adding Applicant solicitor case roles");
+        ccdAccessService.addApplicantSolicitorRole(
             idamAuthToken,
             callbackRequest.getCaseDetails().getCaseId()
         );

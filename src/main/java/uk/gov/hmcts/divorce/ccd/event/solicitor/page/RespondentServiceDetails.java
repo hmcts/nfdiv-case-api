@@ -9,7 +9,7 @@ import uk.gov.hmcts.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.divorce.ccd.model.State;
 import uk.gov.hmcts.divorce.ccd.model.UserRole;
 
-import static uk.gov.hmcts.divorce.ccd.model.UserRole.PETITIONER_SOLICITOR;
+import static uk.gov.hmcts.divorce.ccd.model.UserRole.APPLICANT_SOLICITOR;
 
 public class RespondentServiceDetails implements CcdPageConfiguration {
 
@@ -37,9 +37,9 @@ public class RespondentServiceDetails implements CcdPageConfiguration {
                     .mandatory(Organisation::getOrganisationId)
                     .done()
                 .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole,
-                    "petitionerNameChanged=\"NeverShow\"",
-                    PETITIONER_SOLICITOR)
-                .optional(OrganisationPolicy::getOrgPolicyReference, "petitionerNameChanged=\"NeverShow\"")
+                    "applicantNameChanged=\"NeverShow\"",
+                    APPLICANT_SOLICITOR)
+                .optional(OrganisationPolicy::getOrgPolicyReference, "applicantNameChanged=\"NeverShow\"")
                 .done()
             .optional(CaseData::getDerivedRespondentHomeAddress, "respondentSolicitorRepresented=\"No\"")
             .mandatory(CaseData::getDerivedRespondentCorrespondenceAddr, "respondentSolicitorRepresented=\"No\"");

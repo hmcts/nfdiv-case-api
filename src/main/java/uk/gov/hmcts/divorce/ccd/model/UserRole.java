@@ -17,7 +17,7 @@ public enum UserRole implements HasRole {
     CASEWORKER_DIVORCE_COURTADMIN_LA("caseworker-divorce-courtadmin-la", "CRU"),
     CASEWORKER_DIVORCE_SYSTEMUPDATE("caseworker-divorce-systemupdate", "CRU"),
     RESPONDENT_SOLICITOR("[RESPSOLICITOR]", "CRU"),
-    PETITIONER_SOLICITOR("[PETSOLICITOR]", "CRU"),
+    APPLICANT_SOLICITOR("[APPSOLICITOR]", "CRU"),
     CREATOR("[CREATOR]", "CRU");
 
     @JsonValue

@@ -15,7 +15,7 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
         fieldCollectionBuilder
             .page("SolStatementOfTruth")
             .pageLabel("Statement of truth and reconciliation")
-            .label("LabelSolStatementOfTruthPara-1", "## The petitioner is applying to the court")
+            .label("LabelSolStatementOfTruthPara-1", "## The applicant is applying to the court")
             .label(
                 "LabelSolStatementOfTruthPara-1.1",
                 "That the marriage be dissolved as it has broken down irretrievably.")

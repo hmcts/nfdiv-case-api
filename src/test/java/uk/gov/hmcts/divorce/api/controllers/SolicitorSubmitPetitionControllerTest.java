@@ -83,7 +83,7 @@ public class SolicitorSubmitPetitionControllerTest {
 
         doNothing()
             .when(ccdAccessService)
-            .addPetitionerSolicitorRole(
+            .addApplicantSolicitorRole(
                 anyString(),
                 anyString()
             );
@@ -107,7 +107,7 @@ public class SolicitorSubmitPetitionControllerTest {
         );
 
         verify(solicitorSubmitPetitionService).getOrderSummary();
-        verify(ccdAccessService).addPetitionerSolicitorRole(
+        verify(ccdAccessService).addApplicantSolicitorRole(
             anyString(),
             anyString()
         );
@@ -164,7 +164,7 @@ public class SolicitorSubmitPetitionControllerTest {
                 .build()
         );
 
-        doThrow(feignException).when(ccdAccessService).addPetitionerSolicitorRole(
+        doThrow(feignException).when(ccdAccessService).addApplicantSolicitorRole(
             anyString(),
             anyString()
         );
