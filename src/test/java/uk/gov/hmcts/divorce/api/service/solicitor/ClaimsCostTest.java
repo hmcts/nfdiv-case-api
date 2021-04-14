@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.ccd.model.enums.ClaimsCostFrom.CORRESPONDENT;
-import static uk.gov.hmcts.divorce.ccd.model.enums.ClaimsCostFrom.RESPONDENT;
+import static uk.gov.hmcts.divorce.ccd.model.enums.ClaimsCostFrom.CO_APPLICANT;
 
 @ExtendWith(MockitoExtension.class)
 class ClaimsCostTest {
@@ -33,7 +33,7 @@ class ClaimsCostTest {
     private ClaimsCost claimsCost;
 
     @Test
-    void shouldSetClaimsCostFromRespondentIfApplicantClaimingCostsAndClaimsCostFromIsEmpty() {
+    void shouldSetClaimsCostFromCoApplicantIfApplicantClaimingCostsAndClaimsCostFromIsEmpty() {
 
         final CaseData caseData = CaseData.builder()
             .divorceCostsClaim(YES)
@@ -44,11 +44,11 @@ class ClaimsCostTest {
         final CaseDataContext result = claimsCost.updateCaseData(caseDataContext, caseDataUpdaterChain);
 
         assertThat(result, is(caseDataContext));
-        assertThat(caseData.getDivorceClaimFrom(), is(Set.of(RESPONDENT)));
+        assertThat(caseData.getDivorceClaimFrom(), is(Set.of(CO_APPLICANT)));
     }
 
     @Test
-    void shouldNotSetClaimsCostFromRespondentIfApplicantClaimingCostsAndClaimsCostFromIsNotEmpty() {
+    void shouldNotSetClaimsCostFromCoApplicantIfApplicantClaimingCostsAndClaimsCostFromIsNotEmpty() {
 
         final CaseData caseData = CaseData.builder()
             .divorceCostsClaim(YES)
@@ -63,7 +63,7 @@ class ClaimsCostTest {
     }
 
     @Test
-    void shouldNotSetClaimsCostFromRespondentIfApplicantNotClaimingCosts() {
+    void shouldNotSetClaimsCostFromCoApplicantIfApplicantNotClaimingCosts() {
 
         final CaseData caseData = CaseData.builder()
             .divorceCostsClaim(NO)

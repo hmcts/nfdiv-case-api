@@ -10,16 +10,16 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 @AllArgsConstructor
 public enum JurisdictionConnections implements HasLabel {
     @JsonProperty("A")
-    @JsonPropertyDescription("The Applicant and Respondent are habitually resident")
-    APP_RESP_RESIDENT("A"),
+    @JsonPropertyDescription("The Applicant and Co-Applicant are habitually resident")
+    APP_COAPP_RESIDENT("A"),
 
     @JsonProperty("B")
-    @JsonPropertyDescription("The Applicant and Respondent were last habitually resident in England and Wales")
-    APP_RESP_LAST_RESIDENT("B"),
+    @JsonPropertyDescription("The Applicant and Co-Applicant were last habitually resident in England and Wales")
+    APP_COAPP_LAST_RESIDENT("B"),
 
     @JsonProperty("C")
     @JsonPropertyDescription("The Applicant habitually resides in England and Wales")
-    RESP_RESIDENT("C"),
+    APP_RESIDENT("C"),
 
     @JsonProperty("D")
     @JsonPropertyDescription("The Applicant is habitually resident in England and Wales and has been for 12 months")
@@ -30,8 +30,8 @@ public enum JurisdictionConnections implements HasLabel {
     APP_RESIDENT_SIX_MONTHS("E"),
 
     @JsonProperty("F")
-    @JsonPropertyDescription("The Applicant and Respondent are both domiciled in England and Wales")
-    APP_RESP_DOMICILED("F"),
+    @JsonPropertyDescription("The Applicant and Co-Applicant are both domiciled in England and Wales")
+    APP_COAPP_DOMICILED("F"),
 
     @JsonProperty("G")
     @JsonPropertyDescription("Eligible for Residual Jurisdiction")

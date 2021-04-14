@@ -9,9 +9,10 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 @AllArgsConstructor
 public enum ClaimsCostFrom implements HasLabel {
 
-    @JsonProperty("respondent")
-    RESPONDENT("Respondent"),
+    @JsonProperty("co-applicant")
+    CO_APPLICANT("Co-applicant"),
 
+    //TODO: If respondent becomes co-applicant, what does a co-respondent become?
     @JsonProperty("correspondent")
     CORRESPONDENT("Co-respondent");
 

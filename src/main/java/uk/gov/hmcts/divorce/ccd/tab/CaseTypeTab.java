@@ -14,7 +14,7 @@ public class CaseTypeTab implements CcdConfiguration {
         configBuilder.tab("petitionDetails", "Petition")
             .field(CaseData::getDivorceOrDissolution)
             .field(CaseData::getInferredApplicantGender)
-            .field(CaseData::getInferredRespondentGender)
+            .field(CaseData::getInferredCoApplicantGender)
             .field(CaseData::getMarriageIsSameSexCouple)
             .field(CaseData::getMarriageDate)
             .field(CaseData::getMarriedInUk)

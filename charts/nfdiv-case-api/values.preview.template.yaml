@@ -106,6 +106,7 @@ ccd:
                 - divorce_as_caseworker_superuser@mailinator.com|DIVORCE|NO_FAULT_DIVORCE|Submitted
                 - divorce_as_caseworker_la@mailinator.com|DIVORCE|NO_FAULT_DIVORCE|Submitted
                 - divorce_as_caseworker_admin@mailinator.com|DIVORCE|NO_FAULT_DIVORCE|Submitted
+                #TODO: work out what needs to happen for divorce_respondent_solicitor user below
                 - divorce_respondent_solicitor@mailinator.com|DIVORCE|NO_FAULT_DIVORCE|Submitted
             userProfileDatabaseHost: ${SERVICE_NAME}-ccd-postgres
             userProfileDatabasePort: 5432

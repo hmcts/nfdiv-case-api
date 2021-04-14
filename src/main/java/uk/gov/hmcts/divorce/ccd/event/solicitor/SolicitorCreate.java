@@ -6,13 +6,13 @@ import uk.gov.hmcts.ccd.sdk.api.FieldCollection.FieldCollectionBuilder;
 import uk.gov.hmcts.divorce.ccd.CcdConfiguration;
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.event.solicitor.page.ClaimForCosts;
+import uk.gov.hmcts.divorce.ccd.event.solicitor.page.CoApplicantServiceDetails;
 import uk.gov.hmcts.divorce.ccd.event.solicitor.page.FinancialOrders;
 import uk.gov.hmcts.divorce.ccd.event.solicitor.page.LanguagePreference;
 import uk.gov.hmcts.divorce.ccd.event.solicitor.page.MarriageCertificateDetails;
 import uk.gov.hmcts.divorce.ccd.event.solicitor.page.OtherLegalProceedings;
-import uk.gov.hmcts.divorce.ccd.event.solicitor.page.RespondentServiceDetails;
 import uk.gov.hmcts.divorce.ccd.event.solicitor.page.SolAboutTheApplicant;
-import uk.gov.hmcts.divorce.ccd.event.solicitor.page.SolAboutTheRespondent;
+import uk.gov.hmcts.divorce.ccd.event.solicitor.page.SolAboutTheCoApplicant;
 import uk.gov.hmcts.divorce.ccd.event.solicitor.page.SolAboutTheSolicitor;
 import uk.gov.hmcts.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.divorce.ccd.model.State;
@@ -38,8 +38,8 @@ public class SolicitorCreate implements CcdConfiguration {
     private final List<CcdPageConfiguration> pages = asList(
         new SolAboutTheSolicitor(),
         new SolAboutTheApplicant(),
-        new SolAboutTheRespondent(),
-        new RespondentServiceDetails(),
+        new SolAboutTheCoApplicant(),
+        new CoApplicantServiceDetails(),
         new MarriageCertificateDetails(),
         new OtherLegalProceedings(),
         new FinancialOrders(),

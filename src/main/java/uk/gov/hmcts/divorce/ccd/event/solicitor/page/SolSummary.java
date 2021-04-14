@@ -19,8 +19,9 @@ public class SolSummary implements CcdPageConfiguration {
             .label(
                 "LabelSolAppSummaryPara-3",
                 "### Please continue to submit your application on the next screen. \r\nThe application "
-                    + "will be checked. If it’s correct, you’ll be sent a notice of issue. The respondent will "
+                    + "will be checked. If it’s correct, you’ll be sent a notice of issue. The co-applicant will "
                     + "also receive a copy of the application unless you have chosen to personally effect service.")
+            //TODO: co-respondent is mentioned in the paragraph below, what should this be?
             .label(
                 "LabelSolAppSummaryPara-4",
                 "In cases of adultery where the co-respondent was named, they will also get a copy and a "

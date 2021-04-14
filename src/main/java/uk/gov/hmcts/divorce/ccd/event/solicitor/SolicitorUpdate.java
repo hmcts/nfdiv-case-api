@@ -7,7 +7,7 @@ import uk.gov.hmcts.divorce.ccd.CcdConfiguration;
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.event.solicitor.page.LanguagePreference;
 import uk.gov.hmcts.divorce.ccd.event.solicitor.page.SolAboutTheApplicant;
-import uk.gov.hmcts.divorce.ccd.event.solicitor.page.SolAboutTheRespondent;
+import uk.gov.hmcts.divorce.ccd.event.solicitor.page.SolAboutTheCoApplicant;
 import uk.gov.hmcts.divorce.ccd.event.solicitor.page.SolAboutTheSolicitor;
 import uk.gov.hmcts.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.divorce.ccd.model.State;
@@ -33,7 +33,7 @@ public class SolicitorUpdate implements CcdConfiguration {
     private final List<CcdPageConfiguration> pages = asList(
         new SolAboutTheSolicitor(),
         new SolAboutTheApplicant(),
-        new SolAboutTheRespondent(),
+        new SolAboutTheCoApplicant(),
         new LanguagePreference());
 
     @Override

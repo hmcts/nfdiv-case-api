@@ -10,7 +10,7 @@ import java.util.Set;
 
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.ccd.model.enums.ClaimsCostFrom.RESPONDENT;
+import static uk.gov.hmcts.divorce.ccd.model.enums.ClaimsCostFrom.CO_APPLICANT;
 
 @Component
 public class ClaimsCost implements CaseDataUpdater {
@@ -25,7 +25,7 @@ public class ClaimsCost implements CaseDataUpdater {
         final boolean claimsCostFromIsEmpty = isEmpty(caseData.getDivorceClaimFrom());
 
         if (isApplicantClaimingCosts && claimsCostFromIsEmpty) {
-            caseData.setDivorceClaimFrom(Set.of(RESPONDENT));
+            caseData.setDivorceClaimFrom(Set.of(CO_APPLICANT));
         }
 
         return caseDataUpdaterChain.processNext(caseDataContext.handlerContextWith(caseData));

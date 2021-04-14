@@ -7,23 +7,23 @@ import uk.gov.hmcts.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.divorce.ccd.model.State;
 import uk.gov.hmcts.divorce.ccd.model.UserRole;
 
-public class SolAboutTheRespondent implements CcdPageConfiguration {
+public class SolAboutTheCoApplicant implements CcdPageConfiguration {
 
     @Override
     public void addTo(FieldCollectionBuilder<CaseData, EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder) {
 
         fieldCollectionBuilder
-            .page("SolAboutTheRespondent")
-            .pageLabel("About the respondent")
+            .page("SolAboutTheCoApplicant")
+            .pageLabel("About the co-applicant")
             .label(
-                "LabelSolAboutEditingApplication-AboutRespondent",
+                "LabelSolAboutEditingApplication-AboutCoApplicant",
                 "You can make changes at the end of your application.")
-            .mandatory(CaseData::getRespondentFirstName)
-            .mandatory(CaseData::getRespondentLastName)
-            .mandatory(CaseData::getRespondentNameAsOnMarriageCertificate)
+            .mandatory(CaseData::getCoApplicantFirstName)
+            .mandatory(CaseData::getCoApplicantLastName)
+            .mandatory(CaseData::getCoApplicantNameAsOnMarriageCertificate)
             .optional(
-                CaseData::getRespNameDifferentToMarriageCertExplain,
-                "respondentNameAsOnMarriageCertificate=\"Yes\"")
-            .mandatory(CaseData::getInferredRespondentGender);
+                CaseData::getCoApplicantNameDifferentToMarriageCertExplain,
+                "coApplicantNameAsOnMarriageCertificate=\"Yes\"")
+            .mandatory(CaseData::getInferredCoApplicantGender);
     }
 }

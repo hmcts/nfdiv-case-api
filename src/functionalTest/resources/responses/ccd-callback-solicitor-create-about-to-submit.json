@@ -6,7 +6,7 @@
     "applicantEmail": "simulate-delivered@notifications.service.gov.uk",
     "divorceCostsClaim": "YES",
     "divorceClaimFrom": [
-      "respondent"
+      "co-applicant"
     ],
     "divorceUnit": "serviceCentre",
     "selectedDivorceCentreSiteId": "AA07"

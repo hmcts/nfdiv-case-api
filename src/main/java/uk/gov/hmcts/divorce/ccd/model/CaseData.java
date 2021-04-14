@@ -62,7 +62,7 @@ public class CaseData {
     private YesOrNo screenHasMarriageBroken;
 
     @CCD(
-        label = "Were the applicant and the respondent a same-sex couple when they got married?",
+        label = "Were the applicant and the co-applicant a same-sex couple when they got married?",
         access = {DefaultAccess.class}
     )
     private YesOrNo marriageIsSameSexCouple;
@@ -77,13 +77,13 @@ public class CaseData {
     private Gender inferredApplicantGender;
 
     @CCD(
-        label = "What is the respondent's gender?",
-        hint = "The respondent’s gender is collected for statistical purposes only.",
+        label = "What is the co-applicant's gender?",
+        hint = "The co-applicant’s gender is collected for statistical purposes only.",
         typeOverride = FixedList,
         typeParameterOverride = "Gender",
         access = {DefaultAccess.class}
     )
-    private Gender inferredRespondentGender;
+    private Gender inferredCoApplicantGender;
 
     @CCD(
         label = "Marriage date",
@@ -182,10 +182,10 @@ public class CaseData {
     private YesOrNo jurisdictionApplicantResidence;
 
     @CCD(
-        label = "Is the respondent resident?",
+        label = "Is the co-applicant resident?",
         access = {DefaultAccess.class}
     )
-    private YesOrNo jurisdictionRespondentResidence;
+    private YesOrNo jurisdictionCoApplicantResidence;
 
     @CCD(
         label = "Is the applicant domiciled?",
@@ -194,10 +194,10 @@ public class CaseData {
     private YesOrNo jurisdictionApplicantDomicile;
 
     @CCD(
-        label = "Is the respondent domiciled?",
+        label = "Is the co-applicant domiciled?",
         access = {DefaultAccess.class}
     )
-    private YesOrNo jurisdictionRespondentDomicile;
+    private YesOrNo jurisdictionCoApplicantDomicile;
 
     @CCD(
         label = "Has the applicant been resident for the last twelve months?",
@@ -218,7 +218,7 @@ public class CaseData {
     private YesOrNo jurisdictionResidualEligible;
 
     @CCD(
-        label = "Were the both applicant and respondent last habitually resident, and one still resides?",
+        label = "Were the both applicant and co-applicant last habitually resident, and one still resides?",
         access = {DefaultAccess.class}
     )
     private YesOrNo jurisdictionBothLastHabituallyResident;
@@ -232,7 +232,7 @@ public class CaseData {
 
     @CCD(
         label = "Has the applicant changed their name since they got married?",
-        hint = "Is the respondent’s current name different to their married name or the name shown on their "
+        hint = "Is the co-applicant’s current name different to their married name or the name shown on their "
             + "marriage certificate?",
         access = {DefaultAccess.class}
     )
@@ -281,7 +281,7 @@ public class CaseData {
     private String applicantPhoneNumber;
 
     @CCD(
-        label = "Keep the applicant's contact details private from the respondent?",
+        label = "Keep the applicant's contact details private from the co-applicant?",
         typeOverride = FixedList,
         typeParameterOverride = "ConfidentialAddress",
         access = {DefaultAccess.class}
@@ -289,32 +289,32 @@ public class CaseData {
     private ConfidentialAddress applicantContactDetailsConfidential;
 
     @CCD(
-        label = "Respondent's First name(s)",
+        label = "Co-Applicant's First name(s)",
         hint = "Include all middle names here",
         access = {DefaultAccess.class}
     )
-    private String respondentFirstName;
+    private String coApplicantFirstName;
 
     @CCD(
-        label = "Respondent's Last name",
+        label = "Co-Applicant's Last name",
         access = {DefaultAccess.class}
     )
-    private String respondentLastName;
+    private String coApplicantLastName;
 
     @CCD(
         label = "Name changed since marriage?",
-        hint = "Is the respondent’s current name different to their married name or the name shown on their "
+        hint = "Is the co-applicant’s current name different to their married name or the name shown on their "
             + "marriage certificate?",
         access = {DefaultAccess.class}
     )
-    private YesOrNo respondentNameAsOnMarriageCertificate;
+    private YesOrNo coApplicantNameAsOnMarriageCertificate;
 
     @CCD(
         label = "Please explain, if known, how their name has changed since they were married.",
         typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
-    private String respNameDifferentToMarriageCertExplain;
+    private String coApplicantNameDifferentToMarriageCertExplain;
 
     @CCD(
         label = "Applicant Solicitor’s name",
@@ -371,12 +371,12 @@ public class CaseData {
     private String marriageApplicantName;
 
     @CCD(
-        label = "Respondent's full name as on marriage certificate",
-        hint = "Enter the respondent's name exactly as it appears on the marriage certificate. "
+        label = "Co-Applicant's full name as on marriage certificate",
+        hint = "Enter the co-applicant's name exactly as it appears on the marriage certificate. "
             + " Include any extra text such as \"formerly known as\"",
         access = {DefaultAccess.class}
     )
-    private String marriageRespondentName;
+    private String marriageCoApplicantName;
 
     @CCD(
         label = "Is this an urgent jurisdiction case?",
@@ -406,7 +406,7 @@ public class CaseData {
     private YesOrNo financialOrder;
 
     @CCD(
-        label = "Applicant wants/will to apply to have the papers served to the respondent another way.",
+        label = "Applicant wants/will to apply to have the papers served to the co-applicant another way.",
         hint = "For example by email, text message or social media. This is a separate application with "
             + "an additional fee, which will need to be reviewed by a judge.",
         access = {DefaultAccess.class}
@@ -414,7 +414,7 @@ public class CaseData {
     private YesOrNo applicantWantsToHavePapersServedAnotherWay;
 
     @CCD(
-        label = "How would you like the respondent to be served?",
+        label = "How would you like the co-applicant to be served?",
         access = {DefaultAccess.class}
     )
     private SolServiceMethod solServiceMethod;
@@ -512,34 +512,34 @@ public class CaseData {
         label = "Your partner's email address",
         access = {DefaultAccess.class}
     )
-    private String respondentEmailAddress;
+    private String coApplicantEmailAddress;
 
     @CCD(
         label = "Do you know their email address",
         access = {DefaultAccess.class}
     )
-    private YesOrNo applicantKnowsRespondentsEmailAddress;
+    private YesOrNo applicantKnowsCoApplicantsEmailAddress;
 
     @CCD(
         label = "Do you know their address",
         access = {DefaultAccess.class}
     )
-    private YesOrNo applicantKnowsRespondentsAddress;
+    private YesOrNo applicantKnowsCoApplicantsAddress;
 
     @CCD(
-        label = "The Respondent's home address",
-        hint = "If the respondent is to be served at their home address, enter the home address here and as the service "
+        label = "The Co-Applicant's home address",
+        hint = "If the co-applicant is to be served at their home address, enter the home address here and as the service "
             + "address below",
         typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
-    private String derivedRespondentHomeAddress;
+    private String derivedCoApplicantHomeAddress;
 
     @CCD(
-        label = "Is respondents home address an international address?",
+        label = "Is co-applicant's home address an international address?",
         access = {DefaultAccess.class}
     )
-    private YesOrNo respondentHomeAddressIsInternational;
+    private YesOrNo coApplicantHomeAddressIsInternational;
 
     @CCD(
         label = "Any there any existing or previous court proceedings relating to the applicant's marriage, "
@@ -593,10 +593,10 @@ public class CaseData {
     private String selectedDivorceCentreSiteId;
 
     @CCD(
-        label = "Respondent's solicitor's reference",
+        label = "Co-Applicant's solicitor's reference",
         access = {DefaultAccess.class}
     )
-    private String respondentSolicitorReference;
+    private String coApplicantSolicitorReference;
 
     @CCD(
         label = "Documents generated",
@@ -607,59 +607,59 @@ public class CaseData {
     private List<DivorceDocument> documentsGenerated;
 
     @CCD(
-        label = "Is the respondent represented by a solicitor?",
+        label = "Is the co-applicant represented by a solicitor?",
         access = {DefaultAccess.class}
     )
-    private YesOrNo respondentSolicitorRepresented;
+    private YesOrNo coApplicantSolicitorRepresented;
 
     @CCD(
-        label = "Respondent's solicitor's name",
+        label = "Co-Applicant's solicitor's name",
         access = {DefaultAccess.class}
     )
-    private String respondentSolicitorName;
+    private String coApplicantSolicitorName;
 
     @CCD(
-        label = "Respondent's solicitor's Phone number",
+        label = "Co-Applicant's solicitor's Phone number",
         regex = "^[0-9 +().-]{9,}$",
         access = {DefaultAccess.class}
     )
-    private String respondentSolicitorPhone;
+    private String coApplicantSolicitorPhone;
 
     @CCD(
-        label = "Respondent's solicitor's Email",
+        label = "Co-Applicant's solicitor's Email",
         typeOverride = Email,
         access = {DefaultAccess.class}
     )
-    private String respondentSolicitorEmail;
+    private String coApplicantSolicitorEmail;
 
     @CCD(
-        label = "Respondent's solicitor's firm/ DX address",
+        label = "Co-Applicant's solicitor's firm/ DX address",
         typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
-    private String derivedRespondentSolicitorAddr;
+    private String derivedCoApplicantSolicitorAddr;
 
     @CCD(
-        label = "Digital respondent case",
+        label = "Digital co-applicant case",
         access = {DefaultAccess.class}
     )
-    private YesOrNo respSolDigital;
+    private YesOrNo coApplicantSolDigital;
 
     @CCD(
-        label = "Respondent solicitor's firm",
-        hint = "Respondent Organisation Details",
+        label = "Co-Applicant solicitor's firm",
+        hint = "Co-Applicant Organisation Details",
         access = {DefaultAccess.class}
     )
-    private OrganisationPolicy<UserRole> respondentOrganisationPolicy;
+    private OrganisationPolicy<UserRole> coApplicantOrganisationPolicy;
 
     @CCD(
-        label = "The Respondent's service address",
-        hint = "If the respondent is to be served at their home address, enter the home address here and as the service "
+        label = "The Co-Applicant's service address",
+        hint = "If the co-applicant is to be served at their home address, enter the home address here and as the service "
             + "address below",
         typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
-    private String derivedRespondentCorrespondenceAddr;
+    private String derivedCoApplicantCorrespondenceAddr;
 
     @CCD(
         label = "Who is the financial order for?",

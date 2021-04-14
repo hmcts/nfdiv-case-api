@@ -6,7 +6,7 @@
     "applicantEmail": "test@test.com",
     "divorceCostsClaim": "YES",
     "divorceClaimFrom": [
-      "respondent"
+      "co-applicant"
     ],
     "createdDate": "2021-04-06",
     "divorceUnit": "serviceCentre",
