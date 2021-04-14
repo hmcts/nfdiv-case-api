@@ -173,13 +173,13 @@ public class CaseData {
         label = "Applicant has agreed to receive notifications and be served (delivered) court documents by email",
         access = {DefaultAccess.class}
     )
-    private YesOrNo petitionerAgreedToReceiveEmails;
+    private YesOrNo applicantAgreedToReceiveEmails;
 
     @CCD(
         label = "Is the applicant resident?",
         access = {DefaultAccess.class}
     )
-    private YesOrNo jurisdictionPetitionerResidence;
+    private YesOrNo jurisdictionApplicantResidence;
 
     @CCD(
         label = "Is the respondent resident?",
@@ -191,7 +191,7 @@ public class CaseData {
         label = "Is the applicant domiciled?",
         access = {DefaultAccess.class}
     )
-    private YesOrNo jurisdictionPetitionerDomicile;
+    private YesOrNo jurisdictionApplicantDomicile;
 
     @CCD(
         label = "Is the respondent domiciled?",
@@ -271,7 +271,7 @@ public class CaseData {
         label = "Is applicant home address an international address?",
         access = {DefaultAccess.class}
     )
-    private YesOrNo petitionerHomeAddressIsInternational;
+    private YesOrNo applicantHomeAddressIsInternational;
 
     @CCD(
         label = "Applicant's phone number",

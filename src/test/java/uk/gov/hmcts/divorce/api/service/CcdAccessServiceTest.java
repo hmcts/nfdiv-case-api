@@ -49,7 +49,7 @@ public class CcdAccessServiceTest {
     private AuthTokenGenerator authTokenGenerator;
 
     @Test
-    public void shouldNotThrowAnyExceptionWhenAddPetitionerRoleIsInvoked() {
+    public void shouldNotThrowAnyExceptionWhenAddApplicantRoleIsInvoked() {
         User solicitorUser = getIdamUser(PET_SOL_AUTH_TOKEN, SOLICITOR_USER_ID, TEST_SOL_USER_EMAIL);
         User caseworkerUser = getIdamUser(CASEWORKER_AUTH_TOKEN, CASEWORKER_USER_ID, TEST_CASEWORKER_USER_EMAIL);
 
