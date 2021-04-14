@@ -432,7 +432,7 @@ public class CaseData {
     private YesOrNo solStatementOfReconciliationDiscussed;
 
     @CCD(
-        label = "The petitioner has given their \"prayer\".",
+        label = "The applicant has given their \"prayer\".",
         hint = "\"The prayer\" means they confirm they wish to dissolve the union, pay any fees (if applicable),"
             + " and have decided how money and property will be split (\"financial order\").",
         access = {DefaultAccess.class}
