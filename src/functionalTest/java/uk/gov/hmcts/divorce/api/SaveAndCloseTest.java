@@ -17,7 +17,7 @@ import static uk.gov.hmcts.divorce.api.ccd.model.enums.DivorceOrDissolution.DIVO
 import static uk.gov.hmcts.divorce.api.constants.ControllerConstants.SERVICE_AUTHORIZATION;
 
 @SpringBootTest
-public class SaveAndSignOutNotificationTest extends FunctionalTestSuite {
+public class SaveAndCloseTest extends FunctionalTestSuite {
     @Test
     public void shouldSendEmailWhenAllTemplateParamsAreValid() {
         Response response = RestAssured

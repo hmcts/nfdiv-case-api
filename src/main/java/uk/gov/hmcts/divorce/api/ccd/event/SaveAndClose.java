@@ -37,8 +37,7 @@ public class SaveAndClose implements CCDConfig<CaseData, State, UserRole> {
             .submittedCallback(this::submitted);
     }
 
-    @SuppressWarnings("PMD")
-    private SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
                                                 CaseDetails<CaseData, State> beforeDetails) {
         saveAndSignOutNotificationHandler.notifyApplicant(details.getData());
 
