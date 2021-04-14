@@ -22,6 +22,7 @@ import uk.gov.hmcts.divorce.api.ccd.model.enums.ClaimsCostFrom;
 import uk.gov.hmcts.divorce.api.ccd.model.enums.ConfidentialAddress;
 import uk.gov.hmcts.divorce.api.ccd.model.enums.Court;
 import uk.gov.hmcts.divorce.api.ccd.model.enums.DivorceOrDissolution;
+import uk.gov.hmcts.divorce.api.ccd.model.enums.FinancialOrderFor;
 import uk.gov.hmcts.divorce.api.ccd.model.enums.Gender;
 import uk.gov.hmcts.divorce.api.ccd.model.enums.JurisdictionConnections;
 import uk.gov.hmcts.divorce.api.ccd.model.enums.LegalProceedingsRelated;
@@ -135,13 +136,15 @@ public class CaseData {
     private YesOrNo certifiedTranslation;
 
     @CCD(
-        label = "Country where marriage took place",
+        label = "Country of marriage",
+        hint = "Enter the country in which the marriage took place",
         access = {DefaultAccess.class}
     )
     private String countryName;
 
     @CCD(
         label = "Place of marriage",
+        hint = "Enter the place of marriage as it appears on the marriage certificate",
         access = {DefaultAccess.class}
     )
     private String marriagePlaceOfMarriage;
@@ -361,12 +364,16 @@ public class CaseData {
 
     @CCD(
         label = "Petitioner's full name as on marriage certificate",
+        hint = "Enter the petitioner's name exactly as it appears on the marriage certificate. "
+            + " Include any extra text such as \"formerly known as\"",
         access = {DefaultAccess.class}
     )
     private String marriagePetitionerName;
 
     @CCD(
         label = "Respondent's full name as on marriage certificate",
+        hint = "Enter the respondent's name exactly as it appears on the marriage certificate. "
+            + " Include any extra text such as \"formerly known as\"",
         access = {DefaultAccess.class}
     )
     private String marriageRespondentName;
@@ -653,4 +660,10 @@ public class CaseData {
         access = {DefaultAccess.class}
     )
     private String derivedRespondentCorrespondenceAddr;
+
+    @CCD(
+        label = "Who is the financial order for?",
+        access = {DefaultAccess.class}
+    )
+    private Set<FinancialOrderFor> financialOrderFor;
 }
