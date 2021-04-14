@@ -9,7 +9,7 @@ import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 
-import static uk.gov.hmcts.divorce.common.model.UserRole.PETITIONER_SOLICITOR;
+import static uk.gov.hmcts.divorce.common.model.UserRole.APPLICANT_SOLICITOR;
 
 public class RespondentServiceDetails implements CcdPageConfiguration {
 
@@ -33,14 +33,14 @@ public class RespondentServiceDetails implements CcdPageConfiguration {
                 "respondentSolicitorRepresented=\"Yes\"")
             .mandatory(CaseData::getRespSolDigital, "respondentSolicitorRepresented=\"Yes\"")
             .complex(CaseData::getRespondentOrganisationPolicy, "respSolDigital=\"Yes\"")
-            .complex(OrganisationPolicy::getOrganisation)
-            .mandatory(Organisation::getOrganisationId)
-            .done()
-            .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole,
-                "petitionerNameChanged=\"NeverShow\"",
-                PETITIONER_SOLICITOR)
-            .optional(OrganisationPolicy::getOrgPolicyReference, "petitionerNameChanged=\"NeverShow\"")
-            .done()
+                .complex(OrganisationPolicy::getOrganisation)
+                    .mandatory(Organisation::getOrganisationId)
+                    .done()
+                .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole,
+                    "applicantNameChanged=\"NeverShow\"",
+                    APPLICANT_SOLICITOR)
+                .optional(OrganisationPolicy::getOrgPolicyReference, "applicantNameChanged=\"NeverShow\"")
+                .done()
             .optional(CaseData::getDerivedRespondentHomeAddress, "respondentSolicitorRepresented=\"No\"")
             .mandatory(CaseData::getDerivedRespondentCorrespondenceAddr, "respondentSolicitorRepresented=\"No\"");
     }

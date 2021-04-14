@@ -43,10 +43,10 @@ public class SolicitorCreateTest extends FunctionalTestSuite {
         throws Exception {
         CaseData caseDataWithOrganisationPolicy = caseData()
             .toBuilder()
-            .petitionerOrganisationPolicy(
+            .applicantOrganisationPolicy(
                 OrganisationPolicy
                     .<UserRole>builder()
-                    .orgPolicyCaseAssignedRole(UserRole.PETITIONER_SOLICITOR)
+                    .orgPolicyCaseAssignedRole(UserRole.APPLICANT_SOLICITOR)
                     .build()
             )
             .build();

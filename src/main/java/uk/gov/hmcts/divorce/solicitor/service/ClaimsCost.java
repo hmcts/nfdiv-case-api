@@ -21,10 +21,10 @@ public class ClaimsCost implements CaseDataUpdater {
 
         final CaseData caseData = caseDataContext.copyOfCaseData();
 
-        final boolean isPetitionerClaimingCosts = YES.equals(caseData.getDivorceCostsClaim());
+        final boolean isApplicantClaimingCosts = YES.equals(caseData.getDivorceCostsClaim());
         final boolean claimsCostFromIsEmpty = isEmpty(caseData.getDivorceClaimFrom());
 
-        if (isPetitionerClaimingCosts && claimsCostFromIsEmpty) {
+        if (isApplicantClaimingCosts && claimsCostFromIsEmpty) {
             caseData.setDivorceClaimFrom(Set.of(RESPONDENT));
         }
 

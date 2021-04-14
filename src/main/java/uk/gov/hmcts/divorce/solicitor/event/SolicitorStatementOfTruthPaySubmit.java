@@ -78,8 +78,8 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
         final CaseData caseData = details.getData();
         caseData.setSolApplicationFeeOrderSummary(orderSummary);
 
-        log.info("Adding Petitioner solicitor case roles");
-        ccdAccessService.addPetitionerSolicitorRole(
+        log.info("Adding Applicant solicitor case roles");
+        ccdAccessService.addApplicantSolicitorRole(
             httpServletRequest.getHeader(AUTHORIZATION),
             details.getId()
         );

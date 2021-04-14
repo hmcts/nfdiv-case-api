@@ -52,10 +52,10 @@ public abstract class FunctionalTestSuite {
 
     protected CaseData caseData() {
         return CaseData.builder()
-            .petitionerFirstName(TEST_FIRST_NAME)
-            .petitionerLastName(TEST_LAST_NAME)
+            .applicantFirstName(TEST_FIRST_NAME)
+            .applicantLastName(TEST_LAST_NAME)
             .divorceOrDissolution(DIVORCE)
-            .petitionerEmail(TEST_USER_EMAIL)
+            .applicantEmail(TEST_USER_EMAIL)
             .build();
     }
 
@@ -95,7 +95,7 @@ public abstract class FunctionalTestSuite {
                 .description("Create draft case for functional tests")
                 .build())
             .data(Map.of(
-                "petitionerSolicitorName", "functional test"
+                "applicantSolicitorName", "functional test"
             ))
             .build();
 

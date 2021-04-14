@@ -59,7 +59,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             solicitorStatementOfTruthPaySubmit.aboutToStart(caseDetails);
 
         assertThat(response.getData().getSolApplicationFeeOrderSummary(), is(orderSummary));
-        verify(ccdAccessService).addPetitionerSolicitorRole(
+        verify(ccdAccessService).addApplicantSolicitorRole(
             authorization,
             caseId
         );

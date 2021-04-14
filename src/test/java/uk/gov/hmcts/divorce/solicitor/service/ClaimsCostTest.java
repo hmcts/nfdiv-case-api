@@ -33,7 +33,7 @@ class ClaimsCostTest {
     private ClaimsCost claimsCost;
 
     @Test
-    void shouldSetClaimsCostFromRespondentIfPetitionerClaimingCostsAndClaimsCostFromIsEmpty() {
+    void shouldSetClaimsCostFromRespondentIfApplicantClaimingCostsAndClaimsCostFromIsEmpty() {
 
         final CaseData caseData = CaseData.builder()
             .divorceCostsClaim(YES)
@@ -48,7 +48,7 @@ class ClaimsCostTest {
     }
 
     @Test
-    void shouldNotSetClaimsCostFromRespondentIfPetitionerClaimingCostsAndClaimsCostFromIsNotEmpty() {
+    void shouldNotSetClaimsCostFromRespondentIfApplicantClaimingCostsAndClaimsCostFromIsNotEmpty() {
 
         final CaseData caseData = CaseData.builder()
             .divorceCostsClaim(YES)
@@ -63,7 +63,7 @@ class ClaimsCostTest {
     }
 
     @Test
-    void shouldNotSetClaimsCostFromRespondentIfPetitionerNotClaimingCosts() {
+    void shouldNotSetClaimsCostFromRespondentIfApplicantNotClaimingCosts() {
 
         final CaseData caseData = CaseData.builder()
             .divorceCostsClaim(NO)

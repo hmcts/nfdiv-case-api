@@ -11,8 +11,8 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.Set;
 
+import static uk.gov.hmcts.divorce.common.model.UserRole.APPLICANT_SOLICITOR;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CREATOR;
-import static uk.gov.hmcts.divorce.common.model.UserRole.PETITIONER_SOLICITOR;
 
 @Service
 @Slf4j
@@ -26,11 +26,11 @@ public class CcdAccessService {
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
-    public void addPetitionerSolicitorRole(String solicitorIdamToken, Long caseId) {
+    public void addApplicantSolicitorRole(String solicitorIdamToken, Long caseId) {
         User solicitorUser = idamService.retrieveUser(solicitorIdamToken);
         User caseworkerUser = idamService.retrieveCaseWorkerDetails();
 
-        Set<String> caseRoles = Set.of(CREATOR.getRole(), PETITIONER_SOLICITOR.getRole());
+        Set<String> caseRoles = Set.of(CREATOR.getRole(), APPLICANT_SOLICITOR.getRole());
 
         String solicitorUserId = solicitorUser.getUserDetails().getId();
 
@@ -48,6 +48,6 @@ public class CcdAccessService {
             new CaseUser(solicitorUserId, caseRoles)
         );
 
-        log.info("Successfully added petitioner solicitor roles to case Id {} ", caseId);
+        log.info("Successfully added applicant solicitor roles to case Id {} ", caseId);
     }
 }

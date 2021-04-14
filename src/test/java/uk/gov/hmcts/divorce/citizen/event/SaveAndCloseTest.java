@@ -42,7 +42,7 @@ public class SaveAndCloseTest {
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmail() throws Exception {
         final CaseData caseData = caseData();
-        caseData.setPetitionerEmail("test@test.com");
+        caseData.setApplicantEmail("test@test.com");
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);

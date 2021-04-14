@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.FieldCollection.FieldCollectionBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
+import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutTheApplicant;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
@@ -20,7 +21,6 @@ import uk.gov.hmcts.divorce.solicitor.event.page.LanguagePreference;
 import uk.gov.hmcts.divorce.solicitor.event.page.MarriageCertificateDetails;
 import uk.gov.hmcts.divorce.solicitor.event.page.OtherLegalProceedings;
 import uk.gov.hmcts.divorce.solicitor.event.page.RespondentServiceDetails;
-import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutThePetitioner;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutTheRespondent;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutTheSolicitor;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorCreatePetitionService;
@@ -48,7 +48,7 @@ public class SolicitorCreate implements CCDConfig<CaseData, State, UserRole> {
 
     private final List<CcdPageConfiguration> pages = asList(
         new SolAboutTheSolicitor(),
-        new SolAboutThePetitioner(),
+        new SolAboutTheApplicant(),
         new SolAboutTheRespondent(),
         new RespondentServiceDetails(),
         new MarriageCertificateDetails(),

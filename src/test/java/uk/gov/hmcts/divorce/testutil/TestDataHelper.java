@@ -35,9 +35,9 @@ public class TestDataHelper {
 
     public static CaseData caseData() {
         return CaseData.builder()
-            .petitionerFirstName(TEST_FIRST_NAME)
-            .petitionerLastName(TEST_LAST_NAME)
-            .petitionerEmail(TEST_USER_EMAIL)
+            .applicantFirstName(TEST_FIRST_NAME)
+            .applicantLastName(TEST_LAST_NAME)
+            .applicantEmail(TEST_USER_EMAIL)
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .build();
     }

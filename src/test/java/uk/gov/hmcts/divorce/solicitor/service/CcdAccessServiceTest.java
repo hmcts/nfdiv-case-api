@@ -23,8 +23,8 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.common.model.UserRole.APPLICANT_SOLICITOR;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CREATOR;
-import static uk.gov.hmcts.divorce.common.model.UserRole.PETITIONER_SOLICITOR;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.PET_SOL_AUTH_TOKEN;
@@ -50,7 +50,7 @@ public class CcdAccessServiceTest {
     private AuthTokenGenerator authTokenGenerator;
 
     @Test
-    public void shouldNotThrowAnyExceptionWhenAddPetitionerRoleIsInvoked() {
+    public void shouldNotThrowAnyExceptionWhenAddApplicantRoleIsInvoked() {
         User solicitorUser = getIdamUser(PET_SOL_AUTH_TOKEN, SOLICITOR_USER_ID, TEST_SOL_USER_EMAIL);
         User caseworkerUser = getIdamUser(CASEWORKER_AUTH_TOKEN, CASEWORKER_USER_ID, TEST_CASEWORKER_USER_EMAIL);
 
@@ -72,10 +72,10 @@ public class CcdAccessServiceTest {
                 TEST_SERVICE_AUTH_TOKEN,
                 String.valueOf(TEST_CASE_ID),
                 SOLICITOR_USER_ID,
-                new CaseUser(SOLICITOR_USER_ID, Set.of(CREATOR.getRole(), PETITIONER_SOLICITOR.getRole()))
+                new CaseUser(SOLICITOR_USER_ID, Set.of(CREATOR.getRole(), APPLICANT_SOLICITOR.getRole()))
             );
 
-        assertThatCode(() -> ccdAccessService.addPetitionerSolicitorRole(PET_SOL_AUTH_TOKEN, TEST_CASE_ID))
+        assertThatCode(() -> ccdAccessService.addApplicantSolicitorRole(PET_SOL_AUTH_TOKEN, TEST_CASE_ID))
             .doesNotThrowAnyException();
 
         verify(idamService).retrieveUser(PET_SOL_AUTH_TOKEN);
@@ -87,7 +87,7 @@ public class CcdAccessServiceTest {
                 TEST_SERVICE_AUTH_TOKEN,
                 String.valueOf(TEST_CASE_ID),
                 SOLICITOR_USER_ID,
-                new CaseUser(SOLICITOR_USER_ID, Set.of(CREATOR.getRole(), PETITIONER_SOLICITOR.getRole()))
+                new CaseUser(SOLICITOR_USER_ID, Set.of(CREATOR.getRole(), APPLICANT_SOLICITOR.getRole()))
             );
 
         verifyNoMoreInteractions(idamService, authTokenGenerator, caseUserApi);
@@ -98,7 +98,7 @@ public class CcdAccessServiceTest {
         doThrow(feignException(401, "Failed to retrieve Idam user"))
             .when(idamService).retrieveUser(PET_SOL_AUTH_TOKEN);
 
-        assertThatThrownBy(() -> ccdAccessService.addPetitionerSolicitorRole(PET_SOL_AUTH_TOKEN, TEST_CASE_ID))
+        assertThatThrownBy(() -> ccdAccessService.addApplicantSolicitorRole(PET_SOL_AUTH_TOKEN, TEST_CASE_ID))
             .isExactlyInstanceOf(FeignException.Unauthorized.class)
             .hasMessageContaining("Failed to retrieve Idam user");
     }
@@ -113,7 +113,7 @@ public class CcdAccessServiceTest {
         doThrow(feignException(401, "Failed to retrieve Idam user"))
             .when(idamService).retrieveCaseWorkerDetails();
 
-        assertThatThrownBy(() -> ccdAccessService.addPetitionerSolicitorRole(PET_SOL_AUTH_TOKEN, TEST_CASE_ID))
+        assertThatThrownBy(() -> ccdAccessService.addApplicantSolicitorRole(PET_SOL_AUTH_TOKEN, TEST_CASE_ID))
             .isExactlyInstanceOf(FeignException.Unauthorized.class)
             .hasMessageContaining("Failed to retrieve Idam user");
 
@@ -136,7 +136,7 @@ public class CcdAccessServiceTest {
         doThrow(new InvalidTokenException("s2s secret is invalid"))
             .when(authTokenGenerator).generate();
 
-        assertThatThrownBy(() -> ccdAccessService.addPetitionerSolicitorRole(PET_SOL_AUTH_TOKEN, TEST_CASE_ID))
+        assertThatThrownBy(() -> ccdAccessService.addApplicantSolicitorRole(PET_SOL_AUTH_TOKEN, TEST_CASE_ID))
             .isExactlyInstanceOf(InvalidTokenException.class)
             .hasMessageContaining("s2s secret is invalid");
 
@@ -169,10 +169,10 @@ public class CcdAccessServiceTest {
                 TEST_SERVICE_AUTH_TOKEN,
                 String.valueOf(TEST_CASE_ID),
                 SOLICITOR_USER_ID,
-                new CaseUser(SOLICITOR_USER_ID, Set.of(CREATOR.getRole(), PETITIONER_SOLICITOR.getRole()))
+                new CaseUser(SOLICITOR_USER_ID, Set.of(CREATOR.getRole(), APPLICANT_SOLICITOR.getRole()))
             );
 
-        assertThatThrownBy(() -> ccdAccessService.addPetitionerSolicitorRole(PET_SOL_AUTH_TOKEN, TEST_CASE_ID))
+        assertThatThrownBy(() -> ccdAccessService.addApplicantSolicitorRole(PET_SOL_AUTH_TOKEN, TEST_CASE_ID))
             .isExactlyInstanceOf(FeignException.UnprocessableEntity.class)
             .hasMessageContaining("Case roles not valid");
 

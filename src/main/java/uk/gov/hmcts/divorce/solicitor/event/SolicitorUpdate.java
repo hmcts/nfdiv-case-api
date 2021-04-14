@@ -34,7 +34,7 @@ public class SolicitorUpdate implements CCDConfig<CaseData, State, UserRole> {
 
     private final List<CcdPageConfiguration> pages = asList(
         new SolAboutTheSolicitor(),
-        new SolAboutThePetitioner(),
+        new SolAboutTheApplicant(),
         new SolAboutTheRespondent(),
         new LanguagePreference());
 

@@ -10,28 +10,28 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 @AllArgsConstructor
 public enum JurisdictionConnections implements HasLabel {
     @JsonProperty("A")
-    @JsonPropertyDescription("The Petitioner and Respondent are habitually resident")
-    PET_RESP_RESIDENT("A"),
+    @JsonPropertyDescription("The Applicant and Respondent are habitually resident")
+    APP_RESP_RESIDENT("A"),
 
     @JsonProperty("B")
-    @JsonPropertyDescription("The Petitioner and Respondent were last habitually resident in England and Wales")
-    PET_RESP_LAST_RESIDENT("B"),
+    @JsonPropertyDescription("The Applicant and Respondent were last habitually resident in England and Wales")
+    APP_RESP_LAST_RESIDENT("B"),
 
     @JsonProperty("C")
     @JsonPropertyDescription("The Respondent habitually resides in England and Wales")
     RESP_RESIDENT("C"),
 
     @JsonProperty("D")
-    @JsonPropertyDescription("The Petitioner is habitually resident in England and Wales and has been for 12 months")
-    PET_RESIDENT_TWELVE_MONTHS("D"),
+    @JsonPropertyDescription("The Applicant is habitually resident in England and Wales and has been for 12 months")
+    APP_RESIDENT_TWELVE_MONTHS("D"),
 
     @JsonProperty("E")
-    @JsonPropertyDescription("The Petitioner is habitually resident in England and Wales and has been for 6 months")
-    PET_RESIDENT_SIX_MONTHS("E"),
+    @JsonPropertyDescription("The Applicant is habitually resident in England and Wales and has been for 6 months")
+    APP_RESIDENT_SIX_MONTHS("E"),
 
     @JsonProperty("F")
-    @JsonPropertyDescription("The Petitioner and Respondent are both domiciled in England and Wales")
-    PET_RESP_DOMICILED("F"),
+    @JsonPropertyDescription("The Applicant and Respondent are both domiciled in England and Wales")
+    APP_RESP_DOMICILED("F"),
 
     @JsonProperty("G")
     @JsonPropertyDescription("Eligible for Residual Jurisdiction")
