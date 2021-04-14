@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.api;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
@@ -15,17 +14,13 @@ import static org.skyscreamer.jsonassert.JSONCompareMode.STRICT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static uk.gov.hmcts.divorce.api.TestResourceUtil.ABOUT_TO_START_CALLBACK_URL;
 import static uk.gov.hmcts.divorce.api.TestResourceUtil.expectedCcdCallbackResponse;
-import static uk.gov.hmcts.divorce.api.ccd.event.solicitor.SolicitorStatementOfTruthPaySubmit.SUBMIT_PETITION;
-import static uk.gov.hmcts.divorce.api.constants.ControllerConstants.ABOUT_TO_START_WEBHOOK;
+import static uk.gov.hmcts.divorce.api.ccd.event.solicitor.SolicitorStatementOfTruthPaySubmit.SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT;
 import static uk.gov.hmcts.divorce.api.constants.ControllerConstants.SERVICE_AUTHORIZATION;
 
 @SpringBootTest
 public class SolicitorSubmitPetitionTest extends FunctionalTestSuite {
-
-    private static final String SUBMIT_PETITION_ABOUT_TO_START_CALLBACK_URL = StringUtils.join(
-        "/", SUBMIT_PETITION, ABOUT_TO_START_WEBHOOK
-    );
 
     @Test
     public void shouldUpdateCaseDataWithOrderSummaryAndAddSolCaseRolesWhenIssueFeeIsSuccessfullyRetrieved()
@@ -40,6 +35,7 @@ public class SolicitorSubmitPetitionTest extends FunctionalTestSuite {
             .body(
                 CcdCallbackRequest
                     .builder()
+                    .eventId(SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)
                     .caseDetails(
                         CaseDetails
                             .builder()
@@ -50,7 +46,7 @@ public class SolicitorSubmitPetitionTest extends FunctionalTestSuite {
                     .build()
             )
             .when()
-            .post(SUBMIT_PETITION_ABOUT_TO_START_CALLBACK_URL);
+            .post(ABOUT_TO_START_CALLBACK_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 

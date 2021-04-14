@@ -13,6 +13,8 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static uk.gov.hmcts.divorce.api.TestResourceUtil.SUBMITTED_CALLBACK_URL;
+import static uk.gov.hmcts.divorce.api.ccd.event.SaveAndClose.SAVE_AND_CLOSE;
 import static uk.gov.hmcts.divorce.api.ccd.model.enums.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.api.constants.ControllerConstants.SERVICE_AUTHORIZATION;
 
@@ -29,6 +31,7 @@ public class SaveAndCloseTest extends FunctionalTestSuite {
             .body(
                 CcdCallbackRequest
                     .builder()
+                    .eventId(SAVE_AND_CLOSE)
                     .caseDetails(
                         CaseDetails
                             .builder()
@@ -38,7 +41,7 @@ public class SaveAndCloseTest extends FunctionalTestSuite {
                     .build()
             )
             .when()
-            .post(SAVE_AND_SIGN_OUT_CALLBACK_URL);
+            .post(SUBMITTED_CALLBACK_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
     }
@@ -59,6 +62,7 @@ public class SaveAndCloseTest extends FunctionalTestSuite {
             .body(
                 CcdCallbackRequest
                     .builder()
+                    .eventId(SAVE_AND_CLOSE)
                     .caseDetails(
                         CaseDetails
                             .builder()
@@ -68,7 +72,7 @@ public class SaveAndCloseTest extends FunctionalTestSuite {
                     .build()
             )
             .when()
-            .post(SAVE_AND_SIGN_OUT_CALLBACK_URL);
+            .post(SUBMITTED_CALLBACK_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST.value());
         assertThat(response.getBody().asString())
@@ -93,6 +97,7 @@ public class SaveAndCloseTest extends FunctionalTestSuite {
             .body(
                 CcdCallbackRequest
                     .builder()
+                    .eventId(SAVE_AND_CLOSE)
                     .caseDetails(
                         CaseDetails
                             .builder()
@@ -102,7 +107,7 @@ public class SaveAndCloseTest extends FunctionalTestSuite {
                     .build()
             )
             .when()
-            .post(SAVE_AND_SIGN_OUT_CALLBACK_URL);
+            .post(SUBMITTED_CALLBACK_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST.value());
         assertThat(response.getBody().asString())

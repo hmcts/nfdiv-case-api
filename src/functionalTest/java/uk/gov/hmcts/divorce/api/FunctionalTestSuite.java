@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.api;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.TestPropertySource;
@@ -21,20 +20,14 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.divorce.api.ccd.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.api.ccd.NoFaultDivorce.JURISDICTION;
-import static uk.gov.hmcts.divorce.api.ccd.event.SaveAndClose.SAVE_AND_CLOSE;
 import static uk.gov.hmcts.divorce.api.ccd.event.solicitor.SolicitorCreate.SOLICITOR_CREATE;
 import static uk.gov.hmcts.divorce.api.ccd.model.enums.DivorceOrDissolution.DIVORCE;
-import static uk.gov.hmcts.divorce.api.constants.ControllerConstants.SUBMITTED_WEBHOOK;
 
 @TestPropertySource("classpath:application.yaml")
 abstract class FunctionalTestSuite {
     protected static final String TEST_USER_EMAIL = "simulate-delivered@notifications.service.gov.uk";
     protected static final String TEST_FIRST_NAME = "John";
     protected static final String TEST_LAST_NAME = "Smith";
-
-    protected static final String SAVE_AND_SIGN_OUT_CALLBACK_URL = StringUtils.join(
-        "/", SAVE_AND_CLOSE, SUBMITTED_WEBHOOK
-    );
 
     @Value("${test-url}")
     protected String testUrl;
