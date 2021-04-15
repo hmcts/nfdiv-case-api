@@ -8,7 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import uk.gov.hmcts.divorce.ccd.model.CaseData;
+import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
 
 import java.util.List;
 import java.util.Map;
@@ -18,6 +18,7 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ApiModel(description = "The response to a callback from ccd")
 @Builder
+// TODO remove in favour of CCD generator lib
 public class CcdCallbackResponse {
     private static final ObjectMapper objectMapper = new ObjectMapper();
     @ApiModelProperty(value = "The entire case data to be returned with updated fields")

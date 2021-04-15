@@ -10,8 +10,8 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.Set;
 
-import static uk.gov.hmcts.divorce.ccd.model.UserRole.CREATOR;
-import static uk.gov.hmcts.divorce.ccd.model.UserRole.PETITIONER_SOLICITOR;
+import static uk.gov.hmcts.divorce.api.ccd.model.UserRole.CREATOR;
+import static uk.gov.hmcts.divorce.api.ccd.model.UserRole.PETITIONER_SOLICITOR;
 
 @Service
 @Slf4j
@@ -25,7 +25,7 @@ public class CcdAccessService {
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
-    public void addPetitionerSolicitorRole(String solicitorIdamToken, String caseId) {
+    public void addPetitionerSolicitorRole(String solicitorIdamToken, Long caseId) {
         User solicitorUser = idamService.retrieveUser(solicitorIdamToken);
         User caseworkerUser = idamService.retrieveCaseWorkerDetails();
 
@@ -42,7 +42,7 @@ public class CcdAccessService {
         caseUserApi.updateCaseRolesForUser(
             caseworkerUser.getAuthToken(),
             authTokenGenerator.generate(),
-            caseId,
+            String.valueOf(caseId),
             solicitorUserId,
             new CaseUser(solicitorUserId, caseRoles)
         );

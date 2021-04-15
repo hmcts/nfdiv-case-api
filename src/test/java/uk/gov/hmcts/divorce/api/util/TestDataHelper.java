@@ -6,11 +6,11 @@ import feign.Response;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
+import uk.gov.hmcts.divorce.api.ccd.model.enums.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.api.model.CaseDetails;
 import uk.gov.hmcts.divorce.api.model.CcdCallbackRequest;
 import uk.gov.hmcts.divorce.api.model.payments.FeeResponse;
-import uk.gov.hmcts.divorce.ccd.model.CaseData;
-import uk.gov.hmcts.divorce.ccd.model.enums.DivorceOrDissolution;
 
 import java.util.Collections;
 import java.util.Map;
@@ -49,6 +49,20 @@ public class TestDataHelper {
     public static CcdCallbackRequest callbackRequest(final CaseData caseData) {
         return CcdCallbackRequest
             .builder()
+            .caseDetails(
+                CaseDetails
+                    .builder()
+                    .caseData(caseData)
+                    .caseId(TEST_CASE_ID)
+                    .build()
+            )
+            .build();
+    }
+
+    public static CcdCallbackRequest callbackRequest(final CaseData caseData, String eventId) {
+        return CcdCallbackRequest
+            .builder()
+            .eventId(eventId)
             .caseDetails(
                 CaseDetails
                     .builder()

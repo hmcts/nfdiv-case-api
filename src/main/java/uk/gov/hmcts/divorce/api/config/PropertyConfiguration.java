@@ -14,7 +14,7 @@ import java.util.stream.StreamSupport;
 
 @Component
 @Slf4j
-public class PropertyConfiguration  {
+public class PropertyConfiguration {
 
     // Uncomment to dump env vars to console
     // @EventListener

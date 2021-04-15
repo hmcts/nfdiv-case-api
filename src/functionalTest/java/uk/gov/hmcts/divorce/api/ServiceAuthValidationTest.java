@@ -12,6 +12,8 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static uk.gov.hmcts.divorce.api.TestResourceUtil.SUBMITTED_CALLBACK_URL;
+import static uk.gov.hmcts.divorce.api.ccd.event.SaveAndClose.SAVE_AND_CLOSE;
 import static uk.gov.hmcts.divorce.api.constants.ControllerConstants.SERVICE_AUTHORIZATION;
 
 @SpringBootTest
@@ -27,6 +29,7 @@ public class ServiceAuthValidationTest extends FunctionalTestSuite {
             .body(
                 CcdCallbackRequest
                     .builder()
+                    .eventId(SAVE_AND_CLOSE)
                     .caseDetails(
                         CaseDetails
                             .builder()
@@ -36,7 +39,7 @@ public class ServiceAuthValidationTest extends FunctionalTestSuite {
                     .build()
             )
             .when()
-            .post(SAVE_AND_SIGN_OUT_CALLBACK_URL);
+            .post(SUBMITTED_CALLBACK_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(UNAUTHORIZED.value());
     }
@@ -52,6 +55,7 @@ public class ServiceAuthValidationTest extends FunctionalTestSuite {
             .body(
                 CcdCallbackRequest
                     .builder()
+                    .eventId(SAVE_AND_CLOSE)
                     .caseDetails(
                         CaseDetails
                             .builder()
@@ -61,7 +65,7 @@ public class ServiceAuthValidationTest extends FunctionalTestSuite {
                     .build()
             )
             .when()
-            .post(SAVE_AND_SIGN_OUT_CALLBACK_URL);
+            .post(SUBMITTED_CALLBACK_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(FORBIDDEN.value());
     }

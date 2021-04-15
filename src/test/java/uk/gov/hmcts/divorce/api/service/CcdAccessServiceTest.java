@@ -30,9 +30,9 @@ import static uk.gov.hmcts.divorce.api.TestConstants.TEST_CASEWORKER_USER_EMAIL;
 import static uk.gov.hmcts.divorce.api.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.api.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.api.TestConstants.TEST_SOL_USER_EMAIL;
+import static uk.gov.hmcts.divorce.api.ccd.model.UserRole.CREATOR;
+import static uk.gov.hmcts.divorce.api.ccd.model.UserRole.PETITIONER_SOLICITOR;
 import static uk.gov.hmcts.divorce.api.util.TestDataHelper.feignException;
-import static uk.gov.hmcts.divorce.ccd.model.UserRole.CREATOR;
-import static uk.gov.hmcts.divorce.ccd.model.UserRole.PETITIONER_SOLICITOR;
 
 @ExtendWith(MockitoExtension.class)
 public class CcdAccessServiceTest {
@@ -69,7 +69,7 @@ public class CcdAccessServiceTest {
             .updateCaseRolesForUser(
                 CASEWORKER_AUTH_TOKEN,
                 TEST_SERVICE_AUTH_TOKEN,
-                TEST_CASE_ID,
+                String.valueOf(TEST_CASE_ID),
                 SOLICITOR_USER_ID,
                 new CaseUser(SOLICITOR_USER_ID, Set.of(CREATOR.getRole(), PETITIONER_SOLICITOR.getRole()))
             );
@@ -84,7 +84,7 @@ public class CcdAccessServiceTest {
             .updateCaseRolesForUser(
                 CASEWORKER_AUTH_TOKEN,
                 TEST_SERVICE_AUTH_TOKEN,
-                TEST_CASE_ID,
+                String.valueOf(TEST_CASE_ID),
                 SOLICITOR_USER_ID,
                 new CaseUser(SOLICITOR_USER_ID, Set.of(CREATOR.getRole(), PETITIONER_SOLICITOR.getRole()))
             );
@@ -166,7 +166,7 @@ public class CcdAccessServiceTest {
             .updateCaseRolesForUser(
                 CASEWORKER_AUTH_TOKEN,
                 TEST_SERVICE_AUTH_TOKEN,
-                TEST_CASE_ID,
+                String.valueOf(TEST_CASE_ID),
                 SOLICITOR_USER_ID,
                 new CaseUser(SOLICITOR_USER_ID, Set.of(CREATOR.getRole(), PETITIONER_SOLICITOR.getRole()))
             );

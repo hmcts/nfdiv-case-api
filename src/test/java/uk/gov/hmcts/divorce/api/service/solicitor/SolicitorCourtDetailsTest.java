@@ -6,9 +6,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
 import uk.gov.hmcts.divorce.api.util.CaseDataContext;
 import uk.gov.hmcts.divorce.api.util.CaseDataUpdaterChain;
-import uk.gov.hmcts.divorce.ccd.model.CaseData;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -18,7 +18,7 @@ import java.time.ZoneId;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.ccd.model.enums.Court.SERVICE_CENTRE;
+import static uk.gov.hmcts.divorce.api.ccd.model.enums.Court.SERVICE_CENTRE;
 
 @ExtendWith(MockitoExtension.class)
 class SolicitorCourtDetailsTest {

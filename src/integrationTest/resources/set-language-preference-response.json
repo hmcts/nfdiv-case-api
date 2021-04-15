@@ -4,7 +4,8 @@
     "petitionerFirstName": "test_first_name",
     "petitionerLastName": "test_last_name",
     "petitionerEmail": "test@test.com",
-    "languagePreferenceWelsh": "NO"
+    "languagePreferenceWelsh": "NO",
+    "divorceCostsClaim": "YES"
   },
   "errors": null,
   "warnings": null,

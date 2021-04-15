@@ -1,16 +1,16 @@
 package uk.gov.hmcts.divorce.api.service.solicitor;
 
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.api.ccd.model.CaseData;
 import uk.gov.hmcts.divorce.api.util.CaseDataContext;
 import uk.gov.hmcts.divorce.api.util.CaseDataUpdater;
 import uk.gov.hmcts.divorce.api.util.CaseDataUpdaterChain;
-import uk.gov.hmcts.divorce.ccd.model.CaseData;
 
 import java.util.Set;
 
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.ccd.model.enums.ClaimsCostFrom.RESPONDENT;
+import static uk.gov.hmcts.divorce.api.ccd.model.enums.ClaimsCostFrom.RESPONDENT;
 
 @Component
 public class ClaimsCost implements CaseDataUpdater {

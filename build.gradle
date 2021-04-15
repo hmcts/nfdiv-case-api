@@ -22,7 +22,7 @@ plugins {
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'org.springframework.boot' version '2.4.4'
   id 'com.github.ben-manes.versions' version '0.38.0'
-  id 'hmcts.ccd.sdk' version '0.17.3'
+  id 'hmcts.ccd.sdk' version '0.19.8'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -145,7 +145,7 @@ dependencyCheck {
 project.tasks['sonarqube'].dependsOn jacocoTestReport
 
 def sonarExclusions = [
-  '**/uk/gov/hmcts/divorce/ccd/**',
+  '**/uk/gov/hmcts/divorce/api/ccd/**',
   '**/uk/gov/hmcts/divorce/api/model/**',
   '**/uk/gov/hmcts/divorce/api/config/**'
 ]
@@ -194,7 +194,6 @@ repositories {
 
 def versions = [
   assertJ           : '3.19.0',
-  ccdConfigGenerator: '0.17.3',
   ccdStoreClient    : '4.7.6',
   idamClient        : '2.0.0',
   junit             : '5.7.1',
@@ -259,7 +258,6 @@ dependencies {
 
   compile group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
-  compile group: 'uk.gov.hmcts.reform', name: 'ccd-config-generator', version: versions.ccdConfigGenerator
   compile group: 'uk.gov.hmcts.reform', name: 'service-auth-provider-client', version: versions.s2sClient
 
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
@@ -351,7 +349,7 @@ functional {
 generateTypeScript {
   jsonLibrary = 'jackson2'
   classPatterns = [
-    'uk.gov.hmcts.divorce.ccd.model.*',
+    'uk.gov.hmcts.divorce.api.ccd.model.*',
     'uk.gov.hmcts.ccd.sdk.type.*',
   ]
   outputFile = 'build/ts/index.ts'
