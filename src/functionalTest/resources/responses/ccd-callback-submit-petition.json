@@ -12,7 +12,7 @@
           "id": null,
           "value": {
             "FeeDescription": "Filing an application for a divorce, nullity or civil partnership dissolution – fees order 1.2.",
-            "FeeVersion": "4",
+            "FeeVersion": "5",
             "FeeCode": "FEE0002",
             "FeeAmount": "55000"
           }
