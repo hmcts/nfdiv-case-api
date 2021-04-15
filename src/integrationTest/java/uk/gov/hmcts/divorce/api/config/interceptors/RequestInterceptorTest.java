@@ -22,8 +22,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.divorce.api.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.api.TestConstants.INVALID_AUTH_TOKEN;
-import static uk.gov.hmcts.divorce.api.TestConstants.SAVE_AND_CLOSE_API_URL;
 import static uk.gov.hmcts.divorce.api.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.api.TestConstants.SUBMITTED_URL;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -50,7 +50,7 @@ public class RequestInterceptorTest {
             .thenThrow(InvalidTokenException.class);
 
         mockMvc.perform(
-            post(SAVE_AND_CLOSE_API_URL)
+            post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, INVALID_AUTH_TOKEN)
         ).andExpect(
@@ -65,7 +65,7 @@ public class RequestInterceptorTest {
     public void shouldReturn403WhenServiceIsNotAllowedToInvokeCallback() throws Exception {
         when(validator.getServiceName(AUTH_HEADER_VALUE)).thenReturn("some_service");
         mockMvc.perform(
-            post(SAVE_AND_CLOSE_API_URL)
+            post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
         ).andExpect(

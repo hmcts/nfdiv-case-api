@@ -27,11 +27,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.divorce.api.TestConstants.AUTH_HEADER_VALUE;
-import static uk.gov.hmcts.divorce.api.TestConstants.SAVE_AND_CLOSE_API_URL;
 import static uk.gov.hmcts.divorce.api.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.api.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.api.TestConstants.TEST_USER_EMAIL;
+import static uk.gov.hmcts.divorce.api.ccd.event.SaveAndClose.SAVE_AND_CLOSE;
 import static uk.gov.hmcts.divorce.api.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.api.util.TestDataHelper.callbackRequest;
+import static uk.gov.hmcts.divorce.api.util.TestDataHelper.caseData;
 
 
 @ExtendWith(SpringExtension.class)
@@ -63,10 +65,10 @@ public class SaveAndCloseTest {
 
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmail() throws Exception {
-        mockMvc.perform(post(SAVE_AND_CLOSE_API_URL)
+        mockMvc.perform(post(SUBMITTED_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest()))
+            .content(objectMapper.writeValueAsString(callbackRequest(caseData(), SAVE_AND_CLOSE)))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
@@ -78,7 +80,7 @@ public class SaveAndCloseTest {
 
     @Test
     public void givenRequestBodyIsNullWhenEndpointInvokedThenReturnBadRequest() throws Exception {
-        mockMvc.perform(post(SAVE_AND_CLOSE_API_URL)
+        mockMvc.perform(post(SUBMITTED_URL)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
@@ -94,10 +96,10 @@ public class SaveAndCloseTest {
             anyMap(),
             eq(ENGLISH));
 
-        mockMvc.perform(post(SAVE_AND_CLOSE_API_URL)
+        mockMvc.perform(post(SUBMITTED_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest()))
+            .content(objectMapper.writeValueAsString(callbackRequest(caseData(), SAVE_AND_CLOSE)))
             .accept(APPLICATION_JSON))
             .andExpect(status().isBadRequest())
             .andExpect(content().string("All template params not passed"));
