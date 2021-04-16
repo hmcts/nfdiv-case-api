@@ -293,7 +293,7 @@ dependencies {
   smokeTestImplementation sourceSets.main.runtimeClasspath
 }
 
-mainClassName = 'uk.gov.hmcts.divorce.api.CaseApiApplication'
+mainClassName = 'uk.gov.hmcts.divorce.Case.ApiApplication'
 
 ext.getVaultSecret = { String secretName ->
   new ByteArrayOutputStream().withStream { os ->
