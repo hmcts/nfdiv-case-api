@@ -145,9 +145,9 @@ dependencyCheck {
 project.tasks['sonarqube'].dependsOn jacocoTestReport
 
 def sonarExclusions = [
-  '**/uk/gov/hmcts/divorce/api/ccd/**',
-  '**/uk/gov/hmcts/divorce/api/model/**',
-  '**/uk/gov/hmcts/divorce/api/config/**'
+  '**/uk/gov/hmcts/divorce/ccd/**',
+  '**/uk/gov/hmcts/divorce/common/model/**',
+  '**/uk/gov/hmcts/divorce/common/config/**'
 ]
 
 sonarqube {
