@@ -22,7 +22,7 @@ plugins {
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'org.springframework.boot' version '2.4.4'
   id 'com.github.ben-manes.versions' version '0.38.0'
-  id 'hmcts.ccd.sdk' version '0.19.8'
+  id 'hmcts.ccd.sdk' version '0.19.10'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -379,7 +379,7 @@ ccd {
   configDir = file('build/definitions')
 }
 
-def importCcdDefinition = tasks.register('importCcdDefinition') {
+def reloadCcd = tasks.register('reloadCcd') {
   group = 'ccd tasks'
   doLast {
     exec {
@@ -388,10 +388,11 @@ def importCcdDefinition = tasks.register('importCcdDefinition') {
         environment key, value
       }
       commandLine './bin/process-and-import-ccd-definition.sh'
+      commandLine 'docker-compose', '-f', '../docker-compose.yml', 'restart', 'nfdiv-case-api'
     }
   }
 }
 
-importCcdDefinition.configure {
-  dependsOn generateCCDConfig
+reloadCcd.configure {
+  dependsOn assemble, generateCCDConfig
 }
