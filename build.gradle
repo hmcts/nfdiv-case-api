@@ -145,9 +145,9 @@ dependencyCheck {
 project.tasks['sonarqube'].dependsOn jacocoTestReport
 
 def sonarExclusions = [
-  '**/uk/gov/hmcts/divorce/api/ccd/**',
-  '**/uk/gov/hmcts/divorce/api/model/**',
-  '**/uk/gov/hmcts/divorce/api/config/**'
+  '**/uk/gov/hmcts/divorce/ccd/**',
+  '**/uk/gov/hmcts/divorce/model/**',
+  '**/uk/gov/hmcts/divorce/config/**'
 ]
 
 sonarqube {
@@ -349,7 +349,7 @@ functional {
 generateTypeScript {
   jsonLibrary = 'jackson2'
   classPatterns = [
-    'uk.gov.hmcts.divorce.api.ccd.model.*',
+    'uk.gov.hmcts.divorce.ccd.model.*',
     'uk.gov.hmcts.ccd.sdk.type.*',
   ]
   outputFile = 'build/ts/index.ts'
