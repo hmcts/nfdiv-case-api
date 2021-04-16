@@ -20,6 +20,7 @@ import uk.gov.hmcts.divorce.api.ccd.access.DefaultAccess;
 import uk.gov.hmcts.divorce.api.ccd.model.enums.ChangedNameHow;
 import uk.gov.hmcts.divorce.api.ccd.model.enums.ClaimsCostFrom;
 import uk.gov.hmcts.divorce.api.ccd.model.enums.ConfidentialAddress;
+import uk.gov.hmcts.divorce.api.ccd.model.enums.ConnectionSummary;
 import uk.gov.hmcts.divorce.api.ccd.model.enums.Court;
 import uk.gov.hmcts.divorce.api.ccd.model.enums.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.api.ccd.model.enums.FinancialOrderFor;
@@ -674,4 +675,10 @@ public class CaseData {
         access = {DefaultAccess.class}
     )
     private Set<FinancialOrderFor> financialOrderFor;
+
+    @CCD(
+        label = "Connection Summary",
+        access = {DefaultAccess.class}
+    )
+    private ConnectionSummary connectionSummary;
 }
