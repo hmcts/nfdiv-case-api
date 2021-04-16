@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.api;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import uk.gov.hmcts.divorce.api.model.CaseDetails;
@@ -21,6 +22,7 @@ import static uk.gov.hmcts.divorce.api.constants.ControllerConstants.SERVICE_AUT
 @SpringBootTest
 public class SolicitorSubmitPetitionTest extends FunctionalTestSuite {
 
+    @Test
     public void shouldUpdateCaseDataWithOrderSummaryAndAddSolCaseRolesWhenIssueFeeIsSuccessfullyRetrieved()
         throws Exception {
         Response response = RestAssured
