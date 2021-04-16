@@ -16,7 +16,6 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.api.ccd.model.enums.ConnectionSummary;
 import uk.gov.hmcts.divorce.common.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
