@@ -2,6 +2,29 @@
 
 This API handles callbacks from CCD for the NO_FAULT_DIVORCE case type.
 
+## Overview
+
+
+                        ┌────────────────┐
+                        │                │
+                        │ NFDIV-CASE-API │
+                        │                │
+                        └───────▲────────┘
+                                │
+                                │
+                        ┌───────▼────────┐
+                        │                │
+                  ┌─────►      CCD       │◄────┐
+                  │     │                │     │
+                  │     └────────────────┘     │
+                  │                            │
+          ┌───────┴─────────┐        ┌─────────┴───────┐
+          │                 │        │                 │
+          │ NFDIV-FRONTEND  │        │       XUI       │
+          │                 │        │                 │
+          └─────────────────┘        └─────────────────┘
+
+
 ## Building and deploying the application.
 
 ### Building the application
