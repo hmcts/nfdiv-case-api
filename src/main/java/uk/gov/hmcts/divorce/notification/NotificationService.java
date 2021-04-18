@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.service;
+package uk.gov.hmcts.divorce.notification;
 
 
 import lombok.extern.slf4j.Slf4j;

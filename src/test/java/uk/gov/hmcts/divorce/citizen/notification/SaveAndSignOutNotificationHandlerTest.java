@@ -9,7 +9,7 @@ import uk.gov.hmcts.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.divorce.ccd.model.enums.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.exceptions.NotificationException;
-import uk.gov.hmcts.divorce.service.NotificationService;
+import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.service.notify.NotificationClientException;
 
 import java.util.Map;
@@ -28,9 +28,9 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.citizen.notification.EmailTemplateNames.SAVE_SIGN_OUT;
-import static uk.gov.hmcts.divorce.constants.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
-import static uk.gov.hmcts.divorce.constants.NotificationConstants.SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.util.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)

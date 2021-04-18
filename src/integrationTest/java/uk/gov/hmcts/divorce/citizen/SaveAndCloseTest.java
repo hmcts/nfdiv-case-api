@@ -14,7 +14,7 @@ import uk.gov.hmcts.divorce.clients.FeesAndPaymentsClient;
 import uk.gov.hmcts.divorce.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.exceptions.NotificationException;
-import uk.gov.hmcts.divorce.service.NotificationService;
+import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.service.notify.NotificationClientException;
 
 import static org.mockito.ArgumentMatchers.anyMap;
