@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.ccd.event;
+package uk.gov.hmcts.divorce.citizen.event;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -8,7 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.divorce.ccd.model.State;
 import uk.gov.hmcts.divorce.ccd.model.UserRole;
-import uk.gov.hmcts.divorce.notification.handler.SaveAndSignOutNotificationHandler;
+import uk.gov.hmcts.divorce.citizen.notification.SaveAndSignOutNotificationHandler;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import static uk.gov.hmcts.divorce.ccd.access.Permissions.CREATE_READ_UPDATE;

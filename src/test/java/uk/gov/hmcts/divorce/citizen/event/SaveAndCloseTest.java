@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.ccd.event;
+package uk.gov.hmcts.divorce.citizen.event;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,14 +10,14 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.divorce.ccd.model.State;
 import uk.gov.hmcts.divorce.ccd.model.UserRole;
-import uk.gov.hmcts.divorce.notification.handler.SaveAndSignOutNotificationHandler;
+import uk.gov.hmcts.divorce.citizen.notification.SaveAndSignOutNotificationHandler;
 
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.verify;
-import static uk.gov.hmcts.divorce.ccd.event.SaveAndClose.SAVE_AND_CLOSE;
+import static uk.gov.hmcts.divorce.citizen.event.SaveAndClose.SAVE_AND_CLOSE;
 import static uk.gov.hmcts.divorce.util.TestDataHelper.caseData;
 
 

@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.notification.handler;
+package uk.gov.hmcts.divorce.citizen.notification;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.service.NotificationService;
 import java.util.HashMap;
 import java.util.Map;
 
+import static uk.gov.hmcts.divorce.citizen.notification.EmailTemplateNames.SAVE_SIGN_OUT;
 import static uk.gov.hmcts.divorce.constants.NotificationConstants.APPLICATION_TO_END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.constants.NotificationConstants.APPLY_FOR_DIVORCE;
 import static uk.gov.hmcts.divorce.constants.NotificationConstants.COURT_EMAIL;
@@ -22,7 +23,6 @@ import static uk.gov.hmcts.divorce.constants.NotificationConstants.SIGN_IN_DISSO
 import static uk.gov.hmcts.divorce.constants.NotificationConstants.SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.constants.NotificationConstants.SIGN_IN_URL_NOTIFY_KEY;
 import static uk.gov.hmcts.divorce.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateNames.SAVE_SIGN_OUT;
 
 @Component
 public class SaveAndSignOutNotificationHandler {

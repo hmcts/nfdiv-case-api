@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.notification.handler;
+package uk.gov.hmcts.divorce.citizen.notification;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,10 +27,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
+import static uk.gov.hmcts.divorce.citizen.notification.EmailTemplateNames.SAVE_SIGN_OUT;
 import static uk.gov.hmcts.divorce.constants.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.constants.NotificationConstants.SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateNames.SAVE_SIGN_OUT;
 import static uk.gov.hmcts.divorce.util.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)

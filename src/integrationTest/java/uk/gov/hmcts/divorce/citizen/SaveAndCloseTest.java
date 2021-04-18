@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.ccd.event;
+package uk.gov.hmcts.divorce.citizen;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -9,11 +9,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.hmcts.divorce.citizen.notification.SaveAndSignOutNotificationHandler;
 import uk.gov.hmcts.divorce.clients.FeesAndPaymentsClient;
 import uk.gov.hmcts.divorce.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.exceptions.NotificationException;
-import uk.gov.hmcts.divorce.notification.handler.SaveAndSignOutNotificationHandler;
 import uk.gov.hmcts.divorce.service.NotificationService;
 import uk.gov.service.notify.NotificationClientException;
 
@@ -30,7 +30,7 @@ import static uk.gov.hmcts.divorce.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.TestConstants.TEST_USER_EMAIL;
-import static uk.gov.hmcts.divorce.ccd.event.SaveAndClose.SAVE_AND_CLOSE;
+import static uk.gov.hmcts.divorce.citizen.event.SaveAndClose.SAVE_AND_CLOSE;
 import static uk.gov.hmcts.divorce.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.util.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.util.TestDataHelper.caseData;

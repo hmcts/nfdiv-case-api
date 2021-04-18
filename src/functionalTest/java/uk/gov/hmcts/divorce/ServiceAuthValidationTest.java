@@ -13,7 +13,7 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.divorce.TestResourceUtil.SUBMITTED_CALLBACK_URL;
-import static uk.gov.hmcts.divorce.ccd.event.SaveAndClose.SAVE_AND_CLOSE;
+import static uk.gov.hmcts.divorce.citizen.event.SaveAndClose.SAVE_AND_CLOSE;
 import static uk.gov.hmcts.divorce.constants.ControllerConstants.SERVICE_AUTHORIZATION;
 
 @SpringBootTest
