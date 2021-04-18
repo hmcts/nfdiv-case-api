@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.FunctionalTestSuite;
 import uk.gov.hmcts.divorce.ccd.model.CaseData;
-import uk.gov.hmcts.divorce.model.CaseDetails;
-import uk.gov.hmcts.divorce.model.CcdCallbackRequest;
+import uk.gov.hmcts.divorce.common.model.CaseDetails;
+import uk.gov.hmcts.divorce.common.model.CcdCallbackRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -17,7 +17,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.divorce.TestResourceUtil.SUBMITTED_CALLBACK_URL;
 import static uk.gov.hmcts.divorce.ccd.model.enums.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.citizen.event.SaveAndClose.SAVE_AND_CLOSE;
-import static uk.gov.hmcts.divorce.constants.ControllerConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUTHORIZATION;
 
 @SpringBootTest
 public class SaveAndCloseTest extends FunctionalTestSuite {

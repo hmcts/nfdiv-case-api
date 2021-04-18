@@ -7,8 +7,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.ccd.model.CaseData;
-import uk.gov.hmcts.divorce.util.CaseDataContext;
-import uk.gov.hmcts.divorce.util.CaseDataUpdaterChain;
+import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
+import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
 
 import java.time.Clock;
 import java.time.Instant;

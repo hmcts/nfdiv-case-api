@@ -8,8 +8,8 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.divorce.ccd.model.enums.DivorceOrDissolution;
-import uk.gov.hmcts.divorce.model.CaseDetails;
-import uk.gov.hmcts.divorce.model.CcdCallbackRequest;
+import uk.gov.hmcts.divorce.common.model.CaseDetails;
+import uk.gov.hmcts.divorce.common.model.CcdCallbackRequest;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
 
 import java.util.Collections;

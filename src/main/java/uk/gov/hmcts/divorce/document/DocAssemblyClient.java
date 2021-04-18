@@ -9,7 +9,7 @@ import uk.gov.hmcts.divorce.document.model.DocAssemblyRequest;
 import uk.gov.hmcts.divorce.document.model.DocAssemblyResponse;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static uk.gov.hmcts.divorce.constants.ControllerConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUTHORIZATION;
 
 @FeignClient(name = "doc-assembly-api", primary = false, url = "${doc_assembly.url}")
 public interface DocAssemblyClient {

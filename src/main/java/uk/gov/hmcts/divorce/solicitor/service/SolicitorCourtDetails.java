@@ -3,9 +3,9 @@ package uk.gov.hmcts.divorce.solicitor.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.ccd.model.CaseData;
-import uk.gov.hmcts.divorce.util.CaseDataContext;
-import uk.gov.hmcts.divorce.util.CaseDataUpdater;
-import uk.gov.hmcts.divorce.util.CaseDataUpdaterChain;
+import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
+import uk.gov.hmcts.divorce.common.updater.CaseDataUpdater;
+import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
 
 import java.time.Clock;
 

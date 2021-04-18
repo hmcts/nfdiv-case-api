@@ -6,10 +6,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.ccd.model.CaseData;
-import uk.gov.hmcts.divorce.util.CaseDataContext;
-import uk.gov.hmcts.divorce.util.CaseDataUpdater;
-import uk.gov.hmcts.divorce.util.CaseDataUpdaterChain;
-import uk.gov.hmcts.divorce.util.CaseDataUpdaterChainFactory;
+import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
+import uk.gov.hmcts.divorce.common.updater.CaseDataUpdater;
+import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
+import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChainFactory;
 
 import java.util.List;
 

@@ -13,8 +13,8 @@ import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.FunctionalTestSuite;
 import uk.gov.hmcts.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.divorce.ccd.model.UserRole;
-import uk.gov.hmcts.divorce.model.CaseDetails;
-import uk.gov.hmcts.divorce.model.CcdCallbackRequest;
+import uk.gov.hmcts.divorce.common.model.CaseDetails;
+import uk.gov.hmcts.divorce.common.model.CcdCallbackRequest;
 
 import java.time.LocalDate;
 
@@ -29,7 +29,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.TestResourceUtil.ABOUT_TO_START_CALLBACK_URL;
 import static uk.gov.hmcts.divorce.TestResourceUtil.ABOUT_TO_SUBMIT_CALLBACK_URL;
 import static uk.gov.hmcts.divorce.TestResourceUtil.expectedCcdCallbackResponse;
-import static uk.gov.hmcts.divorce.constants.ControllerConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreate.SOLICITOR_CREATE;
 
 @SpringBootTest

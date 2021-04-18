@@ -3,14 +3,14 @@ package uk.gov.hmcts.divorce.citizen.notification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.ccd.model.CaseData;
-import uk.gov.hmcts.divorce.config.EmailTemplatesConfig;
+import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.citizen.notification.EmailTemplateNames.SAVE_SIGN_OUT;
-import static uk.gov.hmcts.divorce.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TO_END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLY_FOR_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.COURT_EMAIL;

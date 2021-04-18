@@ -11,8 +11,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.divorce.ccd.model.enums.DivorceOrDissolution;
-import uk.gov.hmcts.divorce.config.WebMvcConfig;
-import uk.gov.hmcts.divorce.config.interceptors.RequestInterceptor;
+import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
+import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 
 import java.io.File;
 import java.io.IOException;

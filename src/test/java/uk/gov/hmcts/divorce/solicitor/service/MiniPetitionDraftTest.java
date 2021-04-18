@@ -9,12 +9,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.ccd.model.CaseData;
-import uk.gov.hmcts.divorce.config.DocmosisTemplatesConfig;
+import uk.gov.hmcts.divorce.common.config.DocmosisTemplatesConfig;
+import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
+import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
 import uk.gov.hmcts.divorce.document.DocAssemblyService;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentInfo;
-import uk.gov.hmcts.divorce.util.CaseDataContext;
-import uk.gov.hmcts.divorce.util.CaseDataUpdaterChain;
 
 import java.util.Collections;
 import java.util.Map;
@@ -33,9 +33,9 @@ import static uk.gov.hmcts.divorce.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.TestConstants.WELSH_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.ccd.model.enums.DocumentType.Petition;
+import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.common.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_PETITION;
-import static uk.gov.hmcts.divorce.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.util.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
