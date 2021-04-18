@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.ccd.access;
+package uk.gov.hmcts.divorce.common.model.access;
 
 import uk.gov.hmcts.ccd.sdk.api.Permission;
 

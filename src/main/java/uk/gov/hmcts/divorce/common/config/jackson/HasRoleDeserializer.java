@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import uk.gov.hmcts.ccd.sdk.api.HasRole;
-import uk.gov.hmcts.divorce.ccd.model.UserRole;
+import uk.gov.hmcts.divorce.common.model.UserRole;
 
 import java.io.IOException;
 import java.util.Arrays;

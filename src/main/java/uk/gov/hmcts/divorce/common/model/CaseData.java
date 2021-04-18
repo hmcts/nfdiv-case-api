@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.ccd.model;
+package uk.gov.hmcts.divorce.common.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -16,19 +16,7 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.ccd.access.DefaultAccess;
-import uk.gov.hmcts.divorce.ccd.model.enums.ChangedNameHow;
-import uk.gov.hmcts.divorce.ccd.model.enums.ClaimsCostFrom;
-import uk.gov.hmcts.divorce.ccd.model.enums.ConfidentialAddress;
-import uk.gov.hmcts.divorce.ccd.model.enums.Court;
-import uk.gov.hmcts.divorce.ccd.model.enums.DivorceOrDissolution;
-import uk.gov.hmcts.divorce.ccd.model.enums.FinancialOrderFor;
-import uk.gov.hmcts.divorce.ccd.model.enums.Gender;
-import uk.gov.hmcts.divorce.ccd.model.enums.JurisdictionConnections;
-import uk.gov.hmcts.divorce.ccd.model.enums.LegalProceedingsRelated;
-import uk.gov.hmcts.divorce.ccd.model.enums.SolServiceMethod;
-import uk.gov.hmcts.divorce.ccd.model.enums.SolToPay;
-import uk.gov.hmcts.divorce.ccd.model.enums.WhoDivorcing;
+import uk.gov.hmcts.divorce.common.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;

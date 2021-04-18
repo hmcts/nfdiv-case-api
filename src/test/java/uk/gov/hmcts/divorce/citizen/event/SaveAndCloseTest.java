@@ -7,10 +7,10 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.divorce.ccd.model.CaseData;
-import uk.gov.hmcts.divorce.ccd.model.State;
-import uk.gov.hmcts.divorce.ccd.model.UserRole;
 import uk.gov.hmcts.divorce.citizen.notification.SaveAndSignOutNotificationHandler;
+import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.common.model.State;
+import uk.gov.hmcts.divorce.common.model.UserRole;
 
 import java.util.Set;
 

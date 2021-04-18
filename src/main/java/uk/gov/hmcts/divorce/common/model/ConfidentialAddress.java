@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.ccd.model.enums;
+package uk.gov.hmcts.divorce.common.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -7,13 +7,13 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 
 @Getter
 @AllArgsConstructor
-public enum WhoDivorcing implements HasLabel {
+public enum ConfidentialAddress implements HasLabel {
 
-    @JsonProperty("husband")
-    HUSBAND("Husband"),
+    @JsonProperty("share")
+    SHARE("-"),
 
-    @JsonProperty("wife")
-    WIFE("Wife");
+    @JsonProperty("keep")
+    KEEP("Confidential Address");
 
     private final String label;
 }

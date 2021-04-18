@@ -4,8 +4,8 @@ import lombok.Builder;
 import lombok.Data;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.Document;
-import uk.gov.hmcts.divorce.ccd.access.DefaultAccess;
-import uk.gov.hmcts.divorce.ccd.model.enums.DocumentType;
+import uk.gov.hmcts.divorce.common.model.DocumentType;
+import uk.gov.hmcts.divorce.common.model.access.DefaultAccess;
 
 import java.util.Date;
 

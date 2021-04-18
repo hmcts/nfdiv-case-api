@@ -11,10 +11,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.FunctionalTestSuite;
-import uk.gov.hmcts.divorce.ccd.model.CaseData;
-import uk.gov.hmcts.divorce.ccd.model.UserRole;
+import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.CaseDetails;
 import uk.gov.hmcts.divorce.common.model.CcdCallbackRequest;
+import uk.gov.hmcts.divorce.common.model.UserRole;
 
 import java.time.LocalDate;
 

@@ -1,9 +1,10 @@
-package uk.gov.hmcts.divorce;
+package uk.gov.hmcts.divorce.common;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import uk.gov.hmcts.divorce.FunctionalTestSuite;
 import uk.gov.hmcts.divorce.common.model.CaseDetails;
 import uk.gov.hmcts.divorce.common.model.CcdCallbackRequest;
 

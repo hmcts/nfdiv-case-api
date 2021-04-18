@@ -31,8 +31,8 @@ import static uk.gov.hmcts.divorce.TestConstants.TEST_CASEWORKER_USER_EMAIL;
 import static uk.gov.hmcts.divorce.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.TestConstants.TEST_SOL_USER_EMAIL;
-import static uk.gov.hmcts.divorce.ccd.model.UserRole.CREATOR;
-import static uk.gov.hmcts.divorce.ccd.model.UserRole.PETITIONER_SOLICITOR;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CREATOR;
+import static uk.gov.hmcts.divorce.common.model.UserRole.PETITIONER_SOLICITOR;
 import static uk.gov.hmcts.divorce.util.TestDataHelper.feignException;
 
 @ExtendWith(MockitoExtension.class)
