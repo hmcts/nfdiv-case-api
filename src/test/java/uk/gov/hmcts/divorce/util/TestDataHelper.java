@@ -10,7 +10,7 @@ import uk.gov.hmcts.divorce.ccd.model.CaseData;
 import uk.gov.hmcts.divorce.ccd.model.enums.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.model.CaseDetails;
 import uk.gov.hmcts.divorce.model.CcdCallbackRequest;
-import uk.gov.hmcts.divorce.model.payments.FeeResponse;
+import uk.gov.hmcts.divorce.payment.model.FeeResponse;
 
 import java.util.Collections;
 import java.util.Map;

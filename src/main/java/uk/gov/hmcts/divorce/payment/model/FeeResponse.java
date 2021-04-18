@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.model.payments;
+package uk.gov.hmcts.divorce.payment.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

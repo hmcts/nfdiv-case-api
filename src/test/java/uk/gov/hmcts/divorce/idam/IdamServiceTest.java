@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.service;
+package uk.gov.hmcts.divorce.idam;
 
 import feign.FeignException;
 import org.junit.jupiter.api.Test;

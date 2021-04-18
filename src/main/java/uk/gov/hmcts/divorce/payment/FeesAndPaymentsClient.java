@@ -4,7 +4,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import uk.gov.hmcts.divorce.model.payments.FeeResponse;
+import uk.gov.hmcts.divorce.payment.model.FeeResponse;
 
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;

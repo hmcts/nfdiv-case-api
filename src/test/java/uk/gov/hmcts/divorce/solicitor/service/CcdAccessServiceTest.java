@@ -6,7 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.divorce.service.IdamService;
+import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.authorisation.exceptions.InvalidTokenException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CaseUserApi;
