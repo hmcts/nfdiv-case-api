@@ -28,15 +28,15 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.TestConstants.ENGLISH_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.TestConstants.TEST_AUTHORIZATION_TOKEN;
-import static uk.gov.hmcts.divorce.TestConstants.TEST_CASE_ID;
-import static uk.gov.hmcts.divorce.TestConstants.WELSH_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.common.model.DocumentType.Petition;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_PETITION;
-import static uk.gov.hmcts.divorce.util.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.ENGLISH_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.WELSH_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
 public class MiniPetitionDraftTest {

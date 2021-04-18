@@ -26,14 +26,14 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static uk.gov.hmcts.divorce.TestConstants.AUTH_HEADER_VALUE;
-import static uk.gov.hmcts.divorce.TestConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.divorce.TestConstants.SUBMITTED_URL;
-import static uk.gov.hmcts.divorce.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.citizen.event.SaveAndClose.SAVE_AND_CLOSE;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.util.TestDataHelper.callbackRequest;
-import static uk.gov.hmcts.divorce.util.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 
 @ExtendWith(SpringExtension.class)

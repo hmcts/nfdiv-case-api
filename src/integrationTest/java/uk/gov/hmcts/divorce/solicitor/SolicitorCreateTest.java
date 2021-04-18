@@ -29,17 +29,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.util.ResourceUtils.getFile;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.TestConstants.ABOUT_TO_START_URL;
-import static uk.gov.hmcts.divorce.TestConstants.ABOUT_TO_SUBMIT_URL;
-import static uk.gov.hmcts.divorce.TestConstants.AUTHORIZATION;
-import static uk.gov.hmcts.divorce.TestConstants.AUTH_HEADER_VALUE;
-import static uk.gov.hmcts.divorce.TestConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.divorce.TestConstants.TEST_AUTHORIZATION_TOKEN;
-import static uk.gov.hmcts.divorce.TestConstants.TEST_FIRST_NAME;
-import static uk.gov.hmcts.divorce.TestConstants.TEST_LAST_NAME;
-import static uk.gov.hmcts.divorce.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreate.SOLICITOR_CREATE;
-import static uk.gov.hmcts.divorce.util.TestDataHelper.callbackRequest;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

@@ -27,11 +27,11 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.TestConstants.ENGLISH_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.TestConstants.TEST_AUTHORIZATION_TOKEN;
-import static uk.gov.hmcts.divorce.TestConstants.TEST_CASE_ID;
-import static uk.gov.hmcts.divorce.TestConstants.TEST_SERVICE_AUTH_TOKEN;
-import static uk.gov.hmcts.divorce.util.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.ENGLISH_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
 public class DocAssemblyServiceTest {

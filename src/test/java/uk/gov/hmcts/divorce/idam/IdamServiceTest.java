@@ -16,13 +16,13 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.TestConstants.INVALID_AUTH_TOKEN;
-import static uk.gov.hmcts.divorce.TestConstants.PET_SOL_AUTH_TOKEN;
-import static uk.gov.hmcts.divorce.TestConstants.SOLICITOR_USER_ID;
-import static uk.gov.hmcts.divorce.TestConstants.TEST_CASEWORKER_USER_EMAIL;
-import static uk.gov.hmcts.divorce.TestConstants.TEST_CASEWORKER_USER_PASSWORD;
-import static uk.gov.hmcts.divorce.TestConstants.TEST_SOL_USER_EMAIL;
-import static uk.gov.hmcts.divorce.util.TestDataHelper.feignException;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.INVALID_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.PET_SOL_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_USER_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASEWORKER_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASEWORKER_USER_PASSWORD;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOL_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.feignException;
 
 @ExtendWith(MockitoExtension.class)
 public class IdamServiceTest {

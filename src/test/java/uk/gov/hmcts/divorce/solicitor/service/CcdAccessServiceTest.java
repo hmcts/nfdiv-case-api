@@ -23,17 +23,17 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.TestConstants.CASEWORKER_AUTH_TOKEN;
-import static uk.gov.hmcts.divorce.TestConstants.CASEWORKER_USER_ID;
-import static uk.gov.hmcts.divorce.TestConstants.PET_SOL_AUTH_TOKEN;
-import static uk.gov.hmcts.divorce.TestConstants.SOLICITOR_USER_ID;
-import static uk.gov.hmcts.divorce.TestConstants.TEST_CASEWORKER_USER_EMAIL;
-import static uk.gov.hmcts.divorce.TestConstants.TEST_CASE_ID;
-import static uk.gov.hmcts.divorce.TestConstants.TEST_SERVICE_AUTH_TOKEN;
-import static uk.gov.hmcts.divorce.TestConstants.TEST_SOL_USER_EMAIL;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.common.model.UserRole.PETITIONER_SOLICITOR;
-import static uk.gov.hmcts.divorce.util.TestDataHelper.feignException;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.PET_SOL_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_USER_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASEWORKER_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOL_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.feignException;
 
 @ExtendWith(MockitoExtension.class)
 public class CcdAccessServiceTest {

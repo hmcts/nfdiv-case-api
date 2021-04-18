@@ -23,11 +23,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.ResourceUtils;
-import uk.gov.hmcts.divorce.TestConstants;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitPetitionService;
+import uk.gov.hmcts.divorce.testutil.TestConstants;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.io.File;
@@ -55,17 +55,17 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static uk.gov.hmcts.divorce.TestConstants.ABOUT_TO_START_URL;
-import static uk.gov.hmcts.divorce.TestConstants.AUTH_HEADER_VALUE;
-import static uk.gov.hmcts.divorce.TestConstants.CASEWORKER_USER_ID;
-import static uk.gov.hmcts.divorce.TestConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.divorce.TestConstants.SOLICITOR_USER_ID;
-import static uk.gov.hmcts.divorce.TestConstants.TEST_AUTHORIZATION_TOKEN;
-import static uk.gov.hmcts.divorce.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorStatementOfTruthPaySubmit.SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT;
-import static uk.gov.hmcts.divorce.util.TestDataHelper.callbackRequest;
-import static uk.gov.hmcts.divorce.util.TestDataHelper.caseData;
-import static uk.gov.hmcts.divorce.util.TestDataHelper.getFeeResponse;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_USER_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFeeResponse;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

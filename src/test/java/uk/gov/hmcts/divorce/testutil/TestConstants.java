@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce;
+package uk.gov.hmcts.divorce.testutil;
 
 public final class TestConstants {
     public static final String TEST_USER_EMAIL = "test@test.com";

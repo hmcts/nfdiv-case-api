@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce;
+package uk.gov.hmcts.divorce.testutil;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;

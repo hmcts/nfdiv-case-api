@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce;
+package uk.gov.hmcts.divorce.testutil;
 
 import org.springframework.util.ResourceUtils;
 

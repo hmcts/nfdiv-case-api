@@ -10,11 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
-import uk.gov.hmcts.divorce.FunctionalTestSuite;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.CaseDetails;
 import uk.gov.hmcts.divorce.common.model.CcdCallbackRequest;
 import uk.gov.hmcts.divorce.common.model.UserRole;
+import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 
 import java.time.LocalDate;
 
@@ -26,11 +26,11 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.TestResourceUtil.ABOUT_TO_START_CALLBACK_URL;
-import static uk.gov.hmcts.divorce.TestResourceUtil.ABOUT_TO_SUBMIT_CALLBACK_URL;
-import static uk.gov.hmcts.divorce.TestResourceUtil.expectedCcdCallbackResponse;
 import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreate.SOLICITOR_CREATE;
+import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.ABOUT_TO_START_CALLBACK_URL;
+import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.ABOUT_TO_SUBMIT_CALLBACK_URL;
+import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedCcdCallbackResponse;
 
 @SpringBootTest
 public class SolicitorCreateTest extends FunctionalTestSuite {

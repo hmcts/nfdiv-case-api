@@ -18,7 +18,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.divorce.citizen.event.SaveAndClose.SAVE_AND_CLOSE;
-import static uk.gov.hmcts.divorce.util.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 
 @ExtendWith(SpringExtension.class)

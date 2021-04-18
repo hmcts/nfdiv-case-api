@@ -11,12 +11,12 @@ import uk.gov.hmcts.divorce.common.model.UserRole;
 import java.util.List;
 
 import static java.util.List.of;
-import static uk.gov.hmcts.divorce.ccd.search.constants.CaseFieldsConstants.EMAIL;
-import static uk.gov.hmcts.divorce.ccd.search.constants.CaseFieldsConstants.FIRSTNAME;
-import static uk.gov.hmcts.divorce.ccd.search.constants.CaseFieldsConstants.LASTNAME;
-import static uk.gov.hmcts.divorce.ccd.search.constants.CaseFieldsConstants.PETITIONER_EMAIL;
-import static uk.gov.hmcts.divorce.ccd.search.constants.CaseFieldsConstants.PETITIONER_FIRST_NAME;
-import static uk.gov.hmcts.divorce.ccd.search.constants.CaseFieldsConstants.PETITIONER_LAST_NAME;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.EMAIL;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.FIRSTNAME;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.LASTNAME;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_EMAIL;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_FIRST_NAME;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_LAST_NAME;
 
 @Component
 public class SearchInputFields implements CCDConfig<CaseData, State, UserRole> {

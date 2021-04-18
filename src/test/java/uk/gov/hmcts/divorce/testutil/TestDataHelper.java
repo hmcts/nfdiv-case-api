@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.util;
+package uk.gov.hmcts.divorce.testutil;
 
 import feign.FeignException;
 import feign.Request;
@@ -20,12 +20,12 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static uk.gov.hmcts.ccd.sdk.type.Fee.getValueInPence;
-import static uk.gov.hmcts.divorce.TestConstants.FEE_CODE;
-import static uk.gov.hmcts.divorce.TestConstants.ISSUE_FEE;
-import static uk.gov.hmcts.divorce.TestConstants.TEST_CASE_ID;
-import static uk.gov.hmcts.divorce.TestConstants.TEST_FIRST_NAME;
-import static uk.gov.hmcts.divorce.TestConstants.TEST_LAST_NAME;
-import static uk.gov.hmcts.divorce.TestConstants.TEST_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 
 public class TestDataHelper {
 

@@ -27,9 +27,9 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static uk.gov.hmcts.divorce.TestConstants.FEE_CODE;
-import static uk.gov.hmcts.divorce.TestConstants.ISSUE_FEE;
-import static uk.gov.hmcts.divorce.util.TestDataHelper.getFeeResponse;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFeeResponse;
 
 @ExtendWith(MockitoExtension.class)
 public class SolicitorSubmitPetitionServiceTest {

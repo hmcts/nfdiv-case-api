@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.ccd.search.constants;
+package uk.gov.hmcts.divorce.ccd.search;
 
 public final class CaseFieldsConstants {
 

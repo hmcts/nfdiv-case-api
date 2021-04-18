@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce;
+package uk.gov.hmcts.divorce.testutil;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -8,7 +8,7 @@ import uk.gov.hmcts.reform.authorisation.validators.AuthTokenValidator;
 
 import java.util.List;
 
-import static uk.gov.hmcts.divorce.TestConstants.CCD_DATA;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.CCD_DATA;
 
 @Configuration
 public class TestAuthConfiguration {

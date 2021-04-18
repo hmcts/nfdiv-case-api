@@ -20,10 +20,10 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static uk.gov.hmcts.divorce.TestConstants.AUTH_HEADER_VALUE;
-import static uk.gov.hmcts.divorce.TestConstants.INVALID_AUTH_TOKEN;
-import static uk.gov.hmcts.divorce.TestConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.divorce.TestConstants.SUBMITTED_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.INVALID_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
