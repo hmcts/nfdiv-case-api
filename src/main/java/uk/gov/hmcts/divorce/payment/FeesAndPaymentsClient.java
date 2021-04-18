@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.clients;
+package uk.gov.hmcts.divorce.payment;
 
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -8,12 +8,12 @@ import uk.gov.hmcts.divorce.model.payments.FeeResponse;
 
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static uk.gov.hmcts.divorce.constants.FeesAndPayConstants.CHANNEL;
-import static uk.gov.hmcts.divorce.constants.FeesAndPayConstants.EVENT;
-import static uk.gov.hmcts.divorce.constants.FeesAndPayConstants.JURISDICTION_1;
-import static uk.gov.hmcts.divorce.constants.FeesAndPayConstants.JURISDICTION_2;
-import static uk.gov.hmcts.divorce.constants.FeesAndPayConstants.KEYWORD;
-import static uk.gov.hmcts.divorce.constants.FeesAndPayConstants.SERVICE;
+import static uk.gov.hmcts.divorce.payment.FeesAndPayConstants.CHANNEL;
+import static uk.gov.hmcts.divorce.payment.FeesAndPayConstants.EVENT;
+import static uk.gov.hmcts.divorce.payment.FeesAndPayConstants.JURISDICTION_1;
+import static uk.gov.hmcts.divorce.payment.FeesAndPayConstants.JURISDICTION_2;
+import static uk.gov.hmcts.divorce.payment.FeesAndPayConstants.KEYWORD;
+import static uk.gov.hmcts.divorce.payment.FeesAndPayConstants.SERVICE;
 
 @FeignClient(name = "fees-and-payments-client", url = "${fee.api.baseUrl}")
 @SuppressWarnings("PMD.UseObjectForClearerAPI")

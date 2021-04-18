@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.constants;
+package uk.gov.hmcts.divorce.payment;
 
 public final class FeesAndPayConstants {
 

@@ -10,7 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
-import uk.gov.hmcts.divorce.clients.FeesAndPaymentsClient;
+import uk.gov.hmcts.divorce.payment.FeesAndPaymentsClient;
 
 import java.util.Collections;
 import java.util.Map;

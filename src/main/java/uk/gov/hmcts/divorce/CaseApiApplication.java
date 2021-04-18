@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import uk.gov.hmcts.divorce.clients.DocAssemblyClient;
-import uk.gov.hmcts.divorce.clients.FeesAndPaymentsClient;
+import uk.gov.hmcts.divorce.payment.FeesAndPaymentsClient;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 import uk.gov.hmcts.reform.ccd.client.CaseUserApi;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
