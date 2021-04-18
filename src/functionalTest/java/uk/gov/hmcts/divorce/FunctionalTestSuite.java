@@ -24,7 +24,7 @@ import static uk.gov.hmcts.divorce.ccd.model.enums.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreate.SOLICITOR_CREATE;
 
 @TestPropertySource("classpath:application.yaml")
-abstract class FunctionalTestSuite {
+public abstract class FunctionalTestSuite {
     protected static final String TEST_USER_EMAIL = "simulate-delivered@notifications.service.gov.uk";
     protected static final String TEST_FIRST_NAME = "John";
     protected static final String TEST_LAST_NAME = "Smith";

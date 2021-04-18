@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.ccd.event.solicitor;
+package uk.gov.hmcts.divorce.solicitor;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
