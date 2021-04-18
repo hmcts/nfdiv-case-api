@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.model.docassembly;
+package uk.gov.hmcts.divorce.document.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

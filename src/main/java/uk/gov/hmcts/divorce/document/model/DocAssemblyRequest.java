@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.model.docassembly;
+package uk.gov.hmcts.divorce.document.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.JsonNode;

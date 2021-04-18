@@ -29,6 +29,7 @@ import uk.gov.hmcts.divorce.ccd.model.enums.LegalProceedingsRelated;
 import uk.gov.hmcts.divorce.ccd.model.enums.SolServiceMethod;
 import uk.gov.hmcts.divorce.ccd.model.enums.SolToPay;
 import uk.gov.hmcts.divorce.ccd.model.enums.WhoDivorcing;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
 import java.util.List;

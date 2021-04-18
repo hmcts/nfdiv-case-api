@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.service;
+package uk.gov.hmcts.divorce.document;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
@@ -9,10 +9,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.divorce.clients.DocAssemblyClient;
-import uk.gov.hmcts.divorce.model.DocumentInfo;
-import uk.gov.hmcts.divorce.model.docassembly.DocAssemblyRequest;
-import uk.gov.hmcts.divorce.model.docassembly.DocAssemblyResponse;
+import uk.gov.hmcts.divorce.document.model.DocAssemblyRequest;
+import uk.gov.hmcts.divorce.document.model.DocAssemblyResponse;
+import uk.gov.hmcts.divorce.document.model.DocumentInfo;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.util.Collections;

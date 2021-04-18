@@ -1,14 +1,13 @@
-package uk.gov.hmcts.divorce.service;
+package uk.gov.hmcts.divorce.document;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.ccd.model.CaseData;
-import uk.gov.hmcts.divorce.clients.DocAssemblyClient;
-import uk.gov.hmcts.divorce.model.DocumentInfo;
-import uk.gov.hmcts.divorce.model.docassembly.DocAssemblyRequest;
-import uk.gov.hmcts.divorce.model.docassembly.DocAssemblyResponse;
+import uk.gov.hmcts.divorce.document.model.DocAssemblyRequest;
+import uk.gov.hmcts.divorce.document.model.DocAssemblyResponse;
+import uk.gov.hmcts.divorce.document.model.DocumentInfo;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import static java.lang.String.format;

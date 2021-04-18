@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.ccd.model;
+package uk.gov.hmcts.divorce.document.model;
 
 import lombok.Builder;
 import lombok.Data;
