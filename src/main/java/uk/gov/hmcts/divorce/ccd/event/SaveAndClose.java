@@ -38,7 +38,7 @@ public class SaveAndClose implements CCDConfig<CaseData, State, UserRole> {
     }
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
-                                                CaseDetails<CaseData, State> beforeDetails) {
+                                               CaseDetails<CaseData, State> beforeDetails) {
         saveAndSignOutNotificationHandler.notifyApplicant(details.getData());
 
         return SubmittedCallbackResponse.builder().build();
