@@ -9,7 +9,7 @@ import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 
-import static uk.gov.hmcts.divorce.common.model.UserRole.PETITIONER_SOLICITOR;
+import static uk.gov.hmcts.divorce.common.model.UserRole.APPLICANT_SOLICITOR;
 
 public class SolAboutTheSolicitor implements CcdPageConfiguration {
 

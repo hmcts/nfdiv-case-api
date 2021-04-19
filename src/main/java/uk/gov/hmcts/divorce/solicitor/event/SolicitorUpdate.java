@@ -10,7 +10,7 @@ import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.LanguagePreference;
-import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutThePetitioner;
+import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutTheApplicant;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutTheRespondent;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutTheSolicitor;
 
