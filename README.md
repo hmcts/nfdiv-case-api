@@ -14,7 +14,7 @@ This API handles callbacks from CCD for the NO_FAULT_DIVORCE case type.
                                 │
                         ┌───────▼────────┐
                         │                │
-                  ┌─────►      CCD       │◄────┐
+                  ┌─────►      CCD       ◄─────┐
                   │     │                │     │
                   │     └────────────────┘     │
                   │                            │
