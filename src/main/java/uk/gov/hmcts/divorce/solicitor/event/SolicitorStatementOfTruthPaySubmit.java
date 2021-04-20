@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -26,7 +27,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Arrays.asList;
-import static org.reflections.Reflections.log;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.common.model.State.SOTAgreementPayAndSubmitRequired;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
@@ -37,11 +37,11 @@ import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_SUPE
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 
+@Slf4j
 @Component
 public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT = "solicitor-statement-of-truth-pay-submit";
-    public static final String SUBMIT_PETITION = "submit-petition";
 
     @Autowired
     private SolicitorSubmitPetitionService solicitorSubmitPetitionService;
