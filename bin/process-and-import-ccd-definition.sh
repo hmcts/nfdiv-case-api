@@ -9,7 +9,7 @@ echo "Script Path ${scriptPath}"
 root_dir=$(realpath $(dirname ${0})/..)
 config_dir=${root_dir}/build/definitions
 build_dir=${root_dir}/build/ccd-config
-definitionOutputFile=${build_dir}/ccd-nfd-dev.xlsx
+definitionOutputFile=${build_dir}/ccd-nfd-${CCD_DEF_NAME:-dev}.xlsx
 
 mkdir -p ${build_dir}
 

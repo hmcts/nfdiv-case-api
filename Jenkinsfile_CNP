@@ -57,7 +57,7 @@ withPipeline(type, product, component) {
     before('functionalTest:preview') {
         env.CASE_API_URL="http://nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
         builder.gradle('generateCCDConfig')
-        setCommonEnvVariables('aat')
+        setCommonEnvVariables()
 
         //env.CCD_ADMIN_URL="https://admin-web-nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
         env.CCD_DEFINITION_STORE_API_BASE_URL="https://ccd-definition-store-nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
@@ -69,26 +69,26 @@ withPipeline(type, product, component) {
     before('functionalTest:aat') {
         env.CASE_API_URL="http://nfdiv-case-api-aat.service.core-compute-aat.internal"
         builder.gradle('generateCCDConfig')
-        setCommonEnvVariables('aat')
+        setCommonEnvVariables()
         env.CCD_DEFINITION_STORE_API_BASE_URL="http://ccd-definition-store-api-aat.service.core-compute-aat.internal"
         uploadCoreCaseDataDefinitions()
     }
 
-    after('build:perftest') {
+    after('functionalTest:aat') {
         env.CASE_API_URL="http://nfdiv-case-api-perftest.service.core-compute-perftest.internal"
+        env.CCD_DEF_NAME="perftest"
         builder.gradle('generateCCDConfig')
-        setCommonEnvVariables('perftest')
-        env.CCD_DEFINITION_STORE_API_BASE_URL="http://ccd-definition-store-api-aat.service.core-compute-aat.internal"
+
         dir("${WORKSPACE}") {
-            steps.archiveArtifacts artifacts: "build/ccd-config/ccd-nfd-dev.xlsx"
+            steps.archiveArtifacts artifacts: "build/ccd-config/ccd-nfd-perftest.xlsx"
         }
     }
 }
 
-def setCommonEnvVariables(envName){
-    env.IDAM_API_BASE_URL = "https://idam-api.${envName}.platform.hmcts.net"
-    env.SERVICE_AUTH_PROVIDER_API_BASE_URL = "http://rpe-service-auth-provider-${envName}.service.core-compute-${envName}.internal"
-    env.FEE_API_URL = "http://fees-register-api-${envName}.service.core-compute-${envName}.internal"
+def setCommonEnvVariables(){
+    env.IDAM_API_BASE_URL = "https://idam-api.aat.platform.hmcts.net"
+    env.SERVICE_AUTH_PROVIDER_API_BASE_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+    env.FEE_API_URL = "http://fees-register-api-aat.service.core-compute-aat.internal"
 }
 
 def uploadCoreCaseDataDefinitions() {
