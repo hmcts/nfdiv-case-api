@@ -79,7 +79,7 @@ withPipeline(type, product, component) {
         builder.gradle('generateCCDConfig')
 
         dir("${WORKSPACE}") {
-            sh "./bin/generate-ccd-definition.sh build/definitions build/ccd-config/ccd-nfd-perftest.xlsx "-e *-nonprod.json,*-testing.json"
+            sh "./bin/generate-ccd-definition.sh build/definitions build/ccd-config/ccd-nfd-perftest.xlsx '-e *-nonprod.json,*-testing.json'"
             steps.archiveArtifacts artifacts: "build/ccd-config/ccd-nfd-perftest.xlsx"
         }
     }
