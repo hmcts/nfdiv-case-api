@@ -76,10 +76,10 @@ withPipeline(type, product, component) {
 
     after('functionalTest:aat') {
         env.CASE_API_URL="http://nfdiv-case-api-perftest.service.core-compute-perftest.internal"
-        env.CCD_DEF_NAME="perftest"
         builder.gradle('generateCCDConfig')
 
         dir("${WORKSPACE}") {
+            sh "./bin/generate-ccd-definition.sh build/definitions build/ccd-config/ccd-nfd-perftest.xlsx "-e *-nonprod.json,*-testing.json"
             steps.archiveArtifacts artifacts: "build/ccd-config/ccd-nfd-perftest.xlsx"
         }
     }
