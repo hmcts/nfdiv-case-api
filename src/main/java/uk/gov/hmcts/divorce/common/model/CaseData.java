@@ -148,7 +148,7 @@ public class CaseData {
         label = "Middle name(s)",
         access = {DefaultAccess.class}
     )
-    private String petitionerMiddleName;
+    private String applicantMiddleName;
 
     @CCD(
         label = "Last name",

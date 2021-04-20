@@ -38,8 +38,8 @@ public enum JurisdictionConnections implements HasLabel {
     RESIDUAL_JURISDICTION("G"),
 
     @JsonProperty("H")
-    @JsonPropertyDescription("The Petitioner is domiciled in England and Wales")
-    PET_DOMICILED("H"),
+    @JsonPropertyDescription("The Applicant is domiciled in England and Wales")
+    APP_DOMICILED("H"),
 
     @JsonProperty("I")
     @JsonPropertyDescription("The Respondent is domiciled in England and Wales")
