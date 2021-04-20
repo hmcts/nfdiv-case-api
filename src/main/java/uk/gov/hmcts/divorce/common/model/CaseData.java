@@ -140,10 +140,15 @@ public class CaseData {
 
     @CCD(
         label = "First name(s)",
-        hint = "Include all middle names here",
         access = {DefaultAccess.class}
     )
     private String petitionerFirstName;
+
+    @CCD(
+        label = "Middle name(s)",
+        access = {DefaultAccess.class}
+    )
+    private String petitionerMiddleName;
 
     @CCD(
         label = "Last name",
@@ -279,10 +284,15 @@ public class CaseData {
 
     @CCD(
         label = "Respondent's First name(s)",
-        hint = "Include all middle names here",
         access = {DefaultAccess.class}
     )
     private String respondentFirstName;
+
+    @CCD(
+        label = "Respondent's Middle name(s)",
+        access = {DefaultAccess.class}
+    )
+    private String respondentMiddleName;
 
     @CCD(
         label = "Respondent's Last name",
