@@ -8,7 +8,9 @@
     "petitionerOrganisationPolicy": {
       "Organisation": null,
       "OrgPolicyReference": null,
-      "OrgPolicyCaseAssignedRole": "[PETSOLICITOR]"
+      "OrgPolicyCaseAssignedRole": "[PETSOLICITOR]",
+      "PrepopulateToUsersOrganisation": null,
+      "PreviousOrganisations": null
     }
   },
   "errors": null,
