@@ -74,6 +74,18 @@ withPipeline(type, product, component) {
         uploadCoreCaseDataDefinitions()
     }
 
+    after('functionalTest:aat') {
+        env.CASE_API_URL="http://nfdiv-case-api-perftest.service.core-compute-perftest.internal"
+        env.CCD_DEF_NAME="perftest"
+        builder.gradle('generateCCDConfig')
+
+        dir("${WORKSPACE}/bin"){
+            sh "./build-ccd-definition.sh"
+        }
+        dir("${WORKSPACE}") {
+            steps.archiveArtifacts artifacts: "build/ccd-config/ccd-nfd-perftest.xlsx"
+        }
+    }
 }
 
 def setCommonEnvVariables(){
