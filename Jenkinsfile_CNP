@@ -77,6 +77,7 @@ withPipeline(type, product, component) {
     after('functionalTest:aat') {
         env.CASE_API_URL="http://nfdiv-case-api-perftest.service.core-compute-perftest.internal"
         env.CCD_DEF_NAME="perftest"
+
         builder.gradle('generateCCDConfig')
 
         dir("${WORKSPACE}/bin"){
