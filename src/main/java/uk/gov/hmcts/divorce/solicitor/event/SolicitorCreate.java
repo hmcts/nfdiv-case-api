@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.ClaimForCosts;
 import uk.gov.hmcts.divorce.solicitor.event.page.FinancialOrders;
+import uk.gov.hmcts.divorce.solicitor.event.page.JurisdictionApplyForDivorce;
 import uk.gov.hmcts.divorce.solicitor.event.page.LanguagePreference;
 import uk.gov.hmcts.divorce.solicitor.event.page.MarriageCertificateDetails;
 import uk.gov.hmcts.divorce.solicitor.event.page.OtherLegalProceedings;
@@ -52,6 +53,7 @@ public class SolicitorCreate implements CCDConfig<CaseData, State, UserRole> {
         new SolAboutTheRespondent(),
         new RespondentServiceDetails(),
         new MarriageCertificateDetails(),
+        new JurisdictionApplyForDivorce(),
         new OtherLegalProceedings(),
         new FinancialOrders(),
         new ClaimForCosts(),
