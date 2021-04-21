@@ -50,19 +50,6 @@ class SolicitorCreateTest {
     }
 
     @Test
-    public void shouldSetDefaultCaseDataValues() {
-        final CaseData caseData = caseData();
-        caseData.setLanguagePreferenceWelsh(YES);
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> result = solicitorCreate.aboutToStart(details);
-
-        assertEquals(result.getData().getLanguagePreferenceWelsh(), NO);
-    }
-
-    @Test
     public void shouldPopulateMissingRequirementsFieldsInCaseData() throws Exception {
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> details = new CaseDetails<>();

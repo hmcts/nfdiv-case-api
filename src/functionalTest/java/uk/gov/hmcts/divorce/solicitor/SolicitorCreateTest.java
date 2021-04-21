@@ -39,50 +39,6 @@ public class SolicitorCreateTest extends FunctionalTestSuite {
     ObjectMapper mapper;
 
     @Test
-    public void shouldUpdateLanguagePreferenceSuccessfullyWhenAboutToStartCallbackIsInvoked()
-        throws Exception {
-        CaseData caseDataWithOrganisationPolicy = caseData()
-            .toBuilder()
-            .petitionerOrganisationPolicy(
-                OrganisationPolicy
-                    .<UserRole>builder()
-                    .orgPolicyCaseAssignedRole(UserRole.PETITIONER_SOLICITOR)
-                    .build()
-            )
-            .build();
-
-        Response response = RestAssured
-            .given()
-            .relaxedHTTPSValidation()
-            .baseUri(testUrl)
-            .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-            .header(SERVICE_AUTHORIZATION, generateServiceAuthTokenFor(s2sName))
-            .header(HttpHeaders.AUTHORIZATION, generateIdamTokenForSolicitor())
-            .body(
-                CcdCallbackRequest
-                    .builder()
-                    .eventId(SOLICITOR_CREATE)
-                    .caseDetails(
-                        CaseDetails
-                            .builder()
-                            .caseData(caseDataWithOrganisationPolicy)
-                            .build()
-                    )
-                    .build()
-            )
-            .when()
-            .post(ABOUT_TO_START_CALLBACK_URL);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK.value());
-
-        assertEquals(
-            expectedCcdCallbackResponse("classpath:responses/ccd-callback-set-language-preference.json"),
-            response.asString(),
-            STRICT
-        );
-    }
-
-    @Test
     public void shouldUpdateCaseDataWithClaimCostsAndCourtDetailsWhenAboutToSubmitCallbackIsSuccessful()
         throws Exception {
         CaseData caseData = caseData();

@@ -84,24 +84,12 @@ public class SolicitorCreate implements CCDConfig<CaseData, State, UserRole> {
             .displayOrder(1)
             .showSummary()
             .endButtonLabel("Save Petition")
-            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_SOLICITOR)
             .grant(READ_UPDATE, CASEWORKER_DIVORCE_SUPERUSER)
             .grant(READ, CASEWORKER_DIVORCE_COURTADMIN_BETA, CASEWORKER_DIVORCE_COURTADMIN, CASEWORKER_DIVORCE_COURTADMIN_LA)
             .fields();
-    }
-
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(CaseDetails<CaseData, State> details) {
-        log.info("Solicitor create petition about to start callback invoked");
-
-        CaseData data = details.getData();
-        data.setLanguagePreferenceWelsh(YesOrNo.NO);
-
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(data)
-            .build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
