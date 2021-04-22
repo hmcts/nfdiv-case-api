@@ -9,7 +9,7 @@ import uk.gov.hmcts.divorce.common.model.UserRole;
 
 public class MarriageCertificateDetails implements CcdPageConfiguration {
     @Override
-    public void addTo(FieldCollectionBuilder<CaseData, EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder) {
+    public void addTo(FieldCollectionBuilder<CaseData, State, EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder) {
         fieldCollectionBuilder
             .page("MarriageCertificateDetails")
             .pageLabel("Marriage certificate details")
