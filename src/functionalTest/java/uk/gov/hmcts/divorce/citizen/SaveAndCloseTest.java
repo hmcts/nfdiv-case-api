@@ -4,10 +4,12 @@ import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -49,10 +51,9 @@ public class SaveAndCloseTest extends FunctionalTestSuite {
 
     @Test
     public void shouldFailWithBadRequestErrorWhenFirstAndLastNamesAreMissing() {
-        CaseData caseDataWithMissingParams = CaseData.builder()
-            .divorceOrDissolution(DIVORCE)
-            .petitionerEmail(TEST_USER_EMAIL)
-            .build();
+        Map<String, Object> caseDataMapWithMissingParams = new HashMap<>();
+        caseDataMapWithMissingParams.put("divorceOrDissolution", DIVORCE);
+        caseDataMapWithMissingParams.put("petitionerEmail", TEST_USER_EMAIL);
 
         Response response = RestAssured
             .given()
@@ -67,7 +68,7 @@ public class SaveAndCloseTest extends FunctionalTestSuite {
                     .caseDetails(
                         CaseDetails
                             .builder()
-                            .data(caseDataWithMissingParams)
+                            .data(caseDataMapWithMissingParams)
                             .build()
                     )
                     .build()
@@ -85,9 +86,8 @@ public class SaveAndCloseTest extends FunctionalTestSuite {
 
     @Test
     public void shouldFailValidationErrorWhenEmailIsMissing() {
-        CaseData caseDataWithMissingParams = CaseData.builder()
-            .divorceOrDissolution(DIVORCE)
-            .build();
+        Map<String, Object> caseDataMapWithMissingParams = new HashMap<>();
+        caseDataMapWithMissingParams.put("divorceOrDissolution", DIVORCE);
 
         Response response = RestAssured
             .given()
@@ -102,7 +102,7 @@ public class SaveAndCloseTest extends FunctionalTestSuite {
                     .caseDetails(
                         CaseDetails
                             .builder()
-                            .data(caseDataWithMissingParams)
+                            .data(caseDataMapWithMissingParams)
                             .build()
                     )
                     .build()

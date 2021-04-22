@@ -11,7 +11,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
-import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
 
 import java.io.File;
@@ -19,6 +18,8 @@ import java.io.IOException;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.HashMap;
+import java.util.Map;
 
 import static java.nio.file.Files.readAllBytes;
 import static org.mockito.Mockito.when;
@@ -116,13 +117,13 @@ class SolicitorCreateTest {
         return new String(readAllBytes(issueFeesResponseJsonFile.toPath()));
     }
 
-    private CaseData caseData() {
-        return CaseData.builder()
-            .petitionerFirstName(TEST_FIRST_NAME)
-            .petitionerLastName(TEST_LAST_NAME)
-            .petitionerEmail(TEST_USER_EMAIL)
-            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
-            .divorceCostsClaim(YES)
-            .build();
+    private Map<String, Object> caseData() {
+        Map<String, Object> caseData = new HashMap<>();
+        caseData.put("petitionerFirstName", TEST_FIRST_NAME);
+        caseData.put("petitionerLastName", TEST_LAST_NAME);
+        caseData.put("petitionerEmail", TEST_USER_EMAIL);
+        caseData.put("divorceOrDissolution", DivorceOrDissolution.DIVORCE);
+        caseData.put("divorceCostsClaim", YES);
+        return caseData;
     }
 }

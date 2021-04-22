@@ -14,7 +14,8 @@ import static uk.gov.hmcts.divorce.common.model.UserRole.PETITIONER_SOLICITOR;
 public class RespondentServiceDetails implements CcdPageConfiguration {
 
     @Override
-    public void addTo(final FieldCollectionBuilder<CaseData, State, EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder) {
+    public void addTo(
+        final FieldCollectionBuilder<CaseData, State, EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder) {
 
         fieldCollectionBuilder
             .page("RespondentServiceDetails")

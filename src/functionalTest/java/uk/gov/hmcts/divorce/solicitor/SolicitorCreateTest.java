@@ -9,14 +9,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
-import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
-import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.common.model.CcdCallbackRequest;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
+import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
+import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
@@ -41,15 +42,14 @@ public class SolicitorCreateTest extends FunctionalTestSuite {
     @Test
     public void shouldUpdateLanguagePreferenceSuccessfullyWhenAboutToStartCallbackIsInvoked()
         throws Exception {
-        CaseData caseDataWithOrganisationPolicy = caseData()
-            .toBuilder()
-            .petitionerOrganisationPolicy(
-                OrganisationPolicy
-                    .<UserRole>builder()
-                    .orgPolicyCaseAssignedRole(UserRole.PETITIONER_SOLICITOR)
-                    .build()
-            )
-            .build();
+        Map<String, Object> caseDataWithOrganisationPolicy = new HashMap<>();
+        caseDataWithOrganisationPolicy.put(
+            "petitionerOrganisationPolicy",
+            OrganisationPolicy
+                .<UserRole>builder()
+                .orgPolicyCaseAssignedRole(UserRole.PETITIONER_SOLICITOR)
+                .build()
+        );
 
         Response response = RestAssured
             .given()
@@ -59,7 +59,7 @@ public class SolicitorCreateTest extends FunctionalTestSuite {
             .header(SERVICE_AUTHORIZATION, generateServiceAuthTokenFor(s2sName))
             .header(HttpHeaders.AUTHORIZATION, generateIdamTokenForSolicitor())
             .body(
-                CcdCallbackRequest
+                CallbackRequest
                     .builder()
                     .eventId(SOLICITOR_CREATE)
                     .caseDetails(
@@ -85,8 +85,9 @@ public class SolicitorCreateTest extends FunctionalTestSuite {
     @Test
     public void shouldUpdateCaseDataWithClaimCostsAndCourtDetailsWhenAboutToSubmitCallbackIsSuccessful()
         throws Exception {
-        CaseData caseData = caseData();
-        caseData.setDivorceCostsClaim(YES);
+        Map<String, Object> caseData = new HashMap<>();
+        caseData.put("divorceCostsClaim", YES);
+
 
         Response response = RestAssured
             .given()
@@ -96,7 +97,7 @@ public class SolicitorCreateTest extends FunctionalTestSuite {
             .header(SERVICE_AUTHORIZATION, generateServiceAuthTokenFor(s2sName))
             .header(AUTHORIZATION, generateIdamTokenForSolicitor())
             .body(
-                CcdCallbackRequest
+                CallbackRequest
                     .builder()
                     .eventId(SOLICITOR_CREATE)
                     .caseDetails(
