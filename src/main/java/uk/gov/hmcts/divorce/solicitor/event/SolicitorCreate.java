@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.solicitor.event.page.ClaimForCosts;
 import uk.gov.hmcts.divorce.solicitor.event.page.FinancialOrders;
 import uk.gov.hmcts.divorce.solicitor.event.page.LanguagePreference;
 import uk.gov.hmcts.divorce.solicitor.event.page.MarriageCertificateDetails;
+import uk.gov.hmcts.divorce.solicitor.event.page.MarriageIrretrievablyBroken;
 import uk.gov.hmcts.divorce.solicitor.event.page.OtherLegalProceedings;
 import uk.gov.hmcts.divorce.solicitor.event.page.RespondentServiceDetails;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutThePetitioner;
@@ -55,7 +56,8 @@ public class SolicitorCreate implements CCDConfig<CaseData, State, UserRole> {
         new OtherLegalProceedings(),
         new FinancialOrders(),
         new ClaimForCosts(),
-        new LanguagePreference()
+        new LanguagePreference(),
+        new MarriageIrretrievablyBroken()
     );
 
     @Autowired
