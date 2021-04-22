@@ -29,6 +29,11 @@ public abstract class FunctionalTestSuite {
     protected static final String TEST_FIRST_NAME = "John";
     protected static final String TEST_LAST_NAME = "Smith";
 
+    protected static final String PETITIONER_FIRST_NAME = "petitionerFirstName";
+    protected static final String PETITIONER_LAST_NAME = "petitionerLastName";
+    protected static final String PETITIONER_EMAIL = "petitionerEmail";
+    protected static final String DIVORCE_OR_DISSOLUTION = "divorceOrDissolution";
+
     @Value("${test-url}")
     protected String testUrl;
 
@@ -52,10 +57,10 @@ public abstract class FunctionalTestSuite {
 
     protected Map<String, Object> caseData() {
         Map<String, Object> caseDataMap = new HashMap<>();
-        caseDataMap.put("petitionerFirstName", TEST_FIRST_NAME);
-        caseDataMap.put("petitionerLastName", TEST_LAST_NAME);
-        caseDataMap.put("divorceOrDissolution", DIVORCE);
-        caseDataMap.put("petitionerEmail", TEST_USER_EMAIL);
+        caseDataMap.put(PETITIONER_FIRST_NAME, TEST_FIRST_NAME);
+        caseDataMap.put(PETITIONER_LAST_NAME, TEST_LAST_NAME);
+        caseDataMap.put(DIVORCE_OR_DISSOLUTION, DIVORCE);
+        caseDataMap.put(PETITIONER_EMAIL, TEST_USER_EMAIL);
         return caseDataMap;
     }
 

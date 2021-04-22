@@ -42,7 +42,7 @@ public class SolicitorCreateTest extends FunctionalTestSuite {
     @Test
     public void shouldUpdateLanguagePreferenceSuccessfullyWhenAboutToStartCallbackIsInvoked()
         throws Exception {
-        Map<String, Object> caseDataWithOrganisationPolicy = new HashMap<>();
+        Map<String, Object> caseDataWithOrganisationPolicy = caseData();
         caseDataWithOrganisationPolicy.put(
             "petitionerOrganisationPolicy",
             OrganisationPolicy
@@ -85,9 +85,8 @@ public class SolicitorCreateTest extends FunctionalTestSuite {
     @Test
     public void shouldUpdateCaseDataWithClaimCostsAndCourtDetailsWhenAboutToSubmitCallbackIsSuccessful()
         throws Exception {
-        Map<String, Object> caseData = new HashMap<>();
+        Map<String, Object> caseData = caseData();
         caseData.put("divorceCostsClaim", YES);
-
 
         Response response = RestAssured
             .given()
