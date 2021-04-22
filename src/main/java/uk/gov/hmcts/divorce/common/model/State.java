@@ -16,6 +16,13 @@ public enum State {
     )
     Draft("Draft"),
 
+    @JsonProperty("AwaitingPayment")
+    @CCD(
+        label = "Awaiting Payment",
+        name = "Awaiting Payment"
+    )
+    AwaitingPayment("AwaitingPayment"),
+
     @JsonProperty("SOTAgreementPayAndSubmitRequired")
     @CCD(
         label = "Statement of Truth, Pay and Submit Required",
