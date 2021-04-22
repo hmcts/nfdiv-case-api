@@ -3,11 +3,11 @@ package uk.gov.hmcts.divorce.testutil;
 import feign.FeignException;
 import feign.Request;
 import feign.Response;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.common.model.CaseDetails;
 import uk.gov.hmcts.divorce.common.model.CcdCallbackRequest;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
@@ -52,8 +52,8 @@ public class TestDataHelper {
             .caseDetails(
                 CaseDetails
                     .builder()
-                    .caseData(caseData)
-                    .caseId(TEST_CASE_ID)
+                    .data(caseData)
+                    .id(TEST_CASE_ID)
                     .build()
             )
             .build();
@@ -66,8 +66,8 @@ public class TestDataHelper {
             .caseDetails(
                 CaseDetails
                     .builder()
-                    .caseData(caseData)
-                    .caseId(TEST_CASE_ID)
+                    .data(caseData)
+                    .id(TEST_CASE_ID)
                     .build()
             )
             .build();

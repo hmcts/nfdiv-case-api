@@ -63,7 +63,7 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
-        final FieldCollectionBuilder<CaseData, EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder =
+        final FieldCollectionBuilder<CaseData, State, EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder =
             addEventConfig(configBuilder);
 
         pages.forEach(page -> page.addTo(fieldCollectionBuilder));
@@ -89,7 +89,7 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
             .build();
     }
 
-    private FieldCollectionBuilder<CaseData, EventBuilder<CaseData, UserRole, State>> addEventConfig(
+    private FieldCollectionBuilder<CaseData, State, EventBuilder<CaseData, UserRole, State>> addEventConfig(
         final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         return configBuilder.event(SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)

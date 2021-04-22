@@ -4,7 +4,7 @@ import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import uk.gov.hmcts.divorce.common.model.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.common.model.CcdCallbackRequest;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 
@@ -34,7 +34,7 @@ public class ServiceAuthValidationTest extends FunctionalTestSuite {
                     .caseDetails(
                         CaseDetails
                             .builder()
-                            .caseData(caseData())
+                            .data(caseData())
                             .build()
                     )
                     .build()
@@ -60,7 +60,7 @@ public class ServiceAuthValidationTest extends FunctionalTestSuite {
                     .caseDetails(
                         CaseDetails
                             .builder()
-                            .caseData(caseData())
+                            .data(caseData())
                             .build()
                     )
                     .build()

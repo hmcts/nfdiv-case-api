@@ -5,9 +5,9 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.common.model.CaseDetails;
-import uk.gov.hmcts.divorce.common.model.CcdCallbackRequest;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
+import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
+import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -30,13 +30,13 @@ public class SaveAndCloseTest extends FunctionalTestSuite {
             .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
             .header(SERVICE_AUTHORIZATION, generateServiceAuthTokenFor(s2sName))
             .body(
-                CcdCallbackRequest
+                CallbackRequest
                     .builder()
                     .eventId(SAVE_AND_CLOSE)
                     .caseDetails(
                         CaseDetails
                             .builder()
-                            .caseData(caseData())
+                            .data(caseData())
                             .build()
                     )
                     .build()
@@ -61,13 +61,13 @@ public class SaveAndCloseTest extends FunctionalTestSuite {
             .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
             .header(SERVICE_AUTHORIZATION, generateServiceAuthTokenFor(s2sName))
             .body(
-                CcdCallbackRequest
+                CallbackRequest
                     .builder()
                     .eventId(SAVE_AND_CLOSE)
                     .caseDetails(
                         CaseDetails
                             .builder()
-                            .caseData(caseDataWithMissingParams)
+                            .data(caseDataWithMissingParams)
                             .build()
                     )
                     .build()
@@ -96,13 +96,13 @@ public class SaveAndCloseTest extends FunctionalTestSuite {
             .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
             .header(SERVICE_AUTHORIZATION, generateServiceAuthTokenFor(s2sName))
             .body(
-                CcdCallbackRequest
+                CallbackRequest
                     .builder()
                     .eventId(SAVE_AND_CLOSE)
                     .caseDetails(
                         CaseDetails
                             .builder()
-                            .caseData(caseDataWithMissingParams)
+                            .data(caseDataWithMissingParams)
                             .build()
                     )
                     .build()

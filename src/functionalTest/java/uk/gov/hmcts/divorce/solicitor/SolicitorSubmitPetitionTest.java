@@ -5,7 +5,7 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
-import uk.gov.hmcts.divorce.common.model.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.common.model.CcdCallbackRequest;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 
@@ -40,8 +40,8 @@ public class SolicitorSubmitPetitionTest extends FunctionalTestSuite {
                     .caseDetails(
                         CaseDetails
                             .builder()
-                            .caseId(createCaseInCcd().getId())
-                            .caseData(caseData())
+                            .id(createCaseInCcd().getId())
+                            .data(caseData())
                             .build()
                     )
                     .build()
