@@ -18,13 +18,13 @@ public class MarriageIrretrievablyBroken implements CcdPageConfiguration {
             .pageLabel("Has the marriage irretrievably broken down (it cannot be saved)?")
             .label(
                 "marriageIrretrievablyBrokenPara-1",
-                ("The marriage must have irretrievably broken down for the petitioner to get a divorce. " +
-                    "This means it cannot be saved."))
+                "The marriage must have irretrievably broken down for the petitioner to get a divorce. "
+                    + "This means it cannot be saved.")
             .mandatory(CaseData::getScreenHasMarriageBroken)
             .label(
                 "MarriageNotIrretrievablyBroken",
-                "The marriage must have irretrievably broken down for the petitioner to get a divorce. " +
-                    "This is the law in England and Wales.",
+                "The marriage must have irretrievably broken down for the petitioner to get a divorce. "
+                    + "This is the law in England and Wales.",
                 "screenHasMarriageBroken=\"No\""
             );
     }
