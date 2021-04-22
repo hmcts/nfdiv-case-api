@@ -68,7 +68,7 @@ In order to test if the application is up, you can call its health endpoint:
   curl http://localhost:4013/health
 ```
 
-You should get a response similar to this:
+You should get a response similar to this::
 
 ```
   {"status":"UP","diskSpace":{"status":"UP","total":249644974080,"free":137188298752,"threshold":10485760}}
