@@ -69,7 +69,7 @@ public class JurisdictionApplyForDivorce implements CcdPageConfiguration {
             )
             .label(
                 "labelResidualJurisdictionBullet-3",
-                "• It would be in the interests of justice for hte court to consider the application "
+                "• It would be in the interests of justice for the court to consider the application "
                     + "(this may apply if, for example, the petitioner's or respondent's home country doesn't "
                     + "allow divorce between same-sex couples)."
             );
