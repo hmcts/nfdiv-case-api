@@ -243,7 +243,7 @@ dependencies {
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-hystrix', version: '2.2.7.RELEASE'
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: '3.0.2'
 
-  implementation group: 'uk.gov.service.notify', name: 'notifications-java-client', version: '3.17.0-RELEASE'
+  implementation group: 'uk.gov.service.notify', name: 'notifications-java-client', version: '3.17.2-RELEASE'
 
   implementation group: 'uk.gov.hmcts.reform', name: 'logging', version: versions.reformsJavaLogging
   implementation group: 'uk.gov.hmcts.reform', name: 'logging-appinsights', version: versions.reformsJavaLogging
