@@ -10,7 +10,7 @@ import uk.gov.hmcts.divorce.common.model.UserRole;
 public class SolSummary implements CcdPageConfiguration {
 
     @Override
-    public void addTo(final FieldCollectionBuilder<CaseData, EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder) {
+    public void addTo(final FieldCollectionBuilder<CaseData, State, EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder) {
 
         fieldCollectionBuilder
             .page("SolSummary")
