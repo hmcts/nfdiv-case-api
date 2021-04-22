@@ -10,7 +10,9 @@ import uk.gov.hmcts.divorce.common.model.UserRole;
 public class JurisdictionApplyForDivorce implements CcdPageConfiguration {
 
     @Override
-    public void addTo(final FieldCollection.FieldCollectionBuilder<CaseData, Event.EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder) {
+    public void addTo(
+        final FieldCollection.FieldCollectionBuilder<CaseData, Event.EventBuilder<CaseData, UserRole, State>>
+            fieldCollectionBuilder) {
 
         fieldCollectionBuilder
             .page("JurisdictionApplyForDivorce")
@@ -27,7 +29,8 @@ public class JurisdictionApplyForDivorce implements CcdPageConfiguration {
                 "The court has legal power to deal with this application because the following applies:")
             .label(
                 "LabelSolicitorOppositeSexRegulations",
-                "Divorce – *Opposite Sex Couple* – Article 3(1) of Council Regulation (EC) No 2201/2003 of 27 November 2003"
+                "Divorce – *Opposite Sex Couple* – Article 3(1) of Council Regulation (EC) No 2201/2003"
+                    + "of 27 November 2003"
             )
             .optional(CaseData::getJurisdictionConnections)
             .label(
@@ -48,11 +51,13 @@ public class JurisdictionApplyForDivorce implements CcdPageConfiguration {
             )
             .label(
                 "labelResidualJurisdictionPara-4",
-                "neither the petitioner nor the respondent is able to apply for a divorce in another member state of the EU on the basis of any of the other connections."
+                "neither the petitioner nor the respondent is able to apply for a divorce in another member state "
+                    + "of the EU on the basis of any of the other connections."
             )
             .label(
                 "labelResidualJurisdictionPara-5",
-                "In addition, in the case of a same-sex marriage, the court may have residual jurisdiction if the following apply:"
+                "In addition, in the case of a same-sex marriage, "
+                    + "the court may have residual jurisdiction if the following apply:"
             )
             .label(
                 "labelResidualJurisdictionBullet-1",
@@ -64,8 +69,9 @@ public class JurisdictionApplyForDivorce implements CcdPageConfiguration {
             )
             .label(
                 "labelResidualJurisdictionBullet-3",
-                "• It would be in the interests of justice for hte court to consider the application " +
-                    "(this may apply if, for example, the petitioner's or respondent's home country doesn't allow divorce between same-sex couples)."
+                "• It would be in the interests of justice for hte court to consider the application "
+                    + "(this may apply if, for example, the petitioner's or respondent's home country doesn't "
+                    + "allow divorce between same-sex couples)."
             );
     }
 }
