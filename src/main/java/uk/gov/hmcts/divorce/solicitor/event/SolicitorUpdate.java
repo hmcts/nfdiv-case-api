@@ -41,13 +41,13 @@ public class SolicitorUpdate implements CCDConfig<CaseData, State, UserRole> {
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
-        final FieldCollectionBuilder<CaseData, EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder =
+        final FieldCollectionBuilder<CaseData, State, EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder =
             addEventConfig(configBuilder);
 
         pages.forEach(page -> page.addTo(fieldCollectionBuilder));
     }
 
-    private FieldCollectionBuilder<CaseData, EventBuilder<CaseData, UserRole, State>> addEventConfig(
+    private FieldCollectionBuilder<CaseData, State, EventBuilder<CaseData, UserRole, State>> addEventConfig(
         final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         return configBuilder

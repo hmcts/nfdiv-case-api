@@ -8,5 +8,5 @@ import uk.gov.hmcts.divorce.common.model.UserRole;
 
 public interface CcdPageConfiguration {
 
-    void addTo(final FieldCollectionBuilder<CaseData, EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder);
+    void addTo(final FieldCollectionBuilder<CaseData, State, EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder);
 }
