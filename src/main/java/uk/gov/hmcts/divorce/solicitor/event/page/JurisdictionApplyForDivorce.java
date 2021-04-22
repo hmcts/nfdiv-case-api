@@ -11,7 +11,7 @@ public class JurisdictionApplyForDivorce implements CcdPageConfiguration {
 
     @Override
     public void addTo(
-        final FieldCollection.FieldCollectionBuilder<CaseData, Event.EventBuilder<CaseData, UserRole, State>>
+        final FieldCollection.FieldCollectionBuilder<CaseData, State, Event.EventBuilder<CaseData, UserRole, State>>
             fieldCollectionBuilder) {
 
         fieldCollectionBuilder
