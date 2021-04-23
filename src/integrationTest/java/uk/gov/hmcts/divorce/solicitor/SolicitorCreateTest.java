@@ -11,7 +11,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
-import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
 
 import java.io.File;
@@ -19,6 +18,8 @@ import java.io.IOException;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.HashMap;
+import java.util.Map;
 
 import static java.nio.file.Files.readAllBytes;
 import static org.mockito.Mockito.when;
@@ -29,6 +30,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.util.ResourceUtils.getFile;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_COSTS_CLAIM;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_OR_DISSOLUTION;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_EMAIL;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_FIRST_NAME;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_LAST_NAME;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreate.SOLICITOR_CREATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
@@ -95,13 +101,13 @@ class SolicitorCreateTest {
         return new String(readAllBytes(issueFeesResponseJsonFile.toPath()));
     }
 
-    private CaseData caseData() {
-        return CaseData.builder()
-            .petitionerFirstName(TEST_FIRST_NAME)
-            .petitionerLastName(TEST_LAST_NAME)
-            .petitionerEmail(TEST_USER_EMAIL)
-            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
-            .divorceCostsClaim(YES)
-            .build();
+    private Map<String, Object> caseData() {
+        Map<String, Object> caseData = new HashMap<>();
+        caseData.put(PETITIONER_FIRST_NAME, TEST_FIRST_NAME);
+        caseData.put(PETITIONER_LAST_NAME, TEST_LAST_NAME);
+        caseData.put(PETITIONER_EMAIL, TEST_USER_EMAIL);
+        caseData.put(DIVORCE_OR_DISSOLUTION, DivorceOrDissolution.DIVORCE);
+        caseData.put(DIVORCE_COSTS_CLAIM, YES);
+        return caseData;
     }
 }

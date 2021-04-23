@@ -5,9 +5,9 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
-import uk.gov.hmcts.divorce.common.model.CaseDetails;
-import uk.gov.hmcts.divorce.common.model.CcdCallbackRequest;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
+import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
+import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
@@ -34,14 +34,14 @@ public class SolicitorSubmitPetitionTest extends FunctionalTestSuite {
             .header(SERVICE_AUTHORIZATION, generateServiceAuthTokenFor(s2sName))
             .header(HttpHeaders.AUTHORIZATION, generateIdamTokenForSolicitor())
             .body(
-                CcdCallbackRequest
+                CallbackRequest
                     .builder()
                     .eventId(SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)
                     .caseDetails(
                         CaseDetails
                             .builder()
-                            .caseId(createCaseInCcd().getId())
-                            .caseData(caseData())
+                            .id(createCaseInCcd().getId())
+                            .data(caseData())
                             .build()
                     )
                     .build()

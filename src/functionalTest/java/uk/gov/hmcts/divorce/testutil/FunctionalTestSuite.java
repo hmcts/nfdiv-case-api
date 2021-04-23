@@ -5,7 +5,6 @@ import io.restassured.response.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.TestPropertySource;
-import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
@@ -13,6 +12,7 @@ import uk.gov.hmcts.reform.ccd.client.model.Event;
 import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
 import uk.gov.hmcts.reform.idam.client.IdamClient;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,6 +20,10 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.divorce.ccd.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.ccd.NoFaultDivorce.JURISDICTION;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_OR_DISSOLUTION;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_EMAIL;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_FIRST_NAME;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_LAST_NAME;
 import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreate.SOLICITOR_CREATE;
 
@@ -50,13 +54,13 @@ public abstract class FunctionalTestSuite {
     @Autowired
     private CoreCaseDataApi coreCaseDataApi;
 
-    protected CaseData caseData() {
-        return CaseData.builder()
-            .petitionerFirstName(TEST_FIRST_NAME)
-            .petitionerLastName(TEST_LAST_NAME)
-            .divorceOrDissolution(DIVORCE)
-            .petitionerEmail(TEST_USER_EMAIL)
-            .build();
+    protected Map<String, Object> caseData() {
+        Map<String, Object> caseDataMap = new HashMap<>();
+        caseDataMap.put(PETITIONER_FIRST_NAME, TEST_FIRST_NAME);
+        caseDataMap.put(PETITIONER_LAST_NAME, TEST_LAST_NAME);
+        caseDataMap.put(DIVORCE_OR_DISSOLUTION, DIVORCE);
+        caseDataMap.put(PETITIONER_EMAIL, TEST_USER_EMAIL);
+        return caseDataMap;
     }
 
     protected String generateServiceAuthTokenFor(String s2sName) {
