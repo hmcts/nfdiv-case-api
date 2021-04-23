@@ -19,22 +19,22 @@ import java.util.List;
 public class PetitionValidationService {
 
     @Autowired
-    @Qualifier("RuleBook")
-    private RuleBook<List<String>> ruleBook;
+    @Qualifier("SubmittedCaseDataRuleBook")
+    private RuleBook<List<String>> submittedCaseDataRuleBook;
 
     public ValidationResponse validateCaseData(CaseData caseData) {
         log.info("Validating petitioner case data");
         NameValueReferableMap<CaseData> facts = new FactMap<>();
 
         facts.setValue("caseData", caseData);
-        ruleBook.setDefaultResult(new ArrayList<>());
-        ruleBook.run(facts);
+        submittedCaseDataRuleBook.setDefaultResult(new ArrayList<>());
+        submittedCaseDataRuleBook.run(facts);
 
         ValidationResponse validationResponse = ValidationResponse.builder()
             .validationStatus(ValidationStatus.SUCCESS.getValue())
             .build();
 
-        ruleBook.getResult().map(Result::getValue)
+        submittedCaseDataRuleBook.getResult().map(Result::getValue)
             .ifPresent(result -> errorResponse(validationResponse, result));
 
         return validationResponse;

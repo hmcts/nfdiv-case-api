@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -24,6 +25,8 @@ import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 public class PetitionerStatementOfTruth implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String PETITIONER_STATEMENT_OF_TRUTH = "petitioner-statement-of-truth";
+
+    @Autowired
     private PetitionValidationService petitionValidationService;
 
     @Override

@@ -11,12 +11,12 @@ import java.util.List;
 @Configuration
 public class RulesConfig {
 
-    public static final String RULEBOOK = "uk.gov.hmcts.divorce.citizen.validation.rules.caseData";
+    public static final String SUBMITTEDCASEDATARULEBOOK = "uk.gov.hmcts.divorce.citizen.validation.rules.caseData";
 
     @SuppressWarnings("unchecked")
-    @Bean("RuleBook")
-    public RuleBook<List<String>> ruleBook() {
-        return new RuleBookRunner(RULEBOOK);
+    @Bean("SubmittedCaseDataRuleBook")
+    public RuleBook<List<String>> submittedCaseDataRuleBook() {
+        return new RuleBookRunner(SUBMITTEDCASEDATARULEBOOK);
     }
 
 
