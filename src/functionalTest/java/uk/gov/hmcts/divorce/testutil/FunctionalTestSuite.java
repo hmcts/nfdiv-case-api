@@ -20,6 +20,10 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.divorce.ccd.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.ccd.NoFaultDivorce.JURISDICTION;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_OR_DISSOLUTION;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_EMAIL;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_FIRST_NAME;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_LAST_NAME;
 import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreate.SOLICITOR_CREATE;
 
@@ -28,11 +32,6 @@ public abstract class FunctionalTestSuite {
     protected static final String TEST_USER_EMAIL = "simulate-delivered@notifications.service.gov.uk";
     protected static final String TEST_FIRST_NAME = "John";
     protected static final String TEST_LAST_NAME = "Smith";
-
-    protected static final String PETITIONER_FIRST_NAME = "petitionerFirstName";
-    protected static final String PETITIONER_LAST_NAME = "petitionerLastName";
-    protected static final String PETITIONER_EMAIL = "petitionerEmail";
-    protected static final String DIVORCE_OR_DISSOLUTION = "divorceOrDissolution";
 
     @Value("${test-url}")
     protected String testUrl;

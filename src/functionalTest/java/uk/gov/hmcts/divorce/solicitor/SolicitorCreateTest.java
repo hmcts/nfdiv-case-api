@@ -26,6 +26,8 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_COSTS_CLAIM;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_ORGANISATION_POLICY;
 import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreate.SOLICITOR_CREATE;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.ABOUT_TO_START_CALLBACK_URL;
@@ -43,7 +45,7 @@ public class SolicitorCreateTest extends FunctionalTestSuite {
         throws Exception {
         Map<String, Object> caseDataWithOrganisationPolicy = caseData();
         caseDataWithOrganisationPolicy.put(
-            "petitionerOrganisationPolicy",
+            PETITIONER_ORGANISATION_POLICY,
             OrganisationPolicy
                 .<UserRole>builder()
                 .orgPolicyCaseAssignedRole(UserRole.PETITIONER_SOLICITOR)
@@ -85,7 +87,7 @@ public class SolicitorCreateTest extends FunctionalTestSuite {
     public void shouldUpdateCaseDataWithClaimCostsAndCourtDetailsWhenAboutToSubmitCallbackIsSuccessful()
         throws Exception {
         Map<String, Object> caseData = caseData();
-        caseData.put("divorceCostsClaim", YES);
+        caseData.put(DIVORCE_COSTS_CLAIM, YES);
 
         Response response = RestAssured
             .given()
