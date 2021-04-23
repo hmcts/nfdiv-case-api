@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
@@ -18,12 +17,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreate.SOLICITOR_CREATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -47,19 +43,6 @@ class SolicitorCreateTest {
         solicitorCreate.configure(configBuilder);
 
         assertThat(configBuilder.getEvents().get(0).getEventID(), is(SOLICITOR_CREATE));
-    }
-
-    @Test
-    public void shouldSetDefaultCaseDataValues() {
-        final CaseData caseData = caseData();
-        caseData.setLanguagePreferenceWelsh(YES);
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> result = solicitorCreate.aboutToStart(details);
-
-        assertEquals(result.getData().getLanguagePreferenceWelsh(), NO);
     }
 
     @Test

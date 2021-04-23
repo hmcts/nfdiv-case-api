@@ -8,12 +8,9 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpHeaders;
-import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.CaseDetails;
 import uk.gov.hmcts.divorce.common.model.CcdCallbackRequest;
-import uk.gov.hmcts.divorce.common.model.UserRole;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 
 import java.time.LocalDate;
@@ -28,7 +25,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreate.SOLICITOR_CREATE;
-import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.ABOUT_TO_START_CALLBACK_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.ABOUT_TO_SUBMIT_CALLBACK_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedCcdCallbackResponse;
 
@@ -37,50 +33,6 @@ public class SolicitorCreateTest extends FunctionalTestSuite {
 
     @Autowired
     ObjectMapper mapper;
-
-    @Test
-    public void shouldUpdateLanguagePreferenceSuccessfullyWhenAboutToStartCallbackIsInvoked()
-        throws Exception {
-        CaseData caseDataWithOrganisationPolicy = caseData()
-            .toBuilder()
-            .petitionerOrganisationPolicy(
-                OrganisationPolicy
-                    .<UserRole>builder()
-                    .orgPolicyCaseAssignedRole(UserRole.PETITIONER_SOLICITOR)
-                    .build()
-            )
-            .build();
-
-        Response response = RestAssured
-            .given()
-            .relaxedHTTPSValidation()
-            .baseUri(testUrl)
-            .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-            .header(SERVICE_AUTHORIZATION, generateServiceAuthTokenFor(s2sName))
-            .header(HttpHeaders.AUTHORIZATION, generateIdamTokenForSolicitor())
-            .body(
-                CcdCallbackRequest
-                    .builder()
-                    .eventId(SOLICITOR_CREATE)
-                    .caseDetails(
-                        CaseDetails
-                            .builder()
-                            .caseData(caseDataWithOrganisationPolicy)
-                            .build()
-                    )
-                    .build()
-            )
-            .when()
-            .post(ABOUT_TO_START_CALLBACK_URL);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK.value());
-
-        assertEquals(
-            expectedCcdCallbackResponse("classpath:responses/ccd-callback-set-language-preference.json"),
-            response.asString(),
-            STRICT
-        );
-    }
 
     @Test
     public void shouldUpdateCaseDataWithClaimCostsAndCourtDetailsWhenAboutToSubmitCallbackIsSuccessful()
