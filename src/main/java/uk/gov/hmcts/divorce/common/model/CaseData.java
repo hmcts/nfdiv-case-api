@@ -510,6 +510,7 @@ public class CaseData {
 
     @CCD(
         label = "Jurisdiction connections",
+        hint = "Tick all the reasons that apply:",
         access = {DefaultAccess.class}
     )
     private Set<JurisdictionConnections> jurisdictionConnections;
