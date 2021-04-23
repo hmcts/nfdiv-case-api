@@ -16,6 +16,7 @@ public class SolAboutTheRespondent implements CcdPageConfiguration {
                 "LabelSolAboutEditingApplication-AboutRespondent",
                 "You can make changes at the end of your application.")
             .mandatory(CaseData::getRespondentFirstName)
+            .optional(CaseData::getRespondentMiddleName)
             .mandatory(CaseData::getRespondentLastName)
             .mandatory(CaseData::getRespondentNameAsOnMarriageCertificate)
             .optional(

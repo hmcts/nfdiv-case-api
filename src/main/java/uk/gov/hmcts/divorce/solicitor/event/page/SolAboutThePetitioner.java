@@ -16,6 +16,7 @@ public class SolAboutThePetitioner implements CcdPageConfiguration {
                 "LabelSolAboutEditingApplication-AboutPetitioner",
                 "You can make changes at the end of your application.")
             .mandatory(CaseData::getPetitionerFirstName)
+            .optional(CaseData::getPetitionerMiddleName)
             .mandatory(CaseData::getPetitionerLastName)
             .mandatory(CaseData::getPetitionerNameDifferentToMarriageCertificate)
             .label(
