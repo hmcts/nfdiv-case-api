@@ -1,20 +1,15 @@
 package uk.gov.hmcts.divorce.solicitor.event.page;
 
-import uk.gov.hmcts.ccd.sdk.api.Event;
-import uk.gov.hmcts.ccd.sdk.api.FieldCollection;
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
+import uk.gov.hmcts.divorce.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.common.model.State;
-import uk.gov.hmcts.divorce.common.model.UserRole;
 
 public class JurisdictionApplyForDivorce implements CcdPageConfiguration {
 
     @Override
-    public void addTo(
-        final FieldCollection.FieldCollectionBuilder<CaseData, State, Event.EventBuilder<CaseData, UserRole, State>>
-            fieldCollectionBuilder) {
+    public void addTo(final PageBuilder pageBuilder) {
 
-        fieldCollectionBuilder
+        pageBuilder
             .page("JurisdictionApplyForDivorce")
             .pageLabel("Jurisdiction - Apply for a divorce")
             .label(
