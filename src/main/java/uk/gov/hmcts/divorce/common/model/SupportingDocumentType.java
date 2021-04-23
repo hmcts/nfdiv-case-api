@@ -7,7 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 
 @Getter
 @AllArgsConstructor
-public enum SupportingDocuments implements HasLabel {
+public enum SupportingDocumentType implements HasLabel {
 
     @JsonProperty("unionCertificate")
     UNION_CERTIFICATE("Union Certificate"),
