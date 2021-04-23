@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.notification;
 
 public final class NotificationConstants {
     public static final String FIRST_NAME = "first name";
-    public static final String MIDDLE_NAME = "middle name";
     public static final String LAST_NAME = "last name";
     public static final String RELATIONSHIP = "relationship";
 
