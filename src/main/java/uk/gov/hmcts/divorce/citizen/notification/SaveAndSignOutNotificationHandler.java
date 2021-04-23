@@ -18,6 +18,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_AP
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FIRST_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.LAST_NAME;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.RELATIONSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.RELATIONSHIP_COURT_HEADER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
@@ -36,6 +37,7 @@ public class SaveAndSignOutNotificationHandler {
     public void notifyApplicant(CaseData caseData) {
         Map<String, String> templateVars = new HashMap<>();
         templateVars.put(FIRST_NAME, caseData.getPetitionerFirstName());
+        templateVars.put(MIDDLE_NAME, caseData.getPetitionerMiddleName());
         templateVars.put(LAST_NAME, caseData.getPetitionerLastName());
 
         Map<String, Map<String, String>> configTemplateVars = emailTemplatesConfig.getTemplateVars();

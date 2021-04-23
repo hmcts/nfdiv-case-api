@@ -27,6 +27,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 
 public class TestDataHelper {
@@ -38,6 +39,7 @@ public class TestDataHelper {
     public static CaseData caseData() {
         return CaseData.builder()
             .petitionerFirstName(TEST_FIRST_NAME)
+            .petitionerMiddleName(TEST_MIDDLE_NAME)
             .petitionerLastName(TEST_LAST_NAME)
             .petitionerEmail(TEST_USER_EMAIL)
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
@@ -47,6 +49,7 @@ public class TestDataHelper {
     public static Map<String, Object> caseDataMap() {
         Map<String, Object> caseDataMap = new HashMap<>();
         caseDataMap.put("petitionerFirstName", TEST_FIRST_NAME);
+        caseDataMap.put("petitionerMiddleName", TEST_MIDDLE_NAME);
         caseDataMap.put("petitionerLastName", TEST_LAST_NAME);
         caseDataMap.put("divorceOrDissolution", DIVORCE);
         caseDataMap.put("petitionerEmail", TEST_USER_EMAIL);
