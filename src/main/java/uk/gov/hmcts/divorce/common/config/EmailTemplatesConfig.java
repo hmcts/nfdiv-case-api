@@ -20,5 +20,5 @@ public class EmailTemplatesConfig {
     private final Map<LanguagePreference, Map<String, String>> templates = new EnumMap<>(LanguagePreference.class);
 
     @NotNull
-    private final Map<String, Map<String, String>> templateVars = new HashMap<>();
+    private final Map<String, String> templateVars = new HashMap<>();
 }
