@@ -4,16 +4,20 @@ import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.common.model.CaseDetails;
-import uk.gov.hmcts.divorce.common.model.CcdCallbackRequest;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
+import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
+import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_OR_DISSOLUTION;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_EMAIL;
 import static uk.gov.hmcts.divorce.citizen.event.SaveAndClose.SAVE_AND_CLOSE;
 import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
@@ -30,13 +34,13 @@ public class SaveAndCloseTest extends FunctionalTestSuite {
             .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
             .header(SERVICE_AUTHORIZATION, generateServiceAuthTokenFor(s2sName))
             .body(
-                CcdCallbackRequest
+                CallbackRequest
                     .builder()
                     .eventId(SAVE_AND_CLOSE)
                     .caseDetails(
                         CaseDetails
                             .builder()
-                            .caseData(caseData())
+                            .data(caseData())
                             .build()
                     )
                     .build()
@@ -49,10 +53,9 @@ public class SaveAndCloseTest extends FunctionalTestSuite {
 
     @Test
     public void shouldFailWithBadRequestErrorWhenFirstAndLastNamesAreMissing() {
-        CaseData caseDataWithMissingParams = CaseData.builder()
-            .divorceOrDissolution(DIVORCE)
-            .petitionerEmail(TEST_USER_EMAIL)
-            .build();
+        Map<String, Object> caseDataMapWithMissingParams = new HashMap<>();
+        caseDataMapWithMissingParams.put(DIVORCE_OR_DISSOLUTION, DIVORCE);
+        caseDataMapWithMissingParams.put(PETITIONER_EMAIL, TEST_USER_EMAIL);
 
         Response response = RestAssured
             .given()
@@ -61,13 +64,13 @@ public class SaveAndCloseTest extends FunctionalTestSuite {
             .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
             .header(SERVICE_AUTHORIZATION, generateServiceAuthTokenFor(s2sName))
             .body(
-                CcdCallbackRequest
+                CallbackRequest
                     .builder()
                     .eventId(SAVE_AND_CLOSE)
                     .caseDetails(
                         CaseDetails
                             .builder()
-                            .caseData(caseDataWithMissingParams)
+                            .data(caseDataMapWithMissingParams)
                             .build()
                     )
                     .build()
@@ -85,9 +88,8 @@ public class SaveAndCloseTest extends FunctionalTestSuite {
 
     @Test
     public void shouldFailValidationErrorWhenEmailIsMissing() {
-        CaseData caseDataWithMissingParams = CaseData.builder()
-            .divorceOrDissolution(DIVORCE)
-            .build();
+        Map<String, Object> caseDataMapWithMissingParams = new HashMap<>();
+        caseDataMapWithMissingParams.put(DIVORCE_OR_DISSOLUTION, DIVORCE);
 
         Response response = RestAssured
             .given()
@@ -96,13 +98,13 @@ public class SaveAndCloseTest extends FunctionalTestSuite {
             .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
             .header(SERVICE_AUTHORIZATION, generateServiceAuthTokenFor(s2sName))
             .body(
-                CcdCallbackRequest
+                CallbackRequest
                     .builder()
                     .eventId(SAVE_AND_CLOSE)
                     .caseDetails(
                         CaseDetails
                             .builder()
-                            .caseData(caseDataWithMissingParams)
+                            .data(caseDataMapWithMissingParams)
                             .build()
                     )
                     .build()

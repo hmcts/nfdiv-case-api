@@ -64,7 +64,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataMap;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFeeResponse;
 
 @ExtendWith(SpringExtension.class)
@@ -149,7 +149,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(TestConstants.AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseData(), SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)))
+            .content(objectMapper.writeValueAsString(callbackRequest(caseDataMap(), SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
@@ -171,7 +171,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(TestConstants.AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseData(), SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)))
+            .content(objectMapper.writeValueAsString(callbackRequest(caseDataMap(), SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isNotFound()
@@ -196,7 +196,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(TestConstants.AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseData(), SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)))
+            .content(objectMapper.writeValueAsString(callbackRequest(caseDataMap(), SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isUnauthorized()
@@ -229,7 +229,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(TestConstants.AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseData(), SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)))
+            .content(objectMapper.writeValueAsString(callbackRequest(caseDataMap(), SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isForbidden()

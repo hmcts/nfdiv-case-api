@@ -6,18 +6,18 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
-import uk.gov.hmcts.ccd.sdk.api.Event.EventBuilder;
-import uk.gov.hmcts.ccd.sdk.api.FieldCollection.FieldCollectionBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
+import uk.gov.hmcts.divorce.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.ClaimForCosts;
 import uk.gov.hmcts.divorce.solicitor.event.page.FinancialOrders;
+import uk.gov.hmcts.divorce.solicitor.event.page.JurisdictionApplyForDivorce;
 import uk.gov.hmcts.divorce.solicitor.event.page.LanguagePreference;
 import uk.gov.hmcts.divorce.solicitor.event.page.MarriageCertificateDetails;
+import uk.gov.hmcts.divorce.solicitor.event.page.MarriageIrretrievablyBroken;
 import uk.gov.hmcts.divorce.solicitor.event.page.OtherLegalProceedings;
 import uk.gov.hmcts.divorce.solicitor.event.page.RespondentServiceDetails;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutThePetitioner;
@@ -52,10 +52,12 @@ public class SolicitorCreate implements CCDConfig<CaseData, State, UserRole> {
         new SolAboutTheRespondent(),
         new RespondentServiceDetails(),
         new MarriageCertificateDetails(),
+        new JurisdictionApplyForDivorce(),
         new OtherLegalProceedings(),
         new FinancialOrders(),
         new ClaimForCosts(),
-        new LanguagePreference()
+        new LanguagePreference(),
+        new MarriageIrretrievablyBroken()
     );
 
     @Autowired
@@ -66,42 +68,8 @@ public class SolicitorCreate implements CCDConfig<CaseData, State, UserRole> {
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-
-        final FieldCollectionBuilder<CaseData, EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder =
-            addEventConfig(configBuilder);
-
-        pages.forEach(page -> page.addTo(fieldCollectionBuilder));
-    }
-
-    private FieldCollectionBuilder<CaseData, EventBuilder<CaseData, UserRole, State>> addEventConfig(
-        final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-
-        return configBuilder
-            .event(SOLICITOR_CREATE)
-            .initialState(SOTAgreementPayAndSubmitRequired)
-            .name("Apply for a divorce")
-            .description("Apply for a divorce")
-            .displayOrder(1)
-            .showSummary()
-            .endButtonLabel("Save Petition")
-            .aboutToStartCallback(this::aboutToStart)
-            .aboutToSubmitCallback(this::aboutToSubmit)
-            .explicitGrants()
-            .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_SOLICITOR)
-            .grant(READ_UPDATE, CASEWORKER_DIVORCE_SUPERUSER)
-            .grant(READ, CASEWORKER_DIVORCE_COURTADMIN_BETA, CASEWORKER_DIVORCE_COURTADMIN, CASEWORKER_DIVORCE_COURTADMIN_LA)
-            .fields();
-    }
-
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(CaseDetails<CaseData, State> details) {
-        log.info("Solicitor create petition about to start callback invoked");
-
-        CaseData data = details.getData();
-        data.setLanguagePreferenceWelsh(YesOrNo.NO);
-
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(data)
-            .build();
+        final PageBuilder pageBuilder = addEventConfig(configBuilder);
+        pages.forEach(page -> page.addTo(pageBuilder));
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
@@ -117,5 +85,23 @@ public class SolicitorCreate implements CCDConfig<CaseData, State, UserRole> {
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
             .build();
+    }
+
+    private PageBuilder addEventConfig(
+        final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+
+        return new PageBuilder(configBuilder
+            .event(SOLICITOR_CREATE)
+            .initialState(SOTAgreementPayAndSubmitRequired)
+            .name("Apply for a divorce")
+            .description("Apply for a divorce")
+            .displayOrder(1)
+            .showSummary()
+            .endButtonLabel("Save Petition")
+            .aboutToSubmitCallback(this::aboutToSubmit)
+            .explicitGrants()
+            .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_SOLICITOR)
+            .grant(READ_UPDATE, CASEWORKER_DIVORCE_SUPERUSER)
+            .grant(READ, CASEWORKER_DIVORCE_COURTADMIN_BETA, CASEWORKER_DIVORCE_COURTADMIN, CASEWORKER_DIVORCE_COURTADMIN_LA));
     }
 }

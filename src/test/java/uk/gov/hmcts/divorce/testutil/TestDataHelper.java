@@ -7,12 +7,13 @@ import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.common.model.CaseDetails;
-import uk.gov.hmcts.divorce.common.model.CcdCallbackRequest;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
+import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
+import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import static feign.Request.HttpMethod.GET;
@@ -20,11 +21,13 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static uk.gov.hmcts.ccd.sdk.type.Fee.getValueInPence;
+import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 
 public class TestDataHelper {
@@ -36,38 +39,49 @@ public class TestDataHelper {
     public static CaseData caseData() {
         return CaseData.builder()
             .petitionerFirstName(TEST_FIRST_NAME)
+            .petitionerMiddleName(TEST_MIDDLE_NAME)
             .petitionerLastName(TEST_LAST_NAME)
             .petitionerEmail(TEST_USER_EMAIL)
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .build();
     }
 
-    public static CcdCallbackRequest callbackRequest() {
-        return callbackRequest(caseData());
+    public static Map<String, Object> caseDataMap() {
+        Map<String, Object> caseDataMap = new HashMap<>();
+        caseDataMap.put("petitionerFirstName", TEST_FIRST_NAME);
+        caseDataMap.put("petitionerMiddleName", TEST_MIDDLE_NAME);
+        caseDataMap.put("petitionerLastName", TEST_LAST_NAME);
+        caseDataMap.put("divorceOrDissolution", DIVORCE);
+        caseDataMap.put("petitionerEmail", TEST_USER_EMAIL);
+        return caseDataMap;
     }
 
-    public static CcdCallbackRequest callbackRequest(final CaseData caseData) {
-        return CcdCallbackRequest
+    public static CallbackRequest callbackRequest() {
+        return callbackRequest(caseDataMap());
+    }
+
+    public static CallbackRequest callbackRequest(final Map<String, Object> caseData) {
+        return CallbackRequest
             .builder()
             .caseDetails(
                 CaseDetails
                     .builder()
-                    .caseData(caseData)
-                    .caseId(TEST_CASE_ID)
+                    .data(caseData)
+                    .id(TEST_CASE_ID)
                     .build()
             )
             .build();
     }
 
-    public static CcdCallbackRequest callbackRequest(final CaseData caseData, String eventId) {
-        return CcdCallbackRequest
+    public static CallbackRequest callbackRequest(final Map<String, Object> caseData, String eventId) {
+        return CallbackRequest
             .builder()
             .eventId(eventId)
             .caseDetails(
                 CaseDetails
                     .builder()
-                    .caseData(caseData)
-                    .caseId(TEST_CASE_ID)
+                    .data(caseData)
+                    .id(TEST_CASE_ID)
                     .build()
             )
             .build();

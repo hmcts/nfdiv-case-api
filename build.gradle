@@ -22,13 +22,17 @@ plugins {
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'org.springframework.boot' version '2.4.4'
   id 'com.github.ben-manes.versions' version '0.38.0'
-  id 'hmcts.ccd.sdk' version '0.19.18'
+  id 'hmcts.ccd.sdk' version '0.19.20'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
 
 group = 'uk.gov.hmcts'
 version = '0.0.1'
+
+ccd {
+  configDir = file('ccd-definitions/definitions')
+}
 
 sourceSets {
   functionalTest {
@@ -353,7 +357,7 @@ functional {
 generateTypeScript {
   jsonLibrary = 'jackson2'
   classPatterns = [
-    'uk.gov.hmcts.divorce.ccd.model.*',
+    'uk.gov.hmcts.divorce.**.model.*',
     'uk.gov.hmcts.ccd.sdk.type.*',
   ]
   outputFile = 'build/ts/index.ts'

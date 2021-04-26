@@ -6,11 +6,10 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
-import uk.gov.hmcts.ccd.sdk.api.Event.EventBuilder;
-import uk.gov.hmcts.ccd.sdk.api.FieldCollection.FieldCollectionBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
+import uk.gov.hmcts.divorce.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
@@ -62,11 +61,8 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-
-        final FieldCollectionBuilder<CaseData, EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder =
-            addEventConfig(configBuilder);
-
-        pages.forEach(page -> page.addTo(fieldCollectionBuilder));
+        final PageBuilder pageBuilder = addEventConfig(configBuilder);
+        pages.forEach(page -> page.addTo(pageBuilder));
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
@@ -89,10 +85,9 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
             .build();
     }
 
-    private FieldCollectionBuilder<CaseData, EventBuilder<CaseData, UserRole, State>> addEventConfig(
-        final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+    private PageBuilder addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
-        return configBuilder.event(SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)
+        return new PageBuilder(configBuilder.event(SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)
             .forStates(SOTAgreementPayAndSubmitRequired)
             .name("Case submission")
             .description("Agree Statement of Truth, Pay & Submit")
@@ -106,7 +101,6 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
                 CASEWORKER_DIVORCE_COURTADMIN_BETA,
                 CASEWORKER_DIVORCE_COURTADMIN,
                 CASEWORKER_DIVORCE_SUPERUSER,
-                CASEWORKER_DIVORCE_COURTADMIN_LA)
-            .fields();
+                CASEWORKER_DIVORCE_COURTADMIN_LA));
     }
 }

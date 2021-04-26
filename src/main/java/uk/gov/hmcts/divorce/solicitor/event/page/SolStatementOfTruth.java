@@ -1,18 +1,15 @@
 package uk.gov.hmcts.divorce.solicitor.event.page;
 
-import uk.gov.hmcts.ccd.sdk.api.Event.EventBuilder;
-import uk.gov.hmcts.ccd.sdk.api.FieldCollection.FieldCollectionBuilder;
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
+import uk.gov.hmcts.divorce.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.common.model.State;
-import uk.gov.hmcts.divorce.common.model.UserRole;
 
 public class SolStatementOfTruth implements CcdPageConfiguration {
 
     @Override
-    public void addTo(final FieldCollectionBuilder<CaseData, EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder) {
+    public void addTo(final PageBuilder pageBuilder) {
 
-        fieldCollectionBuilder
+        pageBuilder
             .page("SolStatementOfTruth")
             .pageLabel("Statement of truth and reconciliation")
             .label("LabelSolStatementOfTruthPara-1", "## The petitioner is applying to the court")
