@@ -577,6 +577,22 @@ public class CaseData {
     private Set<ClaimsCostFrom> divorceClaimFrom;
 
     @CCD(
+        label = "Uploaded supporting documents",
+        hint = "Such as marriage/civil union certificate, proof of name changes, certified translations etc.",
+        typeOverride = Collection,
+        typeParameterOverride = "DivorceDocument",
+        access = {DefaultAccess.class}
+    )
+    private List<DivorceDocument> supportingDocumentMetadata;
+
+
+    @CCD(
+        label = "Cannot upload supporting documents",
+        access = {DefaultAccess.class}
+    )
+    private Set<SupportingDocumentType> cannotUploadSupportingDocument;
+
+    @CCD(
         label = "Created date",
         hint = "Date case was created",
         access = {DefaultAccess.class}
