@@ -41,6 +41,12 @@ import static uk.gov.hmcts.divorce.common.model.LanguagePreference.WELSH;
 public class CaseData {
 
     @CCD(
+        label = "Does the petitioner want to apply as a sole applicant?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo soleOrJoinApplicant;
+
+    @CCD(
         label = "Divorce or Dissolution?",
         access = {DefaultAccess.class}
     )
