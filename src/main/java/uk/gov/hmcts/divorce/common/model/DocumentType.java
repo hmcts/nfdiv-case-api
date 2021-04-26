@@ -108,10 +108,10 @@ public enum DocumentType implements HasLabel {
     DECREE_NISI_APPLICATION("Decree Nisi application (D84/D80)"),
 
     @JsonProperty("decreeAbsoluteGranted")
-    DECREE_ABSOLUTE_GRANTED(""),
+    DECREE_ABSOLUTE_GRANTED("Decree Absolute Granted"),
 
     @JsonProperty("decreeAbsoluteApplication")
-    DECREE_ABSOLUTE_APPLICATION(""),
+    DECREE_ABSOLUTE_APPLICATION("Decree Absolute application"),
 
     @JsonProperty("costsOrder")
     COSTS_ORDER("Costs Order"),
