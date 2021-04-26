@@ -21,6 +21,7 @@ import uk.gov.hmcts.divorce.common.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -699,10 +700,20 @@ public class CaseData {
     )
     private Set<FinancialOrderFor> financialOrderFor;
 
+    @CCD(
+        access = {DefaultAccess.class}
+    )
+    private LocalDateTime dateSubmitted;
+
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
         return this.getLanguagePreferenceWelsh() == null || this.getLanguagePreferenceWelsh().equals(YesOrNo.NO)
             ? ENGLISH
             : WELSH;
+    }
+
+    @JsonIgnore
+    public LocalDate getDateOfSubmissionResponse() {
+        return dateSubmitted == null ? null : dateSubmitted.plusDays(14).toLocalDate();
     }
 }

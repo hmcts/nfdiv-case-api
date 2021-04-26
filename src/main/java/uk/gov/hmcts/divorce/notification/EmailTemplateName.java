@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.citizen.notification;
+package uk.gov.hmcts.divorce.notification;
 
 public enum EmailTemplateName {
     SAVE_SIGN_OUT,

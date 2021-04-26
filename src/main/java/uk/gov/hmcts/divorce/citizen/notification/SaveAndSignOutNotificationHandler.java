@@ -9,7 +9,7 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import java.util.HashMap;
 import java.util.Map;
 
-import static uk.gov.hmcts.divorce.citizen.notification.EmailTemplateName.SAVE_SIGN_OUT;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SAVE_SIGN_OUT;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_URL_NOTIFY_KEY;
