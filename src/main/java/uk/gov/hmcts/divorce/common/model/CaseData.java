@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.common.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -28,6 +29,8 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
+import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.common.model.LanguagePreference.WELSH;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -673,4 +676,11 @@ public class CaseData {
         access = {DefaultAccess.class}
     )
     private Set<FinancialOrderFor> financialOrderFor;
+
+    @JsonIgnore
+    public LanguagePreference getLanguagePreference() {
+        return this.getLanguagePreferenceWelsh() == null || this.getLanguagePreferenceWelsh().equals(YesOrNo.NO)
+            ? ENGLISH
+            : WELSH;
+    }
 }

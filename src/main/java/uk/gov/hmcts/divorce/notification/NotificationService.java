@@ -4,6 +4,8 @@ package uk.gov.hmcts.divorce.notification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.divorce.citizen.notification.EmailTemplateName;
+import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.common.exception.NotificationException;
 import uk.gov.hmcts.divorce.common.model.LanguagePreference;
 import uk.gov.service.notify.NotificationClient;
@@ -20,15 +22,20 @@ public class NotificationService {
     @Autowired
     private NotificationClient notificationClient;
 
+    @Autowired
+    private EmailTemplatesConfig emailTemplatesConfig;
+
     public void sendEmail(
         String destinationAddress,
-        String templateId,
+        EmailTemplateName template,
         Map<String, String> templateVars,
         LanguagePreference languagePreference
     ) {
         String referenceId = UUID.randomUUID().toString();
 
         try {
+            String templateId = emailTemplatesConfig.getTemplates().get(languagePreference).get(template.name());
+
             log.info("Sending email for reference id : {} using template : {}", referenceId, templateId);
 
             SendEmailResponse sendEmailResponse =
