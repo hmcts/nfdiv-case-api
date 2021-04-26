@@ -38,6 +38,12 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 public class CaseData {
 
     @CCD(
+        label = "Does the petitioner want to apply as a sole applicant?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo soleOrJoinApplicant;
+
+    @CCD(
         label = "Divorce or Dissolution?",
         access = {DefaultAccess.class}
     )
