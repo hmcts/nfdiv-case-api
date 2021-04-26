@@ -30,6 +30,10 @@ apply plugin: 'cz.habarta.typescript-generator'
 group = 'uk.gov.hmcts'
 version = '0.0.1'
 
+ccd {
+  configDir = file('ccd-definitions/definitions')
+}
+
 sourceSets {
   functionalTest {
     java {

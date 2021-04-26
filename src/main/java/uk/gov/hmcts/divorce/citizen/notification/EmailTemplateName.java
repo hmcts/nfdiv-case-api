@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.citizen.notification;
 
-public enum EmailTemplateNames {
+public enum EmailTemplateName {
     SAVE_SIGN_OUT,
+    APPLICATION_SUBMITTED,
 }

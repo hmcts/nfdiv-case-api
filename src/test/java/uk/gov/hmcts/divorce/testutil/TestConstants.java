@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.testutil;
 public final class TestConstants {
     public static final String TEST_USER_EMAIL = "test@test.com";
     public static final String TEST_FIRST_NAME = "test_first_name";
+    public static final String TEST_MIDDLE_NAME = "test_middle_name";
     public static final String TEST_LAST_NAME = "test_last_name";
 
     public static final String ABOUT_TO_START_URL = "/callbacks/about-to-start";

@@ -5,11 +5,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.common.exception.NotificationException;
 import uk.gov.service.notify.NotificationClient;
 import uk.gov.service.notify.NotificationClientException;
 import uk.gov.service.notify.SendEmailResponse;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,6 +24,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.citizen.notification.EmailTemplateName.SAVE_SIGN_OUT;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.WELSH;
 
@@ -32,6 +35,9 @@ class NotificationServiceTest {
 
     @Mock
     private NotificationClient notificationClient;
+
+    @Mock
+    private EmailTemplatesConfig emailTemplatesConfig;
 
     @InjectMocks
     private NotificationService notificationService;
@@ -45,6 +51,10 @@ class NotificationServiceTest {
 
         when(sendEmailResponse.getReference()).thenReturn(Optional.of(randomUUID().toString()));
         when(sendEmailResponse.getNotificationId()).thenReturn(UUID.randomUUID());
+        when(emailTemplatesConfig.getTemplates()).thenReturn(
+            Map.of(
+                ENGLISH, Map.of(SAVE_SIGN_OUT.name(), templateId)
+            ));
 
         when(notificationClient.sendEmail(
             eq(templateId),
@@ -55,7 +65,7 @@ class NotificationServiceTest {
 
         notificationService.sendEmail(
             EMAIL_ADDRESS,
-            templateId,
+            SAVE_SIGN_OUT,
             null,
             ENGLISH
         );
@@ -78,6 +88,10 @@ class NotificationServiceTest {
 
         when(sendEmailResponse.getReference()).thenReturn(Optional.of(randomUUID().toString()));
         when(sendEmailResponse.getNotificationId()).thenReturn(UUID.randomUUID());
+        when(emailTemplatesConfig.getTemplates()).thenReturn(
+            Map.of(
+                WELSH, Map.of(SAVE_SIGN_OUT.name(), templateId)
+            ));
 
         when(notificationClient.sendEmail(
             eq(templateId),
@@ -88,7 +102,7 @@ class NotificationServiceTest {
 
         notificationService.sendEmail(
             EMAIL_ADDRESS,
-            templateId,
+            SAVE_SIGN_OUT,
             null,
             WELSH
         );
@@ -113,9 +127,14 @@ class NotificationServiceTest {
         doThrow(new NotificationClientException("some message"))
             .when(notificationClient).sendEmail(anyString(), anyString(), eq(null), anyString());
 
+        when(emailTemplatesConfig.getTemplates()).thenReturn(
+            Map.of(
+                ENGLISH, Map.of(SAVE_SIGN_OUT.name(), templateId)
+            ));
+
         assertThatThrownBy(() -> notificationService.sendEmail(
             EMAIL_ADDRESS,
-            templateId,
+            SAVE_SIGN_OUT,
             null,
             ENGLISH
             )
