@@ -47,13 +47,13 @@ public class MiniPetitionDraft implements CaseDataUpdater {
             languagePreference = WELSH;
         }
 
-        String templateId = docmosisTemplatesConfig.getTemplates().get(languagePreference).get(DIVORCE_MINI_PETITION);
+        String templateName = docmosisTemplatesConfig.getTemplates().get(languagePreference).get(DIVORCE_MINI_PETITION);
 
         DocumentInfo documentInfo = docAssemblyService.generateAndStoreDraftPetition(
             caseData,
             caseDataContext.getCaseId(),
             caseDataContext.getUserAuthToken(),
-            templateId
+            templateName
         );
 
         Document ccdDocument = new Document(

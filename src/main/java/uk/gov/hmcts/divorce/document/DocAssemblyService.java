@@ -5,12 +5,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.document.mapper.CaseDataToDraftPetitionTemplateMapper;
 import uk.gov.hmcts.divorce.document.model.DocAssemblyRequest;
 import uk.gov.hmcts.divorce.document.model.DocAssemblyResponse;
 import uk.gov.hmcts.divorce.document.model.DocumentInfo;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
+import java.util.Map;
+
 import static java.lang.String.format;
+import static uk.gov.hmcts.divorce.common.config.ControllerConstants.BEARER_PREFIX;
 
 @Service
 @Slf4j
@@ -24,6 +28,9 @@ public class DocAssemblyService {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private CaseDataToDraftPetitionTemplateMapper templateDataMapper;
+
     public static final String DOCUMENT_FILENAME_FMT = "%s%s";
 
     public static final String DOCUMENT_NAME = "draft-mini-petition-";
@@ -32,21 +39,23 @@ public class DocAssemblyService {
         CaseData caseData,
         Long caseId,
         String authorisation,
-        String templateId
+        String templateName
     ) {
+
+        Map<String, Object> templateData = templateDataMapper.map(caseData, caseId);
 
         DocAssemblyRequest docAssemblyRequest =
             DocAssemblyRequest
                 .builder()
-                .templateId(templateId)
+                .templateId(templateName)
                 .outputType("PDF")
-                .formPayload(objectMapper.valueToTree(caseData))
+                .formPayload(objectMapper.valueToTree(templateData))
                 .build();
 
-        log.info("Sending document request for template: {} case id: {}", templateId, caseId);
+        log.info("Sending document request for template : {} case id: {}", templateName, caseId);
 
         DocAssemblyResponse docAssemblyResponse = docAssemblyClient.generateAndStoreDraftPetition(
-            authorisation,
+            BEARER_PREFIX.concat(authorisation),
             authTokenGenerator.generate(),
             docAssemblyRequest
         );

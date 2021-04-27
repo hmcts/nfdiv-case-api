@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import uk.gov.hmcts.divorce.common.model.LanguagePreference;
 
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
 
@@ -16,5 +17,5 @@ import javax.validation.constraints.NotNull;
 @Getter
 public class DocmosisTemplatesConfig {
     @NotNull
-    private final Map<LanguagePreference, Map<String, String>> templates = new EnumMap<>(LanguagePreference.class);
+    private final Map<LanguagePreference, Map<String, String>> templates = new HashMap<>();
 }

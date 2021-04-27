@@ -30,5 +30,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
         configBuilder.tab("languageDetails", "Language")
             .field(CaseData::getLanguagePreferenceWelsh);
+
+        configBuilder.tab("generatedDocuments", "Documents")
+            .field(CaseData::getDocumentsGenerated);
     }
 }
