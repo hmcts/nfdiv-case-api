@@ -11,10 +11,7 @@ import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
-import java.util.Set;
-
 import static uk.gov.hmcts.divorce.common.model.State.Draft;
-import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CITIZEN;
@@ -33,7 +30,6 @@ public class PaymentMade implements CCDConfig<CaseData, State, UserRole> {
         configBuilder
             .event(PAYMENT_MADE)
             .initialState(Draft)
-            .postState(Set.of(Submitted))
             .name("Payment made")
             .description("Payment made")
             .grant(CREATE_READ_UPDATE, CITIZEN, CASEWORKER_DIVORCE_COURTADMIN, CASEWORKER_DIVORCE_COURTADMIN_BETA)
