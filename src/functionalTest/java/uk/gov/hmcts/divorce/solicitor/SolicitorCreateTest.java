@@ -8,6 +8,7 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import uk.gov.hmcts.divorce.testutil.CaseDataUtil;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
@@ -32,13 +33,15 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedCcdCallback
 @SpringBootTest
 public class SolicitorCreateTest extends FunctionalTestSuite {
 
+    private static final String ABOUT_TO_SUBMIT_REQUEST = "classpath:request/casedata/ccd-callback-casedata.json";
+
     @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
 
     @Test
     public void shouldUpdateCaseDataWithClaimCostsAndCourtDetailsWhenAboutToSubmitCallbackIsSuccessful()
         throws Exception {
-        Map<String, Object> caseData = caseData();
+        Map<String, Object> caseData = CaseDataUtil.caseData(ABOUT_TO_SUBMIT_REQUEST);
         caseData.put(DIVORCE_COSTS_CLAIM, YES);
 
         Response response = RestAssured
