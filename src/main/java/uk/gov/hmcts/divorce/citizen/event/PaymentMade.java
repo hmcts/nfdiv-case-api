@@ -41,7 +41,7 @@ public class PaymentMade implements CCDConfig<CaseData, State, UserRole> {
     }
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> beforeDetails) {
-        notification.send(details.getData());
+        notification.send(details.getData(), details.getId());
 
         return SubmittedCallbackResponse.builder().build();
     }

@@ -19,6 +19,7 @@ public final class NotificationConstants {
     public static final String COURT_EMAIL = "court email";
 
     public static final String SUBMISSION_RESPONSE_DATE = "date of response";
+    public static final String APPLICATION_REFERENCE = "reference number";
 
     private NotificationConstants() {
     }

@@ -18,6 +18,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICATION_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -39,12 +40,15 @@ class ApplicationSubmittedNotificationTest {
         CaseData data = caseData();
         data.setDateSubmitted(LocalDateTime.of(2021, 4, 21, 1, 1));
 
-        notification.send(data);
+        notification.send(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(APPLICATION_SUBMITTED),
-            argThat(allOf(hasEntry(SUBMISSION_RESPONSE_DATE, "5 May 2021"))),
+            argThat(allOf(
+                hasEntry(SUBMISSION_RESPONSE_DATE, "5 May 2021"),
+                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456")
+            )),
             eq(ENGLISH)
         );
         verify(commonContent).apply(any(), eq(data));

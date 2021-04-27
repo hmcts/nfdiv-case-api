@@ -50,6 +50,6 @@ public class PaymentMadeTest {
 
         paymentMade.submitted(details, details);
 
-        verify(notification).send(caseData);
+        verify(notification).send(caseData, details.getId());
     }
 }
