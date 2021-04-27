@@ -8,6 +8,7 @@ import lombok.Data;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 
 import java.util.List;
+import java.util.Optional;
 
 @Data
 public class MarriagePetitionerName {
@@ -24,7 +25,7 @@ public class MarriagePetitionerName {
 
     @When
     public boolean when() {
-        return caseData.getMarriagePetitionerName().isEmpty() || caseData.getMarriagePetitionerName() == null;
+        return Optional.ofNullable(caseData.getMarriagePetitionerName()).isEmpty();
     }
 
     @Then

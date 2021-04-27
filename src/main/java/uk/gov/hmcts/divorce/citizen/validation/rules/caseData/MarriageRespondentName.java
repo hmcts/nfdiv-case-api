@@ -25,7 +25,7 @@ public class MarriageRespondentName {
 
     @When
     public boolean when() {
-        return caseData.getMarriageRespondentName().isEmpty() || caseData.getMarriageRespondentName() == null;
+        return Optional.ofNullable(caseData.getMarriageRespondentName()).isEmpty();
     }
 
     @Then

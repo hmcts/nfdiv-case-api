@@ -25,7 +25,7 @@ public class FinancialOrder {
 
     @When
     public boolean when() {
-        return !Optional.ofNullable(caseData.getFinancialOrder()).isPresent();
+        return Optional.ofNullable(caseData.getFinancialOrder()).isEmpty();
     }
 
     @Then

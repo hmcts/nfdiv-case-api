@@ -25,7 +25,7 @@ public class PetitionerContactDetailsConfidential {
 
     @When
     public boolean when() {
-        return caseData.getPetitionerContactDetailsConfidential().toString().isEmpty() || caseData.getPetitionerContactDetailsConfidential() == null;
+        return Optional.ofNullable(caseData.getPetitionerContactDetailsConfidential()).isEmpty();
     }
 
     @Then

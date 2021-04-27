@@ -25,7 +25,7 @@ public class PetitionerFirstName {
 
     @When
     public boolean when() {
-        return caseData.getPetitionerFirstName().isEmpty() || caseData.getPetitionerFirstName() == null;
+        return Optional.ofNullable(caseData.getPetitionerFirstName()).isEmpty();
     }
 
     @Then

@@ -4,11 +4,13 @@ import com.deliveredtechnologies.rulebook.annotation.Given;
 import com.deliveredtechnologies.rulebook.annotation.Result;
 import com.deliveredtechnologies.rulebook.annotation.Then;
 import com.deliveredtechnologies.rulebook.annotation.When;
+import lombok.Data;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 
 import java.util.List;
 import java.util.Optional;
 
+@Data
 public class DivorceCostsClaim {
 
     private static final String BLANK_SPACE = " ";
@@ -23,7 +25,7 @@ public class DivorceCostsClaim {
 
     @When
     public boolean when() {
-        return !Optional.ofNullable(caseData.getDivorceCostsClaim()).isPresent();
+        return Optional.ofNullable(caseData.getDivorceCostsClaim()).isEmpty();
     }
 
     @Then

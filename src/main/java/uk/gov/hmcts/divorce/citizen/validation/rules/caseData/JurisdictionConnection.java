@@ -25,7 +25,7 @@ public class JurisdictionConnection {
 
     @When
     public boolean when() {
-        return !Optional.ofNullable(caseData.getJurisdictionConnections()).isPresent();
+        return Optional.ofNullable(caseData.getJurisdictionConnections()).isEmpty();
     }
 
     @Then

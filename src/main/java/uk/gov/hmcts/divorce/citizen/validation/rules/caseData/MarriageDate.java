@@ -55,7 +55,7 @@ public class MarriageDate {
     }
 
     private boolean isNull() {
-        return !Optional.ofNullable(caseData.getMarriageDate()).isPresent();
+        return Optional.ofNullable(caseData.getMarriageDate()).isEmpty();
     }
 
     private boolean isLessThanOneYearAgo(String date) {

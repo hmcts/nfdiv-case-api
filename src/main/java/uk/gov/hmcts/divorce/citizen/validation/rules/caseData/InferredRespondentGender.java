@@ -25,7 +25,7 @@ public class InferredRespondentGender {
 
     @When
     public boolean when() {
-        return !Optional.ofNullable(caseData.getInferredRespondentGender()).isPresent();
+        return Optional.ofNullable(caseData.getInferredRespondentGender()).isEmpty();
     }
 
     @Then

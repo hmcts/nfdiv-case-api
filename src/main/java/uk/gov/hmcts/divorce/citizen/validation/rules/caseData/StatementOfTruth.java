@@ -28,7 +28,7 @@ public class StatementOfTruth {
 
     @When
     public boolean when() {
-        return caseData.getStatementOfTruth() == null || caseData.getStatementOfTruth().equals(YesOrNo.NO);
+        return Optional.ofNullable(caseData.getStatementOfTruth()).isEmpty() || caseData.getStatementOfTruth().equals(YesOrNo.NO);
     }
 
     @Then
