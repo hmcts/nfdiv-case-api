@@ -13,10 +13,6 @@ public class UploadMarriageCertificate implements CcdPageConfiguration {
             .page("UploadMarriageCertificate")
             .pageLabel("Upload the marriage certificate - Apply for a divorce")
             .label(
-                "Label-UploadMarriageCertificate",
-                "# Upload the marriage certificate - Apply for a divorce"
-            )
-            .label(
                 "LabelSolAboutEditingApplication-UploadMarriageCertificate",
                 "You can make changes at the end of your application.")
             .label(

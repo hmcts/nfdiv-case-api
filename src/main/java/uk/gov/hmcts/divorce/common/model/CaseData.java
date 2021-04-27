@@ -525,6 +525,14 @@ public class CaseData {
     private Set<JurisdictionConnections> jurisdictionConnections;
 
     @CCD(
+        label = "Legal connections",
+        hint = "Tick all the reasons that apply:",
+        access = {DefaultAccess.class}
+    )
+    private Set<LegalConnections> legalConnections;
+
+
+    @CCD(
         label = "Your partner's email address",
         access = {DefaultAccess.class}
     )
