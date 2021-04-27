@@ -8,7 +8,6 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.model.CaseData;
@@ -28,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Arrays.asList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.common.model.State.SOTAgreementPayAndSubmitRequired;
 import static uk.gov.hmcts.divorce.common.model.State.SolicitorAwaitingPaymentConfirmation;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
@@ -95,8 +93,7 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
 
         final CaseData caseData = details.getData();
 
-        if (isNotAccepted(caseData.getStatementOfTruth())
-            || isNotAccepted(caseData.getSolSignStatementOfTruth())) {
+        if (!caseData.hasStatementOfTruth() || !caseData.hasSolSignStatementOfTruth()) {
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(details.getData())
@@ -129,9 +126,5 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
                 CASEWORKER_DIVORCE_COURTADMIN,
                 CASEWORKER_DIVORCE_SUPERUSER,
                 CASEWORKER_DIVORCE_COURTADMIN_LA));
-    }
-
-    private boolean isNotAccepted(final YesOrNo value) {
-        return null == value || NO.equals(value);
     }
 }
