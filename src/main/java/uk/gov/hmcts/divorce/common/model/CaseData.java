@@ -703,6 +703,7 @@ public class CaseData {
     private Set<FinancialOrderFor> financialOrderFor;
 
     @CCD(
+        label = "Date of submission",
         access = {DefaultAccess.class}
     )
     private LocalDateTime dateSubmitted;
