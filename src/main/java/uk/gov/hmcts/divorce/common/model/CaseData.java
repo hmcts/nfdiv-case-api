@@ -41,6 +41,8 @@ import static uk.gov.hmcts.divorce.common.model.LanguagePreference.WELSH;
 @Builder(toBuilder = true)
 public class CaseData {
 
+    private static final int SUBMISSION_RESPONSE_DAYS = 14;
+
     @CCD(
         label = "Does the petitioner want to apply as a sole applicant?",
         access = {DefaultAccess.class}
@@ -714,6 +716,6 @@ public class CaseData {
 
     @JsonIgnore
     public LocalDate getDateOfSubmissionResponse() {
-        return dateSubmitted == null ? null : dateSubmitted.plusDays(14).toLocalDate();
+        return dateSubmitted == null ? null : dateSubmitted.plusDays(SUBMISSION_RESPONSE_DAYS).toLocalDate();
     }
 }
