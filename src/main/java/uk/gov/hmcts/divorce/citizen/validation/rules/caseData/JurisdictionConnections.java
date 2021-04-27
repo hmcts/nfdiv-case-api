@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Data
-public class JurisdictionConnection {
+public class JurisdictionConnections {
 
     private static final String BLANK_SPACE = " ";
     private static final String ACTUAL_DATA = "Actual data is: %s";
-    private static final String ERROR_MESSAGE = "JurisdictionConnection can not be null or empty.";
+    private static final String ERROR_MESSAGE = "JurisdictionConnections can not be null or empty.";
 
     @Result
     public List<String> result;

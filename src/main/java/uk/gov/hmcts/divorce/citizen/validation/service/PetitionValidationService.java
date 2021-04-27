@@ -8,6 +8,7 @@ import com.deliveredtechnologies.rulebook.model.RuleBook;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.ValidationResponse;
 import uk.gov.hmcts.divorce.common.model.ValidationStatus;
@@ -15,6 +16,7 @@ import uk.gov.hmcts.divorce.common.model.ValidationStatus;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 @Slf4j
 public class PetitionValidationService {
 

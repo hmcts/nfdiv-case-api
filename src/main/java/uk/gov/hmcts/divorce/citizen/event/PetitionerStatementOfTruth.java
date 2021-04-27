@@ -43,7 +43,7 @@ public class PetitionerStatementOfTruth implements CCDConfig<CaseData, State, Us
             .grant(READ, CASEWORKER_DIVORCE_SUPERUSER);
     }
 
-    private AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
 
         log.info("Submit petition about to start callback invoked");
 
@@ -54,7 +54,6 @@ public class PetitionerStatementOfTruth implements CCDConfig<CaseData, State, Us
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
-            .errors(validationResponse.getErrors())
             .build();
     }
 }

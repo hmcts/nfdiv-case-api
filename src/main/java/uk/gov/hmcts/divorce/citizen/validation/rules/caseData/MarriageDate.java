@@ -7,9 +7,9 @@ import com.deliveredtechnologies.rulebook.annotation.When;
 
 import lombok.Data;
 import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.common.utils.DateUtils;
 
-import java.time.Instant;
+import java.text.ParseException;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +26,7 @@ public class MarriageDate {
         "MarriageDate can not be less than one year ago.";
     private static final String ERROR_MESSAGE_MORE_THAN_ONE_HUNDRED_YEARS_AGO =
         "MarriageDate can not be more than 100 years ago.";
-    private static final String ERROR_MESSAGE_IN_THE_FUTURE = "D8MarriageDate can not be in the future.";
+    private static final String ERROR_MESSAGE_IN_THE_FUTURE = "MarriageDate can not be in the future.";
 
     @Result
     public List<String> result;
@@ -36,7 +36,8 @@ public class MarriageDate {
 
     @When
     public boolean when() {
-        String marriageDate = caseData.getMarriageDate();
+        LocalDate marriageDate = caseData.getMarriageDate();
+
         return isNull()
             || isLessThanOneYearAgo(marriageDate)
             || isOverOneHundredYearsAgo(marriageDate)
@@ -58,21 +59,21 @@ public class MarriageDate {
         return Optional.ofNullable(caseData.getMarriageDate()).isEmpty();
     }
 
-    private boolean isLessThanOneYearAgo(String date) {
-        return !DateUtils.parseToInstant(date).isAfter(Instant.now())
-            && DateUtils.parseToInstant(date).isAfter(Instant.now().minus(365, ChronoUnit.DAYS));
+    private boolean isLessThanOneYearAgo(LocalDate date) {
+        return !date.isAfter(LocalDate.now())
+            && date.isAfter(LocalDate.now().minus(365, ChronoUnit.DAYS));
     }
 
-    private boolean isOverOneHundredYearsAgo(String date) {
-        return DateUtils.parseToInstant(date).isBefore(Instant.now().minus(365 * 100, ChronoUnit.DAYS));
+    private boolean isOverOneHundredYearsAgo(LocalDate date) {
+        return date.isBefore(LocalDate.now().minus(365 * 100, ChronoUnit.DAYS));
     }
 
-    private boolean isInTheFuture(String date) {
-        return DateUtils.parseToInstant(date).isAfter(Instant.now());
+    private boolean isInTheFuture(LocalDate date) {
+        return date.isAfter(LocalDate.now());
     }
 
     private String deriveErrorMessage() {
-        String marriageDate = caseData.getMarriageDate();
+        LocalDate marriageDate = caseData.getMarriageDate();
         return isNull()
             ? ERROR_MESSAGE_NULL
             : Stream.of(

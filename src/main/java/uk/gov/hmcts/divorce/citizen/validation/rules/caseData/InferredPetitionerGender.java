@@ -21,11 +21,11 @@ public class InferredPetitionerGender {
     public List<String> result;
 
     @Given("caseData")
-    public CaseData coreCaseData = new CaseData();
+    public CaseData caseData = new CaseData();
 
     @When
     public boolean when() {
-        return Optional.ofNullable(coreCaseData.getInferredPetitionerGender()).isEmpty();
+        return Optional.ofNullable(caseData.getInferredPetitionerGender()).isEmpty();
     }
 
     @Then
@@ -33,7 +33,7 @@ public class InferredPetitionerGender {
         result.add(String.join(
             BLANK_SPACE, // delimiter
             ERROR_MESSAGE,
-            String.format(ACTUAL_DATA, coreCaseData.getInferredPetitionerGender())
+            String.format(ACTUAL_DATA, caseData.getInferredPetitionerGender())
         ));
     }
 }
