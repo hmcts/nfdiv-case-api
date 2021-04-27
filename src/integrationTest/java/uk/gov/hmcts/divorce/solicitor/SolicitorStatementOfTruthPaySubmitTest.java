@@ -22,7 +22,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.util.ResourceUtils;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
@@ -34,6 +33,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -55,13 +56,24 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.util.ResourceUtils.getFile;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_COSTS_CLAIM;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_OR_DISSOLUTION;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_EMAIL;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_FIRST_NAME;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_LAST_NAME;
+import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorStatementOfTruthPaySubmit.SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataMap;
@@ -239,6 +251,48 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             );
     }
 
+    @Test
+    void givenValidCaseDataWhenAboutToSubmitCallbackIsInvokedThenStateIsChangedToSolicitorAwaitingPaymentConfirmation()
+        throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(TestConstants.AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(callbackRequest(
+                caseDataWithStatementOfTruth(),
+                SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT,
+                "SOTAgreementPayAndSubmitRequired")))
+            .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk()
+            )
+            .andExpect(
+                content().json(expectedCcdAboutToSubmitCallbackResponse())
+            );
+    }
+
+    @Test
+    void givenInValidCaseDataWhenAboutToSubmitCallbackIsInvokedThenStateIsNotChangedAndErrorIsReturned()
+        throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(TestConstants.AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(callbackRequest(
+                caseDataMap(),
+                SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT,
+                "SOTAgreementPayAndSubmitRequired")))
+            .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk()
+            )
+            .andExpect(
+                content().json(expectedCcdAboutToSubmitCallbackErrorResponse())
+            );
+    }
+
     private void stubForCcdCaseRoles() {
         CASE_DATA_SERVER.stubFor(put(urlMatching("/cases/[0-9]+/users/[0-9]+"))
             .withHeader(AUTHORIZATION, new EqualToPattern(BEARER + CASE_WORKER_TOKEN))
@@ -318,7 +372,21 @@ public class SolicitorStatementOfTruthPaySubmitTest {
     }
 
     private String expectedCcdCallbackResponse() throws IOException {
-        File issueFeesResponseJsonFile = ResourceUtils.getFile("classpath:wiremock/responses/issue-fees-response.json");
+        File issueFeesResponseJsonFile = getFile("classpath:wiremock/responses/issue-fees-response.json");
+
+        return new String(Files.readAllBytes(issueFeesResponseJsonFile.toPath()));
+    }
+
+    private String expectedCcdAboutToSubmitCallbackResponse() throws IOException {
+        File issueFeesResponseJsonFile = getFile(
+            "classpath:wiremock/responses/about-to-submit-statement-of-truth.json");
+
+        return new String(Files.readAllBytes(issueFeesResponseJsonFile.toPath()));
+    }
+
+    private String expectedCcdAboutToSubmitCallbackErrorResponse() throws IOException {
+        File issueFeesResponseJsonFile = getFile(
+            "classpath:wiremock/responses/about-to-submit-statement-of-truth-error.json");
 
         return new String(Files.readAllBytes(issueFeesResponseJsonFile.toPath()));
     }
@@ -337,6 +405,18 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             + "&redirect_uri=" + encode("http://localhost:3001/oauth2/callback", UTF_8.name())
             + "&client_id=divorce"
             + "&username=" + encode("dummycaseworker@test.com", UTF_8.name());
+    }
+
+    private Map<String, Object> caseDataWithStatementOfTruth() {
+        Map<String, Object> caseData = new HashMap<>();
+        caseData.put(PETITIONER_FIRST_NAME, TEST_FIRST_NAME);
+        caseData.put(PETITIONER_LAST_NAME, TEST_LAST_NAME);
+        caseData.put(PETITIONER_EMAIL, TEST_USER_EMAIL);
+        caseData.put(DIVORCE_OR_DISSOLUTION, DIVORCE);
+        caseData.put(DIVORCE_COSTS_CLAIM, YES);
+        caseData.put("statementOfTruth", YES);
+        caseData.put("solSignStatementOfTruth", YES);
+        return caseData;
     }
 
     static class PropertiesInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
