@@ -4,7 +4,6 @@ import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import uk.gov.hmcts.divorce.testutil.CaseDataUtil;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
@@ -22,6 +21,7 @@ import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_FIR
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_LAST_NAME;
 import static uk.gov.hmcts.divorce.citizen.event.SaveAndClose.SAVE_AND_CLOSE;
 import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.SUBMITTED_CALLBACK_URL;
 
 @SpringBootTest
@@ -44,7 +44,7 @@ public class SaveAndCloseTest extends FunctionalTestSuite {
                     .caseDetails(
                         CaseDetails
                             .builder()
-                            .data(CaseDataUtil.caseData(SUBMITTED_REQUEST))
+                            .data(caseData(SUBMITTED_REQUEST))
                             .build()
                     )
                     .build()
@@ -57,7 +57,7 @@ public class SaveAndCloseTest extends FunctionalTestSuite {
 
     @Test
     public void shouldFailWithBadRequestErrorWhenFirstAndLastNamesAreMissing() throws IOException {
-        Map<String, Object> caseDataMapWithMissingParams = CaseDataUtil.caseData(SUBMITTED_REQUEST);
+        Map<String, Object> caseDataMapWithMissingParams = caseData(SUBMITTED_REQUEST);
         caseDataMapWithMissingParams.remove(PETITIONER_FIRST_NAME);
         caseDataMapWithMissingParams.remove(PETITIONER_LAST_NAME);
 
@@ -92,7 +92,7 @@ public class SaveAndCloseTest extends FunctionalTestSuite {
 
     @Test
     public void shouldFailValidationErrorWhenEmailIsMissing() throws IOException {
-        Map<String, Object> caseDataMapWithMissingParams = CaseDataUtil.caseData(SUBMITTED_REQUEST);
+        Map<String, Object> caseDataMapWithMissingParams = caseData(SUBMITTED_REQUEST);
         caseDataMapWithMissingParams.remove(PETITIONER_EMAIL);
 
         Response response = RestAssured

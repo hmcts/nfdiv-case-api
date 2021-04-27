@@ -5,7 +5,6 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
-import uk.gov.hmcts.divorce.testutil.CaseDataUtil;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
@@ -21,6 +20,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.common.model.State.SOTAgreementPayAndSubmitRequired;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorStatementOfTruthPaySubmit.SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT;
+import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.ABOUT_TO_START_CALLBACK_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.ABOUT_TO_SUBMIT_CALLBACK_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedCcdCallbackResponse;
@@ -53,7 +53,7 @@ public class SolicitorSubmitPetitionTest extends FunctionalTestSuite {
                         CaseDetails
                             .builder()
                             .id(createCaseInCcd().getId())
-                            .data(CaseDataUtil.caseData(ABOUT_TO_SUBMIT_REQUEST))
+                            .data(caseData(ABOUT_TO_SUBMIT_REQUEST))
                             .build()
                     )
                     .build()
@@ -74,7 +74,7 @@ public class SolicitorSubmitPetitionTest extends FunctionalTestSuite {
     public void shouldChangeStateToAwaitingPaymentConfirmationIfValidCaseData()
         throws Exception {
 
-        final Map<String, Object> caseData = CaseDataUtil.caseData(VALID_ABOUT_TO_SUBMIT_REQUEST);
+        final Map<String, Object> caseData = caseData(VALID_ABOUT_TO_SUBMIT_REQUEST);
 
         final Response response = RestAssured
             .given()
@@ -91,7 +91,7 @@ public class SolicitorSubmitPetitionTest extends FunctionalTestSuite {
                         CaseDetails
                             .builder()
                             .id(1L)
-                            .data(CaseDataUtil.caseData(VALID_ABOUT_TO_SUBMIT_REQUEST))
+                            .data(caseData(VALID_ABOUT_TO_SUBMIT_REQUEST))
                             .state(SOTAgreementPayAndSubmitRequired.getName())
                             .build()
                     )
