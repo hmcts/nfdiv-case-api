@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.citizen.notification;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.model.CaseData;
@@ -16,6 +17,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATIO
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
 
 @Component
+@Slf4j
 public class ApplicationSubmittedNotification {
 
     private static final DateTimeFormatter formatter = ofPattern("d MMMM yyyy");
@@ -32,6 +34,8 @@ public class ApplicationSubmittedNotification {
 
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDateOfSubmissionResponse().format(formatter));
         templateVars.put(APPLICATION_REFERENCE, formatId(id));
+
+        log.info("Sending application submitted notification for case : {}", id);
 
         notificationService.sendEmail(
             caseData.getPetitionerEmail(),
