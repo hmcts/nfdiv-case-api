@@ -87,6 +87,21 @@ public class TestDataHelper {
             .build();
     }
 
+    public static CallbackRequest callbackRequest(final Map<String, Object> caseData, String eventId, String state) {
+        return CallbackRequest
+            .builder()
+            .eventId(eventId)
+            .caseDetails(
+                CaseDetails
+                    .builder()
+                    .data(caseData)
+                    .state(state)
+                    .id(TEST_CASE_ID)
+                    .build()
+            )
+            .build();
+    }
+
     public static FeeResponse getFeeResponse() {
         return FeeResponse
             .builder()

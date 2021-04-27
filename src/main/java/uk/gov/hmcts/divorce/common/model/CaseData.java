@@ -30,6 +30,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.WELSH;
 
@@ -719,5 +720,15 @@ public class CaseData {
     @JsonIgnore
     public LocalDate getDateOfSubmissionResponse() {
         return dateSubmitted == null ? null : dateSubmitted.plusDays(SUBMISSION_RESPONSE_DAYS).toLocalDate();
+    }
+
+    @JsonIgnore
+    public boolean hasStatementOfTruth() {
+        return YES.equals(statementOfTruth);
+    }
+
+    @JsonIgnore
+    public boolean hasSolSignStatementOfTruth() {
+        return YES.equals(solSignStatementOfTruth);
     }
 }
