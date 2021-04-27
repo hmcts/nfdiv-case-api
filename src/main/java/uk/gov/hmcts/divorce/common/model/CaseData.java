@@ -41,6 +41,7 @@ import static uk.gov.hmcts.divorce.common.model.LanguagePreference.WELSH;
 @Builder(toBuilder = true)
 public class CaseData {
 
+    @CCD(ignore = true)
     private static final int SUBMISSION_RESPONSE_DAYS = 14;
 
     @CCD(
