@@ -24,7 +24,7 @@ public class Payment {
     private String paymentSiteId;
 
     @JsonProperty("PaymentStatus")
-    private String paymentStatus;
+    private PaymentStatus paymentStatus;
 
     @JsonProperty("PaymentChannel")
     private String paymentChannel;

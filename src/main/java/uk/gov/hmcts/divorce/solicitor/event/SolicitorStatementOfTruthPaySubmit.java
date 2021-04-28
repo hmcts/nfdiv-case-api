@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
+import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
 import uk.gov.hmcts.divorce.solicitor.event.page.HelpWithFees;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayAccount;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayment;
@@ -21,6 +22,7 @@ import uk.gov.hmcts.divorce.solicitor.event.page.SolStatementOfTruth;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolSummary;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitPetitionService;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +31,7 @@ import static java.util.Arrays.asList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.common.model.State.SOTAgreementPayAndSubmitRequired;
 import static uk.gov.hmcts.divorce.common.model.State.SolicitorAwaitingPaymentConfirmation;
+import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_LA;
@@ -82,7 +85,11 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
         );
 
         log.info("Setting dummy payment to mock payment process");
-        caseData.setPayments(solicitorSubmitPetitionService.getDummyPayment(orderSummary));
+        if (caseData.getPayments() != null && caseData.getPayments().size() > 0) {
+            caseData.getPayments().add(solicitorSubmitPetitionService.getDummyPayment(orderSummary));
+        } else {
+            caseData.setPayments(asList(solicitorSubmitPetitionService.getDummyPayment(orderSummary)));
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
@@ -111,6 +118,20 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
             .build();
     }
 
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
+                                               CaseDetails<CaseData, State> beforeDetails) {
+        final CaseData caseData = details.getData();
+        PaymentStatus paymentStatus = caseData.getPayments().get(caseData.getPayments().size() - 1).getValue().getPaymentStatus();
+
+        if (paymentStatus.equals(PaymentStatus.SUCCESS)) {
+            details.setState(Submitted);
+        } else {
+            details.setState(SolicitorAwaitingPaymentConfirmation);
+        }
+
+        return SubmittedCallbackResponse.builder().build();
+    }
+
     private PageBuilder addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         return new PageBuilder(configBuilder.event(SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)
@@ -128,6 +149,7 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
                 CASEWORKER_DIVORCE_COURTADMIN_BETA,
                 CASEWORKER_DIVORCE_COURTADMIN,
                 CASEWORKER_DIVORCE_SUPERUSER,
-                CASEWORKER_DIVORCE_COURTADMIN_LA));
+                CASEWORKER_DIVORCE_COURTADMIN_LA)
+            .submittedCallback(this::submitted));
     }
 }
