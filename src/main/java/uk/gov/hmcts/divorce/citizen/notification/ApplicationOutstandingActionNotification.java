@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.notification.NotificationConstants;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import static java.lang.String.join;
@@ -68,15 +69,12 @@ public class ApplicationOutstandingActionNotification {
     }
 
     private String getPartner(CaseData caseData) {
-        return caseData.getDivorceOrDissolution().isDivorce() ? caseData.getDivorceWho().getLabel().toLowerCase() : "civil partner";
+        return caseData.getDivorceOrDissolution().isDivorce()
+            ? caseData.getDivorceWho().getLabel().toLowerCase(Locale.UK) : "civil partner";
     }
 
     private String getPapers(DivorceOrDissolution divorceOrDissolution) {
         return divorceOrDissolution.isDivorce() ?  "divorce " + PAPERS : PAPERS;
-    }
-
-    private String isMarriageOrCivilPartnership(DivorceOrDissolution divorceOrDissolution) {
-        return divorceOrDissolution.isDivorce() ? "marriage" : "civil partnership";
     }
 
     private void setMissingSupportingDocumentType(Map<String, String> templateVars,  CaseData caseData) {
@@ -91,16 +89,25 @@ public class ApplicationOutstandingActionNotification {
         for (SupportingDocumentType docType : caseData.getCannotUploadSupportingDocument()) {
             switch (docType) {
                 case UNION_CERTIFICATE:
-                    templateVars.put(caseData.getDivorceOrDissolution().isDivorce() ? MARRIAGE_CERTIFICATE : CIVIL_PARTNERSHIP_CERTIFICATE, "yes");
+                    templateVars.put(
+                        caseData.getDivorceOrDissolution().isDivorce()
+                            ? MARRIAGE_CERTIFICATE : CIVIL_PARTNERSHIP_CERTIFICATE, "yes");
                     break;
                 case FOREIGN_UNION_CERTIFICATE:
-                    templateVars.put(caseData.getDivorceOrDissolution().isDivorce() ? MARRIAGE_FOREIGN_UNION_CERTIFICATE : CIVIL_PARTNERSHIP_FOREIGN_UNION_CERTIFICATE, "yes");
+                    templateVars.put(
+                        caseData.getDivorceOrDissolution().isDivorce()
+                            ? MARRIAGE_FOREIGN_UNION_CERTIFICATE : CIVIL_PARTNERSHIP_FOREIGN_UNION_CERTIFICATE, "yes");
                     break;
                 case FOREIGN_UNION_CERTIFICATE_TRANSLATION:
-                    templateVars.put(caseData.getDivorceOrDissolution().isDivorce() ? MARRIAGE_FOREIGN_UNION_CERTIFICATE_TRANSLATION : CIVIL_PARTNERSHIP_FOREIGN_UNION_CERTIFICATE_TRANSLATION, "yes");
+                    templateVars.put(
+                        caseData.getDivorceOrDissolution().isDivorce()
+                            ? MARRIAGE_FOREIGN_UNION_CERTIFICATE_TRANSLATION
+                            : CIVIL_PARTNERSHIP_FOREIGN_UNION_CERTIFICATE_TRANSLATION, "yes");
                     break;
                 case NAME_CHANGE_PROOF:
                     templateVars.put(NotificationConstants.NAME_CHANGE_PROOF, "yes");
+                    break;
+                default:
                     break;
             }
         }
