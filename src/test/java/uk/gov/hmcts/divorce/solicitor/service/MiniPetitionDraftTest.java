@@ -81,7 +81,7 @@ public class MiniPetitionDraftTest {
         CaseDataContext result = miniPetitionDraft.updateCaseData(caseDataContext, caseDataUpdaterChain);
         assertThat(result.getCaseData().getDocumentsGenerated()).hasSize(1);
 
-        DivorceDocument divorceDocument = result.getCaseData().getDocumentsGenerated().get(0);
+        DivorceDocument divorceDocument = result.getCaseData().getDocumentsGenerated().get(0).getValue();
 
         assertThat(divorceDocument.getDocumentType()).isEqualTo(PETITION);
         assertThat(divorceDocument
@@ -117,7 +117,7 @@ public class MiniPetitionDraftTest {
         CaseDataContext updatedCaseDataContext = miniPetitionDraft.updateCaseData(caseDataContext, caseDataUpdaterChain);
         assertThat(updatedCaseDataContext.getCaseData().getDocumentsGenerated()).hasSize(1);
 
-        DivorceDocument divorceDocument = updatedCaseDataContext.getCaseData().getDocumentsGenerated().get(0);
+        DivorceDocument divorceDocument = updatedCaseDataContext.getCaseData().getDocumentsGenerated().get(0).getValue();
 
         assertThat(divorceDocument.getDocumentType()).isEqualTo(PETITION);
         assertThat(divorceDocument

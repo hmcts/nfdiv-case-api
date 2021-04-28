@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.config.DocmosisTemplatesConfig;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.LanguagePreference;
@@ -67,9 +68,15 @@ public class MiniPetitionDraft implements CaseDataUpdater {
             .documentType(PETITION)
             .build();
 
+        ListValue<DivorceDocument> value = ListValue
+            .<DivorceDocument>builder()
+            .id("petition")
+            .value(divorceDocument)
+            .build();
+
         CaseData updatedCaseData = caseData
             .toBuilder()
-            .documentsGenerated(singletonList(divorceDocument))
+            .documentsGenerated(singletonList(value))
             .build();
 
         return caseDataUpdaterChain.processNext(caseDataContext.handlerContextWith(updatedCaseData));
