@@ -72,7 +72,7 @@ public class MiniPetitionDraft implements CaseDataUpdater {
 
         ListValue<DivorceDocument> value = ListValue
             .<DivorceDocument>builder()
-            .id(PETITION.name())
+            .id(PETITION.getLabel())
             .value(divorceDocument)
             .build();
 
