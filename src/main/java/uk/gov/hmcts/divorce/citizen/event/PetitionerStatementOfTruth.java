@@ -1,17 +1,17 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.citizen.validation.service.PetitionValidationService;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 import uk.gov.hmcts.divorce.common.model.ValidationResponse;
+
+import java.util.List;
 
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.common.model.State.Draft;
@@ -25,9 +25,6 @@ import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 public class PetitionerStatementOfTruth implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String PETITIONER_STATEMENT_OF_TRUTH = "petitioner-statement-of-truth";
-
-    @Autowired
-    private PetitionValidationService petitionValidationService;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -50,10 +47,19 @@ public class PetitionerStatementOfTruth implements CCDConfig<CaseData, State, Us
         log.info("Retrieving case data");
         final CaseData caseData = details.getData();
 
-        final ValidationResponse validationResponse = petitionValidationService.validateCaseData(caseData);
+        log.info("Validating case data");
+        final List<String> validationErrors = AwaitingPayment.validate(caseData);
+
+        if(!validationErrors.isEmpty()) {
+            log.info("Validation errors: ");
+            for(String item:validationErrors) {
+                log.info(item);
+            }
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
+            .errors(validationErrors)
             .build();
     }
 }
