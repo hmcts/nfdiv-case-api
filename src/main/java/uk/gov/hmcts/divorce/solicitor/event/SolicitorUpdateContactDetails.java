@@ -8,9 +8,8 @@ import uk.gov.hmcts.divorce.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
-import uk.gov.hmcts.divorce.solicitor.event.page.LanguagePreference;
+import uk.gov.hmcts.divorce.solicitor.event.page.SolUpdateContactDetails;
 
-import static uk.gov.hmcts.divorce.common.model.State.SOTAgreementPayAndSubmitRequired;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
@@ -22,11 +21,11 @@ import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ_UPDATE;
 
 @Component
-public class SolicitorUpdateLanguage implements CCDConfig<CaseData, State, UserRole> {
+public class SolicitorUpdateContactDetails implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String SOLICITOR_UPDATE_LANGUAGE = "solicitor-update-language";
+    public static final String SOLICITOR_UPDATE_CONTACT_DETAILS = "solicitor-update-contact-details";
 
-    private final CcdPageConfiguration page = new LanguagePreference();
+    private final CcdPageConfiguration page = new SolUpdateContactDetails();
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -37,11 +36,11 @@ public class SolicitorUpdateLanguage implements CCDConfig<CaseData, State, UserR
     private PageBuilder addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         return new PageBuilder(configBuilder
-            .event(SOLICITOR_UPDATE_LANGUAGE)
-            .forStates(SOTAgreementPayAndSubmitRequired, Submitted)
-            .name("Update Language")
-            .description("Update Language")
-            .displayOrder(3)
+            .event(SOLICITOR_UPDATE_CONTACT_DETAILS)
+            .forState(Submitted)
+            .name("Update Contact Details")
+            .description("Update contact details")
+            .displayOrder(1)
             .showSummary()
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_SOLICITOR)
