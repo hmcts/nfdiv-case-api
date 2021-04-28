@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.document.mapper.CaseDataToDraftPetitionTemplateMapper;
+import uk.gov.hmcts.divorce.document.content.DraftPetitionTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DocAssemblyRequest;
 import uk.gov.hmcts.divorce.document.model.DocAssemblyResponse;
 import uk.gov.hmcts.divorce.document.model.DocumentInfo;
@@ -28,20 +28,20 @@ public class DocAssemblyService {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private CaseDataToDraftPetitionTemplateMapper templateDataMapper;
+    private DraftPetitionTemplateContent templateContent;
 
     public static final String DOCUMENT_FILENAME_FMT = "%s%s";
 
     public static final String DOCUMENT_NAME = "draft-mini-petition-";
 
-    public DocumentInfo generateAndStoreDraftPetition(
+    public DocumentInfo renderDocument(
         CaseData caseData,
         Long caseId,
         String authorisation,
         String templateName
     ) {
 
-        Map<String, Object> templateData = templateDataMapper.map(caseData, caseId);
+        Map<String, Object> templateData = templateContent.apply(caseData, caseId);
 
         DocAssemblyRequest docAssemblyRequest =
             DocAssemblyRequest

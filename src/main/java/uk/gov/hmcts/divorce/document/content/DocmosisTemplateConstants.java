@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.document.mapper;
+package uk.gov.hmcts.divorce.document.content;
 
 public final class DocmosisTemplateConstants {
     public static final String DIVORCE_OR_DISSOLUTION = "divorceOrDissolution";

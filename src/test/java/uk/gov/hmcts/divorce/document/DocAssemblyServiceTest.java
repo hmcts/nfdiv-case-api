@@ -10,7 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.document.mapper.CaseDataToDraftPetitionTemplateMapper;
+import uk.gov.hmcts.divorce.document.content.DraftPetitionTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DocAssemblyRequest;
 import uk.gov.hmcts.divorce.document.model.DocAssemblyResponse;
 import uk.gov.hmcts.divorce.document.model.DocumentInfo;
@@ -53,7 +53,7 @@ public class DocAssemblyServiceTest {
     private ObjectMapper objectMapper;
 
     @Mock
-    private CaseDataToDraftPetitionTemplateMapper petitionTemplateMapper;
+    private DraftPetitionTemplateContent petitionTemplateMapper;
 
     @InjectMocks
     private DocAssemblyService docAssemblyService;
@@ -64,7 +64,7 @@ public class DocAssemblyServiceTest {
         Map<String, Object> caseDataMap = caseDataMap();
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(petitionTemplateMapper.map(caseData, TEST_CASE_ID)).thenReturn(caseDataMap);
+        when(petitionTemplateMapper.apply(caseData, TEST_CASE_ID)).thenReturn(caseDataMap);
 
         DocAssemblyRequest docAssemblyRequest =
             DocAssemblyRequest
@@ -86,7 +86,7 @@ public class DocAssemblyServiceTest {
             docAssemblyRequest
         )).thenReturn(docAssemblyResponse);
 
-        DocumentInfo documentInfo = docAssemblyService.generateAndStoreDraftPetition(
+        DocumentInfo documentInfo = docAssemblyService.renderDocument(
             caseData(),
             TEST_CASE_ID,
             TEST_AUTHORIZATION_TOKEN,
@@ -103,7 +103,7 @@ public class DocAssemblyServiceTest {
             TEST_SERVICE_AUTH_TOKEN,
             docAssemblyRequest
         );
-        verify(petitionTemplateMapper).map(caseData, TEST_CASE_ID);
+        verify(petitionTemplateMapper).apply(caseData, TEST_CASE_ID);
         verifyNoMoreInteractions(authTokenGenerator, docAssemblyClient, petitionTemplateMapper);
     }
 
@@ -112,7 +112,7 @@ public class DocAssemblyServiceTest {
         CaseData caseData = caseData();
         Map<String, Object> caseDataMap = caseDataMap();
 
-        when(petitionTemplateMapper.map(caseData, TEST_CASE_ID)).thenReturn(caseDataMap);
+        when(petitionTemplateMapper.apply(caseData, TEST_CASE_ID)).thenReturn(caseDataMap);
 
         byte[] emptyBody = {};
         Request request = Request.create(POST, EMPTY, Map.of(), emptyBody, UTF_8, null);
@@ -147,7 +147,7 @@ public class DocAssemblyServiceTest {
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         assertThatThrownBy(() -> docAssemblyService
-            .generateAndStoreDraftPetition(
+            .renderDocument(
                 caseData(),
                 TEST_CASE_ID,
                 TEST_AUTHORIZATION_TOKEN,
