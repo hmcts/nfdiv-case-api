@@ -13,9 +13,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static java.lang.String.join;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICATION_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_ACTIONS;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.CIVIL_PARTNERSHIP_CERTIFICATE;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.CIVIL_PARTNERSHIP_FOREIGN_UNION_CERTIFICATE;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.CIVIL_PARTNERSHIP_FOREIGN_UNION_CERTIFICATE_TRANSLATION;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.MARRIAGE_CERTIFICATE;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.MARRIAGE_FOREIGN_UNION_CERTIFICATE;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.MARRIAGE_FOREIGN_UNION_CERTIFICATE_TRANSLATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PAPERS;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PARTNER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SERVICE;
@@ -38,7 +43,6 @@ public class ApplicationOutstandingActionNotification {
         templateVars.put(SERVICE, getService(caseData.getDivorceOrDissolution()));
         templateVars.put(PARTNER, getPartner(caseData));
         templateVars.put(PAPERS, getPapers(caseData.getDivorceOrDissolution()));
-        templateVars.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, isMarriageOrCivilPartnership(caseData.getDivorceOrDissolution()));
 
 
         if (caseData.getCannotUploadSupportingDocument() != null && !caseData.getCannotUploadSupportingDocument().isEmpty()) {
@@ -49,7 +53,7 @@ public class ApplicationOutstandingActionNotification {
 
         notificationService.sendEmail(
             caseData.getPetitionerEmail(),
-            APPLICATION_SUBMITTED,
+            OUTSTANDING_ACTIONS,
             templateVars,
             caseData.getLanguagePreference()
         );
@@ -76,16 +80,24 @@ public class ApplicationOutstandingActionNotification {
     }
 
     private void setMissingSupportingDocumentType(Map<String, String> templateVars,  CaseData caseData) {
+        templateVars.put(MARRIAGE_CERTIFICATE, "no");
+        templateVars.put(CIVIL_PARTNERSHIP_CERTIFICATE, "no");
+        templateVars.put(MARRIAGE_FOREIGN_UNION_CERTIFICATE, "no");
+        templateVars.put(CIVIL_PARTNERSHIP_FOREIGN_UNION_CERTIFICATE, "no");
+        templateVars.put(MARRIAGE_FOREIGN_UNION_CERTIFICATE_TRANSLATION, "no");
+        templateVars.put(CIVIL_PARTNERSHIP_FOREIGN_UNION_CERTIFICATE_TRANSLATION, "no");
+        templateVars.put(NotificationConstants.NAME_CHANGE_PROOF, "no");
+
         for (SupportingDocumentType docType : caseData.getCannotUploadSupportingDocument()) {
             switch (docType) {
                 case UNION_CERTIFICATE:
-                    templateVars.put(NotificationConstants.UNION_CERTIFICATE, "yes");
+                    templateVars.put(caseData.getDivorceOrDissolution().isDivorce() ? MARRIAGE_CERTIFICATE : CIVIL_PARTNERSHIP_CERTIFICATE, "yes");
                     break;
                 case FOREIGN_UNION_CERTIFICATE:
-                    templateVars.put(NotificationConstants.FOREIGN_UNION_CERTIFICATE, "yes");
+                    templateVars.put(caseData.getDivorceOrDissolution().isDivorce() ? MARRIAGE_FOREIGN_UNION_CERTIFICATE : CIVIL_PARTNERSHIP_FOREIGN_UNION_CERTIFICATE, "yes");
                     break;
                 case FOREIGN_UNION_CERTIFICATE_TRANSLATION:
-                    templateVars.put(NotificationConstants.FOREIGN_UNION_CERTIFICATE_TRANSLATION, "yes");
+                    templateVars.put(caseData.getDivorceOrDissolution().isDivorce() ? MARRIAGE_FOREIGN_UNION_CERTIFICATE_TRANSLATION : CIVIL_PARTNERSHIP_FOREIGN_UNION_CERTIFICATE_TRANSLATION, "yes");
                     break;
                 case NAME_CHANGE_PROOF:
                     templateVars.put(NotificationConstants.NAME_CHANGE_PROOF, "yes");

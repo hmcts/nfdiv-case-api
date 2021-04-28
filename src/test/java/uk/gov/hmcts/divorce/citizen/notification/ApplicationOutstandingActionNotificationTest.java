@@ -25,8 +25,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATIO
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SERVICE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PARTNER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PAPERS;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.UNION_CERTIFICATE;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.NAME_CHANGE_PROOF;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -63,8 +62,7 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(SERVICE, "divorce"),
                 hasEntry(PARTNER, "husband"),
                 hasEntry(PAPERS, "divorce papers"),
-                hasEntry(MARRIAGE_OR_CIVIL_PARTNERSHIP, "marriage"),
-                hasEntry(UNION_CERTIFICATE, "yes"),
+                hasEntry(MARRIAGE_CERTIFICATE, "yes"),
                 hasEntry(NAME_CHANGE_PROOF, "yes")
             )),
             eq(ENGLISH)
