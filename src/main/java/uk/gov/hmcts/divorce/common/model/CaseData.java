@@ -614,7 +614,7 @@ public class CaseData {
         typeParameterOverride = "DivorceDocument",
         access = {DefaultAccess.class}
     )
-    private List<DivorceDocument> supportingDocumentMetadata;
+    private List<ListValue<DivorceDocument>> supportingDocumentMetadata;
 
     @CCD(
         label = "Cannot upload supporting documents",
@@ -657,7 +657,7 @@ public class CaseData {
         typeParameterOverride = "DivorceDocument",
         access = {DefaultAccess.class}
     )
-    private List<DivorceDocument> documentsGenerated;
+    private List<ListValue<DivorceDocument>> documentsGenerated;
 
     @CCD(
         label = "Is the respondent represented by a solicitor?",
