@@ -37,9 +37,11 @@ uk:
         templates:
           english:
             SAVE_SIGN_OUT: '3aff9dc0-0188-42f6-a0be-fc5daa404d9a'
+            OUTSTANDING_ACTIONS: '1bc9ce05-557b-4cf6-9e20-87d57d55e89c'
             APPLICATION_SUBMITTED: '68b87fab-f99f-49c2-a3df-04415d003eb9'
           welsh:
             SAVE_SIGN_OUT: '3aff9dc0-0188-42f6-a0be-fc5daa404d9a'
+            OUTSTANDING_ACTIONS: '1bc9ce05-557b-4cf6-9e20-87d57d55e89c'
             APPLICATION_SUBMITTED: '68b87fab-f99f-49c2-a3df-04415d003eb9'
 
 s2s-authorised:
