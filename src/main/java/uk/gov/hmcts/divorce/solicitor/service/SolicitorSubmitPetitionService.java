@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.solicitor.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
@@ -8,6 +9,11 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.payment.FeesAndPaymentsClient;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
+import uk.gov.hmcts.divorce.payment.model.Payment;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
 
 import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.ccd.sdk.type.Fee.getValueInPence;
@@ -56,5 +62,25 @@ public class SolicitorSubmitPetitionService {
                     .build()
             )
             .build();
+    }
+
+    public List<ListValue<Payment>> getDummyPayment(OrderSummary orderSummary) {
+        return singletonList(ListValue
+            .<Payment>builder()
+            .id(UUID.randomUUID().toString())
+            .value(
+                Payment
+                    .builder()
+                    .paymentAmount(orderSummary.getPaymentTotal())
+                    .paymentChannel("online")
+                    .paymentDate(LocalDate.now())
+                    .paymentFeeId("FEE0001")
+                    .paymentReference(orderSummary.getPaymentReference())
+                    .paymentSiteId("AA04")
+                    .paymentStatus("Success")
+                    .paymentTransactionId(RandomStringUtils.random(26))
+                    .build()
+            )
+            .build());
     }
 }

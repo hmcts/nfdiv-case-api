@@ -81,6 +81,9 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
             details.getId()
         );
 
+        log.info("Setting dummy payment to mock payment process");
+        caseData.setPayments(solicitorSubmitPetitionService.getDummyPayment(orderSummary));
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
