@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.document.mapper;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.FinancialOrderFor;
@@ -45,11 +46,14 @@ import static uk.gov.hmcts.divorce.document.mapper.DocmosisTemplateConstants.TO_
 import static uk.gov.hmcts.divorce.document.mapper.DocmosisTemplateConstants.TO_END_THE_CIVIL_PARTNERSHIP;
 
 @Component
+@Slf4j
 public class CaseDataToDraftPetitionTemplateMapper {
 
     public Map<String, Object> map(CaseData caseData, Long ccdCaseReference) {
-
         Map<String, Object> templateData = new HashMap<>();
+
+        log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
+
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateData.put(DIVORCE_OR_DISSOLUTION, FOR_A_DIVORCE);
             templateData.put(MARRIAGE_OR_RELATIONSHIP, MARRIAGE);

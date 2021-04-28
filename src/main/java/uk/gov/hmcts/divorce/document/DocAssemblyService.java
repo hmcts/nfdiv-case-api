@@ -14,7 +14,6 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import java.util.Map;
 
 import static java.lang.String.format;
-import static uk.gov.hmcts.divorce.common.config.ControllerConstants.BEARER_PREFIX;
 
 @Service
 @Slf4j
@@ -55,7 +54,7 @@ public class DocAssemblyService {
         log.info("Sending document request for template : {} case id: {}", templateName, caseId);
 
         DocAssemblyResponse docAssemblyResponse = docAssemblyClient.generateAndStoreDraftPetition(
-            BEARER_PREFIX.concat(authorisation),
+            authorisation,
             authTokenGenerator.generate(),
             docAssemblyRequest
         );

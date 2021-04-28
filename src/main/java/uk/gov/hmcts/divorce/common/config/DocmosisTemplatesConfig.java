@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import uk.gov.hmcts.divorce.common.model.LanguagePreference;
 
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import javax.validation.constraints.NotNull;

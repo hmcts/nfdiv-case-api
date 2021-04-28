@@ -14,15 +14,18 @@
     "selectedDivorceCentreSiteId": "AA07",
     "documentsGenerated": [
       {
-        "documentDateAdded": null,
-        "documentComment": null,
-        "documentFileName": null,
-        "documentType": "petition",
-        "documentEmailContent": null,
-        "documentLink": {
-          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/8d2bd0f2-80e9-4b0f-b38d-2c138b243e27",
-          "document_filename": "draft-mini-petition-1616591401473378.pdf",
-          "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/8d2bd0f2-80e9-4b0f-b38d-2c138b243e27/binary"
+        "id": "Petition",
+        "value": {
+          "documentDateAdded": null,
+          "documentComment": null,
+          "documentFileName": "draft-mini-petition-1616591401473378.pdf",
+          "documentType": "petition",
+          "documentEmailContent": null,
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/8d2bd0f2-80e9-4b0f-b38d-2c138b243e27",
+            "document_filename": "draft-mini-petition-1616591401473378.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/8d2bd0f2-80e9-4b0f-b38d-2c138b243e27/binary"
+          }
         }
       }
     ]

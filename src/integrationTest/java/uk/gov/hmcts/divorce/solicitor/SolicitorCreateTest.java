@@ -59,7 +59,7 @@ import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreate.SOLICITOR_CRE
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.BEARER;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.LANGUAGE_PREFERENCE_WELSH;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
@@ -157,14 +157,14 @@ class SolicitorCreateTest {
         caseData.put(PETITIONER_EMAIL, TEST_USER_EMAIL);
         caseData.put(DIVORCE_OR_DISSOLUTION, DivorceOrDissolution.DIVORCE);
         caseData.put(DIVORCE_COSTS_CLAIM, YES);
-        caseData.put("languagePreferenceWelsh", NO);
+        caseData.put(LANGUAGE_PREFERENCE_WELSH, NO);
         return caseData;
     }
 
     private void stubForDocAssembly() throws IOException {
         DOC_ASSEMBLY_SERVER.stubFor(
             post("/api/template-renditions")
-                .withHeader(HttpHeaders.AUTHORIZATION, new EqualToPattern(BEARER + TEST_AUTHORIZATION_TOKEN))
+                .withHeader(HttpHeaders.AUTHORIZATION, new EqualToPattern(TEST_AUTHORIZATION_TOKEN))
                 .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(SERVICE_AUTH_TOKEN))
                 .willReturn(aResponse()
                     .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)

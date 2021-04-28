@@ -65,12 +65,14 @@ public class MiniPetitionDraft implements CaseDataUpdater {
         DivorceDocument divorceDocument = DivorceDocument
             .builder()
             .documentLink(ccdDocument)
+            .documentFileName(documentInfo.getFilename())
             .documentType(PETITION)
             .build();
 
+
         ListValue<DivorceDocument> value = ListValue
             .<DivorceDocument>builder()
-            .id("petition")
+            .id(PETITION.name())
             .value(divorceDocument)
             .build();
 

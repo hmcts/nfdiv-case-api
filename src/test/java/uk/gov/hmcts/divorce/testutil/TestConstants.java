@@ -35,6 +35,8 @@ public final class TestConstants {
     public static final String ENGLISH_TEMPLATE_ID = "divorceminipetition";
     public static final String WELSH_TEMPLATE_ID = "FL-DIV-GNO-WEL-00256.docx";
     public static final String BEARER = "Bearer ";
+    public static final String LANGUAGE_PREFERENCE_WELSH = "languagePreferenceWelsh";
+
     private TestConstants() {
     }
 }
