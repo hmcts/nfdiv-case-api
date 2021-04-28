@@ -16,7 +16,7 @@ import uk.gov.hmcts.divorce.document.model.DocumentInfo;
 
 import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.divorce.common.model.DocumentType.Petition;
+import static uk.gov.hmcts.divorce.common.model.DocumentType.PETITION;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_PETITION;
@@ -64,7 +64,7 @@ public class MiniPetitionDraft implements CaseDataUpdater {
         DivorceDocument divorceDocument = DivorceDocument
             .builder()
             .documentLink(ccdDocument)
-            .documentType(Petition)
+            .documentType(PETITION)
             .build();
 
         CaseData updatedCaseData = caseData

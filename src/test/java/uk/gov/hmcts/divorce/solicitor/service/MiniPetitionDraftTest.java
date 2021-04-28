@@ -28,7 +28,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.common.model.DocumentType.Petition;
+import static uk.gov.hmcts.divorce.common.model.DocumentType.PETITION;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_PETITION;
@@ -83,7 +83,7 @@ public class MiniPetitionDraftTest {
 
         DivorceDocument divorceDocument = result.getCaseData().getDocumentsGenerated().get(0);
 
-        assertThat(divorceDocument.getDocumentType()).isEqualTo(Petition);
+        assertThat(divorceDocument.getDocumentType()).isEqualTo(PETITION);
         assertThat(divorceDocument
             .getDocumentLink())
             .extracting(URL, FILENAME, BINARY_URL)
@@ -119,7 +119,7 @@ public class MiniPetitionDraftTest {
 
         DivorceDocument divorceDocument = updatedCaseDataContext.getCaseData().getDocumentsGenerated().get(0);
 
-        assertThat(divorceDocument.getDocumentType()).isEqualTo(Petition);
+        assertThat(divorceDocument.getDocumentType()).isEqualTo(PETITION);
         assertThat(divorceDocument
             .getDocumentLink())
             .extracting(URL, FILENAME, BINARY_URL)

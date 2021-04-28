@@ -530,6 +530,14 @@ public class CaseData {
     private Set<JurisdictionConnections> jurisdictionConnections;
 
     @CCD(
+        label = "Legal connections",
+        hint = "Tick all the reasons that apply:",
+        access = {DefaultAccess.class}
+    )
+    private Set<LegalConnections> legalConnections;
+
+
+    @CCD(
         label = "Your partner's email address",
         access = {DefaultAccess.class}
     )
@@ -591,6 +599,14 @@ public class CaseData {
     private Set<ClaimsCostFrom> divorceClaimFrom;
 
     @CCD(
+        label = "Documents uploaded",
+        typeOverride = Collection,
+        typeParameterOverride = "DivorceDocument",
+        access = {DefaultAccess.class}
+    )
+    private List<DivorceDocument> documentsUploaded;
+
+    @CCD(
         label = "Uploaded supporting documents",
         hint = "Such as marriage/civil union certificate, proof of name changes, certified translations etc.",
         typeOverride = Collection,
@@ -598,7 +614,6 @@ public class CaseData {
         access = {DefaultAccess.class}
     )
     private List<DivorceDocument> supportingDocumentMetadata;
-
 
     @CCD(
         label = "Cannot upload supporting documents",
