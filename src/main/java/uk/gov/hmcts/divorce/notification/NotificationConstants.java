@@ -4,7 +4,10 @@ public final class NotificationConstants {
     public static final String FIRST_NAME = "first name";
     public static final String LAST_NAME = "last name";
     public static final String RELATIONSHIP = "relationship";
+    public static final String PARTNER = "partner";
 
+    public static final String SERVICE = "service";
+    public static final String MARRIAGE_OR_CIVIL_PARTNERSHIP = "marriage or civil partnership";
     public static final String DIVORCE_APPLICATION = "divorce application";
     public static final String APPLICATION_TO_END_CIVIL_PARTNERSHIP = "application to end your civil partnership";
 
@@ -17,6 +20,13 @@ public final class NotificationConstants {
     public static final String DISSOLUTION_COURT_EMAIL = "dissolutionCourtEmail";
 
     public static final String COURT_EMAIL = "court email";
+
+    public static final String PAPERS = "papers";
+
+    public static final String UNION_CERTIFICATE = "unionCertificate";
+    public static final String FOREIGN_UNION_CERTIFICATE = "foreignUnionCertificate";
+    public static final String FOREIGN_UNION_CERTIFICATE_TRANSLATION = "foreignUnionCertificateTranslation";
+    public static final String NAME_CHANGE_PROOF = "nameChangeProof";
 
     public static final String SUBMISSION_RESPONSE_DATE = "date of response";
     public static final String APPLICATION_REFERENCE = "reference number";

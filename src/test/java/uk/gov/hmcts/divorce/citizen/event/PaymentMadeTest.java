@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
@@ -26,6 +27,9 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 public class PaymentMadeTest {
     @Mock
     private ApplicationSubmittedNotification notification;
+
+    @Mock
+    private ApplicationOutstandingActionNotification outstandingActionNotification;
 
     @InjectMocks
     private PaymentMade paymentMade;
@@ -50,6 +54,7 @@ public class PaymentMadeTest {
 
         paymentMade.submitted(details, details);
 
+        verify(outstandingActionNotification).send(caseData, details.getId());
         verify(notification).send(caseData, details.getId());
     }
 }
