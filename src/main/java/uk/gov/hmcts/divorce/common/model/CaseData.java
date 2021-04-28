@@ -14,6 +14,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
@@ -604,7 +605,7 @@ public class CaseData {
         typeParameterOverride = "DivorceDocument",
         access = {DefaultAccess.class}
     )
-    private List<DivorceDocument> documentsUploaded;
+    private List<ListValue<DivorceDocument>> documentsUploaded;
 
     @CCD(
         label = "Uploaded supporting documents",
