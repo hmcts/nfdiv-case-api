@@ -8,25 +8,27 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.citizen.validation.service.PetitionValidationService;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.citizen.event.PetitionerStatementOfTruth.PETITIONER_STATEMENT_OF_TRUTH;
 
 @ExtendWith(MockitoExtension.class)
 class PetitionerStatementOfTruthTest {
-    @Mock
-    private PetitionValidationService petitionValidationService;
 
     @InjectMocks
     private PetitionerStatementOfTruth petitionerStatementOfTruth;
+
+    @Mock
+    private State awaitingPayment;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
@@ -47,8 +49,12 @@ class PetitionerStatementOfTruthTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
+        List<String> validationErrors = new ArrayList<>();
+        validationErrors.add("Some error");
+
+        when(awaitingPayment.validate(caseData)).thenReturn(validationErrors);
         final AboutToStartOrSubmitResponse<CaseData, State> response = petitionerStatementOfTruth.aboutToStart(caseDetails);
 
-        verify(petitionValidationService).validateCaseData(caseData);
+//        verify(awaitingPayment, 1).validate(caseData);
     }
 }
