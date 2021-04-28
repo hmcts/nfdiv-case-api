@@ -140,7 +140,6 @@ class SolicitorCreateTest {
             .getResponse()
             .getContentAsString();
 
-        System.out.println(jsonStringResponse);
         assertEquals(jsonStringResponse, expectedResponse(SOLICITOR_CREATE_ABOUT_TO_SUBMIT), STRICT);
     }
 
