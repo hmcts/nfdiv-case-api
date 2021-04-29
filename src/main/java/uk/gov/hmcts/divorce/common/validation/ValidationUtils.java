@@ -60,13 +60,6 @@ public class ValidationUtils {
         return null;
     }
 
-    public String checkIfSetNullOrEmpty(Set set, String field) {
-        if (set.isEmpty()) {
-            return field + EMPTY;
-        }
-        return null;
-    }
-
     public static String checkIfDateIsAllowed(LocalDate localDate, String field) {
         if (localDate == null) {
             return field + EMPTY;
