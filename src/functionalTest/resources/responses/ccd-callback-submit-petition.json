@@ -29,7 +29,7 @@
             "amount": "55000"
           },
           "PaymentSiteId": "AA04",
-          "PaymentStatus": "Success",
+          "PaymentStatus": "success",
           "PaymentChannel": "online",
           "PaymentReference": null,
           "PaymentTransactionId": "ge7po9h5bhbtbd466424src9tk"
