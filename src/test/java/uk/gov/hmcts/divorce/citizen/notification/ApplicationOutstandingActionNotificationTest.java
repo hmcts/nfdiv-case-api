@@ -70,7 +70,7 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(MARRIAGE_FOREIGN_UNION_CERTIFICATE, "yes"),
                 hasEntry(MARRIAGE_FOREIGN_UNION_CERTIFICATE_TRANSLATION, "yes"),
                 hasEntry(NAME_CHANGE_PROOF, "yes")
-            )),
+            )), // NOSONAR
             eq(ENGLISH)
         );
         verify(commonContent).apply(any(), eq(data));
@@ -100,7 +100,7 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(MARRIAGE_FOREIGN_UNION_CERTIFICATE, "no"),
                 hasEntry(MARRIAGE_FOREIGN_UNION_CERTIFICATE_TRANSLATION, "no"),
                 hasEntry(NAME_CHANGE_PROOF, "yes")
-            )),
+            )), // NOSONAR
             eq(ENGLISH)
         );
         verify(commonContent).apply(any(), eq(data));
