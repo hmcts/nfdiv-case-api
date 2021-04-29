@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.config.DocmosisTemplatesConfig;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.LanguagePreference;
@@ -16,7 +17,7 @@ import uk.gov.hmcts.divorce.document.model.DocumentInfo;
 
 import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.divorce.common.model.DocumentType.Petition;
+import static uk.gov.hmcts.divorce.common.model.DocumentType.PETITION;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_PETITION;
@@ -64,12 +65,18 @@ public class MiniPetitionDraft implements CaseDataUpdater {
         DivorceDocument divorceDocument = DivorceDocument
             .builder()
             .documentLink(ccdDocument)
-            .documentType(Petition)
+            .documentType(PETITION)
+            .build();
+
+        ListValue<DivorceDocument> value = ListValue
+            .<DivorceDocument>builder()
+            .id("petition")
+            .value(divorceDocument)
             .build();
 
         CaseData updatedCaseData = caseData
             .toBuilder()
-            .documentsGenerated(singletonList(divorceDocument))
+            .documentsGenerated(singletonList(value))
             .build();
 
         return caseDataUpdaterChain.processNext(caseDataContext.handlerContextWith(updatedCaseData));

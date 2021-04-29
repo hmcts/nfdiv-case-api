@@ -23,7 +23,7 @@ public class DivorceDocument {
     private final Date documentDateAdded;
 
     @CCD(
-        label = "DocumentComment",
+        label = "Comment",
         access = {DefaultAccess.class}
     )
     private final String documentComment;

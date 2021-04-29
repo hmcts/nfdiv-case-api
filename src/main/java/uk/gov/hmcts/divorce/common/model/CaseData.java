@@ -14,6 +14,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
@@ -30,6 +31,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.WELSH;
 
@@ -529,6 +531,14 @@ public class CaseData {
     private Set<JurisdictionConnections> jurisdictionConnections;
 
     @CCD(
+        label = "Legal connections",
+        hint = "Tick all the reasons that apply:",
+        access = {DefaultAccess.class}
+    )
+    private Set<LegalConnections> legalConnections;
+
+
+    @CCD(
         label = "Your partner's email address",
         access = {DefaultAccess.class}
     )
@@ -590,14 +600,21 @@ public class CaseData {
     private Set<ClaimsCostFrom> divorceClaimFrom;
 
     @CCD(
+        label = "Documents uploaded",
+        typeOverride = Collection,
+        typeParameterOverride = "DivorceDocument",
+        access = {DefaultAccess.class}
+    )
+    private List<ListValue<DivorceDocument>> documentsUploaded;
+
+    @CCD(
         label = "Uploaded supporting documents",
         hint = "Such as marriage/civil union certificate, proof of name changes, certified translations etc.",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
         access = {DefaultAccess.class}
     )
-    private List<DivorceDocument> supportingDocumentMetadata;
-
+    private List<ListValue<DivorceDocument>> supportingDocumentMetadata;
 
     @CCD(
         label = "Cannot upload supporting documents",
@@ -640,7 +657,7 @@ public class CaseData {
         typeParameterOverride = "DivorceDocument",
         access = {DefaultAccess.class}
     )
-    private List<DivorceDocument> documentsGenerated;
+    private List<ListValue<DivorceDocument>> documentsGenerated;
 
     @CCD(
         label = "Is the respondent represented by a solicitor?",
@@ -719,5 +736,15 @@ public class CaseData {
     @JsonIgnore
     public LocalDate getDateOfSubmissionResponse() {
         return dateSubmitted == null ? null : dateSubmitted.plusDays(SUBMISSION_RESPONSE_DAYS).toLocalDate();
+    }
+
+    @JsonIgnore
+    public boolean hasStatementOfTruth() {
+        return YES.equals(statementOfTruth);
+    }
+
+    @JsonIgnore
+    public boolean hasSolSignStatementOfTruth() {
+        return YES.equals(solSignStatementOfTruth);
     }
 }
