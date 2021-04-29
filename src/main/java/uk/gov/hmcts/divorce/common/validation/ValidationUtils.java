@@ -7,10 +7,15 @@ import uk.gov.hmcts.divorce.common.model.Gender;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 public class ValidationUtils {
+
+    public static final String LESS_THAN_ONE_YEAR_AGO = " can not be less than one year ago.";
+    public static final String MORE_THAN_ONE_HUNDRED_YEARS_AGO = "MarriageDate can not be more than 100 years ago.";
+    public static final String IN_THE_FUTURE = "MarriageDate can not be in the future.";
+    public static final String EMPTY = " cannot be empty or null";
+    public static final String MUST_BE_YES = " must be YES";
 
     public void addToErrorList(String error, List<String> errorList) {
         if (error != null) {
@@ -19,7 +24,6 @@ public class ValidationUtils {
     }
 
     public String checkIfStringNullOrEmpty(String string, String field) {
-        String EMPTY = " cannot be empty or null";
         if (string == null) {
             return field + EMPTY;
         }
@@ -27,7 +31,6 @@ public class ValidationUtils {
     }
 
     public String checkIfYesOrNoNullOrEmpty(YesOrNo yesOrNo, String field) {
-        String EMPTY = " cannot be empty or null";
         if (yesOrNo == null) {
             return field + EMPTY;
         }
@@ -35,7 +38,6 @@ public class ValidationUtils {
     }
 
     public String checkIfGenderNullOrEmpty(Gender gender, String field) {
-        String EMPTY = " cannot be empty or null";
         if (gender == null) {
             return field + EMPTY;
         }
@@ -43,7 +45,6 @@ public class ValidationUtils {
     }
 
     public String checkIfConfidentialAddressNullOrEmpty(ConfidentialAddress confidentialAddress, String field) {
-        String EMPTY = " cannot be empty or null";
         if (confidentialAddress == null) {
             return field + EMPTY;
         }
@@ -51,8 +52,6 @@ public class ValidationUtils {
     }
 
     public String checkIfYesOrNoIsNullOrEmptyOrNo(YesOrNo yesOrNo, String field) {
-        String EMPTY = " cannot be empty or null";
-        String MUST_BE_YES = " must be YES";
         if (yesOrNo == null) {
             return field + EMPTY;
         } else if (yesOrNo.equals(YesOrNo.NO)) {
@@ -62,7 +61,6 @@ public class ValidationUtils {
     }
 
     public String checkIfSetNullOrEmpty(Set set, String field) {
-        String EMPTY = " cannot be empty";
         if (set.isEmpty()) {
             return field + EMPTY;
         }
@@ -70,10 +68,9 @@ public class ValidationUtils {
     }
 
     public String checkIfDateIsAllowed(LocalDate localDate, String field) {
-        String LESS_THAN_ONE_YEAR_AGO = " can not be less than one year ago.";
-        String MORE_THAN_ONE_HUNDRED_YEARS_AGO = "MarriageDate can not be more than 100 years ago.";
-        String IN_THE_FUTURE = "MarriageDate can not be in the future.";
-        if (isLessThanOneYearAgo(localDate)) {
+        if (localDate == null) {
+            return field + EMPTY;
+        } else if (isLessThanOneYearAgo(localDate)) {
             return field + LESS_THAN_ONE_YEAR_AGO;
         } else if (isOverOneHundredYearsAgo(localDate)) {
             return field + MORE_THAN_ONE_HUNDRED_YEARS_AGO;
