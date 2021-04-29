@@ -67,8 +67,8 @@ public class SolicitorSubmitPetitionService {
 
     public ListValue<Payment> getDummyPayment(OrderSummary orderSummary) {
         // sonar compliant random id generator
-        SecureRandom random = new SecureRandom();
-        byte[] paymentTransactionId = new byte[26];
+        final SecureRandom random = new SecureRandom();
+        final byte[] paymentTransactionId = new byte[26];
         random.nextBytes(paymentTransactionId);
 
         return ListValue

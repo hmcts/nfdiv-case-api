@@ -7,12 +7,14 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
+import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
 import uk.gov.hmcts.divorce.solicitor.event.page.HelpWithFees;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayAccount;
@@ -24,6 +26,7 @@ import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitPetitionService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
@@ -85,10 +88,12 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
         );
 
         log.info("Setting dummy payment to mock payment process");
-        if (caseData.getPayments() != null && caseData.getPayments().size() > 0) {
-            caseData.getPayments().add(solicitorSubmitPetitionService.getDummyPayment(orderSummary));
+        if (caseData.getPayments() == null || caseData.getPayments().isEmpty()) {
+            List<ListValue<Payment>> payments = new ArrayList<>();
+            payments.add(solicitorSubmitPetitionService.getDummyPayment(orderSummary));
+            caseData.setPayments(payments);
         } else {
-            caseData.setPayments(asList(solicitorSubmitPetitionService.getDummyPayment(orderSummary)));
+            caseData.getPayments().add(solicitorSubmitPetitionService.getDummyPayment(orderSummary));
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -121,7 +126,7 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
                                                CaseDetails<CaseData, State> beforeDetails) {
         final CaseData caseData = details.getData();
-        PaymentStatus paymentStatus = caseData.getPayments().get(caseData.getPayments().size() - 1).getValue().getPaymentStatus();
+        final PaymentStatus paymentStatus = caseData.getPayments().get(caseData.getPayments().size() - 1).getValue().getPaymentStatus();
 
         if (paymentStatus.equals(PaymentStatus.SUCCESS)) {
             details.setState(Submitted);
