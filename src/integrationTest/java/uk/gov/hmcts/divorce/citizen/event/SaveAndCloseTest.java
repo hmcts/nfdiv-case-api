@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.citizen;
+package uk.gov.hmcts.divorce.citizen.event;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -28,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.divorce.citizen.event.SaveAndClose.SAVE_AND_CLOSE;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SAVE_SIGN_OUT;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
@@ -73,7 +74,7 @@ public class SaveAndCloseTest {
             .andExpect(status().isOk());
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq("70dd0a1e-047f-4baa-993a-e722db17d8ac"), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(SAVE_SIGN_OUT), anyMap(), eq(ENGLISH));
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -92,7 +93,7 @@ public class SaveAndCloseTest {
         doThrow(new NotificationException(new NotificationClientException("All template params not passed")))
             .when(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
-            eq("70dd0a1e-047f-4baa-993a-e722db17d8ac"),
+            eq(SAVE_SIGN_OUT),
             anyMap(),
             eq(ENGLISH));
 

@@ -23,6 +23,8 @@ import uk.gov.hmcts.divorce.solicitor.event.page.RespondentServiceDetails;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutThePetitioner;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutTheRespondent;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutTheSolicitor;
+import uk.gov.hmcts.divorce.solicitor.event.page.SolHowDoYouWantToApplyForDivorce;
+import uk.gov.hmcts.divorce.solicitor.event.page.UploadMarriageCertificate;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorCreatePetitionService;
 
 import java.util.List;
@@ -47,16 +49,18 @@ public class SolicitorCreate implements CCDConfig<CaseData, State, UserRole> {
     public static final String SOLICITOR_CREATE = "solicitor-create";
 
     private final List<CcdPageConfiguration> pages = asList(
+        new SolHowDoYouWantToApplyForDivorce(),
         new SolAboutTheSolicitor(),
         new SolAboutThePetitioner(),
         new SolAboutTheRespondent(),
         new RespondentServiceDetails(),
         new MarriageCertificateDetails(),
-        new JurisdictionApplyForDivorce(),
         new OtherLegalProceedings(),
         new FinancialOrders(),
         new ClaimForCosts(),
+        new UploadMarriageCertificate(),
         new LanguagePreference(),
+        new JurisdictionApplyForDivorce(),
         new MarriageIrretrievablyBroken()
     );
 

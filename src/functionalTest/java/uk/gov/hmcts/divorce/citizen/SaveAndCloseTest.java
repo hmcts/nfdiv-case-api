@@ -8,7 +8,7 @@ import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
-import java.util.HashMap;
+import java.io.IOException;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,17 +16,21 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_EMAIL;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_FIRST_NAME;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_LAST_NAME;
 import static uk.gov.hmcts.divorce.citizen.event.SaveAndClose.SAVE_AND_CLOSE;
 import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
+import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.SUBMITTED_CALLBACK_URL;
 
 @SpringBootTest
 public class SaveAndCloseTest extends FunctionalTestSuite {
+
+    private static final String SUBMITTED_REQUEST = "classpath:request/casedata/ccd-callback-casedata.json";
+
     @Test
-    public void shouldSendEmailWhenAllTemplateParamsAreValid() {
+    public void shouldSendEmailWhenAllTemplateParamsAreValid() throws IOException {
         Response response = RestAssured
             .given()
             .relaxedHTTPSValidation()
@@ -40,7 +44,7 @@ public class SaveAndCloseTest extends FunctionalTestSuite {
                     .caseDetails(
                         CaseDetails
                             .builder()
-                            .data(caseData())
+                            .data(caseData(SUBMITTED_REQUEST))
                             .build()
                     )
                     .build()
@@ -52,10 +56,10 @@ public class SaveAndCloseTest extends FunctionalTestSuite {
     }
 
     @Test
-    public void shouldFailWithBadRequestErrorWhenFirstAndLastNamesAreMissing() {
-        Map<String, Object> caseDataMapWithMissingParams = new HashMap<>();
-        caseDataMapWithMissingParams.put(DIVORCE_OR_DISSOLUTION, DIVORCE);
-        caseDataMapWithMissingParams.put(PETITIONER_EMAIL, TEST_USER_EMAIL);
+    public void shouldFailWithBadRequestErrorWhenFirstAndLastNamesAreMissing() throws IOException {
+        Map<String, Object> caseDataMapWithMissingParams = caseData(SUBMITTED_REQUEST);
+        caseDataMapWithMissingParams.remove(PETITIONER_FIRST_NAME);
+        caseDataMapWithMissingParams.remove(PETITIONER_LAST_NAME);
 
         Response response = RestAssured
             .given()
@@ -87,9 +91,9 @@ public class SaveAndCloseTest extends FunctionalTestSuite {
     }
 
     @Test
-    public void shouldFailValidationErrorWhenEmailIsMissing() {
-        Map<String, Object> caseDataMapWithMissingParams = new HashMap<>();
-        caseDataMapWithMissingParams.put(DIVORCE_OR_DISSOLUTION, DIVORCE);
+    public void shouldFailValidationErrorWhenEmailIsMissing() throws IOException {
+        Map<String, Object> caseDataMapWithMissingParams = caseData(SUBMITTED_REQUEST);
+        caseDataMapWithMissingParams.remove(PETITIONER_EMAIL);
 
         Response response = RestAssured
             .given()

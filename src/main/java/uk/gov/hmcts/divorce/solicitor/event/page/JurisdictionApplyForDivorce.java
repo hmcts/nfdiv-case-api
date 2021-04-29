@@ -13,10 +13,6 @@ public class JurisdictionApplyForDivorce implements CcdPageConfiguration {
             .page("JurisdictionApplyForDivorce")
             .pageLabel("Jurisdiction - Apply for a divorce")
             .label(
-                "JurisdictionApplyForDivorce-Jurisdiction",
-                "# Jurisdiction - Apply for a divorce"
-            )
-            .label(
                 "LabelSolAboutEditingApplication-Jurisdiction",
                 "You can make changes at the end of your application.")
             .label(
@@ -27,7 +23,7 @@ public class JurisdictionApplyForDivorce implements CcdPageConfiguration {
                 "Divorce – *Opposite Sex Couple* – Article 3(1) of Council Regulation (EC) No 2201/2003"
                     + "of 27 November 2003"
             )
-            .optional(CaseData::getJurisdictionConnections)
+            .mandatory(CaseData::getLegalConnections)
             .label(
                 "ResidualJurisdiction-Jurisdiction",
                 "### Residual Jurisdiction"

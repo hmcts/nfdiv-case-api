@@ -8,6 +8,8 @@ import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
+import java.io.IOException;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
@@ -15,12 +17,16 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.divorce.citizen.event.SaveAndClose.SAVE_AND_CLOSE;
 import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.SUBMITTED_CALLBACK_URL;
 
 @SpringBootTest
 public class ServiceAuthValidationTest extends FunctionalTestSuite {
+
+    private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata.json";
+
     @Test
-    public void shouldReturn401WhenServiceAuthTokenIsInvalid() {
+    public void shouldReturn401WhenServiceAuthTokenIsInvalid() throws IOException {
         Response response = RestAssured
             .given()
             .relaxedHTTPSValidation()
@@ -34,7 +40,7 @@ public class ServiceAuthValidationTest extends FunctionalTestSuite {
                     .caseDetails(
                         CaseDetails
                             .builder()
-                            .data(caseData())
+                            .data(caseData(REQUEST))
                             .build()
                     )
                     .build()
@@ -46,7 +52,7 @@ public class ServiceAuthValidationTest extends FunctionalTestSuite {
     }
 
     @Test
-    public void shouldReturn403WhenServiceIsNotAuthorised() {
+    public void shouldReturn403WhenServiceIsNotAuthorised() throws IOException {
         Response response = RestAssured
             .given()
             .relaxedHTTPSValidation()
@@ -60,7 +66,7 @@ public class ServiceAuthValidationTest extends FunctionalTestSuite {
                     .caseDetails(
                         CaseDetails
                             .builder()
-                            .data(caseData())
+                            .data(caseData(REQUEST))
                             .build()
                     )
                     .build()

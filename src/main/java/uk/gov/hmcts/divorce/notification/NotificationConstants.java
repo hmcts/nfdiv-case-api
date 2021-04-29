@@ -11,13 +11,15 @@ public final class NotificationConstants {
     public static final String SIGN_IN_URL_NOTIFY_KEY = "signin url";
     public static final String RELATIONSHIP_COURT_HEADER = "relationship court header";
 
-    public static final String APPLY_FOR_DIVORCE = "Apply for a divorce";
-    public static final String END_CIVIL_PARTNERSHIP = "End a civil partnership";
-
     public static final String SIGN_IN_DIVORCE_URL = "signInDivorceUrl";
     public static final String SIGN_IN_DISSOLUTION_URL = "signInDissolutionUrl";
+    public static final String DIVORCE_COURT_EMAIL = "divorceCourtEmail";
+    public static final String DISSOLUTION_COURT_EMAIL = "dissolutionCourtEmail";
 
     public static final String COURT_EMAIL = "court email";
+
+    public static final String SUBMISSION_RESPONSE_DATE = "date of response";
+    public static final String APPLICATION_REFERENCE = "reference number";
 
     private NotificationConstants() {
     }

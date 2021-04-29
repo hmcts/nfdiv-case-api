@@ -1,0 +1,13 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "petitionerFirstName": "test_first_name",
+    "petitionerLastName": "test_last_name",
+    "petitionerEmail": "test@test.com",
+    "statementOfTruth": "YES",
+    "solSignStatementOfTruth": "YES"
+  },
+  "errors": null,
+  "warnings": null,
+  "state": "SolicitorAwaitingPaymentConfirmation"
+}
