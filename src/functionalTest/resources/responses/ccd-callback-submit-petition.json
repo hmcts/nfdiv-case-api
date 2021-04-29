@@ -19,7 +19,7 @@
         }
       ]
     },
-    "Payments": [
+    "payments": [
       {
         "id": null,
         "value": {
