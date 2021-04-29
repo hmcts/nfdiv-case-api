@@ -51,8 +51,8 @@ public class PetitionerStatementOfTruth implements CCDConfig<CaseData, State, Us
 
         if(!validationErrors.isEmpty()) {
             log.info("Validation errors: ");
-            for(String item:validationErrors) {
-                log.info(item);
+            for(String error:validationErrors) {
+                log.info(error);
             }
         }
 

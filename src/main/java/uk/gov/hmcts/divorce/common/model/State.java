@@ -4,14 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.common.validation.ValidationUtils;
 
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 @RequiredArgsConstructor
 @Getter
@@ -37,18 +33,19 @@ public enum State implements CaseState {
     AwaitingPayment("AwaitingPayment") {
         @Override
         public List<String> validate(CaseData data) {
+            ValidationUtils validationUtils = new ValidationUtils();
             List<String> errors = new ArrayList<>();
-            errors.add(checkIfNullOrEmpty(data.getPetitionerFirstName(), "PetitionerFirstName"));
-            errors.add(checkIfNullOrEmpty(data.getPetitionerLastName(), "PetitionerLastName"));
-            errors.add(checkIfNullOrEmpty(data.getRespondentFirstName(), "RespondentFirstName"));
-            errors.add(checkIfNullOrEmpty(data.getRespondentLastName(), "RespondentLastName"));
-//            errors.add(checkIfNullOrEmpty(data.getFinancialOrder().toString(), "FinancialOrder"));
-//            errors.add(checkIfNullOrEmpty(data.getInferredPetitionerGender().toString(), "InferredPetitionerGender"));
-//            errors.add(checkIfNullOrEmpty(data.getInferredRespondentGender().toString(), "InferredRespondentGender"));
-            errors.add(checkIfNullOrEmpty(data.getMarriagePetitionerName(), "MarriagePetitionerName"));
-//            errors.add(checkIfNullOrEmpty(data.getPetitionerContactDetailsConfidential().toString(), "PetitionerContactDetailsConfidential"));
-//            errors.add(checkIfNullOrEmptyOrNo(data.getPrayerHasBeenGiven().toString(), "PrayerHasBeenGiven"));
-//            errors.add(checkIfNullOrEmptyOrNo(data.getStatementOfTruth().toString(), "StatementOfTruth"));
+            validationUtils.addToErrorList(validationUtils.checkIfStringNullOrEmpty(data.getPetitionerFirstName(), "PetitionerFirstName"), errors);
+            validationUtils.addToErrorList(validationUtils.checkIfStringNullOrEmpty(data.getPetitionerLastName(), "PetitionerLastName"), errors);
+            validationUtils.addToErrorList(validationUtils.checkIfStringNullOrEmpty(data.getRespondentFirstName(), "RespondentFirstName"), errors);
+            validationUtils.addToErrorList(validationUtils.checkIfStringNullOrEmpty(data.getRespondentLastName(), "RespondentLastName"), errors);
+            validationUtils.addToErrorList(validationUtils.checkIfYesOrNoNullOrEmpty(data.getFinancialOrder(), "FinancialOrder"), errors);
+            validationUtils.addToErrorList(validationUtils.checkIfGenderNullOrEmpty(data.getInferredPetitionerGender(), "InferredPetitionerGender"), errors);
+            validationUtils.addToErrorList(validationUtils.checkIfGenderNullOrEmpty(data.getInferredRespondentGender(), "InferredRespondentGender"), errors);
+            validationUtils.addToErrorList(validationUtils.checkIfStringNullOrEmpty(data.getMarriagePetitionerName(), "MarriagePetitionerName"), errors);
+            validationUtils.addToErrorList(validationUtils.checkIfConfidentialAddressNullOrEmpty(data.getPetitionerContactDetailsConfidential(), "PetitionerContactDetailsConfidential"), errors);
+            validationUtils.addToErrorList(validationUtils.checkIfYesOrNoIsNullOrEmptyOrNo(data.getPrayerHasBeenGiven(), "PrayerHasBeenGiven"), errors);
+            validationUtils.addToErrorList(validationUtils.checkIfYesOrNoIsNullOrEmptyOrNo(data.getStatementOfTruth(), "StatementOfTruth"), errors);
 //            errors.add(checkIfSetNullOrEmpty(data.getJurisdictionConnections(), "JurisdictionConnections"));
 //            errors.add(checkIfDateIsAllowed(data.getMarriageDate(), "MarriageDate"));
             return errors;
@@ -92,62 +89,6 @@ public enum State implements CaseState {
     };
 
     private final String name;
-
-    protected String checkIfNullOrEmpty(String string, String field) {
-        String EMPTY = " cannot be empty or null";
-        if (Optional.ofNullable(string).isEmpty()) {
-            return field + EMPTY;
-        }
-        return null;
-    }
-
-    protected String checkIfNullOrEmptyOrNo(String string, String field) {
-        String EMPTY = " cannot be empty or null";
-        String YES = " must be YES";
-        if (Optional.ofNullable(string).isEmpty()) {
-            return field + EMPTY;
-        } else if (string.equals(YesOrNo.NO.toString())) {
-            return field + YES;
-        }
-        return null;
-    }
-
-    protected String checkIfSetNullOrEmpty(Set set, String field) {
-        String EMPTY = " cannot be empty";
-        if (set.isEmpty()) {
-            return field + EMPTY;
-        }
-        return null;
-    }
-
-    protected String checkIfDateIsAllowed(LocalDate localDate, String field) {
-        String LESS_THAN_ONE_YEAR_AGO = " can not be less than one year ago.";
-        String MORE_THAN_ONE_HUNDRED_YEARS_AGO = "MarriageDate can not be more than 100 years ago.";
-        String IN_THE_FUTURE = "MarriageDate can not be in the future.";
-        if (isLessThanOneYearAgo(localDate)) {
-            return field + LESS_THAN_ONE_YEAR_AGO;
-        } else if (isOverOneHundredYearsAgo(localDate)) {
-            return field + MORE_THAN_ONE_HUNDRED_YEARS_AGO;
-        } else if (isInTheFuture(localDate)) {
-            return field + IN_THE_FUTURE;
-        } else if (localDate.toString().isEmpty()) {
-            checkIfNullOrEmpty(localDate.toString(), field);
-        }
-        return null;
-    }
-
-    private boolean isLessThanOneYearAgo(LocalDate date) {
-        return !date.isAfter(LocalDate.now())
-            && date.isAfter(LocalDate.now().minus(365, ChronoUnit.DAYS));
-    }
-
-    private boolean isOverOneHundredYearsAgo(LocalDate date) {
-        return date.isBefore(LocalDate.now().minus(365 * 100, ChronoUnit.DAYS));
-    }
-
-    private boolean isInTheFuture(LocalDate date) {
-        return date.isAfter(LocalDate.now());
-    }
 
 }
 
