@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotificatio
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.common.exception.NotificationException;
+import uk.gov.hmcts.divorce.common.model.WhoDivorcing;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.service.notify.NotificationClientException;
 
@@ -67,6 +68,7 @@ public class PaymentMadeTest {
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmail() throws Exception {
         Map<String, Object> data = caseDataMap();
         data.put("dateSubmitted", LocalDateTime.now());
+        data.put("divorceWho", WhoDivorcing.HUSBAND);
 
         mockMvc.perform(post(SUBMITTED_URL)
             .contentType(APPLICATION_JSON)
@@ -85,6 +87,7 @@ public class PaymentMadeTest {
     public void givenSendEmailThrowsExceptionWhenCallbackIsInvokedThenReturnBadRequest() throws Exception {
         Map<String, Object> data = caseDataMap();
         data.put("dateSubmitted", LocalDateTime.now());
+        data.put("divorceWho", WhoDivorcing.HUSBAND);
 
         doThrow(new NotificationException(new NotificationClientException("All template params not passed")))
             .when(notificationService).sendEmail(
