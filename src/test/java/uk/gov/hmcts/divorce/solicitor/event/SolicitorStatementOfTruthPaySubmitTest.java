@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.MoneyGBP;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
@@ -91,7 +92,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final Payment payment = Payment
             .builder()
-            .paymentAmount(orderSummary.getPaymentTotal())
+            .paymentAmount(MoneyGBP.builder().amount(orderSummary.getPaymentTotal()).build())
             .paymentChannel("online")
             .paymentDate(LocalDate.now())
             .paymentFeeId("FEE0001")
@@ -234,7 +235,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
         final Payment payment = Payment
             .builder()
-            .paymentAmount(orderSummary.getPaymentTotal())
+            .paymentAmount(MoneyGBP.builder().amount(orderSummary.getPaymentTotal()).build())
             .paymentChannel("online")
             .paymentDate(LocalDate.now())
             .paymentFeeId("FEE0001")
@@ -269,7 +270,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
         final Payment payment = Payment
             .builder()
-            .paymentAmount(orderSummary.getPaymentTotal())
+            .paymentAmount(MoneyGBP.builder().amount(orderSummary.getPaymentTotal()).build())
             .paymentChannel("online")
             .paymentDate(LocalDate.now())
             .paymentFeeId("FEE0001")

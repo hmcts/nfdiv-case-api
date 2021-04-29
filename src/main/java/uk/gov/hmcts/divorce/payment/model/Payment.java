@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.MoneyGBP;
 import uk.gov.hmcts.divorce.common.model.access.DefaultAccess;
 
 import java.time.LocalDate;
@@ -34,7 +35,7 @@ public class Payment {
         access = {DefaultAccess.class}
     )
     @JsonProperty("PaymentAmount")
-    private String paymentAmount;
+    private MoneyGBP paymentAmount;
 
     @CCD(
         label = "Payment Site Id",
