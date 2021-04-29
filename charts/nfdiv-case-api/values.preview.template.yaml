@@ -56,6 +56,7 @@ ccd:
                 IDAM_USER_URL: https://idam-web-public.aat.platform.hmcts.net
                 DATA_STORE_S2S_AUTHORISED_SERVICES: ccd_data,ccd_gw,ccd_admin,ccd_ps,divorce_ccd_submission,divorce_frontend,nfdiv_case_api
                 ELASTIC_SEARCH_ENABLED: false
+                CCD_DM_DOMAIN: http://dm-store-aat.service.core-compute-aat.internal
             keyVaults: []
             ingressHost: ccd-data-store-api-${SERVICE_FQDN}
 
