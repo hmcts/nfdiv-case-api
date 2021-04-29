@@ -23,6 +23,8 @@ import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_ACTIONS;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.MARRIAGE_CERTIFICATE;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.MARRIAGE_FOREIGN_UNION_CERTIFICATE;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.MARRIAGE_FOREIGN_UNION_CERTIFICATE_TRANSLATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.NAME_CHANGE_PROOF;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PAPERS;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PARTNER;
@@ -43,7 +45,39 @@ class ApplicationOutstandingActionNotificationTest {
     private ApplicationOutstandingActionNotification notification;
 
     @Test
-    void shouldCallSendEmailWithSubmissionResponseDate() {
+    void shouldCallSendEmailForAllSupportingDocuments() {
+        CaseData data = caseData();
+        data.setDivorceWho(WhoDivorcing.HUSBAND);
+
+        Set<SupportingDocumentType> docs = new HashSet<>();
+        docs.add(SupportingDocumentType.UNION_CERTIFICATE);
+        docs.add(SupportingDocumentType.FOREIGN_UNION_CERTIFICATE);
+        docs.add(SupportingDocumentType.FOREIGN_UNION_CERTIFICATE_TRANSLATION);
+        docs.add(SupportingDocumentType.NAME_CHANGE_PROOF);
+        data.setCannotUploadSupportingDocument(docs);
+
+        notification.send(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(OUTSTANDING_ACTIONS),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(SERVICE, "divorce"),
+                hasEntry(PARTNER, "husband"),
+                hasEntry(PAPERS, "divorce papers"),
+                hasEntry(MARRIAGE_CERTIFICATE, "yes"),
+                hasEntry(MARRIAGE_FOREIGN_UNION_CERTIFICATE, "yes"),
+                hasEntry(MARRIAGE_FOREIGN_UNION_CERTIFICATE_TRANSLATION, "yes"),
+                hasEntry(NAME_CHANGE_PROOF, "yes")
+            )),
+            eq(ENGLISH)
+        );
+        verify(commonContent).apply(any(), eq(data));
+    }
+
+    @Test
+    void shouldCallSendEmailForSomeSupportingDocuments() {
         CaseData data = caseData();
         data.setDivorceWho(WhoDivorcing.HUSBAND);
 
@@ -63,6 +97,8 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(PARTNER, "husband"),
                 hasEntry(PAPERS, "divorce papers"),
                 hasEntry(MARRIAGE_CERTIFICATE, "yes"),
+                hasEntry(MARRIAGE_FOREIGN_UNION_CERTIFICATE, "no"),
+                hasEntry(MARRIAGE_FOREIGN_UNION_CERTIFICATE_TRANSLATION, "no"),
                 hasEntry(NAME_CHANGE_PROOF, "yes")
             )),
             eq(ENGLISH)
