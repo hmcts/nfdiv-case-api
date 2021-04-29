@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor.notification;
+package uk.gov.hmcts.divorce.solicitor.service.notification;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,7 +9,6 @@ import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-import uk.gov.hmcts.divorce.solicitor.service.notification.ApplicantSubmittedNotification;
 
 import java.util.HashMap;
 import java.util.Map;
