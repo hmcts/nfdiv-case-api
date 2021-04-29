@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor.service;
+package uk.gov.hmcts.divorce.solicitor.service.updater;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

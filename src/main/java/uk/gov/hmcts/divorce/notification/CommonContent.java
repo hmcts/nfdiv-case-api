@@ -1,10 +1,11 @@
-package uk.gov.hmcts.divorce.citizen.notification;
+package uk.gov.hmcts.divorce.notification;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TO_END_CIVIL_PARTNERSHIP;
@@ -26,7 +27,10 @@ public class CommonContent {
     @Autowired
     private EmailTemplatesConfig emailTemplatesConfig;
 
-    public void apply(Map<String, String> templateVars, CaseData caseData) {
+    public Map<String, String> templateVarsFor(final CaseData caseData) {
+
+        final HashMap<String, String> templateVars = new HashMap<>();
+
         templateVars.put(FIRST_NAME, caseData.getPetitionerFirstName());
         templateVars.put(LAST_NAME, caseData.getPetitionerLastName());
 
@@ -41,5 +45,7 @@ public class CommonContent {
             templateVars.put(RELATIONSHIP_COURT_HEADER, END_CIVIL_PARTNERSHIP);
             templateVars.put(COURT_EMAIL, configTemplateVars.get(DISSOLUTION_COURT_EMAIL));
         }
+
+        return templateVars;
     }
 }

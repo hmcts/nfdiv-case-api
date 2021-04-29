@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor.service;
+package uk.gov.hmcts.divorce.solicitor.service.updater;
 
 import feign.FeignException;
 import feign.Request;

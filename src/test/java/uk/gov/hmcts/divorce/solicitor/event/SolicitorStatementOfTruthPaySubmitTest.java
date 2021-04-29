@@ -22,6 +22,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -84,6 +85,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         assertThat(configBuilder.getEvents().get(0).getEventID(), is(SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT));
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     void shouldReturnWithoutErrorIfStatementOfTruthAndSolStatementOfTruthAreSetToYes() {
 
@@ -93,7 +95,12 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setState(SOTAgreementPayAndSubmitRequired);
+        final CaseDetails<CaseData, State> resultDetails = new CaseDetails<>();
+        resultDetails.setData(caseData);
+        resultDetails.setState(SolicitorAwaitingPaymentConfirmation);
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
+
+        when(solicitorSubmitPetitionService.aboutToSubmit(any(CaseDetails.class))).thenReturn(resultDetails);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorStatementOfTruthPaySubmit
             .aboutToSubmit(caseDetails, beforeCaseDetails);
