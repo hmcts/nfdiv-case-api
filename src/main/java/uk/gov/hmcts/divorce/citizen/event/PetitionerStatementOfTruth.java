@@ -30,7 +30,7 @@ public class PetitionerStatementOfTruth implements CCDConfig<CaseData, State, Us
 
         configBuilder
             .event(PETITIONER_STATEMENT_OF_TRUTH)
-            .forStateTransition(Draft, AwaitingPayment)
+            .forStates(Draft)
             .name("Petitioner Statement of Truth")
             .description("Petitioner confirms SOT")
             .aboutToStartCallback(this::aboutToStart)
@@ -43,23 +43,28 @@ public class PetitionerStatementOfTruth implements CCDConfig<CaseData, State, Us
 
         log.info("Submit petition about to start callback invoked");
 
-        log.info("Retrieving case data");
         final CaseData caseData = details.getData();
 
         log.info("Validating case data");
         final List<String> validationErrors = AwaitingPayment.validate(caseData);
 
-        if(!validationErrors.isEmpty()) {
+        if (!validationErrors.isEmpty()) {
             log.info("Validation errors: ");
-            for(String error:validationErrors) {
+            for (String error:validationErrors) {
                 log.info(error);
             }
-        }
 
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(validationErrors)
+                .state(Draft)
+                .build();
+        }
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
-            .errors(validationErrors)
-            .build();
+                .data(caseData)
+                .state(AwaitingPayment)
+                .build();
     }
+
 }
 

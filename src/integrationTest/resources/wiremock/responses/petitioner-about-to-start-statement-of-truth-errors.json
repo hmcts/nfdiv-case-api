@@ -1,0 +1,23 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "petitionerFirstName": "test_first_name",
+    "petitionerMiddleName": "test_middle_name",
+    "petitionerLastName": "test_last_name",
+    "petitionerEmail": "test@test.com"
+  },
+  "errors": [
+    "RespondentFirstName cannot be empty or null",
+    "RespondentLastName cannot be empty or null",
+    "FinancialOrder cannot be empty or null",
+    "InferredPetitionerGender cannot be empty or null",
+    "InferredRespondentGender cannot be empty or null",
+    "MarriagePetitionerName cannot be empty or null",
+    "PetitionerContactDetailsConfidential cannot be empty or null",
+    "PrayerHasBeenGiven cannot be empty or null",
+    "StatementOfTruth cannot be empty or null",
+    "MarriageDate cannot be empty or null"
+  ],
+  "state": "Draft",
+  "warnings": null
+}

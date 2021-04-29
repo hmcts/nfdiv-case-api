@@ -14,6 +14,8 @@ import uk.gov.hmcts.divorce.common.model.Gender;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -47,7 +49,7 @@ class PetitionerStatementOfTruthTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = petitionerStatementOfTruth.aboutToStart(caseDetails);
 
-        assertThat(response.getErrors().size(), is(11));
+        assertThat(response.getErrors().size(), is(12));
         assertThat(response.getErrors().get(0), is("PetitionerFirstName cannot be empty or null"));
     }
 
@@ -68,7 +70,7 @@ class PetitionerStatementOfTruthTest {
     }
 
     @Test
-    public void givenEventStartedWithValidCaseThenGiveNoValidationErrors() {
+    public void givenEventStartedWithValidCaseThenChangeState() {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = CaseData.builder().build();
@@ -79,7 +81,7 @@ class PetitionerStatementOfTruthTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = petitionerStatementOfTruth.aboutToStart(caseDetails);
 
-        assertThat(response.getErrors().size(), is(0));
+        assertThat(response.getState(), is(State.AwaitingPayment));
     }
 
     private CaseData setValidCaseData(CaseData caseData) {
@@ -94,6 +96,7 @@ class PetitionerStatementOfTruthTest {
         caseData.setPrayerHasBeenGiven(YesOrNo.YES);
         caseData.setMarriagePetitionerName("Full name");
         caseData.setStatementOfTruth(YesOrNo.YES);
+        caseData.setMarriageDate(LocalDate.now().minus(2, ChronoUnit.YEARS));
         return caseData;
     }
 
