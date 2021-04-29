@@ -30,6 +30,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
@@ -54,7 +55,9 @@ public class CaseData {
 
     @CCD(
         label = "Divorce or Dissolution?",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "DivorceOrDissolution"
     )
     private DivorceOrDissolution divorceOrDissolution;
 

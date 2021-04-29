@@ -68,6 +68,7 @@ import static uk.gov.hmcts.divorce.solicitor.event.SolicitorStatementOfTruthPayS
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.BEARER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_USER_ID;
@@ -93,7 +94,6 @@ public class SolicitorStatementOfTruthPaySubmitTest {
 
     private static final String SERVICE_AUTH_TOKEN = "test-service-auth-token";
 
-    private static final String BEARER = "Bearer ";
 
     @Autowired
     private MockMvc mockMvc;
