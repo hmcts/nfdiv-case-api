@@ -14,13 +14,11 @@ import uk.gov.hmcts.divorce.solicitor.service.notification.ApplicantSubmittedNot
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.collection.IsMapContaining.hasEntry;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_AMENDED_APPLICATION_SUBMITTED;
@@ -53,13 +51,13 @@ class ApplicantSubmittedNotificationTest {
 
         applicationSubmittedNotification.send(caseData, 1234567890123456L);
 
+        assertThat(templateVars.get(APPLICATION_REFERENCE), is("1234-5678-9012-3456"));
+
         verify(notificationService).sendEmail(
-            eq(petitionerEmail),
-            eq(SOL_APPLICANT_APPLICATION_SUBMITTED),
-            argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456")
-            )),
-            eq(ENGLISH));
+            petitionerEmail,
+            SOL_APPLICANT_APPLICATION_SUBMITTED,
+            templateVars,
+            ENGLISH);
     }
 
     @Test
@@ -77,13 +75,13 @@ class ApplicantSubmittedNotificationTest {
 
         applicationSubmittedNotification.send(caseData, 1234567890123456L);
 
+        assertThat(templateVars.get(APPLICATION_REFERENCE), is("1234-5678-9012-3456"));
+
         verify(notificationService).sendEmail(
-            eq(petitionerEmail),
-            eq(SOL_APPLICANT_AMENDED_APPLICATION_SUBMITTED),
-            argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456")
-            )),
-            eq(ENGLISH));
+            petitionerEmail,
+            SOL_APPLICANT_AMENDED_APPLICATION_SUBMITTED,
+            templateVars,
+            ENGLISH);
     }
 
     @Test
