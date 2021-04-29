@@ -20,7 +20,7 @@ public class ValidationUtils {
 
     public String checkIfStringNullOrEmpty(String string, String field) {
         String EMPTY = " cannot be empty or null";
-        if (Optional.ofNullable(string).isEmpty()) {
+        if (string == null) {
             return field + EMPTY;
         }
         return null;
@@ -28,7 +28,7 @@ public class ValidationUtils {
 
     public String checkIfYesOrNoNullOrEmpty(YesOrNo yesOrNo, String field) {
         String EMPTY = " cannot be empty or null";
-        if (Optional.ofNullable(yesOrNo).isEmpty()) {
+        if (yesOrNo == null) {
             return field + EMPTY;
         }
         return null;
@@ -36,7 +36,7 @@ public class ValidationUtils {
 
     public String checkIfGenderNullOrEmpty(Gender gender, String field) {
         String EMPTY = " cannot be empty or null";
-        if (Optional.ofNullable(gender).isEmpty()) {
+        if (gender == null) {
             return field + EMPTY;
         }
         return null;
@@ -44,7 +44,7 @@ public class ValidationUtils {
 
     public String checkIfConfidentialAddressNullOrEmpty(ConfidentialAddress confidentialAddress, String field) {
         String EMPTY = " cannot be empty or null";
-        if (Optional.ofNullable(confidentialAddress).isEmpty()) {
+        if (confidentialAddress == null) {
             return field + EMPTY;
         }
         return null;
@@ -53,7 +53,7 @@ public class ValidationUtils {
     public String checkIfYesOrNoIsNullOrEmptyOrNo(YesOrNo yesOrNo, String field) {
         String EMPTY = " cannot be empty or null";
         String MUST_BE_YES = " must be YES";
-        if (Optional.ofNullable(yesOrNo).isEmpty()) {
+        if (yesOrNo == null) {
             return field + EMPTY;
         } else if (yesOrNo.equals(YesOrNo.NO)) {
             return field + MUST_BE_YES;
