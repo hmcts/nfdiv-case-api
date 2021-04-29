@@ -81,7 +81,8 @@ public abstract class FunctionalTestSuite {
                 .build())
             .data(Map.of(
                 "petitionerSolicitorName", "functional test",
-                "languagePreferenceWelsh", "NO"
+                "languagePreferenceWelsh", "NO",
+                "divorceOrDissolution", "divorce"
             ))
             .build();
 
