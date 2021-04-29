@@ -3,6 +3,7 @@
 @Library("Infrastructure")
 
 import uk.gov.hmcts.contino.GradleBuilder
+import uk.gov.hmcts.contino.AppPipelineConfig
 
 def type = "java"
 def product = "nfdiv"
@@ -43,6 +44,9 @@ def secrets = [
         ]
 ]
 
+def pipelineConf = new AppPipelineConfig()
+pipelineConf.vaultSecrets = secrets
+
 withPipeline(type, product, component) {
     enableAksStagingDeployment()
     disableLegacyDeployment()
@@ -76,17 +80,20 @@ withPipeline(type, product, component) {
         uploadCoreCaseDataDefinitions()
     }
 
-    after('functionalTest:aat') {
-        env.CASE_API_URL="http://nfdiv-case-api-perftest.service.core-compute-perftest.internal"
-        env.CCD_DEF_NAME="perftest"
-
-        builder.gradle('generateCCDConfig')
-
-        dir("${WORKSPACE}/bin"){
-            sh "./ccd-build-definition.sh"
-        }
+    before('buildinfra:perftest') {
         dir("${WORKSPACE}") {
-            steps.archiveArtifacts artifacts: "build/ccd-config/ccd-nfd-${CCD_DEF_NAME}.xlsx"
+            withSubscription('nonprod') {
+                withTeamSecrets(pipelineConf, 'perftest') {
+                    env.CASE_API_URL="http://nfdiv-case-api-perftest.service.core-compute-perftest.internal"
+                    env.CCD_DEF_NAME="perftest"
+                    env.IDAM_API_BASE_URL = "https://idam-api.perftest.platform.hmcts.net"
+                    env.SERVICE_AUTH_PROVIDER_API_BASE_URL = "http://rpe-service-auth-provider-perftest.service.core-compute-perftest.internal"
+                    env.CCD_DEFINITION_STORE_API_BASE_URL="http://ccd-definition-store-api-perftest.service.core-compute-perftest.internal"
+
+                    builder.gradle('generateCCDConfig')
+                    uploadCoreCaseDataDefinitions()
+                }
+            }
         }
     }
 }

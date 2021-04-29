@@ -23,6 +23,9 @@ public class SolicitorCreatePetitionService {
     private SolicitorCourtDetails solicitorCourtDetails;
 
     @Autowired
+    private MiniPetitionDraft miniPetitionDraft;
+
+    @Autowired
     private CaseDataUpdaterChainFactory caseDataUpdaterChainFactory;
 
     public CaseData aboutToSubmit(
@@ -33,7 +36,8 @@ public class SolicitorCreatePetitionService {
 
         final List<CaseDataUpdater> caseDataUpdaters = asList(
             claimsCost,
-            solicitorCourtDetails);
+            solicitorCourtDetails,
+            miniPetitionDraft);
 
         final CaseDataContext caseDataContext = CaseDataContext.builder()
             .caseData(caseData)

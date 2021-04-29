@@ -12,7 +12,7 @@ public class SolHowDoYouWantToApplyForDivorce implements CcdPageConfiguration {
         pageBuilder
             .page("howDoYouWantToApplyForDivorce")
             .pageLabel("How do you want to apply for the divorce?")
-            .label("solHowDoYouWantToApplyForDivorcePara-1","The petitioner can apply for the divorce on their"
+            .label("solHowDoYouWantToApplyForDivorcePara-1", "The petitioner can apply for the divorce on their"
                 + " own (as a 'sole applicant') or with their husband or wife (in a 'joint application').")
             .label("solHowDoYouWantToApplyForDivorceHeader-1", "### Applying as a sole applicant")
             .label("solHowDoYouWantToApplyForDivorcePara-2", "If the petitioner applies as a sole applicant,"
@@ -26,6 +26,7 @@ public class SolHowDoYouWantToApplyForDivorce implements CcdPageConfiguration {
             .label("solHowDoYouWantToApplyForDivorcePara-4", "*How the petitioner divides their money"
                 + " and property is dealt with separately. It should  not affect the decision on whether to do a sole"
                 + " or a joint application.*")
-            .mandatory(CaseData::getSoleOrJoinApplicant);
+            .mandatory(CaseData::getSoleOrJoinApplicant)
+            .mandatory(CaseData::getDivorceOrDissolution);
     }
 }
