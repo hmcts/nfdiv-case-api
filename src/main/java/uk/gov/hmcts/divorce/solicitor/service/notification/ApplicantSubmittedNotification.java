@@ -22,11 +22,11 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATIO
 public class ApplicantSubmittedNotification {
 
     private static final String NO_EMAIL_SENT_FOR_CASE =
-        "No applicant email is provided so no email sent for case : {}";
+        "No applicant email is provided so no email sent for case id : {}";
     private static final String SENDING_AMENDED_APPLICATION_EMAIL =
-        "Sending amended application submitted notification to applicant for case : {}";
+        "Sending amended application submitted notification to applicant for case id : {}";
     private static final String SENDING_APPLICATION_EMAIL =
-        "Sending application submitted notification to applicant for case : {}";
+        "Sending application submitted notification to applicant for case id : {}";
 
     @Autowired
     private NotificationService notificationService;

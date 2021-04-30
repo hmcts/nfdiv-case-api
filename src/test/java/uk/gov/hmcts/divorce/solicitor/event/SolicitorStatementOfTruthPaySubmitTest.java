@@ -89,9 +89,10 @@ public class SolicitorStatementOfTruthPaySubmitTest {
     void shouldReturnWithoutErrorIfStatementOfTruthAndSolStatementOfTruthAreSetToYes() {
 
         final long caseId = 1L;
-        final CaseData caseData = CaseData.builder().build();
-        caseData.setStatementOfTruth(YES);
-        caseData.setSolSignStatementOfTruth(YES);
+        final CaseData caseData = CaseData.builder()
+            .statementOfTruth(YES)
+            .solSignStatementOfTruth(YES)
+            .build();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
