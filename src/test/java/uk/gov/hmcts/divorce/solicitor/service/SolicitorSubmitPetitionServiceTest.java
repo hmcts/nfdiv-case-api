@@ -8,7 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.common.model.CaseData;
@@ -31,7 +30,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static uk.gov.hmcts.divorce.common.model.State.SOTAgreementPayAndSubmitRequired;
 import static uk.gov.hmcts.divorce.common.model.State.SolicitorAwaitingPaymentConfirmation;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
@@ -119,16 +117,11 @@ public class SolicitorSubmitPetitionServiceTest {
     void shouldNotifyApplicantAndSetStateForAboutToSubmit() {
 
         final CaseData caseData = CaseData.builder().build();
+        final long caseId = 1L;
 
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(1L);
-        caseDetails.setState(SOTAgreementPayAndSubmitRequired);
+        final State resultState = solicitorSubmitPetitionService.aboutToSubmit(caseData, caseId);
 
-        final CaseDetails<CaseData, State> result = solicitorSubmitPetitionService.aboutToSubmit(caseDetails);
-
-        assertThat(result.getState()).isEqualTo(SolicitorAwaitingPaymentConfirmation);
-
-        verify(applicantSubmittedNotification).send(caseData, 1L);
+        assertThat(resultState).isEqualTo(SolicitorAwaitingPaymentConfirmation);
+        verify(applicantSubmittedNotification).send(caseData, caseId);
     }
 }

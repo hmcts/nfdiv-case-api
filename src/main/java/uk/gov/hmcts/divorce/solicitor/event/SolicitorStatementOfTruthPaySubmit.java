@@ -91,21 +91,22 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
         log.info("Submit petition about to submit callback invoked");
 
         final CaseData caseData = details.getData();
+        final State currentState = details.getState();
 
         if (!caseData.hasStatementOfTruth() || !caseData.hasSolSignStatementOfTruth()) {
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(details.getData())
-                .state(details.getState())
+                .data(caseData)
+                .state(currentState)
                 .errors(asList("Statement of truth for solicitor and applicant 1 needs to be accepted"))
                 .build();
         }
 
-        final CaseDetails<CaseData, State> resultDetails = solicitorSubmitPetitionService.aboutToSubmit(details);
+        final State resultState = solicitorSubmitPetitionService.aboutToSubmit(caseData, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(resultDetails.getData())
-            .state(resultDetails.getState())
+            .data(caseData)
+            .state(resultState)
             .build();
     }
 

@@ -22,7 +22,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -89,21 +88,19 @@ public class SolicitorStatementOfTruthPaySubmitTest {
     @Test
     void shouldReturnWithoutErrorIfStatementOfTruthAndSolStatementOfTruthAreSetToYes() {
 
+        final long caseId = 1L;
         final CaseData caseData = CaseData.builder().build();
         caseData.setStatementOfTruth(YES);
         caseData.setSolSignStatementOfTruth(YES);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
+        caseDetails.setId(caseId);
         caseDetails.setState(SOTAgreementPayAndSubmitRequired);
-        final CaseDetails<CaseData, State> resultDetails = new CaseDetails<>();
-        resultDetails.setData(caseData);
-        resultDetails.setState(SolicitorAwaitingPaymentConfirmation);
-        final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
 
-        when(solicitorSubmitPetitionService.aboutToSubmit(any(CaseDetails.class))).thenReturn(resultDetails);
+        when(solicitorSubmitPetitionService.aboutToSubmit(caseData, caseId)).thenReturn(SolicitorAwaitingPaymentConfirmation);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorStatementOfTruthPaySubmit
-            .aboutToSubmit(caseDetails, beforeCaseDetails);
+            .aboutToSubmit(caseDetails, new CaseDetails<>());
 
         assertThat(response.getData(), is(caseData));
         assertThat(response.getState(), is(SolicitorAwaitingPaymentConfirmation));
