@@ -35,7 +35,6 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.common.model.State.SOTAgreementPayAndSubmitRequired;
 import static uk.gov.hmcts.divorce.common.model.State.SolicitorAwaitingPaymentConfirmation;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
-
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_LA;

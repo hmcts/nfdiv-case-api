@@ -15,7 +15,6 @@ import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
 import uk.gov.hmcts.divorce.solicitor.service.notification.ApplicantSubmittedNotification;
 
-
 import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.ccd.sdk.type.Fee.getValueInPence;
 import static uk.gov.hmcts.divorce.common.model.State.SolicitorAwaitingPaymentConfirmation;
