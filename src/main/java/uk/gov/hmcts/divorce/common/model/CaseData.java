@@ -277,7 +277,7 @@ public class CaseData {
         typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
-    private String derivedPetitionerHomeAddress;
+    private String applicantHomeAddress;
 
     @CCD(
         label = "Is petitioners home address an international address?",
@@ -567,7 +567,7 @@ public class CaseData {
         typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
-    private String derivedRespondentHomeAddress;
+    private String respondentHomeAddress;
 
     @CCD(
         label = "Is respondents home address an international address?",
@@ -716,7 +716,7 @@ public class CaseData {
         typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
-    private String derivedRespondentCorrespondenceAddr;
+    private String respondentCorrespondenceAddress;
 
     @CCD(
         label = "Who is the financial order for?",
