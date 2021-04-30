@@ -99,7 +99,7 @@ public final class ValidationUtil {
     }
 
     private static boolean isOverOneHundredYearsAgo(LocalDate date) {
-        return date.isBefore(LocalDate.now().minus(100 * 365, ChronoUnit.DAYS));
+        return date.isBefore(LocalDate.now().minus(100L * 365, ChronoUnit.DAYS));
     }
 
     private static boolean isInTheFuture(LocalDate date) {
