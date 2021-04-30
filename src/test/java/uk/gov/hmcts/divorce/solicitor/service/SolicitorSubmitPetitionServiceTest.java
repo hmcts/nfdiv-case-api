@@ -10,7 +10,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.payment.FeesAndPaymentsClient;
+import uk.gov.hmcts.divorce.solicitor.service.notification.ApplicantSubmittedNotification;
 
 import java.util.Collections;
 import java.util.Map;
@@ -27,6 +30,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static uk.gov.hmcts.divorce.common.model.State.SolicitorAwaitingPaymentConfirmation;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFeeResponse;
@@ -36,6 +40,9 @@ public class SolicitorSubmitPetitionServiceTest {
 
     @Mock
     private FeesAndPaymentsClient feesAndPaymentsClient;
+
+    @Mock
+    private ApplicantSubmittedNotification applicantSubmittedNotification;
 
     @InjectMocks
     private SolicitorSubmitPetitionService solicitorSubmitPetitionService;
@@ -104,5 +111,17 @@ public class SolicitorSubmitPetitionServiceTest {
         assertThatThrownBy(() -> solicitorSubmitPetitionService.getOrderSummary())
             .hasMessageContaining("404 Fee Not found")
             .isExactlyInstanceOf(FeignException.NotFound.class);
+    }
+
+    @Test
+    void shouldNotifyApplicantAndSetStateForAboutToSubmit() {
+
+        final CaseData caseData = CaseData.builder().build();
+        final long caseId = 1L;
+
+        final State resultState = solicitorSubmitPetitionService.aboutToSubmit(caseData, caseId);
+
+        assertThat(resultState).isEqualTo(SolicitorAwaitingPaymentConfirmation);
+        verify(applicantSubmittedNotification).send(caseData, caseId);
     }
 }

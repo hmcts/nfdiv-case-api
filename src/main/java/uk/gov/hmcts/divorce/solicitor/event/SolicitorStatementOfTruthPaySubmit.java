@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import static java.util.Arrays.asList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.common.model.State.SOTAgreementPayAndSubmitRequired;
-import static uk.gov.hmcts.divorce.common.model.State.SolicitorAwaitingPaymentConfirmation;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_LA;
@@ -92,19 +91,22 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
         log.info("Submit petition about to submit callback invoked");
 
         final CaseData caseData = details.getData();
+        final State currentState = details.getState();
 
         if (!caseData.hasStatementOfTruth() || !caseData.hasSolSignStatementOfTruth()) {
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(details.getData())
-                .state(details.getState())
+                .data(caseData)
+                .state(currentState)
                 .errors(asList("Statement of truth for solicitor and applicant 1 needs to be accepted"))
                 .build();
         }
 
+        final State resultState = solicitorSubmitPetitionService.aboutToSubmit(caseData, details.getId());
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
-            .state(SolicitorAwaitingPaymentConfirmation)
+            .data(caseData)
+            .state(resultState)
             .build();
     }
 

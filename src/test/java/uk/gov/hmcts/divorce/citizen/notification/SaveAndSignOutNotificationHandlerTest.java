@@ -6,23 +6,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
-import uk.gov.hmcts.divorce.common.exception.NotificationException;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
+import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-import uk.gov.service.notify.NotificationClientException;
 
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -63,7 +56,7 @@ class SaveAndSignOutNotificationHandlerTest {
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(SAVE_SIGN_OUT),
-            anyMap(),
+            argThat(allOf(hasEntry(SIGN_IN_URL_NOTIFY_KEY, SOME_URL))), // NOSONAR
             eq(ENGLISH)
         );
         verify(emailTemplatesConfig).getTemplateVars();
@@ -84,32 +77,10 @@ class SaveAndSignOutNotificationHandlerTest {
             argThat(allOf(hasEntry(SIGN_IN_URL_NOTIFY_KEY, SOME_OTHER_URL))), // NOSONAR
             eq(ENGLISH)
         );
-        verify(emailTemplatesConfig).getTemplateVars();
-        verifyNoMoreInteractions(emailTemplatesConfig, notificationService);
-    }
-
-    @Test
-    void shouldThrowExceptionWhenExceptionIsThrownWhileSendingEmail() {
-        when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
-
-        doThrow(new NotificationException(
-                new NotificationClientException("all template params not set")
-            )
-        )
-            .when(notificationService).sendEmail(any(), any(), anyMap(), any());
-
-        Throwable thrown = assertThrows(NotificationException.class,
-            () -> {
-                saveAndSignOutNotificationHandler.notifyApplicant(caseData());
-            }
-        );
-
-        assertThat(thrown.getCause().getMessage(), is("all template params not set"));
 
         verify(emailTemplatesConfig).getTemplateVars();
         verifyNoMoreInteractions(emailTemplatesConfig, notificationService);
     }
-
 
     private Map<String, String> getConfigTemplateVars() {
         return Map.of(
