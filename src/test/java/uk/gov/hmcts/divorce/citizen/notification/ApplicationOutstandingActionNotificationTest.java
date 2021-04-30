@@ -45,6 +45,7 @@ class ApplicationOutstandingActionNotificationTest {
     private ApplicationOutstandingActionNotification notification;
 
     @Test
+    @SuppressWarnings("squid:S6068")
     void shouldCallSendEmailForAllSupportingDocuments() {
         CaseData data = caseData();
         data.setDivorceWho(WhoDivorcing.HUSBAND);
@@ -77,6 +78,7 @@ class ApplicationOutstandingActionNotificationTest {
     }
 
     @Test
+    @SuppressWarnings("squid:S6068")
     void shouldCallSendEmailForSomeSupportingDocuments() {
         CaseData data = caseData();
         data.setDivorceWho(WhoDivorcing.HUSBAND);
