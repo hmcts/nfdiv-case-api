@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.common.validation;
 
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.common.model.Gender;
 
@@ -18,6 +19,23 @@ public final class ValidationUtil {
 
     private ValidationUtil() {
     }
+
+    public static void validateBasicCase(CaseData caseData, List<String> errorList) {
+        addToErrorList(checkIfStringNullOrEmpty(caseData.getPetitionerFirstName(), "PetitionerFirstName"), errorList);
+        addToErrorList(checkIfStringNullOrEmpty(caseData.getPetitionerLastName(), "PetitionerLastName"), errorList);
+        addToErrorList(checkIfStringNullOrEmpty(caseData.getRespondentFirstName(), "RespondentFirstName"), errorList);
+        addToErrorList(checkIfStringNullOrEmpty(caseData.getRespondentLastName(), "RespondentLastName"), errorList);
+        addToErrorList(checkIfYesOrNoNullOrEmpty(caseData.getFinancialOrder(), "FinancialOrder"), errorList);
+        addToErrorList(checkIfGenderNullOrEmpty(caseData.getInferredPetitionerGender(), "InferredPetitionerGender"), errorList);
+        addToErrorList(checkIfGenderNullOrEmpty(caseData.getInferredRespondentGender(), "InferredRespondentGender"), errorList);
+        addToErrorList(checkIfStringNullOrEmpty(caseData.getMarriagePetitionerName(), "MarriagePetitionerName"), errorList);
+        addToErrorList(checkIfConfidentialAddressNullOrEmpty(caseData.getPetitionerContactDetailsConfidential(),
+            "PetitionerContactDetailsConfidential"), errorList);
+        addToErrorList(checkIfYesOrNoIsNullOrEmptyOrNo(caseData.getPrayerHasBeenGiven(), "PrayerHasBeenGiven"), errorList);
+        addToErrorList(checkIfYesOrNoIsNullOrEmptyOrNo(caseData.getStatementOfTruth(), "StatementOfTruth"), errorList);
+        addToErrorList(checkIfDateIsAllowed(caseData.getMarriageDate(), "MarriageDate"), errorList);
+    }
+
 
     public static void addToErrorList(String error, List<String> errorList) {
         if (error != null) {
