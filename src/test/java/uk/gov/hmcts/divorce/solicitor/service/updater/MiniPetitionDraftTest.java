@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor.service;
+package uk.gov.hmcts.divorce.solicitor.service.updater;
 
 import feign.FeignException;
 import feign.Request;
@@ -67,7 +67,7 @@ public class MiniPetitionDraftTest {
 
         CaseDataContext caseDataContext = caseDataContext(caseData);
 
-        when(docAssemblyService.generateAndStoreDraftPetition(
+        when(docAssemblyService.renderDocument(
             caseData,
             TEST_CASE_ID,
             TEST_AUTHORIZATION_TOKEN,
@@ -103,7 +103,7 @@ public class MiniPetitionDraftTest {
         DocumentInfo documentInfo = documentInfo();
 
         when(docAssemblyService
-            .generateAndStoreDraftPetition(
+            .renderDocument(
                 caseData,
                 TEST_CASE_ID,
                 TEST_AUTHORIZATION_TOKEN,
@@ -149,7 +149,7 @@ public class MiniPetitionDraftTest {
         CaseData caseData = caseData();
         caseData.setLanguagePreferenceWelsh(NO);
 
-        doThrow(feignException).when(docAssemblyService).generateAndStoreDraftPetition(
+        doThrow(feignException).when(docAssemblyService).renderDocument(
             caseData,
             TEST_CASE_ID,
             TEST_AUTHORIZATION_TOKEN,

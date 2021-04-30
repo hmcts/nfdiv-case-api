@@ -7,6 +7,9 @@ import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdater;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChainFactory;
+import uk.gov.hmcts.divorce.solicitor.service.updater.ClaimsCost;
+import uk.gov.hmcts.divorce.solicitor.service.updater.MiniPetitionDraft;
+import uk.gov.hmcts.divorce.solicitor.service.updater.SolicitorCourtDetails;
 
 import java.util.List;
 
@@ -23,6 +26,9 @@ public class SolicitorCreatePetitionService {
     private SolicitorCourtDetails solicitorCourtDetails;
 
     @Autowired
+    private MiniPetitionDraft miniPetitionDraft;
+
+    @Autowired
     private CaseDataUpdaterChainFactory caseDataUpdaterChainFactory;
 
     public CaseData aboutToSubmit(
@@ -33,7 +39,8 @@ public class SolicitorCreatePetitionService {
 
         final List<CaseDataUpdater> caseDataUpdaters = asList(
             claimsCost,
-            solicitorCourtDetails);
+            solicitorCourtDetails,
+            miniPetitionDraft);
 
         final CaseDataContext caseDataContext = CaseDataContext.builder()
             .caseData(caseData)

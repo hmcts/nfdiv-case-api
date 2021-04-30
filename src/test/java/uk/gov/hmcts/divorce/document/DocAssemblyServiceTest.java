@@ -9,6 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.document.content.DraftPetitionTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DocAssemblyRequest;
 import uk.gov.hmcts.divorce.document.model.DocAssemblyResponse;
 import uk.gov.hmcts.divorce.document.model.DocumentInfo;
@@ -32,6 +34,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOK
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataMap;
 
 @ExtendWith(MockitoExtension.class)
 public class DocAssemblyServiceTest {
@@ -49,19 +52,26 @@ public class DocAssemblyServiceTest {
     @Mock
     private ObjectMapper objectMapper;
 
+    @Mock
+    private DraftPetitionTemplateContent petitionTemplateMapper;
+
     @InjectMocks
     private DocAssemblyService docAssemblyService;
 
     @Test
     public void shouldGenerateAndStoreDraftPetitionAndReturnDocumentUrl() {
+        CaseData caseData = caseData();
+        Map<String, Object> caseDataMap = caseDataMap();
+
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(petitionTemplateMapper.apply(caseData, TEST_CASE_ID)).thenReturn(caseDataMap);
 
         DocAssemblyRequest docAssemblyRequest =
             DocAssemblyRequest
                 .builder()
                 .templateId(ENGLISH_TEMPLATE_ID)
                 .outputType("PDF")
-                .formPayload(objectMapper.valueToTree(caseData()))
+                .formPayload(objectMapper.valueToTree(caseDataMap))
                 .build();
 
         String documentUuid = UUID.randomUUID().toString();
@@ -76,7 +86,7 @@ public class DocAssemblyServiceTest {
             docAssemblyRequest
         )).thenReturn(docAssemblyResponse);
 
-        DocumentInfo documentInfo = docAssemblyService.generateAndStoreDraftPetition(
+        DocumentInfo documentInfo = docAssemblyService.renderDocument(
             caseData(),
             TEST_CASE_ID,
             TEST_AUTHORIZATION_TOKEN,
@@ -93,11 +103,17 @@ public class DocAssemblyServiceTest {
             TEST_SERVICE_AUTH_TOKEN,
             docAssemblyRequest
         );
-        verifyNoMoreInteractions(authTokenGenerator, docAssemblyClient);
+        verify(petitionTemplateMapper).apply(caseData, TEST_CASE_ID);
+        verifyNoMoreInteractions(authTokenGenerator, docAssemblyClient, petitionTemplateMapper);
     }
 
     @Test
     public void shouldReturn401UnauthorizedExceptionWhenServiceIsNotWhitelistedInDocAssemblyService() {
+        CaseData caseData = caseData();
+        Map<String, Object> caseDataMap = caseDataMap();
+
+        when(petitionTemplateMapper.apply(caseData, TEST_CASE_ID)).thenReturn(caseDataMap);
+
         byte[] emptyBody = {};
         Request request = Request.create(POST, EMPTY, Map.of(), emptyBody, UTF_8, null);
 
@@ -117,7 +133,7 @@ public class DocAssemblyServiceTest {
                 .builder()
                 .templateId(ENGLISH_TEMPLATE_ID)
                 .outputType("PDF")
-                .formPayload(objectMapper.valueToTree(caseData()))
+                .formPayload(objectMapper.valueToTree(caseDataMap))
                 .build();
 
         doThrow(feignException)
@@ -131,7 +147,7 @@ public class DocAssemblyServiceTest {
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         assertThatThrownBy(() -> docAssemblyService
-            .generateAndStoreDraftPetition(
+            .renderDocument(
                 caseData(),
                 TEST_CASE_ID,
                 TEST_AUTHORIZATION_TOKEN,

@@ -39,10 +39,14 @@ uk:
             SAVE_SIGN_OUT: '3aff9dc0-0188-42f6-a0be-fc5daa404d9a'
             OUTSTANDING_ACTIONS: '1bc9ce05-557b-4cf6-9e20-87d57d55e89c'
             APPLICATION_SUBMITTED: '68b87fab-f99f-49c2-a3df-04415d003eb9'
+            SOL_APPLICANT_APPLICATION_SUBMITTED: '3ecccc69-81e7-4bcd-8316-0547fd30795f'
+            SOL_APPLICANT_AMENDED_APPLICATION_SUBMITTED: 'd87e0405-15bb-405b-b277-27cec5444106'
           welsh:
             SAVE_SIGN_OUT: '3aff9dc0-0188-42f6-a0be-fc5daa404d9a'
             OUTSTANDING_ACTIONS: '1bc9ce05-557b-4cf6-9e20-87d57d55e89c'
             APPLICATION_SUBMITTED: '68b87fab-f99f-49c2-a3df-04415d003eb9'
+            SOL_APPLICANT_APPLICATION_SUBMITTED: '3ecccc69-81e7-4bcd-8316-0547fd30795f'
+            SOL_APPLICANT_AMENDED_APPLICATION_SUBMITTED: 'd87e0405-15bb-405b-b277-27cec5444106'
 
 s2s-authorised:
   services: ${S2S_AUTHORISED_SERVICES:ccd_data}
@@ -51,7 +55,7 @@ idam:
   s2s-auth:
     url: ${S2S_URL:http://rpe-service-auth-provider-aat.service.core-compute-aat.internal}
     secret: ${S2S_SECRET:AAAAAAAAAAAAAAAA}
-    microservice: nfdiv_cms # Temporarily use cms secret till ccd whitelists case api
+    microservice: nfdiv_case_api
   api:
     url: ${IDAM_API_BASEURL:http://localhost:5000}
   caseworker:
@@ -76,7 +80,7 @@ core_case_data:
 docmosis:
   templates:
     english:
-      DIVORCE_MINI_PETITION: divorceminipetition
+      DIVORCE_MINI_PETITION: Divorce_CP_Mini_Draft_Petition_Template.docx
     welsh:
       DIVORCE_MINI_PETITION: FL-DIV-GNO-WEL-00256.docx
 

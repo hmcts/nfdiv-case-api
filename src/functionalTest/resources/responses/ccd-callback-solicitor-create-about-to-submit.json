@@ -4,12 +4,31 @@
     "petitionerFirstName": "John",
     "petitionerLastName": "Smith",
     "petitionerEmail": "simulate-delivered@notifications.service.gov.uk",
+    "languagePreferenceWelsh": "NO",
     "divorceCostsClaim": "YES",
     "divorceClaimFrom": [
       "respondent"
     ],
+    "createdDate": "2021-04-29",
     "divorceUnit": "serviceCentre",
-    "selectedDivorceCentreSiteId": "AA07"
+    "selectedDivorceCentreSiteId": "AA07",
+    "documentsGenerated": [
+      {
+        "id": "Petition",
+        "value": {
+          "documentDateAdded": null,
+          "documentComment": null,
+          "documentFileName": "draft-mini-petition-1.pdf",
+          "documentType": "petition",
+          "documentEmailContent": null,
+          "documentLink": {
+            "document_url": "${json-unit.ignore}",
+            "document_filename": "draft-mini-petition-1.pdf",
+            "document_binary_url": "${json-unit.ignore}"
+          }
+        }
+      }
+    ]
   },
   "errors": null,
   "warnings": null,

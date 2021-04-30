@@ -68,10 +68,9 @@ public abstract class FunctionalTestSuite {
 
     protected CaseDetails createCaseInCcd() {
         String solicitorToken = generateIdamTokenForSolicitor();
-        //Temporarily using cms s2s till ccd whitelists case api
-        String s2sTokenForCms = generateServiceAuthTokenFor("nfdiv_cms");
+        String s2sTokenForCaseApi = generateServiceAuthTokenFor("nfdiv_case_api");
         String solicitorUserId = idamClient.getUserDetails(solicitorToken).getId();
-        StartEventResponse startEventResponse = startEventForCreateCase(solicitorToken, s2sTokenForCms, solicitorUserId);
+        StartEventResponse startEventResponse = startEventForCreateCase(solicitorToken, s2sTokenForCaseApi, solicitorUserId);
 
         CaseDataContent caseDataContent = CaseDataContent.builder()
             .eventToken(startEventResponse.getToken())
@@ -81,11 +80,13 @@ public abstract class FunctionalTestSuite {
                 .description("Create draft case for functional tests")
                 .build())
             .data(Map.of(
-                "petitionerSolicitorName", "functional test"
+                "petitionerSolicitorName", "functional test",
+                "languagePreferenceWelsh", "NO",
+                "divorceOrDissolution", "divorce"
             ))
             .build();
 
-        return submitNewCase(caseDataContent, solicitorToken, s2sTokenForCms, solicitorUserId);
+        return submitNewCase(caseDataContent, solicitorToken, s2sTokenForCaseApi, solicitorUserId);
     }
 
     private StartEventResponse startEventForCreateCase(

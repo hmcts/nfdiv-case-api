@@ -5,10 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.document.content.DraftPetitionTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DocAssemblyRequest;
 import uk.gov.hmcts.divorce.document.model.DocAssemblyResponse;
 import uk.gov.hmcts.divorce.document.model.DocumentInfo;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+
+import java.util.Map;
 
 import static java.lang.String.format;
 
@@ -24,26 +27,31 @@ public class DocAssemblyService {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private DraftPetitionTemplateContent templateContent;
+
     public static final String DOCUMENT_FILENAME_FMT = "%s%s";
 
     public static final String DOCUMENT_NAME = "draft-mini-petition-";
 
-    public DocumentInfo generateAndStoreDraftPetition(
+    public DocumentInfo renderDocument(
         CaseData caseData,
         Long caseId,
         String authorisation,
-        String templateId
+        String templateName
     ) {
+
+        Map<String, Object> templateData = templateContent.apply(caseData, caseId);
 
         DocAssemblyRequest docAssemblyRequest =
             DocAssemblyRequest
                 .builder()
-                .templateId(templateId)
+                .templateId(templateName)
                 .outputType("PDF")
-                .formPayload(objectMapper.valueToTree(caseData))
+                .formPayload(objectMapper.valueToTree(templateData))
                 .build();
 
-        log.info("Sending document request for template: {} case id: {}", templateId, caseId);
+        log.info("Sending document request for template : {} case id: {}", templateName, caseId);
 
         DocAssemblyResponse docAssemblyResponse = docAssemblyClient.generateAndStoreDraftPetition(
             authorisation,
