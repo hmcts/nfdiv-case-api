@@ -61,21 +61,16 @@ public class SolicitorSubmitPetitionService {
             .build();
     }
 
-    public ListValue<Payment> getDummyPayment(OrderSummary orderSummary) {
-        return ListValue
-            .<Payment>builder()
-            .value(
-                Payment
-                    .builder()
-                    .paymentAmount(MoneyGBP.builder().amount(orderSummary.getPaymentTotal()).build())
-                    .paymentChannel("online")
-                    .paymentFeeId("FEE0001")
-                    .paymentReference(orderSummary.getPaymentReference())
-                    .paymentSiteId("AA04")
-                    .paymentStatus(PaymentStatus.SUCCESS)
-                    .paymentTransactionId("ge7po9h5bhbtbd466424src9tk")
-                    .build()
-            )
+    public Payment getDummyPayment(OrderSummary orderSummary) {
+        return Payment
+            .builder()
+            .paymentAmount(MoneyGBP.builder().amount(orderSummary.getPaymentTotal()).build())
+            .paymentChannel("online")
+            .paymentFeeId("FEE0001")
+            .paymentReference(orderSummary.getPaymentReference())
+            .paymentSiteId("AA04")
+            .paymentStatus(PaymentStatus.SUCCESS)
+            .paymentTransactionId("ge7po9h5bhbtbd466424src9tk")
             .build();
     }
 }
