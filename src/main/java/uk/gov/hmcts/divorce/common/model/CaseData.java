@@ -703,6 +703,12 @@ public class CaseData {
     private YesOrNo respSolDigital;
 
     @CCD(
+        label = "Respondent is using digital channel?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo respContactMethodIsDigital;
+
+    @CCD(
         label = "Respondent solicitor's firm",
         hint = "Respondent Organisation Details",
         access = {DefaultAccess.class}

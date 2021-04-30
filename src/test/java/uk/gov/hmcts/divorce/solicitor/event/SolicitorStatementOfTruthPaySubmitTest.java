@@ -9,6 +9,8 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.ccd.sdk.type.Organisation;
+import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
@@ -31,6 +33,8 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.model.State.SOTAgreementPayAndSubmitRequired;
 import static uk.gov.hmcts.divorce.common.model.State.SolicitorAwaitingPaymentConfirmation;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorStatementOfTruthPaySubmit.SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TES_ORG_ID;
 
 @ExtendWith(MockitoExtension.class)
 public class SolicitorStatementOfTruthPaySubmitTest {
@@ -98,7 +102,13 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         caseDetails.setId(caseId);
         caseDetails.setState(SOTAgreementPayAndSubmitRequired);
 
-        when(solicitorSubmitPetitionService.aboutToSubmit(caseData, caseId)).thenReturn(SolicitorAwaitingPaymentConfirmation);
+        AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
+            AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .state(SolicitorAwaitingPaymentConfirmation)
+                .build();
+
+        when(solicitorSubmitPetitionService.aboutToSubmit(caseData, caseId)).thenReturn(aboutToStartOrSubmitResponse);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorStatementOfTruthPaySubmit
             .aboutToSubmit(caseDetails, new CaseDetails<>());
@@ -180,5 +190,114 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         assertThat(response.getData(), is(caseData));
         assertThat(response.getState(), is(SOTAgreementPayAndSubmitRequired));
         assertThat(response.getErrors(), contains(STATEMENT_OF_TRUTH_ERROR_MESSAGE));
+    }
+
+    @Test
+    void shouldSetRespondentDigitalDetailsWhenRespSolicitorIsDigitalAndRespOrganisationIsSet() {
+        final long caseId = 1L;
+        final OrganisationPolicy<UserRole> organisationPolicy = OrganisationPolicy.<UserRole>builder()
+            .organisation(Organisation
+                .builder()
+                .organisationId(TES_ORG_ID)
+                .organisationName(TEST_ORG_NAME)
+                .build()
+            )
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .statementOfTruth(YES)
+            .solSignStatementOfTruth(YES)
+            .respSolDigital(YES)
+            .respondentOrganisationPolicy(organisationPolicy)
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(caseId);
+        caseDetails.setState(SOTAgreementPayAndSubmitRequired);
+
+        AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
+            AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .state(SolicitorAwaitingPaymentConfirmation)
+                .build();
+
+        when(solicitorSubmitPetitionService.aboutToSubmit(caseData, caseId)).thenReturn(aboutToStartOrSubmitResponse);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorStatementOfTruthPaySubmit
+            .aboutToSubmit(caseDetails, new CaseDetails<>());
+
+        final CaseData expectedCaseData = CaseData.builder()
+            .statementOfTruth(YES)
+            .solSignStatementOfTruth(YES)
+            .respSolDigital(YES)
+            .respContactMethodIsDigital(YES)
+            .respondentSolicitorRepresented(YES)
+            .respondentOrganisationPolicy(organisationPolicy)
+            .build();
+
+        assertThat(response.getData(), is(expectedCaseData));
+        assertThat(response.getState(), is(SolicitorAwaitingPaymentConfirmation));
+        assertThat(response.getErrors(), is(nullValue()));
+    }
+
+    @Test
+    void shouldNotSetRespondentDigitalDetailsWhenRespSolicitorIsNotDigital() {
+        final long caseId = 1L;
+        final CaseData caseData = CaseData.builder()
+            .statementOfTruth(YES)
+            .solSignStatementOfTruth(YES)
+            .respSolDigital(NO)
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(caseId);
+        caseDetails.setState(SOTAgreementPayAndSubmitRequired);
+
+        AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
+            AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .state(SolicitorAwaitingPaymentConfirmation)
+                .build();
+
+        when(solicitorSubmitPetitionService.aboutToSubmit(caseData, caseId)).thenReturn(aboutToStartOrSubmitResponse);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorStatementOfTruthPaySubmit
+            .aboutToSubmit(caseDetails, new CaseDetails<>());
+
+        assertThat(response.getData(), is(caseData));
+        assertThat(response.getState(), is(SolicitorAwaitingPaymentConfirmation));
+        assertThat(response.getErrors(), is(nullValue()));
+    }
+
+    @Test
+    void shouldNotSetRespondentDigitalDetailsWhenRespSolicitorIsDigitalAndRespOrgIsNotSet() {
+        final long caseId = 1L;
+        final CaseData caseData = CaseData.builder()
+            .statementOfTruth(YES)
+            .solSignStatementOfTruth(YES)
+            .respSolDigital(YES)
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(caseId);
+        caseDetails.setState(SOTAgreementPayAndSubmitRequired);
+
+        AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
+            AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .state(SolicitorAwaitingPaymentConfirmation)
+                .build();
+
+        when(solicitorSubmitPetitionService.aboutToSubmit(caseData, caseId)).thenReturn(aboutToStartOrSubmitResponse);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorStatementOfTruthPaySubmit
+            .aboutToSubmit(caseDetails, new CaseDetails<>());
+
+        assertThat(response.getData(), is(caseData));
+        assertThat(response.getState(), is(SolicitorAwaitingPaymentConfirmation));
+        assertThat(response.getErrors(), is(nullValue()));
     }
 }

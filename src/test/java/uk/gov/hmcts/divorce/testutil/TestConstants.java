@@ -36,6 +36,8 @@ public final class TestConstants {
     public static final String WELSH_TEMPLATE_ID = "FL-DIV-GNO-WEL-00256.docx";
     public static final String BEARER = "Bearer ";
     public static final String LANGUAGE_PREFERENCE_WELSH = "languagePreferenceWelsh";
+    public static final String TES_ORG_ID = "ABC123";
+    public static final String TEST_ORG_NAME = "TEST ORG";
 
     private TestConstants() {
     }

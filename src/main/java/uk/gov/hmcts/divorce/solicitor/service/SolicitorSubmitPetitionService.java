@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.solicitor.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
@@ -49,9 +50,13 @@ public class SolicitorSubmitPetitionService {
             .build();
     }
 
-    public State aboutToSubmit(final CaseData caseData, final Long caseId) {
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseData caseData, final Long caseId) {
         applicantSubmittedNotification.send(caseData, caseId);
-        return SolicitorAwaitingPaymentConfirmation;
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .state(SolicitorAwaitingPaymentConfirmation)
+            .build();
     }
 
     private ListValue<Fee> getFee(FeeResponse feeResponse) {

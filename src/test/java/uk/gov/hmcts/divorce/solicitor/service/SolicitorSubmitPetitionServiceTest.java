@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.common.model.CaseData;
@@ -119,9 +120,10 @@ public class SolicitorSubmitPetitionServiceTest {
         final CaseData caseData = CaseData.builder().build();
         final long caseId = 1L;
 
-        final State resultState = solicitorSubmitPetitionService.aboutToSubmit(caseData, caseId);
+        final AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
+            solicitorSubmitPetitionService.aboutToSubmit(caseData, caseId);
 
-        assertThat(resultState).isEqualTo(SolicitorAwaitingPaymentConfirmation);
+        assertThat(aboutToStartOrSubmitResponse.getState()).isEqualTo(SolicitorAwaitingPaymentConfirmation);
         verify(applicantSubmittedNotification).send(caseData, caseId);
     }
 }
