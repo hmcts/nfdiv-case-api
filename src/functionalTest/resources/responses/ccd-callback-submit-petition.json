@@ -23,16 +23,16 @@
       {
         "id": null,
         "value": {
-          "PaymentDate": null,
-          "PaymentFeeId": "FEE0001",
-          "PaymentAmount": {
+          "paymentDate": null,
+          "paymentFeeId": "FEE0001",
+          "paymentAmount": {
             "amount": "55000"
           },
-          "PaymentSiteId": "AA04",
-          "PaymentStatus": "success",
-          "PaymentChannel": "online",
-          "PaymentReference": null,
-          "PaymentTransactionId": "ge7po9h5bhbtbd466424src9tk"
+          "paymentSiteId": "AA04",
+          "paymentStatus": "success",
+          "paymentChannel": "online",
+          "paymentReference": null,
+          "paymentTransactionId": "ge7po9h5bhbtbd466424src9tk"
         }
       }
     ]

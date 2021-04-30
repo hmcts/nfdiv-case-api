@@ -235,7 +235,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
     @Test
     void shouldSetStateToSubmittedIfPaymentSuccessful() {
         final long caseId = 1L;
-        final OrderSummary orderSummary = mock(OrderSummary.class);
+        final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("1000").build();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
         final Payment payment = Payment
@@ -251,12 +251,12 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .build();
         ListValue<Payment> paymentListValue = ListValue
             .<Payment>builder()
-            .id(UUID.randomUUID().toString())
             .value(payment)
             .build();
         List<ListValue<Payment>> payments = new ArrayList<>();
         payments.add(paymentListValue);
         final CaseData caseData = CaseData.builder()
+            .solApplicationFeeOrderSummary(orderSummary)
             .payments(payments)
             .build();
         caseDetails.setData(caseData);
@@ -270,7 +270,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
     @Test
     void shouldSetStateToSolicitorAwaitingPaymentConfirmationIfPaymentNotYetSuccessful() {
         final long caseId = 1L;
-        final OrderSummary orderSummary = mock(OrderSummary.class);
+        final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("1000").build();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
         final Payment payment = Payment
@@ -286,12 +286,12 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .build();
         ListValue<Payment> paymentListValue = ListValue
             .<Payment>builder()
-            .id(UUID.randomUUID().toString())
             .value(payment)
             .build();
         List<ListValue<Payment>> payments = new ArrayList<>();
         payments.add(paymentListValue);
         final CaseData caseData = CaseData.builder()
+            .solApplicationFeeOrderSummary(orderSummary)
             .payments(payments)
             .build();
         caseDetails.setData(caseData);

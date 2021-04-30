@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.payment.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
@@ -19,7 +18,6 @@ public class Payment {
         label = "Payment Date",
         access = {DefaultAccess.class}
     )
-    @JsonProperty("PaymentDate")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate paymentDate;
 
@@ -27,14 +25,12 @@ public class Payment {
         label = "Payment Fee Id",
         access = {DefaultAccess.class}
     )
-    @JsonProperty("PaymentFeeId")
     private String paymentFeeId;
 
     @CCD(
         label = "Payment Amount",
         access = {DefaultAccess.class}
     )
-    @JsonProperty("PaymentAmount")
     private MoneyGBP paymentAmount;
 
     @CCD(
@@ -42,34 +38,29 @@ public class Payment {
         access = {DefaultAccess.class}
     )
     @ApiModelProperty("ID of site the payment was made")
-    @JsonProperty("PaymentSiteId")
     private String paymentSiteId;
 
     @CCD(
         label = "Payment Status",
         access = {DefaultAccess.class}
     )
-    @JsonProperty("PaymentStatus")
     private PaymentStatus paymentStatus;
 
     @CCD(
         label = "Payment Channel",
         access = {DefaultAccess.class}
     )
-    @JsonProperty("PaymentChannel")
     private String paymentChannel;
 
     @CCD(
         label = "Payment Reference",
         access = {DefaultAccess.class}
     )
-    @JsonProperty("PaymentReference")
     private String paymentReference;
 
     @CCD(
         label = "Payment Transaction Id",
         access = {DefaultAccess.class}
     )
-    @JsonProperty("PaymentTransactionId")
     private String paymentTransactionId;
 }

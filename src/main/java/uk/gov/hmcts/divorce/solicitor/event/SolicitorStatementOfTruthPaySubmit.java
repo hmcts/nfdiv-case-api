@@ -15,7 +15,6 @@ import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 import uk.gov.hmcts.divorce.payment.model.Payment;
-import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
 import uk.gov.hmcts.divorce.solicitor.event.page.HelpWithFees;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayAccount;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayment;
@@ -42,6 +41,7 @@ import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_SOLI
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
+import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
 @Slf4j
 @Component
@@ -90,18 +90,11 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
         log.info("Setting dummy payment to mock payment process");
         if (caseData.getPayments() == null || caseData.getPayments().isEmpty()) {
             List<ListValue<Payment>> payments = new ArrayList<>();
-            payments.add(
-                ListValue
-                    .<Payment>builder()
-                    .value(solicitorSubmitPetitionService.getDummyPayment(orderSummary))
-                    .build());
+            payments.add(new ListValue<>(null, solicitorSubmitPetitionService.getDummyPayment(orderSummary)));
             caseData.setPayments(payments);
         } else {
-            caseData.getPayments().add(
-                ListValue
-                    .<Payment>builder()
-                    .value(solicitorSubmitPetitionService.getDummyPayment(orderSummary))
-                    .build());
+            caseData.getPayments()
+                .add(new ListValue<>(null, solicitorSubmitPetitionService.getDummyPayment(orderSummary)));
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -137,9 +130,12 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
                                                CaseDetails<CaseData, State> beforeDetails) {
         final CaseData caseData = details.getData();
-        final PaymentStatus paymentStatus = caseData.getPayments().get(caseData.getPayments().size() - 1).getValue().getPaymentStatus();
+        final int feesPaid = caseData.getPayments().stream()
+            .filter(payment -> payment.getValue().getPaymentStatus().equals(SUCCESS))
+            .mapToInt(payment -> Integer.parseInt(payment.getValue().getPaymentAmount().getAmount()))
+            .sum();
 
-        if (paymentStatus.equals(PaymentStatus.SUCCESS)) {
+        if (String.valueOf(feesPaid).equals(caseData.getSolApplicationFeeOrderSummary().getPaymentTotal())) {
             details.setState(Submitted);
         } else {
             details.setState(SolicitorAwaitingPaymentConfirmation);
