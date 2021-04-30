@@ -4,5 +4,7 @@ import java.util.List;
 
 public interface CaseState {
 
-    List<String> validate(CaseData data);
+    default List<String> validate(CaseData data) {
+        return null;
+    }
 }

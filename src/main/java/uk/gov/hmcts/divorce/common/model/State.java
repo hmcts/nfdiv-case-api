@@ -8,13 +8,13 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import java.util.ArrayList;
 import java.util.List;
 
-import static uk.gov.hmcts.divorce.common.validation.ValidationUtils.addToErrorList;
-import static uk.gov.hmcts.divorce.common.validation.ValidationUtils.checkIfConfidentialAddressNullOrEmpty;
-import static uk.gov.hmcts.divorce.common.validation.ValidationUtils.checkIfDateIsAllowed;
-import static uk.gov.hmcts.divorce.common.validation.ValidationUtils.checkIfGenderNullOrEmpty;
-import static uk.gov.hmcts.divorce.common.validation.ValidationUtils.checkIfStringNullOrEmpty;
-import static uk.gov.hmcts.divorce.common.validation.ValidationUtils.checkIfYesOrNoIsNullOrEmptyOrNo;
-import static uk.gov.hmcts.divorce.common.validation.ValidationUtils.checkIfYesOrNoNullOrEmpty;
+import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.addToErrorList;
+import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.checkIfConfidentialAddressNullOrEmpty;
+import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.checkIfDateIsAllowed;
+import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.checkIfGenderNullOrEmpty;
+import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.checkIfStringNullOrEmpty;
+import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.checkIfYesOrNoIsNullOrEmptyOrNo;
+import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.checkIfYesOrNoNullOrEmpty;
 
 @RequiredArgsConstructor
 @Getter
@@ -25,12 +25,7 @@ public enum State implements CaseState {
         label = "Draft",
         name = "Draft"
     )
-    Draft("Draft") {
-        @Override
-        public List<String> validate(CaseData data) {
-            return null;
-        }
-    },
+    Draft("Draft"),
 
     @JsonProperty("AwaitingPayment")
     @CCD(
@@ -63,36 +58,21 @@ public enum State implements CaseState {
         label = "Statement of Truth, Pay and Submit Required",
         name = "Statement of Truth, Pay and Submit Required"
     )
-    SOTAgreementPayAndSubmitRequired("SOTAgreementPayAndSubmitRequired") {
-        @Override
-        public List<String> validate(CaseData data) {
-            return null;
-        }
-    },
+    SOTAgreementPayAndSubmitRequired("SOTAgreementPayAndSubmitRequired"),
 
     @JsonProperty("Submitted")
     @CCD(
         label = "Petition paid and submitted",
         name = "Petition submitted"
     )
-    Submitted("Submitted") {
-        @Override
-        public List<String> validate(CaseData data) {
-            return null;
-        }
-    },
+    Submitted("Submitted"),
 
     @JsonProperty("SolicitorAwaitingPaymentConfirmation")
     @CCD(
         label = "Solicitor - Awaiting Payment Confirmation",
         name = "Solicitor - Awaiting Payment Confirmation"
     )
-    SolicitorAwaitingPaymentConfirmation("SolicitorAwaitingPaymentConfirmation") {
-        @Override
-        public List<String> validate(CaseData data) {
-            return null;
-        }
-    };
+    SolicitorAwaitingPaymentConfirmation("SolicitorAwaitingPaymentConfirmation");
 
     private final String name;
 
