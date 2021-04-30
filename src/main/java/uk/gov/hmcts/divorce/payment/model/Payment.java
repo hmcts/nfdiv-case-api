@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.MoneyGBP;
-import uk.gov.hmcts.divorce.common.model.access.DefaultAccess;
 
 import java.time.LocalDate;
 
@@ -15,52 +14,44 @@ import java.time.LocalDate;
 public class Payment {
 
     @CCD(
-        label = "Payment Date",
-        access = {DefaultAccess.class}
+        label = "Payment Date"
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate paymentDate;
 
     @CCD(
-        label = "Payment Fee Id",
-        access = {DefaultAccess.class}
+        label = "Payment Fee Id"
     )
     private String paymentFeeId;
 
     @CCD(
-        label = "Payment Amount",
-        access = {DefaultAccess.class}
+        label = "Payment Amount"
     )
     private MoneyGBP paymentAmount;
 
     @CCD(
-        label = "Payment Site Id",
-        access = {DefaultAccess.class}
+        label = "Payment Site Id"
     )
     @ApiModelProperty("ID of site the payment was made")
     private String paymentSiteId;
 
     @CCD(
-        label = "Payment Status",
-        access = {DefaultAccess.class}
+        label = "Payment Status"
     )
     private PaymentStatus paymentStatus;
 
     @CCD(
-        label = "Payment Channel",
-        access = {DefaultAccess.class}
+        label = "Payment Channel"
     )
     private String paymentChannel;
 
     @CCD(
-        label = "Payment Reference",
-        access = {DefaultAccess.class}
+        label = "Payment Reference"
     )
     private String paymentReference;
 
     @CCD(
-        label = "Payment Transaction Id",
-        access = {DefaultAccess.class}
+        label = "Payment Transaction Id"
     )
     private String paymentTransactionId;
 }
