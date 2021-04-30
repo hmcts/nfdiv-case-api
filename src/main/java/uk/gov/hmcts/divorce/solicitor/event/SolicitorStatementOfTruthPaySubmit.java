@@ -26,7 +26,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.model.State.SOTAgreementPayAndSubmitRequired;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
@@ -93,21 +95,27 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
         final CaseData caseData = details.getData();
         final State currentState = details.getState();
 
+        updateRespondentDigitalDetails(caseData);
+
         if (!caseData.hasStatementOfTruth() || !caseData.hasSolSignStatementOfTruth()) {
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .state(currentState)
-                .errors(asList("Statement of truth for solicitor and applicant 1 needs to be accepted"))
+                .errors(singletonList("Statement of truth for solicitor and applicant 1 needs to be accepted"))
                 .build();
         }
 
-        final State resultState = solicitorSubmitPetitionService.aboutToSubmit(caseData, details.getId());
+        return solicitorSubmitPetitionService.aboutToSubmit(caseData, details.getId());
 
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
-            .state(resultState)
-            .build();
+    }
+
+    private void updateRespondentDigitalDetails(CaseData caseData) {
+        if (caseData.hasDigitalDetailsForRespSol() && caseData.hasRespondentOrgId()) {
+            log.info("Respondent solicitor is digital and respondent org is populated");
+            caseData.setRespContactMethodIsDigital(YES);
+            caseData.setRespondentSolicitorRepresented(YES);
+        }
     }
 
     private PageBuilder addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
