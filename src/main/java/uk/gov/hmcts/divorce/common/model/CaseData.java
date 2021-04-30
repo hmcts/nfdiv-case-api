@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -767,5 +768,19 @@ public class CaseData {
     @JsonIgnore
     public boolean hasPreviousCaseId() {
         return null != previousCaseId;
+    }
+
+    @JsonIgnore
+    public boolean hasDigitalDetailsForRespSol() {
+        return YES.equals(respSolDigital);
+    }
+
+    @JsonIgnore
+    public boolean hasRespondentOrgId() {
+        if (null != respondentOrganisationPolicy) {
+            String respondentOrgId = respondentOrganisationPolicy.getOrganisation().getOrganisationId();
+            return !Strings.isNullOrEmpty(respondentOrgId);
+        }
+        return false;
     }
 }

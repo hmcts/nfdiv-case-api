@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
-import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -112,13 +111,10 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
     }
 
     private void updateRespondentDigitalDetails(CaseData caseData) {
-        if (null != caseData.getRespondentOrganisationPolicy()) {
-            String respondentOrgId = caseData.getRespondentOrganisationPolicy().getOrganisation().getOrganisationId();
-            if (YES.equals(caseData.getRespSolDigital()) && !Strings.isNullOrEmpty(respondentOrgId)) {
-                log.info("Respondent solicitor is digital and respondent org is populated");
-                caseData.setRespContactMethodIsDigital(YES);
-                caseData.setRespondentSolicitorRepresented(YES);
-            }
+        if (caseData.hasDigitalDetailsForRespSol() && caseData.hasRespondentOrgId()) {
+            log.info("Respondent solicitor is digital and respondent org is populated");
+            caseData.setRespContactMethodIsDigital(YES);
+            caseData.setRespondentSolicitorRepresented(YES);
         }
     }
 
