@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.common.validation;
 
-import lombok.experimental.UtilityClass;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.common.model.Gender;
@@ -9,14 +8,16 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-@UtilityClass
-public class ValidationUtil {
+public final class ValidationUtil {
 
     public static final String LESS_THAN_ONE_YEAR_AGO = " can not be less than one year ago.";
     public static final String MORE_THAN_ONE_HUNDRED_YEARS_AGO = " can not be more than 100 years ago.";
     public static final String IN_THE_FUTURE = " can not be in the future.";
     public static final String EMPTY = " cannot be empty or null";
     public static final String MUST_BE_YES = " must be YES";
+
+    private ValidationUtil() {
+    }
 
     public static void addToErrorList(String error, List<String> errorList) {
         if (error != null) {
