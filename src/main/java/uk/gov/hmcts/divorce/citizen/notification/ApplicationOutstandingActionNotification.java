@@ -6,10 +6,10 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.common.model.SupportingDocumentType;
+import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationConstants;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -37,8 +37,7 @@ public class ApplicationOutstandingActionNotification {
     private CommonContent commonContent;
 
     public void send(CaseData caseData, Long id) {
-        Map<String, String> templateVars = new HashMap<>();
-        commonContent.apply(templateVars, caseData);
+        Map<String, String> templateVars = commonContent.templateVarsFor(caseData);
 
         templateVars.put(APPLICATION_REFERENCE, formatId(id));
         templateVars.put(SERVICE, getService(caseData.getDivorceOrDissolution()));

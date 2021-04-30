@@ -8,16 +8,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.SupportingDocumentType;
 import uk.gov.hmcts.divorce.common.model.WhoDivorcing;
+import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_ACTIONS;
@@ -57,6 +59,9 @@ class ApplicationOutstandingActionNotificationTest {
         docs.add(SupportingDocumentType.NAME_CHANGE_PROOF);
         data.setCannotUploadSupportingDocument(docs);
 
+        final HashMap<String, String> templateVars = new HashMap<>();
+        when(commonContent.templateVarsFor(data)).thenReturn(templateVars);
+
         notification.send(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
@@ -74,7 +79,7 @@ class ApplicationOutstandingActionNotificationTest {
             )), // NOSONAR
             eq(ENGLISH)
         );
-        verify(commonContent).apply(any(), eq(data));
+        verify(commonContent).templateVarsFor(data);
     }
 
     @Test
@@ -87,6 +92,9 @@ class ApplicationOutstandingActionNotificationTest {
         docs.add(SupportingDocumentType.UNION_CERTIFICATE);
         docs.add(SupportingDocumentType.NAME_CHANGE_PROOF);
         data.setCannotUploadSupportingDocument(docs);
+
+        final HashMap<String, String> templateVars = new HashMap<>();
+        when(commonContent.templateVarsFor(data)).thenReturn(templateVars);
 
         notification.send(data, 1234567890123456L);
 
@@ -105,7 +113,7 @@ class ApplicationOutstandingActionNotificationTest {
             )), // NOSONAR
             eq(ENGLISH)
         );
-        verify(commonContent).apply(any(), eq(data));
+        verify(commonContent).templateVarsFor(data);
     }
 
 }
