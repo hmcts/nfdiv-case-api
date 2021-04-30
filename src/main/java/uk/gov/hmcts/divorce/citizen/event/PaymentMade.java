@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.common.model.CaseData;
@@ -12,6 +13,7 @@ import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
+import static uk.gov.hmcts.divorce.common.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.common.model.State.Draft;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
@@ -41,8 +43,13 @@ public class PaymentMade implements CCDConfig<CaseData, State, UserRole> {
     }
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> beforeDetails) {
-        outstandingActionNotification.send(details.getData(), details.getId());
-        notification.send(details.getData(), details.getId());
+        CaseData caseData = details.getData();
+        notification.send(caseData, details.getId());
+        if (caseData.getPetitionerWantsToHavePapersServedAnotherWay() == YesOrNo.YES
+            || caseData.getCannotUploadSupportingDocument() != null && caseData.getCannotUploadSupportingDocument().size() > 0) {
+            outstandingActionNotification.send(caseData, details.getId());
+            details.setState(AwaitingDocuments);
+        }
 
         return SubmittedCallbackResponse.builder().build();
     }

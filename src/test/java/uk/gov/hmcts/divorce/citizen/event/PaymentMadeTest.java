@@ -7,18 +7,22 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
+import uk.gov.hmcts.divorce.common.model.SupportingDocumentType;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.divorce.citizen.event.PaymentMade.PAYMENT_MADE;
+import static uk.gov.hmcts.divorce.common.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -54,7 +58,42 @@ public class PaymentMadeTest {
 
         paymentMade.submitted(details, details);
 
+        verify(notification).send(caseData, details.getId());
+    }
+
+    @Test
+    public void givenValidCaseDataWhenCallbackIsInvokedThenSendOutstandingActionEmail() throws Exception {
+        final CaseData caseData = caseData();
+        caseData.setPetitionerEmail(TEST_USER_EMAIL);
+        caseData.setPetitionerWantsToHavePapersServedAnotherWay(YesOrNo.YES);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+
+        paymentMade.submitted(details, details);
+
         verify(outstandingActionNotification).send(caseData, details.getId());
         verify(notification).send(caseData, details.getId());
+        assertThat(details.getState(), is(AwaitingDocuments));
+    }
+
+    @Test
+    public void givenCallbackIsInvokedThenSendOutstandingActionEmailForCannotUploadSupportingDocument() throws Exception {
+        final CaseData caseData = caseData();
+        caseData.setPetitionerEmail(TEST_USER_EMAIL);
+
+        Set<SupportingDocumentType> docs = new HashSet<>();
+        docs.add(SupportingDocumentType.UNION_CERTIFICATE);
+        docs.add(SupportingDocumentType.NAME_CHANGE_PROOF);
+        caseData.setCannotUploadSupportingDocument(docs);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+
+        paymentMade.submitted(details, details);
+
+        verify(outstandingActionNotification).send(caseData, details.getId());
+        verify(notification).send(caseData, details.getId());
+        assertThat(details.getState(), is(AwaitingDocuments));
     }
 }

@@ -35,7 +35,14 @@ public enum State {
         label = "Solicitor - Awaiting Payment Confirmation",
         name = "Solicitor - Awaiting Payment Confirmation"
     )
-    SolicitorAwaitingPaymentConfirmation("SolicitorAwaitingPaymentConfirmation");
+    SolicitorAwaitingPaymentConfirmation("SolicitorAwaitingPaymentConfirmation"),
+
+    @JsonProperty("AwaitingDocuments")
+    @CCD(
+        label = "Case created and awaiting action by the petitioner",
+        name = "Awaiting petitioner"
+    )
+    AwaitingDocuments("AwaitingDocuments");
 
     private final String name;
 
