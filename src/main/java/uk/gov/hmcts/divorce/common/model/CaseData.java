@@ -13,6 +13,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
@@ -738,6 +739,12 @@ public class CaseData {
     )
     private LocalDateTime dateSubmitted;
 
+    @CCD(
+        label = "Case ID for previously Amended Case, which was challenged by respondent",
+        access = {DefaultAccess.class}
+    )
+    private CaseLink previousCaseId;
+
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
         return this.getLanguagePreferenceWelsh() == null || this.getLanguagePreferenceWelsh().equals(YesOrNo.NO)
@@ -758,5 +765,10 @@ public class CaseData {
     @JsonIgnore
     public boolean hasSolSignStatementOfTruth() {
         return YES.equals(solSignStatementOfTruth);
+    }
+
+    @JsonIgnore
+    public boolean hasPreviousCaseId() {
+        return null != previousCaseId;
     }
 }

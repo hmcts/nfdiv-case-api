@@ -134,19 +134,24 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         assertThat(configBuilder.getEvents().get(0).getEventID(), is(SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT));
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     void shouldReturnWithoutErrorIfStatementOfTruthAndSolStatementOfTruthAreSetToYes() {
 
-        final CaseData caseData = CaseData.builder().build();
-        caseData.setStatementOfTruth(YES);
-        caseData.setSolSignStatementOfTruth(YES);
+        final long caseId = 1L;
+        final CaseData caseData = CaseData.builder()
+            .statementOfTruth(YES)
+            .solSignStatementOfTruth(YES)
+            .build();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
+        caseDetails.setId(caseId);
         caseDetails.setState(SOTAgreementPayAndSubmitRequired);
-        final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
+
+        when(solicitorSubmitPetitionService.aboutToSubmit(caseData, caseId)).thenReturn(SolicitorAwaitingPaymentConfirmation);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorStatementOfTruthPaySubmit
-            .aboutToSubmit(caseDetails, beforeCaseDetails);
+            .aboutToSubmit(caseDetails, new CaseDetails<>());
 
         assertThat(response.getData(), is(caseData));
         assertThat(response.getState(), is(SolicitorAwaitingPaymentConfirmation));

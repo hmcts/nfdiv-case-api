@@ -7,13 +7,18 @@ import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.MoneyGBP;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.payment.FeesAndPaymentsClient;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
+import uk.gov.hmcts.divorce.solicitor.service.notification.ApplicantSubmittedNotification;
+
 
 import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.ccd.sdk.type.Fee.getValueInPence;
+import static uk.gov.hmcts.divorce.common.model.State.SolicitorAwaitingPaymentConfirmation;
 
 @Service
 @Slf4j
@@ -25,9 +30,11 @@ public class SolicitorSubmitPetitionService {
     private static final String FAMILY_COURT = "family court";
     private static final String DIVORCE = "divorce";
 
-
     @Autowired
     private FeesAndPaymentsClient feesAndPaymentsClient;
+
+    @Autowired
+    private ApplicantSubmittedNotification applicantSubmittedNotification;
 
     public OrderSummary getOrderSummary() {
         FeeResponse feeResponse = feesAndPaymentsClient.getPetitionIssueFee(
@@ -44,6 +51,11 @@ public class SolicitorSubmitPetitionService {
             .fees(singletonList(getFee(feeResponse)))
             .paymentTotal(getValueInPence(feeResponse.getAmount()))
             .build();
+    }
+
+    public State aboutToSubmit(final CaseData caseData, final Long caseId) {
+        applicantSubmittedNotification.send(caseData, caseId);
+        return SolicitorAwaitingPaymentConfirmation;
     }
 
     private ListValue<Fee> getFee(FeeResponse feeResponse) {

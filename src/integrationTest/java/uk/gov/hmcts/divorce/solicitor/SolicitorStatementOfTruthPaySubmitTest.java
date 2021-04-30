@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
+import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitPetitionService;
 import uk.gov.hmcts.divorce.testutil.TestConstants;
@@ -47,7 +48,10 @@ import static java.net.URLEncoder.encode;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -64,6 +68,8 @@ import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_EMA
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_FIRST_NAME;
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_LAST_NAME;
 import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
+import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorStatementOfTruthPaySubmit.SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
@@ -115,6 +121,9 @@ public class SolicitorStatementOfTruthPaySubmitTest {
 
     @MockBean
     private AuthTokenGenerator serviceTokenGenerator;
+
+    @MockBean
+    private NotificationService notificationService;
 
     private static final WireMockServer IDAM_SERVER = new WireMockServer(wireMockConfig().dynamicPort());
 
@@ -252,7 +261,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
     }
 
     @Test
-    void givenValidCaseDataWhenAboutToSubmitCallbackIsInvokedThenStateIsChangedToSolicitorAwaitingPaymentConfirmation()
+    void givenValidCaseDataWhenAboutToSubmitCallbackIsInvokedThenStateIsChangedAndEmailIsSentToApplicant()
         throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
@@ -270,6 +279,11 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .andExpect(
                 content().json(expectedCcdAboutToSubmitCallbackResponse())
             );
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(SOL_APPLICANT_APPLICATION_SUBMITTED), anyMap(), eq(ENGLISH));
+
+        verifyNoMoreInteractions(notificationService);
     }
 
     @Test
@@ -291,6 +305,8 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .andExpect(
                 content().json(expectedCcdAboutToSubmitCallbackErrorResponse())
             );
+
+        verifyNoInteractions(notificationService);
     }
 
     private void stubForCcdCaseRoles() {
