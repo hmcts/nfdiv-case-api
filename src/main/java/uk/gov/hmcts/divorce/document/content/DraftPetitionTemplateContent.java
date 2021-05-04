@@ -7,6 +7,7 @@ import uk.gov.hmcts.divorce.common.model.FinancialOrderFor;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringJoiner;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
@@ -105,14 +106,17 @@ public class DraftPetitionTemplateContent {
         if (caseData.getRespondentHomeAddress() == null) {
             respondentPostalAddress = caseData.getDerivedRespondentSolicitorAddr();
         } else {
-            respondentPostalAddress =
-                caseData.getRespondentHomeAddress().getAddressLine1() + "\n"
-                + caseData.getRespondentHomeAddress().getAddressLine2() + "\n"
-                + caseData.getRespondentHomeAddress().getAddressLine3() + "\n"
-                + caseData.getRespondentHomeAddress().getPostTown() + "\n"
-                + caseData.getRespondentHomeAddress().getCounty() + "\n"
-                + caseData.getRespondentHomeAddress().getPostCode() + "\n"
-                + caseData.getRespondentHomeAddress().getCountry() + "\n";
+            StringJoiner formattedAddress = new StringJoiner("\n");
+            formattedAddress
+                .add(caseData.getRespondentHomeAddress().getAddressLine1())
+                .add(caseData.getRespondentHomeAddress().getAddressLine2())
+                .add(caseData.getRespondentHomeAddress().getAddressLine3())
+                .add(caseData.getRespondentHomeAddress().getPostTown())
+                .add(caseData.getRespondentHomeAddress().getCounty())
+                .add(caseData.getRespondentHomeAddress().getPostCode())
+                .add(caseData.getRespondentHomeAddress().getCountry());
+
+            respondentPostalAddress = formattedAddress.toString();
         }
         templateData.put(RESPONDENT_POSTAL_ADDRESS, respondentPostalAddress);
 
