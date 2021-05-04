@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.citizen;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
@@ -23,8 +24,8 @@ import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.ABOUT_TO_START_CALLBACK_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedCcdCallbackResponse;
 
+@SpringBootTest
 public class PetitionerStatementOfTruthTest extends FunctionalTestSuite {
-
 
     private static final String ABOUT_TO_SUBMIT_REQUEST =
         "classpath:request/casedata/ccd-callback-casedata-petitoner-statement-of-truth.json";
