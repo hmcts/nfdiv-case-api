@@ -579,7 +579,7 @@ public class CaseData {
     private YesOrNo respondentHomeAddressIsInternational;
 
     @CCD(
-        label = "Any there any existing or previous court proceedings relating to the petitioner's marriage, "
+        label = "Are there any existing or previous court proceedings relating to the petitioner's marriage, "
             + "property or children?",
         access = {DefaultAccess.class}
     )
@@ -768,7 +768,7 @@ public class CaseData {
     }
 
     @JsonIgnore
-    public boolean hasPreviousCaseId() {
+    public boolean isAmendedCase() {
         return null != previousCaseId;
     }
 
