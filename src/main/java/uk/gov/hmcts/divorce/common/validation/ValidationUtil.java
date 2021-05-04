@@ -4,10 +4,13 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.common.model.Gender;
+import uk.gov.hmcts.divorce.common.model.JurisdictionConnections;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public final class ValidationUtil {
 
@@ -16,6 +19,8 @@ public final class ValidationUtil {
     public static final String IN_THE_FUTURE = " can not be in the future.";
     public static final String EMPTY = " cannot be empty or null";
     public static final String MUST_BE_YES = " must be YES";
+    public static final String CONNECTION = "Connection ";
+    public static final String CANNOT_EXIST = " cannot exist";
 
     private ValidationUtil() {
     }
@@ -34,12 +39,19 @@ public final class ValidationUtil {
         addToErrorList(checkIfYesOrNoIsNullOrEmptyOrNo(caseData.getPrayerHasBeenGiven(), "PrayerHasBeenGiven"), errorList);
         addToErrorList(checkIfYesOrNoIsNullOrEmptyOrNo(caseData.getStatementOfTruth(), "StatementOfTruth"), errorList);
         addToErrorList(checkIfDateIsAllowed(caseData.getMarriageDate(), "MarriageDate"), errorList);
+        addListToErrorList(validateJurisdictionConnection(caseData.getJurisdictionConnections(), caseData), errorList);
     }
 
 
     public static void addToErrorList(String error, List<String> errorList) {
         if (error != null) {
             errorList.add(error);
+        }
+    }
+
+    public static void addListToErrorList(List<String> errors, List<String> errorList) {
+        if (errors != null) {
+            errorList.addAll(errors);
         }
     }
 
@@ -104,6 +116,35 @@ public final class ValidationUtil {
 
     private static boolean isInTheFuture(LocalDate date) {
         return date.isAfter(LocalDate.now());
+    }
+
+    public static List<String> validateJurisdictionConnection(Set<JurisdictionConnections> jurisdictionConnections, CaseData
+        caseData) {
+        List<String> errors = new ArrayList<>();
+
+        if (jurisdictionConnections == null) {
+            errors.add("JurisdictionConnections" + EMPTY);
+            return errors;
+        } if (jurisdictionConnections.contains(JurisdictionConnections.PET_RESP_RESIDENT) && caseData.getJurisdictionPetitionerResidence() != YesOrNo.YES && caseData.getJurisdictionRespondentResidence() != YesOrNo.YES) {
+            errors.add(CONNECTION + JurisdictionConnections.PET_RESP_RESIDENT + CANNOT_EXIST);
+        } if (jurisdictionConnections.contains(JurisdictionConnections.PET_RESP_LAST_RESIDENT) && caseData.getJurisdictionBothLastHabituallyResident() != YesOrNo.YES) {
+            errors.add(CONNECTION + JurisdictionConnections.PET_RESP_LAST_RESIDENT + CANNOT_EXIST);
+        } if (jurisdictionConnections.contains(JurisdictionConnections.RESP_RESIDENT) && caseData.getJurisdictionRespondentResidence() != YesOrNo.YES) {
+            errors.add(CONNECTION + JurisdictionConnections.RESP_RESIDENT + CANNOT_EXIST);
+        } if (jurisdictionConnections.contains(JurisdictionConnections.PET_RESIDENT_TWELVE_MONTHS) && caseData.getJurisdictionPetitionerResidence() != YesOrNo.YES && caseData.getJurisdictionPetHabituallyResLastTwelveMonths() != YesOrNo.YES) {
+            errors.add(CONNECTION + JurisdictionConnections.PET_RESIDENT_TWELVE_MONTHS + CANNOT_EXIST);
+        } if (jurisdictionConnections.contains(JurisdictionConnections.PET_RESIDENT_SIX_MONTHS) && caseData.getJurisdictionPetitionerResidence() != YesOrNo.YES && caseData.getJurisdictionPetHabituallyResLastSixMonths() != YesOrNo.YES) {
+            errors.add(CONNECTION + JurisdictionConnections.PET_RESIDENT_SIX_MONTHS + CANNOT_EXIST);
+        } if (jurisdictionConnections.contains(JurisdictionConnections.PET_RESP_DOMICILED) && caseData.getJurisdictionPetitionerDomicile() != YesOrNo.YES && caseData.getJurisdictionRespondentDomicile() != YesOrNo.YES) {
+            errors.add(CONNECTION + JurisdictionConnections.PET_RESP_DOMICILED + CANNOT_EXIST);
+        } if (jurisdictionConnections.contains(JurisdictionConnections.RESIDUAL_JURISDICTION) && caseData.getJurisdictionResidualEligible() != YesOrNo.YES) {
+            errors.add(CONNECTION + JurisdictionConnections.RESIDUAL_JURISDICTION + CANNOT_EXIST);
+        } if (jurisdictionConnections.contains(JurisdictionConnections.PET_DOMICILED) && caseData.getJurisdictionPetitionerDomicile() != YesOrNo.YES) {
+            errors.add(CONNECTION + JurisdictionConnections.PET_DOMICILED + CANNOT_EXIST);
+        } if (jurisdictionConnections.contains(JurisdictionConnections.RESP_DOMICILED) && caseData.getJurisdictionRespondentDomicile() != YesOrNo.YES) {
+            errors.add(CONNECTION + JurisdictionConnections.RESP_DOMICILED + CANNOT_EXIST);
+        }
+        return errors;
     }
 
 }

@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.common.model.Gender;
+import uk.gov.hmcts.divorce.common.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
@@ -20,6 +21,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import static feign.Request.HttpMethod.GET;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -76,6 +78,8 @@ public class TestDataHelper {
         caseDataMap.put("prayerHasBeenGiven", YesOrNo.YES);
         caseDataMap.put("statementOfTruth", YesOrNo.YES);
         caseDataMap.put("marriageDate", LocalDate.now().minus(366, ChronoUnit.DAYS));
+        caseDataMap.put("jurisdictionPetitionerResidence", YesOrNo.YES);
+        caseDataMap.put("jurisdictionConnections", Set.of(JurisdictionConnections.PET_RESP_RESIDENT));
         return caseDataMap;
     }
 

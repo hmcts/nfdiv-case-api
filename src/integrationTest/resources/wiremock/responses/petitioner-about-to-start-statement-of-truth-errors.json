@@ -16,7 +16,8 @@
     "PetitionerContactDetailsConfidential cannot be empty or null",
     "PrayerHasBeenGiven cannot be empty or null",
     "StatementOfTruth cannot be empty or null",
-    "MarriageDate cannot be empty or null"
+    "MarriageDate cannot be empty or null",
+    "JurisdictionConnections cannot be empty or null"
   ],
   "state": "Draft",
   "warnings": null

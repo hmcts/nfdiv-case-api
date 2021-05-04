@@ -12,7 +12,9 @@
     "marriagePetitionerName": "test_first_name test_last_name",
     "financialOrder": "NO",
     "prayerHasBeenGiven": "YES",
-    "statementOfTruth": "YES"
+    "statementOfTruth": "YES",
+    "jurisdictionPetitionerResidence": "YES",
+    "jurisdictionConnections": ["A"]
   },
   "errors": null,
   "state": "AwaitingPayment",

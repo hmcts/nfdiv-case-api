@@ -11,11 +11,13 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.common.model.Gender;
+import uk.gov.hmcts.divorce.common.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -49,7 +51,7 @@ class PetitionerStatementOfTruthTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = petitionerStatementOfTruth.aboutToStart(caseDetails);
 
-        assertThat(response.getErrors().size(), is(12));
+        assertThat(response.getErrors().size(), is(13));
         assertThat(response.getErrors().get(0), is("PetitionerFirstName cannot be empty or null"));
     }
 
@@ -97,6 +99,8 @@ class PetitionerStatementOfTruthTest {
         caseData.setMarriagePetitionerName("Full name");
         caseData.setStatementOfTruth(YesOrNo.YES);
         caseData.setMarriageDate(LocalDate.now().minus(2, ChronoUnit.YEARS));
+        caseData.setJurisdictionConnections(Set.of(JurisdictionConnections.PET_RESP_LAST_RESIDENT));
+        caseData.setJurisdictionBothLastHabituallyResident(YesOrNo.YES);
         return caseData;
     }
 
