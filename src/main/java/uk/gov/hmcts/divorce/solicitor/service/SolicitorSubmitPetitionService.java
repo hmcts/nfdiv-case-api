@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.payment.FeesAndPaymentsClient;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
 import uk.gov.hmcts.divorce.solicitor.service.notification.ApplicantSubmittedNotification;
+import uk.gov.hmcts.divorce.solicitor.service.notification.SolicitorSubmittedNotification;
 
 import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.ccd.sdk.type.Fee.getValueInPence;
@@ -33,6 +34,9 @@ public class SolicitorSubmitPetitionService {
     @Autowired
     private ApplicantSubmittedNotification applicantSubmittedNotification;
 
+    @Autowired
+    private SolicitorSubmittedNotification solicitorSubmittedNotification;
+
     public OrderSummary getOrderSummary() {
         FeeResponse feeResponse = feesAndPaymentsClient.getPetitionIssueFee(
             DEFAULT_CHANNEL,
@@ -52,6 +56,7 @@ public class SolicitorSubmitPetitionService {
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseData caseData, final Long caseId) {
         applicantSubmittedNotification.send(caseData, caseId);
+        solicitorSubmittedNotification.send(caseData, caseId);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

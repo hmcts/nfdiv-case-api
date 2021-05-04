@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.payment.FeesAndPaymentsClient;
 import uk.gov.hmcts.divorce.solicitor.service.notification.ApplicantSubmittedNotification;
+import uk.gov.hmcts.divorce.solicitor.service.notification.SolicitorSubmittedNotification;
 
 import java.util.Collections;
 import java.util.Map;
@@ -44,6 +45,9 @@ public class SolicitorSubmitPetitionServiceTest {
 
     @Mock
     private ApplicantSubmittedNotification applicantSubmittedNotification;
+
+    @Mock
+    private SolicitorSubmittedNotification solicitorSubmittedNotification;
 
     @InjectMocks
     private SolicitorSubmitPetitionService solicitorSubmitPetitionService;
@@ -115,7 +119,7 @@ public class SolicitorSubmitPetitionServiceTest {
     }
 
     @Test
-    void shouldNotifyApplicantAndSetStateForAboutToSubmit() {
+    void shouldSendNotificationsAndSetStateForAboutToSubmit() {
 
         final CaseData caseData = CaseData.builder().build();
         final long caseId = 1L;
@@ -125,5 +129,6 @@ public class SolicitorSubmitPetitionServiceTest {
 
         assertThat(aboutToStartOrSubmitResponse.getState()).isEqualTo(SolicitorAwaitingPaymentConfirmation);
         verify(applicantSubmittedNotification).send(caseData, caseId);
+        verify(solicitorSubmittedNotification).send(caseData, caseId);
     }
 }
