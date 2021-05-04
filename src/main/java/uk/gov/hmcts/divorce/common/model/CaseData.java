@@ -276,7 +276,6 @@ public class CaseData {
 
     @CCD(
         label = "The Petitioner's home address",
-        typeOverride = Address,
         access = {DefaultAccess.class}
     )
     private AddressGlobalUK applicantHomeAddress;
@@ -566,7 +565,6 @@ public class CaseData {
         label = "The Respondent's home address",
         hint = "If the respondent is to be served at their home address, enter the home address here and as the service "
             + "address below",
-        typeOverride = Address,
         access = {DefaultAccess.class}
     )
     private AddressGlobalUK respondentHomeAddress;
@@ -715,7 +713,6 @@ public class CaseData {
         label = "The Respondent's service address",
         hint = "If the respondent is to be served at their home address, enter the home address here and as the service "
             + "address below",
-        typeOverride = Address,
         access = {DefaultAccess.class}
     )
     private AddressGlobalUK respondentCorrespondenceAddress;
