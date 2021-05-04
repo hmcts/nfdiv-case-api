@@ -6,6 +6,7 @@
     "petitionerEmail": "simulate-delivered@notifications.service.gov.uk",
     "languagePreferenceWelsh": "NO",
     "divorceCostsClaim": "YES",
+    "financialOrder": "NO",
     "divorceClaimFrom": [
       "respondent"
     ],
