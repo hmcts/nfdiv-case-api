@@ -4,6 +4,8 @@
     "petitionerFirstName": "John",
     "petitionerLastName": "Smith",
     "petitionerEmail": "simulate-delivered@notifications.service.gov.uk",
+    "divorceCostsClaim": "NO",
+    "financialOrder": "NO",
     "solApplicationFeeOrderSummary": {
       "PaymentTotal": "55000",
       "PaymentReference": null,
