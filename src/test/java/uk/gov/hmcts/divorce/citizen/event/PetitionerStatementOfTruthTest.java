@@ -17,7 +17,6 @@ import uk.gov.hmcts.divorce.common.model.UserRole;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.HashSet;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;

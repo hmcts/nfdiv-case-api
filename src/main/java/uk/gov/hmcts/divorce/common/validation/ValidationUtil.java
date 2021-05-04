@@ -12,6 +12,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static uk.gov.hmcts.divorce.common.validation.JurisdictionConnectionsValidation.validateJurisdictionConnectionA;
+import static uk.gov.hmcts.divorce.common.validation.JurisdictionConnectionsValidation.validateJurisdictionConnectionB;
+import static uk.gov.hmcts.divorce.common.validation.JurisdictionConnectionsValidation.validateJurisdictionConnectionC;
+import static uk.gov.hmcts.divorce.common.validation.JurisdictionConnectionsValidation.validateJurisdictionConnectionD;
+import static uk.gov.hmcts.divorce.common.validation.JurisdictionConnectionsValidation.validateJurisdictionConnectionE;
+import static uk.gov.hmcts.divorce.common.validation.JurisdictionConnectionsValidation.validateJurisdictionConnectionF;
+import static uk.gov.hmcts.divorce.common.validation.JurisdictionConnectionsValidation.validateJurisdictionConnectionG;
+import static uk.gov.hmcts.divorce.common.validation.JurisdictionConnectionsValidation.validateJurisdictionConnectionH;
+import static uk.gov.hmcts.divorce.common.validation.JurisdictionConnectionsValidation.validateJurisdictionConnectionI;
+
 public final class ValidationUtil {
 
     public static final String LESS_THAN_ONE_YEAR_AGO = " can not be less than one year ago.";
@@ -19,8 +29,6 @@ public final class ValidationUtil {
     public static final String IN_THE_FUTURE = " can not be in the future.";
     public static final String EMPTY = " cannot be empty or null";
     public static final String MUST_BE_YES = " must be YES";
-    public static final String CONNECTION = "Connection ";
-    public static final String CANNOT_EXIST = " cannot exist";
 
     private ValidationUtil() {
     }
@@ -39,7 +47,7 @@ public final class ValidationUtil {
         addToErrorList(checkIfYesOrNoIsNullOrEmptyOrNo(caseData.getPrayerHasBeenGiven(), "PrayerHasBeenGiven"), errorList);
         addToErrorList(checkIfYesOrNoIsNullOrEmptyOrNo(caseData.getStatementOfTruth(), "StatementOfTruth"), errorList);
         addToErrorList(checkIfDateIsAllowed(caseData.getMarriageDate(), "MarriageDate"), errorList);
-        addListToErrorList(validateJurisdictionConnection(caseData.getJurisdictionConnections(), caseData), errorList);
+        addListToErrorList(validateJurisdictionConnection(caseData), errorList);
     }
 
 
@@ -118,33 +126,26 @@ public final class ValidationUtil {
         return date.isAfter(LocalDate.now());
     }
 
-    public static List<String> validateJurisdictionConnection(Set<JurisdictionConnections> jurisdictionConnections, CaseData
-        caseData) {
-        List<String> errors = new ArrayList<>();
+    public static List<String> validateJurisdictionConnection(CaseData caseData) {
+        List<String> errorList = new ArrayList<>();
+
+        Set<JurisdictionConnections> jurisdictionConnections = caseData.getJurisdictionConnections();
 
         if (jurisdictionConnections == null) {
-            errors.add("JurisdictionConnections" + EMPTY);
-            return errors;
-        } if (jurisdictionConnections.contains(JurisdictionConnections.PET_RESP_RESIDENT) && caseData.getJurisdictionPetitionerResidence() != YesOrNo.YES && caseData.getJurisdictionRespondentResidence() != YesOrNo.YES) {
-            errors.add(CONNECTION + JurisdictionConnections.PET_RESP_RESIDENT + CANNOT_EXIST);
-        } if (jurisdictionConnections.contains(JurisdictionConnections.PET_RESP_LAST_RESIDENT) && caseData.getJurisdictionBothLastHabituallyResident() != YesOrNo.YES) {
-            errors.add(CONNECTION + JurisdictionConnections.PET_RESP_LAST_RESIDENT + CANNOT_EXIST);
-        } if (jurisdictionConnections.contains(JurisdictionConnections.RESP_RESIDENT) && caseData.getJurisdictionRespondentResidence() != YesOrNo.YES) {
-            errors.add(CONNECTION + JurisdictionConnections.RESP_RESIDENT + CANNOT_EXIST);
-        } if (jurisdictionConnections.contains(JurisdictionConnections.PET_RESIDENT_TWELVE_MONTHS) && caseData.getJurisdictionPetitionerResidence() != YesOrNo.YES && caseData.getJurisdictionPetHabituallyResLastTwelveMonths() != YesOrNo.YES) {
-            errors.add(CONNECTION + JurisdictionConnections.PET_RESIDENT_TWELVE_MONTHS + CANNOT_EXIST);
-        } if (jurisdictionConnections.contains(JurisdictionConnections.PET_RESIDENT_SIX_MONTHS) && caseData.getJurisdictionPetitionerResidence() != YesOrNo.YES && caseData.getJurisdictionPetHabituallyResLastSixMonths() != YesOrNo.YES) {
-            errors.add(CONNECTION + JurisdictionConnections.PET_RESIDENT_SIX_MONTHS + CANNOT_EXIST);
-        } if (jurisdictionConnections.contains(JurisdictionConnections.PET_RESP_DOMICILED) && caseData.getJurisdictionPetitionerDomicile() != YesOrNo.YES && caseData.getJurisdictionRespondentDomicile() != YesOrNo.YES) {
-            errors.add(CONNECTION + JurisdictionConnections.PET_RESP_DOMICILED + CANNOT_EXIST);
-        } if (jurisdictionConnections.contains(JurisdictionConnections.RESIDUAL_JURISDICTION) && caseData.getJurisdictionResidualEligible() != YesOrNo.YES) {
-            errors.add(CONNECTION + JurisdictionConnections.RESIDUAL_JURISDICTION + CANNOT_EXIST);
-        } if (jurisdictionConnections.contains(JurisdictionConnections.PET_DOMICILED) && caseData.getJurisdictionPetitionerDomicile() != YesOrNo.YES) {
-            errors.add(CONNECTION + JurisdictionConnections.PET_DOMICILED + CANNOT_EXIST);
-        } if (jurisdictionConnections.contains(JurisdictionConnections.RESP_DOMICILED) && caseData.getJurisdictionRespondentDomicile() != YesOrNo.YES) {
-            errors.add(CONNECTION + JurisdictionConnections.RESP_DOMICILED + CANNOT_EXIST);
+            errorList.add("JurisdictionConnections" + EMPTY);
+        } else {
+            addToErrorList(validateJurisdictionConnectionA(jurisdictionConnections, caseData), errorList);
+            addToErrorList(validateJurisdictionConnectionB(jurisdictionConnections, caseData), errorList);
+            addToErrorList(validateJurisdictionConnectionC(jurisdictionConnections, caseData), errorList);
+            addToErrorList(validateJurisdictionConnectionD(jurisdictionConnections, caseData), errorList);
+            addToErrorList(validateJurisdictionConnectionE(jurisdictionConnections, caseData), errorList);
+            addToErrorList(validateJurisdictionConnectionF(jurisdictionConnections, caseData), errorList);
+            addToErrorList(validateJurisdictionConnectionG(jurisdictionConnections, caseData), errorList);
+            addToErrorList(validateJurisdictionConnectionH(jurisdictionConnections, caseData), errorList);
+            addToErrorList(validateJurisdictionConnectionI(jurisdictionConnections, caseData), errorList);
         }
-        return errors;
+
+        return errorList;
     }
 
 }
