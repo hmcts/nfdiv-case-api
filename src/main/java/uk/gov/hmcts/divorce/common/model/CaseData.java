@@ -766,7 +766,7 @@ public class CaseData {
     }
 
     @JsonIgnore
-    public boolean hasPreviousCaseId() {
+    public boolean isAmendedCase() {
         return null != previousCaseId;
     }
 

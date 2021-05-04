@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.solicitor.service.notification;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.model.CaseData;
@@ -42,26 +41,27 @@ public class SolicitorSubmittedNotification {
 
         if (isNotEmpty(petitionerSolicitorEmail)) {
 
-            final ImmutablePair<EmailTemplateName, String> emailInfo = getSolicitorEmailTemplate(caseData);
+            final EmailTemplateName templateName;
+            final String logMessage;
+            if (caseData.isAmendedCase()) {
+                templateName = SOL_APPLICANT_SOLICITOR_AMENDED_APPLICATION_SUBMITTED;
+                logMessage = SENDING_AMENDED_APPLICATION_EMAIL;
+
+            } else {
+                templateName = SOL_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED;
+                logMessage = SENDING_APPLICATION_EMAIL;
+            }
 
             notificationService.sendEmail(
                 petitionerSolicitorEmail,
-                emailInfo.getKey(),
+                templateName,
                 templateVars,
                 caseData.getLanguagePreference());
 
-            log.info(emailInfo.getValue(), caseId);
+            log.info(logMessage, caseId);
+
         } else {
             log.info(NO_EMAIL_SENT_FOR_CASE, caseId);
         }
-    }
-
-    private ImmutablePair<EmailTemplateName, String> getSolicitorEmailTemplate(final CaseData caseData) {
-
-        if (caseData.hasPreviousCaseId()) {
-            return ImmutablePair.of(SOL_APPLICANT_SOLICITOR_AMENDED_APPLICATION_SUBMITTED, SENDING_AMENDED_APPLICATION_EMAIL);
-        }
-
-        return ImmutablePair.of(SOL_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED, SENDING_APPLICATION_EMAIL);
     }
 }
