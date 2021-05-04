@@ -89,7 +89,8 @@ public class DraftPetitionTemplateContent {
         templateData.put(MARRIAGE_DATE, caseData.getMarriageDate());
         templateData.put(COURT_CASE_DETAILS, caseData.getLegalProceedingsDetails());
 
-        templateData.put(HAS_COST_ORDERS, caseData.getDivorceCostsClaim());
+        boolean hasCostOrders = YES.equals(caseData.getDivorceCostsClaim());
+        templateData.put(HAS_COST_ORDERS, hasCostOrders);
 
         boolean hasFinancialOrders = YES.equals(caseData.getFinancialOrder());
         templateData.put(HAS_FINANCIAL_ORDERS, hasFinancialOrders);
