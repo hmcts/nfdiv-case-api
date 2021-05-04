@@ -6,15 +6,22 @@ import feign.Response;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.common.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
+import uk.gov.hmcts.divorce.common.model.Gender;
+import uk.gov.hmcts.divorce.common.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import static feign.Request.HttpMethod.GET;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -53,6 +60,26 @@ public class TestDataHelper {
         caseDataMap.put("petitionerLastName", TEST_LAST_NAME);
         caseDataMap.put("divorceOrDissolution", DIVORCE);
         caseDataMap.put("petitionerEmail", TEST_USER_EMAIL);
+        return caseDataMap;
+    }
+
+    public static Map<String, Object> validPetitionerCaseDataMap() {
+        Map<String, Object> caseDataMap = new HashMap<>();
+        caseDataMap.put("petitionerFirstName", TEST_FIRST_NAME);
+        caseDataMap.put("petitionerMiddleName", TEST_MIDDLE_NAME);
+        caseDataMap.put("petitionerLastName", TEST_LAST_NAME);
+        caseDataMap.put("respondentFirstName", TEST_FIRST_NAME);
+        caseDataMap.put("respondentLastName", TEST_LAST_NAME);
+        caseDataMap.put("financialOrder", YesOrNo.NO);
+        caseDataMap.put("inferredPetitionerGender", Gender.FEMALE);
+        caseDataMap.put("inferredRespondentGender", Gender.MALE);
+        caseDataMap.put("marriagePetitionerName", TEST_FIRST_NAME + " " + TEST_LAST_NAME);
+        caseDataMap.put("petitionerContactDetailsConfidential", ConfidentialAddress.KEEP);
+        caseDataMap.put("prayerHasBeenGiven", YesOrNo.YES);
+        caseDataMap.put("statementOfTruth", YesOrNo.YES);
+        caseDataMap.put("marriageDate", LocalDate.now().minus(366, ChronoUnit.DAYS));
+        caseDataMap.put("jurisdictionPetitionerResidence", YesOrNo.YES);
+        caseDataMap.put("jurisdictionConnections", Set.of(JurisdictionConnections.PET_RESP_RESIDENT));
         return caseDataMap;
     }
 

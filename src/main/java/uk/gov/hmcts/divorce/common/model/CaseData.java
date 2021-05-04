@@ -98,7 +98,8 @@ public class CaseData {
         typeOverride = Date,
         access = {DefaultAccess.class}
     )
-    private String marriageDate;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate marriageDate;
 
     @CCD(
         label = "Help with fees reference",
