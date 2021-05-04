@@ -8,7 +8,7 @@ import uk.gov.hmcts.divorce.common.model.FinancialOrderFor;
 import java.util.HashMap;
 import java.util.Map;
 
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.toBoolean;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
@@ -71,7 +71,6 @@ public class DraftPetitionTemplateContent {
             templateData.put(DIVORCE_OR_DISSOLUTION_COST, COSTS_RELATED_TO_ENDING_THE_CIVIL_PARTNERSHIP);
         }
 
-
         templateData.put(CCD_CASE_REFERENCE, ccdCaseReference);
         templateData.put(ISSUE_DATE, caseData.getCreatedDate().toString());
 
@@ -89,11 +88,8 @@ public class DraftPetitionTemplateContent {
         templateData.put(MARRIAGE_DATE, caseData.getMarriageDate());
         templateData.put(COURT_CASE_DETAILS, caseData.getLegalProceedingsDetails());
 
-        boolean hasCostOrders = YES.equals(caseData.getDivorceCostsClaim());
-        templateData.put(HAS_COST_ORDERS, hasCostOrders);
-
-        boolean hasFinancialOrders = YES.equals(caseData.getFinancialOrder());
-        templateData.put(HAS_FINANCIAL_ORDERS, hasFinancialOrders);
+        templateData.put(HAS_COST_ORDERS, toBoolean(caseData.getDivorceCostsClaim()));
+        templateData.put(HAS_FINANCIAL_ORDERS, toBoolean(caseData.getFinancialOrder()));
 
         boolean hasFinancialOrdersForChild =
             null != caseData.getFinancialOrderFor()
