@@ -15,6 +15,8 @@ import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -55,7 +57,8 @@ public class PetitionerStatementOfTruthTest {
             .content(objectMapper.writeValueAsString(callbackRequest(validPetitionerCaseDataMap(), PETITIONER_STATEMENT_OF_TRUTH)))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(content().json(expectedCcdAboutToStartCallbackSuccessfulResponse()));
+            .andExpect(content().json(expectedCcdAboutToStartCallbackSuccessfulResponse()
+                .replace("2020-04-29", LocalDate.now().minus(366, ChronoUnit.DAYS).toString())));
     }
 
     @Test
