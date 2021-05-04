@@ -8,7 +8,6 @@ import uk.gov.hmcts.divorce.common.model.FinancialOrderFor;
 import java.util.HashMap;
 import java.util.Map;
 
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.toBoolean;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
@@ -88,8 +87,8 @@ public class DraftPetitionTemplateContent {
         templateData.put(MARRIAGE_DATE, caseData.getMarriageDate());
         templateData.put(COURT_CASE_DETAILS, caseData.getLegalProceedingsDetails());
 
-        templateData.put(HAS_COST_ORDERS, toBoolean(caseData.getDivorceCostsClaim()));
-        templateData.put(HAS_FINANCIAL_ORDERS, toBoolean(caseData.getFinancialOrder()));
+        templateData.put(HAS_COST_ORDERS, caseData.getDivorceCostsClaim().toBoolean());
+        templateData.put(HAS_FINANCIAL_ORDERS, caseData.getFinancialOrder().toBoolean());
 
         boolean hasFinancialOrdersForChild =
             null != caseData.getFinancialOrderFor()
