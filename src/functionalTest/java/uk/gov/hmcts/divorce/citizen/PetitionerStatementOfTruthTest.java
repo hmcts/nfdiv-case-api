@@ -8,6 +8,8 @@ import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
@@ -30,6 +32,9 @@ public class PetitionerStatementOfTruthTest extends FunctionalTestSuite {
 
     @Test
     public void shouldPassValidationAndGiveSuccessWhenCaseDataValid() throws IOException {
+        ABOUT_TO_SUBMIT_REQUEST.replace("2020-04-28", LocalDate.now().minus(366, ChronoUnit.DAYS).toString());
+        ABOUT_TO_START_RESPONSE.replace("2020-04-28", LocalDate.now().minus(366, ChronoUnit.DAYS).toString());
+
         Response response = RestAssured
             .given()
             .relaxedHTTPSValidation()
