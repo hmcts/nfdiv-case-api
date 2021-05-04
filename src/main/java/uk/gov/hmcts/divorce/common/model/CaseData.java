@@ -98,7 +98,6 @@ public class CaseData {
         typeOverride = Date,
         access = {DefaultAccess.class}
     )
-    @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate marriageDate;
 
