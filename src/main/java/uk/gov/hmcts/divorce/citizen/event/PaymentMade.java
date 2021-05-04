@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.common.model.State.Draft;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
@@ -46,7 +47,7 @@ public class PaymentMade implements CCDConfig<CaseData, State, UserRole> {
         CaseData caseData = details.getData();
         notification.send(caseData, details.getId());
         if (caseData.getPetitionerWantsToHavePapersServedAnotherWay() == YesOrNo.YES
-            || caseData.getCannotUploadSupportingDocument() != null && caseData.getCannotUploadSupportingDocument().size() > 0) {
+            || !isEmpty(caseData.getCannotUploadSupportingDocument())) {
             outstandingActionNotification.send(caseData, details.getId());
             details.setState(AwaitingDocuments);
         }
