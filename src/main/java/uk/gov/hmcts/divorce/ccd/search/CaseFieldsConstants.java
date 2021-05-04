@@ -10,6 +10,7 @@ public final class CaseFieldsConstants {
     public static final String EMAIL = "Email";
     public static final String DIVORCE_COSTS_CLAIM = "divorceCostsClaim";
     public static final String DIVORCE_OR_DISSOLUTION = "divorceOrDissolution";
+    public static final String FINANCIAL_ORDER = "financialOrder";
 
     // required for Checkstyle
     private CaseFieldsConstants() {

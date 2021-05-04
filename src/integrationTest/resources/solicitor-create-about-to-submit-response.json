@@ -6,6 +6,7 @@
     "petitionerEmail": "test@test.com",
     "languagePreferenceWelsh": "NO",
     "divorceCostsClaim": "YES",
+    "financialOrder": "NO",
     "divorceClaimFrom": [
       "respondent"
     ],
