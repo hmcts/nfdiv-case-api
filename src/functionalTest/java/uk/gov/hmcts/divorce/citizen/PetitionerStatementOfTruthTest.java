@@ -29,7 +29,7 @@ public class PetitionerStatementOfTruthTest extends FunctionalTestSuite {
     private static final String ABOUT_TO_START_RESPONSE = "classpath:responses/ccd-callback-casedata-petitoner-statement-of-truth.json";
 
     @Test
-    public void shouldSendEmailWhenAllTemplateParamsAreValid() throws IOException {
+    public void shouldPassValidationAndGiveSuccessWhenCaseDataValid() throws IOException {
         Response response = RestAssured
             .given()
             .relaxedHTTPSValidation()
