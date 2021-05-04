@@ -13,6 +13,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -27,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.Address;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
@@ -274,10 +276,10 @@ public class CaseData {
 
     @CCD(
         label = "The Petitioner's home address",
-        typeOverride = TextArea,
+        typeOverride = Address,
         access = {DefaultAccess.class}
     )
-    private String applicantHomeAddress;
+    private AddressGlobalUK applicantHomeAddress;
 
     @CCD(
         label = "Is petitioners home address an international address?",
@@ -564,10 +566,10 @@ public class CaseData {
         label = "The Respondent's home address",
         hint = "If the respondent is to be served at their home address, enter the home address here and as the service "
             + "address below",
-        typeOverride = TextArea,
+        typeOverride = Address,
         access = {DefaultAccess.class}
     )
-    private String respondentHomeAddress;
+    private AddressGlobalUK respondentHomeAddress;
 
     @CCD(
         label = "Is respondents home address an international address?",
@@ -713,10 +715,10 @@ public class CaseData {
         label = "The Respondent's service address",
         hint = "If the respondent is to be served at their home address, enter the home address here and as the service "
             + "address below",
-        typeOverride = TextArea,
+        typeOverride = Address,
         access = {DefaultAccess.class}
     )
-    private String respondentCorrespondenceAddress;
+    private AddressGlobalUK respondentCorrespondenceAddress;
 
     @CCD(
         label = "Who is the financial order for?",

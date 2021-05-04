@@ -101,9 +101,19 @@ public class DraftPetitionTemplateContent {
         templateData.put(HAS_FINANCIAL_ORDERS_FOR_CHILD, hasFinancialOrdersForChild);
         templateData.put(FINANCIAL_ORDER_CHILD, CHILDREN_OF_THE_APPLICANT_AND_THE_RESPONDENT);
 
-        String respondentPostalAddress = null == caseData.getRespondentHomeAddress()
-            ? caseData.getDerivedRespondentSolicitorAddr()
-            : caseData.getRespondentHomeAddress();
+        String respondentPostalAddress;
+        if (caseData.getRespondentHomeAddress() == null) {
+            respondentPostalAddress = caseData.getDerivedRespondentSolicitorAddr();
+        } else {
+            respondentPostalAddress =
+                caseData.getRespondentHomeAddress().getAddressLine1() + "\n"
+                + caseData.getRespondentHomeAddress().getAddressLine2() + "\n"
+                + caseData.getRespondentHomeAddress().getAddressLine3() + "\n"
+                + caseData.getRespondentHomeAddress().getPostTown() + "\n"
+                + caseData.getRespondentHomeAddress().getCounty() + "\n"
+                + caseData.getRespondentHomeAddress().getPostCode() + "\n"
+                + caseData.getRespondentHomeAddress().getCountry() + "\n";
+        }
         templateData.put(RESPONDENT_POSTAL_ADDRESS, respondentPostalAddress);
 
         return templateData;
