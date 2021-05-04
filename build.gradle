@@ -17,12 +17,12 @@ plugins {
   id 'checkstyle'
   id 'pmd'
   id 'jacoco'
-  id 'org.owasp.dependencycheck' version '6.1.5'
-  id 'org.sonarqube' version '3.1.1'
+  id 'org.owasp.dependencycheck' version '6.1.6'
+  id 'org.sonarqube' version '3.2.0'
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'org.springframework.boot' version '2.4.5'
   id 'com.github.ben-manes.versions' version '0.38.0'
-  id 'hmcts.ccd.sdk' version '0.19.20'
+  id 'hmcts.ccd.sdk' version '0.19.21'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -227,7 +227,7 @@ ext.libraries = [
 // rest assured 4.2 -> 4.3 jumps to groovy v3. junit v5.6 still on v2.5
 dependencyManagement {
   dependencies {
-    dependencySet(group: 'org.codehaus.groovy', version: '3.0.7') {
+    dependencySet(group: 'org.codehaus.groovy', version: '3.0.8') {
       entry 'groovy'
       entry 'groovy-json'
       entry 'groovy-xml'
@@ -316,7 +316,7 @@ bootRun {
       systemProperty 'IDAM_API_BASEURL', 'https://idam-api.aat.platform.hmcts.net'
 
       systemProperty 'UK_GOV_NOTIFY_API_KEY', getVaultSecret('uk-gov-notify-api-key')
-      systemProperty 'S2S_SECRET', getVaultSecret('s2s-cms-secret')
+      systemProperty 'S2S_SECRET', getVaultSecret('s2s-case-api-secret')
       systemProperty 'IDAM_CASEWORKER_USERNAME', getVaultSecret('idam-caseworker-username')
       systemProperty 'IDAM_CASEWORKER_PASSWORD', getVaultSecret('idam-caseworker-password')
       systemProperty 'IDAM_SOLICITOR_USERNAME', getVaultSecret('idam-solicitor-username')
@@ -343,7 +343,7 @@ functional {
       systemProperty 'IDAM_API_BASEURL', 'https://idam-api.aat.platform.hmcts.net'
 
       systemProperty 'UK_GOV_NOTIFY_API_KEY', getVaultSecret('uk-gov-notify-api-key')
-      systemProperty 'S2S_SECRET', getVaultSecret('s2s-cms-secret')
+      systemProperty 'S2S_SECRET', getVaultSecret('s2s-case-api-secret')
       systemProperty 'IDAM_CASEWORKER_USERNAME', getVaultSecret('idam-caseworker-username')
       systemProperty 'IDAM_CASEWORKER_PASSWORD', getVaultSecret('idam-caseworker-password')
       systemProperty 'IDAM_SOLICITOR_USERNAME', getVaultSecret('idam-solicitor-username')

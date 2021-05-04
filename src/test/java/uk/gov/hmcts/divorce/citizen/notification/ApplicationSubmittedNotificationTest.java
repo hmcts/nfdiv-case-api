@@ -6,15 +6,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICATION_SUBMITTED;
@@ -39,6 +41,9 @@ class ApplicationSubmittedNotificationTest {
     void shouldCallSendEmailWithSubmissionResponseDate() {
         CaseData data = caseData();
         data.setDateSubmitted(LocalDateTime.of(2021, 4, 21, 1, 1));
+        final HashMap<String, String> templateVars = new HashMap<>();
+
+        when(commonContent.templateVarsFor(data)).thenReturn(templateVars);
 
         notification.send(data, 1234567890123456L);
 
@@ -51,7 +56,6 @@ class ApplicationSubmittedNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).apply(any(), eq(data));
+        verify(commonContent).templateVarsFor(data);
     }
-
 }

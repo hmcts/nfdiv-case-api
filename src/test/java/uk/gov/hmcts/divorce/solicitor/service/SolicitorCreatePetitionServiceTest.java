@@ -10,6 +10,9 @@ import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdater;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChainFactory;
+import uk.gov.hmcts.divorce.solicitor.service.updater.ClaimsCost;
+import uk.gov.hmcts.divorce.solicitor.service.updater.MiniPetitionDraft;
+import uk.gov.hmcts.divorce.solicitor.service.updater.SolicitorCourtDetails;
 
 import java.util.List;
 
@@ -33,6 +36,9 @@ class SolicitorCreatePetitionServiceTest {
     private SolicitorCourtDetails solicitorCourtDetails;
 
     @Mock
+    private MiniPetitionDraft miniPetitionDraft;
+
+    @Mock
     private CaseDataUpdaterChainFactory caseDataUpdaterChainFactory;
 
     @InjectMocks
@@ -46,7 +52,8 @@ class SolicitorCreatePetitionServiceTest {
 
         final List<CaseDataUpdater> caseDataUpdaters = asList(
             claimsCost,
-            solicitorCourtDetails);
+            solicitorCourtDetails,
+            miniPetitionDraft);
 
         final CaseDataContext caseDataContext = CaseDataContext.builder()
             .caseData(caseData)

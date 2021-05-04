@@ -8,11 +8,13 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
@@ -30,6 +32,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
@@ -54,7 +57,9 @@ public class CaseData {
 
     @CCD(
         label = "Divorce or Dissolution?",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "DivorceOrDissolution"
     )
     private DivorceOrDissolution divorceOrDissolution;
 
@@ -701,6 +706,12 @@ public class CaseData {
     private YesOrNo respSolDigital;
 
     @CCD(
+        label = "Respondent is using digital channel?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo respContactMethodIsDigital;
+
+    @CCD(
         label = "Respondent solicitor's firm",
         hint = "Respondent Organisation Details",
         access = {DefaultAccess.class}
@@ -728,6 +739,12 @@ public class CaseData {
     )
     private LocalDateTime dateSubmitted;
 
+    @CCD(
+        label = "Case ID for previously Amended Case, which was challenged by respondent",
+        access = {DefaultAccess.class}
+    )
+    private CaseLink previousCaseId;
+
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
         return this.getLanguagePreferenceWelsh() == null || this.getLanguagePreferenceWelsh().equals(YesOrNo.NO)
@@ -748,5 +765,24 @@ public class CaseData {
     @JsonIgnore
     public boolean hasSolSignStatementOfTruth() {
         return YES.equals(solSignStatementOfTruth);
+    }
+
+    @JsonIgnore
+    public boolean hasPreviousCaseId() {
+        return null != previousCaseId;
+    }
+
+    @JsonIgnore
+    public boolean hasDigitalDetailsForRespSol() {
+        return YES.equals(respSolDigital);
+    }
+
+    @JsonIgnore
+    public boolean hasRespondentOrgId() {
+        if (null != respondentOrganisationPolicy) {
+            String respondentOrgId = respondentOrganisationPolicy.getOrganisation().getOrganisationId();
+            return !Strings.isNullOrEmpty(respondentOrgId);
+        }
+        return false;
     }
 }

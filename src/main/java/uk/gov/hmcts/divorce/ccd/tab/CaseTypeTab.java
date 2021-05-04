@@ -25,10 +25,11 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("paymentDetailsCourtAdmin", "Payment")
             .field(CaseData::getHelpWithFeesReferenceNumber);
 
-        configBuilder.tab("documents", "Documents")
-            .field(CaseData::getDocumentsGenerated);
-
         configBuilder.tab("languageDetails", "Language")
             .field(CaseData::getLanguagePreferenceWelsh);
+
+        configBuilder.tab("documents", "Documents")
+            .field(CaseData::getDocumentsGenerated)
+            .field(CaseData::getDocumentsUploaded);
     }
 }
