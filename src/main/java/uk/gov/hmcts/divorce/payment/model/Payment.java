@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
-import uk.gov.hmcts.ccd.sdk.type.MoneyGBP;
 
 import java.time.LocalDate;
 
@@ -27,7 +26,7 @@ public class Payment {
     @CCD(
         label = "Payment Amount"
     )
-    private MoneyGBP paymentAmount;
+    private Integer paymentAmount;
 
     @CCD(
         label = "Payment Site Id"

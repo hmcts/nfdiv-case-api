@@ -140,7 +140,7 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
         final CaseData caseData = details.getData();
         final int feesPaid = caseData.getPayments().stream()
             .filter(payment -> payment.getValue().getPaymentStatus().equals(SUCCESS))
-            .mapToInt(payment -> Integer.parseInt(payment.getValue().getPaymentAmount().getAmount()))
+            .mapToInt(payment -> payment.getValue().getPaymentAmount())
             .sum();
 
         if (String.valueOf(feesPaid).equals(caseData.getSolApplicationFeeOrderSummary().getPaymentTotal())) {
