@@ -9,7 +9,6 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.MoneyGBP;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
@@ -92,11 +91,11 @@ public class SolicitorStatementOfTruthPaySubmitTest {
 
         final long caseId = 1L;
         final String authorization = "authorization";
-        final OrderSummary orderSummary = mock(OrderSummary.class);
+        final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final Payment payment = Payment
             .builder()
-            .paymentAmount(MoneyGBP.builder().amount(orderSummary.getPaymentTotal()).build())
+            .paymentAmount(Integer.parseInt(orderSummary.getPaymentTotal()))
             .paymentChannel("online")
             .paymentDate(LocalDate.now())
             .paymentFeeId("FEE0001")
@@ -359,7 +358,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
         final Payment payment = Payment
             .builder()
-            .paymentAmount(MoneyGBP.builder().amount(orderSummary.getPaymentTotal()).build())
+            .paymentAmount(Integer.parseInt(orderSummary.getPaymentTotal()))
             .paymentChannel("online")
             .paymentDate(LocalDate.now())
             .paymentFeeId("FEE0001")
@@ -394,7 +393,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
         final Payment payment = Payment
             .builder()
-            .paymentAmount(MoneyGBP.builder().amount(orderSummary.getPaymentTotal()).build())
+            .paymentAmount(Integer.parseInt(orderSummary.getPaymentTotal()))
             .paymentChannel("online")
             .paymentDate(LocalDate.now())
             .paymentFeeId("FEE0001")

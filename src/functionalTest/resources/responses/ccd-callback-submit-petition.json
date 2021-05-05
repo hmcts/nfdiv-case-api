@@ -25,9 +25,7 @@
         "value": {
           "paymentDate": null,
           "paymentFeeId": "FEE0001",
-          "paymentAmount": {
-            "amount": "55000"
-          },
+          "paymentAmount": 55000,
           "paymentSiteId": "AA04",
           "paymentStatus": "success",
           "paymentChannel": "online",
