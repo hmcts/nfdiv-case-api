@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 
+import static java.lang.Integer.parseInt;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -95,7 +96,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final Payment payment = Payment
             .builder()
-            .paymentAmount(Integer.parseInt(orderSummary.getPaymentTotal()))
+            .paymentAmount(parseInt(orderSummary.getPaymentTotal()))
             .paymentChannel("online")
             .paymentDate(LocalDate.now())
             .paymentFeeId("FEE0001")
@@ -358,7 +359,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
         final Payment payment = Payment
             .builder()
-            .paymentAmount(Integer.parseInt(orderSummary.getPaymentTotal()))
+            .paymentAmount(parseInt(orderSummary.getPaymentTotal()))
             .paymentChannel("online")
             .paymentDate(LocalDate.now())
             .paymentFeeId("FEE0001")
@@ -393,7 +394,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
         final Payment payment = Payment
             .builder()
-            .paymentAmount(Integer.parseInt(orderSummary.getPaymentTotal()))
+            .paymentAmount(parseInt(orderSummary.getPaymentTotal()))
             .paymentChannel("online")
             .paymentDate(LocalDate.now())
             .paymentFeeId("FEE0001")
