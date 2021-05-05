@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +18,7 @@ import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.payment.model.Payment;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -97,7 +95,8 @@ public class CaseData {
         typeOverride = Date,
         access = {DefaultAccess.class}
     )
-    private String marriageDate;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate marriageDate;
 
     @CCD(
         label = "Help with fees reference",
@@ -576,7 +575,7 @@ public class CaseData {
     private YesOrNo respondentHomeAddressIsInternational;
 
     @CCD(
-        label = "Any there any existing or previous court proceedings relating to the petitioner's marriage, "
+        label = "Are there any existing or previous court proceedings relating to the petitioner's marriage, "
             + "property or children?",
         access = {DefaultAccess.class}
     )
@@ -631,8 +630,6 @@ public class CaseData {
         hint = "Date case was created",
         access = {DefaultAccess.class}
     )
-    @JsonSerialize(using = LocalDateSerializer.class)
-    @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate createdDate;
 
@@ -703,6 +700,12 @@ public class CaseData {
     private YesOrNo respSolDigital;
 
     @CCD(
+        label = "Respondent is using digital channel?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo respContactMethodIsDigital;
+
+    @CCD(
         label = "Respondent solicitor's firm",
         hint = "Respondent Organisation Details",
         access = {DefaultAccess.class}
@@ -723,6 +726,14 @@ public class CaseData {
         access = {DefaultAccess.class}
     )
     private Set<FinancialOrderFor> financialOrderFor;
+
+    @CCD(
+        label = "Payments",
+        typeOverride = Collection,
+        typeParameterOverride = "Payment",
+        access = {DefaultAccess.class}
+    )
+    private List<ListValue<Payment>> payments;
 
     @CCD(
         label = "Date of submission",
@@ -759,7 +770,21 @@ public class CaseData {
     }
 
     @JsonIgnore
-    public boolean hasPreviousCaseId() {
+    public boolean isAmendedCase() {
         return null != previousCaseId;
+    }
+
+    @JsonIgnore
+    public boolean hasDigitalDetailsForRespSol() {
+        return YES.equals(respSolDigital);
+    }
+
+    @JsonIgnore
+    public boolean hasRespondentOrgId() {
+        if (null != respondentOrganisationPolicy) {
+            String respondentOrgId = respondentOrganisationPolicy.getOrganisation().getOrganisationId();
+            return !Strings.isNullOrEmpty(respondentOrgId);
+        }
+        return false;
     }
 }

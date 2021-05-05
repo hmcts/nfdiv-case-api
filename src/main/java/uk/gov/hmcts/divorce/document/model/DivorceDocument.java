@@ -5,7 +5,6 @@ import lombok.Data;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.divorce.common.model.DocumentType;
-import uk.gov.hmcts.divorce.common.model.access.DefaultAccess;
 
 import java.util.Date;
 
@@ -17,41 +16,35 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 public class DivorceDocument {
 
     @CCD(
-        label = "Date added",
-        access = {DefaultAccess.class}
+        label = "Date added"
     )
     private final Date documentDateAdded;
 
     @CCD(
-        label = "Comment",
-        access = {DefaultAccess.class}
+        label = "Comment"
     )
     private final String documentComment;
 
     @CCD(
-        label = "File name",
-        access = {DefaultAccess.class}
+        label = "File name"
     )
     private final String documentFileName;
 
     @CCD(
         label = "Type",
         typeOverride = FixedList,
-        typeParameterOverride = "DocumentType",
-        access = {DefaultAccess.class}
+        typeParameterOverride = "DocumentType"
     )
     private final DocumentType documentType;
 
     @CCD(
         label = "Email content",
-        typeOverride = TextArea,
-        access = {DefaultAccess.class}
+        typeOverride = TextArea
     )
     private String documentEmailContent;
 
     @CCD(
-        label = "Document Url",
-        access = {DefaultAccess.class}
+        label = "Document Url"
     )
     private final Document documentLink;
 }

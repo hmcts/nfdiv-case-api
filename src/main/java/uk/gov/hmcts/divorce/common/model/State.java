@@ -5,9 +5,14 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.validateBasicCase;
+
 @RequiredArgsConstructor
 @Getter
-public enum State {
+public enum State implements CaseState {
 
     @JsonProperty("Draft")
     @CCD(
@@ -15,6 +20,20 @@ public enum State {
         name = "Draft"
     )
     Draft("Draft"),
+
+    @JsonProperty("AwaitingPayment")
+    @CCD(
+        label = "Awaiting Payment",
+        name = "Awaiting Payment"
+    )
+    AwaitingPayment("AwaitingPayment") {
+        @Override
+        public List<String> validate(CaseData caseData) {
+            List<String> errors = new ArrayList<>();
+            validateBasicCase(caseData, errors);
+            return errors;
+        }
+    },
 
     @JsonProperty("SOTAgreementPayAndSubmitRequired")
     @CCD(

@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.testutil;
 
 public final class TestConstants {
     public static final String TEST_USER_EMAIL = "test@test.com";
+    public static final String TEST_SOLICITOR_EMAIL = "solicitor@test.com";
     public static final String TEST_FIRST_NAME = "test_first_name";
     public static final String TEST_MIDDLE_NAME = "test_middle_name";
     public static final String TEST_LAST_NAME = "test_last_name";
@@ -36,6 +37,8 @@ public final class TestConstants {
     public static final String WELSH_TEMPLATE_ID = "FL-DIV-GNO-WEL-00256.docx";
     public static final String BEARER = "Bearer ";
     public static final String LANGUAGE_PREFERENCE_WELSH = "languagePreferenceWelsh";
+    public static final String TES_ORG_ID = "ABC123";
+    public static final String TEST_ORG_NAME = "TEST ORG";
 
     private TestConstants() {
     }
