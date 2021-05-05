@@ -69,12 +69,12 @@ public class SolicitorSubmitPetitionService {
     ) {
         log.info("Removing petition documents from case data and document management for {}", caseId);
 
-        List<ListValue<DivorceDocument>> documentsExcludingPetition
-            = draftPetitionRemovalService.removeDraftPetitionDocument(
-            caseData.getDocumentsGenerated(),
-            caseId,
-            userAuth
-        );
+        List<ListValue<DivorceDocument>> documentsExcludingPetition =
+            draftPetitionRemovalService.removeDraftPetitionDocument(
+                caseData.getDocumentsGenerated(),
+                caseId,
+                userAuth
+            );
 
         caseData.setDocumentsGenerated(documentsExcludingPetition);
 

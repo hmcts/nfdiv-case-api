@@ -13,6 +13,8 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
