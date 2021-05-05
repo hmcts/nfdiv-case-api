@@ -6,11 +6,12 @@ import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.JurisdictionConnections;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static java.time.temporal.ChronoUnit.DAYS;
+import static java.time.temporal.ChronoUnit.YEARS;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
@@ -104,21 +105,25 @@ public class CaseValidationTest {
 
     @Test
     public void shouldReturnErrorWhenDateIsInTheFuture() {
-        String response = checkIfDateIsAllowed(LocalDate.now().plus(2, ChronoUnit.YEARS), "field");
+        String response = checkIfDateIsAllowed(LocalDate.now().plus(2, YEARS), "field");
 
         assertThat(response, is("field" + IN_THE_FUTURE));
     }
 
     @Test
     public void shouldReturnErrorWhenDateIsOverOneHundredYearsAgo() {
-        String response = checkIfDateIsAllowed(LocalDate.now().minus(365 * 100 + 1, ChronoUnit.DAYS), "field");
+        LocalDate oneHundredYearsAndOneDayAgo = LocalDate.now()
+            .minus(100, YEARS)
+            .minus(1, DAYS);
+
+        String response = checkIfDateIsAllowed(oneHundredYearsAndOneDayAgo, "field");
 
         assertThat(response, is("field" + MORE_THAN_ONE_HUNDRED_YEARS_AGO));
     }
 
     @Test
     public void shouldReturnErrorWhenDateIsLessThanOneYearAgo() {
-        String response = checkIfDateIsAllowed(LocalDate.now().minus(360, ChronoUnit.DAYS), "field");
+        String response = checkIfDateIsAllowed(LocalDate.now().minus(360, DAYS), "field");
 
         assertThat(response, is("field" + LESS_THAN_ONE_YEAR_AGO));
     }
