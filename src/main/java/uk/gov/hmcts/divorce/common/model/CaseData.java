@@ -34,6 +34,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -786,5 +787,14 @@ public class CaseData {
             return !Strings.isNullOrEmpty(respondentOrgId);
         }
         return false;
+    }
+
+    @JsonIgnore
+    public Integer getPaymentTotal() {
+        return this.getPayments()
+            .stream()
+            .filter(p -> SUCCESS.equals(p.getValue().getPaymentStatus()))
+            .map(p -> Integer.parseInt(p.getValue().getPaymentAmount().getAmount()))
+            .reduce(0, Integer::sum);
     }
 }
