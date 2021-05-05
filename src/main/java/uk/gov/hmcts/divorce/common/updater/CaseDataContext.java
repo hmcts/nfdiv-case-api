@@ -7,6 +7,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 
+import java.time.LocalDate;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,6 +19,7 @@ public class CaseDataContext {
     private CaseData caseData;
     private Long caseId;
     private String userAuthToken;
+    private LocalDate createdDate;
 
     public CaseData copyOfCaseData() {
         return caseData.toBuilder().build();

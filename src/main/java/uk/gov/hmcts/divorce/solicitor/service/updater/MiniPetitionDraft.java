@@ -52,6 +52,7 @@ public class MiniPetitionDraft implements CaseDataUpdater {
         DocumentInfo documentInfo = docAssemblyService.renderDocument(
             caseData,
             caseDataContext.getCaseId(),
+            caseDataContext.getCreatedDate(),
             caseDataContext.getUserAuthToken(),
             templateName
         );
