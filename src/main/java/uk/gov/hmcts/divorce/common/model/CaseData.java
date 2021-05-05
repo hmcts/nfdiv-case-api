@@ -603,6 +603,7 @@ public class CaseData {
 
     @CCD(
         label = "Documents uploaded",
+        hint = "Such as marriage/civil union certificate, proof of name changes, certified translations etc.",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
         access = {DefaultAccess.class}
@@ -610,19 +611,10 @@ public class CaseData {
     private List<ListValue<DivorceDocument>> documentsUploaded;
 
     @CCD(
-        label = "Uploaded supporting documents",
-        hint = "Such as marriage/civil union certificate, proof of name changes, certified translations etc.",
-        typeOverride = Collection,
-        typeParameterOverride = "DivorceDocument",
-        access = {DefaultAccess.class}
-    )
-    private List<ListValue<DivorceDocument>> supportingDocumentMetadata;
-
-    @CCD(
         label = "Cannot upload supporting documents",
         access = {DefaultAccess.class}
     )
-    private Set<SupportingDocumentType> cannotUploadSupportingDocument;
+    private Set<DocumentType> cannotUploadSupportingDocument;
 
     @CCD(
         label = "Created date",
