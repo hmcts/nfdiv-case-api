@@ -236,7 +236,7 @@ public class CaseData {
     private YesOrNo jurisdictionBothLastHabituallyResident;
 
     @CCD(
-        label = "What language do you want to receive emails and documents in?",
+        label = "Is the language preference Welsh?",
         access = {DefaultAccess.class},
         hint = "Select \"No\" for English or \"Yes\" for bilingual"
     )
