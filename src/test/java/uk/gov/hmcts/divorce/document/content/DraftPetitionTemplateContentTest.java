@@ -150,14 +150,13 @@ public class DraftPetitionTemplateContentTest {
             .postCode("NW1 6XE")
             .country("United Kingdom")
             .build();
+        Clock fixedClock = Clock.fixed(LOCAL_DATE.atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
 
         CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.setDivorceCostsClaim(NO);
         caseData.setFinancialOrder(NO);
         caseData.setRespondentHomeAddress(address);
-
-        Clock fixedClock = Clock.fixed(LOCAL_DATE.atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
         caseData.setCreatedDate(LocalDate.now(fixedClock));
 
         Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID);
