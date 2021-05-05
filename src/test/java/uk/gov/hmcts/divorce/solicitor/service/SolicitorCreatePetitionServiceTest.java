@@ -26,6 +26,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 
 @ExtendWith(MockitoExtension.class)
 class SolicitorCreatePetitionServiceTest {
@@ -61,7 +62,7 @@ class SolicitorCreatePetitionServiceTest {
         final CaseDataContext caseDataContext = CaseDataContext.builder()
             .caseData(caseData)
             .caseId(TEST_CASE_ID)
-            .createdDate(LOCAL_DATE_TIME)
+            .createdDate(LOCAL_DATE)
             .userAuthToken(TEST_AUTHORIZATION_TOKEN)
             .build();
 
@@ -71,7 +72,7 @@ class SolicitorCreatePetitionServiceTest {
         final CaseData actualCaseData = solicitorCreatePetitionService.aboutToSubmit(
             caseData,
             TEST_CASE_ID,
-            LOCAL_DATE_TIME,
+            LOCAL_DATE,
             TEST_AUTHORIZATION_TOKEN
         );
 

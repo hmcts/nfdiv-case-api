@@ -37,6 +37,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ENGLISH_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.WELSH_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -72,7 +73,7 @@ public class MiniPetitionDraftTest {
         when(docAssemblyService.renderDocument(
             caseData,
             TEST_CASE_ID,
-            LOCAL_DATE_TIME,
+            LOCAL_DATE,
             TEST_AUTHORIZATION_TOKEN,
             ENGLISH_TEMPLATE_ID
         )).thenReturn(documentInfo());
@@ -109,7 +110,7 @@ public class MiniPetitionDraftTest {
             .renderDocument(
                 caseData,
                 TEST_CASE_ID,
-                LOCAL_DATE_TIME,
+                LOCAL_DATE,
                 TEST_AUTHORIZATION_TOKEN,
                 WELSH_TEMPLATE_ID))
             .thenReturn(documentInfo);
@@ -156,7 +157,7 @@ public class MiniPetitionDraftTest {
         doThrow(feignException).when(docAssemblyService).renderDocument(
             caseData,
             TEST_CASE_ID,
-            LOCAL_DATE_TIME,
+            LOCAL_DATE,
             TEST_AUTHORIZATION_TOKEN,
             ENGLISH_TEMPLATE_ID
         );
@@ -184,7 +185,7 @@ public class MiniPetitionDraftTest {
             .builder()
             .caseData(caseData)
             .caseId(TEST_CASE_ID)
-            .createdDate(LOCAL_DATE_TIME)
+            .createdDate(LOCAL_DATE)
             .userAuthToken(TEST_AUTHORIZATION_TOKEN)
             .build();
     }

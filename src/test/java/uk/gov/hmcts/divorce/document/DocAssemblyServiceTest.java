@@ -33,7 +33,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ENGLISH_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataMap;
 
@@ -65,7 +65,7 @@ public class DocAssemblyServiceTest {
         Map<String, Object> caseDataMap = caseDataMap();
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(petitionTemplateMapper.apply(caseData, TEST_CASE_ID, LOCAL_DATE_TIME)).thenReturn(caseDataMap);
+        when(petitionTemplateMapper.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(caseDataMap);
 
         DocAssemblyRequest docAssemblyRequest =
             DocAssemblyRequest
@@ -90,7 +90,7 @@ public class DocAssemblyServiceTest {
         DocumentInfo documentInfo = docAssemblyService.renderDocument(
             caseData(),
             TEST_CASE_ID,
-            LOCAL_DATE_TIME,
+            LOCAL_DATE,
             TEST_AUTHORIZATION_TOKEN,
             ENGLISH_TEMPLATE_ID
         );
@@ -105,7 +105,7 @@ public class DocAssemblyServiceTest {
             TEST_SERVICE_AUTH_TOKEN,
             docAssemblyRequest
         );
-        verify(petitionTemplateMapper).apply(caseData, TEST_CASE_ID, LOCAL_DATE_TIME);
+        verify(petitionTemplateMapper).apply(caseData, TEST_CASE_ID, LOCAL_DATE);
         verifyNoMoreInteractions(authTokenGenerator, docAssemblyClient, petitionTemplateMapper);
     }
 
@@ -114,7 +114,7 @@ public class DocAssemblyServiceTest {
         CaseData caseData = caseData();
         Map<String, Object> caseDataMap = caseDataMap();
 
-        when(petitionTemplateMapper.apply(caseData, TEST_CASE_ID, LOCAL_DATE_TIME)).thenReturn(caseDataMap);
+        when(petitionTemplateMapper.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(caseDataMap);
 
         byte[] emptyBody = {};
         Request request = Request.create(POST, EMPTY, Map.of(), emptyBody, UTF_8, null);
@@ -152,7 +152,7 @@ public class DocAssemblyServiceTest {
             .renderDocument(
                 caseData(),
                 TEST_CASE_ID,
-                LOCAL_DATE_TIME,
+                LOCAL_DATE,
                 TEST_AUTHORIZATION_TOKEN,
                 ENGLISH_TEMPLATE_ID
             ))

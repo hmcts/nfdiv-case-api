@@ -7,7 +7,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 
-import java.time.LocalDateTime;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -53,12 +52,11 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
 public class DraftPetitionTemplateContentTest {
-
-    private static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(2021, 04, 28, 1, 0);
 
     @InjectMocks
     private DraftPetitionTemplateContent templateContent;
@@ -69,7 +67,7 @@ public class DraftPetitionTemplateContentTest {
         caseData.setDivorceCostsClaim(YES);
         caseData.setFinancialOrder(NO);
 
-        Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE_TIME);
+        Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
 
         assertThat(templateData).contains(
             entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
@@ -104,7 +102,7 @@ public class DraftPetitionTemplateContentTest {
         caseData.setDivorceCostsClaim(NO);
         caseData.setFinancialOrder(NO);
 
-        Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE_TIME);
+        Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
 
         assertThat(templateData).contains(
             entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
@@ -149,7 +147,7 @@ public class DraftPetitionTemplateContentTest {
         caseData.setFinancialOrder(NO);
         caseData.setRespondentHomeAddress(address);
 
-        Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE_TIME);
+        Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
 
         assertThat(templateData).contains(
             entry(RESPONDENT_POSTAL_ADDRESS, "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom")

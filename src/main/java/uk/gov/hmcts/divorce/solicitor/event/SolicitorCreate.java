@@ -83,7 +83,7 @@ public class SolicitorCreate implements CCDConfig<CaseData, State, UserRole> {
         final CaseData data = solicitorCreatePetitionService.aboutToSubmit(
             details.getData(),
             details.getId(),
-            details.getCreatedDate(),
+            details.getCreatedDate().toLocalDate(),
             request.getHeader(AUTHORIZATION)
         );
 
