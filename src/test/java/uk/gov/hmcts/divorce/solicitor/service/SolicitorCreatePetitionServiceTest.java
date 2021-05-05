@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.solicitor.service.updater.ClaimsCost;
 import uk.gov.hmcts.divorce.solicitor.service.updater.MiniPetitionDraft;
 import uk.gov.hmcts.divorce.solicitor.service.updater.SolicitorCourtDetails;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -28,6 +29,8 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 class SolicitorCreatePetitionServiceTest {
+
+    private static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(2021, 04, 28, 1, 0);
 
     @Mock
     private ClaimsCost claimsCost;
@@ -58,6 +61,7 @@ class SolicitorCreatePetitionServiceTest {
         final CaseDataContext caseDataContext = CaseDataContext.builder()
             .caseData(caseData)
             .caseId(TEST_CASE_ID)
+            .createdDate(LOCAL_DATE_TIME)
             .userAuthToken(TEST_AUTHORIZATION_TOKEN)
             .build();
 
@@ -67,6 +71,7 @@ class SolicitorCreatePetitionServiceTest {
         final CaseData actualCaseData = solicitorCreatePetitionService.aboutToSubmit(
             caseData,
             TEST_CASE_ID,
+            LOCAL_DATE_TIME,
             TEST_AUTHORIZATION_TOKEN
         );
 

@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.document.DocAssemblyService;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentInfo;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Map;
 
@@ -41,6 +42,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 @ExtendWith(MockitoExtension.class)
 public class MiniPetitionDraftTest {
 
+    private static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(2021, 04, 28, 1, 0);
     private static final String DOC_URL = "http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003";
     private static final String DOC_BINARY_URL = "http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003/binary";
     private static final String PDF_FILENAME = "draft-mini-petition-1616591401473378.pdf";
@@ -70,6 +72,7 @@ public class MiniPetitionDraftTest {
         when(docAssemblyService.renderDocument(
             caseData,
             TEST_CASE_ID,
+            LOCAL_DATE_TIME,
             TEST_AUTHORIZATION_TOKEN,
             ENGLISH_TEMPLATE_ID
         )).thenReturn(documentInfo());
@@ -106,6 +109,7 @@ public class MiniPetitionDraftTest {
             .renderDocument(
                 caseData,
                 TEST_CASE_ID,
+                LOCAL_DATE_TIME,
                 TEST_AUTHORIZATION_TOKEN,
                 WELSH_TEMPLATE_ID))
             .thenReturn(documentInfo);
@@ -152,6 +156,7 @@ public class MiniPetitionDraftTest {
         doThrow(feignException).when(docAssemblyService).renderDocument(
             caseData,
             TEST_CASE_ID,
+            LOCAL_DATE_TIME,
             TEST_AUTHORIZATION_TOKEN,
             ENGLISH_TEMPLATE_ID
         );
@@ -179,6 +184,7 @@ public class MiniPetitionDraftTest {
             .builder()
             .caseData(caseData)
             .caseId(TEST_CASE_ID)
+            .createdDate(LOCAL_DATE_TIME)
             .userAuthToken(TEST_AUTHORIZATION_TOKEN)
             .build();
     }

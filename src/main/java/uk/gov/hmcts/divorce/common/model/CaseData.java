@@ -625,14 +625,6 @@ public class CaseData {
     private Set<SupportingDocumentType> cannotUploadSupportingDocument;
 
     @CCD(
-        label = "Created date",
-        hint = "Date case was created",
-        access = {DefaultAccess.class}
-    )
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate createdDate;
-
-    @CCD(
         label = "RDC",
         hint = "Regional divorce unit",
         access = {DefaultAccess.class}

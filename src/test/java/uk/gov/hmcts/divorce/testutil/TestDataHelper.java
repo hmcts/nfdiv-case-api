@@ -17,6 +17,8 @@ import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,6 +41,8 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 
 public class TestDataHelper {
+
+    public static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(2021, 04, 28, 1, 0);
 
     private TestDataHelper() {
 
@@ -96,12 +100,14 @@ public class TestDataHelper {
                     .builder()
                     .data(caseData)
                     .id(TEST_CASE_ID)
+                    .createdDate(LOCAL_DATE_TIME)
                     .build()
             )
             .build();
     }
 
-    public static CallbackRequest callbackRequest(final Map<String, Object> caseData, String eventId) {
+    public static CallbackRequest callbackRequest(final Map<String, Object> caseData,
+                                                  final String eventId) {
         return CallbackRequest
             .builder()
             .eventId(eventId)
@@ -110,6 +116,7 @@ public class TestDataHelper {
                     .builder()
                     .data(caseData)
                     .id(TEST_CASE_ID)
+                    .createdDate(LOCAL_DATE_TIME)
                     .build()
             )
             .build();

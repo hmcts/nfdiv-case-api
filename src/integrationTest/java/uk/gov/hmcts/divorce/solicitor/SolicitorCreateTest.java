@@ -30,9 +30,6 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.time.Clock;
-import java.time.Instant;
-import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,9 +71,6 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 @ContextConfiguration(initializers = {SolicitorCreateTest.PropertiesInitializer.class})
 class SolicitorCreateTest {
 
-    private static final Instant INSTANT = Instant.parse("2021-04-06T16:00:00.00Z");
-    private static final ZoneId ZONE_ID = ZoneId.systemDefault();
-
     private static final String SOLICITOR_CREATE_ABOUT_TO_SUBMIT = "classpath:solicitor-create-about-to-submit-response.json";
     private static final String SERVICE_AUTH_TOKEN = "test-service-auth-token";
 
@@ -101,9 +95,6 @@ class SolicitorCreateTest {
     @MockBean
     private WebMvcConfig webMvcConfig;
 
-    @MockBean
-    private Clock clock;
-
     private static final WireMockServer DOC_ASSEMBLY_SERVER = new WireMockServer(wireMockConfig().dynamicPort());
 
     @BeforeAll
@@ -120,9 +111,6 @@ class SolicitorCreateTest {
     @Test
     void givenValidCaseDataWhenAboutToSubmitCallbackIsInvokedCaseDataIsSetCorrectly()
         throws Exception {
-
-        when(clock.instant()).thenReturn(INSTANT);
-        when(clock.getZone()).thenReturn(ZONE_ID);
 
         when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTH_TOKEN);
 

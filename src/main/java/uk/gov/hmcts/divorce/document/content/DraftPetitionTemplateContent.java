@@ -6,6 +6,7 @@ import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.FinancialOrderFor;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -51,7 +52,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TO
 @Slf4j
 public class DraftPetitionTemplateContent {
 
-    public Map<String, Object> apply(CaseData caseData, Long ccdCaseReference) {
+    public Map<String, Object> apply(CaseData caseData, Long ccdCaseReference, LocalDateTime createdDate) {
         Map<String, Object> templateData = new HashMap<>();
 
         log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
@@ -74,7 +75,7 @@ public class DraftPetitionTemplateContent {
         }
 
         templateData.put(CCD_CASE_REFERENCE, ccdCaseReference);
-        templateData.put(ISSUE_DATE, caseData.getCreatedDate().toString());
+        templateData.put(ISSUE_DATE, createdDate.toLocalDate().toString());
 
         templateData.put(APPLICANT_1_FIRST_NAME, caseData.getPetitionerFirstName());
         templateData.put(APPLICANT_1_MIDDLE_NAME, caseData.getPetitionerMiddleName());

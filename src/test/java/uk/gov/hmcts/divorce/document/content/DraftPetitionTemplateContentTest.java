@@ -7,9 +7,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -60,7 +58,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 @ExtendWith(MockitoExtension.class)
 public class DraftPetitionTemplateContentTest {
 
-    private static final LocalDate LOCAL_DATE = LocalDate.of(2021, 04, 28);
+    private static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(2021, 04, 28, 1, 0);
 
     @InjectMocks
     private DraftPetitionTemplateContent templateContent;
@@ -68,13 +66,10 @@ public class DraftPetitionTemplateContentTest {
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForDivorce() {
         CaseData caseData = caseData();
-
-        Clock fixedClock = Clock.fixed(LOCAL_DATE.atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
-        caseData.setCreatedDate(LocalDate.now(fixedClock));
         caseData.setDivorceCostsClaim(YES);
         caseData.setFinancialOrder(NO);
 
-        Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID);
+        Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE_TIME);
 
         assertThat(templateData).contains(
             entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
@@ -109,10 +104,7 @@ public class DraftPetitionTemplateContentTest {
         caseData.setDivorceCostsClaim(NO);
         caseData.setFinancialOrder(NO);
 
-        Clock fixedClock = Clock.fixed(LOCAL_DATE.atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
-        caseData.setCreatedDate(LocalDate.now(fixedClock));
-
-        Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID);
+        Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE_TIME);
 
         assertThat(templateData).contains(
             entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
