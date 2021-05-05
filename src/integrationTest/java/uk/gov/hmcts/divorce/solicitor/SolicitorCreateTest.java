@@ -52,6 +52,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_COSTS_CLAIM;
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_OR_DISSOLUTION;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.FINANCIAL_ORDER;
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_EMAIL;
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_FIRST_NAME;
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_LAST_NAME;
@@ -156,6 +157,7 @@ class SolicitorCreateTest {
         caseData.put(PETITIONER_EMAIL, TEST_USER_EMAIL);
         caseData.put(DIVORCE_OR_DISSOLUTION, DivorceOrDissolution.DIVORCE);
         caseData.put(DIVORCE_COSTS_CLAIM, YES);
+        caseData.put(FINANCIAL_ORDER, NO);
         caseData.put(LANGUAGE_PREFERENCE_WELSH, NO);
         return caseData;
     }

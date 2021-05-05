@@ -13,6 +13,8 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
@@ -68,6 +70,8 @@ public class DraftPetitionTemplateContentTest {
 
         Clock fixedClock = Clock.fixed(LOCAL_DATE.atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
         caseData.setCreatedDate(LocalDate.now(fixedClock));
+        caseData.setDivorceCostsClaim(YES);
+        caseData.setFinancialOrder(NO);
 
         Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID);
 
@@ -82,7 +86,7 @@ public class DraftPetitionTemplateContentTest {
             entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, OF_THE_DIVORCE),
             entry(FINANCIAL_ORDER_CHILD, CHILDREN_OF_THE_APPLICANT_AND_THE_RESPONDENT),
             entry(FINANCIAL_ORDER_OR_DISSOLUTION, CONDITIONAL_ORDER_OF_DIVORCE_FROM),
-            entry(HAS_COST_ORDERS, false),
+            entry(HAS_COST_ORDERS, true),
             entry(HAS_FINANCIAL_ORDERS, false),
             entry(HAS_FINANCIAL_ORDERS_FOR_CHILD, false),
             entry(ISSUE_DATE, "2021-04-28"),
@@ -101,6 +105,8 @@ public class DraftPetitionTemplateContentTest {
     public void shouldSuccessfullyApplyContentFromCaseDataForDissolution() {
         CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DISSOLUTION);
+        caseData.setDivorceCostsClaim(NO);
+        caseData.setFinancialOrder(NO);
 
         Clock fixedClock = Clock.fixed(LOCAL_DATE.atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
         caseData.setCreatedDate(LocalDate.now(fixedClock));
