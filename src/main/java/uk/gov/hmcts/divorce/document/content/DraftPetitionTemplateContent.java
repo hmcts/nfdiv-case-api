@@ -2,12 +2,14 @@ package uk.gov.hmcts.divorce.document.content;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.FinancialOrderFor;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.StringJoiner;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
@@ -103,20 +105,22 @@ public class DraftPetitionTemplateContent {
         templateData.put(FINANCIAL_ORDER_CHILD, CHILDREN_OF_THE_APPLICANT_AND_THE_RESPONDENT);
 
         String respondentPostalAddress;
-        if (caseData.getRespondentHomeAddress() == null) {
+        AddressGlobalUK respondentHomeAddress = caseData.getRespondentHomeAddress();
+        if (respondentHomeAddress == null) {
             respondentPostalAddress = caseData.getDerivedRespondentSolicitorAddr();
         } else {
-            StringJoiner formattedAddress = new StringJoiner("\n");
-            formattedAddress
-                .add(caseData.getRespondentHomeAddress().getAddressLine1())
-                .add(caseData.getRespondentHomeAddress().getAddressLine2())
-                .add(caseData.getRespondentHomeAddress().getAddressLine3())
-                .add(caseData.getRespondentHomeAddress().getPostTown())
-                .add(caseData.getRespondentHomeAddress().getCounty())
-                .add(caseData.getRespondentHomeAddress().getPostCode())
-                .add(caseData.getRespondentHomeAddress().getCountry());
-
-            respondentPostalAddress = formattedAddress.toString();
+            respondentPostalAddress =
+                Stream.of(
+                    respondentHomeAddress.getAddressLine1(),
+                    respondentHomeAddress.getAddressLine2(),
+                    respondentHomeAddress.getAddressLine3(),
+                    respondentHomeAddress.getPostTown(),
+                    respondentHomeAddress.getCounty(),
+                    respondentHomeAddress.getPostCode(),
+                    respondentHomeAddress.getCountry()
+                    )
+                    .filter(value -> value != null && !value.isEmpty())
+                    .collect(Collectors.joining("\n"));
         }
         templateData.put(RESPONDENT_POSTAL_ADDRESS, respondentPostalAddress);
 

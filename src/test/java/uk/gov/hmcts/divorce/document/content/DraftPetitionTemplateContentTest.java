@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 
 import java.time.Clock;
@@ -130,6 +131,31 @@ public class DraftPetitionTemplateContentTest {
             entry(APPLICANT_2_FIRST_NAME, null),
             entry(APPLICANT_2_FULL_NAME, null),
             entry(APPLICANT_2_LAST_NAME, null)
+        );
+    }
+
+    @Test
+    public void shouldSuccessfullyApplyRespondentPostalAddressIfRespondentHomeAddressNotNull() {
+        AddressGlobalUK address = AddressGlobalUK.builder()
+            .addressLine1("221b")
+            .addressLine2("Baker Street")
+            .postTown("London")
+            .county("Greater London")
+            .postCode("NW1 6XE")
+            .country("United Kingdom")
+            .build();
+
+        CaseData caseData = caseData();
+        caseData.setDivorceOrDissolution(DISSOLUTION);
+        caseData.setRespondentHomeAddress(address);
+
+        Clock fixedClock = Clock.fixed(LOCAL_DATE.atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
+        caseData.setCreatedDate(LocalDate.now(fixedClock));
+
+        Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID);
+
+        assertThat(templateData).contains(
+            entry(RESPONDENT_POSTAL_ADDRESS, "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom")
         );
     }
 }
