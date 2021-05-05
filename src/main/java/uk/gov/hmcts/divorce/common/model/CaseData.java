@@ -18,6 +18,7 @@ import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.payment.model.Payment;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -725,6 +726,14 @@ public class CaseData {
         access = {DefaultAccess.class}
     )
     private Set<FinancialOrderFor> financialOrderFor;
+
+    @CCD(
+        label = "Payments",
+        typeOverride = Collection,
+        typeParameterOverride = "Payment",
+        access = {DefaultAccess.class}
+    )
+    private List<ListValue<Payment>> payments;
 
     @CCD(
         label = "Date of submission",
