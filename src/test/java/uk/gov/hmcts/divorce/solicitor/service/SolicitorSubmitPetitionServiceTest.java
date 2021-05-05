@@ -9,7 +9,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
@@ -23,7 +22,6 @@ import uk.gov.hmcts.divorce.solicitor.service.notification.SolicitorSubmittedNot
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import static feign.Request.HttpMethod.GET;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -46,6 +44,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.PETITION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.PET_SOL_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFeeResponse;
 
 @ExtendWith(MockitoExtension.class)
@@ -148,7 +147,7 @@ public class SolicitorSubmitPetitionServiceTest {
 
     @Test
     void shouldRemoveDraftPetitionAndNotifyApplicantAndSetStateForAboutToSubmit() {
-        List<ListValue<DivorceDocument>> generatedDocuments = singletonList(petitionDocument());
+        List<ListValue<DivorceDocument>> generatedDocuments = singletonList(documentWithType(PETITION));
         final CaseData caseData = CaseData.builder().build();
         caseData.setDocumentsGenerated(generatedDocuments);
 
@@ -196,29 +195,5 @@ public class SolicitorSubmitPetitionServiceTest {
         assertThatThrownBy(() -> solicitorSubmitPetitionService.aboutToSubmit(caseData, caseId, PET_SOL_AUTH_TOKEN))
             .hasMessageContaining("403 Service not whitelisted")
             .isExactlyInstanceOf(FeignException.Forbidden.class);
-    }
-
-    private ListValue<DivorceDocument> petitionDocument() {
-        String documentUrl = "http://localhost:8080/" + UUID.randomUUID();
-
-        Document ccdDocument = new Document(
-            documentUrl,
-            "test-mini-draft-petition.pdf",
-            documentUrl + "/binary"
-        );
-
-        DivorceDocument divorceDocument = DivorceDocument
-            .builder()
-            .documentLink(ccdDocument)
-            .documentFileName("test-mini-draft-petition-12345.pdf")
-            .documentType(PETITION)
-            .build();
-
-
-        return ListValue
-            .<DivorceDocument>builder()
-            .id(PETITION.getLabel())
-            .value(divorceDocument)
-            .build();
     }
 }

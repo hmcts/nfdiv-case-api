@@ -37,10 +37,9 @@ public class DraftPetitionRemovalService {
     ) {
 
         if (isEmpty(generatedDocuments)) {
+            log.info("Generated documents list is empty for case id {} ", caseId);
             return emptyList();
         }
-
-        UserDetails solicitorUserDetails = idamService.retrieveUser(userAuth).getUserDetails();
 
         List<ListValue<DivorceDocument>> generatedDocumentsExcludingPetition = generatedDocuments
             .stream()
@@ -48,8 +47,6 @@ public class DraftPetitionRemovalService {
                 deleteDocumentFromDocumentStore(
                     document,
                     userAuth,
-                    String.join(",", solicitorUserDetails.getRoles()),
-                    solicitorUserDetails.getId(),
                     String.valueOf(caseId)
                 )
             )
@@ -66,20 +63,24 @@ public class DraftPetitionRemovalService {
     private ListValue<DivorceDocument> deleteDocumentFromDocumentStore(
         ListValue<DivorceDocument> document,
         String userAuth,
-        String userRoles,
-        String userId,
         String caseId
     ) {
         if (isPetitionDocument(document)) {
+            UserDetails solicitorUserDetails = idamService.retrieveUser(userAuth).getUserDetails();
+
+            String solicitorRolesCsv = String.join(",", solicitorUserDetails.getRoles());
+
             documentManagementClient.deleteDocument(
                 userAuth,
                 authTokenGenerator.generate(),
-                userRoles,
-                userId,
+                solicitorRolesCsv,
+                solicitorUserDetails.getId(),
                 document.getValue().getDocumentLink().getUrl(),
                 true
             );
             log.info("Successfully deleted petition document from document management for case id {} ", caseId);
+        } else {
+            log.info("No draft petition document found for case id {} ", caseId);
         }
         return document;
     }
