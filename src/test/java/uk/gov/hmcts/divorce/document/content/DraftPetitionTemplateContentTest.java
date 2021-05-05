@@ -142,16 +142,14 @@ public class DraftPetitionTemplateContentTest {
             .postCode("NW1 6XE")
             .country("United Kingdom")
             .build();
-        Clock fixedClock = Clock.fixed(LOCAL_DATE.atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
 
         CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.setDivorceCostsClaim(NO);
         caseData.setFinancialOrder(NO);
         caseData.setRespondentHomeAddress(address);
-        caseData.setCreatedDate(LocalDate.now(fixedClock));
 
-        Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID);
+        Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE_TIME);
 
         assertThat(templateData).contains(
             entry(RESPONDENT_POSTAL_ADDRESS, "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom")
