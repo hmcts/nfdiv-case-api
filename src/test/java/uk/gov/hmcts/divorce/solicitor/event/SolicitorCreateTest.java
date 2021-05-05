@@ -60,7 +60,7 @@ class SolicitorCreateTest {
         verify(solicitorCreatePetitionService).aboutToSubmit(
             caseData,
             details.getId(),
-            details.getCreatedDate(), auth
-        );
+            details.getCreatedDate(),
+            auth);
     }
 }

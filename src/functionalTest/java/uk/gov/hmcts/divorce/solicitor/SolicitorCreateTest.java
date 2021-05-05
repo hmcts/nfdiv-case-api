@@ -1,18 +1,14 @@
 package uk.gov.hmcts.divorce.solicitor;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
@@ -35,10 +31,9 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedCcdCallback
 @SpringBootTest
 public class SolicitorCreateTest extends FunctionalTestSuite {
 
+    private static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(2021, 04, 28, 1, 0);
     private static final String ABOUT_TO_SUBMIT_REQUEST = "classpath:request/casedata/ccd-callback-casedata.json";
     private static final String LANGUAGE_PREFERENCE_WELSH = "languagePreferenceWelsh";
-    @Autowired
-    private ObjectMapper mapper;
 
     @Test
     public void shouldUpdateCaseDataWithClaimCostsAndCourtDetailsWhenAboutToSubmitCallbackIsSuccessful()
@@ -64,6 +59,7 @@ public class SolicitorCreateTest extends FunctionalTestSuite {
                             .builder()
                             .id(1L)
                             .data(caseData)
+                            .createdDate(LOCAL_DATE_TIME)
                             .build()
                     )
                     .build()
@@ -73,17 +69,11 @@ public class SolicitorCreateTest extends FunctionalTestSuite {
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
-        String expectedResponse = expectedCcdCallbackResponse(
-            "classpath:responses/ccd-callback-solicitor-create-about-to-submit.json"
-        );
-        //replace created date with current date as the handler sets current date
-        JsonNode jsonNode = mapper.readTree(expectedResponse);
-        JsonNode dataNode = jsonNode.get("data");
-        ((ObjectNode) dataNode).put("createdDate", LocalDate.now().toString());
-
         // document_url and document_binary_url are ignored using ${json-unit.ignore}
         // assertion will fail if the above elements are missing actual value
         assertThatJson(response.asString())
-            .isEqualTo(json(jsonNode.toString()));
+            .isEqualTo(json(expectedCcdCallbackResponse(
+                "classpath:responses/ccd-callback-solicitor-create-about-to-submit.json"
+            )));
     }
 }
