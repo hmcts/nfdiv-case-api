@@ -603,7 +603,6 @@ public class CaseData {
 
     @CCD(
         label = "Documents uploaded",
-        hint = "Such as marriage/civil union certificate, proof of name changes, certified translations etc.",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
         access = {DefaultAccess.class}
