@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -273,10 +274,9 @@ public class CaseData {
 
     @CCD(
         label = "The Petitioner's home address",
-        typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
-    private String derivedPetitionerHomeAddress;
+    private AddressGlobalUK applicantHomeAddress;
 
     @CCD(
         label = "Is petitioners home address an international address?",
@@ -563,10 +563,9 @@ public class CaseData {
         label = "The Respondent's home address",
         hint = "If the respondent is to be served at their home address, enter the home address here and as the service "
             + "address below",
-        typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
-    private String derivedRespondentHomeAddress;
+    private AddressGlobalUK respondentHomeAddress;
 
     @CCD(
         label = "Is respondents home address an international address?",
@@ -716,10 +715,9 @@ public class CaseData {
         label = "The Respondent's service address",
         hint = "If the respondent is to be served at their home address, enter the home address here and as the service "
             + "address below",
-        typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
-    private String derivedRespondentCorrespondenceAddr;
+    private AddressGlobalUK respondentCorrespondenceAddress;
 
     @CCD(
         label = "Who is the financial order for?",

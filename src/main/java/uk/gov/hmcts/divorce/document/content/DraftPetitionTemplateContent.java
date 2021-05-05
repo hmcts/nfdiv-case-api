@@ -2,11 +2,14 @@ package uk.gov.hmcts.divorce.document.content;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.FinancialOrderFor;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
@@ -97,9 +100,24 @@ public class DraftPetitionTemplateContent {
         templateData.put(HAS_FINANCIAL_ORDERS_FOR_CHILD, hasFinancialOrdersForChild);
         templateData.put(FINANCIAL_ORDER_CHILD, CHILDREN_OF_THE_APPLICANT_AND_THE_RESPONDENT);
 
-        String respondentPostalAddress = null == caseData.getDerivedRespondentHomeAddress()
-            ? caseData.getDerivedRespondentSolicitorAddr()
-            : caseData.getDerivedRespondentHomeAddress();
+        String respondentPostalAddress;
+        AddressGlobalUK respondentHomeAddress = caseData.getRespondentHomeAddress();
+        if (respondentHomeAddress == null) {
+            respondentPostalAddress = caseData.getDerivedRespondentSolicitorAddr();
+        } else {
+            respondentPostalAddress =
+                Stream.of(
+                    respondentHomeAddress.getAddressLine1(),
+                    respondentHomeAddress.getAddressLine2(),
+                    respondentHomeAddress.getAddressLine3(),
+                    respondentHomeAddress.getPostTown(),
+                    respondentHomeAddress.getCounty(),
+                    respondentHomeAddress.getPostCode(),
+                    respondentHomeAddress.getCountry()
+                    )
+                    .filter(value -> value != null && !value.isEmpty())
+                    .collect(Collectors.joining("\n"));
+        }
         templateData.put(RESPONDENT_POSTAL_ADDRESS, respondentPostalAddress);
 
         return templateData;

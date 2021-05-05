@@ -38,7 +38,7 @@ public class RespondentServiceDetails implements CcdPageConfiguration {
                 PETITIONER_SOLICITOR)
             .optional(OrganisationPolicy::getOrgPolicyReference, "petitionerNameChanged=\"NeverShow\"")
             .done()
-            .optional(CaseData::getDerivedRespondentHomeAddress, "respondentSolicitorRepresented=\"No\"")
-            .mandatory(CaseData::getDerivedRespondentCorrespondenceAddr, "respondentSolicitorRepresented=\"No\"");
+            .optional(CaseData::getRespondentHomeAddress, "respondentSolicitorRepresented=\"No\"")
+            .mandatory(CaseData::getRespondentCorrespondenceAddress, "respondentSolicitorRepresented=\"No\"");
     }
 }
