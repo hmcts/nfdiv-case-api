@@ -10,8 +10,9 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 
+import static java.time.temporal.ChronoUnit.DAYS;
+import static java.time.temporal.ChronoUnit.YEARS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 import static org.skyscreamer.jsonassert.JSONCompareMode.STRICT;
@@ -33,8 +34,8 @@ public class PetitionerStatementOfTruthTest extends FunctionalTestSuite {
 
     @Test
     public void shouldPassValidationAndGiveSuccessWhenCaseDataValid() throws IOException {
-        ABOUT_TO_SUBMIT_REQUEST.replace("2020-04-28", LocalDate.now().minus(366, ChronoUnit.DAYS).toString());
-        ABOUT_TO_START_RESPONSE.replace("2020-04-28", LocalDate.now().minus(366, ChronoUnit.DAYS).toString());
+        ABOUT_TO_SUBMIT_REQUEST.replace("2020-04-28", LocalDate.now().minus(1, YEARS).minus(1, DAYS).toString());
+        ABOUT_TO_START_RESPONSE.replace("2020-04-28", LocalDate.now().minus(1, YEARS).minus(1, DAYS).toString());
 
         Response response = RestAssured
             .given()

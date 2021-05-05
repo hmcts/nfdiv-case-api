@@ -16,8 +16,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 
+import static java.time.temporal.ChronoUnit.DAYS;
+import static java.time.temporal.ChronoUnit.YEARS;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -58,7 +59,7 @@ public class PetitionerStatementOfTruthTest {
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().json(expectedCcdAboutToStartCallbackSuccessfulResponse()
-                .replace("2020-04-29", LocalDate.now().minus(366, ChronoUnit.DAYS).toString())));
+                .replace("2020-04-29", LocalDate.now().minus(1, YEARS).minus(1, DAYS).toString())));
     }
 
     @Test
