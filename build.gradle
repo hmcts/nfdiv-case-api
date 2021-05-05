@@ -2,10 +2,6 @@
 buildscript {
   repositories {
     mavenCentral()
-    jcenter()
-    maven {
-      url "https://jitpack.io"
-    }
   }
   dependencies {
     classpath group: 'cz.habarta.typescript-generator', name: 'typescript-generator-gradle-plugin', version: '2.31.861'
@@ -22,7 +18,7 @@ plugins {
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'org.springframework.boot' version '2.4.5'
   id 'com.github.ben-manes.versions' version '0.38.0'
-  id 'hmcts.ccd.sdk' version '0.19.22'
+  id 'hmcts.ccd.sdk' version '0.19.25'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -191,11 +187,7 @@ dependencyManagement {
 
 repositories {
   mavenLocal()
-  jcenter()
   mavenCentral()
-  maven {
-    url "https://jitpack.io"
-  }
 }
 
 def versions = [

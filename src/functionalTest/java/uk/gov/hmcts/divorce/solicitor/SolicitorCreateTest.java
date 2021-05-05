@@ -25,6 +25,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_COSTS_CLAIM;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.FINANCIAL_ORDER;
 import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreate.SOLICITOR_CREATE;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
@@ -45,6 +46,7 @@ public class SolicitorCreateTest extends FunctionalTestSuite {
         Map<String, Object> caseData = caseData(ABOUT_TO_SUBMIT_REQUEST);
         caseData.put(DIVORCE_COSTS_CLAIM, YES);
         caseData.put(LANGUAGE_PREFERENCE_WELSH, NO);
+        caseData.put(FINANCIAL_ORDER, NO);
 
         Response response = RestAssured
             .given()

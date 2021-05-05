@@ -70,6 +70,7 @@ import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_LAS
 import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_APPLICATION_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorStatementOfTruthPaySubmit.SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
@@ -81,6 +82,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataMap;
@@ -281,7 +283,17 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             );
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(SOL_APPLICANT_APPLICATION_SUBMITTED), anyMap(), eq(ENGLISH));
+            .sendEmail(
+                eq(TEST_USER_EMAIL),
+                eq(SOL_APPLICANT_APPLICATION_SUBMITTED),
+                anyMap(),
+                eq(ENGLISH));
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_SOLICITOR_EMAIL),
+                eq(SOL_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED),
+                anyMap(),
+                eq(ENGLISH));
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -432,6 +444,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         caseData.put(DIVORCE_COSTS_CLAIM, YES);
         caseData.put("statementOfTruth", YES);
         caseData.put("solSignStatementOfTruth", YES);
+        caseData.put("petitionerSolicitorEmail", TEST_SOLICITOR_EMAIL);
         return caseData;
     }
 
