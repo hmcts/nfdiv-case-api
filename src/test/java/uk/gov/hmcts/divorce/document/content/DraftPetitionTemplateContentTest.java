@@ -153,6 +153,8 @@ public class DraftPetitionTemplateContentTest {
 
         CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DISSOLUTION);
+        caseData.setDivorceCostsClaim(NO);
+        caseData.setFinancialOrder(NO);
         caseData.setRespondentHomeAddress(address);
 
         Clock fixedClock = Clock.fixed(LOCAL_DATE.atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
