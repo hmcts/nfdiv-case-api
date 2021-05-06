@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.common.model;
+package uk.gov.hmcts.divorce.document.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

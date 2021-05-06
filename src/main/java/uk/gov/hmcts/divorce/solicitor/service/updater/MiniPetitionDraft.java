@@ -17,10 +17,10 @@ import uk.gov.hmcts.divorce.document.model.DocumentInfo;
 
 import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.divorce.common.model.DocumentType.PETITION;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_PETITION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.PETITION;
 
 @Component
 @Slf4j

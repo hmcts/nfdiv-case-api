@@ -3,7 +3,7 @@ package uk.gov.hmcts.divorce.common.config.advice;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import uk.gov.hmcts.divorce.common.exception.NotificationException;
+import uk.gov.hmcts.divorce.notification.exception.NotificationException;
 import uk.gov.service.notify.NotificationClientException;
 
 import static org.hamcrest.CoreMatchers.is;

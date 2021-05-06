@@ -12,8 +12,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.citizen.notification.SaveAndSignOutNotificationHandler;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
-import uk.gov.hmcts.divorce.common.exception.NotificationException;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.notification.exception.NotificationException;
 import uk.gov.hmcts.divorce.payment.FeesAndPaymentsClient;
 import uk.gov.service.notify.NotificationClientException;
 
