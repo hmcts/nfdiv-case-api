@@ -359,6 +359,7 @@ generateTypeScript {
   outputKind = 'module'
   outputFileType = 'implementationFile'
   mapEnum = 'asEnum'
+  mapDate = 'asString'
   group = 'ccd tasks'
 
   doLast {
@@ -367,16 +368,6 @@ generateTypeScript {
     }
   }
 }
-
-tasks.register('publishTypeScriptLocal', {
-  dependsOn generateTypeScript
-  group = 'ccd tasks'
-  doLast {
-    exec {
-      commandLine 'yarn', 'link'
-    }
-  }
-})
 
 ccd {
   configDir = file('build/definitions')
