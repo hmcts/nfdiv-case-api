@@ -43,7 +43,7 @@ class SolicitorCreateTest {
 
         solicitorCreate.configure(configBuilder);
 
-        assertThat(configBuilder.getEvents().get(0).getEventID(), is(SOLICITOR_CREATE));
+        assertThat(configBuilder.getEvents().get(0).getId(), is(SOLICITOR_CREATE));
     }
 
     @Test
