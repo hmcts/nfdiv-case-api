@@ -30,6 +30,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -123,7 +124,7 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
                 .build();
         }
 
-        return solicitorSubmitPetitionService.aboutToSubmit(caseData, details.getId(),httpServletRequest.getHeader(AUTHORIZATION));
+        return solicitorSubmitPetitionService.aboutToSubmit(caseData, details.getId(), httpServletRequest.getHeader(AUTHORIZATION));
 
     }
 
@@ -138,7 +139,8 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
                                                CaseDetails<CaseData, State> beforeDetails) {
         final CaseData caseData = details.getData();
-        final int feesPaid = caseData.getPayments().stream()
+        final List<ListValue<Payment>> payments = caseData.getPayments() == null ? emptyList() : caseData.getPayments();
+        final int feesPaid = payments.stream()
             .filter(payment -> payment.getValue().getPaymentStatus().equals(SUCCESS))
             .mapToInt(payment -> payment.getValue().getPaymentAmount())
             .sum();

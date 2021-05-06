@@ -17,7 +17,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.USER_ROLES;
 @FeignClient(name = "document-management-api", url = "${document_management.url}")
 public interface DocumentManagementClient {
 
-    @RequestMapping(method = RequestMethod.DELETE, value = "{document_delete_uri}")
+    @RequestMapping(method = RequestMethod.DELETE, value = "/documents/{document_delete_uri}")
     void deleteDocument(
         @RequestHeader(AUTHORIZATION) String authorisation,
         @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuth,
