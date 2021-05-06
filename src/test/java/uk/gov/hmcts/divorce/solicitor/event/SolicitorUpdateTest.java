@@ -28,6 +28,6 @@ class SolicitorUpdateTest {
 
         solicitorUpdate.configure(configBuilder);
 
-        assertThat(configBuilder.getEvents().get(0).getEventID(), is(SOLICITOR_UPDATE));
+        assertThat(configBuilder.getEvents().get(0).getId(), is(SOLICITOR_UPDATE));
     }
 }

@@ -29,6 +29,6 @@ class PatchCaseTest {
 
         patchCase.configure(configBuilder);
 
-        assertThat(configBuilder.getEvents().get(0).getEventID(), is(PATCH_CASE));
+        assertThat(configBuilder.getEvents().get(0).getId(), is(PATCH_CASE));
     }
 }

@@ -37,7 +37,7 @@ public class PaymentMadeTest {
 
         paymentMade.configure(configBuilder);
 
-        assertThat(configBuilder.getEvents().get(0).getEventID(), is(PAYMENT_MADE));
+        assertThat(configBuilder.getEvents().get(0).getId(), is(PAYMENT_MADE));
     }
 
     @Test
