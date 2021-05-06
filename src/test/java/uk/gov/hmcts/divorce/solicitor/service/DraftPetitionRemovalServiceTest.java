@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.solicitor.service;
 import feign.FeignException;
 import feign.Request;
 import feign.Response;
+import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -74,12 +75,14 @@ public class DraftPetitionRemovalServiceTest {
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
+        String documentUuid = FilenameUtils.getName(divorceDocumentListValue.getValue().getDocumentLink().getUrl());
+
         doNothing().when(documentManagementClient).deleteDocument(
             PET_SOL_AUTH_TOKEN,
             TEST_SERVICE_AUTH_TOKEN,
             solicitorRolesCsv,
             userId,
-            divorceDocumentListValue.getValue().getDocumentLink().getUrl(),
+            documentUuid,
             true
         );
 
@@ -98,7 +101,7 @@ public class DraftPetitionRemovalServiceTest {
             TEST_SERVICE_AUTH_TOKEN,
             solicitorRolesCsv,
             userId,
-            divorceDocumentListValue.getValue().getDocumentLink().getUrl(),
+            documentUuid,
             true
         );
 
