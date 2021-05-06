@@ -17,7 +17,7 @@ import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +25,8 @@ import java.util.Set;
 
 import static feign.Request.HttpMethod.GET;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.time.temporal.ChronoUnit.DAYS;
+import static java.time.temporal.ChronoUnit.YEARS;
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static uk.gov.hmcts.ccd.sdk.type.Fee.getValueInPence;
@@ -38,6 +40,9 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 
 public class TestDataHelper {
+
+    public static final LocalDate LOCAL_DATE = LocalDate.of(2021, 04, 28);
+    public static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(2021, 04, 28, 1, 0);
 
     private TestDataHelper() {
 
@@ -77,7 +82,7 @@ public class TestDataHelper {
         caseDataMap.put("petitionerContactDetailsConfidential", ConfidentialAddress.KEEP);
         caseDataMap.put("prayerHasBeenGiven", YesOrNo.YES);
         caseDataMap.put("statementOfTruth", YesOrNo.YES);
-        caseDataMap.put("marriageDate", LocalDate.now().minus(366, ChronoUnit.DAYS));
+        caseDataMap.put("marriageDate", LocalDate.now().minus(1, YEARS).minus(1, DAYS));
         caseDataMap.put("jurisdictionPetitionerResidence", YesOrNo.YES);
         caseDataMap.put("jurisdictionConnections", Set.of(JurisdictionConnections.PET_RESP_RESIDENT));
         return caseDataMap;
@@ -95,12 +100,14 @@ public class TestDataHelper {
                     .builder()
                     .data(caseData)
                     .id(TEST_CASE_ID)
+                    .createdDate(LOCAL_DATE_TIME)
                     .build()
             )
             .build();
     }
 
-    public static CallbackRequest callbackRequest(final Map<String, Object> caseData, String eventId) {
+    public static CallbackRequest callbackRequest(final Map<String, Object> caseData,
+                                                  final String eventId) {
         return CallbackRequest
             .builder()
             .eventId(eventId)
@@ -109,6 +116,7 @@ public class TestDataHelper {
                     .builder()
                     .data(caseData)
                     .id(TEST_CASE_ID)
+                    .createdDate(LOCAL_DATE_TIME)
                     .build()
             )
             .build();

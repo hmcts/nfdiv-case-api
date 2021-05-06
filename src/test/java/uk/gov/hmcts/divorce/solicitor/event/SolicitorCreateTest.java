@@ -21,6 +21,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreate.SOLICITOR_CREATE;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -51,6 +52,7 @@ class SolicitorCreateTest {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
         details.setId(1L);
+        details.setCreatedDate(LOCAL_DATE_TIME);
 
         final String auth = "authorization";
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(auth);
@@ -60,7 +62,7 @@ class SolicitorCreateTest {
         verify(solicitorCreatePetitionService).aboutToSubmit(
             caseData,
             details.getId(),
-            auth
-        );
+            details.getCreatedDate().toLocalDate(),
+            auth);
     }
 }

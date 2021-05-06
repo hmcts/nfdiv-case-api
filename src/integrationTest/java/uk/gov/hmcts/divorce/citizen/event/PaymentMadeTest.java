@@ -10,12 +10,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.MoneyGBP;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
-import uk.gov.hmcts.divorce.common.exception.NotificationException;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.notification.exception.NotificationException;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.service.notify.NotificationClientException;
 
@@ -75,7 +74,7 @@ public class PaymentMadeTest {
         data.put("dateSubmitted", LocalDateTime.now());
 
         Payment payment = Payment.builder()
-            .paymentAmount(new MoneyGBP("55000"))
+            .paymentAmount(55000)
             .paymentStatus(SUCCESS)
             .build();
 

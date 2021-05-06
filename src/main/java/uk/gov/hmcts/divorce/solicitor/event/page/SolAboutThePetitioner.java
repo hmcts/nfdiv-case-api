@@ -28,7 +28,7 @@ public class SolAboutThePetitioner implements CcdPageConfiguration {
             .mandatory(CaseData::getDivorceWho)
             .mandatory(CaseData::getInferredPetitionerGender)
             .mandatory(CaseData::getMarriageIsSameSexCouple)
-            .mandatory(CaseData::getDerivedPetitionerHomeAddress)
+            .mandatory(CaseData::getApplicantHomeAddress)
             .optional(CaseData::getPetitionerPhoneNumber)
             .optional(CaseData::getPetitionerEmail)
             .mandatory(CaseData::getPetitionerContactDetailsConfidential);

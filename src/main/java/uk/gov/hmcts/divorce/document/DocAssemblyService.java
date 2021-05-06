@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.document.model.DocAssemblyResponse;
 import uk.gov.hmcts.divorce.document.model.DocumentInfo;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 import static java.lang.String.format;
@@ -37,11 +38,12 @@ public class DocAssemblyService {
     public DocumentInfo renderDocument(
         CaseData caseData,
         Long caseId,
+        LocalDate createDate,
         String authorisation,
         String templateName
     ) {
 
-        Map<String, Object> templateData = templateContent.apply(caseData, caseId);
+        Map<String, Object> templateData = templateContent.apply(caseData, caseId, createDate);
 
         DocAssemblyRequest docAssemblyRequest =
             DocAssemblyRequest

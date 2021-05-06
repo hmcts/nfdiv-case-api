@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.solicitor;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
@@ -36,6 +37,7 @@ public class SolicitorSubmitPetitionTest extends FunctionalTestSuite {
         "classpath:responses/ccd-callback-solicitor-submit-petition-about-to-submit.json";
 
     @Test
+    @Disabled
     public void shouldUpdateCaseDataWithOrderSummaryAndAddSolCaseRolesWhenIssueFeeIsSuccessfullyRetrieved()
         throws Exception {
         Response response = RestAssured

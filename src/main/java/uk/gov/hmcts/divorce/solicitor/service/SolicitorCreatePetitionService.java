@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.solicitor.service.updater.ClaimsCost;
 import uk.gov.hmcts.divorce.solicitor.service.updater.MiniPetitionDraft;
 import uk.gov.hmcts.divorce.solicitor.service.updater.SolicitorCourtDetails;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -34,6 +35,7 @@ public class SolicitorCreatePetitionService {
     public CaseData aboutToSubmit(
         final CaseData caseData,
         final Long caseId,
+        final LocalDate createdDate,
         final String idamAuthToken
     ) {
 
@@ -45,6 +47,7 @@ public class SolicitorCreatePetitionService {
         final CaseDataContext caseDataContext = CaseDataContext.builder()
             .caseData(caseData)
             .caseId(caseId)
+            .createdDate(createdDate)
             .userAuthToken(idamAuthToken)
             .build();
 

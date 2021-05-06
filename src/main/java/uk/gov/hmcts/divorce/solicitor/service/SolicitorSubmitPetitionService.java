@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.MoneyGBP;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
@@ -85,7 +84,7 @@ public class SolicitorSubmitPetitionService {
     public Payment getDummyPayment(OrderSummary orderSummary) {
         return Payment
             .builder()
-            .paymentAmount(MoneyGBP.builder().amount(orderSummary.getPaymentTotal()).build())
+            .paymentAmount(Integer.parseInt(orderSummary.getPaymentTotal()))
             .paymentChannel("online")
             .paymentFeeId("FEE0001")
             .paymentReference(orderSummary.getPaymentReference())

@@ -4,22 +4,22 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.common.config.jackson.PaymentListValueDeserializer;
 import uk.gov.hmcts.divorce.common.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 
 import java.time.LocalDate;
@@ -238,7 +238,7 @@ public class CaseData {
     private YesOrNo jurisdictionBothLastHabituallyResident;
 
     @CCD(
-        label = "What language do you want to receive emails and documents in?",
+        label = "Is the language preference Welsh?",
         access = {DefaultAccess.class},
         hint = "Select \"No\" for English or \"Yes\" for bilingual"
     )
@@ -276,10 +276,9 @@ public class CaseData {
 
     @CCD(
         label = "The Petitioner's home address",
-        typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
-    private String derivedPetitionerHomeAddress;
+    private AddressGlobalUK applicantHomeAddress;
 
     @CCD(
         label = "Is petitioners home address an international address?",
@@ -566,10 +565,9 @@ public class CaseData {
         label = "The Respondent's home address",
         hint = "If the respondent is to be served at their home address, enter the home address here and as the service "
             + "address below",
-        typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
-    private String derivedRespondentHomeAddress;
+    private AddressGlobalUK respondentHomeAddress;
 
     @CCD(
         label = "Is respondents home address an international address?",
@@ -614,27 +612,10 @@ public class CaseData {
     private List<ListValue<DivorceDocument>> documentsUploaded;
 
     @CCD(
-        label = "Uploaded supporting documents",
-        hint = "Such as marriage/civil union certificate, proof of name changes, certified translations etc.",
-        typeOverride = Collection,
-        typeParameterOverride = "DivorceDocument",
-        access = {DefaultAccess.class}
-    )
-    private List<ListValue<DivorceDocument>> supportingDocumentMetadata;
-
-    @CCD(
         label = "Cannot upload supporting documents",
         access = {DefaultAccess.class}
     )
-    private Set<SupportingDocumentType> cannotUploadSupportingDocument;
-
-    @CCD(
-        label = "Created date",
-        hint = "Date case was created",
-        access = {DefaultAccess.class}
-    )
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate createdDate;
+    private Set<DocumentType> cannotUploadSupportingDocument;
 
     @CCD(
         label = "RDC",
@@ -719,10 +700,9 @@ public class CaseData {
         label = "The Respondent's service address",
         hint = "If the respondent is to be served at their home address, enter the home address here and as the service "
             + "address below",
-        typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
-    private String derivedRespondentCorrespondenceAddr;
+    private AddressGlobalUK respondentCorrespondenceAddress;
 
     @CCD(
         label = "Who is the financial order for?",
@@ -730,7 +710,6 @@ public class CaseData {
     )
     private Set<FinancialOrderFor> financialOrderFor;
 
-    @JsonDeserialize(using = PaymentListValueDeserializer.class)
     @CCD(
         label = "Payments",
         typeOverride = Collection,
@@ -799,7 +778,7 @@ public class CaseData {
             : payments
                 .stream()
                 .filter(p -> SUCCESS.equals(p.getValue().getPaymentStatus()))
-                .map(p -> p.getValue().getPaymentAmount().toInt())
+                .map(p -> p.getValue().getPaymentAmount())
                 .reduce(0, Integer::sum);
     }
 }

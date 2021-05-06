@@ -7,11 +7,11 @@ import uk.gov.hmcts.divorce.common.model.Gender;
 import uk.gov.hmcts.divorce.common.model.JurisdictionConnections;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static java.time.temporal.ChronoUnit.YEARS;
 import static uk.gov.hmcts.divorce.common.validation.JurisdictionConnectionsValidation.validateJurisdictionConnectionA;
 import static uk.gov.hmcts.divorce.common.validation.JurisdictionConnectionsValidation.validateJurisdictionConnectionB;
 import static uk.gov.hmcts.divorce.common.validation.JurisdictionConnectionsValidation.validateJurisdictionConnectionC;
@@ -115,11 +115,11 @@ public final class ValidationUtil {
 
     private static boolean isLessThanOneYearAgo(LocalDate date) {
         return !date.isAfter(LocalDate.now())
-            && date.isAfter(LocalDate.now().minus(365, ChronoUnit.DAYS));
+            && date.isAfter(LocalDate.now().minus(1, YEARS));
     }
 
     private static boolean isOverOneHundredYearsAgo(LocalDate date) {
-        return date.isBefore(LocalDate.now().minus(100L * 365, ChronoUnit.DAYS));
+        return date.isBefore(LocalDate.now().minus(100, YEARS));
     }
 
     private static boolean isInTheFuture(LocalDate date) {
