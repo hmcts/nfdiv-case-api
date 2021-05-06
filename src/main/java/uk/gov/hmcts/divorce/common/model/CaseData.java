@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +17,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.common.config.jackson.PaymentListValueDeserializer;
 import uk.gov.hmcts.divorce.common.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.payment.model.Payment;
@@ -728,6 +730,7 @@ public class CaseData {
     )
     private Set<FinancialOrderFor> financialOrderFor;
 
+    @JsonDeserialize(using = PaymentListValueDeserializer.class)
     @CCD(
         label = "Payments",
         typeOverride = Collection,
@@ -791,10 +794,12 @@ public class CaseData {
 
     @JsonIgnore
     public Integer getPaymentTotal() {
-        return this.getPayments()
-            .stream()
-            .filter(p -> SUCCESS.equals(p.getValue().getPaymentStatus()))
-            .map(p -> Integer.parseInt(p.getValue().getPaymentAmount().getAmount()))
-            .reduce(0, Integer::sum);
+        return payments == null
+            ? 0
+            : payments
+                .stream()
+                .filter(p -> SUCCESS.equals(p.getValue().getPaymentStatus()))
+                .map(p -> p.getValue().getPaymentAmount().toInt())
+                .reduce(0, Integer::sum);
     }
 }

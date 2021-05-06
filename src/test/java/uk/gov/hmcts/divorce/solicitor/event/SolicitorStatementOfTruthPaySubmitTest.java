@@ -135,7 +135,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
 
         solicitorStatementOfTruthPaySubmit.configure(configBuilder);
 
-        assertThat(configBuilder.getEvents().get(0).getEventID(), is(SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT));
+        assertThat(configBuilder.getEvents().get(0).getId(), is(SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT));
     }
 
     @SuppressWarnings("unchecked")

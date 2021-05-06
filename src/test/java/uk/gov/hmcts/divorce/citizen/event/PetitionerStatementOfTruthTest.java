@@ -37,7 +37,7 @@ class PetitionerStatementOfTruthTest {
 
         petitionerStatementOfTruth.configure(configBuilder);
 
-        assertThat(configBuilder.getEvents().get(0).getEventID(), is(PETITIONER_STATEMENT_OF_TRUTH));
+        assertThat(configBuilder.getEvents().get(0).getId(), is(PETITIONER_STATEMENT_OF_TRUTH));
     }
 
     @Test

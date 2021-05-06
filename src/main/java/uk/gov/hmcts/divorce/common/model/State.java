@@ -52,8 +52,8 @@ public enum State {
         public List<String> validate(CaseData caseData) {
             List<String> errors = new ArrayList<>();
 
-            // TODO add citizenFee field on caseData
-            if (caseData.getPaymentTotal() < 550) {
+            final int feePence = 55000; // TODO get from order summary
+            if (caseData.getPaymentTotal() < feePence) {
                 errors.add("Payment incomplete");
             }
 

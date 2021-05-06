@@ -37,7 +37,7 @@ public class PaymentMadeTest {
 
         paymentMade.configure(configBuilder);
 
-        assertThat(configBuilder.getEvents().get(0).getEventID(), is(PAYMENT_MADE));
+        assertThat(configBuilder.getEvents().get(0).getId(), is(PAYMENT_MADE));
     }
 
     @Test
@@ -48,7 +48,7 @@ public class PaymentMadeTest {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
 
-        paymentMade.submitted(details, details);
+        paymentMade.aboutToSubmit(details, details);
 
         verify(notification).send(caseData, details.getId());
     }

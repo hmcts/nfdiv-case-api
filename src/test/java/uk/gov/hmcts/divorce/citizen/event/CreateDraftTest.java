@@ -29,6 +29,6 @@ class CreateDraftTest {
 
         createDraft.configure(configBuilder);
 
-        assertThat(configBuilder.getEvents().get(0).getEventID(), is(CREATE_DRAFT));
+        assertThat(configBuilder.getEvents().get(0).getId(), is(CREATE_DRAFT));
     }
 }
