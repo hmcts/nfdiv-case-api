@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.solicitor.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.PETITION;
 
@@ -51,7 +53,7 @@ public class DraftPetitionRemovalService {
                 )
             )
             .filter(document -> !isPetitionDocument(document))
-            .collect(Collectors.toList());
+            .collect(toList());
 
 
         log.info("Successfully removed petition document from case data generated document list for case id {} ", caseId);
@@ -75,7 +77,7 @@ public class DraftPetitionRemovalService {
                 authTokenGenerator.generate(),
                 solicitorRolesCsv,
                 solicitorUserDetails.getId(),
-                document.getValue().getDocumentLink().getUrl(),
+                FilenameUtils.getName(document.getValue().getDocumentLink().getUrl()),
                 true
             );
             log.info("Successfully deleted petition document from document management for case id {} ", caseId);

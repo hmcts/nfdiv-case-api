@@ -23,7 +23,7 @@ public interface DocumentManagementClient {
         @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuth,
         @RequestHeader(USER_ROLES) String userRoles,
         @RequestHeader(USER_ID) String userId,
-        @PathVariable(DOCUMENT_DELETE_URI) String documentDownloadUri,
+        @PathVariable(DOCUMENT_DELETE_URI) String documentDeleteUri,
         @RequestParam(PERMANENT) boolean permanent
     );
 }
