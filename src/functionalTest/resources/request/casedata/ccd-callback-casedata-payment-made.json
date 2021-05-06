@@ -1,0 +1,26 @@
+{
+  "divorceOrDissolution": "divorce",
+  "inferredPetitionerGender": "female",
+  "inferredRespondentGender": "male",
+  "marriageDate": "2020-04-28",
+  "petitionerFirstName": "Billy",
+  "petitionerMiddleName": "B",
+  "petitionerLastName": "Bob",
+  "petitionerContactDetailsConfidential": "keep",
+  "petitionerEmail": "linus.norton@solirius.com",
+  "respondentFirstName": "test_first_name",
+  "respondentLastName": "test_last_name",
+  "marriagePetitionerName": "test_first_name test_last_name",
+  "financialOrder": "NO",
+  "prayerHasBeenGiven": "YES",
+  "statementOfTruth": "YES",
+  "jurisdictionPetitionerResidence": "YES",
+  "jurisdictionConnections": ["A"],
+  "payments": [{
+    "id": "1",
+    "value": {
+      "paymentStatus": "success",
+      "paymentAmount": 55000
+    }
+  }]
+}
