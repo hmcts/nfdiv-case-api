@@ -48,7 +48,7 @@ public class DivorceDocument {
 
     @CCD(
         label = "Document Url",
-        regex = "^.*\\.(pdf|tif|tiff|jpg|jpeg|png)$"
+        regex = ".pdf,.tif,.tiff,.jpg,.jpeg,.png"
     )
     private Document documentLink;
 }
