@@ -40,7 +40,6 @@ import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataMap;
@@ -129,7 +128,7 @@ public class PaymentMadeTest {
             anyMap(),
             eq(ENGLISH));
 
-        mockMvc.perform(post(SUBMITTED_URL)
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .content(objectMapper.writeValueAsString(callbackRequest(data, PAYMENT_MADE)))
