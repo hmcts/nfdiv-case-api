@@ -1,7 +1,9 @@
 package uk.gov.hmcts.divorce.document.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.divorce.common.model.DocumentType;
@@ -13,29 +15,31 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class DivorceDocument {
 
     @CCD(
         label = "Date added"
     )
-    private final Date documentDateAdded;
+    private Date documentDateAdded;
 
     @CCD(
         label = "Comment"
     )
-    private final String documentComment;
+    private String documentComment;
 
     @CCD(
         label = "File name"
     )
-    private final String documentFileName;
+    private String documentFileName;
 
     @CCD(
         label = "Type",
         typeOverride = FixedList,
         typeParameterOverride = "DocumentType"
     )
-    private final DocumentType documentType;
+    private DocumentType documentType;
 
     @CCD(
         label = "Email content",
@@ -46,5 +50,5 @@ public class DivorceDocument {
     @CCD(
         label = "Document Url"
     )
-    private final Document documentLink;
+    private Document documentLink;
 }
