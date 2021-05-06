@@ -121,6 +121,13 @@ public class PaymentMadeTest {
         Map<String, Object> data = caseDataMap();
         data.put("dateSubmitted", LocalDateTime.now());
 
+        Payment payment = Payment.builder()
+            .paymentAmount(55000)
+            .paymentStatus(SUCCESS)
+            .build();
+
+        data.put("payments", singletonList(new ListValue<>("1", payment)));
+
         doThrow(new NotificationException(new NotificationClientException("All template params not passed")))
             .when(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
