@@ -459,7 +459,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
     }
 
     private void stubForDocumentManagement(String documentUuid) {
-        DM_STORE_SERVER.stubFor(delete("/documents" + documentUuid + "?permanent=true")
+        DM_STORE_SERVER.stubFor(delete("/documents/" + documentUuid + "?permanent=true")
             .withHeader(AUTHORIZATION, new EqualToPattern(TEST_AUTHORIZATION_TOKEN))
             .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(SERVICE_AUTH_TOKEN))
             .withHeader("user-id", new EqualToPattern("1"))
