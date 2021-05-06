@@ -722,6 +722,7 @@ public class CaseData {
         label = "Date of submission",
         access = {DefaultAccess.class}
     )
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime dateSubmitted;
 
     @CCD(
