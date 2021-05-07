@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import uk.gov.hmcts.divorce.document.DocAssemblyClient;
+import uk.gov.hmcts.divorce.document.DocumentManagementClient;
 import uk.gov.hmcts.divorce.payment.FeesAndPaymentsClient;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 import uk.gov.hmcts.reform.ccd.client.CaseUserApi;
@@ -22,7 +23,8 @@ import uk.gov.hmcts.reform.idam.client.IdamApi;
         CaseUserApi.class,
         FeesAndPaymentsClient.class,
         DocAssemblyClient.class,
-        CoreCaseDataApi.class
+        CoreCaseDataApi.class,
+        DocumentManagementClient.class
     }
 )
 @SuppressWarnings("HideUtilityClassConstructor") // Spring needs a constructor, its not a utility class

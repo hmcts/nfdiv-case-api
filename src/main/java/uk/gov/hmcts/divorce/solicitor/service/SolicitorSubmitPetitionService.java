@@ -9,12 +9,15 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.payment.FeesAndPaymentsClient;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
 import uk.gov.hmcts.divorce.solicitor.service.notification.ApplicantSubmittedNotification;
 import uk.gov.hmcts.divorce.solicitor.service.notification.SolicitorSubmittedNotification;
+
+import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.ccd.sdk.type.Fee.getValueInPence;
@@ -39,6 +42,9 @@ public class SolicitorSubmitPetitionService {
     @Autowired
     private SolicitorSubmittedNotification solicitorSubmittedNotification;
 
+    @Autowired
+    private DraftPetitionRemovalService draftPetitionRemovalService;
+
     public OrderSummary getOrderSummary() {
         FeeResponse feeResponse = feesAndPaymentsClient.getPetitionIssueFee(
             DEFAULT_CHANNEL,
@@ -56,7 +62,24 @@ public class SolicitorSubmitPetitionService {
             .build();
     }
 
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseData caseData, final Long caseId) {
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
+        final CaseData caseData,
+        final Long caseId,
+        final String userAuth
+    ) {
+        log.info("Removing petition documents from case data and document management for {}", caseId);
+
+        List<ListValue<DivorceDocument>> documentsExcludingPetition =
+            draftPetitionRemovalService.removeDraftPetitionDocument(
+                caseData.getDocumentsGenerated(),
+                caseId,
+                userAuth
+            );
+
+        caseData.setDocumentsGenerated(documentsExcludingPetition);
+
+        log.info("Successfully removed petition documents from case data for case id {}", caseId);
+
         applicantSubmittedNotification.send(caseData, caseId);
         solicitorSubmittedNotification.send(caseData, caseId);
 
