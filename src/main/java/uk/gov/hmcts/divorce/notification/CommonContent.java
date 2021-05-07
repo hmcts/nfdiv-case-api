@@ -21,8 +21,8 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.RELATIONSH
 @Component
 public class CommonContent {
 
-    private static final String APPLY_FOR_DIVORCE = "Apply for a divorce";
-    private static final String END_CIVIL_PARTNERSHIP = "End a civil partnership";
+    private static final String APPLY_FOR_DIVORCE = "Divorce service";
+    private static final String END_CIVIL_PARTNERSHIP = "End a civil partnership service";
 
     @Autowired
     private EmailTemplatesConfig emailTemplatesConfig;
