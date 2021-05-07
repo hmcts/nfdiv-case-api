@@ -58,7 +58,7 @@ class CommonContentTest {
         assertThat(templateVars.get(FIRST_NAME), is(firstName));
         assertThat(templateVars.get(LAST_NAME), is(lastName));
         assertThat(templateVars.get(RELATIONSHIP), is(DIVORCE_APPLICATION));
-        assertThat(templateVars.get(RELATIONSHIP_COURT_HEADER), is("Apply for a divorce"));
+        assertThat(templateVars.get(RELATIONSHIP_COURT_HEADER), is("Divorce service"));
         assertThat(templateVars.get(COURT_EMAIL), is(courtEmail));
     }
 
@@ -85,7 +85,7 @@ class CommonContentTest {
         assertThat(templateVars.get(FIRST_NAME), is(firstName));
         assertThat(templateVars.get(LAST_NAME), is(lastName));
         assertThat(templateVars.get(RELATIONSHIP), is(APPLICATION_TO_END_CIVIL_PARTNERSHIP));
-        assertThat(templateVars.get(RELATIONSHIP_COURT_HEADER), is("End a civil partnership"));
+        assertThat(templateVars.get(RELATIONSHIP_COURT_HEADER), is("End a civil partnership service"));
         assertThat(templateVars.get(COURT_EMAIL), is(courtEmail));
     }
 }
