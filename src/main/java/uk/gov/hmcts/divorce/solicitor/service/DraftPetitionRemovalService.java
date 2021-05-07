@@ -16,7 +16,7 @@ import java.util.List;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.CollectionUtils.isEmpty;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.PETITION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 
 @Service
 @Slf4j
@@ -51,7 +51,7 @@ public class DraftPetitionRemovalService {
                     String.valueOf(caseId)
                 )
             )
-            .filter(document -> !isPetitionDocument(document))
+            .filter(document -> !isApplicationDocument(document))
             .collect(toList());
 
 
@@ -66,7 +66,7 @@ public class DraftPetitionRemovalService {
         String userAuth,
         String caseId
     ) {
-        if (isPetitionDocument(document)) {
+        if (isApplicationDocument(document)) {
             UserDetails solicitorUserDetails = idamService.retrieveUser(userAuth).getUserDetails();
 
             String solicitorRolesCsv = String.join(",", solicitorUserDetails.getRoles());
@@ -86,7 +86,7 @@ public class DraftPetitionRemovalService {
         return document;
     }
 
-    private boolean isPetitionDocument(ListValue<DivorceDocument> document) {
-        return document.getValue().getDocumentType().equals(PETITION);
+    private boolean isApplicationDocument(ListValue<DivorceDocument> document) {
+        return document.getValue().getDocumentType().equals(DIVORCE_APPLICATION);
     }
 }

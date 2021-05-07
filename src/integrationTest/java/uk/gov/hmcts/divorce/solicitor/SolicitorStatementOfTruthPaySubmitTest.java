@@ -28,7 +28,6 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
-import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitPetitionService;
@@ -80,6 +79,7 @@ import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_LAS
 import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.common.model.State.SOTAgreementPayAndSubmitRequired;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorStatementOfTruthPaySubmit.SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT;
@@ -320,7 +320,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         throws Exception {
         Map<String, Object> caseData = caseDataWithStatementOfTruth();
 
-        ListValue<DivorceDocument> documentListValue = documentWithType(DocumentType.PETITION);
+        ListValue<DivorceDocument> documentListValue = documentWithType(DIVORCE_APPLICATION);
 
         List<ListValue<DivorceDocument>> generatedDocuments = singletonList(documentListValue);
         caseData.put("documentsGenerated", generatedDocuments);
@@ -364,7 +364,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         throws Exception {
         Map<String, Object> caseData = caseDataWithStatementOfTruth();
 
-        ListValue<DivorceDocument> documentListValue = documentWithType(DocumentType.PETITION);
+        ListValue<DivorceDocument> documentListValue = documentWithType(DIVORCE_APPLICATION);
 
         List<ListValue<DivorceDocument>> generatedDocuments = singletonList(documentListValue);
         caseData.put("documentsGenerated", generatedDocuments);
@@ -398,7 +398,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         throws Exception {
         Map<String, Object> caseData = caseDataWithStatementOfTruth();
 
-        ListValue<DivorceDocument> documentListValue = documentWithType(DocumentType.PETITION);
+        ListValue<DivorceDocument> documentListValue = documentWithType(DIVORCE_APPLICATION);
 
         List<ListValue<DivorceDocument>> generatedDocuments = singletonList(documentListValue);
         caseData.put("documentsGenerated", generatedDocuments);

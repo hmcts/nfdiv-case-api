@@ -20,7 +20,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_PETITION;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.PETITION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 
 @Component
 @Slf4j
@@ -67,13 +67,13 @@ public class MiniPetitionDraft implements CaseDataUpdater {
             .builder()
             .documentLink(ccdDocument)
             .documentFileName(documentInfo.getFilename())
-            .documentType(PETITION)
+            .documentType(DIVORCE_APPLICATION)
             .build();
 
 
         ListValue<DivorceDocument> value = ListValue
             .<DivorceDocument>builder()
-            .id(PETITION.getLabel())
+            .id(DIVORCE_APPLICATION.getLabel())
             .value(divorceDocument)
             .build();
 

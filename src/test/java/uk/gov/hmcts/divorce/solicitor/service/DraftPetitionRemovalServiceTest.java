@@ -37,8 +37,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.OTHER;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.PETITION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.PET_SOL_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
@@ -65,7 +65,7 @@ public class DraftPetitionRemovalServiceTest {
 
         String solicitorRolesCsv = String.join(",", solicitorRoles);
 
-        ListValue<DivorceDocument> divorceDocumentListValue = documentWithType(PETITION);
+        ListValue<DivorceDocument> divorceDocumentListValue = documentWithType(DIVORCE_APPLICATION);
 
         String userId = UUID.randomUUID().toString();
 
@@ -114,7 +114,7 @@ public class DraftPetitionRemovalServiceTest {
 
         String solicitorRolesCsv = String.join(",", solicitorRoles);
 
-        ListValue<DivorceDocument> divorceDocumentListValue = documentWithType(PETITION);
+        ListValue<DivorceDocument> divorceDocumentListValue = documentWithType(DIVORCE_APPLICATION);
 
         String userId = UUID.randomUUID().toString();
 
@@ -149,7 +149,7 @@ public class DraftPetitionRemovalServiceTest {
             );
 
         assertThatThrownBy(() -> draftPetitionRemovalService.removeDraftPetitionDocument(
-            singletonList(documentWithType(PETITION)),
+            singletonList(documentWithType(DIVORCE_APPLICATION)),
             TEST_CASE_ID,
             PET_SOL_AUTH_TOKEN
         ))
@@ -167,7 +167,7 @@ public class DraftPetitionRemovalServiceTest {
 
         String solicitorRolesCsv = String.join(",", solicitorRoles);
 
-        ListValue<DivorceDocument> divorceDocumentListValue = documentWithType(PETITION);
+        ListValue<DivorceDocument> divorceDocumentListValue = documentWithType(DIVORCE_APPLICATION);
 
         String userId = UUID.randomUUID().toString();
 
@@ -191,7 +191,7 @@ public class DraftPetitionRemovalServiceTest {
         doThrow(feignException).when(authTokenGenerator).generate();
 
         assertThatThrownBy(() -> draftPetitionRemovalService.removeDraftPetitionDocument(
-            singletonList(documentWithType(PETITION)),
+            singletonList(documentWithType(DIVORCE_APPLICATION)),
             TEST_CASE_ID,
             PET_SOL_AUTH_TOKEN
         ))
