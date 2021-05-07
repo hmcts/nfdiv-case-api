@@ -433,4 +433,23 @@ public class SolicitorStatementOfTruthPaySubmitTest {
 
         assertThat(caseDetails.getState(), is(SolicitorAwaitingPaymentConfirmation));
     }
+
+    @Test
+    void shouldSetStateToSolicitorAwaitingPaymentConfirmationWhenHelpWithFeesIsSelectedAndNoPaymentIsMade() {
+        final long caseId = 1L;
+        final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("1000").build();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
+
+        final CaseData caseData = CaseData.builder()
+            .solApplicationFeeOrderSummary(orderSummary)
+            .helpWithFeesAppliedForFees(YES)
+            .build();
+        caseDetails.setData(caseData);
+        caseDetails.setId(caseId);
+
+        solicitorStatementOfTruthPaySubmit.submitted(caseDetails, beforeCaseDetails);
+
+        assertThat(caseDetails.getState(), is(SolicitorAwaitingPaymentConfirmation));
+    }
 }

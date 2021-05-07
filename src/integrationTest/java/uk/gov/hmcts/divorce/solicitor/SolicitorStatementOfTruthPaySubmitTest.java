@@ -63,7 +63,9 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -77,6 +79,7 @@ import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_FIR
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_LAST_NAME;
 import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.common.model.State.SOTAgreementPayAndSubmitRequired;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorStatementOfTruthPaySubmit.SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT;
@@ -287,7 +290,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .content(objectMapper.writeValueAsString(callbackRequest(
                 caseDataWithStatementOfTruth(),
                 SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT,
-                "SOTAgreementPayAndSubmitRequired")))
+                SOTAgreementPayAndSubmitRequired.name())))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
@@ -327,7 +330,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTH_TOKEN);
 
         String documentUuid = FilenameUtils.getName(documentListValue.getValue().getDocumentLink().getUrl());
-        stubForDocumentManagement(documentUuid);
+        stubForDocumentManagement(documentUuid, OK);
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -336,7 +339,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .content(objectMapper.writeValueAsString(callbackRequest(
                 caseData,
                 SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT,
-                "SOTAgreementPayAndSubmitRequired")))
+                SOTAgreementPayAndSubmitRequired.name())))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
@@ -356,6 +359,74 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         verifyNoMoreInteractions(notificationService, serviceTokenGenerator);
     }
 
+    @Test
+    void givenCaseDataWithPetitionDocumentAndServiceNotWhitelistedInDocStoreWhenAboutToSubmitCallbackIsInvokedThen403IsReturned()
+        throws Exception {
+        Map<String, Object> caseData = caseDataWithStatementOfTruth();
+
+        ListValue<DivorceDocument> documentListValue = documentWithType(DocumentType.PETITION);
+
+        List<ListValue<DivorceDocument>> generatedDocuments = singletonList(documentListValue);
+        caseData.put("documentsGenerated", generatedDocuments);
+
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, SOLICITOR_USER_ID, SOLICITOR_ROLE);
+
+        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTH_TOKEN);
+
+        String documentUuid = FilenameUtils.getName(documentListValue.getValue().getDocumentLink().getUrl());
+        stubForDocumentManagement(documentUuid, FORBIDDEN);
+
+        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(TestConstants.AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(callbackRequest(
+                caseData,
+                SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT,
+                SOTAgreementPayAndSubmitRequired.name())))
+            .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isForbidden()
+            );
+
+        verify(serviceTokenGenerator).generate();
+        verifyNoMoreInteractions(serviceTokenGenerator);
+    }
+
+    @Test
+    void givenCaseDataWithPetitionDocumentAndServiceAuthValidationFailsInDocStoreWhenAboutToSubmitCallbackIsInvokedThen401IsReturned()
+        throws Exception {
+        Map<String, Object> caseData = caseDataWithStatementOfTruth();
+
+        ListValue<DivorceDocument> documentListValue = documentWithType(DocumentType.PETITION);
+
+        List<ListValue<DivorceDocument>> generatedDocuments = singletonList(documentListValue);
+        caseData.put("documentsGenerated", generatedDocuments);
+
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, SOLICITOR_USER_ID, SOLICITOR_ROLE);
+
+        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTH_TOKEN);
+
+        String documentUuid = FilenameUtils.getName(documentListValue.getValue().getDocumentLink().getUrl());
+        stubForDocumentManagement(documentUuid, UNAUTHORIZED);
+
+        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(TestConstants.AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(callbackRequest(
+                caseData,
+                SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT,
+                SOTAgreementPayAndSubmitRequired.name())))
+            .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isUnauthorized()
+            );
+
+        verify(serviceTokenGenerator).generate();
+
+        verifyNoMoreInteractions(serviceTokenGenerator);
+    }
 
     @Test
     void givenInValidCaseDataWhenAboutToSubmitCallbackIsInvokedThenStateIsNotChangedAndErrorIsReturned()
@@ -368,7 +439,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .content(objectMapper.writeValueAsString(callbackRequest(
                 caseDataMap(),
                 SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT,
-                "SOTAgreementPayAndSubmitRequired")))
+                SOTAgreementPayAndSubmitRequired.name())))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
@@ -458,14 +529,14 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         );
     }
 
-    private void stubForDocumentManagement(String documentUuid) {
+    private void stubForDocumentManagement(String documentUuid, HttpStatus httpStatus) {
         DM_STORE_SERVER.stubFor(delete("/documents/" + documentUuid + "?permanent=true")
             .withHeader(AUTHORIZATION, new EqualToPattern(TEST_AUTHORIZATION_TOKEN))
             .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(SERVICE_AUTH_TOKEN))
             .withHeader("user-id", new EqualToPattern("1"))
             .withHeader("user-roles", new EqualToPattern("caseworker-divorce-solicitor")
             )
-            .willReturn(aResponse().withStatus(OK.value()))
+            .willReturn(aResponse().withStatus(httpStatus.value()))
         );
     }
 
