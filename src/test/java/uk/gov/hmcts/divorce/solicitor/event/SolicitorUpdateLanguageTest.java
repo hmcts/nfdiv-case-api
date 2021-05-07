@@ -28,6 +28,6 @@ public class SolicitorUpdateLanguageTest {
 
         solicitorUpdateLanguage.configure(configBuilder);
 
-        assertThat(configBuilder.getEvents().get(0).getEventID(), is(SOLICITOR_UPDATE_LANGUAGE));
+        assertThat(configBuilder.getEvents().get(0).getId(), is(SOLICITOR_UPDATE_LANGUAGE));
     }
 }

@@ -79,7 +79,12 @@
   <rule ref="category/java/security.xml"/>
   <rule ref="category/java/design.xml/ExcessiveImports">
     <properties>
-      <property name="minimum" value="45.0" />
+      <property name="minimum" value="46.0" />
+    </properties>
+  </rule>
+  <rule ref="category/java/codestyle.xml/UseUnderscoresInNumericLiterals">
+    <properties>
+      <property name="acceptableDecimalLength" value="16" />
     </properties>
   </rule>
 </ruleset>

@@ -9,7 +9,6 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.MoneyGBP;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
@@ -28,6 +27,7 @@ import java.util.Set;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 
+import static java.lang.Integer.parseInt;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -92,11 +92,11 @@ public class SolicitorStatementOfTruthPaySubmitTest {
 
         final long caseId = 1L;
         final String authorization = "authorization";
-        final OrderSummary orderSummary = mock(OrderSummary.class);
+        final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final Payment payment = Payment
             .builder()
-            .paymentAmount(MoneyGBP.builder().amount(orderSummary.getPaymentTotal()).build())
+            .paymentAmount(parseInt(orderSummary.getPaymentTotal()))
             .paymentChannel("online")
             .paymentDate(LocalDate.now())
             .paymentFeeId("FEE0001")
@@ -135,7 +135,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
 
         solicitorStatementOfTruthPaySubmit.configure(configBuilder);
 
-        assertThat(configBuilder.getEvents().get(0).getEventID(), is(SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT));
+        assertThat(configBuilder.getEvents().get(0).getId(), is(SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT));
     }
 
     @SuppressWarnings("unchecked")
@@ -359,7 +359,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
         final Payment payment = Payment
             .builder()
-            .paymentAmount(MoneyGBP.builder().amount(orderSummary.getPaymentTotal()).build())
+            .paymentAmount(parseInt(orderSummary.getPaymentTotal()))
             .paymentChannel("online")
             .paymentDate(LocalDate.now())
             .paymentFeeId("FEE0001")
@@ -394,7 +394,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
         final Payment payment = Payment
             .builder()
-            .paymentAmount(MoneyGBP.builder().amount(orderSummary.getPaymentTotal()).build())
+            .paymentAmount(parseInt(orderSummary.getPaymentTotal()))
             .paymentChannel("online")
             .paymentDate(LocalDate.now())
             .paymentFeeId("FEE0001")

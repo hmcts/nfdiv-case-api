@@ -35,8 +35,7 @@ public final class DocmosisTemplateConstants {
     public static final String TO_END_THE_CIVIL_PARTNERSHIP = "to end the civil partnership";
     public static final String DISSOLUTION_OF_THE_CIVIL_PARTNERSHIP_WITH = "for the dissolution of the civil partnership with";
     public static final String COSTS_RELATED_TO_ENDING_THE_CIVIL_PARTNERSHIP = "costs related to ending the civil partnership";
-    public static final String CHILDREN_OF_THE_APPLICANT_AND_THE_RESPONDENT
-        = ", and for the children of the applicant and the respondent";
+    public static final String CHILDREN_OF_THE_APPLICANT_AND_THE_RESPONDENT = ", and for the children of the applicant and the respondent";
 
     private DocmosisTemplateConstants() {
     }

@@ -12,7 +12,7 @@ import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.validateBasi
 
 @RequiredArgsConstructor
 @Getter
-public enum State implements CaseState {
+public enum State {
 
     @JsonProperty("Draft")
     @CCD(
@@ -47,7 +47,19 @@ public enum State implements CaseState {
         label = "Petition paid and submitted",
         name = "Petition submitted"
     )
-    Submitted("Submitted"),
+    Submitted("Submitted") {
+        @Override
+        public List<String> validate(CaseData caseData) {
+            List<String> errors = new ArrayList<>();
+
+            final int feePence = 55000; // TODO get from order summary
+            if (caseData.getPaymentTotal() < feePence) {
+                errors.add("Payment incomplete");
+            }
+
+            return errors;
+        }
+    },
 
     @JsonProperty("SolicitorAwaitingPaymentConfirmation")
     @CCD(
@@ -64,6 +76,10 @@ public enum State implements CaseState {
     AwaitingDocuments("AwaitingDocuments");
 
     private final String name;
+
+    public List<String> validate(CaseData data) {
+        return null;
+    }
 
 }
 

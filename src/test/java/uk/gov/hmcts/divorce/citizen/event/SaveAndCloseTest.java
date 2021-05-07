@@ -36,7 +36,7 @@ public class SaveAndCloseTest {
 
         saveAndClose.configure(configBuilder);
 
-        assertThat(configBuilder.getEvents().get(0).getEventID(), is(SAVE_AND_CLOSE));
+        assertThat(configBuilder.getEvents().get(0).getId(), is(SAVE_AND_CLOSE));
     }
 
     @Test
