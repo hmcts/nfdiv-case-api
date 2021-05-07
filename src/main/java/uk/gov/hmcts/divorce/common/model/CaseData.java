@@ -281,12 +281,6 @@ public class CaseData {
     private AddressGlobalUK applicantHomeAddress;
 
     @CCD(
-        label = "Is petitioners home address an international address?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo petitionerHomeAddressIsInternational;
-
-    @CCD(
         label = "Petitioner's phone number",
         regex = "^[0-9 +().-]{9,}$",
         access = {DefaultAccess.class}
@@ -568,12 +562,6 @@ public class CaseData {
         access = {DefaultAccess.class}
     )
     private AddressGlobalUK respondentHomeAddress;
-
-    @CCD(
-        label = "Is respondents home address an international address?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo respondentHomeAddressIsInternational;
 
     @CCD(
         label = "Are there any existing or previous court proceedings relating to the petitioner's marriage, "
