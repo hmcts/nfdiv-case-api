@@ -1,21 +1,37 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
+import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2ServiceDetails;
+import uk.gov.hmcts.divorce.solicitor.event.page.ClaimForCosts;
+import uk.gov.hmcts.divorce.solicitor.event.page.FinancialOrders;
+import uk.gov.hmcts.divorce.solicitor.event.page.JurisdictionApplyForDivorce;
 import uk.gov.hmcts.divorce.solicitor.event.page.LanguagePreference;
+import uk.gov.hmcts.divorce.solicitor.event.page.MarriageCertificateDetails;
+import uk.gov.hmcts.divorce.solicitor.event.page.MarriageIrretrievablyBroken;
+import uk.gov.hmcts.divorce.solicitor.event.page.OtherLegalProceedings;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant1;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant2;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutTheSolicitor;
+import uk.gov.hmcts.divorce.solicitor.event.page.SolHowDoYouWantToApplyForDivorce;
+import uk.gov.hmcts.divorce.solicitor.event.page.UploadMarriageCertificate;
+import uk.gov.hmcts.divorce.solicitor.service.SolicitorUpdatePetitionService;
 
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Arrays.asList;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.common.model.State.SOTAgreementPayAndSubmitRequired;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
@@ -26,21 +42,57 @@ import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_U
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ_UPDATE;
 
+@Slf4j
 @Component
 public class SolicitorUpdate implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SOLICITOR_UPDATE = "solicitor-update";
 
+    @Autowired
+    private SolAboutTheSolicitor solAboutTheSolicitor;
+
+    @Autowired
+    private SolicitorUpdatePetitionService solicitorUpdatePetitionService;
+
+    @Autowired
+    HttpServletRequest request;
+
     private final List<CcdPageConfiguration> pages = asList(
-        new SolAboutTheSolicitor(),
+        new SolHowDoYouWantToApplyForDivorce(),
+        solAboutTheSolicitor,
         new SolAboutApplicant1(),
         new SolAboutApplicant2(),
-        new LanguagePreference());
+        new Applicant2ServiceDetails(),
+        new MarriageCertificateDetails(),
+        new OtherLegalProceedings(),
+        new FinancialOrders(),
+        new ClaimForCosts(),
+        new UploadMarriageCertificate(),
+        new LanguagePreference(),
+        new JurisdictionApplyForDivorce(),
+        new MarriageIrretrievablyBroken()
+    );
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final PageBuilder pageBuilder = addEventConfig(configBuilder);
         pages.forEach(page -> page.addTo(pageBuilder));
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
+                                                                       final CaseDetails<CaseData, State> beforeDetails) {
+        log.info("Solicitor update petition about to submit callback invoked");
+
+        solicitorUpdatePetitionService.aboutToSubmit(
+            details.getData(),
+            details.getId(),
+            details.getCreatedDate().toLocalDate(),
+            request.getHeader(AUTHORIZATION)
+        );
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(details.getData())
+            .build();
     }
 
     private PageBuilder addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
