@@ -35,7 +35,7 @@ import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static uk.gov.hmcts.ccd.sdk.type.Fee.getValueInPence;
 import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.PETITION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -212,7 +212,7 @@ public class TestDataHelper {
 
         return ListValue
             .<DivorceDocument>builder()
-            .id(PETITION.getLabel())
+            .id(DIVORCE_APPLICATION.getLabel())
             .value(divorceDocument)
             .build();
     }

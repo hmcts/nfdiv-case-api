@@ -32,7 +32,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_PETITION;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.PETITION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ENGLISH_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -87,7 +87,7 @@ public class MiniPetitionDraftTest {
 
         DivorceDocument divorceDocument = result.getCaseData().getDocumentsGenerated().get(0).getValue();
 
-        assertThat(divorceDocument.getDocumentType()).isEqualTo(PETITION);
+        assertThat(divorceDocument.getDocumentType()).isEqualTo(DIVORCE_APPLICATION);
         assertThat(divorceDocument
             .getDocumentLink())
             .extracting(URL, FILENAME, BINARY_URL)
@@ -124,7 +124,7 @@ public class MiniPetitionDraftTest {
 
         DivorceDocument divorceDocument = updatedCaseDataContext.getCaseData().getDocumentsGenerated().get(0).getValue();
 
-        assertThat(divorceDocument.getDocumentType()).isEqualTo(PETITION);
+        assertThat(divorceDocument.getDocumentType()).isEqualTo(DIVORCE_APPLICATION);
         assertThat(divorceDocument
             .getDocumentLink())
             .extracting(URL, FILENAME, BINARY_URL)

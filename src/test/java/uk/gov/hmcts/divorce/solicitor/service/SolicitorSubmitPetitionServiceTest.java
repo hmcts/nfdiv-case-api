@@ -40,7 +40,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.common.model.State.SolicitorAwaitingPaymentConfirmation;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.PETITION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.PET_SOL_AUTH_TOKEN;
@@ -147,7 +147,7 @@ public class SolicitorSubmitPetitionServiceTest {
 
     @Test
     void shouldRemoveDraftPetitionAndNotifyApplicantAndSetStateForAboutToSubmit() {
-        List<ListValue<DivorceDocument>> generatedDocuments = singletonList(documentWithType(PETITION));
+        List<ListValue<DivorceDocument>> generatedDocuments = singletonList(documentWithType(DIVORCE_APPLICATION));
         final CaseData caseData = CaseData.builder().build();
         caseData.setDocumentsGenerated(generatedDocuments);
 
