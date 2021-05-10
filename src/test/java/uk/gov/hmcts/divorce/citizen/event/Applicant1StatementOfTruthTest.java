@@ -21,13 +21,13 @@ import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static uk.gov.hmcts.divorce.citizen.event.PetitionerStatementOfTruth.PETITIONER_STATEMENT_OF_TRUTH;
+import static uk.gov.hmcts.divorce.citizen.event.Applicant1StatementOfTruth.APPLICANT_1_STATEMENT_OF_TRUTH;
 
 @ExtendWith(MockitoExtension.class)
-class PetitionerStatementOfTruthTest {
+class Applicant1StatementOfTruthTest {
 
     @InjectMocks
-    private PetitionerStatementOfTruth petitionerStatementOfTruth;
+    private Applicant1StatementOfTruth applicant1StatementOfTruth;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
@@ -35,9 +35,9 @@ class PetitionerStatementOfTruthTest {
         final Set<State> stateSet = Set.of(State.class.getEnumConstants());
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = new ConfigBuilderImpl<>(CaseData.class, stateSet);
 
-        petitionerStatementOfTruth.configure(configBuilder);
+        applicant1StatementOfTruth.configure(configBuilder);
 
-        assertThat(configBuilder.getEvents().get(0).getId(), is(PETITIONER_STATEMENT_OF_TRUTH));
+        assertThat(configBuilder.getEvents().get(0).getId(), is(APPLICANT_1_STATEMENT_OF_TRUTH));
     }
 
     @Test
@@ -48,10 +48,10 @@ class PetitionerStatementOfTruthTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = petitionerStatementOfTruth.aboutToStart(caseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = applicant1StatementOfTruth.aboutToStart(caseDetails);
 
         assertThat(response.getErrors().size(), is(13));
-        assertThat(response.getErrors().get(0), is("PetitionerFirstName cannot be empty or null"));
+        assertThat(response.getErrors().get(0), is("Applicant1FirstName cannot be empty or null"));
     }
 
     @Test
@@ -64,7 +64,7 @@ class PetitionerStatementOfTruthTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = petitionerStatementOfTruth.aboutToStart(caseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = applicant1StatementOfTruth.aboutToStart(caseDetails);
 
         assertThat(response.getErrors().size(), is(1));
         assertThat(response.getErrors().get(0), is("PrayerHasBeenGiven must be YES"));
@@ -80,25 +80,25 @@ class PetitionerStatementOfTruthTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = petitionerStatementOfTruth.aboutToStart(caseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = applicant1StatementOfTruth.aboutToStart(caseDetails);
 
         assertThat(response.getState(), is(State.AwaitingPayment));
     }
 
     private CaseData setValidCaseData(CaseData caseData) {
-        caseData.setPetitionerFirstName("First Name");
-        caseData.setPetitionerLastName("Last Name");
-        caseData.setRespondentFirstName("First Name");
-        caseData.setRespondentLastName("Last Name");
+        caseData.setApplicant1FirstName("First Name");
+        caseData.setApplicant1LastName("Last Name");
+        caseData.setApplicant2FirstName("First Name");
+        caseData.setApplicant2LastName("Last Name");
         caseData.setFinancialOrder(YesOrNo.NO);
-        caseData.setInferredPetitionerGender(Gender.FEMALE);
-        caseData.setInferredRespondentGender(Gender.MALE);
-        caseData.setPetitionerContactDetailsConfidential(ConfidentialAddress.KEEP);
+        caseData.setInferredApplicant1Gender(Gender.FEMALE);
+        caseData.setInferredApplicant2Gender(Gender.MALE);
+        caseData.setApplicant1ContactDetailsConfidential(ConfidentialAddress.KEEP);
         caseData.setPrayerHasBeenGiven(YesOrNo.YES);
-        caseData.setMarriagePetitionerName("Full name");
+        caseData.setMarriageApplicant1Name("Full name");
         caseData.setStatementOfTruth(YesOrNo.YES);
         caseData.setMarriageDate(LocalDate.now().minus(2, ChronoUnit.YEARS));
-        caseData.setJurisdictionConnections(Set.of(JurisdictionConnections.PET_RESP_LAST_RESIDENT));
+        caseData.setJurisdictionConnections(Set.of(JurisdictionConnections.APP_1_APP_2_LAST_RESIDENT));
         caseData.setJurisdictionBothLastHabituallyResident(YesOrNo.YES);
         return caseData;
     }

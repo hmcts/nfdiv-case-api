@@ -23,11 +23,11 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.common.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CREATOR;
-import static uk.gov.hmcts.divorce.common.model.UserRole.PETITIONER_SOLICITOR;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_1_SOL_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.PET_SOL_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASEWORKER_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -50,11 +50,11 @@ public class CcdAccessServiceTest {
     private AuthTokenGenerator authTokenGenerator;
 
     @Test
-    public void shouldNotThrowAnyExceptionWhenAddPetitionerRoleIsInvoked() {
-        User solicitorUser = getIdamUser(PET_SOL_AUTH_TOKEN, SOLICITOR_USER_ID, TEST_SOL_USER_EMAIL);
+    public void shouldNotThrowAnyExceptionWhenAddApplicant1RoleIsInvoked() {
+        User solicitorUser = getIdamUser(APP_1_SOL_AUTH_TOKEN, SOLICITOR_USER_ID, TEST_SOL_USER_EMAIL);
         User caseworkerUser = getIdamUser(CASEWORKER_AUTH_TOKEN, CASEWORKER_USER_ID, TEST_CASEWORKER_USER_EMAIL);
 
-        when(idamService.retrieveUser(PET_SOL_AUTH_TOKEN))
+        when(idamService.retrieveUser(APP_1_SOL_AUTH_TOKEN))
             .thenReturn(solicitorUser);
 
         when(idamService.retrieveCaseWorkerDetails())
@@ -72,13 +72,13 @@ public class CcdAccessServiceTest {
                 TEST_SERVICE_AUTH_TOKEN,
                 String.valueOf(TEST_CASE_ID),
                 SOLICITOR_USER_ID,
-                new CaseUser(SOLICITOR_USER_ID, Set.of(CREATOR.getRole(), PETITIONER_SOLICITOR.getRole()))
+                new CaseUser(SOLICITOR_USER_ID, Set.of(CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole()))
             );
 
-        assertThatCode(() -> ccdAccessService.addPetitionerSolicitorRole(PET_SOL_AUTH_TOKEN, TEST_CASE_ID))
+        assertThatCode(() -> ccdAccessService.addApplicant1SolicitorRole(APP_1_SOL_AUTH_TOKEN, TEST_CASE_ID))
             .doesNotThrowAnyException();
 
-        verify(idamService).retrieveUser(PET_SOL_AUTH_TOKEN);
+        verify(idamService).retrieveUser(APP_1_SOL_AUTH_TOKEN);
         verify(idamService).retrieveCaseWorkerDetails();
         verify(authTokenGenerator).generate();
         verify(caseUserApi)
@@ -87,7 +87,7 @@ public class CcdAccessServiceTest {
                 TEST_SERVICE_AUTH_TOKEN,
                 String.valueOf(TEST_CASE_ID),
                 SOLICITOR_USER_ID,
-                new CaseUser(SOLICITOR_USER_ID, Set.of(CREATOR.getRole(), PETITIONER_SOLICITOR.getRole()))
+                new CaseUser(SOLICITOR_USER_ID, Set.of(CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole()))
             );
 
         verifyNoMoreInteractions(idamService, authTokenGenerator, caseUserApi);
@@ -96,38 +96,38 @@ public class CcdAccessServiceTest {
     @Test
     public void shouldThrowFeignUnauthorizedExceptionWhenRetrievalOfSolicitorUserFails() {
         doThrow(feignException(401, "Failed to retrieve Idam user"))
-            .when(idamService).retrieveUser(PET_SOL_AUTH_TOKEN);
+            .when(idamService).retrieveUser(APP_1_SOL_AUTH_TOKEN);
 
-        assertThatThrownBy(() -> ccdAccessService.addPetitionerSolicitorRole(PET_SOL_AUTH_TOKEN, TEST_CASE_ID))
+        assertThatThrownBy(() -> ccdAccessService.addApplicant1SolicitorRole(APP_1_SOL_AUTH_TOKEN, TEST_CASE_ID))
             .isExactlyInstanceOf(FeignException.Unauthorized.class)
             .hasMessageContaining("Failed to retrieve Idam user");
     }
 
     @Test
     public void shouldThrowFeignUnauthorizedExceptionWhenRetrievalOfCaseworkerTokenFails() {
-        User solicitorUser = getIdamUser(PET_SOL_AUTH_TOKEN, SOLICITOR_USER_ID, TEST_SOL_USER_EMAIL);
+        User solicitorUser = getIdamUser(APP_1_SOL_AUTH_TOKEN, SOLICITOR_USER_ID, TEST_SOL_USER_EMAIL);
 
-        when(idamService.retrieveUser(PET_SOL_AUTH_TOKEN))
+        when(idamService.retrieveUser(APP_1_SOL_AUTH_TOKEN))
             .thenReturn(solicitorUser);
 
         doThrow(feignException(401, "Failed to retrieve Idam user"))
             .when(idamService).retrieveCaseWorkerDetails();
 
-        assertThatThrownBy(() -> ccdAccessService.addPetitionerSolicitorRole(PET_SOL_AUTH_TOKEN, TEST_CASE_ID))
+        assertThatThrownBy(() -> ccdAccessService.addApplicant1SolicitorRole(APP_1_SOL_AUTH_TOKEN, TEST_CASE_ID))
             .isExactlyInstanceOf(FeignException.Unauthorized.class)
             .hasMessageContaining("Failed to retrieve Idam user");
 
-        verify(idamService).retrieveUser(PET_SOL_AUTH_TOKEN);
+        verify(idamService).retrieveUser(APP_1_SOL_AUTH_TOKEN);
 
         verifyNoMoreInteractions(idamService);
     }
 
     @Test
     public void shouldThrowInvalidTokenExceptionWhenServiceAuthTokenGenerationFails() {
-        User solicitorUser = getIdamUser(PET_SOL_AUTH_TOKEN, SOLICITOR_USER_ID, TEST_SOL_USER_EMAIL);
+        User solicitorUser = getIdamUser(APP_1_SOL_AUTH_TOKEN, SOLICITOR_USER_ID, TEST_SOL_USER_EMAIL);
         User caseworkerUser = getIdamUser(CASEWORKER_AUTH_TOKEN, CASEWORKER_USER_ID, TEST_CASEWORKER_USER_EMAIL);
 
-        when(idamService.retrieveUser(PET_SOL_AUTH_TOKEN))
+        when(idamService.retrieveUser(APP_1_SOL_AUTH_TOKEN))
             .thenReturn(solicitorUser);
 
         when(idamService.retrieveCaseWorkerDetails())
@@ -136,11 +136,11 @@ public class CcdAccessServiceTest {
         doThrow(new InvalidTokenException("s2s secret is invalid"))
             .when(authTokenGenerator).generate();
 
-        assertThatThrownBy(() -> ccdAccessService.addPetitionerSolicitorRole(PET_SOL_AUTH_TOKEN, TEST_CASE_ID))
+        assertThatThrownBy(() -> ccdAccessService.addApplicant1SolicitorRole(APP_1_SOL_AUTH_TOKEN, TEST_CASE_ID))
             .isExactlyInstanceOf(InvalidTokenException.class)
             .hasMessageContaining("s2s secret is invalid");
 
-        verify(idamService).retrieveUser(PET_SOL_AUTH_TOKEN);
+        verify(idamService).retrieveUser(APP_1_SOL_AUTH_TOKEN);
         verify(idamService).retrieveCaseWorkerDetails();
 
         verifyNoMoreInteractions(idamService);
@@ -148,10 +148,10 @@ public class CcdAccessServiceTest {
 
     @Test
     public void shouldThrowFeignUnprocessableEntityExceptionWhenCcdClientThrowsException() {
-        User solicitorUser = getIdamUser(PET_SOL_AUTH_TOKEN, SOLICITOR_USER_ID, TEST_SOL_USER_EMAIL);
+        User solicitorUser = getIdamUser(APP_1_SOL_AUTH_TOKEN, SOLICITOR_USER_ID, TEST_SOL_USER_EMAIL);
         User caseworkerUser = getIdamUser(CASEWORKER_AUTH_TOKEN, CASEWORKER_USER_ID, TEST_CASEWORKER_USER_EMAIL);
 
-        when(idamService.retrieveUser(PET_SOL_AUTH_TOKEN))
+        when(idamService.retrieveUser(APP_1_SOL_AUTH_TOKEN))
             .thenReturn(solicitorUser);
 
         when(idamService.retrieveCaseWorkerDetails())
@@ -169,14 +169,14 @@ public class CcdAccessServiceTest {
                 TEST_SERVICE_AUTH_TOKEN,
                 String.valueOf(TEST_CASE_ID),
                 SOLICITOR_USER_ID,
-                new CaseUser(SOLICITOR_USER_ID, Set.of(CREATOR.getRole(), PETITIONER_SOLICITOR.getRole()))
+                new CaseUser(SOLICITOR_USER_ID, Set.of(CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole()))
             );
 
-        assertThatThrownBy(() -> ccdAccessService.addPetitionerSolicitorRole(PET_SOL_AUTH_TOKEN, TEST_CASE_ID))
+        assertThatThrownBy(() -> ccdAccessService.addApplicant1SolicitorRole(APP_1_SOL_AUTH_TOKEN, TEST_CASE_ID))
             .isExactlyInstanceOf(FeignException.UnprocessableEntity.class)
             .hasMessageContaining("Case roles not valid");
 
-        verify(idamService).retrieveUser(PET_SOL_AUTH_TOKEN);
+        verify(idamService).retrieveUser(APP_1_SOL_AUTH_TOKEN);
         verify(idamService).retrieveCaseWorkerDetails();
         verify(authTokenGenerator).generate();
 

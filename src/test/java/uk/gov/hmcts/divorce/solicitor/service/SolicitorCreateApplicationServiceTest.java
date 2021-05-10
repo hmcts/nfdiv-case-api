@@ -11,7 +11,7 @@ import uk.gov.hmcts.divorce.common.updater.CaseDataUpdater;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChainFactory;
 import uk.gov.hmcts.divorce.solicitor.service.updater.ClaimsCost;
-import uk.gov.hmcts.divorce.solicitor.service.updater.MiniPetitionDraft;
+import uk.gov.hmcts.divorce.solicitor.service.updater.MiniApplicationDraft;
 import uk.gov.hmcts.divorce.solicitor.service.updater.SolicitorCourtDetails;
 
 import java.time.LocalDateTime;
@@ -29,7 +29,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 
 @ExtendWith(MockitoExtension.class)
-class SolicitorCreatePetitionServiceTest {
+class SolicitorCreateApplicationServiceTest {
 
     private static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(2021, 04, 28, 1, 0);
 
@@ -40,16 +40,16 @@ class SolicitorCreatePetitionServiceTest {
     private SolicitorCourtDetails solicitorCourtDetails;
 
     @Mock
-    private MiniPetitionDraft miniPetitionDraft;
+    private MiniApplicationDraft miniApplicationDraft;
 
     @Mock
     private CaseDataUpdaterChainFactory caseDataUpdaterChainFactory;
 
     @InjectMocks
-    private SolicitorCreatePetitionService solicitorCreatePetitionService;
+    private SolicitorCreateApplicationService solicitorCreateApplicationService;
 
     @Test
-    void shouldCompleteStepsToCreatePetition() {
+    void shouldCompleteStepsToCreateApplication() {
 
         final CaseData caseData = mock(CaseData.class);
         final CaseDataUpdaterChain caseDataUpdaterChain = mock(CaseDataUpdaterChain.class);
@@ -57,7 +57,7 @@ class SolicitorCreatePetitionServiceTest {
         final List<CaseDataUpdater> caseDataUpdaters = asList(
             claimsCost,
             solicitorCourtDetails,
-            miniPetitionDraft);
+            miniApplicationDraft);
 
         final CaseDataContext caseDataContext = CaseDataContext.builder()
             .caseData(caseData)
@@ -69,7 +69,7 @@ class SolicitorCreatePetitionServiceTest {
         when(caseDataUpdaterChainFactory.createWith(caseDataUpdaters)).thenReturn(caseDataUpdaterChain);
         when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
 
-        final CaseData actualCaseData = solicitorCreatePetitionService.aboutToSubmit(
+        final CaseData actualCaseData = solicitorCreateApplicationService.aboutToSubmit(
             caseData,
             TEST_CASE_ID,
             LOCAL_DATE,

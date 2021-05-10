@@ -26,14 +26,14 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.ABOUT_TO_SUBMIT_CAL
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedCcdCallbackResponse;
 
 @SpringBootTest
-public class SolicitorSubmitPetitionTest extends FunctionalTestSuite {
+public class SolicitorSubmitApplicationTest extends FunctionalTestSuite {
 
     private static final String ABOUT_TO_SUBMIT_REQUEST = "classpath:request/casedata/ccd-callback-casedata.json";
-    private static final String ABOUT_TO_START_RESPONSE = "classpath:responses/ccd-callback-submit-petition.json";
+    private static final String ABOUT_TO_START_RESPONSE = "classpath:responses/ccd-callback-submit-application.json";
     private static final String VALID_ABOUT_TO_SUBMIT_REQUEST =
-        "classpath:request/casedata/ccd-callback-solicitor-submit-petition-about-to-submit.json";
+        "classpath:request/casedata/ccd-callback-solicitor-submit-application-about-to-submit.json";
     private static final String VALID_ABOUT_TO_SUBMIT_RESPONSE =
-        "classpath:responses/ccd-callback-solicitor-submit-petition-about-to-submit.json";
+        "classpath:responses/ccd-callback-solicitor-submit-application-about-to-submit.json";
 
     @Test
     public void shouldUpdateCaseDataWithOrderSummaryAndAddSolCaseRolesWhenIssueFeeIsSuccessfullyRetrieved()

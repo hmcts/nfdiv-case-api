@@ -21,7 +21,7 @@ public final class TestConstants {
     public static final String FEE_CODE = "FEECODE1";
     public static final String ISSUE_FEE = "Issue Fee";
 
-    public static final String PET_SOL_AUTH_TOKEN = "Bearer PetSolAuthToken";
+    public static final String APP_1_SOL_AUTH_TOKEN = "Bearer App1SolAuthToken";
     public static final String CASEWORKER_AUTH_TOKEN = "Bearer CaseWorkerAuthToken";
     public static final String SOLICITOR_USER_ID = "1";
     public static final String CASEWORKER_USER_ID = "2";
@@ -33,7 +33,7 @@ public final class TestConstants {
     public static final Long TEST_CASE_ID = 1616591401473378L;
     public static final String TEST_SERVICE_AUTH_TOKEN = "Bearer TestServiceAuth";
 
-    public static final String ENGLISH_TEMPLATE_ID = "divorceminipetition";
+    public static final String ENGLISH_TEMPLATE_ID = "divorceminiapplication";
     public static final String WELSH_TEMPLATE_ID = "FL-DIV-GNO-WEL-00256.docx";
     public static final String BEARER = "Bearer ";
     public static final String LANGUAGE_PREFERENCE_WELSH = "languagePreferenceWelsh";

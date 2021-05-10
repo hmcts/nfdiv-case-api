@@ -16,9 +16,9 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_EMAIL;
-import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_FIRST_NAME;
-import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_LAST_NAME;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.APPLICANT_1_EMAIL;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.APPLICANT_1_FIRST_NAME;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.citizen.event.SaveAndClose.SAVE_AND_CLOSE;
 import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
@@ -58,8 +58,8 @@ public class SaveAndCloseTest extends FunctionalTestSuite {
     @Test
     public void shouldFailWithBadRequestErrorWhenFirstAndLastNamesAreMissing() throws IOException {
         Map<String, Object> caseDataMapWithMissingParams = caseData(SUBMITTED_REQUEST);
-        caseDataMapWithMissingParams.remove(PETITIONER_FIRST_NAME);
-        caseDataMapWithMissingParams.remove(PETITIONER_LAST_NAME);
+        caseDataMapWithMissingParams.remove(APPLICANT_1_FIRST_NAME);
+        caseDataMapWithMissingParams.remove(APPLICANT_1_LAST_NAME);
 
         Response response = RestAssured
             .given()
@@ -93,7 +93,7 @@ public class SaveAndCloseTest extends FunctionalTestSuite {
     @Test
     public void shouldFailValidationErrorWhenEmailIsMissing() throws IOException {
         Map<String, Object> caseDataMapWithMissingParams = caseData(SUBMITTED_REQUEST);
-        caseDataMapWithMissingParams.remove(PETITIONER_EMAIL);
+        caseDataMapWithMissingParams.remove(APPLICANT_1_EMAIL);
 
         Response response = RestAssured
             .given()

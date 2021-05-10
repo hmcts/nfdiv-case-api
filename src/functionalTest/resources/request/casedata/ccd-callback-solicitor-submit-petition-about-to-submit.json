@@ -1,8 +1,8 @@
 {
   "divorceOrDissolution": "divorce",
-  "petitionerFirstName": "John",
-  "petitionerLastName": "Smith",
-  "petitionerEmail": "simulate-delivered@notifications.service.gov.uk",
+  "applicant1FirstName": "John",
+  "applicant1LastName": "Smith",
+  "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
   "divorceCostsClaim": "YES",
   "statementOfTruth": "YES",
   "solSignStatementOfTruth": "YES"

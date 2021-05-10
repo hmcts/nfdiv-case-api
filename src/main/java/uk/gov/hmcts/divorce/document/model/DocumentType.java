@@ -32,26 +32,20 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("decreeNisiRefusal")
     DECREE_NISI_REFUSAL("Decree Nisi Refusal - Clarification Response"),
 
-    @JsonProperty("aosOfflineAdulteryFormCoRespondent")
-    AOS_OFFLINE_ADULTERY_FORM_CO_RESPONDENT("AOS Offline Adultery Form Co-Respondent"),
-
-    @JsonProperty("aosOfflineAdulteryFormRespondent")
-    AOS_OFFLINE_ADULTERY_FORM_RESPONDENT("AOS Offline Adultery Form Respondent"),
+    @JsonProperty("aosOfflineAdulteryFormApplicant2")
+    AOS_OFFLINE_ADULTERY_FORM_APPLICANT_2("AOS Offline Adultery Form Applicant2"),
 
     @JsonProperty("aosOfflineUnreasonableBehaviourForm")
-    AOS_OFFLINE_UNREASONABLE_BEHAVIOUR_FORM("AOS Offline Unreasonable Behaviour / Desertion Form Respondent"),
+    AOS_OFFLINE_UNREASONABLE_BEHAVIOUR_FORM("AOS Offline Unreasonable Behaviour / Desertion Form Applicant 2"),
 
     @JsonProperty("aosOfflineFiveYearSeparationForm")
-    AOS_OFFLINE_FIVE_YEAR_SEPARATION_FORM("AOS Offline Five Year Separation Form Respondent"),
+    AOS_OFFLINE_FIVE_YEAR_SEPARATION_FORM("AOS Offline Five Year Separation Form Applicant 2"),
 
     @JsonProperty("aosOfflineTwoYearSeparationForm")
-    AOS_OFFLINE_TWO_YEAR_SEPARATION_FORM("AOS Offline Two Year Separation Form Respondent"),
+    AOS_OFFLINE_TWO_YEAR_SEPARATION_FORM("AOS Offline Two Year Separation Form Applicant 2"),
 
-    @JsonProperty("aosOfflineInvitationLetterCoRespondent")
-    AOS_OFFLINE_INVITATION_LETTER_CO_RESPONDENT("AOS Offline Invitation Letter Co-respondent"),
-
-    @JsonProperty("aosOfflineInvitationLetterRespondent")
-    AOS_OFFLINE_INVITATION_LETTER_RESPONDENT("AOS Offline Invitation Letter Respondent"),
+    @JsonProperty("aosOfflineInvitationLetterApplicant2")
+    AOS_OFFLINE_INVITATION_LETTER_APPLICANT_2("AOS Offline Invitation Letter Applicant 2"),
 
     @JsonProperty("personalService")
     PERSONAL_SERVICE("Personal Service"),
@@ -62,11 +56,11 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("decreeNisiAnswers")
     DECREE_NISI_ANSWERS("Decree Nisi Answers"),
 
-    @JsonProperty("respondentAnswers")
-    RESPONDENT_ANSWERS("Respondent Answers"),
+    @JsonProperty("applicant2Answers")
+    APPLICANT_2_ANSWERS("Applicant 2 Answers"),
 
-    @JsonProperty("petition")
-    PETITION("Petition"),
+    @JsonProperty("application")
+    APPLICATION("Application"),
 
     @JsonProperty("nameChangeEvidence")
     NAME_CHANGE_EVIDENCE("Name change evidence"),
@@ -122,9 +116,6 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("correspondence")
     CORRESPONDENCE("Correspondence"),
 
-    @JsonProperty("coRespondentAnswers")
-    CO_RESPONDENT_ANSWERS("Co-Respondent Answers"),
-
     @JsonProperty("certificateOfEntitlement")
     CERTIFICATE_OF_ENTITLEMENT("Certificate Of Entitlement"),
 
@@ -133,9 +124,6 @@ public enum DocumentType implements HasLabel {
 
     @JsonProperty("annexA")
     ANNEX_A("Annex A"),
-
-    @JsonProperty("acknowledgementOfServiceCoRespondent")
-    ACKNOWLEDGEMENT_OF_SERVICE_CO_RESPONDENT("Acknowledgement of Service (Co-Respondent)"),
 
     @JsonProperty("acknowledgementOfService")
     ACKNOWLEDGEMENT_OF_SERVICE("Acknowledgement of Service");

@@ -38,7 +38,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFeeResponse;
 
 @ExtendWith(MockitoExtension.class)
-public class SolicitorSubmitPetitionServiceTest {
+public class SolicitorSubmitApplicationServiceTest {
 
     @Mock
     private FeesAndPaymentsClient feesAndPaymentsClient;
@@ -50,13 +50,13 @@ public class SolicitorSubmitPetitionServiceTest {
     private SolicitorSubmittedNotification solicitorSubmittedNotification;
 
     @InjectMocks
-    private SolicitorSubmitPetitionService solicitorSubmitPetitionService;
+    private SolicitorSubmitApplicationService solicitorSubmitApplicationService;
 
     @Test
     public void shouldReturnOrderSummaryWhenFeeEventIsAvailable() {
         doReturn(getFeeResponse())
             .when(feesAndPaymentsClient)
-            .getPetitionIssueFee(
+            .getApplicationIssueFee(
                 anyString(),
                 anyString(),
                 anyString(),
@@ -65,7 +65,7 @@ public class SolicitorSubmitPetitionServiceTest {
                 isNull()
             );
 
-        OrderSummary orderSummary = solicitorSubmitPetitionService.getOrderSummary();
+        OrderSummary orderSummary = solicitorSubmitApplicationService.getOrderSummary();
         assertThat(orderSummary.getPaymentReference()).isNull();
         assertThat(orderSummary.getPaymentTotal()).isEqualTo(String.valueOf(1000));// in pence
         assertThat(orderSummary.getFees())
@@ -75,7 +75,7 @@ public class SolicitorSubmitPetitionServiceTest {
             );
 
         verify(feesAndPaymentsClient)
-            .getPetitionIssueFee(
+            .getApplicationIssueFee(
                 anyString(),
                 anyString(),
                 anyString(),
@@ -104,7 +104,7 @@ public class SolicitorSubmitPetitionServiceTest {
 
         doThrow(feignException)
             .when(feesAndPaymentsClient)
-            .getPetitionIssueFee(
+            .getApplicationIssueFee(
                 anyString(),
                 anyString(),
                 anyString(),
@@ -113,7 +113,7 @@ public class SolicitorSubmitPetitionServiceTest {
                 isNull()
             );
 
-        assertThatThrownBy(() -> solicitorSubmitPetitionService.getOrderSummary())
+        assertThatThrownBy(() -> solicitorSubmitApplicationService.getOrderSummary())
             .hasMessageContaining("404 Fee Not found")
             .isExactlyInstanceOf(FeignException.NotFound.class);
     }
@@ -125,7 +125,7 @@ public class SolicitorSubmitPetitionServiceTest {
         final long caseId = 1L;
 
         final AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
-            solicitorSubmitPetitionService.aboutToSubmit(caseData, caseId);
+            solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId);
 
         assertThat(aboutToStartOrSubmitResponse.getState()).isEqualTo(SolicitorAwaitingPaymentConfirmation);
         verify(applicantSubmittedNotification).send(caseData, caseId);

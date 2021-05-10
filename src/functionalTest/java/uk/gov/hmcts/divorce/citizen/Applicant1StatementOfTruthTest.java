@@ -19,18 +19,18 @@ import static org.skyscreamer.jsonassert.JSONCompareMode.STRICT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static uk.gov.hmcts.divorce.citizen.event.PetitionerStatementOfTruth.PETITIONER_STATEMENT_OF_TRUTH;
+import static uk.gov.hmcts.divorce.citizen.event.Applicant1StatementOfTruth.APPLICANT_1_STATEMENT_OF_TRUTH;
 import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.ABOUT_TO_START_CALLBACK_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedCcdCallbackResponse;
 
 @SpringBootTest
-public class PetitionerStatementOfTruthTest extends FunctionalTestSuite {
+public class Applicant1StatementOfTruthTest extends FunctionalTestSuite {
 
     private static final String ABOUT_TO_SUBMIT_REQUEST =
-        "classpath:request/casedata/ccd-callback-casedata-petitoner-statement-of-truth.json";
-    private static final String ABOUT_TO_START_RESPONSE = "classpath:responses/ccd-callback-casedata-petitoner-statement-of-truth.json";
+        "classpath:request/casedata/ccd-callback-casedata-applicant1-statement-of-truth.json";
+    private static final String ABOUT_TO_START_RESPONSE = "classpath:responses/ccd-callback-casedata-applicant1-statement-of-truth.json";
 
     @Test
     public void shouldPassValidationAndGiveSuccessWhenCaseDataValid() throws IOException {
@@ -46,7 +46,7 @@ public class PetitionerStatementOfTruthTest extends FunctionalTestSuite {
             .body(
                 CallbackRequest
                     .builder()
-                    .eventId(PETITIONER_STATEMENT_OF_TRUTH)
+                    .eventId(APPLICANT_1_STATEMENT_OF_TRUTH)
                     .caseDetails(
                         CaseDetails
                             .builder()

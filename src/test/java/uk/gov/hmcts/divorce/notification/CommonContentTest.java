@@ -46,8 +46,8 @@ class CommonContentTest {
         final String lastName = "Smith";
         final CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DIVORCE)
-            .petitionerFirstName(firstName)
-            .petitionerLastName(lastName)
+            .applicant1FirstName(firstName)
+            .applicant1LastName(lastName)
             .build();
 
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(configTemplateVars);
@@ -73,8 +73,8 @@ class CommonContentTest {
         final String lastName = "Smith";
         final CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DISSOLUTION)
-            .petitionerFirstName(firstName)
-            .petitionerLastName(lastName)
+            .applicant1FirstName(firstName)
+            .applicant1LastName(lastName)
             .build();
 
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(configTemplateVars);

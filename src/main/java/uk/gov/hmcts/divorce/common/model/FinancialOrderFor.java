@@ -12,8 +12,8 @@ public enum FinancialOrderFor implements HasLabel {
     @JsonProperty("children")
     CHILDREN("Children"),
 
-    @JsonProperty("petitioner")
-    PETITIONER("Petitioner");
+    @JsonProperty("applicant1")
+    APPLICANT_1("Applicant 1");
 
     private final String label;
 }

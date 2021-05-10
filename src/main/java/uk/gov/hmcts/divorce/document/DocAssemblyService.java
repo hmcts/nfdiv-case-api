@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.document.content.DraftPetitionTemplateContent;
+import uk.gov.hmcts.divorce.document.content.DraftApplicationTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DocAssemblyRequest;
 import uk.gov.hmcts.divorce.document.model.DocAssemblyResponse;
 import uk.gov.hmcts.divorce.document.model.DocumentInfo;
@@ -29,11 +29,11 @@ public class DocAssemblyService {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private DraftPetitionTemplateContent templateContent;
+    private DraftApplicationTemplateContent templateContent;
 
     public static final String DOCUMENT_FILENAME_FMT = "%s%s";
 
-    public static final String DOCUMENT_NAME = "draft-mini-petition-";
+    public static final String DOCUMENT_NAME = "draft-mini-application-";
 
     public DocumentInfo renderDocument(
         CaseData caseData,
@@ -55,7 +55,7 @@ public class DocAssemblyService {
 
         log.info("Sending document request for template : {} case id: {}", templateName, caseId);
 
-        DocAssemblyResponse docAssemblyResponse = docAssemblyClient.generateAndStoreDraftPetition(
+        DocAssemblyResponse docAssemblyResponse = docAssemblyClient.generateAndStoreDraftApplication(
             authorisation,
             authTokenGenerator.generate(),
             docAssemblyRequest

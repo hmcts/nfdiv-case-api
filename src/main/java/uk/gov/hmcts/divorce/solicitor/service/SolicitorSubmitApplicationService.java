@@ -22,7 +22,7 @@ import static uk.gov.hmcts.divorce.common.model.State.SolicitorAwaitingPaymentCo
 
 @Service
 @Slf4j
-public class SolicitorSubmitPetitionService {
+public class SolicitorSubmitApplicationService {
 
     private static final String DEFAULT_CHANNEL = "default";
     private static final String ISSUE_EVENT = "issue";
@@ -40,7 +40,7 @@ public class SolicitorSubmitPetitionService {
     private SolicitorSubmittedNotification solicitorSubmittedNotification;
 
     public OrderSummary getOrderSummary() {
-        FeeResponse feeResponse = feesAndPaymentsClient.getPetitionIssueFee(
+        FeeResponse feeResponse = feesAndPaymentsClient.getApplicationIssueFee(
             DEFAULT_CHANNEL,
             ISSUE_EVENT,
             FAMILY,

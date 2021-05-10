@@ -10,7 +10,7 @@ import java.util.Set;
 
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.common.model.ClaimsCostFrom.RESPONDENT;
+import static uk.gov.hmcts.divorce.common.model.ClaimsCostFrom.APPLICANT_2;
 
 @Component
 public class ClaimsCost implements CaseDataUpdater {
@@ -21,11 +21,11 @@ public class ClaimsCost implements CaseDataUpdater {
 
         final CaseData caseData = caseDataContext.copyOfCaseData();
 
-        final boolean isPetitionerClaimingCosts = YES.equals(caseData.getDivorceCostsClaim());
+        final boolean isApplicant1ClaimingCosts = YES.equals(caseData.getDivorceCostsClaim());
         final boolean claimsCostFromIsEmpty = isEmpty(caseData.getDivorceClaimFrom());
 
-        if (isPetitionerClaimingCosts && claimsCostFromIsEmpty) {
-            caseData.setDivorceClaimFrom(Set.of(RESPONDENT));
+        if (isApplicant1ClaimingCosts && claimsCostFromIsEmpty) {
+            caseData.setDivorceClaimFrom(Set.of(APPLICANT_2));
         }
 
         return caseDataUpdaterChain.processNext(caseDataContext.handlerContextWith(caseData));

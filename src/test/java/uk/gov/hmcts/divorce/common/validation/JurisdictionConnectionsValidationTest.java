@@ -26,61 +26,61 @@ public class JurisdictionConnectionsValidationTest {
     @Test
     public void whenValidatingJurisdictionConnectionAShouldReturnError() {
         CaseData caseData = new CaseData();
-        caseData.setJurisdictionConnections(Set.of(JurisdictionConnections.PET_RESP_RESIDENT));
+        caseData.setJurisdictionConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
 
         String error = validateJurisdictionConnectionA(caseData.getJurisdictionConnections(), caseData);
 
-        assertThat(error, is(CONNECTION + JurisdictionConnections.PET_RESP_RESIDENT + CANNOT_EXIST));
+        assertThat(error, is(CONNECTION + JurisdictionConnections.APP_1_APP_2_RESIDENT + CANNOT_EXIST));
     }
 
     @Test
     public void whenValidatingJurisdictionConnectionBShouldReturnError() {
         CaseData caseData = new CaseData();
-        caseData.setJurisdictionConnections(Set.of(JurisdictionConnections.PET_RESP_LAST_RESIDENT));
+        caseData.setJurisdictionConnections(Set.of(JurisdictionConnections.APP_1_APP_2_LAST_RESIDENT));
 
         String error = validateJurisdictionConnectionB(caseData.getJurisdictionConnections(), caseData);
 
-        assertThat(error, is(CONNECTION + JurisdictionConnections.PET_RESP_LAST_RESIDENT + CANNOT_EXIST));
+        assertThat(error, is(CONNECTION + JurisdictionConnections.APP_1_APP_2_LAST_RESIDENT + CANNOT_EXIST));
     }
 
     @Test
     public void whenValidatingJurisdictionConnectionCShouldReturnError() {
         CaseData caseData = new CaseData();
-        caseData.setJurisdictionConnections(Set.of(JurisdictionConnections.RESP_RESIDENT));
+        caseData.setJurisdictionConnections(Set.of(JurisdictionConnections.APP_2_RESIDENT));
 
         String error = validateJurisdictionConnectionC(caseData.getJurisdictionConnections(), caseData);
 
-        assertThat(error, is(CONNECTION + JurisdictionConnections.RESP_RESIDENT + CANNOT_EXIST));
+        assertThat(error, is(CONNECTION + JurisdictionConnections.APP_2_RESIDENT + CANNOT_EXIST));
     }
 
     @Test
     public void whenValidatingJurisdictionConnectionDShouldReturnError() {
         CaseData caseData = new CaseData();
-        caseData.setJurisdictionConnections(Set.of(JurisdictionConnections.PET_RESIDENT_TWELVE_MONTHS));
+        caseData.setJurisdictionConnections(Set.of(JurisdictionConnections.APP_1_RESIDENT_TWELVE_MONTHS));
 
         String error = validateJurisdictionConnectionD(caseData.getJurisdictionConnections(), caseData);
 
-        assertThat(error, is(CONNECTION + JurisdictionConnections.PET_RESIDENT_TWELVE_MONTHS + CANNOT_EXIST));
+        assertThat(error, is(CONNECTION + JurisdictionConnections.APP_1_RESIDENT_TWELVE_MONTHS + CANNOT_EXIST));
     }
 
     @Test
     public void whenValidatingJurisdictionConnectionEShouldReturnError() {
         CaseData caseData = new CaseData();
-        caseData.setJurisdictionConnections(Set.of(JurisdictionConnections.PET_RESIDENT_SIX_MONTHS));
+        caseData.setJurisdictionConnections(Set.of(JurisdictionConnections.APP_1_RESIDENT_SIX_MONTHS));
 
         String error = validateJurisdictionConnectionE(caseData.getJurisdictionConnections(), caseData);
 
-        assertThat(error, is(CONNECTION + JurisdictionConnections.PET_RESIDENT_SIX_MONTHS + CANNOT_EXIST));
+        assertThat(error, is(CONNECTION + JurisdictionConnections.APP_1_RESIDENT_SIX_MONTHS + CANNOT_EXIST));
     }
 
     @Test
     public void whenValidatingJurisdictionConnectionFShouldReturnError() {
         CaseData caseData = new CaseData();
-        caseData.setJurisdictionConnections(Set.of(JurisdictionConnections.PET_RESP_DOMICILED));
+        caseData.setJurisdictionConnections(Set.of(JurisdictionConnections.APP_1_APP_2_DOMICILED));
 
         String error = validateJurisdictionConnectionF(caseData.getJurisdictionConnections(), caseData);
 
-        assertThat(error, is(CONNECTION + JurisdictionConnections.PET_RESP_DOMICILED + CANNOT_EXIST));
+        assertThat(error, is(CONNECTION + JurisdictionConnections.APP_1_APP_2_DOMICILED + CANNOT_EXIST));
     }
 
     @Test
@@ -96,20 +96,20 @@ public class JurisdictionConnectionsValidationTest {
     @Test
     public void whenValidatingJurisdictionConnectionHShouldReturnError() {
         CaseData caseData = new CaseData();
-        caseData.setJurisdictionConnections(Set.of(JurisdictionConnections.PET_DOMICILED));
+        caseData.setJurisdictionConnections(Set.of(JurisdictionConnections.APP_1_DOMICILED));
 
         String error = validateJurisdictionConnectionH(caseData.getJurisdictionConnections(), caseData);
 
-        assertThat(error, is(CONNECTION + JurisdictionConnections.PET_DOMICILED + CANNOT_EXIST));
+        assertThat(error, is(CONNECTION + JurisdictionConnections.APP_1_DOMICILED + CANNOT_EXIST));
     }
 
     @Test
     public void whenValidatingJurisdictionConnectionIShouldReturnError() {
         CaseData caseData = new CaseData();
-        caseData.setJurisdictionConnections(Set.of(JurisdictionConnections.RESP_DOMICILED));
+        caseData.setJurisdictionConnections(Set.of(JurisdictionConnections.APP_2_DOMICILED));
 
         String error = validateJurisdictionConnectionI(caseData.getJurisdictionConnections(), caseData);
 
-        assertThat(error, is(CONNECTION + JurisdictionConnections.RESP_DOMICILED + CANNOT_EXIST));
+        assertThat(error, is(CONNECTION + JurisdictionConnections.APP_2_DOMICILED + CANNOT_EXIST));
     }
 }

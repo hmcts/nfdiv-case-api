@@ -17,7 +17,7 @@ public class ClaimForCosts implements CcdPageConfiguration {
                 "You can make changes at the end of your application.")
             .label(
                 "LabelClaimForCostsPara-1",
-                "A claim for costs can include all the fees the petitioner has to pay during the divorce, such as "
+                "A claim for costs can include all the fees applicant 1 has to pay during the divorce, such as "
                     + "application fees, solicitor fees and any extra court fees.")
             .mandatory(CaseData::getDivorceCostsClaim);
     }

@@ -35,11 +35,11 @@ public class ApplicantSubmittedNotification {
 
     public void send(final CaseData caseData, final Long caseId) {
 
-        final String petitionerEmail = caseData.getPetitionerEmail();
+        final String applicant1Email = caseData.getApplicant1Email();
         final Map<String, String> templateVars = commonContent.templateVarsFor(caseData);
         templateVars.put(APPLICATION_REFERENCE, formatId(caseId));
 
-        if (isNotEmpty(petitionerEmail)) {
+        if (isNotEmpty(applicant1Email)) {
 
             final EmailTemplateName templateName;
             final String logMessage;
@@ -53,7 +53,7 @@ public class ApplicantSubmittedNotification {
             }
 
             notificationService.sendEmail(
-                petitionerEmail,
+                applicant1Email,
                 templateName,
                 templateVars,
                 caseData.getLanguagePreference());

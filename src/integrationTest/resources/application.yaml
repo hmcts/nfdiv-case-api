@@ -55,6 +55,6 @@ doc_assembly:
 docmosis:
   templates:
     english:
-      DIVORCE_MINI_PETITION: Divorce_CP_Mini_Draft_Petition_Template.docx
+      DIVORCE_MINI_APPLICATION: Divorce_CP_Mini_Draft_Application_Template.docx
     welsh:
-      DIVORCE_MINI_PETITION: FL-DIV-GNO-WEL-00256.docx
+      DIVORCE_MINI_APPLICATION: FL-DIV-GNO-WEL-00256.docx

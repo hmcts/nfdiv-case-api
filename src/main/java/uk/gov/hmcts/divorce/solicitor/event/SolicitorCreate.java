@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
+import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2ServiceDetails;
 import uk.gov.hmcts.divorce.solicitor.event.page.ClaimForCosts;
 import uk.gov.hmcts.divorce.solicitor.event.page.FinancialOrders;
 import uk.gov.hmcts.divorce.solicitor.event.page.JurisdictionApplyForDivorce;
@@ -19,13 +20,12 @@ import uk.gov.hmcts.divorce.solicitor.event.page.LanguagePreference;
 import uk.gov.hmcts.divorce.solicitor.event.page.MarriageCertificateDetails;
 import uk.gov.hmcts.divorce.solicitor.event.page.MarriageIrretrievablyBroken;
 import uk.gov.hmcts.divorce.solicitor.event.page.OtherLegalProceedings;
-import uk.gov.hmcts.divorce.solicitor.event.page.RespondentServiceDetails;
-import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutThePetitioner;
-import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutTheRespondent;
+import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant1;
+import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant2;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutTheSolicitor;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolHowDoYouWantToApplyForDivorce;
 import uk.gov.hmcts.divorce.solicitor.event.page.UploadMarriageCertificate;
-import uk.gov.hmcts.divorce.solicitor.service.SolicitorCreatePetitionService;
+import uk.gov.hmcts.divorce.solicitor.service.SolicitorCreateApplicationService;
 
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -51,9 +51,9 @@ public class SolicitorCreate implements CCDConfig<CaseData, State, UserRole> {
     private final List<CcdPageConfiguration> pages = asList(
         new SolHowDoYouWantToApplyForDivorce(),
         new SolAboutTheSolicitor(),
-        new SolAboutThePetitioner(),
-        new SolAboutTheRespondent(),
-        new RespondentServiceDetails(),
+        new SolAboutApplicant1(),
+        new SolAboutApplicant2(),
+        new Applicant2ServiceDetails(),
         new MarriageCertificateDetails(),
         new OtherLegalProceedings(),
         new FinancialOrders(),
@@ -65,7 +65,7 @@ public class SolicitorCreate implements CCDConfig<CaseData, State, UserRole> {
     );
 
     @Autowired
-    private SolicitorCreatePetitionService solicitorCreatePetitionService;
+    private SolicitorCreateApplicationService solicitorCreateApplicationService;
 
     @Autowired
     HttpServletRequest request;
@@ -78,9 +78,9 @@ public class SolicitorCreate implements CCDConfig<CaseData, State, UserRole> {
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Solicitor create petition about to submit callback invoked");
+        log.info("Solicitor create application about to submit callback invoked");
 
-        final CaseData data = solicitorCreatePetitionService.aboutToSubmit(
+        final CaseData data = solicitorCreateApplicationService.aboutToSubmit(
             details.getData(),
             details.getId(),
             details.getCreatedDate().toLocalDate(),
@@ -102,7 +102,7 @@ public class SolicitorCreate implements CCDConfig<CaseData, State, UserRole> {
             .description("Apply for a divorce")
             .displayOrder(1)
             .showSummary()
-            .endButtonLabel("Save Petition")
+            .endButtonLabel("Save Application")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_SOLICITOR)

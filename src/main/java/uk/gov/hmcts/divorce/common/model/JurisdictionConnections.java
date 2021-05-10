@@ -10,40 +10,40 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 @AllArgsConstructor
 public enum JurisdictionConnections implements HasLabel {
     @JsonProperty("A")
-    @JsonPropertyDescription("The Petitioner and Respondent are habitually resident")
-    PET_RESP_RESIDENT("A"),
+    @JsonPropertyDescription("Applicant 1 and Applicant 2 are habitually resident")
+    APP_1_APP_2_RESIDENT("A"),
 
     @JsonProperty("B")
-    @JsonPropertyDescription("The Petitioner and Respondent were last habitually resident in England and Wales")
-    PET_RESP_LAST_RESIDENT("B"),
+    @JsonPropertyDescription("Applicant 1 and Applicant 2 were last habitually resident in England and Wales")
+    APP_1_APP_2_LAST_RESIDENT("B"),
 
     @JsonProperty("C")
-    @JsonPropertyDescription("The Respondent habitually resides in England and Wales")
-    RESP_RESIDENT("C"),
+    @JsonPropertyDescription("Applicant 2 habitually resides in England and Wales")
+    APP_2_RESIDENT("C"),
 
     @JsonProperty("D")
-    @JsonPropertyDescription("The Petitioner is habitually resident in England and Wales and has been for 12 months")
-    PET_RESIDENT_TWELVE_MONTHS("D"),
+    @JsonPropertyDescription("Applicant 1 is habitually resident in England and Wales and has been for 12 months")
+    APP_1_RESIDENT_TWELVE_MONTHS("D"),
 
     @JsonProperty("E")
-    @JsonPropertyDescription("The Petitioner is habitually resident in England and Wales and has been for 6 months")
-    PET_RESIDENT_SIX_MONTHS("E"),
+    @JsonPropertyDescription("Applicant 1 is habitually resident in England and Wales and has been for 6 months")
+    APP_1_RESIDENT_SIX_MONTHS("E"),
 
     @JsonProperty("F")
-    @JsonPropertyDescription("The Petitioner and Respondent are both domiciled in England and Wales")
-    PET_RESP_DOMICILED("F"),
+    @JsonPropertyDescription("Applicant 1 and Applicant 2 are both domiciled in England and Wales")
+    APP_1_APP_2_DOMICILED("F"),
 
     @JsonProperty("G")
     @JsonPropertyDescription("Eligible for Residual Jurisdiction")
     RESIDUAL_JURISDICTION("G"),
 
     @JsonProperty("H")
-    @JsonPropertyDescription("The Petitioner is domiciled in England and Wales")
-    PET_DOMICILED("H"),
+    @JsonPropertyDescription("Applicant 1 is domiciled in England and Wales")
+    APP_1_DOMICILED("H"),
 
     @JsonProperty("I")
-    @JsonPropertyDescription("The Respondent is domiciled in England and Wales")
-    RESP_DOMICILED("I");
+    @JsonPropertyDescription("Applicant 2 is domiciled in England and Wales")
+    APP_2_DOMICILED("I");
 
     private final String label;
 }

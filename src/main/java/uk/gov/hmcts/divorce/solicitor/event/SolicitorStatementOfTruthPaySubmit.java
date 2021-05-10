@@ -22,7 +22,7 @@ import uk.gov.hmcts.divorce.solicitor.event.page.SolPaymentSummary;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolStatementOfTruth;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolSummary;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
-import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitPetitionService;
+import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitApplicationService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
     public static final String SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT = "solicitor-statement-of-truth-pay-submit";
 
     @Autowired
-    private SolicitorSubmitPetitionService solicitorSubmitPetitionService;
+    private SolicitorSubmitApplicationService solicitorSubmitApplicationService;
 
     @Autowired
     private CcdAccessService ccdAccessService;
@@ -76,15 +76,15 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
 
-        log.info("Submit petition about to start callback invoked");
+        log.info("Submit application about to start callback invoked");
 
         log.info("Retrieving order summary");
-        final OrderSummary orderSummary = solicitorSubmitPetitionService.getOrderSummary();
+        final OrderSummary orderSummary = solicitorSubmitApplicationService.getOrderSummary();
         final CaseData caseData = details.getData();
         caseData.setSolApplicationFeeOrderSummary(orderSummary);
 
-        log.info("Adding Petitioner solicitor case roles");
-        ccdAccessService.addPetitionerSolicitorRole(
+        log.info("Adding Applicant 1 solicitor case roles");
+        ccdAccessService.addApplicant1SolicitorRole(
             httpServletRequest.getHeader(AUTHORIZATION),
             details.getId()
         );
@@ -92,11 +92,11 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
         log.info("Setting dummy payment to mock payment process");
         if (caseData.getPayments() == null || caseData.getPayments().isEmpty()) {
             List<ListValue<Payment>> payments = new ArrayList<>();
-            payments.add(new ListValue<>(null, solicitorSubmitPetitionService.getDummyPayment(orderSummary)));
+            payments.add(new ListValue<>(null, solicitorSubmitApplicationService.getDummyPayment(orderSummary)));
             caseData.setPayments(payments);
         } else {
             caseData.getPayments()
-                .add(new ListValue<>(null, solicitorSubmitPetitionService.getDummyPayment(orderSummary)));
+                .add(new ListValue<>(null, solicitorSubmitApplicationService.getDummyPayment(orderSummary)));
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -107,12 +107,12 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Submit petition about to submit callback invoked");
+        log.info("Submit application about to submit callback invoked");
 
         final CaseData caseData = details.getData();
         final State currentState = details.getState();
 
-        updateRespondentDigitalDetails(caseData);
+        updateApplicant2DigitalDetails(caseData);
 
         if (!caseData.hasStatementOfTruth() || !caseData.hasSolSignStatementOfTruth()) {
 
@@ -123,15 +123,15 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
                 .build();
         }
 
-        return solicitorSubmitPetitionService.aboutToSubmit(caseData, details.getId());
+        return solicitorSubmitApplicationService.aboutToSubmit(caseData, details.getId());
 
     }
 
-    private void updateRespondentDigitalDetails(CaseData caseData) {
-        if (caseData.hasDigitalDetailsForRespSol() && caseData.hasRespondentOrgId()) {
-            log.info("Respondent solicitor is digital and respondent org is populated");
-            caseData.setRespContactMethodIsDigital(YES);
-            caseData.setRespondentSolicitorRepresented(YES);
+    private void updateApplicant2DigitalDetails(CaseData caseData) {
+        if (caseData.hasDigitalDetailsForApp2Sol() && caseData.hasApplicant2OrgId()) {
+            log.info("Applicant 2 solicitor is digital and applicant 2 org is populated");
+            caseData.setApp2ContactMethodIsDigital(YES);
+            caseData.setApplicant2SolicitorRepresented(YES);
         }
     }
 
@@ -160,7 +160,7 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
             .description("Agree Statement of Truth, Pay & Submit")
             .displayOrder(1)
             .showSummary()
-            .endButtonLabel("Submit Petition")
+            .endButtonLabel("Submit Application")
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .explicitGrants()

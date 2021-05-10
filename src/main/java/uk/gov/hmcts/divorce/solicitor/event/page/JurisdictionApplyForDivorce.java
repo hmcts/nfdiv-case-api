@@ -38,11 +38,11 @@ public class JurisdictionApplyForDivorce implements CcdPageConfiguration {
             )
             .label(
                 "labelResidualJurisdictionPara-3",
-                "either the petitioner or the respondent is domiciled in England and Wales; and"
+                "either applicant 1 or applicant 2 is domiciled in England and Wales; and"
             )
             .label(
                 "labelResidualJurisdictionPara-4",
-                "neither the petitioner nor the respondent is able to apply for a divorce in another member state "
+                "neither applicant 1 nor applicant 2 is able to apply for a divorce in another member state "
                     + "of the EU on the basis of any of the other connections."
             )
             .label(
@@ -52,16 +52,16 @@ public class JurisdictionApplyForDivorce implements CcdPageConfiguration {
             )
             .label(
                 "labelResidualJurisdictionBullet-1",
-                "• The petitioner and the respondent married each other in England and Wales; and"
+                "• Applicant 1 and applicant 2 married each other in England and Wales; and"
             )
             .label(
                 "labelResidualJurisdictionBullet-2",
-                "• Neither the petitioner nor the respondent is able to apple for a divorce in any other country; and"
+                "• Neither applicant 1 nor applicant 2 is able to apple for a divorce in any other country; and"
             )
             .label(
                 "labelResidualJurisdictionBullet-3",
                 "• It would be in the interests of justice for the court to consider the application "
-                    + "(this may apply if, for example, the petitioner's or respondent's home country doesn't "
+                    + "(this may apply if, for example, applicant 1's or applicant 2's home country doesn't "
                     + "allow divorce between same-sex couples)."
             );
     }

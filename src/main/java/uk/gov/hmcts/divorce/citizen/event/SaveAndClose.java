@@ -30,7 +30,7 @@ public class SaveAndClose implements CCDConfig<CaseData, State, UserRole> {
             .event(SAVE_AND_CLOSE)
             .forState(Draft)
             .name("Save and close application")
-            .description("Save application and send email notification to petitioner")
+            .description("Save application and send email notification to applicant 1")
             .displayOrder(1)
             .retries(120, 120)
             .grant(CREATE_READ_UPDATE, CITIZEN)
