@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotificatio
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 
 import java.util.HashSet;
@@ -25,9 +26,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.citizen.event.PaymentMade.PAYMENT_MADE;
+import static uk.gov.hmcts.divorce.common.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.DECLINED;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
-import static uk.gov.hmcts.divorce.common.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -86,15 +87,18 @@ public class PaymentMadeTest {
     }
 
     @Test
-    public void givenValidCaseDataWhenCallbackIsInvokedThenSendOutstandingActionEmail() throws Exception {
+    public void givenValidCaseDataWhenCallbackIsInvokedThenSendOutstandingActionEmail() {
         final CaseData caseData = caseData();
         caseData.setPetitionerEmail(TEST_USER_EMAIL);
         caseData.setPetitionerWantsToHavePapersServedAnotherWay(YesOrNo.YES);
 
+        Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(SUCCESS).build();
+        caseData.setPayments(singletonList(new ListValue<>("1", payment)));
+
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
 
-        paymentMade.submitted(details, details);
+        paymentMade.aboutToSubmit(details, details);
 
         verify(outstandingActionNotification).send(caseData, details.getId());
         verify(notification).send(caseData, details.getId());
@@ -102,19 +106,22 @@ public class PaymentMadeTest {
     }
 
     @Test
-    public void givenCallbackIsInvokedThenSendOutstandingActionEmailForCannotUploadSupportingDocument() throws Exception {
+    public void givenCallbackIsInvokedThenSendOutstandingActionEmailForCannotUploadSupportingDocument() {
         final CaseData caseData = caseData();
         caseData.setPetitionerEmail(TEST_USER_EMAIL);
 
-        Set<SupportingDocumentType> docs = new HashSet<>();
-        docs.add(SupportingDocumentType.UNION_CERTIFICATE);
-        docs.add(SupportingDocumentType.NAME_CHANGE_PROOF);
+        Set<DocumentType> docs = new HashSet<>();
+        docs.add(DocumentType.MARRIAGE_CERTIFICATE);
+        docs.add(DocumentType.NAME_CHANGE_EVIDENCE);
         caseData.setCannotUploadSupportingDocument(docs);
+
+        Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(SUCCESS).build();
+        caseData.setPayments(singletonList(new ListValue<>("1", payment)));
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
 
-        paymentMade.submitted(details, details);
+        paymentMade.aboutToSubmit(details, details);
 
         verify(outstandingActionNotification).send(caseData, details.getId());
         verify(notification).send(caseData, details.getId());

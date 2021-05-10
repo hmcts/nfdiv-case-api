@@ -24,11 +24,11 @@ public final class NotificationConstants {
 
     public static final String MARRIAGE_CERTIFICATE = "marriageCertificate";
     public static final String CIVIL_PARTNERSHIP_CERTIFICATE = "civilPartnershipCertificate";
-    public static final String MARRIAGE_FOREIGN_UNION_CERTIFICATE = "marriageForeignUnionCertificate";
-    public static final String CIVIL_PARTNERSHIP_FOREIGN_UNION_CERTIFICATE = "civilPartnershipForeignUnionCertificate";
-    public static final String MARRIAGE_FOREIGN_UNION_CERTIFICATE_TRANSLATION = "marriageForeignUnionCertificateTranslation";
-    public static final String CIVIL_PARTNERSHIP_FOREIGN_UNION_CERTIFICATE_TRANSLATION =
-        "civilPartnershipForeignUnionCertificateTranslation";
+    public static final String FOREIGN_CIVIL_PARTNERSHIP_CERTIFICATE = "foreignCivilPartnershipCertificate";
+    public static final String FOREIGN_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION =
+        "foreignCivilPartnershipCertificateTranslation";
+    public static final String FOREIGN_MARRIAGE_CERTIFICATE = "foreignMarriageCertificate";
+    public static final String FOREIGN_MARRIAGE_CERTIFICATE_TRANSLATION = "foreignMarriageCertificateTranslation";
     public static final String NAME_CHANGE_PROOF = "nameChangeProof";
 
     public static final String SUBMISSION_RESPONSE_DATE = "date of response";

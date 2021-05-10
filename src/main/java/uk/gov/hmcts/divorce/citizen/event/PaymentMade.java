@@ -19,7 +19,8 @@ import java.util.List;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingDocuments;
-import static uk.gov.hmcts.divorce.common.model.State.*;
+import static uk.gov.hmcts.divorce.common.model.State.Draft;
+import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CITIZEN;
