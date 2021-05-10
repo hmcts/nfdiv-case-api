@@ -7,7 +7,6 @@ import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.notification.CommonContent;
-import uk.gov.hmcts.divorce.notification.NotificationConstants;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Locale;
@@ -22,6 +21,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOREIGN_CI
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOREIGN_MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOREIGN_MARRIAGE_CERTIFICATE_TRANSLATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.MARRIAGE_CERTIFICATE;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.NAME_CHANGE_PROOF;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PAPERS;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PARTNER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SERVICE;
@@ -47,7 +47,7 @@ public class ApplicationOutstandingActionNotification {
         templateVars.put(PARTNER, getPartner(caseData));
         templateVars.put(PAPERS, getPapers(caseData.getDivorceOrDissolution()));
 
-
+        setDefaultSupportingDocumentType(templateVars);
         if (caseData.getCannotUploadSupportingDocument() != null && !caseData.getCannotUploadSupportingDocument().isEmpty()) {
             setMissingSupportingDocumentType(templateVars, caseData);
         }
@@ -75,15 +75,17 @@ public class ApplicationOutstandingActionNotification {
         return divorceOrDissolution.isDivorce() ?  "divorce " + PAPERS : PAPERS;
     }
 
-    private void setMissingSupportingDocumentType(Map<String, String> templateVars,  CaseData caseData) {
+    private void setDefaultSupportingDocumentType(Map<String, String> templateVars) {
         templateVars.put(MARRIAGE_CERTIFICATE, NO);
         templateVars.put(CIVIL_PARTNERSHIP_CERTIFICATE, NO);
         templateVars.put(FOREIGN_MARRIAGE_CERTIFICATE, NO);
         templateVars.put(FOREIGN_CIVIL_PARTNERSHIP_CERTIFICATE, NO);
         templateVars.put(FOREIGN_MARRIAGE_CERTIFICATE_TRANSLATION, NO);
         templateVars.put(FOREIGN_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION, NO);
-        templateVars.put(NotificationConstants.NAME_CHANGE_PROOF, NO);
+        templateVars.put(NAME_CHANGE_PROOF, NO);
+    }
 
+    private void setMissingSupportingDocumentType(Map<String, String> templateVars,  CaseData caseData) {
         for (DocumentType docType : caseData.getCannotUploadSupportingDocument()) {
             switch (docType) {
                 case MARRIAGE_CERTIFICATE:
@@ -104,7 +106,7 @@ public class ApplicationOutstandingActionNotification {
                             : FOREIGN_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION, YES);
                     break;
                 case NAME_CHANGE_EVIDENCE:
-                    templateVars.put(NotificationConstants.NAME_CHANGE_PROOF, YES);
+                    templateVars.put(NAME_CHANGE_PROOF, YES);
                     break;
                 default:
                     break;
