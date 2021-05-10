@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.testutil;
 import feign.FeignException;
 import feign.Request;
 import feign.Response;
+import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
@@ -12,6 +13,8 @@ import uk.gov.hmcts.divorce.common.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.common.model.Gender;
 import uk.gov.hmcts.divorce.common.model.JurisdictionConnections;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
@@ -22,6 +25,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import static feign.Request.HttpMethod.GET;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -31,6 +35,7 @@ import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static uk.gov.hmcts.ccd.sdk.type.Fee.getValueInPence;
 import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -186,5 +191,29 @@ public class TestDataHelper {
                 .reason(reason)
                 .build()
         );
+    }
+
+    public static ListValue<DivorceDocument> documentWithType(DocumentType documentType) {
+        String documentUrl = "http://localhost:8080/" + UUID.randomUUID();
+
+        Document ccdDocument = new Document(
+            documentUrl,
+            "test-mini-draft-petition.pdf",
+            documentUrl + "/binary"
+        );
+
+        DivorceDocument divorceDocument = DivorceDocument
+            .builder()
+            .documentLink(ccdDocument)
+            .documentFileName("test-mini-draft-petition-12345.pdf")
+            .documentType(documentType)
+            .build();
+
+
+        return ListValue
+            .<DivorceDocument>builder()
+            .id(DIVORCE_APPLICATION.getLabel())
+            .value(divorceDocument)
+            .build();
     }
 }
