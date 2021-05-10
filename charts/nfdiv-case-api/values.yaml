@@ -35,3 +35,4 @@ java:
       IDAM_API_BASEURL: "https://idam-api.{{ .Values.global.environment }}.platform.hmcts.net"
       CASE_DATA_STORE_BASEURL: "http://ccd-data-store-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal"
       DOC_ASSEMBLY_URL: http://dg-docassembly-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
+      DOCUMENT_MANAGEMENT_URL: http://dm-store-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal

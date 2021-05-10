@@ -42,6 +42,7 @@ import static uk.gov.hmcts.divorce.common.model.State.SOTAgreementPayAndSubmitRe
 import static uk.gov.hmcts.divorce.common.model.State.SolicitorAwaitingPaymentConfirmation;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorStatementOfTruthPaySubmit.SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_1_SOL_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TES_ORG_ID;
 
@@ -158,7 +159,10 @@ public class SolicitorStatementOfTruthPaySubmitTest {
                 .state(SolicitorAwaitingPaymentConfirmation)
                 .build();
 
-        when(solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId)).thenReturn(aboutToStartOrSubmitResponse);
+        when(solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN))
+            .thenReturn(aboutToStartOrSubmitResponse);
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(APP_1_SOL_AUTH_TOKEN);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorStatementOfTruthPaySubmit
             .aboutToSubmit(caseDetails, new CaseDetails<>());
@@ -272,7 +276,10 @@ public class SolicitorStatementOfTruthPaySubmitTest {
                 .state(SolicitorAwaitingPaymentConfirmation)
                 .build();
 
-        when(solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId)).thenReturn(aboutToStartOrSubmitResponse);
+        when(solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN))
+            .thenReturn(aboutToStartOrSubmitResponse);
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(APP_1_SOL_AUTH_TOKEN);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorStatementOfTruthPaySubmit
             .aboutToSubmit(caseDetails, new CaseDetails<>());
@@ -311,7 +318,10 @@ public class SolicitorStatementOfTruthPaySubmitTest {
                 .state(SolicitorAwaitingPaymentConfirmation)
                 .build();
 
-        when(solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId)).thenReturn(aboutToStartOrSubmitResponse);
+        when(solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN))
+            .thenReturn(aboutToStartOrSubmitResponse);
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(APP_1_SOL_AUTH_TOKEN);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorStatementOfTruthPaySubmit
             .aboutToSubmit(caseDetails, new CaseDetails<>());
@@ -341,7 +351,10 @@ public class SolicitorStatementOfTruthPaySubmitTest {
                 .state(SolicitorAwaitingPaymentConfirmation)
                 .build();
 
-        when(solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId)).thenReturn(aboutToStartOrSubmitResponse);
+        when(solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN))
+            .thenReturn(aboutToStartOrSubmitResponse);
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(APP_1_SOL_AUTH_TOKEN);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorStatementOfTruthPaySubmit
             .aboutToSubmit(caseDetails, new CaseDetails<>());
@@ -412,6 +425,25 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         final CaseData caseData = CaseData.builder()
             .solApplicationFeeOrderSummary(orderSummary)
             .payments(payments)
+            .build();
+        caseDetails.setData(caseData);
+        caseDetails.setId(caseId);
+
+        solicitorStatementOfTruthPaySubmit.submitted(caseDetails, beforeCaseDetails);
+
+        assertThat(caseDetails.getState(), is(SolicitorAwaitingPaymentConfirmation));
+    }
+
+    @Test
+    void shouldSetStateToSolicitorAwaitingPaymentConfirmationWhenHelpWithFeesIsSelectedAndNoPaymentIsMade() {
+        final long caseId = 1L;
+        final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("1000").build();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
+
+        final CaseData caseData = CaseData.builder()
+            .solApplicationFeeOrderSummary(orderSummary)
+            .helpWithFeesAppliedForFees(YES)
             .build();
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);

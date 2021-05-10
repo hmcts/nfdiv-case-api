@@ -14,16 +14,16 @@
     "selectedDivorceCentreSiteId": "AA07",
     "documentsGenerated": [
       {
-        "id": "Application",
+        "id": "Divorce application",
         "value": {
           "documentDateAdded": null,
           "documentComment": null,
-          "documentFileName": "draft-mini-application-1.pdf",
-          "documentType": "application",
+          "documentFileName": "draft-mini-application-1234567890123456.pdf",
+          "documentType": "divorceApplication",
           "documentEmailContent": null,
           "documentLink": {
             "document_url": "${json-unit.ignore}",
-            "document_filename": "draft-mini-application-1.pdf",
+            "document_filename": "draft-mini-application-1234567890123456.pdf",
             "document_binary_url": "${json-unit.ignore}"
           }
         }

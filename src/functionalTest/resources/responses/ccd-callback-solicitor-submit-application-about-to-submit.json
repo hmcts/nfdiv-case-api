@@ -6,7 +6,8 @@
     "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
     "divorceCostsClaim": "YES",
     "statementOfTruth": "YES",
-    "solSignStatementOfTruth": "YES"
+    "solSignStatementOfTruth": "YES",
+    "documentsGenerated": []
   },
   "errors": null,
   "warnings": null,

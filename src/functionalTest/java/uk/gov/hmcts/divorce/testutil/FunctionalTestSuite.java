@@ -6,23 +6,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.TestPropertySource;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
+import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.Event;
 import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
 import uk.gov.hmcts.reform.idam.client.IdamClient;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.divorce.ccd.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.ccd.NoFaultDivorce.JURISDICTION;
+import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreate.SOLICITOR_CREATE;
 
 @TestPropertySource("classpath:application.yaml")
 public abstract class FunctionalTestSuite {
+
+    private static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(2021, 04, 28, 1, 0);
 
     @Value("${test-url}")
     protected String testUrl;
@@ -123,5 +130,35 @@ public abstract class FunctionalTestSuite {
             true,
             caseDataContent
         );
+    }
+
+    protected Response triggerCallback(Map<String, Object> caseData, String eventId, String url) throws IOException {
+        CallbackRequest request = CallbackRequest
+            .builder()
+            .eventId(eventId)
+            .caseDetails(
+                CaseDetails
+                    .builder()
+                    .id(1234567890123456L)
+                    .data(caseData)
+                    .createdDate(LOCAL_DATE_TIME)
+                    .build()
+            )
+            .build();
+
+        return triggerCallback(request, url);
+    }
+
+    protected Response triggerCallback(CallbackRequest request, String url) throws IOException {
+        return RestAssured
+            .given()
+            .relaxedHTTPSValidation()
+            .baseUri(testUrl)
+            .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+            .header(SERVICE_AUTHORIZATION, generateServiceAuthTokenFor(s2sName))
+            .header(AUTHORIZATION, generateIdamTokenForSolicitor())
+            .body(request)
+            .when()
+            .post(url);
     }
 }

@@ -58,3 +58,6 @@ docmosis:
       DIVORCE_MINI_APPLICATION: Divorce_CP_Mini_Draft_Application_Template.docx
     welsh:
       DIVORCE_MINI_APPLICATION: FL-DIV-GNO-WEL-00256.docx
+
+document_management:
+  url: ${DOCUMENT_MANAGEMENT_URL:http://dm-store-aat.service.core-compute-aat.internal}
