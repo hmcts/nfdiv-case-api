@@ -43,7 +43,7 @@ public class SolicitorSubmitApplicationService {
     private SolicitorSubmittedNotification solicitorSubmittedNotification;
 
     @Autowired
-    private DraftPetitionRemovalService draftPetitionRemovalService;
+    private DraftApplicationRemovalService draftApplicationRemovalService;
 
     public OrderSummary getOrderSummary() {
         FeeResponse feeResponse = feesAndPaymentsClient.getApplicationIssueFee(
@@ -67,18 +67,18 @@ public class SolicitorSubmitApplicationService {
         final Long caseId,
         final String userAuth
     ) {
-        log.info("Removing petition documents from case data and document management for {}", caseId);
+        log.info("Removing application documents from case data and document management for {}", caseId);
 
-        List<ListValue<DivorceDocument>> documentsExcludingPetition =
-            draftPetitionRemovalService.removeDraftPetitionDocument(
+        List<ListValue<DivorceDocument>> documentsExcludingApplication =
+            draftApplicationRemovalService.removeDraftApplicationDocument(
                 caseData.getDocumentsGenerated(),
                 caseId,
                 userAuth
             );
 
-        caseData.setDocumentsGenerated(documentsExcludingPetition);
+        caseData.setDocumentsGenerated(documentsExcludingApplication);
 
-        log.info("Successfully removed petition documents from case data for case id {}", caseId);
+        log.info("Successfully removed application documents from case data for case id {}", caseId);
 
         applicantSubmittedNotification.send(caseData, caseId);
         solicitorSubmittedNotification.send(caseData, caseId);

@@ -45,7 +45,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKE
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
 
 @ExtendWith(MockitoExtension.class)
-public class DraftPetitionRemovalServiceTest {
+public class DraftApplicationRemovalServiceTest {
 
     @Mock
     private DocumentManagementClient documentManagementClient;
@@ -57,10 +57,10 @@ public class DraftPetitionRemovalServiceTest {
     private IdamService idamService;
 
     @InjectMocks
-    private DraftPetitionRemovalService draftPetitionRemovalService;
+    private DraftApplicationRemovalService draftApplicationRemovalService;
 
     @Test
-    public void shouldRemoveDraftPetitionDocumentFromCaseDataAndDeletePetitionDocumentFromDocManagement() {
+    public void shouldRemoveDraftApplicationDocumentFromCaseDataAndDeleteApplicationDocumentFromDocManagement() {
         List<String> solicitorRoles = List.of("caseworker-divorce", "caseworker-divorce-solicitor");
 
         String solicitorRolesCsv = String.join(",", solicitorRoles);
@@ -86,7 +86,7 @@ public class DraftPetitionRemovalServiceTest {
             true
         );
 
-        List<ListValue<DivorceDocument>> actualDocumentsList = draftPetitionRemovalService.removeDraftPetitionDocument(
+        List<ListValue<DivorceDocument>> actualDocumentsList = draftApplicationRemovalService.removeDraftApplicationDocument(
             singletonList(divorceDocumentListValue),
             TEST_CASE_ID,
             APP_1_SOL_AUTH_TOKEN
@@ -148,7 +148,7 @@ public class DraftPetitionRemovalServiceTest {
                 anyBoolean()
             );
 
-        assertThatThrownBy(() -> draftPetitionRemovalService.removeDraftPetitionDocument(
+        assertThatThrownBy(() -> draftApplicationRemovalService.removeDraftApplicationDocument(
             singletonList(documentWithType(DIVORCE_APPLICATION)),
             TEST_CASE_ID,
             APP_1_SOL_AUTH_TOKEN
@@ -190,7 +190,7 @@ public class DraftPetitionRemovalServiceTest {
 
         doThrow(feignException).when(authTokenGenerator).generate();
 
-        assertThatThrownBy(() -> draftPetitionRemovalService.removeDraftPetitionDocument(
+        assertThatThrownBy(() -> draftApplicationRemovalService.removeDraftApplicationDocument(
             singletonList(documentWithType(DIVORCE_APPLICATION)),
             TEST_CASE_ID,
             APP_1_SOL_AUTH_TOKEN
@@ -203,10 +203,10 @@ public class DraftPetitionRemovalServiceTest {
     }
 
     @Test
-    public void shouldNotInvokeDocManagementWhenPetitionDocumentDoesNotExistInGenerateDocuments() {
+    public void shouldNotInvokeDocManagementWhenApplicationDocumentDoesNotExistInGenerateDocuments() {
         ListValue<DivorceDocument> divorceDocumentListValue = documentWithType(OTHER);
 
-        List<ListValue<DivorceDocument>> actualDocumentsList = draftPetitionRemovalService.removeDraftPetitionDocument(
+        List<ListValue<DivorceDocument>> actualDocumentsList = draftApplicationRemovalService.removeDraftApplicationDocument(
             singletonList(divorceDocumentListValue),
             TEST_CASE_ID,
             APP_1_SOL_AUTH_TOKEN

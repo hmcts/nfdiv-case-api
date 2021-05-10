@@ -45,11 +45,11 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("serviceBaliff")
     SERVICE_BALIFF("Bailiff Service"),
 
-    @JsonProperty("aosOfflineInvitationLetterToRespondent")
-    AOS_OFFLINE_INVITATION_LETTER_TO_RESPONDENT("AOS Offline Invitation Letter Respondent"),
+    @JsonProperty("aosOfflineInvitationLetterToApplicant2")
+    AOS_OFFLINE_INVITATION_LETTER_TO_APPLICANT_2("AOS Offline Invitation Letter Applicant 2"),
 
-    @JsonProperty("respondentAnswers")
-    RESPONDENT_ANSWERS("Respondent's answers"),
+    @JsonProperty("applicant2Answers")
+    APPLICANT_2_ANSWERS("Applicant 2's answers"),
 
     @JsonProperty("conditionalOrderApplication")
     CONDITIONAL_ORDER_APPLICATION("Conditional Order application"),

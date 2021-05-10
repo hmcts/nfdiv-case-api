@@ -29,7 +29,7 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
                     + "solicitor, a paper AOS pack will be sent to applicant 2's solicitor's address entered above.",
                 "applicant2SolicitorRepresented=\"Yes\"")
             .mandatory(CaseData::getApp2SolDigital, "applicant2SolicitorRepresented=\"Yes\"")
-            .complex(CaseData::getApplicant2OrganisationPolicy, "respSolDigital=\"Yes\"")
+            .complex(CaseData::getApplicant2OrganisationPolicy, "applicant2SolDigital=\"Yes\"")
             .complex(OrganisationPolicy::getOrganisation)
             .mandatory(Organisation::getOrganisationId)
             .done()

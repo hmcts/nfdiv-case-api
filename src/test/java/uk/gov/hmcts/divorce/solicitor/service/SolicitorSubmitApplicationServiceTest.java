@@ -60,7 +60,7 @@ public class SolicitorSubmitApplicationServiceTest {
     private SolicitorSubmittedNotification solicitorSubmittedNotification;
 
     @Mock
-    private DraftPetitionRemovalService draftPetitionRemovalService;
+    private DraftApplicationRemovalService draftApplicationRemovalService;
 
     @InjectMocks
     private SolicitorSubmitApplicationService solicitorSubmitApplicationService;
@@ -146,14 +146,14 @@ public class SolicitorSubmitApplicationServiceTest {
     }
 
     @Test
-    void shouldRemoveDraftPetitionAndNotifyApplicantAndSetStateForAboutToSubmit() {
+    void shouldRemoveDraftApplicationAndNotifyApplicantAndSetStateForAboutToSubmit() {
         List<ListValue<DivorceDocument>> generatedDocuments = singletonList(documentWithType(DIVORCE_APPLICATION));
         final CaseData caseData = CaseData.builder().build();
         caseData.setDocumentsGenerated(generatedDocuments);
 
         final long caseId = 1L;
 
-        when(draftPetitionRemovalService.removeDraftPetitionDocument(generatedDocuments, caseId, APP_1_SOL_AUTH_TOKEN))
+        when(draftApplicationRemovalService.removeDraftApplicationDocument(generatedDocuments, caseId, APP_1_SOL_AUTH_TOKEN))
             .thenReturn(emptyList());
 
         final AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
@@ -185,8 +185,8 @@ public class SolicitorSubmitApplicationServiceTest {
         );
 
         doThrow(feignException)
-            .when(draftPetitionRemovalService)
-            .removeDraftPetitionDocument(
+            .when(draftApplicationRemovalService)
+            .removeDraftApplicationDocument(
                 isNull(),
                 anyLong(),
                 anyString()

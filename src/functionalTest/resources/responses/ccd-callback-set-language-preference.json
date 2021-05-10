@@ -8,7 +8,7 @@
     "applicant1OrganisationPolicy": {
       "Organisation": null,
       "OrgPolicyReference": null,
-      "OrgPolicyCaseAssignedRole": "[APP1SOLICITOR]",
+      "OrgPolicyCaseAssignedRole": "[APPONESOLICITOR]",
       "PrepopulateToUsersOrganisation": null,
       "PreviousOrganisations": null
     }

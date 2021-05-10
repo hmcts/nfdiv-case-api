@@ -316,7 +316,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
     }
 
     @Test
-    void givenValidCaseDataContainingDraftPetitionDocumentWhenAboutToSubmitCallbackIsInvokedThenDraftPetitionDocumentIsRemoved()
+    void givenValidCaseDataContainingDraftApplicationDocumentWhenAboutToSubmitCallbackIsInvokedThenDraftApplicationDocumentIsRemoved()
         throws Exception {
         Map<String, Object> caseData = caseDataWithStatementOfTruth();
 
@@ -360,7 +360,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
     }
 
     @Test
-    void givenCaseDataWithPetitionDocumentAndServiceNotWhitelistedInDocStoreWhenAboutToSubmitCallbackIsInvokedThen403IsReturned()
+    void givenCaseDataWithApplicationDocumentAndServiceNotWhitelistedInDocStoreWhenAboutToSubmitCallbackIsInvokedThen403IsReturned()
         throws Exception {
         Map<String, Object> caseData = caseDataWithStatementOfTruth();
 
@@ -394,7 +394,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
     }
 
     @Test
-    void givenCaseDataWithPetitionDocumentAndServiceAuthValidationFailsInDocStoreWhenAboutToSubmitCallbackIsInvokedThen401IsReturned()
+    void givenCaseDataWithApplicationDocumentAndServiceAuthValidationFailsInDocStoreWhenAboutToSubmitCallbackIsInvokedThen401IsReturned()
         throws Exception {
         Map<String, Object> caseData = caseDataWithStatementOfTruth();
 
@@ -456,7 +456,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .withHeader(HttpHeaders.AUTHORIZATION, new EqualToPattern(BEARER + CASE_WORKER_TOKEN))
             .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(SERVICE_AUTH_TOKEN))
             .withRequestBody(new EqualToJsonPattern(
-                "{\"user_id\" : \"1\", \"case_roles\":[\"[CREATOR]\",\"[APP1SOLICITOR]\"]}",
+                "{\"user_id\" : \"1\", \"case_roles\":[\"[CREATOR]\",\"[APPONESOLICITOR]\"]}",
                 true,
                 true)
             )
@@ -469,7 +469,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .withHeader(HttpHeaders.AUTHORIZATION, new EqualToPattern(BEARER + CASE_WORKER_TOKEN))
             .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(SERVICE_AUTH_TOKEN))
             .withRequestBody(new EqualToJsonPattern(
-                "{\"user_id\" : \"1\", \"case_roles\":[\"[CREATOR]\",\"[APP1SOLICITOR]\"]}",
+                "{\"user_id\" : \"1\", \"case_roles\":[\"[CREATOR]\",\"[APPONESOLICITOR]\"]}",
                 true,
                 true)
             )

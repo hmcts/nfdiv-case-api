@@ -198,14 +198,14 @@ public class TestDataHelper {
 
         Document ccdDocument = new Document(
             documentUrl,
-            "test-mini-draft-petition.pdf",
+            "test-mini-draft-application.pdf",
             documentUrl + "/binary"
         );
 
         DivorceDocument divorceDocument = DivorceDocument
             .builder()
             .documentLink(ccdDocument)
-            .documentFileName("test-mini-draft-petition-12345.pdf")
+            .documentFileName("test-mini-draft-application-12345.pdf")
             .documentType(documentType)
             .build();
 

@@ -20,7 +20,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATI
 
 @Service
 @Slf4j
-public class DraftPetitionRemovalService {
+public class DraftApplicationRemovalService {
 
     @Autowired
     private DocumentManagementClient documentManagementClient;
@@ -31,7 +31,7 @@ public class DraftPetitionRemovalService {
     @Autowired
     private IdamService idamService;
 
-    public List<ListValue<DivorceDocument>> removeDraftPetitionDocument(
+    public List<ListValue<DivorceDocument>> removeDraftApplicationDocument(
         List<ListValue<DivorceDocument>> generatedDocuments,
         Long caseId,
         String userAuth
@@ -42,7 +42,7 @@ public class DraftPetitionRemovalService {
             return emptyList();
         }
 
-        List<ListValue<DivorceDocument>> generatedDocumentsExcludingPetition = generatedDocuments
+        List<ListValue<DivorceDocument>> generatedDocumentsExcludingApplication = generatedDocuments
             .stream()
             .map(document ->
                 deleteDocumentFromDocumentStore(
@@ -55,9 +55,9 @@ public class DraftPetitionRemovalService {
             .collect(toList());
 
 
-        log.info("Successfully removed petition document from case data generated document list for case id {} ", caseId);
+        log.info("Successfully removed application document from case data generated document list for case id {} ", caseId);
 
-        return generatedDocumentsExcludingPetition;
+        return generatedDocumentsExcludingApplication;
     }
 
 
@@ -79,9 +79,9 @@ public class DraftPetitionRemovalService {
                 FilenameUtils.getName(document.getValue().getDocumentLink().getUrl()),
                 true
             );
-            log.info("Successfully deleted petition document from document management for case id {} ", caseId);
+            log.info("Successfully deleted application document from document management for case id {} ", caseId);
         } else {
-            log.info("No draft petition document found for case id {} ", caseId);
+            log.info("No draft application document found for case id {} ", caseId);
         }
         return document;
     }
