@@ -6,7 +6,6 @@ public final class NotificationConstants {
     public static final String RELATIONSHIP = "relationship";
     public static final String PARTNER = "partner";
 
-    public static final String SERVICE = "service";
     public static final String DIVORCE_APPLICATION = "divorce application";
     public static final String APPLICATION_TO_END_CIVIL_PARTNERSHIP = "application to end your civil partnership";
 
@@ -20,15 +19,13 @@ public final class NotificationConstants {
 
     public static final String COURT_EMAIL = "court email";
 
-    public static final String PAPERS = "papers";
+    public static final String PAPERS_SERVED_ANOTHER_WAY_APPLY = "papersServedAnotherWayApply";
+    public static final String PAPERS_SERVED_ANOTHER_WAY_PARAGRAPH = "papersServedAnotherWayParagraph";
+    public static final String PAPERS_SERVED_ANOTHER_WAY_TITLE = "papersServedAnotherWayTitle";
 
-    public static final String MARRIAGE_CERTIFICATE = "marriageCertificate";
-    public static final String CIVIL_PARTNERSHIP_CERTIFICATE = "civilPartnershipCertificate";
-    public static final String FOREIGN_CIVIL_PARTNERSHIP_CERTIFICATE = "foreignCivilPartnershipCertificate";
-    public static final String FOREIGN_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION =
-        "foreignCivilPartnershipCertificateTranslation";
-    public static final String FOREIGN_MARRIAGE_CERTIFICATE = "foreignMarriageCertificate";
-    public static final String FOREIGN_MARRIAGE_CERTIFICATE_TRANSLATION = "foreignMarriageCertificateTranslation";
+    public static final String CERTIFICATE = "certificate";
+    public static final String FOREIGN_CERTIFICATE = "foreignCertificate";
+    public static final String FOREIGN_CERTIFICATE_TRANSLATION = "foreignCertificateTranslation";
     public static final String NAME_CHANGE_PROOF = "nameChangeProof";
 
     public static final String SUBMISSION_RESPONSE_DATE = "date of response";
