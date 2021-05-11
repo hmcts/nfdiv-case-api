@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.validateBasicCase;
 
 @RequiredArgsConstructor
@@ -73,7 +75,19 @@ public enum State {
         label = "Case created and awaiting action by the petitioner",
         name = "Awaiting petitioner"
     )
-    AwaitingDocuments("AwaitingDocuments");
+    AwaitingDocuments("AwaitingDocuments") {
+        @Override
+        public List<String> validate(CaseData caseData) {
+            List<String> errors = new ArrayList<>();
+
+            if (caseData.getPetitionerWantsToHavePapersServedAnotherWay() == YesOrNo.YES
+                || !isEmpty(caseData.getCannotUploadSupportingDocument())) {
+                errors.add("Awaiting Documents");
+            }
+
+            return errors;
+        }
+    };
 
     private final String name;
 

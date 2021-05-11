@@ -7,7 +7,6 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.common.model.CaseData;
@@ -17,7 +16,6 @@ import uk.gov.hmcts.divorce.common.model.UserRole;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.common.model.State.Draft;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
@@ -53,24 +51,26 @@ public class PaymentMade implements CCDConfig<CaseData, State, UserRole> {
                                                                        CaseDetails<CaseData, State> beforeDetails) {
         CaseData data = details.getData();
 
-        List<String> errors = Submitted.validate(details.getData());
+        List<String> errors = Submitted.validate(data);
+        State state = Draft;
 
         if (errors.isEmpty()) {
             log.info("Case {} submitted", details.getId());
             data.setDateSubmitted(LocalDateTime.now());
 
-            CaseData caseData = details.getData();
-            notification.send(caseData, details.getId());
-            if (caseData.getPetitionerWantsToHavePapersServedAnotherWay() == YesOrNo.YES
-                || !isEmpty(caseData.getCannotUploadSupportingDocument())) {
-                outstandingActionNotification.send(caseData, details.getId());
-                details.setState(AwaitingDocuments);
+            notification.send(data, details.getId());
+            if (AwaitingDocuments.validate(data).isEmpty()) {
+                state = Submitted;
+            } else {
+                outstandingActionNotification.send(data, details.getId());
+                state = AwaitingDocuments;
             }
         }
+        details.setState(state);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
-            .state(errors.isEmpty() ? Submitted : details.getState())
+            .state(details.getState())
             .errors(errors)
             .build();
     }

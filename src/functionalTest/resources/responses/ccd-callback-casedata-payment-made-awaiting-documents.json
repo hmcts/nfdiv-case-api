@@ -18,6 +18,9 @@
     "statementOfTruth": "YES",
     "jurisdictionPetitionerResidence": "YES",
     "jurisdictionConnections": ["A"],
+    "cannotUploadSupportingDocument": ["marriageCertificate", "nameChangeEvidence"],
+    "marriedInUk": "YES",
+    "divorceWho": "husband",
     "payments": [{
       "id": "1",
       "value": {
@@ -33,6 +36,6 @@
     }]
   },
   "errors": [],
-  "state": "Submitted",
+  "state": "AwaitingDocuments",
   "warnings": null
 }
