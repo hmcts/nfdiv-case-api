@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 import static java.time.temporal.ChronoUnit.YEARS;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.common.validation.JurisdictionConnectionsValidation.validateJurisdictionConnectionA;
 import static uk.gov.hmcts.divorce.common.validation.JurisdictionConnectionsValidation.validateJurisdictionConnectionB;
 import static uk.gov.hmcts.divorce.common.validation.JurisdictionConnectionsValidation.validateJurisdictionConnectionC;
@@ -29,6 +30,7 @@ public final class ValidationUtil {
     public static final String IN_THE_FUTURE = " can not be in the future.";
     public static final String EMPTY = " cannot be empty or null";
     public static final String MUST_BE_YES = " must be YES";
+    private static final int FEE_PENCE = 55000; // TODO get from order summary
 
     private ValidationUtil() {
     }
@@ -49,7 +51,6 @@ public final class ValidationUtil {
         addToErrorList(checkIfDateIsAllowed(caseData.getMarriageDate(), "MarriageDate"), errorList);
         addListToErrorList(validateJurisdictionConnection(caseData), errorList);
     }
-
 
     public static void addToErrorList(String error, List<String> errorList) {
         if (error != null) {
@@ -124,6 +125,15 @@ public final class ValidationUtil {
 
     private static boolean isInTheFuture(LocalDate date) {
         return date.isAfter(LocalDate.now());
+    }
+
+    public static boolean isPaymentIncomplete(CaseData caseData) {
+        return caseData.getPaymentTotal() < FEE_PENCE;
+    }
+
+    public static boolean hasAwaitingDocuments(CaseData caseData) {
+        return caseData.getPetitionerWantsToHavePapersServedAnotherWay() == YesOrNo.YES
+            || !isEmpty(caseData.getCannotUploadSupportingDocument());
     }
 
     public static List<String> validateJurisdictionConnection(CaseData caseData) {

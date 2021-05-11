@@ -15,6 +15,8 @@ import uk.gov.hmcts.divorce.common.model.UserRole;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.common.model.State.Draft;
@@ -51,26 +53,28 @@ public class PaymentMade implements CCDConfig<CaseData, State, UserRole> {
                                                                        CaseDetails<CaseData, State> beforeDetails) {
         CaseData data = details.getData();
 
-        List<String> errors = Submitted.validate(data);
-        State state = Draft;
+        List<String> submittedErrors = Submitted.validate(data);
+        List<String> awaitingDocumentsErrors = AwaitingDocuments.validate(data);
+        State state = details.getState();
 
-        if (errors.isEmpty()) {
+        if (submittedErrors.isEmpty()) {
             log.info("Case {} submitted", details.getId());
             data.setDateSubmitted(LocalDateTime.now());
 
             notification.send(data, details.getId());
-            if (AwaitingDocuments.validate(data).isEmpty()) {
-                state = Submitted;
-            } else {
-                outstandingActionNotification.send(data, details.getId());
-                state = AwaitingDocuments;
-            }
+            state = Submitted;
+        } else if (awaitingDocumentsErrors.isEmpty()) {
+            log.info("Case {} awaiting documents", details.getId());
+            notification.send(data, details.getId());
+            outstandingActionNotification.send(data, details.getId());
+            state = AwaitingDocuments;
         }
-        details.setState(state);
 
+        List<String> errors = Stream.concat(submittedErrors.stream(), awaitingDocumentsErrors.stream())
+            .collect(Collectors.toList());
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
-            .state(details.getState())
+            .state(state)
             .errors(errors)
             .build();
     }

@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification;
@@ -98,11 +99,11 @@ public class PaymentMadeTest {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
 
-        paymentMade.aboutToSubmit(details, details);
+        AboutToStartOrSubmitResponse response = paymentMade.aboutToSubmit(details, details);
 
         verify(outstandingActionNotification).send(caseData, details.getId());
         verify(notification).send(caseData, details.getId());
-        assertThat(details.getState(), is(AwaitingDocuments));
+        assertThat(response.getState(), is(AwaitingDocuments));
     }
 
     @Test
@@ -121,10 +122,10 @@ public class PaymentMadeTest {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
 
-        paymentMade.aboutToSubmit(details, details);
+        AboutToStartOrSubmitResponse response = paymentMade.aboutToSubmit(details, details);
 
         verify(outstandingActionNotification).send(caseData, details.getId());
         verify(notification).send(caseData, details.getId());
-        assertThat(details.getState(), is(AwaitingDocuments));
+        assertThat(response.getState(), is(AwaitingDocuments));
     }
 }

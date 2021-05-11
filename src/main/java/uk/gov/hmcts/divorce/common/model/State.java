@@ -4,12 +4,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.springframework.util.CollectionUtils.isEmpty;
+import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.hasAwaitingDocuments;
+import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.isPaymentIncomplete;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.validateBasicCase;
 
 @RequiredArgsConstructor
@@ -54,9 +54,11 @@ public enum State {
         public List<String> validate(CaseData caseData) {
             List<String> errors = new ArrayList<>();
 
-            final int feePence = 55000; // TODO get from order summary
-            if (caseData.getPaymentTotal() < feePence) {
+            if (isPaymentIncomplete(caseData)) {
                 errors.add("Payment incomplete");
+            }
+            if (hasAwaitingDocuments(caseData)) {
+                errors.add("Awaiting documents");
             }
 
             return errors;
@@ -80,9 +82,11 @@ public enum State {
         public List<String> validate(CaseData caseData) {
             List<String> errors = new ArrayList<>();
 
-            if (caseData.getPetitionerWantsToHavePapersServedAnotherWay() == YesOrNo.YES
-                || !isEmpty(caseData.getCannotUploadSupportingDocument())) {
-                errors.add("Awaiting Documents");
+            if (isPaymentIncomplete(caseData)) {
+                errors.add("Payment incomplete");
+            }
+            if (!hasAwaitingDocuments(caseData)) {
+                errors.add("No Awaiting documents");
             }
 
             return errors;
