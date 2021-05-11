@@ -56,6 +56,8 @@ public class PaymentMade implements CCDConfig<CaseData, State, UserRole> {
         List<String> submittedErrors = Submitted.validate(data);
         List<String> awaitingDocumentsErrors = AwaitingDocuments.validate(data);
         State state = details.getState();
+        List<String> errors = Stream.concat(submittedErrors.stream(), awaitingDocumentsErrors.stream())
+            .collect(Collectors.toList());
 
         if (submittedErrors.isEmpty()) {
             log.info("Case {} submitted", details.getId());
@@ -63,15 +65,17 @@ public class PaymentMade implements CCDConfig<CaseData, State, UserRole> {
 
             notification.send(data, details.getId());
             state = Submitted;
+            errors.clear();
         } else if (awaitingDocumentsErrors.isEmpty()) {
             log.info("Case {} awaiting documents", details.getId());
+            data.setDateSubmitted(LocalDateTime.now());
+
             notification.send(data, details.getId());
             outstandingActionNotification.send(data, details.getId());
             state = AwaitingDocuments;
+            errors.clear();
         }
 
-        List<String> errors = Stream.concat(submittedErrors.stream(), awaitingDocumentsErrors.stream())
-            .collect(Collectors.toList());
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
             .state(state)
