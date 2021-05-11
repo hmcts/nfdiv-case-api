@@ -81,6 +81,31 @@ public class PaymentMadeTest {
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmail() throws Exception {
         Map<String, Object> data = caseDataMap();
         data.put("dateSubmitted", LocalDateTime.now());
+
+        Payment payment = Payment.builder()
+            .paymentAmount(55000)
+            .paymentStatus(SUCCESS)
+            .build();
+
+        data.put("payments", singletonList(new ListValue<>("1", payment)));
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .content(objectMapper.writeValueAsString(callbackRequest(data, PAYMENT_MADE)))
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(APPLICATION_SUBMITTED), anyMap(), eq(ENGLISH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    public void givenValidCaseDataWhenCallbackIsInvokedThenSendTwoEmail() throws Exception {
+        Map<String, Object> data = caseDataMap();
+        data.put("dateSubmitted", LocalDateTime.now());
         data.put("divorceWho", WhoDivorcing.HUSBAND);
         data.put("petitionerWantsToHavePapersServedAnotherWay", YesOrNo.YES);
 

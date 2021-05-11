@@ -1,9 +1,11 @@
 package uk.gov.hmcts.divorce.common.validation;
 
 import org.junit.jupiter.api.Test;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.JurisdictionConnections;
+import uk.gov.hmcts.divorce.payment.model.Payment;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -12,11 +14,12 @@ import java.util.Set;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 import static java.time.temporal.ChronoUnit.YEARS;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.addToErrorList;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.checkIfConfidentialAddressNullOrEmpty;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.checkIfDateIsAllowed;
@@ -28,6 +31,7 @@ import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.hasAwaitingD
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.isPaymentIncomplete;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.validateBasicCase;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.validateJurisdictionConnection;
+import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
 public class CaseValidationTest {
 
@@ -240,6 +244,8 @@ public class CaseValidationTest {
     @Test
     public void shouldReturnFalseWhenPaymentIsCompleted() {
         CaseData caseData = new CaseData();
+        Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(SUCCESS).build();
+        caseData.setPayments(singletonList(new ListValue<>("1", payment)));
         assertFalse(isPaymentIncomplete(caseData));
     }
 
