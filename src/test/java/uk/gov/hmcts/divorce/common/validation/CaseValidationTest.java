@@ -15,6 +15,8 @@ import static java.time.temporal.ChronoUnit.YEARS;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.addToErrorList;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.checkIfConfidentialAddressNullOrEmpty;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.checkIfDateIsAllowed;
@@ -22,6 +24,8 @@ import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.checkIfGende
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.checkIfStringNullOrEmpty;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.checkIfYesOrNoIsNullOrEmptyOrNo;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.checkIfYesOrNoNullOrEmpty;
+import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.hasAwaitingDocuments;
+import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.isPaymentIncomplete;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.validateBasicCase;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.validateJurisdictionConnection;
 
@@ -225,5 +229,30 @@ public class CaseValidationTest {
         List<String> errors = validateJurisdictionConnection(caseData);
 
         assertThat(errors, contains("JurisdictionConnections" + EMPTY));
+    }
+
+    @Test
+    public void shouldReturnTrueWhenPaymentIsIncompleted() {
+        CaseData caseData = new CaseData();
+        assertTrue(isPaymentIncomplete(caseData));
+    }
+
+    @Test
+    public void shouldReturnFalseWhenPaymentIsCompleted() {
+        CaseData caseData = new CaseData();
+        assertFalse(isPaymentIncomplete(caseData));
+    }
+
+    @Test
+    public void shouldReturnTrueWhenCaseHasAwaitingDocuments() {
+        CaseData caseData = new CaseData();
+        caseData.setPetitionerWantsToHavePapersServedAnotherWay(YesOrNo.YES);
+        assertTrue(hasAwaitingDocuments(caseData));
+    }
+
+    @Test
+    public void shouldReturnFaseWhenCaseDoesNotHaveAwaitingDocuments() {
+        CaseData caseData = new CaseData();
+        assertFalse(hasAwaitingDocuments(caseData));
     }
 }
