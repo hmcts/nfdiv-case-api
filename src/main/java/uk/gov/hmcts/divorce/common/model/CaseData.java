@@ -64,7 +64,7 @@ public class CaseData {
     private DivorceOrDissolution divorceOrDissolution;
 
     @CCD(
-        label = "Has petitioner's marriage broken down irretrievably?",
+        label = "Has the petitioner's marriage broken down irretrievably?",
         access = {DefaultAccess.class}
     )
     private YesOrNo screenHasMarriageBroken;
