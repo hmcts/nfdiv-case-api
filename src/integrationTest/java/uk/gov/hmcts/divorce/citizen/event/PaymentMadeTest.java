@@ -10,6 +10,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
@@ -81,6 +82,7 @@ public class PaymentMadeTest {
         Map<String, Object> data = caseDataMap();
         data.put("dateSubmitted", LocalDateTime.now());
         data.put("divorceWho", WhoDivorcing.HUSBAND);
+        data.put("petitionerWantsToHavePapersServedAnotherWay", YesOrNo.YES);
 
         Payment payment = Payment.builder()
             .paymentAmount(55000)
@@ -131,7 +133,6 @@ public class PaymentMadeTest {
     public void givenSendEmailThrowsExceptionWhenCallbackIsInvokedThenReturnBadRequest() throws Exception {
         Map<String, Object> data = caseDataMap();
         data.put("dateSubmitted", LocalDateTime.now());
-        data.put("divorceWho", WhoDivorcing.HUSBAND);
 
         Payment payment = Payment.builder()
             .paymentAmount(55000)
