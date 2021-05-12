@@ -149,8 +149,7 @@ def sonarExclusions = [
   '**/uk/gov/hmcts/divorce/common/model/**',
   '**/uk/gov/hmcts/divorce/common/config/**',
   '**/uk/gov/hmcts/divorce/document/model/**',
-  '**/uk/gov/hmcts/divorce/payment/model/**',
-  '**/uk/gov/hmcts/divorce/solicitor/client/organisation/OrganisationContactInformation.java' // Temporarily added till we use it
+  '**/uk/gov/hmcts/divorce/payment/model/**'
 ]
 
 sonarqube {
