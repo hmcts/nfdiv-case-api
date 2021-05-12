@@ -10,6 +10,7 @@ public final class TestConstants {
     public static final String ABOUT_TO_START_URL = "/callbacks/about-to-start";
     public static final String ABOUT_TO_SUBMIT_URL = "/callbacks/about-to-submit";
     public static final String SUBMITTED_URL = "/callbacks/submitted";
+    public static final String MID_EVENT_URL = "/callbacks/mid-event?page=SolAboutTheSolicitor";
 
     public static final String AUTH_HEADER_VALUE = "auth-header-value";
     public static final String INVALID_AUTH_TOKEN = "invalid_token";
@@ -37,8 +38,9 @@ public final class TestConstants {
     public static final String WELSH_TEMPLATE_ID = "FL-DIV-GNO-WEL-00256.docx";
     public static final String BEARER = "Bearer ";
     public static final String LANGUAGE_PREFERENCE_WELSH = "languagePreferenceWelsh";
-    public static final String TES_ORG_ID = "ABC123";
+    public static final String TEST_ORG_ID = "ABC123";
     public static final String TEST_ORG_NAME = "TEST ORG";
+    public static final String PETITIONER_ORGANISATION_POLICY = "petitionerOrganisationPolicy";
 
     private TestConstants() {
     }

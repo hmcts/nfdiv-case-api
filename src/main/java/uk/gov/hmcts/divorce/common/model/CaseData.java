@@ -763,6 +763,15 @@ public class CaseData {
     }
 
     @JsonIgnore
+    public boolean hasPetitionerOrgId() {
+        if (null != applicant1OrganisationPolicy) {
+            String petitionerOrgId = applicant1OrganisationPolicy.getOrganisation().getOrganisationId();
+            return !Strings.isNullOrEmpty(petitionerOrgId);
+        }
+        return false;
+    }
+
+    @JsonIgnore
     public Integer getPaymentTotal() {
         return payments == null
             ? 0

@@ -61,3 +61,7 @@ docmosis:
 
 document_management:
   url: ${DOCUMENT_MANAGEMENT_URL:http://dm-store-aat.service.core-compute-aat.internal}
+
+prd:
+  api:
+    url: ${PRD_API_BASEURL:http://rd-professional-api-aat.service.core-compute-aat.internal}

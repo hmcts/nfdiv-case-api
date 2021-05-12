@@ -10,6 +10,7 @@ public final class TestResourceUtil {
     public static final String ABOUT_TO_START_CALLBACK_URL = "/callbacks/about-to-start";
     public static final String ABOUT_TO_SUBMIT_CALLBACK_URL = "/callbacks/about-to-submit";
     public static final String SUBMITTED_CALLBACK_URL = "/callbacks/submitted";
+    public static final String MID_EVENT_CALLBACK_ABOUT_THE_SOL_URL = "/callbacks/mid-event?page=SolAboutTheSolicitor";
 
     private TestResourceUtil() {
 

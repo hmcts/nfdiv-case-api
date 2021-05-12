@@ -7,12 +7,15 @@ import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.ccd.sdk.type.Organisation;
+import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.common.model.Gender;
 import uk.gov.hmcts.divorce.common.model.JurisdictionConnections;
+import uk.gov.hmcts.divorce.common.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
@@ -42,6 +45,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 
 public class TestDataHelper {
@@ -214,6 +218,16 @@ public class TestDataHelper {
             .<DivorceDocument>builder()
             .id(DIVORCE_APPLICATION.getLabel())
             .value(divorceDocument)
+            .build();
+    }
+
+    public static OrganisationPolicy<UserRole> organisationPolicy() {
+        return OrganisationPolicy.<UserRole>builder()
+            .organisation(Organisation
+                .builder()
+                .organisationName("Test Organisation")
+                .organisationId(TEST_ORG_ID)
+                .build())
             .build();
     }
 }
