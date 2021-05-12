@@ -26,7 +26,7 @@ public class SolHowDoYouWantToApplyForDivorce implements CcdPageConfiguration {
             .label("solHowDoYouWantToApplyForDivorcePara-4", "*How applicant 1 divides their money"
                 + " and property is dealt with separately. It should  not affect the decision on whether to do a sole"
                 + " or a joint application.*")
-            .mandatory(CaseData::getSoleOrJoinApplicant)
+            .mandatory(CaseData::getApplicationType)
             .mandatory(CaseData::getDivorceOrDissolution);
     }
 }

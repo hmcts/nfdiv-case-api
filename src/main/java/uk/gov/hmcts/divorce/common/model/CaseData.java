@@ -50,10 +50,12 @@ public class CaseData {
     private static final int SUBMISSION_RESPONSE_DAYS = 14;
 
     @CCD(
-        label = "Does Applicant 1 want to apply as a sole applicant?",
-        access = {DefaultAccess.class}
+        label = "How does applicant 1 want to apply for the divorce?",
+        access = {DefaultAccess.class},
+        typeOverride = FixedList,
+        typeParameterOverride = "ApplicationType"
     )
-    private YesOrNo soleOrJoinApplicant;
+    private ApplicationType applicationType;
 
     @CCD(
         label = "Divorce or Dissolution?",
@@ -279,12 +281,6 @@ public class CaseData {
         access = {DefaultAccess.class}
     )
     private AddressGlobalUK applicant1HomeAddress;
-
-    @CCD(
-        label = "Is Applicant 1s home address an international address?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo applicant1HomeAddressIsInternational;
 
     @CCD(
         label = "Applicant 1's phone number",
@@ -568,12 +564,6 @@ public class CaseData {
         access = {DefaultAccess.class}
     )
     private AddressGlobalUK applicant2HomeAddress;
-
-    @CCD(
-        label = "Is applicant 2s home address an international address?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo applicant2HomeAddressIsInternational;
 
     @CCD(
         label = "Are there any existing or previous court proceedings relating to Applicant 1's marriage, "
