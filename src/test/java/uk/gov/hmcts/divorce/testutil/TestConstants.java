@@ -40,7 +40,7 @@ public final class TestConstants {
     public static final String LANGUAGE_PREFERENCE_WELSH = "languagePreferenceWelsh";
     public static final String TEST_ORG_ID = "ABC123";
     public static final String TEST_ORG_NAME = "TEST ORG";
-    public static final String PETITIONER_ORGANISATION_POLICY = "petitionerOrganisationPolicy";
+    public static final String APPLICANT_1_ORGANISATION_POLICY = "applicant1OrganisationPolicy";
 
     private TestConstants() {
     }

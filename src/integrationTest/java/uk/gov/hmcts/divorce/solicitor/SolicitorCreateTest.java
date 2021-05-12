@@ -63,11 +63,11 @@ import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_OR_DIS
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.FINANCIAL_ORDER;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreate.SOLICITOR_CREATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_1_ORGANISATION_POLICY;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.LANGUAGE_PREFERENCE_WELSH;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.MID_EVENT_URL;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.PETITIONER_ORGANISATION_POLICY;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
@@ -157,7 +157,7 @@ class SolicitorCreateTest {
     }
 
     @Test
-    void shouldValidatePetitionerSolicitorOrgAndReturnNoErrorsWhenSolicitorBelongsToSelectedOrg() throws Exception {
+    void shouldValidateApplicant1SolicitorOrgAndReturnNoErrorsWhenSolicitorBelongsToSelectedOrg() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubGetOrganisationEndpoint(TEST_ORG_ID);
@@ -166,7 +166,7 @@ class SolicitorCreateTest {
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithPetitionerOrg(), SOLICITOR_CREATE)))
+            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant1Org(), SOLICITOR_CREATE)))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
@@ -179,7 +179,7 @@ class SolicitorCreateTest {
     }
 
     @Test
-    public void shouldValidatePetitionerSolicitorOrgAndReturnErrorWhenSolicitorDoesNotBelongsToSelectedOrg() throws Exception {
+    public void shouldValidateApplicant1SolicitorOrgAndReturnErrorWhenSolicitorDoesNotBelongsToSelectedOrg() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubGetOrganisationEndpoint("TESTORG123");
@@ -188,7 +188,7 @@ class SolicitorCreateTest {
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithPetitionerOrg(), SOLICITOR_CREATE)))
+            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant1Org(), SOLICITOR_CREATE)))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
@@ -210,7 +210,7 @@ class SolicitorCreateTest {
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithPetitionerOrg(), SOLICITOR_CREATE)))
+            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant1Org(), SOLICITOR_CREATE)))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isForbidden()
@@ -232,9 +232,9 @@ class SolicitorCreateTest {
         return caseData;
     }
 
-    private Map<String, Object> caseDataWithPetitionerOrg() {
+    private Map<String, Object> caseDataWithApplicant1Org() {
         Map<String, Object> caseData = caseDataMap();
-        caseData.put(PETITIONER_ORGANISATION_POLICY, organisationPolicy());
+        caseData.put(APPLICANT_1_ORGANISATION_POLICY, organisationPolicy());
 
         return caseData;
     }

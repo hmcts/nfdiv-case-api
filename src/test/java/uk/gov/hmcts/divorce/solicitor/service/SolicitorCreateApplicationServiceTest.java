@@ -109,7 +109,7 @@ class SolicitorCreateApplicationServiceTest {
     }
 
     @Test
-    public void shouldValidatePetitionerSolicitorOrgAndReturnNoErrorsWhenSolicitorBelongsToSelectedOrg() {
+    public void shouldValidateApplicant1SolicitorOrgAndReturnNoErrorsWhenSolicitorBelongsToSelectedOrg() {
         CaseData caseData = caseData();
         caseData.setApplicant1OrganisationPolicy(organisationPolicy());
 
@@ -141,7 +141,7 @@ class SolicitorCreateApplicationServiceTest {
     }
 
     @Test
-    public void shouldValidatePetitionerSolicitorOrgAndReturnErrorWhenSolicitorDoesNotBelongsToSelectedOrg() {
+    public void shouldValidateApplicant1SolicitorOrgAndReturnErrorWhenSolicitorDoesNotBelongsToSelectedOrg() {
         CaseData caseData = caseData();
         caseData.setApplicant1OrganisationPolicy(organisationPolicy()); // default org identifier = ABC123
 
@@ -173,7 +173,7 @@ class SolicitorCreateApplicationServiceTest {
     }
 
     @Test
-    public void shouldValidatePetitionerSolicitorOrgAndReturnErrorWhenSolicitorOrgIsNotPopulated() {
+    public void shouldValidateApplicant1SolicitorOrgAndReturnErrorWhenSolicitorOrgIsNotPopulated() {
         CaseData caseData = caseData();
 
         AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =

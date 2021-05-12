@@ -74,8 +74,8 @@ public class SolicitorCreateApplicationService {
         final Long caseId,
         final String userAuth
     ) {
-        if (!caseData.hasPetitionerOrgId()) {
-            log.error("CaseId: {}, Petitioner org policy is not populated", caseId);
+        if (!caseData.hasApplicant1OrgId()) {
+            log.error("CaseId: {}, Applicant 1 org policy is not populated", caseId);
             return AboutToStartOrSubmitResponse
                 .<CaseData, State>builder()
                 .data(caseData)

@@ -1,11 +1,11 @@
 {
   "data": {
     "divorceOrDissolution": "divorce",
-    "petitionerFirstName": "test_first_name",
-    "petitionerLastName": "test_last_name",
-    "petitionerEmail": "test@test.com",
+    "applicant1FirstName": "test_first_name",
+    "applicant1LastName": "test_last_name",
+    "applicant1Email": "test@test.com",
     "languagePreferenceWelsh": "NO",
-    "petitionerOrganisationPolicy": {
+    "applicant1OrganisationPolicy": {
       "Organisation": {
         "OrganisationID": "ABC123",
         "OrganisationName": "Test Organisation"

@@ -11,7 +11,7 @@ public final class CaseFieldsConstants {
     public static final String DIVORCE_COSTS_CLAIM = "divorceCostsClaim";
     public static final String DIVORCE_OR_DISSOLUTION = "divorceOrDissolution";
     public static final String FINANCIAL_ORDER = "financialOrder";
-    public static final String PETITIONER_ORGANISATION_POLICY = "petitionerOrganisationPolicy";
+    public static final String APPLICANT_1_ORGANISATION_POLICY = "applicant1OrganisationPolicy";
 
     // required for Checkstyle
     private CaseFieldsConstants() {

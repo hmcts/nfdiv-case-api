@@ -763,10 +763,10 @@ public class CaseData {
     }
 
     @JsonIgnore
-    public boolean hasPetitionerOrgId() {
+    public boolean hasApplicant1OrgId() {
         if (null != applicant1OrganisationPolicy) {
-            String petitionerOrgId = applicant1OrganisationPolicy.getOrganisation().getOrganisationId();
-            return !Strings.isNullOrEmpty(petitionerOrgId);
+            String applicant1OrgId = applicant1OrganisationPolicy.getOrganisation().getOrganisationId();
+            return !Strings.isNullOrEmpty(applicant1OrgId);
         }
         return false;
     }

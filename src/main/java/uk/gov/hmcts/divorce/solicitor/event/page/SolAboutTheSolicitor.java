@@ -53,7 +53,7 @@ public class SolAboutTheSolicitor implements CcdPageConfiguration {
             .mandatory(Organisation::getOrganisationId)
             .done()
             .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole,
-                "petitionerNameChanged=\"NeverShow\"",
+                "applicant1NameChanged=\"NeverShow\"",
                 APPLICANT_1_SOLICITOR)
             .optional(OrganisationPolicy::getOrgPolicyReference, "applicant1NameChanged=\"NeverShow\"");
 
