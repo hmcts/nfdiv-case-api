@@ -45,7 +45,7 @@ public class PaymentMadeTest extends FunctionalTestSuite {
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
-        assertThatJson(response.asString()).isEqualTo(json(expectedCcdCallbackResponse(AWAITING_DOCUMENTS_RESPONSE)));
+        assertThatJson(json(response.asString())).isEqualTo(json(expectedCcdCallbackResponse(AWAITING_DOCUMENTS_RESPONSE)));
     }
 
 }
