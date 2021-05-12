@@ -18,7 +18,7 @@
     "statementOfTruth": "YES",
     "jurisdictionPetitionerResidence": "YES",
     "jurisdictionConnections": ["A"],
-    "cannotUploadSupportingDocument": ["nameChangeEvidence", "marriageCertificate"],
+    "cannotUploadSupportingDocument": ["marriageCertificate", "nameChangeEvidence"],
     "marriedInUk": "YES",
     "divorceWho": "husband",
     "payments": [{
