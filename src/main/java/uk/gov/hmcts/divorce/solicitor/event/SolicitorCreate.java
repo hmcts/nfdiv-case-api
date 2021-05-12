@@ -48,31 +48,35 @@ public class SolicitorCreate implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SOLICITOR_CREATE = "solicitor-create";
 
-    private final List<CcdPageConfiguration> pages = asList(
-        new SolHowDoYouWantToApplyForDivorce(),
-        new SolAboutTheSolicitor(),
-        new SolAboutThePetitioner(),
-        new SolAboutTheRespondent(),
-        new RespondentServiceDetails(),
-        new MarriageCertificateDetails(),
-        new OtherLegalProceedings(),
-        new FinancialOrders(),
-        new ClaimForCosts(),
-        new UploadMarriageCertificate(),
-        new LanguagePreference(),
-        new JurisdictionApplyForDivorce(),
-        new MarriageIrretrievablyBroken()
-    );
+    @Autowired
+    private SolAboutTheSolicitor solAboutTheSolicitor;
 
     @Autowired
     private SolicitorCreatePetitionService solicitorCreatePetitionService;
 
     @Autowired
-    HttpServletRequest request;
+    private HttpServletRequest request;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final PageBuilder pageBuilder = addEventConfig(configBuilder);
+
+        final List<CcdPageConfiguration> pages = asList(
+            new SolHowDoYouWantToApplyForDivorce(),
+            solAboutTheSolicitor,
+            new SolAboutThePetitioner(),
+            new SolAboutTheRespondent(),
+            new RespondentServiceDetails(),
+            new MarriageCertificateDetails(),
+            new OtherLegalProceedings(),
+            new FinancialOrders(),
+            new ClaimForCosts(),
+            new UploadMarriageCertificate(),
+            new LanguagePreference(),
+            new JurisdictionApplyForDivorce(),
+            new MarriageIrretrievablyBroken()
+        );
+
         pages.forEach(page -> page.addTo(pageBuilder));
     }
 
