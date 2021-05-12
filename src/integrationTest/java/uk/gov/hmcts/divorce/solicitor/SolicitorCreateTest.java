@@ -31,6 +31,7 @@ import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.document.DocAssemblyService;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorCreateApplicationService;
+import uk.gov.hmcts.divorce.document.DocumentIdProvider;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.io.File;
@@ -114,6 +115,9 @@ class SolicitorCreateTest {
     @MockBean
     private WebMvcConfig webMvcConfig;
 
+    @MockBean
+    private DocumentIdProvider documentIdProvider;
+
     private static final WireMockServer DOC_ASSEMBLY_SERVER = new WireMockServer(wireMockConfig().dynamicPort());
 
     private static final WireMockServer PRD_ORGANISATION_SERVER = new WireMockServer(wireMockConfig().dynamicPort());
@@ -137,6 +141,7 @@ class SolicitorCreateTest {
     void givenValidCaseDataWhenAboutToSubmitCallbackIsInvokedCaseDataIsSetCorrectly() throws Exception {
 
         when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTH_TOKEN);
+        when(documentIdProvider.documentId()).thenReturn("Divorce application");
 
         stubForDocAssembly();
 

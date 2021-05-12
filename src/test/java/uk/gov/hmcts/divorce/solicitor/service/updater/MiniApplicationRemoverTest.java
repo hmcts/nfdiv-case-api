@@ -8,7 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
-import uk.gov.hmcts.divorce.solicitor.service.DraftPetitionRemovalService;
+import uk.gov.hmcts.divorce.solicitor.service.DraftApplicationRemovalService;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -27,7 +27,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
 class MiniApplicationRemoverTest {
 
     @Mock
-    private DraftPetitionRemovalService draftPetitionRemovalService;
+    private DraftApplicationRemovalService draftApplicationRemovalService;
 
     @Mock
     private CaseDataUpdaterChain caseDataUpdaterChain;
@@ -50,18 +50,18 @@ class MiniApplicationRemoverTest {
             .build();
 
         when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
-        when(draftPetitionRemovalService.removeDraftPetitionDocument(generatedDocuments, TEST_CASE_ID, TEST_AUTHORIZATION_TOKEN))
+        when(draftApplicationRemovalService.removeDraftApplicationDocument(generatedDocuments, TEST_CASE_ID, TEST_AUTHORIZATION_TOKEN))
             .thenReturn(emptyList());
 
         final var result = miniApplicationRemover.updateCaseData(caseDataContext, caseDataUpdaterChain);
 
         assertThat(result.getCaseData().getDocumentsGenerated(), empty());
-        verify(draftPetitionRemovalService)
-            .removeDraftPetitionDocument(
+        verify(draftApplicationRemovalService)
+            .removeDraftApplicationDocument(
                 generatedDocuments,
                 TEST_CASE_ID,
                 TEST_AUTHORIZATION_TOKEN);
 
-        verifyNoMoreInteractions(draftPetitionRemovalService, caseDataUpdaterChain);
+        verifyNoMoreInteractions(draftApplicationRemovalService, caseDataUpdaterChain);
     }
 }

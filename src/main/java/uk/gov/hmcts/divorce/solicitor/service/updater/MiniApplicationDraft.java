@@ -10,9 +10,9 @@ import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdater;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
 import uk.gov.hmcts.divorce.document.DocAssemblyService;
+import uk.gov.hmcts.divorce.document.DocumentIdProvider;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
-import static java.util.UUID.randomUUID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 
@@ -25,6 +25,9 @@ public class MiniApplicationDraft implements CaseDataUpdater {
 
     @Autowired
     private DocmosisTemplatesConfig docmosisTemplatesConfig;
+
+    @Autowired
+    private DocumentIdProvider documentIdProvider;
 
     @Override
     public CaseDataContext updateCaseData(CaseDataContext caseDataContext, CaseDataUpdaterChain caseDataUpdaterChain) {
@@ -61,7 +64,7 @@ public class MiniApplicationDraft implements CaseDataUpdater {
 
         updatedCaseData.addToDocumentsGenerated(
             ListValue.<DivorceDocument>builder()
-                .id(randomUUID().toString())
+                .id(documentIdProvider.documentId())
                 .value(divorceDocument)
                 .build());
 

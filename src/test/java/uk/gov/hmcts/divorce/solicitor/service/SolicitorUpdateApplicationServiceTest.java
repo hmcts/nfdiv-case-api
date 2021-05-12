@@ -10,8 +10,8 @@ import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdater;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChainFactory;
+import uk.gov.hmcts.divorce.solicitor.service.updater.MiniApplicationDraft;
 import uk.gov.hmcts.divorce.solicitor.service.updater.MiniApplicationRemover;
-import uk.gov.hmcts.divorce.solicitor.service.updater.MiniPetitionDraft;
 
 import java.util.List;
 
@@ -31,7 +31,7 @@ class SolicitorUpdateApplicationServiceTest {
     private MiniApplicationRemover miniApplicationRemover;
 
     @Mock
-    private MiniPetitionDraft miniPetitionDraft;
+    private MiniApplicationDraft miniApplicationDraft;
 
     @Mock
     private CaseDataUpdaterChainFactory caseDataUpdaterChainFactory;
@@ -47,7 +47,7 @@ class SolicitorUpdateApplicationServiceTest {
 
         final List<CaseDataUpdater> caseDataUpdaters = asList(
             miniApplicationRemover,
-            miniPetitionDraft
+            miniApplicationDraft
         );
 
         final CaseDataContext caseDataContext = CaseDataContext.builder()

@@ -6,14 +6,14 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdater;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
-import uk.gov.hmcts.divorce.solicitor.service.DraftPetitionRemovalService;
+import uk.gov.hmcts.divorce.solicitor.service.DraftApplicationRemovalService;
 
 @Component
 @Slf4j
 public class MiniApplicationRemover implements CaseDataUpdater {
 
     @Autowired
-    private DraftPetitionRemovalService draftPetitionRemovalService;
+    private DraftApplicationRemovalService draftApplicationRemovalService;
 
     @Override
     public CaseDataContext updateCaseData(final CaseDataContext caseDataContext,
@@ -25,7 +25,7 @@ public class MiniApplicationRemover implements CaseDataUpdater {
         log.info("Removing petition documents from case data and document management for {}", caseId);
 
         final var documentsExcludingPetition =
-            draftPetitionRemovalService.removeDraftPetitionDocument(
+            draftApplicationRemovalService.removeDraftApplicationDocument(
                 caseDataContext.getCaseData().getDocumentsGenerated(),
                 caseId,
                 caseDataContext.getUserAuthToken()
