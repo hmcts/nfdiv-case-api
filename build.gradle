@@ -395,11 +395,7 @@ def reloadCcd = tasks.register('reloadCcd') {
       commandLine './bin/process-and-import-ccd-definition.sh'
     }
     exec {
-      file('../.env').readLines().each() {
-        def (key, value) = it.tokenize('=')
-        environment key, value
-      }
-      commandLine 'docker-compose', '-f', '../docker-compose.yml', 'restart', 'nfdiv-case-api'
+      commandLine 'docker-compose', '-f', '../docker-compose.yml', 'up', 'nfdiv-case-api'
     }
   }
 }

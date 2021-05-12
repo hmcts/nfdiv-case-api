@@ -27,8 +27,8 @@ import uk.gov.hmcts.divorce.solicitor.event.page.SolHowDoYouWantToApplyForDivorc
 import uk.gov.hmcts.divorce.solicitor.event.page.UploadMarriageCertificate;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorCreatePetitionService;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Arrays.asList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
