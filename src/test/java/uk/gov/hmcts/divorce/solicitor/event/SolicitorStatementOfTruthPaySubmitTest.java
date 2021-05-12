@@ -43,8 +43,8 @@ import static uk.gov.hmcts.divorce.common.model.State.SolicitorAwaitingPaymentCo
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorStatementOfTruthPaySubmit.SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.PET_SOL_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TES_ORG_ID;
 
 @ExtendWith(MockitoExtension.class)
 public class SolicitorStatementOfTruthPaySubmitTest {
@@ -252,7 +252,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         final OrganisationPolicy<UserRole> organisationPolicy = OrganisationPolicy.<UserRole>builder()
             .organisation(Organisation
                 .builder()
-                .organisationId(TES_ORG_ID)
+                .organisationId(TEST_ORG_ID)
                 .organisationName(TEST_ORG_NAME)
                 .build()
             )
