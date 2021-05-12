@@ -27,6 +27,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+import static java.util.Collections.singletonList;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
@@ -780,5 +782,17 @@ public class CaseData {
                 .filter(p -> SUCCESS.equals(p.getValue().getPaymentStatus()))
                 .map(p -> p.getValue().getPaymentAmount())
                 .reduce(0, Integer::sum);
+    }
+
+    @JsonIgnore
+    public void addToDocumentsGenerated(final ListValue<DivorceDocument> listValue) {
+
+        final List<ListValue<DivorceDocument>> documents = getDocumentsGenerated();
+
+        if (isEmpty(documents)) {
+            setDocumentsGenerated(singletonList(listValue));
+        } else {
+            documents.add(listValue);
+        }
     }
 }

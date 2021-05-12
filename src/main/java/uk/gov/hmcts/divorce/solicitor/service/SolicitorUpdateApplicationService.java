@@ -7,25 +7,36 @@ import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdater;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChainFactory;
+import uk.gov.hmcts.divorce.solicitor.service.updater.MiniApplicationRemover;
+import uk.gov.hmcts.divorce.solicitor.service.updater.MiniPetitionDraft;
 
 import java.time.LocalDate;
 import java.util.List;
 
-import static java.util.Collections.emptyList;
+import static java.util.Arrays.asList;
 
 @Service
 @Slf4j
-public class SolicitorUpdatePetitionService {
+public class SolicitorUpdateApplicationService {
 
     @Autowired
     private CaseDataUpdaterChainFactory caseDataUpdaterChainFactory;
+
+    @Autowired
+    private MiniApplicationRemover miniApplicationRemover;
+
+    @Autowired
+    private MiniPetitionDraft miniPetitionDraft;
 
     public CaseData aboutToSubmit(final CaseData caseData,
                                   final Long caseId,
                                   final LocalDate createdDate,
                                   final String idamAuthToken) {
 
-        final List<CaseDataUpdater> caseDataUpdaters = emptyList();
+        final List<CaseDataUpdater> caseDataUpdaters = asList(
+            miniApplicationRemover,
+            miniPetitionDraft
+        );
 
         final CaseDataContext caseDataContext = CaseDataContext.builder()
             .caseData(caseData)

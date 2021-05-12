@@ -25,7 +25,7 @@ import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant2;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutTheSolicitor;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolHowDoYouWantToApplyForDivorce;
 import uk.gov.hmcts.divorce.solicitor.event.page.UploadMarriageCertificate;
-import uk.gov.hmcts.divorce.solicitor.service.SolicitorUpdatePetitionService;
+import uk.gov.hmcts.divorce.solicitor.service.SolicitorUpdateApplicationService;
 
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -52,7 +52,7 @@ public class SolicitorUpdate implements CCDConfig<CaseData, State, UserRole> {
     private SolAboutTheSolicitor solAboutTheSolicitor;
 
     @Autowired
-    private SolicitorUpdatePetitionService solicitorUpdatePetitionService;
+    private SolicitorUpdateApplicationService solicitorUpdateApplicationService;
 
     @Autowired
     HttpServletRequest request;
@@ -81,9 +81,10 @@ public class SolicitorUpdate implements CCDConfig<CaseData, State, UserRole> {
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
+
         log.info("Solicitor update petition about to submit callback invoked");
 
-        solicitorUpdatePetitionService.aboutToSubmit(
+        final CaseData data = solicitorUpdateApplicationService.aboutToSubmit(
             details.getData(),
             details.getId(),
             details.getCreatedDate().toLocalDate(),
@@ -91,7 +92,7 @@ public class SolicitorUpdate implements CCDConfig<CaseData, State, UserRole> {
         );
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
+            .data(data)
             .build();
     }
 
@@ -104,6 +105,7 @@ public class SolicitorUpdate implements CCDConfig<CaseData, State, UserRole> {
             .description("Amend divorce application")
             .displayOrder(2)
             .showSummary()
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_SOLICITOR)
             .grant(READ_UPDATE, CASEWORKER_DIVORCE_SUPERUSER)

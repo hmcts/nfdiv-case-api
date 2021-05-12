@@ -10,10 +10,12 @@ import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdater;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChainFactory;
+import uk.gov.hmcts.divorce.solicitor.service.updater.MiniApplicationRemover;
+import uk.gov.hmcts.divorce.solicitor.service.updater.MiniPetitionDraft;
 
 import java.util.List;
 
-import static java.util.Collections.emptyList;
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -23,13 +25,19 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 
 @ExtendWith(MockitoExtension.class)
-class SolicitorUpdatePetitionServiceTest {
+class SolicitorUpdateApplicationServiceTest {
+
+    @Mock
+    private MiniApplicationRemover miniApplicationRemover;
+
+    @Mock
+    private MiniPetitionDraft miniPetitionDraft;
 
     @Mock
     private CaseDataUpdaterChainFactory caseDataUpdaterChainFactory;
 
     @InjectMocks
-    private SolicitorUpdatePetitionService solicitorUpdatePetitionService;
+    private SolicitorUpdateApplicationService solicitorUpdateApplicationService;
 
     @Test
     void shouldCompleteStepsToUpdateApplication() {
@@ -37,7 +45,10 @@ class SolicitorUpdatePetitionServiceTest {
         final CaseData caseData = mock(CaseData.class);
         final CaseDataUpdaterChain caseDataUpdaterChain = mock(CaseDataUpdaterChain.class);
 
-        final List<CaseDataUpdater> caseDataUpdaters = emptyList();
+        final List<CaseDataUpdater> caseDataUpdaters = asList(
+            miniApplicationRemover,
+            miniPetitionDraft
+        );
 
         final CaseDataContext caseDataContext = CaseDataContext.builder()
             .caseData(caseData)
@@ -49,7 +60,7 @@ class SolicitorUpdatePetitionServiceTest {
         when(caseDataUpdaterChainFactory.createWith(caseDataUpdaters)).thenReturn(caseDataUpdaterChain);
         when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
 
-        final CaseData actualCaseData = solicitorUpdatePetitionService.aboutToSubmit(
+        final CaseData actualCaseData = solicitorUpdateApplicationService.aboutToSubmit(
             caseData,
             TEST_CASE_ID,
             LOCAL_DATE,

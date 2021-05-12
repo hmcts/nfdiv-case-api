@@ -11,7 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
-import uk.gov.hmcts.divorce.solicitor.service.SolicitorUpdatePetitionService;
+import uk.gov.hmcts.divorce.solicitor.service.SolicitorUpdateApplicationService;
 
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorUpdate.SOLICITOR_UPDATE;
@@ -29,7 +30,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 class SolicitorUpdateTest {
 
     @Mock
-    private SolicitorUpdatePetitionService solicitorUpdatePetitionService;
+    private SolicitorUpdateApplicationService solicitorUpdateApplicationService;
 
     @Mock
     private HttpServletRequest httpServletRequest;
@@ -49,33 +50,35 @@ class SolicitorUpdateTest {
 
     @Test
     public void shouldReturnCaseData() throws Exception {
-        final CaseData caseData = caseData();
+
+        final var auth = "authorization";
+        final var caseData = caseData();
+        final var expectedResult = CaseData.builder().build();
+
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
         details.setId(1L);
         details.setCreatedDate(LOCAL_DATE_TIME);
 
-        final String auth = "authorization";
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(auth);
-        when(solicitorUpdatePetitionService
+        when(solicitorUpdateApplicationService
             .aboutToSubmit(
                 caseData,
                 details.getId(),
                 details.getCreatedDate().toLocalDate(),
                 auth))
-            .thenReturn(caseData);
+            .thenReturn(expectedResult);
 
-        details.setCreatedDate(LOCAL_DATE_TIME);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorUpdate.aboutToSubmit(details, details);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            solicitorUpdate.aboutToSubmit(details, details);
+        assertThat(response.getData(), is(expectedResult));
 
-        assertThat(response.getData(), is(caseData));
-
-        verify(solicitorUpdatePetitionService).aboutToSubmit(
+        verify(solicitorUpdateApplicationService).aboutToSubmit(
             caseData,
             details.getId(),
             details.getCreatedDate().toLocalDate(),
             auth);
+
+        verifyNoMoreInteractions(httpServletRequest, solicitorUpdateApplicationService);
     }
 }

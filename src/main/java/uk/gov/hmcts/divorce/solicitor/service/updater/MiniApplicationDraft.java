@@ -6,19 +6,13 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.config.DocmosisTemplatesConfig;
-import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.common.model.LanguagePreference;
 import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdater;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
 import uk.gov.hmcts.divorce.document.DocAssemblyService;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
-import uk.gov.hmcts.divorce.document.model.DocumentInfo;
 
-import static java.util.Collections.singletonList;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.common.model.LanguagePreference.WELSH;
+import static java.util.UUID.randomUUID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 
@@ -34,53 +28,42 @@ public class MiniApplicationDraft implements CaseDataUpdater {
 
     @Override
     public CaseDataContext updateCaseData(CaseDataContext caseDataContext, CaseDataUpdaterChain caseDataUpdaterChain) {
+
         log.info("Executing handler for generating mini draft for case id {} ", caseDataContext.getCaseId());
 
-        CaseData caseData = caseDataContext.copyOfCaseData();
+        final var updatedCaseData = caseDataContext.copyOfCaseData();
 
-        LanguagePreference languagePreference;
+        final var templateName = docmosisTemplatesConfig
+            .getTemplates()
+            .get(updatedCaseData.getLanguagePreference())
+            .get(DIVORCE_MINI_APPLICATION);
 
-        if (caseData.getLanguagePreferenceWelsh().equals(NO)) {
-            languagePreference = ENGLISH;
-
-        } else {
-            languagePreference = WELSH;
-        }
-
-        String templateName = docmosisTemplatesConfig.getTemplates().get(languagePreference).get(DIVORCE_MINI_APPLICATION);
-
-        DocumentInfo documentInfo = docAssemblyService.renderDocument(
-            caseData,
+        final var documentInfo = docAssemblyService.renderDocument(
+            updatedCaseData,
             caseDataContext.getCaseId(),
             caseDataContext.getCreatedDate(),
             caseDataContext.getUserAuthToken(),
             templateName
         );
 
-        Document ccdDocument = new Document(
+        final var ccdDocument = new Document(
             documentInfo.getUrl(),
             documentInfo.getFilename(),
             documentInfo.getBinaryUrl()
         );
 
-        DivorceDocument divorceDocument = DivorceDocument
+        final var divorceDocument = DivorceDocument
             .builder()
             .documentLink(ccdDocument)
             .documentFileName(documentInfo.getFilename())
             .documentType(DIVORCE_APPLICATION)
             .build();
 
-
-        ListValue<DivorceDocument> value = ListValue
-            .<DivorceDocument>builder()
-            .id(DIVORCE_APPLICATION.getLabel())
-            .value(divorceDocument)
-            .build();
-
-        CaseData updatedCaseData = caseData
-            .toBuilder()
-            .documentsGenerated(singletonList(value))
-            .build();
+        updatedCaseData.addToDocumentsGenerated(
+            ListValue.<DivorceDocument>builder()
+                .id(randomUUID().toString())
+                .value(divorceDocument)
+                .build());
 
         return caseDataUpdaterChain.processNext(caseDataContext.handlerContextWith(updatedCaseData));
     }
