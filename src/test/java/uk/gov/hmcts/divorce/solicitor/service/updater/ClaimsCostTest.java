@@ -17,8 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.common.model.ClaimsCostFrom.CORRESPONDENT;
-import static uk.gov.hmcts.divorce.common.model.ClaimsCostFrom.RESPONDENT;
+import static uk.gov.hmcts.divorce.common.model.ClaimsCostFrom.APPLICANT_2;
 
 @ExtendWith(MockitoExtension.class)
 class ClaimsCostTest {
@@ -33,7 +32,7 @@ class ClaimsCostTest {
     private ClaimsCost claimsCost;
 
     @Test
-    void shouldSetClaimsCostFromRespondentIfPetitionerClaimingCostsAndClaimsCostFromIsEmpty() {
+    void shouldSetClaimsCostFromApplicant2IfApplicant1ClaimingCostsAndClaimsCostFromIsEmpty() {
 
         final CaseData caseData = CaseData.builder()
             .divorceCostsClaim(YES)
@@ -44,26 +43,26 @@ class ClaimsCostTest {
         final CaseDataContext result = claimsCost.updateCaseData(caseDataContext, caseDataUpdaterChain);
 
         assertThat(result, is(caseDataContext));
-        assertThat(caseData.getDivorceClaimFrom(), is(Set.of(RESPONDENT)));
+        assertThat(caseData.getDivorceClaimFrom(), is(Set.of(APPLICANT_2)));
     }
 
     @Test
-    void shouldNotSetClaimsCostFromRespondentIfPetitionerClaimingCostsAndClaimsCostFromIsNotEmpty() {
+    void shouldNotSetClaimsCostFromApplicant2IfApplicant1ClaimingCostsAndClaimsCostFromIsNotEmpty() {
 
         final CaseData caseData = CaseData.builder()
             .divorceCostsClaim(YES)
-            .divorceClaimFrom(Set.of(CORRESPONDENT))
+            .divorceClaimFrom(Set.of(APPLICANT_2))
             .build();
 
         setupMocks(caseData);
 
         claimsCost.updateCaseData(caseDataContext, caseDataUpdaterChain);
 
-        assertThat(caseData.getDivorceClaimFrom(), is(Set.of(CORRESPONDENT)));
+        assertThat(caseData.getDivorceClaimFrom(), is(Set.of(APPLICANT_2)));
     }
 
     @Test
-    void shouldNotSetClaimsCostFromRespondentIfPetitionerNotClaimingCosts() {
+    void shouldNotSetClaimsCostFromApplicant2IfApplicant1NotClaimingCosts() {
 
         final CaseData caseData = CaseData.builder()
             .divorceCostsClaim(NO)

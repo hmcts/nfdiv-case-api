@@ -41,14 +41,14 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.common.model.State.SolicitorAwaitingPaymentConfirmation;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_1_SOL_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.PET_SOL_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFeeResponse;
 
 @ExtendWith(MockitoExtension.class)
-public class SolicitorSubmitPetitionServiceTest {
+public class SolicitorSubmitApplicationServiceTest {
 
     @Mock
     private FeesAndPaymentsClient feesAndPaymentsClient;
@@ -60,16 +60,16 @@ public class SolicitorSubmitPetitionServiceTest {
     private SolicitorSubmittedNotification solicitorSubmittedNotification;
 
     @Mock
-    private DraftPetitionRemovalService draftPetitionRemovalService;
+    private DraftApplicationRemovalService draftApplicationRemovalService;
 
     @InjectMocks
-    private SolicitorSubmitPetitionService solicitorSubmitPetitionService;
+    private SolicitorSubmitApplicationService solicitorSubmitApplicationService;
 
     @Test
     public void shouldReturnOrderSummaryWhenFeeEventIsAvailable() {
         doReturn(getFeeResponse())
             .when(feesAndPaymentsClient)
-            .getPetitionIssueFee(
+            .getApplicationIssueFee(
                 anyString(),
                 anyString(),
                 anyString(),
@@ -78,7 +78,7 @@ public class SolicitorSubmitPetitionServiceTest {
                 isNull()
             );
 
-        OrderSummary orderSummary = solicitorSubmitPetitionService.getOrderSummary();
+        OrderSummary orderSummary = solicitorSubmitApplicationService.getOrderSummary();
         assertThat(orderSummary.getPaymentReference()).isNull();
         assertThat(orderSummary.getPaymentTotal()).isEqualTo(String.valueOf(1000));// in pence
         assertThat(orderSummary.getFees())
@@ -88,7 +88,7 @@ public class SolicitorSubmitPetitionServiceTest {
             );
 
         verify(feesAndPaymentsClient)
-            .getPetitionIssueFee(
+            .getApplicationIssueFee(
                 anyString(),
                 anyString(),
                 anyString(),
@@ -117,7 +117,7 @@ public class SolicitorSubmitPetitionServiceTest {
 
         doThrow(feignException)
             .when(feesAndPaymentsClient)
-            .getPetitionIssueFee(
+            .getApplicationIssueFee(
                 anyString(),
                 anyString(),
                 anyString(),
@@ -126,7 +126,7 @@ public class SolicitorSubmitPetitionServiceTest {
                 isNull()
             );
 
-        assertThatThrownBy(() -> solicitorSubmitPetitionService.getOrderSummary())
+        assertThatThrownBy(() -> solicitorSubmitApplicationService.getOrderSummary())
             .hasMessageContaining("404 Fee Not found")
             .isExactlyInstanceOf(FeignException.NotFound.class);
     }
@@ -138,7 +138,7 @@ public class SolicitorSubmitPetitionServiceTest {
         final long caseId = 1L;
 
         final AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
-            solicitorSubmitPetitionService.aboutToSubmit(caseData, caseId, PET_SOL_AUTH_TOKEN);
+            solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN);
 
         assertThat(aboutToStartOrSubmitResponse.getState()).isEqualTo(SolicitorAwaitingPaymentConfirmation);
         verify(applicantSubmittedNotification).send(caseData, caseId);
@@ -146,18 +146,18 @@ public class SolicitorSubmitPetitionServiceTest {
     }
 
     @Test
-    void shouldRemoveDraftPetitionAndNotifyApplicantAndSetStateForAboutToSubmit() {
+    void shouldRemoveDraftApplicationAndNotifyApplicantAndSetStateForAboutToSubmit() {
         List<ListValue<DivorceDocument>> generatedDocuments = singletonList(documentWithType(DIVORCE_APPLICATION));
         final CaseData caseData = CaseData.builder().build();
         caseData.setDocumentsGenerated(generatedDocuments);
 
         final long caseId = 1L;
 
-        when(draftPetitionRemovalService.removeDraftPetitionDocument(generatedDocuments, caseId, PET_SOL_AUTH_TOKEN))
+        when(draftApplicationRemovalService.removeDraftApplicationDocument(generatedDocuments, caseId, APP_1_SOL_AUTH_TOKEN))
             .thenReturn(emptyList());
 
         final AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
-            solicitorSubmitPetitionService.aboutToSubmit(caseData, caseId, PET_SOL_AUTH_TOKEN);
+            solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN);
 
         assertThat(aboutToStartOrSubmitResponse.getData().getDocumentsGenerated()).isEmpty();
         assertThat(aboutToStartOrSubmitResponse.getState()).isEqualTo(SolicitorAwaitingPaymentConfirmation);
@@ -185,14 +185,14 @@ public class SolicitorSubmitPetitionServiceTest {
         );
 
         doThrow(feignException)
-            .when(draftPetitionRemovalService)
-            .removeDraftPetitionDocument(
+            .when(draftApplicationRemovalService)
+            .removeDraftApplicationDocument(
                 isNull(),
                 anyLong(),
                 anyString()
             );
 
-        assertThatThrownBy(() -> solicitorSubmitPetitionService.aboutToSubmit(caseData, caseId, PET_SOL_AUTH_TOKEN))
+        assertThatThrownBy(() -> solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN))
             .hasMessageContaining("403 Service not whitelisted")
             .isExactlyInstanceOf(FeignException.Forbidden.class);
     }

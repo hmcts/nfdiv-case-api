@@ -24,19 +24,19 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.util.ResourceUtils.getFile;
-import static uk.gov.hmcts.divorce.citizen.event.PetitionerStatementOfTruth.PETITIONER_STATEMENT_OF_TRUTH;
+import static uk.gov.hmcts.divorce.citizen.event.Applicant1StatementOfTruth.APPLICANT_1_STATEMENT_OF_TRUTH;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataMap;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validPetitionerCaseDataMap;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseDataMap;
 
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-public class PetitionerStatementOfTruthTest {
+public class Applicant1StatementOfTruthTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -55,7 +55,7 @@ public class PetitionerStatementOfTruthTest {
         mockMvc.perform(post(ABOUT_TO_START_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest(validPetitionerCaseDataMap(), PETITIONER_STATEMENT_OF_TRUTH)))
+            .content(objectMapper.writeValueAsString(callbackRequest(validApplicant1CaseDataMap(), APPLICANT_1_STATEMENT_OF_TRUTH)))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().json(expectedCcdAboutToStartCallbackSuccessfulResponse()
@@ -67,7 +67,7 @@ public class PetitionerStatementOfTruthTest {
         mockMvc.perform(post(ABOUT_TO_START_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseDataMap(), PETITIONER_STATEMENT_OF_TRUTH)))
+            .content(objectMapper.writeValueAsString(callbackRequest(caseDataMap(), APPLICANT_1_STATEMENT_OF_TRUTH)))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().json(expectedCcdAboutToStartCallbackErrorResponse()));
@@ -84,14 +84,14 @@ public class PetitionerStatementOfTruthTest {
 
     private String expectedCcdAboutToStartCallbackErrorResponse() throws IOException {
         File invalidCaseDataJsonFile = getFile(
-            "classpath:wiremock/responses/petitioner-about-to-start-statement-of-truth-errors.json");
+            "classpath:wiremock/responses/applicant-1-about-to-start-statement-of-truth-errors.json");
 
         return new String(Files.readAllBytes(invalidCaseDataJsonFile.toPath()));
     }
 
     private String expectedCcdAboutToStartCallbackSuccessfulResponse() throws IOException {
         File validCaseDataJsonFile = getFile(
-            "classpath:wiremock/responses/petitioner-about-to-start-statement-of-truth.json");
+            "classpath:wiremock/responses/applicant-1-about-to-start-statement-of-truth.json");
 
         return new String(Files.readAllBytes(validCaseDataJsonFile.toPath()));
     }

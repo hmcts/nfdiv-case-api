@@ -16,9 +16,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.APPLICANT_1_ORGANISATION_POLICY;
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_COSTS_CLAIM;
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.FINANCIAL_ORDER;
-import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_ORGANISATION_POLICY;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreate.SOLICITOR_CREATE;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.ABOUT_TO_SUBMIT_CALLBACK_URL;
@@ -56,7 +56,7 @@ public class SolicitorCreateTest extends FunctionalTestSuite {
         caseData.put(DIVORCE_COSTS_CLAIM, YES);
         caseData.put(LANGUAGE_PREFERENCE_WELSH, NO);
         caseData.put(FINANCIAL_ORDER, NO);
-        caseData.put(PETITIONER_ORGANISATION_POLICY, organisationPolicy());
+        caseData.put(APPLICANT_1_ORGANISATION_POLICY, organisationPolicy());
 
         Response response = triggerCallback(caseData, SOLICITOR_CREATE, MID_EVENT_CALLBACK_ABOUT_THE_SOL_URL);
 

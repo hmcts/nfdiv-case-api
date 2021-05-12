@@ -13,10 +13,10 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
-        configBuilder.tab("petitionDetails", "Petition")
+        configBuilder.tab("applicationDetails", "Application")
             .field(CaseData::getDivorceOrDissolution)
-            .field(CaseData::getInferredPetitionerGender)
-            .field(CaseData::getInferredRespondentGender)
+            .field(CaseData::getInferredApplicant1Gender)
+            .field(CaseData::getInferredApplicant2Gender)
             .field(CaseData::getMarriageIsSameSexCouple)
             .field(CaseData::getMarriageDate)
             .field(CaseData::getMarriedInUk)

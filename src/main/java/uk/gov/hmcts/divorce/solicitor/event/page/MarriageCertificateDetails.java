@@ -16,8 +16,8 @@ public class MarriageCertificateDetails implements CcdPageConfiguration {
                 "marriageCertDetailsEditMessage",
                 "You can make changes at the end of your application.")
             .mandatory(CaseData::getMarriageDate)
-            .mandatory(CaseData::getMarriagePetitionerName)
-            .mandatory(CaseData::getMarriageRespondentName)
+            .mandatory(CaseData::getMarriageApplicant1Name)
+            .mandatory(CaseData::getMarriageApplicant2Name)
             .mandatory(CaseData::getMarriedInUk)
             .mandatory(
                 CaseData::getMarriagePlaceOfMarriage,

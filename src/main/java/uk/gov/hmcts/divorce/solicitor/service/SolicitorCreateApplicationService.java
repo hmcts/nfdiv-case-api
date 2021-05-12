@@ -11,7 +11,7 @@ import uk.gov.hmcts.divorce.common.updater.CaseDataUpdater;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChainFactory;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.service.updater.ClaimsCost;
-import uk.gov.hmcts.divorce.solicitor.service.updater.MiniPetitionDraft;
+import uk.gov.hmcts.divorce.solicitor.service.updater.MiniApplicationDraft;
 import uk.gov.hmcts.divorce.solicitor.service.updater.SolicitorCourtDetails;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
@@ -23,7 +23,7 @@ import static java.util.Collections.singletonList;
 
 @Service
 @Slf4j
-public class SolicitorCreatePetitionService {
+public class SolicitorCreateApplicationService {
 
     @Autowired
     private ClaimsCost claimsCost;
@@ -32,7 +32,7 @@ public class SolicitorCreatePetitionService {
     private SolicitorCourtDetails solicitorCourtDetails;
 
     @Autowired
-    private MiniPetitionDraft miniPetitionDraft;
+    private MiniApplicationDraft miniApplicationDraft;
 
     @Autowired
     private CaseDataUpdaterChainFactory caseDataUpdaterChainFactory;
@@ -53,7 +53,7 @@ public class SolicitorCreatePetitionService {
         final List<CaseDataUpdater> caseDataUpdaters = asList(
             claimsCost,
             solicitorCourtDetails,
-            miniPetitionDraft);
+            miniApplicationDraft);
 
         final CaseDataContext caseDataContext = CaseDataContext.builder()
             .caseData(caseData)
@@ -74,8 +74,8 @@ public class SolicitorCreatePetitionService {
         final Long caseId,
         final String userAuth
     ) {
-        if (!caseData.hasPetitionerOrgId()) {
-            log.error("CaseId: {}, Petitioner org policy is not populated", caseId);
+        if (!caseData.hasApplicant1OrgId()) {
+            log.error("CaseId: {}, Applicant 1 org policy is not populated", caseId);
             return AboutToStartOrSubmitResponse
                 .<CaseData, State>builder()
                 .data(caseData)
@@ -91,7 +91,7 @@ public class SolicitorCreatePetitionService {
 
         String solicitorSelectedOrgId =
             caseData
-                .getPetitionerOrganisationPolicy()
+                .getApplicant1OrganisationPolicy()
                 .getOrganisation()
                 .getOrganisationId();
 

@@ -39,10 +39,10 @@ class ApplicantSubmittedNotificationTest {
     @Test
     void shouldNotifyApplicantByApplicationSubmittedEmail() {
 
-        final String petitionerEmail = "test@somewher.com";
+        final String applicant1Email = "test@somewher.com";
         final Map<String, String> templateVars = new HashMap<>();
         final CaseData caseData = CaseData.builder()
-            .petitionerEmail(petitionerEmail)
+            .applicant1Email(applicant1Email)
             .languagePreferenceWelsh(NO)
             .build();
 
@@ -53,7 +53,7 @@ class ApplicantSubmittedNotificationTest {
         assertThat(templateVars.get(APPLICATION_REFERENCE), is("1234-5678-9012-3456"));
 
         verify(notificationService).sendEmail(
-            petitionerEmail,
+            applicant1Email,
             SOL_APPLICANT_APPLICATION_SUBMITTED,
             templateVars,
             ENGLISH);
@@ -62,10 +62,10 @@ class ApplicantSubmittedNotificationTest {
     @Test
     void shouldNotifyApplicantByAmendedApplicationSubmittedEmail() {
 
-        final String petitionerEmail = "test@somewher.com";
+        final String applicant1Email = "test@somewher.com";
         final Map<String, String> templateVars = new HashMap<>();
         final CaseData caseData = CaseData.builder()
-            .petitionerEmail(petitionerEmail)
+            .applicant1Email(applicant1Email)
             .languagePreferenceWelsh(NO)
             .previousCaseId(new CaseLink("Ref"))
             .build();
@@ -77,7 +77,7 @@ class ApplicantSubmittedNotificationTest {
         assertThat(templateVars.get(APPLICATION_REFERENCE), is("1234-5678-9012-3456"));
 
         verify(notificationService).sendEmail(
-            petitionerEmail,
+            applicant1Email,
             SOL_APPLICANT_AMENDED_APPLICATION_SUBMITTED,
             templateVars,
             ENGLISH);

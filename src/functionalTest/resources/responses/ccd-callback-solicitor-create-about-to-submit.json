@@ -1,14 +1,14 @@
 {
   "data": {
     "divorceOrDissolution": "divorce",
-    "petitionerFirstName": "John",
-    "petitionerLastName": "Smith",
-    "petitionerEmail": "simulate-delivered@notifications.service.gov.uk",
+    "applicant1FirstName": "John",
+    "applicant1LastName": "Smith",
+    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
     "languagePreferenceWelsh": "NO",
     "divorceCostsClaim": "YES",
     "financialOrder": "NO",
     "divorceClaimFrom": [
-      "respondent"
+      "applicant2"
     ],
     "divorceUnit": "serviceCentre",
     "selectedDivorceCentreSiteId": "AA07",
@@ -18,12 +18,12 @@
         "value": {
           "documentDateAdded": null,
           "documentComment": null,
-          "documentFileName": "draft-mini-petition-1234567890123456.pdf",
+          "documentFileName": "draft-mini-application-1234567890123456.pdf",
           "documentType": "divorceApplication",
           "documentEmailContent": null,
           "documentLink": {
             "document_url": "${json-unit.ignore}",
-            "document_filename": "draft-mini-petition-1234567890123456.pdf",
+            "document_filename": "draft-mini-application-1234567890123456.pdf",
             "document_binary_url": "${json-unit.ignore}"
           }
         }

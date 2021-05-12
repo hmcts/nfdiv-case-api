@@ -11,19 +11,19 @@ import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
-import uk.gov.hmcts.divorce.solicitor.service.SolicitorCreatePetitionService;
+import uk.gov.hmcts.divorce.solicitor.service.SolicitorCreateApplicationService;
 
 import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static uk.gov.hmcts.divorce.common.model.UserRole.PETITIONER_SOLICITOR;
+import static uk.gov.hmcts.divorce.common.model.UserRole.APPLICANT_1_SOLICITOR;
 
 @Component
 @Slf4j
 public class SolAboutTheSolicitor implements CcdPageConfiguration {
 
     @Autowired
-    private SolicitorCreatePetitionService solicitorCreatePetitionService;
+    private SolicitorCreateApplicationService solicitorCreateApplicationService;
 
     @Autowired
     private HttpServletRequest request;
@@ -40,22 +40,22 @@ public class SolAboutTheSolicitor implements CcdPageConfiguration {
             .label(
                 "LabelSolAboutTheSolPara-1",
                 "Please note that the information provided will be used as evidence by the court to decide if "
-                    + "the petitioner is entitled to legally end their marriage. **A copy of this form is sent to the "
-                    + "respondent**")
-            .mandatory(CaseData::getPetitionerSolicitorName)
+                    + "applicant 1 is entitled to legally end their marriage. **A copy of this form is sent to the "
+                    + "applicant 2**")
+            .mandatory(CaseData::getApplicant1SolicitorName)
             .mandatory(CaseData::getSolicitorReference)
-            .mandatory(CaseData::getPetitionerSolicitorPhone)
-            .mandatory(CaseData::getPetitionerSolicitorEmail)
+            .mandatory(CaseData::getApplicant1SolicitorPhone)
+            .mandatory(CaseData::getApplicant1SolicitorEmail)
             .mandatory(CaseData::getSolicitorAgreeToReceiveEmails)
-            .mandatory(CaseData::getDerivedPetitionerSolicitorAddress)
-            .complex(CaseData::getPetitionerOrganisationPolicy)
+            .mandatory(CaseData::getDerivedApplicant1SolicitorAddress)
+            .complex(CaseData::getApplicant1OrganisationPolicy)
             .complex(OrganisationPolicy::getOrganisation)
             .mandatory(Organisation::getOrganisationId)
             .done()
             .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole,
-                "petitionerNameChanged=\"NeverShow\"",
-                PETITIONER_SOLICITOR)
-            .optional(OrganisationPolicy::getOrgPolicyReference, "petitionerNameChanged=\"NeverShow\"");
+                "applicant1NameChanged=\"NeverShow\"",
+                APPLICANT_1_SOLICITOR)
+            .optional(OrganisationPolicy::getOrgPolicyReference, "applicant1NameChanged=\"NeverShow\"");
 
     }
 
@@ -66,7 +66,7 @@ public class SolAboutTheSolicitor implements CcdPageConfiguration {
         CaseDetails<CaseData, State> detailsBefore
     ) {
         log.info("Mid-event callback triggered for SolAboutTheSolicitor");
-        return solicitorCreatePetitionService.validateSolicitorOrganisation(
+        return solicitorCreateApplicationService.validateSolicitorOrganisation(
             details.getData(),
             details.getId(),
             request.getHeader(AUTHORIZATION)

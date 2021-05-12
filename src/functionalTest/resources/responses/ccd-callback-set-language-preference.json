@@ -1,14 +1,14 @@
 {
   "data": {
     "divorceOrDissolution": "divorce",
-    "petitionerFirstName": "John",
-    "petitionerLastName": "Smith",
-    "petitionerEmail": "simulate-delivered@notifications.service.gov.uk",
+    "applicant1FirstName": "John",
+    "applicant1LastName": "Smith",
+    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
     "languagePreferenceWelsh": "NO",
-    "petitionerOrganisationPolicy": {
+    "applicant1OrganisationPolicy": {
       "Organisation": null,
       "OrgPolicyReference": null,
-      "OrgPolicyCaseAssignedRole": "[PETSOLICITOR]",
+      "OrgPolicyCaseAssignedRole": "[APPONESOLICITOR]",
       "PrepopulateToUsersOrganisation": null,
       "PreviousOrganisations": null
     }

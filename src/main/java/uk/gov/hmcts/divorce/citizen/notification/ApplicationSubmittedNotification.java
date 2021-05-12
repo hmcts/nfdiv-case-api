@@ -34,7 +34,7 @@ public class ApplicationSubmittedNotification {
         log.info("Sending application submitted notification for case : {}", id);
 
         notificationService.sendEmail(
-            caseData.getPetitionerEmail(),
+            caseData.getApplicant1Email(),
             APPLICATION_SUBMITTED,
             templateVars,
             caseData.getLanguagePreference()

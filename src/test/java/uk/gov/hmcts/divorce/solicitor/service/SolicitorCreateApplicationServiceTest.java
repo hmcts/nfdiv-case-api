@@ -18,7 +18,7 @@ import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChainFactory;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 import uk.gov.hmcts.divorce.solicitor.service.updater.ClaimsCost;
-import uk.gov.hmcts.divorce.solicitor.service.updater.MiniPetitionDraft;
+import uk.gov.hmcts.divorce.solicitor.service.updater.MiniApplicationDraft;
 import uk.gov.hmcts.divorce.solicitor.service.updater.SolicitorCourtDetails;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
@@ -47,7 +47,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
 
 @ExtendWith(MockitoExtension.class)
-class SolicitorCreatePetitionServiceTest {
+class SolicitorCreateApplicationServiceTest {
 
     private static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(2021, 04, 28, 1, 0);
 
@@ -58,7 +58,7 @@ class SolicitorCreatePetitionServiceTest {
     private SolicitorCourtDetails solicitorCourtDetails;
 
     @Mock
-    private MiniPetitionDraft miniPetitionDraft;
+    private MiniApplicationDraft miniApplicationDraft;
 
     @Mock
     private CaseDataUpdaterChainFactory caseDataUpdaterChainFactory;
@@ -70,10 +70,10 @@ class SolicitorCreatePetitionServiceTest {
     private AuthTokenGenerator authTokenGenerator;
 
     @InjectMocks
-    private SolicitorCreatePetitionService solicitorCreatePetitionService;
+    private SolicitorCreateApplicationService solicitorCreateApplicationService;
 
     @Test
-    void shouldCompleteStepsToCreatePetition() {
+    void shouldCompleteStepsToCreateApplication() {
 
         final CaseData caseData = mock(CaseData.class);
         final CaseDataUpdaterChain caseDataUpdaterChain = mock(CaseDataUpdaterChain.class);
@@ -81,7 +81,7 @@ class SolicitorCreatePetitionServiceTest {
         final List<CaseDataUpdater> caseDataUpdaters = asList(
             claimsCost,
             solicitorCourtDetails,
-            miniPetitionDraft);
+            miniApplicationDraft);
 
         final CaseDataContext caseDataContext = CaseDataContext.builder()
             .caseData(caseData)
@@ -93,7 +93,7 @@ class SolicitorCreatePetitionServiceTest {
         when(caseDataUpdaterChainFactory.createWith(caseDataUpdaters)).thenReturn(caseDataUpdaterChain);
         when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
 
-        final CaseData actualCaseData = solicitorCreatePetitionService.aboutToSubmit(
+        final CaseData actualCaseData = solicitorCreateApplicationService.aboutToSubmit(
             caseData,
             TEST_CASE_ID,
             LOCAL_DATE,
@@ -109,9 +109,9 @@ class SolicitorCreatePetitionServiceTest {
     }
 
     @Test
-    public void shouldValidatePetitionerSolicitorOrgAndReturnNoErrorsWhenSolicitorBelongsToSelectedOrg() {
+    public void shouldValidateApplicant1SolicitorOrgAndReturnNoErrorsWhenSolicitorBelongsToSelectedOrg() {
         CaseData caseData = caseData();
-        caseData.setPetitionerOrganisationPolicy(organisationPolicy());
+        caseData.setApplicant1OrganisationPolicy(organisationPolicy());
 
         OrganisationsResponse organisationsResponse = OrganisationsResponse
             .builder()
@@ -124,7 +124,7 @@ class SolicitorCreatePetitionServiceTest {
             .thenReturn(organisationsResponse);
 
         AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
-            solicitorCreatePetitionService.validateSolicitorOrganisation(
+            solicitorCreateApplicationService.validateSolicitorOrganisation(
                 caseData,
                 TEST_CASE_ID,
                 TEST_AUTHORIZATION_TOKEN
@@ -141,9 +141,9 @@ class SolicitorCreatePetitionServiceTest {
     }
 
     @Test
-    public void shouldValidatePetitionerSolicitorOrgAndReturnErrorWhenSolicitorDoesNotBelongsToSelectedOrg() {
+    public void shouldValidateApplicant1SolicitorOrgAndReturnErrorWhenSolicitorDoesNotBelongsToSelectedOrg() {
         CaseData caseData = caseData();
-        caseData.setPetitionerOrganisationPolicy(organisationPolicy()); // default org identifier = ABC123
+        caseData.setApplicant1OrganisationPolicy(organisationPolicy()); // default org identifier = ABC123
 
         OrganisationsResponse organisationsResponse = OrganisationsResponse
             .builder()
@@ -156,7 +156,7 @@ class SolicitorCreatePetitionServiceTest {
             .thenReturn(organisationsResponse);
 
         AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
-            solicitorCreatePetitionService.validateSolicitorOrganisation(
+            solicitorCreateApplicationService.validateSolicitorOrganisation(
                 caseData,
                 TEST_CASE_ID,
                 TEST_AUTHORIZATION_TOKEN
@@ -173,11 +173,11 @@ class SolicitorCreatePetitionServiceTest {
     }
 
     @Test
-    public void shouldValidatePetitionerSolicitorOrgAndReturnErrorWhenSolicitorOrgIsNotPopulated() {
+    public void shouldValidateApplicant1SolicitorOrgAndReturnErrorWhenSolicitorOrgIsNotPopulated() {
         CaseData caseData = caseData();
 
         AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
-            solicitorCreatePetitionService.validateSolicitorOrganisation(
+            solicitorCreateApplicationService.validateSolicitorOrganisation(
                 caseData,
                 TEST_CASE_ID,
                 TEST_AUTHORIZATION_TOKEN
@@ -212,9 +212,9 @@ class SolicitorCreatePetitionServiceTest {
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         CaseData caseData = caseData();
-        caseData.setPetitionerOrganisationPolicy(organisationPolicy());
+        caseData.setApplicant1OrganisationPolicy(organisationPolicy());
 
-        assertThatThrownBy(() -> solicitorCreatePetitionService.validateSolicitorOrganisation(
+        assertThatThrownBy(() -> solicitorCreateApplicationService.validateSolicitorOrganisation(
             caseData,
             TEST_CASE_ID,
             TEST_AUTHORIZATION_TOKEN

@@ -49,7 +49,7 @@ public class PaymentMadeTest {
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmail() {
         final CaseData caseData = caseData();
-        caseData.setPetitionerEmail(TEST_USER_EMAIL);
+        caseData.setApplicant1Email(TEST_USER_EMAIL);
 
         Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(SUCCESS).build();
         caseData.setPayments(singletonList(new ListValue<>("1", payment)));
@@ -65,7 +65,7 @@ public class PaymentMadeTest {
     @Test
     public void givenInvalidPaymentWhenThenDontSendEmail() {
         final CaseData caseData = caseData();
-        caseData.setPetitionerEmail(TEST_USER_EMAIL);
+        caseData.setApplicant1Email(TEST_USER_EMAIL);
 
         Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(DECLINED).build();
         caseData.setPayments(singletonList(new ListValue<>("1", payment)));

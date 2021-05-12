@@ -39,10 +39,10 @@ class SolicitorSubmittedNotificationTest {
     @Test
     void shouldNotifyApplicantSolicitorByApplicationSubmittedEmail() {
 
-        final String petitionerSolicitorEmail = "test@somewher.com";
+        final String applicant1SolicitorEmail = "test@somewher.com";
         final Map<String, String> templateVars = new HashMap<>();
         final CaseData caseData = CaseData.builder()
-            .petitionerSolicitorEmail(petitionerSolicitorEmail)
+            .applicant1SolicitorEmail(applicant1SolicitorEmail)
             .languagePreferenceWelsh(NO)
             .build();
 
@@ -53,7 +53,7 @@ class SolicitorSubmittedNotificationTest {
         assertThat(templateVars.get(APPLICATION_REFERENCE), is("1234-5678-9012-3456"));
 
         verify(notificationService).sendEmail(
-            petitionerSolicitorEmail,
+            applicant1SolicitorEmail,
             SOL_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED,
             templateVars,
             ENGLISH);
@@ -62,10 +62,10 @@ class SolicitorSubmittedNotificationTest {
     @Test
     void shouldNotifyApplicantSolicitorByAmendedApplicationSubmittedEmail() {
 
-        final String petitionerSolicitorEmail = "test@somewher.com";
+        final String applicant1SolicitorEmail = "test@somewher.com";
         final Map<String, String> templateVars = new HashMap<>();
         final CaseData caseData = CaseData.builder()
-            .petitionerSolicitorEmail(petitionerSolicitorEmail)
+            .applicant1SolicitorEmail(applicant1SolicitorEmail)
             .languagePreferenceWelsh(NO)
             .previousCaseId(new CaseLink("Ref"))
             .build();
@@ -77,7 +77,7 @@ class SolicitorSubmittedNotificationTest {
         assertThat(templateVars.get(APPLICATION_REFERENCE), is("1234-5678-9012-3456"));
 
         verify(notificationService).sendEmail(
-            petitionerSolicitorEmail,
+            applicant1SolicitorEmail,
             SOL_APPLICANT_SOLICITOR_AMENDED_APPLICATION_SUBMITTED,
             templateVars,
             ENGLISH);

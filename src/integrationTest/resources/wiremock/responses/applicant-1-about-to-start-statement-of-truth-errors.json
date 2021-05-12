@@ -1,0 +1,24 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "applicant1FirstName": "test_first_name",
+    "applicant1MiddleName": "test_middle_name",
+    "applicant1LastName": "test_last_name",
+    "applicant1Email": "test@test.com"
+  },
+  "errors": [
+    "Applicant2FirstName cannot be empty or null",
+    "Applicant2LastName cannot be empty or null",
+    "FinancialOrder cannot be empty or null",
+    "InferredApplicant1Gender cannot be empty or null",
+    "InferredApplicant2Gender cannot be empty or null",
+    "MarriageApplicant1Name cannot be empty or null",
+    "Applicant1ContactDetailsConfidential cannot be empty or null",
+    "PrayerHasBeenGiven cannot be empty or null",
+    "StatementOfTruth cannot be empty or null",
+    "MarriageDate cannot be empty or null",
+    "JurisdictionConnections cannot be empty or null"
+  ],
+  "state": "Draft",
+  "warnings": null
+}

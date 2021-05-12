@@ -1,13 +1,11 @@
 {
-  "divorceOrDissolution": "divorce",
   "inferredApplicant1Gender": "female",
   "inferredApplicant2Gender": "male",
   "marriageDate": "2020-04-28",
-  "applicant1FirstName": "Billy",
-  "applicant1MiddleName": "B",
-  "applicant1LastName": "Bob",
+  "applicant1FirstName": "test_first_name",
+  "applicant1MiddleName": "test_middle_name",
+  "applicant1LastName": "test_last_name",
   "applicant1ContactDetailsConfidential": "keep",
-  "applicant1Email": "test@mailinator.com",
   "applicant2FirstName": "test_first_name",
   "applicant2LastName": "test_last_name",
   "marriageApplicant1Name": "test_first_name test_last_name",
@@ -15,12 +13,5 @@
   "prayerHasBeenGiven": "YES",
   "statementOfTruth": "YES",
   "jurisdictionApplicant1Residence": "YES",
-  "jurisdictionConnections": ["A"],
-  "payments": [{
-    "id": "1",
-    "value": {
-      "paymentStatus": "success",
-      "paymentAmount": 55000
-    }
-  }]
+  "jurisdictionConnections": ["A"]
 }

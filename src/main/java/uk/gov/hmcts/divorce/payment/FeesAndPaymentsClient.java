@@ -19,10 +19,10 @@ import static uk.gov.hmcts.divorce.payment.FeesAndPayConstants.SERVICE;
 @SuppressWarnings("PMD.UseObjectForClearerAPI")
 public interface FeesAndPaymentsClient {
 
-    @ApiOperation("Returns Petition Issue Fee")
+    @ApiOperation("Returns Application Issue Fee")
     @GetMapping(value = "/fees-register/fees/lookup",
         headers = CONTENT_TYPE + "=" + APPLICATION_JSON_VALUE)
-    FeeResponse getPetitionIssueFee(
+    FeeResponse getApplicationIssueFee(
         @RequestParam(CHANNEL) final String channel,
         @RequestParam(EVENT) final String event,
         @RequestParam(JURISDICTION_1) final String jurisdiction1,

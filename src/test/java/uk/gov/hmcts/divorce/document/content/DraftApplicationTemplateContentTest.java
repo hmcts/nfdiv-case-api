@@ -21,8 +21,9 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_POSTAL_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CHILDREN_OF_THE_APPLICANT_AND_THE_RESPONDENT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CHILDREN_OF_THE_APPLICANT_1_AND_APPLICANT_2;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONDITIONAL_ORDER_OF_DIVORCE_FROM;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COSTS_RELATED_TO_ENDING_THE_CIVIL_PARTNERSHIP;
@@ -45,7 +46,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_RELATIONSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.OF_THE_DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATIONSHIP;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_POSTAL_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TO_END_A_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TO_END_THE_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -56,10 +56,10 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class DraftPetitionTemplateContentTest {
+public class DraftApplicationTemplateContentTest {
 
     @InjectMocks
-    private DraftPetitionTemplateContent templateContent;
+    private DraftApplicationTemplateContent templateContent;
 
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForDivorce() {
@@ -78,7 +78,7 @@ public class DraftPetitionTemplateContentTest {
             entry(DIVORCE_OR_DISSOLUTION_COST, DIVORCE_COSTS),
             entry(DIVORCE_OR_DISSOLUTION, FOR_A_DIVORCE),
             entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, OF_THE_DIVORCE),
-            entry(FINANCIAL_ORDER_CHILD, CHILDREN_OF_THE_APPLICANT_AND_THE_RESPONDENT),
+            entry(FINANCIAL_ORDER_CHILD, CHILDREN_OF_THE_APPLICANT_1_AND_APPLICANT_2),
             entry(FINANCIAL_ORDER_OR_DISSOLUTION, CONDITIONAL_ORDER_OF_DIVORCE_FROM),
             entry(HAS_COST_ORDERS, true),
             entry(HAS_FINANCIAL_ORDERS, false),
@@ -88,7 +88,7 @@ public class DraftPetitionTemplateContentTest {
             entry(MARRIAGE_OR_RELATIONSHIP, MARRIAGE),
             entry(COURT_CASE_DETAILS, null),
             entry(MARRIAGE_DATE, null),
-            entry(RESPONDENT_POSTAL_ADDRESS, null),
+            entry(APPLICANT_2_POSTAL_ADDRESS, null),
             entry(APPLICANT_2_FIRST_NAME, null),
             entry(APPLICANT_2_FULL_NAME, null),
             entry(APPLICANT_2_LAST_NAME, null)
@@ -113,7 +113,7 @@ public class DraftPetitionTemplateContentTest {
             entry(DIVORCE_OR_DISSOLUTION, TO_END_A_CIVIL_PARTNERSHIP),
             entry(DIVORCE_OR_DISSOLUTION_COST, COSTS_RELATED_TO_ENDING_THE_CIVIL_PARTNERSHIP),
             entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, TO_END_THE_CIVIL_PARTNERSHIP),
-            entry(FINANCIAL_ORDER_CHILD, CHILDREN_OF_THE_APPLICANT_AND_THE_RESPONDENT),
+            entry(FINANCIAL_ORDER_CHILD, CHILDREN_OF_THE_APPLICANT_1_AND_APPLICANT_2),
             entry(FINANCIAL_ORDER_OR_DISSOLUTION, DISSOLUTION_OF_THE_CIVIL_PARTNERSHIP_WITH),
             entry(HAS_COST_ORDERS, false),
             entry(HAS_FINANCIAL_ORDERS, false),
@@ -123,7 +123,7 @@ public class DraftPetitionTemplateContentTest {
             entry(MARRIAGE_OR_RELATIONSHIP, RELATIONSHIP),
             entry(COURT_CASE_DETAILS, null),
             entry(MARRIAGE_DATE, null),
-            entry(RESPONDENT_POSTAL_ADDRESS, null),
+            entry(APPLICANT_2_POSTAL_ADDRESS, null),
             entry(APPLICANT_2_FIRST_NAME, null),
             entry(APPLICANT_2_FULL_NAME, null),
             entry(APPLICANT_2_LAST_NAME, null)
@@ -131,7 +131,7 @@ public class DraftPetitionTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyRespondentPostalAddressIfRespondentHomeAddressNotNull() {
+    public void shouldSuccessfullyApplyApplicant2PostalAddressIfApplicant2HomeAddressNotNull() {
         AddressGlobalUK address = AddressGlobalUK.builder()
             .addressLine1("221b")
             .addressLine2("Baker Street")
@@ -145,12 +145,12 @@ public class DraftPetitionTemplateContentTest {
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.setDivorceCostsClaim(NO);
         caseData.setFinancialOrder(NO);
-        caseData.setRespondentHomeAddress(address);
+        caseData.setApplicant2HomeAddress(address);
 
         Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
 
         assertThat(templateData).contains(
-            entry(RESPONDENT_POSTAL_ADDRESS, "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom")
+            entry(APPLICANT_2_POSTAL_ADDRESS, "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom")
         );
     }
 }

@@ -59,41 +59,41 @@ public class TestDataHelper {
 
     public static CaseData caseData() {
         return CaseData.builder()
-            .petitionerFirstName(TEST_FIRST_NAME)
-            .petitionerMiddleName(TEST_MIDDLE_NAME)
-            .petitionerLastName(TEST_LAST_NAME)
-            .petitionerEmail(TEST_USER_EMAIL)
+            .applicant1FirstName(TEST_FIRST_NAME)
+            .applicant1MiddleName(TEST_MIDDLE_NAME)
+            .applicant1LastName(TEST_LAST_NAME)
+            .applicant1Email(TEST_USER_EMAIL)
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .build();
     }
 
     public static Map<String, Object> caseDataMap() {
         Map<String, Object> caseDataMap = new HashMap<>();
-        caseDataMap.put("petitionerFirstName", TEST_FIRST_NAME);
-        caseDataMap.put("petitionerMiddleName", TEST_MIDDLE_NAME);
-        caseDataMap.put("petitionerLastName", TEST_LAST_NAME);
+        caseDataMap.put("applicant1FirstName", TEST_FIRST_NAME);
+        caseDataMap.put("applicant1MiddleName", TEST_MIDDLE_NAME);
+        caseDataMap.put("applicant1LastName", TEST_LAST_NAME);
         caseDataMap.put("divorceOrDissolution", DIVORCE);
-        caseDataMap.put("petitionerEmail", TEST_USER_EMAIL);
+        caseDataMap.put("applicant1Email", TEST_USER_EMAIL);
         return caseDataMap;
     }
 
-    public static Map<String, Object> validPetitionerCaseDataMap() {
+    public static Map<String, Object> validApplicant1CaseDataMap() {
         Map<String, Object> caseDataMap = new HashMap<>();
-        caseDataMap.put("petitionerFirstName", TEST_FIRST_NAME);
-        caseDataMap.put("petitionerMiddleName", TEST_MIDDLE_NAME);
-        caseDataMap.put("petitionerLastName", TEST_LAST_NAME);
-        caseDataMap.put("respondentFirstName", TEST_FIRST_NAME);
-        caseDataMap.put("respondentLastName", TEST_LAST_NAME);
+        caseDataMap.put("applicant1FirstName", TEST_FIRST_NAME);
+        caseDataMap.put("applicant1MiddleName", TEST_MIDDLE_NAME);
+        caseDataMap.put("applicant1LastName", TEST_LAST_NAME);
+        caseDataMap.put("applicant2FirstName", TEST_FIRST_NAME);
+        caseDataMap.put("applicant2LastName", TEST_LAST_NAME);
         caseDataMap.put("financialOrder", YesOrNo.NO);
-        caseDataMap.put("inferredPetitionerGender", Gender.FEMALE);
-        caseDataMap.put("inferredRespondentGender", Gender.MALE);
-        caseDataMap.put("marriagePetitionerName", TEST_FIRST_NAME + " " + TEST_LAST_NAME);
-        caseDataMap.put("petitionerContactDetailsConfidential", ConfidentialAddress.KEEP);
+        caseDataMap.put("inferredApplicant1Gender", Gender.FEMALE);
+        caseDataMap.put("inferredApplicant2Gender", Gender.MALE);
+        caseDataMap.put("marriageApplicant1Name", TEST_FIRST_NAME + " " + TEST_LAST_NAME);
+        caseDataMap.put("applicant1ContactDetailsConfidential", ConfidentialAddress.KEEP);
         caseDataMap.put("prayerHasBeenGiven", YesOrNo.YES);
         caseDataMap.put("statementOfTruth", YesOrNo.YES);
         caseDataMap.put("marriageDate", LocalDate.now().minus(1, YEARS).minus(1, DAYS));
-        caseDataMap.put("jurisdictionPetitionerResidence", YesOrNo.YES);
-        caseDataMap.put("jurisdictionConnections", Set.of(JurisdictionConnections.PET_RESP_RESIDENT));
+        caseDataMap.put("jurisdictionApplicant1Residence", YesOrNo.YES);
+        caseDataMap.put("jurisdictionConnections", Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
         return caseDataMap;
     }
 
@@ -179,7 +179,7 @@ public class TestDataHelper {
     }
 
     public static ListValue<Fee> getDefaultFeeItem() {
-        return getFeeItem(10.50, FEE_CODE, "Issue Petition Fee", 1);
+        return getFeeItem(10.50, FEE_CODE, "Issue Application Fee", 1);
     }
 
     public static FeignException feignException(int status, String reason) {
@@ -202,14 +202,14 @@ public class TestDataHelper {
 
         Document ccdDocument = new Document(
             documentUrl,
-            "test-mini-draft-petition.pdf",
+            "test-mini-draft-application.pdf",
             documentUrl + "/binary"
         );
 
         DivorceDocument divorceDocument = DivorceDocument
             .builder()
             .documentLink(ccdDocument)
-            .documentFileName("test-mini-draft-petition-12345.pdf")
+            .documentFileName("test-mini-draft-application-12345.pdf")
             .documentType(documentType)
             .build();
 
