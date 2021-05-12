@@ -50,10 +50,12 @@ public class CaseData {
     private static final int SUBMISSION_RESPONSE_DAYS = 14;
 
     @CCD(
-        label = "Does the petitioner want to apply as a sole applicant?",
-        access = {DefaultAccess.class}
+        label = "How does the petitioner want to apply for the divorce?",
+        access = {DefaultAccess.class},
+        typeOverride = FixedList,
+        typeParameterOverride = "ApplicationType"
     )
-    private YesOrNo soleOrJoinApplicant;
+    private ApplicationType applicationType;
 
     @CCD(
         label = "Divorce or Dissolution?",
