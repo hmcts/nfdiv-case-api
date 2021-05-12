@@ -134,8 +134,7 @@ class SolicitorCreateTest {
     }
 
     @Test
-    void givenValidCaseDataWhenAboutToSubmitCallbackIsInvokedCaseDataIsSetCorrectly()
-        throws Exception {
+    void givenValidCaseDataWhenAboutToSubmitCallbackIsInvokedCaseDataIsSetCorrectly() throws Exception {
 
         when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTH_TOKEN);
 
@@ -235,7 +234,7 @@ class SolicitorCreateTest {
 
     private Map<String, Object> caseDataWithPetitionerOrg() {
         Map<String, Object> caseData = caseDataMap();
-        caseData.put(PETITIONER_ORGANISATION_POLICY, (organisationPolicy()));
+        caseData.put(PETITIONER_ORGANISATION_POLICY, organisationPolicy());
 
         return caseData;
     }
