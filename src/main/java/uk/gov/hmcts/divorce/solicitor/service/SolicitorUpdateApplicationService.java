@@ -38,7 +38,7 @@ public class SolicitorUpdateApplicationService {
             miniApplicationDraft
         );
 
-        final CaseDataContext caseDataContext = CaseDataContext.builder()
+        final var caseDataContext = CaseDataContext.builder()
             .caseData(caseData)
             .caseId(caseId)
             .createdDate(createdDate)
