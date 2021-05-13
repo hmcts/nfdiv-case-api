@@ -74,8 +74,8 @@ public enum State {
 
     @JsonProperty("AwaitingDocuments")
     @CCD(
-        label = "Case created and awaiting action by the petitioner",
-        name = "Awaiting petitioner"
+        label = "Case created and awaiting action by applicant 1",
+        name = "Awaiting applicant 1"
     )
     AwaitingDocuments("AwaitingDocuments") {
         @Override
