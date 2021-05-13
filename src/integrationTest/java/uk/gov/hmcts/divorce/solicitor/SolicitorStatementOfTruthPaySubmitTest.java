@@ -29,6 +29,8 @@ import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.payment.model.Payment;
+import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitApplicationService;
 import uk.gov.hmcts.divorce.testutil.TestConstants;
@@ -316,6 +318,92 @@ public class SolicitorStatementOfTruthPaySubmitTest {
     }
 
     @Test
+    void givenValidCaseDataAndValidPaymentWhenAboutToSubmitCallbackIsInvokedThenStateIsChangedAndEmailIsSentToApplicant()
+        throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(TestConstants.AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(callbackRequest(
+                caseDataWithStatementOfTruth(),
+                SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT,
+                SOTAgreementPayAndSubmitRequired.name())))
+            .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk()
+            )
+            .andExpect(
+                content().json(expectedCcdAboutToSubmitCallbackResponse())
+            );
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_USER_EMAIL),
+                eq(SOL_APPLICANT_APPLICATION_SUBMITTED),
+                anyMap(),
+                eq(ENGLISH));
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_SOLICITOR_EMAIL),
+                eq(SOL_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED),
+                anyMap(),
+                eq(ENGLISH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    void givenValidCaseDataAndIncompletePaymentWhenAboutToSubmitCallbackIsInvokedThenStateIsNotChangedAndErrorIsReturned()
+        throws Exception {
+
+        Map<String, Object> caseData = caseDataWithStatementOfTruth();
+
+        ListValue<Payment> payment = new ListValue<>(null, Payment
+            .builder()
+            .paymentAmount(100)
+            .paymentChannel("online")
+            .paymentFeeId("FEE0001")
+            .paymentReference("paymentRef")
+            .paymentSiteId("AA04")
+            .paymentStatus(PaymentStatus.SUCCESS)
+            .paymentTransactionId("ge7po9h5bhbtbd466424src9tk")
+            .build());
+        caseData.put("payments", singletonList(payment));
+
+        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(TestConstants.AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(callbackRequest(
+                caseData,
+                SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT,
+                SOTAgreementPayAndSubmitRequired.name())))
+            .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk()
+            )
+            .andExpect(
+                content().json(expectedCcdAboutToSubmitCallbackPaymentErrorResponse())
+            );
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_USER_EMAIL),
+                eq(SOL_APPLICANT_APPLICATION_SUBMITTED),
+                anyMap(),
+                eq(ENGLISH));
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_SOLICITOR_EMAIL),
+                eq(SOL_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED),
+                anyMap(),
+                eq(ENGLISH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
     void givenValidCaseDataContainingDraftApplicationDocumentWhenAboutToSubmitCallbackIsInvokedThenDraftApplicationDocumentIsRemoved()
         throws Exception {
         Map<String, Object> caseData = caseDataWithStatementOfTruth();
@@ -553,6 +641,13 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         return new String(Files.readAllBytes(issueFeesResponseJsonFile.toPath()));
     }
 
+    private String expectedCcdAboutToSubmitCallbackPaymentErrorResponse() throws IOException {
+        File issueFeesResponseJsonFile = getFile(
+            "classpath:wiremock/responses/about-to-submit-statement-of-truth-payment-error.json");
+
+        return new String(Files.readAllBytes(issueFeesResponseJsonFile.toPath()));
+    }
+
     private String expectedCcdAboutToSubmitCallbackErrorResponse() throws IOException {
         File issueFeesResponseJsonFile = getFile(
             "classpath:wiremock/responses/about-to-submit-statement-of-truth-error.json");
@@ -586,6 +681,19 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         caseData.put("statementOfTruth", YES);
         caseData.put("solSignStatementOfTruth", YES);
         caseData.put("applicant1SolicitorEmail", TEST_SOLICITOR_EMAIL);
+
+        ListValue<Payment> payment = new ListValue<>(null, Payment
+            .builder()
+            .paymentAmount(55000)
+            .paymentChannel("online")
+            .paymentFeeId("FEE0001")
+            .paymentReference("paymentRef")
+            .paymentSiteId("AA04")
+            .paymentStatus(PaymentStatus.SUCCESS)
+            .paymentTransactionId("ge7po9h5bhbtbd466424src9tk")
+            .build());
+        caseData.put("payments", singletonList(payment));
+
         return caseData;
     }
 

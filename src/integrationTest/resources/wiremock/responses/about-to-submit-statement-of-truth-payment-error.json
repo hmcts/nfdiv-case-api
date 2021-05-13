@@ -7,7 +7,9 @@
     "statementOfTruth": "YES",
     "solSignStatementOfTruth": "YES"
   },
-  "errors": [],
+  "errors": [
+    "Payment incomplete"
+  ],
   "warnings": null,
-  "state": "Submitted"
+  "state": "SolicitorAwaitingPaymentConfirmation"
 }
