@@ -12,10 +12,13 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.payment.FeesAndPaymentsClient;
+import uk.gov.hmcts.divorce.payment.model.Payment;
+import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
 import uk.gov.hmcts.divorce.solicitor.service.notification.ApplicantSubmittedNotification;
 import uk.gov.hmcts.divorce.solicitor.service.notification.SolicitorSubmittedNotification;
 
@@ -40,6 +43,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.common.model.State.SolicitorAwaitingPaymentConfirmation;
+import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_1_SOL_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
@@ -161,6 +165,40 @@ public class SolicitorSubmitApplicationServiceTest {
 
         assertThat(aboutToStartOrSubmitResponse.getData().getDocumentsGenerated()).isEmpty();
         assertThat(aboutToStartOrSubmitResponse.getState()).isEqualTo(SolicitorAwaitingPaymentConfirmation);
+        verify(applicantSubmittedNotification).send(caseData, caseId);
+        verify(solicitorSubmittedNotification).send(caseData, caseId);
+    }
+
+    @Test
+    void shouldRemoveDraftApplicationAndNotifyApplicantAndSetStateToSubmittedForAboutToSubmit() {
+        List<ListValue<DivorceDocument>> generatedDocuments = singletonList(documentWithType(DIVORCE_APPLICATION));
+        final CaseData caseData = CaseData.builder().build();
+        caseData.setDocumentsGenerated(generatedDocuments);
+        caseData.setStatementOfTruth(YesOrNo.YES);
+        caseData.setSolSignStatementOfTruth(YesOrNo.YES);
+
+        ListValue<Payment> payment = new ListValue<>(null, Payment
+            .builder()
+            .paymentAmount(55000)
+            .paymentChannel("online")
+            .paymentFeeId("FEE0001")
+            .paymentReference("paymentRef")
+            .paymentSiteId("AA04")
+            .paymentStatus(PaymentStatus.SUCCESS)
+            .paymentTransactionId("ge7po9h5bhbtbd466424src9tk")
+            .build());
+        caseData.setPayments(singletonList(payment));
+
+        final long caseId = 1L;
+
+        when(draftApplicationRemovalService.removeDraftApplicationDocument(generatedDocuments, caseId, APP_1_SOL_AUTH_TOKEN))
+            .thenReturn(emptyList());
+
+        final AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
+            solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN);
+
+        assertThat(aboutToStartOrSubmitResponse.getData().getDocumentsGenerated()).isEmpty();
+        assertThat(aboutToStartOrSubmitResponse.getState()).isEqualTo(Submitted);
         verify(applicantSubmittedNotification).send(caseData, caseId);
         verify(solicitorSubmittedNotification).send(caseData, caseId);
     }
