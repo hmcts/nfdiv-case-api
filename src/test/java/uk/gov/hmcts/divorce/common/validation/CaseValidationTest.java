@@ -252,7 +252,7 @@ public class CaseValidationTest {
     @Test
     public void shouldReturnTrueWhenCaseHasAwaitingDocuments() {
         CaseData caseData = new CaseData();
-        caseData.setPetitionerWantsToHavePapersServedAnotherWay(YesOrNo.YES);
+        caseData.setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
         assertTrue(hasAwaitingDocuments(caseData));
     }
 

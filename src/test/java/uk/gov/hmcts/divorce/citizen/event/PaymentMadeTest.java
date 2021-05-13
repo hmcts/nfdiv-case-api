@@ -90,8 +90,8 @@ public class PaymentMadeTest {
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendOutstandingActionEmail() {
         final CaseData caseData = caseData();
-        caseData.setPetitionerEmail(TEST_USER_EMAIL);
-        caseData.setPetitionerWantsToHavePapersServedAnotherWay(YesOrNo.YES);
+        caseData.setApplicant1Email(TEST_USER_EMAIL);
+        caseData.setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
 
         Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(SUCCESS).build();
         caseData.setPayments(singletonList(new ListValue<>("1", payment)));
@@ -109,7 +109,7 @@ public class PaymentMadeTest {
     @Test
     public void givenCallbackIsInvokedThenSendOutstandingActionEmailForCannotUploadSupportingDocument() {
         final CaseData caseData = caseData();
-        caseData.setPetitionerEmail(TEST_USER_EMAIL);
+        caseData.setApplicant1Email(TEST_USER_EMAIL);
 
         Set<DocumentType> docs = new HashSet<>();
         docs.add(DocumentType.MARRIAGE_CERTIFICATE);

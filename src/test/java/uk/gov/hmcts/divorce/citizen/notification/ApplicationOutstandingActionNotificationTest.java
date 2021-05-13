@@ -86,7 +86,7 @@ class ApplicationOutstandingActionNotificationTest {
         CaseData data = caseData();
         data.setDivorceWho(WhoDivorcing.HUSBAND);
         data.setMarriedInUk(YesOrNo.YES);
-        data.setPetitionerWantsToHavePapersServedAnotherWay(YesOrNo.YES);
+        data.setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
 
         Set<DocumentType> docs = new HashSet<>();
         docs.add(DocumentType.MARRIAGE_CERTIFICATE);
@@ -124,7 +124,7 @@ class ApplicationOutstandingActionNotificationTest {
         CaseData data = caseData();
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         data.setMarriedInUk(YesOrNo.YES);
-        data.setPetitionerWantsToHavePapersServedAnotherWay(YesOrNo.YES);
+        data.setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
 
         Set<DocumentType> docs = new HashSet<>();
         docs.add(DocumentType.MARRIAGE_CERTIFICATE);

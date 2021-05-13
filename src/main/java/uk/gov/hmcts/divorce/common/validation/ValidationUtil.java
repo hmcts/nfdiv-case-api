@@ -132,7 +132,7 @@ public final class ValidationUtil {
     }
 
     public static boolean hasAwaitingDocuments(CaseData caseData) {
-        return caseData.getPetitionerWantsToHavePapersServedAnotherWay() == YesOrNo.YES
+        return caseData.getApplicant1WantsToHavePapersServedAnotherWay() == YesOrNo.YES
             || !isEmpty(caseData.getCannotUploadSupportingDocument());
     }
 

@@ -43,7 +43,7 @@ public class ApplicationOutstandingActionNotification {
         templateVars.put(APPLICATION_REFERENCE, formatId(id));
 
         setDefaultVariables(templateVars);
-        if (caseData.getPetitionerWantsToHavePapersServedAnotherWay() == YesOrNo.YES) {
+        if (caseData.getApplicant1WantsToHavePapersServedAnotherWay() == YesOrNo.YES) {
             setPapersServedAnotherWay(templateVars, caseData);
         }
         if (caseData.getCannotUploadSupportingDocument() != null && !caseData.getCannotUploadSupportingDocument().isEmpty()) {
@@ -53,7 +53,7 @@ public class ApplicationOutstandingActionNotification {
         log.info("Sending application outstanding actions notification for case : {}", id);
 
         notificationService.sendEmail(
-            caseData.getPetitionerEmail(),
+            caseData.getApplicant1Email(),
             OUTSTANDING_ACTIONS,
             templateVars,
             caseData.getLanguagePreference()

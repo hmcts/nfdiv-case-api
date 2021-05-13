@@ -107,7 +107,7 @@ public class PaymentMadeTest {
         Map<String, Object> data = caseDataMap();
         data.put("dateSubmitted", LocalDateTime.now());
         data.put("divorceWho", WhoDivorcing.HUSBAND);
-        data.put("petitionerWantsToHavePapersServedAnotherWay", YesOrNo.YES);
+        data.put("applicant1WantsToHavePapersServedAnotherWay", YesOrNo.YES);
 
         Payment payment = Payment.builder()
             .paymentAmount(55000)
