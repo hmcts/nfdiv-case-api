@@ -20,7 +20,7 @@ public class SolHowDoYouWantToApplyForDivorce implements CcdPageConfiguration {
                 + " Applicant 1 will be applying on their own.")
             .label("solHowDoYouWantToApplyForDivorceHeader-2", "### Applying jointly, with applicant 1's "
                 + "husband or wife")
-            .label("solHowDoYouWantToApplyForDivorcePara-3", "If applicant 1 applies jointly, the"
+            .label("solHowDoYouWantToApplyForDivorcePara-3", "If applicant 1 applies jointly, "
                 + " applicant 1's husband or wife joins and reviews this online application before it's submitted."
                 + " They will be applying together.")
             .label("solHowDoYouWantToApplyForDivorcePara-4", "*How applicant 1 divides their money"
