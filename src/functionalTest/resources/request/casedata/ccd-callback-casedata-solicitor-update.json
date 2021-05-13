@@ -1,0 +1,31 @@
+{
+  "divorceOrDissolution": "divorce",
+  "applicant1FirstName": "John",
+  "applicant1LastName": "Smith",
+  "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+  "languagePreferenceWelsh": "NO",
+  "divorceCostsClaim": "YES",
+  "financialOrder": "NO",
+  "divorceClaimFrom": [
+    "applicant2"
+  ],
+  "divorceUnit": "serviceCentre",
+  "selectedDivorceCentreSiteId": "AA07",
+  "documentsGenerated": [
+    {
+      "id": "V1",
+      "value": {
+        "documentDateAdded": null,
+        "documentComment": null,
+        "documentFileName": "draft-mini-application-1234567890123456.pdf",
+        "documentType": "divorceApplication",
+        "documentEmailContent": null,
+        "documentLink": {
+          "document_url": "url",
+          "document_filename": "draft-mini-application-1234567890123456.pdf",
+          "document_binary_url": "url"
+        }
+      }
+    }
+  ]
+}
