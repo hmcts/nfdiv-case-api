@@ -14,7 +14,7 @@
     "selectedDivorceCentreSiteId": "AA07",
     "documentsGenerated": [
       {
-        "id": "Divorce application",
+        "id": "${json-unit.ignore}",
         "value": {
           "documentDateAdded": null,
           "documentComment": null,
