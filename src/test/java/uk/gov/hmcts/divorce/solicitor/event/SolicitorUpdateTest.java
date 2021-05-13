@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
+import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutTheSolicitor;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorUpdateApplicationService;
 
 import java.util.Set;
@@ -34,6 +35,9 @@ class SolicitorUpdateTest {
 
     @Mock
     private HttpServletRequest httpServletRequest;
+
+    @Mock
+    private SolAboutTheSolicitor solAboutTheSolicitor;
 
     @InjectMocks
     private SolicitorUpdate solicitorUpdate;

@@ -29,9 +29,9 @@ import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.document.DocAssemblyService;
+import uk.gov.hmcts.divorce.document.DocumentIdProvider;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorCreateApplicationService;
-import uk.gov.hmcts.divorce.document.DocumentIdProvider;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.io.File;
