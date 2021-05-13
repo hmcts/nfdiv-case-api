@@ -30,7 +30,7 @@ import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
-import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitPetitionService;
+import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitApplicationService;
 import uk.gov.hmcts.divorce.testutil.TestConstants;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
@@ -71,11 +71,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.util.ResourceUtils.getFile;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.APPLICANT_1_EMAIL;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.APPLICANT_1_FIRST_NAME;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_COSTS_CLAIM;
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_OR_DISSOLUTION;
-import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_EMAIL;
-import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_FIRST_NAME;
-import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.PETITIONER_LAST_NAME;
 import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.common.model.State.SOTAgreementPayAndSubmitRequired;
@@ -119,7 +119,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private SolicitorSubmitPetitionService solicitorSubmitPetitionService;
+    private SolicitorSubmitApplicationService solicitorSubmitApplicationService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -316,7 +316,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
     }
 
     @Test
-    void givenValidCaseDataContainingDraftPetitionDocumentWhenAboutToSubmitCallbackIsInvokedThenDraftPetitionDocumentIsRemoved()
+    void givenValidCaseDataContainingDraftApplicationDocumentWhenAboutToSubmitCallbackIsInvokedThenDraftApplicationDocumentIsRemoved()
         throws Exception {
         Map<String, Object> caseData = caseDataWithStatementOfTruth();
 
@@ -360,7 +360,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
     }
 
     @Test
-    void givenCaseDataWithPetitionDocumentAndServiceNotWhitelistedInDocStoreWhenAboutToSubmitCallbackIsInvokedThen403IsReturned()
+    void givenCaseDataWithApplicationDocumentAndServiceNotWhitelistedInDocStoreWhenAboutToSubmitCallbackIsInvokedThen403IsReturned()
         throws Exception {
         Map<String, Object> caseData = caseDataWithStatementOfTruth();
 
@@ -394,7 +394,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
     }
 
     @Test
-    void givenCaseDataWithPetitionDocumentAndServiceAuthValidationFailsInDocStoreWhenAboutToSubmitCallbackIsInvokedThen401IsReturned()
+    void givenCaseDataWithApplicationDocumentAndServiceAuthValidationFailsInDocStoreWhenAboutToSubmitCallbackIsInvokedThen401IsReturned()
         throws Exception {
         Map<String, Object> caseData = caseDataWithStatementOfTruth();
 
@@ -456,7 +456,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .withHeader(HttpHeaders.AUTHORIZATION, new EqualToPattern(BEARER + CASE_WORKER_TOKEN))
             .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(SERVICE_AUTH_TOKEN))
             .withRequestBody(new EqualToJsonPattern(
-                "{\"user_id\" : \"1\", \"case_roles\":[\"[CREATOR]\",\"[PETSOLICITOR]\"]}",
+                "{\"user_id\" : \"1\", \"case_roles\":[\"[CREATOR]\",\"[APPONESOLICITOR]\"]}",
                 true,
                 true)
             )
@@ -469,7 +469,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .withHeader(HttpHeaders.AUTHORIZATION, new EqualToPattern(BEARER + CASE_WORKER_TOKEN))
             .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(SERVICE_AUTH_TOKEN))
             .withRequestBody(new EqualToJsonPattern(
-                "{\"user_id\" : \"1\", \"case_roles\":[\"[CREATOR]\",\"[PETSOLICITOR]\"]}",
+                "{\"user_id\" : \"1\", \"case_roles\":[\"[CREATOR]\",\"[APPONESOLICITOR]\"]}",
                 true,
                 true)
             )
@@ -578,14 +578,14 @@ public class SolicitorStatementOfTruthPaySubmitTest {
 
     private Map<String, Object> caseDataWithStatementOfTruth() {
         Map<String, Object> caseData = new HashMap<>();
-        caseData.put(PETITIONER_FIRST_NAME, TEST_FIRST_NAME);
-        caseData.put(PETITIONER_LAST_NAME, TEST_LAST_NAME);
-        caseData.put(PETITIONER_EMAIL, TEST_USER_EMAIL);
+        caseData.put(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME);
+        caseData.put(APPLICANT_1_LAST_NAME, TEST_LAST_NAME);
+        caseData.put(APPLICANT_1_EMAIL, TEST_USER_EMAIL);
         caseData.put(DIVORCE_OR_DISSOLUTION, DIVORCE);
         caseData.put(DIVORCE_COSTS_CLAIM, YES);
         caseData.put("statementOfTruth", YES);
         caseData.put("solSignStatementOfTruth", YES);
-        caseData.put("petitionerSolicitorEmail", TEST_SOLICITOR_EMAIL);
+        caseData.put("applicant1SolicitorEmail", TEST_SOLICITOR_EMAIL);
         return caseData;
     }
 

@@ -46,8 +46,8 @@ public enum State {
 
     @JsonProperty("Submitted")
     @CCD(
-        label = "Petition paid and submitted",
-        name = "Petition submitted"
+        label = "Application paid and submitted",
+        name = "Application submitted"
     )
     Submitted("Submitted") {
         @Override

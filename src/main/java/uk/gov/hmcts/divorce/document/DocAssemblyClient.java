@@ -18,7 +18,7 @@ public interface DocAssemblyClient {
         produces = APPLICATION_JSON_VALUE,
         consumes = APPLICATION_JSON_VALUE
     )
-    DocAssemblyResponse generateAndStoreDraftPetition(
+    DocAssemblyResponse generateAndStoreDraftApplication(
         @RequestHeader(AUTHORIZATION) String authorisation,
         @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorisation,
         DocAssemblyRequest request

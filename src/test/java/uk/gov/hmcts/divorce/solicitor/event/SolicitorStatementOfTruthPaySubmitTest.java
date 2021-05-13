@@ -18,7 +18,7 @@ import uk.gov.hmcts.divorce.common.model.UserRole;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
-import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitPetitionService;
+import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitApplicationService;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -42,9 +42,9 @@ import static uk.gov.hmcts.divorce.common.model.State.SOTAgreementPayAndSubmitRe
 import static uk.gov.hmcts.divorce.common.model.State.SolicitorAwaitingPaymentConfirmation;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorStatementOfTruthPaySubmit.SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.PET_SOL_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_1_SOL_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TES_ORG_ID;
 
 @ExtendWith(MockitoExtension.class)
 public class SolicitorStatementOfTruthPaySubmitTest {
@@ -52,7 +52,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
     private static final String STATEMENT_OF_TRUTH_ERROR_MESSAGE = "Statement of truth for solicitor and applicant 1 needs to be accepted";
 
     @Mock
-    private SolicitorSubmitPetitionService solicitorSubmitPetitionService;
+    private SolicitorSubmitApplicationService solicitorSubmitApplicationService;
 
     @Mock
     private CcdAccessService ccdAccessService;
@@ -74,7 +74,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
-        when(solicitorSubmitPetitionService.getOrderSummary()).thenReturn(orderSummary);
+        when(solicitorSubmitApplicationService.getOrderSummary()).thenReturn(orderSummary);
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(authorization);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
@@ -82,7 +82,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
 
         assertThat(response.getData().getSolApplicationFeeOrderSummary(), is(orderSummary));
         assertThat(response.getData().getPayments().size(), is(1));
-        verify(ccdAccessService).addPetitionerSolicitorRole(
+        verify(ccdAccessService).addApplicant1SolicitorRole(
             authorization,
             caseId
         );
@@ -119,7 +119,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
-        when(solicitorSubmitPetitionService.getOrderSummary()).thenReturn(orderSummary);
+        when(solicitorSubmitApplicationService.getOrderSummary()).thenReturn(orderSummary);
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(authorization);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
@@ -159,10 +159,10 @@ public class SolicitorStatementOfTruthPaySubmitTest {
                 .state(SolicitorAwaitingPaymentConfirmation)
                 .build();
 
-        when(solicitorSubmitPetitionService.aboutToSubmit(caseData, caseId, PET_SOL_AUTH_TOKEN))
+        when(solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN))
             .thenReturn(aboutToStartOrSubmitResponse);
 
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(PET_SOL_AUTH_TOKEN);
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(APP_1_SOL_AUTH_TOKEN);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorStatementOfTruthPaySubmit
             .aboutToSubmit(caseDetails, new CaseDetails<>());
@@ -247,12 +247,12 @@ public class SolicitorStatementOfTruthPaySubmitTest {
     }
 
     @Test
-    void shouldSetRespondentDigitalDetailsWhenRespSolicitorIsDigitalAndRespOrganisationIsSet() {
+    void shouldSetApplicant2DigitalDetailsWhenApp2SolicitorIsDigitalAndApp2OrganisationIsSet() {
         final long caseId = 1L;
         final OrganisationPolicy<UserRole> organisationPolicy = OrganisationPolicy.<UserRole>builder()
             .organisation(Organisation
                 .builder()
-                .organisationId(TES_ORG_ID)
+                .organisationId(TEST_ORG_ID)
                 .organisationName(TEST_ORG_NAME)
                 .build()
             )
@@ -261,8 +261,8 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         final CaseData caseData = CaseData.builder()
             .statementOfTruth(YES)
             .solSignStatementOfTruth(YES)
-            .respSolDigital(YES)
-            .respondentOrganisationPolicy(organisationPolicy)
+            .app2SolDigital(YES)
+            .applicant2OrganisationPolicy(organisationPolicy)
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -276,10 +276,10 @@ public class SolicitorStatementOfTruthPaySubmitTest {
                 .state(SolicitorAwaitingPaymentConfirmation)
                 .build();
 
-        when(solicitorSubmitPetitionService.aboutToSubmit(caseData, caseId, PET_SOL_AUTH_TOKEN))
+        when(solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN))
             .thenReturn(aboutToStartOrSubmitResponse);
 
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(PET_SOL_AUTH_TOKEN);
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(APP_1_SOL_AUTH_TOKEN);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorStatementOfTruthPaySubmit
             .aboutToSubmit(caseDetails, new CaseDetails<>());
@@ -287,10 +287,10 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         final CaseData expectedCaseData = CaseData.builder()
             .statementOfTruth(YES)
             .solSignStatementOfTruth(YES)
-            .respSolDigital(YES)
-            .respContactMethodIsDigital(YES)
-            .respondentSolicitorRepresented(YES)
-            .respondentOrganisationPolicy(organisationPolicy)
+            .app2SolDigital(YES)
+            .app2ContactMethodIsDigital(YES)
+            .applicant2SolicitorRepresented(YES)
+            .applicant2OrganisationPolicy(organisationPolicy)
             .build();
 
         assertThat(response.getData(), is(expectedCaseData));
@@ -299,12 +299,12 @@ public class SolicitorStatementOfTruthPaySubmitTest {
     }
 
     @Test
-    void shouldNotSetRespondentDigitalDetailsWhenRespSolicitorIsNotDigital() {
+    void shouldNotSetApplicant2DigitalDetailsWhenApp2SolicitorIsNotDigital() {
         final long caseId = 1L;
         final CaseData caseData = CaseData.builder()
             .statementOfTruth(YES)
             .solSignStatementOfTruth(YES)
-            .respSolDigital(NO)
+            .app2SolDigital(NO)
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -318,10 +318,10 @@ public class SolicitorStatementOfTruthPaySubmitTest {
                 .state(SolicitorAwaitingPaymentConfirmation)
                 .build();
 
-        when(solicitorSubmitPetitionService.aboutToSubmit(caseData, caseId, PET_SOL_AUTH_TOKEN))
+        when(solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN))
             .thenReturn(aboutToStartOrSubmitResponse);
 
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(PET_SOL_AUTH_TOKEN);
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(APP_1_SOL_AUTH_TOKEN);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorStatementOfTruthPaySubmit
             .aboutToSubmit(caseDetails, new CaseDetails<>());
@@ -332,12 +332,12 @@ public class SolicitorStatementOfTruthPaySubmitTest {
     }
 
     @Test
-    void shouldNotSetRespondentDigitalDetailsWhenRespSolicitorIsDigitalAndRespOrgIsNotSet() {
+    void shouldNotSetApplicant2DigitalDetailsWhenApp2SolicitorIsDigitalAndApp2OrgIsNotSet() {
         final long caseId = 1L;
         final CaseData caseData = CaseData.builder()
             .statementOfTruth(YES)
             .solSignStatementOfTruth(YES)
-            .respSolDigital(YES)
+            .app2SolDigital(YES)
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -351,10 +351,10 @@ public class SolicitorStatementOfTruthPaySubmitTest {
                 .state(SolicitorAwaitingPaymentConfirmation)
                 .build();
 
-        when(solicitorSubmitPetitionService.aboutToSubmit(caseData, caseId, PET_SOL_AUTH_TOKEN))
+        when(solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN))
             .thenReturn(aboutToStartOrSubmitResponse);
 
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(PET_SOL_AUTH_TOKEN);
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(APP_1_SOL_AUTH_TOKEN);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorStatementOfTruthPaySubmit
             .aboutToSubmit(caseDetails, new CaseDetails<>());

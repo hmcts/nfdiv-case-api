@@ -15,23 +15,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 import static org.skyscreamer.jsonassert.JSONCompareMode.STRICT;
 import static org.springframework.http.HttpStatus.OK;
-import static uk.gov.hmcts.divorce.citizen.event.PetitionerStatementOfTruth.PETITIONER_STATEMENT_OF_TRUTH;
+import static uk.gov.hmcts.divorce.citizen.event.Applicant1StatementOfTruth.APPLICANT_1_STATEMENT_OF_TRUTH;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.ABOUT_TO_START_CALLBACK_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedCcdCallbackResponse;
 
 @SpringBootTest
-public class PetitionerStatementOfTruthTest extends FunctionalTestSuite {
+public class Applicant1StatementOfTruthTest extends FunctionalTestSuite {
 
-    private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata-petitoner-statement-of-truth.json";
-    private static final String RESPONSE = "classpath:responses/ccd-callback-casedata-petitoner-statement-of-truth.json";
+    private static final String REQUEST =
+        "classpath:request/casedata/ccd-callback-casedata-applicant1-statement-of-truth.json";
+    private static final String RESPONSE = "classpath:responses/ccd-callback-casedata-applicant1-statement-of-truth.json";
 
     @Test
     public void shouldPassValidationAndGiveSuccessWhenCaseDataValid() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
         request.put("marriageDate", LocalDate.now().minus(1, YEARS).minus(1, DAYS));
 
-        Response response = triggerCallback(request, PETITIONER_STATEMENT_OF_TRUTH, ABOUT_TO_START_CALLBACK_URL);
+        Response response = triggerCallback(request, APPLICANT_1_STATEMENT_OF_TRUTH, ABOUT_TO_START_CALLBACK_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 

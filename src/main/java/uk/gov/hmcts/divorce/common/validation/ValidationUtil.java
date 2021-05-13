@@ -36,16 +36,16 @@ public final class ValidationUtil {
     }
 
     public static void validateBasicCase(CaseData caseData, List<String> errorList) {
-        addToErrorList(checkIfStringNullOrEmpty(caseData.getPetitionerFirstName(), "PetitionerFirstName"), errorList);
-        addToErrorList(checkIfStringNullOrEmpty(caseData.getPetitionerLastName(), "PetitionerLastName"), errorList);
-        addToErrorList(checkIfStringNullOrEmpty(caseData.getRespondentFirstName(), "RespondentFirstName"), errorList);
-        addToErrorList(checkIfStringNullOrEmpty(caseData.getRespondentLastName(), "RespondentLastName"), errorList);
+        addToErrorList(checkIfStringNullOrEmpty(caseData.getApplicant1FirstName(), "Applicant1FirstName"), errorList);
+        addToErrorList(checkIfStringNullOrEmpty(caseData.getApplicant1LastName(), "Applicant1LastName"), errorList);
+        addToErrorList(checkIfStringNullOrEmpty(caseData.getApplicant2FirstName(), "Applicant2FirstName"), errorList);
+        addToErrorList(checkIfStringNullOrEmpty(caseData.getApplicant2LastName(), "Applicant2LastName"), errorList);
         addToErrorList(checkIfYesOrNoNullOrEmpty(caseData.getFinancialOrder(), "FinancialOrder"), errorList);
-        addToErrorList(checkIfGenderNullOrEmpty(caseData.getInferredPetitionerGender(), "InferredPetitionerGender"), errorList);
-        addToErrorList(checkIfGenderNullOrEmpty(caseData.getInferredRespondentGender(), "InferredRespondentGender"), errorList);
-        addToErrorList(checkIfStringNullOrEmpty(caseData.getMarriagePetitionerName(), "MarriagePetitionerName"), errorList);
-        addToErrorList(checkIfConfidentialAddressNullOrEmpty(caseData.getPetitionerContactDetailsConfidential(),
-            "PetitionerContactDetailsConfidential"), errorList);
+        addToErrorList(checkIfGenderNullOrEmpty(caseData.getInferredApplicant1Gender(), "InferredApplicant1Gender"), errorList);
+        addToErrorList(checkIfGenderNullOrEmpty(caseData.getInferredApplicant2Gender(), "InferredApplicant2Gender"), errorList);
+        addToErrorList(checkIfStringNullOrEmpty(caseData.getMarriageApplicant1Name(), "MarriageApplicant1Name"), errorList);
+        addToErrorList(checkIfConfidentialAddressNullOrEmpty(caseData.getApplicant1ContactDetailsConfidential(),
+            "Applicant1ContactDetailsConfidential"), errorList);
         addToErrorList(checkIfYesOrNoIsNullOrEmptyOrNo(caseData.getPrayerHasBeenGiven(), "PrayerHasBeenGiven"), errorList);
         addToErrorList(checkIfYesOrNoIsNullOrEmptyOrNo(caseData.getStatementOfTruth(), "StatementOfTruth"), errorList);
         addToErrorList(checkIfDateIsAllowed(caseData.getMarriageDate(), "MarriageDate"), errorList);

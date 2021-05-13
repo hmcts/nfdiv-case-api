@@ -10,7 +10,8 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
-import uk.gov.hmcts.divorce.solicitor.service.SolicitorCreatePetitionService;
+import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutTheSolicitor;
+import uk.gov.hmcts.divorce.solicitor.service.SolicitorCreateApplicationService;
 
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
@@ -28,10 +29,13 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 class SolicitorCreateTest {
 
     @Mock
-    private SolicitorCreatePetitionService solicitorCreatePetitionService;
+    private SolicitorCreateApplicationService solicitorCreateApplicationService;
 
     @Mock
     private HttpServletRequest httpServletRequest;
+
+    @Mock
+    private SolAboutTheSolicitor solAboutTheSolicitor;
 
     @InjectMocks
     private SolicitorCreate solicitorCreate;
@@ -59,7 +63,7 @@ class SolicitorCreateTest {
 
         solicitorCreate.aboutToSubmit(details, details);
 
-        verify(solicitorCreatePetitionService).aboutToSubmit(
+        verify(solicitorCreateApplicationService).aboutToSubmit(
             caseData,
             details.getId(),
             details.getCreatedDate().toLocalDate(),

@@ -1,0 +1,24 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "applicant1FirstName": "test_first_name",
+    "applicant1LastName": "test_last_name",
+    "applicant1Email": "test@test.com",
+    "languagePreferenceWelsh": "NO",
+    "applicant1OrganisationPolicy": {
+      "Organisation": {
+        "OrganisationID": "ABC123",
+        "OrganisationName": "Test Organisation"
+      },
+      "PreviousOrganisations": null,
+      "OrgPolicyReference": null,
+      "PrepopulateToUsersOrganisation": null,
+      "OrgPolicyCaseAssignedRole": null
+    },
+    "divorceCostsClaim": "YES",
+    "financialOrder": "NO"
+  },
+  "errors": null,
+  "warnings": null,
+  "state": null
+}

@@ -10,7 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.document.content.DraftPetitionTemplateContent;
+import uk.gov.hmcts.divorce.document.content.DraftApplicationTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DocAssemblyRequest;
 import uk.gov.hmcts.divorce.document.model.DocAssemblyResponse;
 import uk.gov.hmcts.divorce.document.model.DocumentInfo;
@@ -42,7 +42,7 @@ public class DocAssemblyServiceTest {
 
     private static final String DOC_STORE_BASE_URL_PATH = "http://localhost:4200/assets/";
     private static final String BINARY = "/binary";
-    private static final String DRAFT_MINI_PETITION_FILENAME = "draft-mini-petition-1616591401473378.pdf";
+    private static final String DRAFT_MINI_APPLICATION_FILENAME = "draft-mini-application-1616591401473378.pdf";
 
     @Mock
     private AuthTokenGenerator authTokenGenerator;
@@ -54,18 +54,18 @@ public class DocAssemblyServiceTest {
     private ObjectMapper objectMapper;
 
     @Mock
-    private DraftPetitionTemplateContent petitionTemplateMapper;
+    private DraftApplicationTemplateContent applicationTemplateMapper;
 
     @InjectMocks
     private DocAssemblyService docAssemblyService;
 
     @Test
-    public void shouldGenerateAndStoreDraftPetitionAndReturnDocumentUrl() {
+    public void shouldGenerateAndStoreDraftApplicationAndReturnDocumentUrl() {
         CaseData caseData = caseData();
         Map<String, Object> caseDataMap = caseDataMap();
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(petitionTemplateMapper.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(caseDataMap);
+        when(applicationTemplateMapper.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(caseDataMap);
 
         DocAssemblyRequest docAssemblyRequest =
             DocAssemblyRequest
@@ -81,7 +81,7 @@ public class DocAssemblyServiceTest {
             DOC_STORE_BASE_URL_PATH + documentUuid
         );
 
-        when(docAssemblyClient.generateAndStoreDraftPetition(
+        when(docAssemblyClient.generateAndStoreDraftApplication(
             TEST_AUTHORIZATION_TOKEN,
             TEST_SERVICE_AUTH_TOKEN,
             docAssemblyRequest
@@ -97,16 +97,16 @@ public class DocAssemblyServiceTest {
 
         assertThat(documentInfo.getUrl()).isEqualTo(DOC_STORE_BASE_URL_PATH + documentUuid);
         assertThat(documentInfo.getBinaryUrl()).isEqualTo(DOC_STORE_BASE_URL_PATH + documentUuid + BINARY);
-        assertThat(documentInfo.getFilename()).isEqualTo(DRAFT_MINI_PETITION_FILENAME);
+        assertThat(documentInfo.getFilename()).isEqualTo(DRAFT_MINI_APPLICATION_FILENAME);
 
         verify(authTokenGenerator).generate();
-        verify(docAssemblyClient).generateAndStoreDraftPetition(
+        verify(docAssemblyClient).generateAndStoreDraftApplication(
             TEST_AUTHORIZATION_TOKEN,
             TEST_SERVICE_AUTH_TOKEN,
             docAssemblyRequest
         );
-        verify(petitionTemplateMapper).apply(caseData, TEST_CASE_ID, LOCAL_DATE);
-        verifyNoMoreInteractions(authTokenGenerator, docAssemblyClient, petitionTemplateMapper);
+        verify(applicationTemplateMapper).apply(caseData, TEST_CASE_ID, LOCAL_DATE);
+        verifyNoMoreInteractions(authTokenGenerator, docAssemblyClient, applicationTemplateMapper);
     }
 
     @Test
@@ -114,7 +114,7 @@ public class DocAssemblyServiceTest {
         CaseData caseData = caseData();
         Map<String, Object> caseDataMap = caseDataMap();
 
-        when(petitionTemplateMapper.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(caseDataMap);
+        when(applicationTemplateMapper.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(caseDataMap);
 
         byte[] emptyBody = {};
         Request request = Request.create(POST, EMPTY, Map.of(), emptyBody, UTF_8, null);
@@ -140,7 +140,7 @@ public class DocAssemblyServiceTest {
 
         doThrow(feignException)
             .when(docAssemblyClient)
-            .generateAndStoreDraftPetition(
+            .generateAndStoreDraftApplication(
                 TEST_AUTHORIZATION_TOKEN,
                 TEST_SERVICE_AUTH_TOKEN,
                 docAssemblyRequest

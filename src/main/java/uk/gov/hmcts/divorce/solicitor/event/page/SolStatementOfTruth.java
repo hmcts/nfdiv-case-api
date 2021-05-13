@@ -12,7 +12,7 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
         pageBuilder
             .page("SolStatementOfTruth")
             .pageLabel("Statement of truth and reconciliation")
-            .label("LabelSolStatementOfTruthPara-1", "## The petitioner is applying to the court")
+            .label("LabelSolStatementOfTruthPara-1", "## Applicant 1 is applying to the court")
             .label(
                 "LabelSolStatementOfTruthPara-1.1",
                 "That the marriage be dissolved as it has broken down irretrievably.")

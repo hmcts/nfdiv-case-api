@@ -12,11 +12,11 @@ public class SolUpdateContactDetails implements CcdPageConfiguration {
         pageBuilder
             .page("SolUpdateContactDetails")
             .pageLabel("Update contact details")
-            .mandatory(CaseData::getPetitionerSolicitorName)
-            .mandatory(CaseData::getPetitionerSolicitorPhone)
-            .mandatory(CaseData::getPetitionerSolicitorEmail)
+            .mandatory(CaseData::getApplicant1SolicitorName)
+            .mandatory(CaseData::getApplicant1SolicitorPhone)
+            .mandatory(CaseData::getApplicant1SolicitorEmail)
             .mandatory(CaseData::getSolicitorAgreeToReceiveEmails)
-            .mandatory(CaseData::getDerivedPetitionerSolicitorAddress)
+            .mandatory(CaseData::getDerivedApplicant1SolicitorAddress)
             .done();
     }
 }

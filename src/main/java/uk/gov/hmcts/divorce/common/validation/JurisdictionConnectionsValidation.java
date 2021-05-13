@@ -15,53 +15,53 @@ public final class JurisdictionConnectionsValidation {
     }
 
     public static String validateJurisdictionConnectionA(Set<JurisdictionConnections> jurisdictionConnections, CaseData caseData) {
-        if (jurisdictionConnections.contains(JurisdictionConnections.PET_RESP_RESIDENT)
-            && caseData.getJurisdictionPetitionerResidence() != YesOrNo.YES
-            && caseData.getJurisdictionRespondentResidence() != YesOrNo.YES) {
-            return CONNECTION + JurisdictionConnections.PET_RESP_RESIDENT + CANNOT_EXIST;
+        if (jurisdictionConnections.contains(JurisdictionConnections.APP_1_APP_2_RESIDENT)
+            && caseData.getJurisdictionApplicant1Residence() != YesOrNo.YES
+            && caseData.getJurisdictionApplicant2Residence() != YesOrNo.YES) {
+            return CONNECTION + JurisdictionConnections.APP_1_APP_2_RESIDENT + CANNOT_EXIST;
         }
         return null;
     }
 
     public static String validateJurisdictionConnectionB(Set<JurisdictionConnections> jurisdictionConnections, CaseData caseData) {
-        if (jurisdictionConnections.contains(JurisdictionConnections.PET_RESP_LAST_RESIDENT)
+        if (jurisdictionConnections.contains(JurisdictionConnections.APP_1_APP_2_LAST_RESIDENT)
             && caseData.getJurisdictionBothLastHabituallyResident() != YesOrNo.YES) {
-            return CONNECTION + JurisdictionConnections.PET_RESP_LAST_RESIDENT + CANNOT_EXIST;
+            return CONNECTION + JurisdictionConnections.APP_1_APP_2_LAST_RESIDENT + CANNOT_EXIST;
         }
         return null;
     }
 
     public static String validateJurisdictionConnectionC(Set<JurisdictionConnections> jurisdictionConnections, CaseData caseData) {
-        if (jurisdictionConnections.contains(JurisdictionConnections.RESP_RESIDENT)
-            && caseData.getJurisdictionRespondentResidence() != YesOrNo.YES) {
-            return CONNECTION + JurisdictionConnections.RESP_RESIDENT + CANNOT_EXIST;
+        if (jurisdictionConnections.contains(JurisdictionConnections.APP_2_RESIDENT)
+            && caseData.getJurisdictionApplicant2Residence() != YesOrNo.YES) {
+            return CONNECTION + JurisdictionConnections.APP_2_RESIDENT + CANNOT_EXIST;
         }
         return null;
     }
 
     public static String validateJurisdictionConnectionD(Set<JurisdictionConnections> jurisdictionConnections, CaseData caseData) {
-        if (jurisdictionConnections.contains(JurisdictionConnections.PET_RESIDENT_TWELVE_MONTHS)
-            && caseData.getJurisdictionPetitionerResidence() != YesOrNo.YES
-            && caseData.getJurisdictionPetHabituallyResLastTwelveMonths() != YesOrNo.YES) {
-            return CONNECTION + JurisdictionConnections.PET_RESIDENT_TWELVE_MONTHS + CANNOT_EXIST;
+        if (jurisdictionConnections.contains(JurisdictionConnections.APP_1_RESIDENT_TWELVE_MONTHS)
+            && caseData.getJurisdictionApplicant1Residence() != YesOrNo.YES
+            && caseData.getJurisdictionApp1HabituallyResLastTwelveMonths() != YesOrNo.YES) {
+            return CONNECTION + JurisdictionConnections.APP_1_RESIDENT_TWELVE_MONTHS + CANNOT_EXIST;
         }
         return null;
     }
 
     public static String validateJurisdictionConnectionE(Set<JurisdictionConnections> jurisdictionConnections, CaseData caseData) {
-        if (jurisdictionConnections.contains(JurisdictionConnections.PET_RESIDENT_SIX_MONTHS)
-            && caseData.getJurisdictionPetitionerResidence() != YesOrNo.YES
-            && caseData.getJurisdictionPetHabituallyResLastSixMonths() != YesOrNo.YES) {
-            return CONNECTION + JurisdictionConnections.PET_RESIDENT_SIX_MONTHS + CANNOT_EXIST;
+        if (jurisdictionConnections.contains(JurisdictionConnections.APP_1_RESIDENT_SIX_MONTHS)
+            && caseData.getJurisdictionApplicant1Residence() != YesOrNo.YES
+            && caseData.getJurisdictionApp1HabituallyResLastSixMonths() != YesOrNo.YES) {
+            return CONNECTION + JurisdictionConnections.APP_1_RESIDENT_SIX_MONTHS + CANNOT_EXIST;
         }
         return null;
     }
 
     public static String validateJurisdictionConnectionF(Set<JurisdictionConnections> jurisdictionConnections, CaseData caseData) {
-        if (jurisdictionConnections.contains(JurisdictionConnections.PET_RESP_DOMICILED)
-            && caseData.getJurisdictionPetitionerDomicile() != YesOrNo.YES
-            && caseData.getJurisdictionRespondentDomicile() != YesOrNo.YES) {
-            return CONNECTION + JurisdictionConnections.PET_RESP_DOMICILED + CANNOT_EXIST;
+        if (jurisdictionConnections.contains(JurisdictionConnections.APP_1_APP_2_DOMICILED)
+            && caseData.getJurisdictionApplicant1Domicile() != YesOrNo.YES
+            && caseData.getJurisdictionApplicant2Domicile() != YesOrNo.YES) {
+            return CONNECTION + JurisdictionConnections.APP_1_APP_2_DOMICILED + CANNOT_EXIST;
         }
         return null;
     }
@@ -75,17 +75,17 @@ public final class JurisdictionConnectionsValidation {
     }
 
     public static String validateJurisdictionConnectionH(Set<JurisdictionConnections> jurisdictionConnections, CaseData caseData) {
-        if (jurisdictionConnections.contains(JurisdictionConnections.PET_DOMICILED)
-            && caseData.getJurisdictionPetitionerDomicile() != YesOrNo.YES) {
-            return CONNECTION + JurisdictionConnections.PET_DOMICILED + CANNOT_EXIST;
+        if (jurisdictionConnections.contains(JurisdictionConnections.APP_1_DOMICILED)
+            && caseData.getJurisdictionApplicant1Domicile() != YesOrNo.YES) {
+            return CONNECTION + JurisdictionConnections.APP_1_DOMICILED + CANNOT_EXIST;
         }
         return null;
     }
 
     public static String validateJurisdictionConnectionI(Set<JurisdictionConnections> jurisdictionConnections, CaseData caseData) {
-        if (jurisdictionConnections.contains(JurisdictionConnections.RESP_DOMICILED)
-            && caseData.getJurisdictionRespondentDomicile() != YesOrNo.YES) {
-            return CONNECTION + JurisdictionConnections.RESP_DOMICILED + CANNOT_EXIST;
+        if (jurisdictionConnections.contains(JurisdictionConnections.APP_2_DOMICILED)
+            && caseData.getJurisdictionApplicant2Domicile() != YesOrNo.YES) {
+            return CONNECTION + JurisdictionConnections.APP_2_DOMICILED + CANNOT_EXIST;
         }
         return null;
     }

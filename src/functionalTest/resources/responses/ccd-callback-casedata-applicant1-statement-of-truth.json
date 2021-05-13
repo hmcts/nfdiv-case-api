@@ -1,0 +1,22 @@
+{
+  "data": {
+    "inferredApplicant1Gender": "female",
+    "inferredApplicant2Gender": "male",
+    "marriageDate": "2020-04-28",
+    "applicant1FirstName": "test_first_name",
+    "applicant1MiddleName": "test_middle_name",
+    "applicant1LastName": "test_last_name",
+    "applicant1ContactDetailsConfidential": "keep",
+    "applicant2FirstName": "test_first_name",
+    "applicant2LastName": "test_last_name",
+    "marriageApplicant1Name": "test_first_name test_last_name",
+    "financialOrder": "NO",
+    "prayerHasBeenGiven": "YES",
+    "statementOfTruth": "YES",
+    "jurisdictionApplicant1Residence": "YES",
+    "jurisdictionConnections": ["A"]
+  },
+  "errors": null,
+  "state": "AwaitingPayment",
+  "warnings": null
+}

@@ -33,7 +33,7 @@ public class SaveAndSignOutNotificationHandler {
         templateVars.put(SIGN_IN_URL_NOTIFY_KEY, configTemplateVars.get(signInUrlKey));
 
         notificationService.sendEmail(
-            caseData.getPetitionerEmail(),
+            caseData.getApplicant1Email(),
             SAVE_SIGN_OUT,
             templateVars,
             caseData.getLanguagePreference()

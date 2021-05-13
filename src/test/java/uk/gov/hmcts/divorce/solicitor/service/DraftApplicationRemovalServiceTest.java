@@ -39,13 +39,13 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.OTHER;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.PET_SOL_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_1_SOL_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
 
 @ExtendWith(MockitoExtension.class)
-public class DraftPetitionRemovalServiceTest {
+public class DraftApplicationRemovalServiceTest {
 
     @Mock
     private DocumentManagementClient documentManagementClient;
@@ -57,10 +57,10 @@ public class DraftPetitionRemovalServiceTest {
     private IdamService idamService;
 
     @InjectMocks
-    private DraftPetitionRemovalService draftPetitionRemovalService;
+    private DraftApplicationRemovalService draftApplicationRemovalService;
 
     @Test
-    public void shouldRemoveDraftPetitionDocumentFromCaseDataAndDeletePetitionDocumentFromDocManagement() {
+    public void shouldRemoveDraftApplicationDocumentFromCaseDataAndDeleteApplicationDocumentFromDocManagement() {
         List<String> solicitorRoles = List.of("caseworker-divorce", "caseworker-divorce-solicitor");
 
         String solicitorRolesCsv = String.join(",", solicitorRoles);
@@ -71,14 +71,14 @@ public class DraftPetitionRemovalServiceTest {
 
         User solicitorUser = solicitorUser(solicitorRoles, userId);
 
-        when(idamService.retrieveUser(PET_SOL_AUTH_TOKEN)).thenReturn(solicitorUser);
+        when(idamService.retrieveUser(APP_1_SOL_AUTH_TOKEN)).thenReturn(solicitorUser);
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         String documentUuid = FilenameUtils.getName(divorceDocumentListValue.getValue().getDocumentLink().getUrl());
 
         doNothing().when(documentManagementClient).deleteDocument(
-            PET_SOL_AUTH_TOKEN,
+            APP_1_SOL_AUTH_TOKEN,
             TEST_SERVICE_AUTH_TOKEN,
             solicitorRolesCsv,
             userId,
@@ -86,18 +86,18 @@ public class DraftPetitionRemovalServiceTest {
             true
         );
 
-        List<ListValue<DivorceDocument>> actualDocumentsList = draftPetitionRemovalService.removeDraftPetitionDocument(
+        List<ListValue<DivorceDocument>> actualDocumentsList = draftApplicationRemovalService.removeDraftApplicationDocument(
             singletonList(divorceDocumentListValue),
             TEST_CASE_ID,
-            PET_SOL_AUTH_TOKEN
+            APP_1_SOL_AUTH_TOKEN
         );
 
         assertThat(actualDocumentsList).isEmpty();
 
-        verify(idamService).retrieveUser(PET_SOL_AUTH_TOKEN);
+        verify(idamService).retrieveUser(APP_1_SOL_AUTH_TOKEN);
         verify(authTokenGenerator).generate();
         verify(documentManagementClient).deleteDocument(
-            PET_SOL_AUTH_TOKEN,
+            APP_1_SOL_AUTH_TOKEN,
             TEST_SERVICE_AUTH_TOKEN,
             solicitorRolesCsv,
             userId,
@@ -120,7 +120,7 @@ public class DraftPetitionRemovalServiceTest {
 
         User solicitorUser = solicitorUser(solicitorRoles, userId);
 
-        when(idamService.retrieveUser(PET_SOL_AUTH_TOKEN)).thenReturn(solicitorUser);
+        when(idamService.retrieveUser(APP_1_SOL_AUTH_TOKEN)).thenReturn(solicitorUser);
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
@@ -148,15 +148,15 @@ public class DraftPetitionRemovalServiceTest {
                 anyBoolean()
             );
 
-        assertThatThrownBy(() -> draftPetitionRemovalService.removeDraftPetitionDocument(
+        assertThatThrownBy(() -> draftApplicationRemovalService.removeDraftApplicationDocument(
             singletonList(documentWithType(DIVORCE_APPLICATION)),
             TEST_CASE_ID,
-            PET_SOL_AUTH_TOKEN
+            APP_1_SOL_AUTH_TOKEN
         ))
             .hasMessageContaining("403 User role is not authorised to delete document")
             .isExactlyInstanceOf(FeignException.Forbidden.class);
 
-        verify(idamService).retrieveUser(PET_SOL_AUTH_TOKEN);
+        verify(idamService).retrieveUser(APP_1_SOL_AUTH_TOKEN);
         verify(authTokenGenerator).generate();
         verifyNoMoreInteractions(idamService, authTokenGenerator);
     }
@@ -173,7 +173,7 @@ public class DraftPetitionRemovalServiceTest {
 
         User solicitorUser = solicitorUser(solicitorRoles, userId);
 
-        when(idamService.retrieveUser(PET_SOL_AUTH_TOKEN)).thenReturn(solicitorUser);
+        when(idamService.retrieveUser(APP_1_SOL_AUTH_TOKEN)).thenReturn(solicitorUser);
 
         byte[] emptyBody = {};
         Request request = Request.create(GET, EMPTY, Map.of(), emptyBody, UTF_8, null);
@@ -190,26 +190,26 @@ public class DraftPetitionRemovalServiceTest {
 
         doThrow(feignException).when(authTokenGenerator).generate();
 
-        assertThatThrownBy(() -> draftPetitionRemovalService.removeDraftPetitionDocument(
+        assertThatThrownBy(() -> draftApplicationRemovalService.removeDraftApplicationDocument(
             singletonList(documentWithType(DIVORCE_APPLICATION)),
             TEST_CASE_ID,
-            PET_SOL_AUTH_TOKEN
+            APP_1_SOL_AUTH_TOKEN
         ))
             .hasMessageContaining("401 Invalid s2s secret")
             .isExactlyInstanceOf(FeignException.Unauthorized.class);
 
-        verify(idamService).retrieveUser(PET_SOL_AUTH_TOKEN);
+        verify(idamService).retrieveUser(APP_1_SOL_AUTH_TOKEN);
         verifyNoMoreInteractions(idamService);
     }
 
     @Test
-    public void shouldNotInvokeDocManagementWhenPetitionDocumentDoesNotExistInGenerateDocuments() {
+    public void shouldNotInvokeDocManagementWhenApplicationDocumentDoesNotExistInGenerateDocuments() {
         ListValue<DivorceDocument> divorceDocumentListValue = documentWithType(OTHER);
 
-        List<ListValue<DivorceDocument>> actualDocumentsList = draftPetitionRemovalService.removeDraftPetitionDocument(
+        List<ListValue<DivorceDocument>> actualDocumentsList = draftApplicationRemovalService.removeDraftApplicationDocument(
             singletonList(divorceDocumentListValue),
             TEST_CASE_ID,
-            PET_SOL_AUTH_TOKEN
+            APP_1_SOL_AUTH_TOKEN
         );
 
         assertThat(actualDocumentsList).containsExactlyInAnyOrder(divorceDocumentListValue);
@@ -224,6 +224,6 @@ public class DraftPetitionRemovalServiceTest {
             .id(userId)
             .build();
 
-        return new User(PET_SOL_AUTH_TOKEN, userDetails);
+        return new User(APP_1_SOL_AUTH_TOKEN, userDetails);
     }
 }

@@ -21,18 +21,18 @@ import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 
 @Slf4j
 @Component
-public class PetitionerStatementOfTruth implements CCDConfig<CaseData, State, UserRole> {
+public class Applicant1StatementOfTruth implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String PETITIONER_STATEMENT_OF_TRUTH = "petitioner-statement-of-truth";
+    public static final String APPLICANT_1_STATEMENT_OF_TRUTH = "applicant-1-statement-of-truth";
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         configBuilder
-            .event(PETITIONER_STATEMENT_OF_TRUTH)
+            .event(APPLICANT_1_STATEMENT_OF_TRUTH)
             .forStates(Draft)
-            .name("Petitioner Statement of Truth")
-            .description("Petitioner confirms SOT")
+            .name("Applicant 1 Statement of Truth")
+            .description("Applicant 1 confirms SOT")
             .aboutToStartCallback(this::aboutToStart)
             .retries(120, 120)
             .grant(CREATE_READ_UPDATE, CITIZEN)
@@ -41,7 +41,7 @@ public class PetitionerStatementOfTruth implements CCDConfig<CaseData, State, Us
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
 
-        log.info("Submit petition about to start callback invoked");
+        log.info("Submit application about to start callback invoked");
 
         final CaseData caseData = details.getData();
 

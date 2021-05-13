@@ -84,12 +84,16 @@ core_case_data:
 docmosis:
   templates:
     english:
-      DIVORCE_MINI_PETITION: Divorce_CP_Mini_Draft_Petition_Template.docx
+      DIVORCE_MINI_APPLICATION: Divorce_CP_Mini_Draft_Application_Template.docx
     welsh:
-      DIVORCE_MINI_PETITION: FL-DIV-GNO-WEL-00256.docx
+      DIVORCE_MINI_APPLICATION: FL-DIV-GNO-WEL-00256.docx
 
 doc_assembly:
   url: ${DOC_ASSEMBLY_URL:http://dg-docassembly-aat.service.core-compute-aat.internal}
 
 document_management:
   url: ${DOCUMENT_MANAGEMENT_URL:http://dm-store-aat.service.core-compute-aat.internal}
+
+prd:
+  api:
+    url: ${PRD_API_BASEURL:http://rd-professional-api-aat.service.core-compute-aat.internal}

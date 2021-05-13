@@ -16,8 +16,8 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_1_SOL_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.INVALID_AUTH_TOKEN;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.PET_SOL_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASEWORKER_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASEWORKER_USER_PASSWORD;
@@ -35,13 +35,13 @@ public class IdamServiceTest {
 
     @Test
     public void shouldRetrieveUserWhenValidAuthorizationTokenIsPassed() {
-        when(idamClient.getUserDetails(PET_SOL_AUTH_TOKEN))
+        when(idamClient.getUserDetails(APP_1_SOL_AUTH_TOKEN))
             .thenReturn(userDetails());
 
-        assertThatCode(() -> idamService.retrieveUser(PET_SOL_AUTH_TOKEN))
+        assertThatCode(() -> idamService.retrieveUser(APP_1_SOL_AUTH_TOKEN))
             .doesNotThrowAnyException();
 
-        verify(idamClient).getUserDetails(PET_SOL_AUTH_TOKEN);
+        verify(idamClient).getUserDetails(APP_1_SOL_AUTH_TOKEN);
         verifyNoMoreInteractions(idamClient);
     }
 
@@ -60,16 +60,16 @@ public class IdamServiceTest {
         setCaseworkerCredentials();
 
         when(idamClient.getAccessToken(TEST_CASEWORKER_USER_EMAIL, TEST_CASEWORKER_USER_PASSWORD))
-            .thenReturn(PET_SOL_AUTH_TOKEN);
+            .thenReturn(APP_1_SOL_AUTH_TOKEN);
 
-        when(idamClient.getUserDetails(PET_SOL_AUTH_TOKEN))
+        when(idamClient.getUserDetails(APP_1_SOL_AUTH_TOKEN))
             .thenReturn(userDetails());
 
         assertThatCode(() -> idamService.retrieveCaseWorkerDetails())
             .doesNotThrowAnyException();
 
         verify(idamClient).getAccessToken(TEST_CASEWORKER_USER_EMAIL, TEST_CASEWORKER_USER_PASSWORD);
-        verify(idamClient).getUserDetails(PET_SOL_AUTH_TOKEN);
+        verify(idamClient).getUserDetails(APP_1_SOL_AUTH_TOKEN);
         verifyNoMoreInteractions(idamClient);
     }
 

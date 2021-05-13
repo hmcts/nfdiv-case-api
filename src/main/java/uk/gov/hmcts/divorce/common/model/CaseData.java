@@ -50,10 +50,12 @@ public class CaseData {
     private static final int SUBMISSION_RESPONSE_DAYS = 14;
 
     @CCD(
-        label = "Does the petitioner want to apply as a sole applicant?",
-        access = {DefaultAccess.class}
+        label = "How does applicant 1 want to apply for the divorce?",
+        access = {DefaultAccess.class},
+        typeOverride = FixedList,
+        typeParameterOverride = "ApplicationType"
     )
-    private YesOrNo soleOrJoinApplicant;
+    private ApplicationType applicationType;
 
     @CCD(
         label = "Divorce or Dissolution?",
@@ -64,34 +66,34 @@ public class CaseData {
     private DivorceOrDissolution divorceOrDissolution;
 
     @CCD(
-        label = "Has petitioner's marriage broken down irretrievably?",
+        label = "Has applicant 1's marriage broken down irretrievably?",
         access = {DefaultAccess.class}
     )
     private YesOrNo screenHasMarriageBroken;
 
     @CCD(
-        label = "Were the petitioner and the respondent a same-sex couple when they got married?",
+        label = "Were applicant 1 and applicant 2 a same-sex couple when they got married?",
         access = {DefaultAccess.class}
     )
     private YesOrNo marriageIsSameSexCouple;
 
     @CCD(
-        label = "What is the petitioner's gender?",
-        hint = "The petitioner’s gender is collected for statistical purposes only.",
+        label = "What is Applicant 1's gender?",
+        hint = "Applicant 1’s gender is collected for statistical purposes only.",
         typeOverride = FixedList,
         typeParameterOverride = "Gender",
         access = {DefaultAccess.class}
     )
-    private Gender inferredPetitionerGender;
+    private Gender inferredApplicant1Gender;
 
     @CCD(
-        label = "What is the respondent's gender?",
-        hint = "The respondent’s gender is collected for statistical purposes only.",
+        label = "What is applicant 2's gender?",
+        hint = "Applicant 2’s gender is collected for statistical purposes only.",
         typeOverride = FixedList,
         typeParameterOverride = "Gender",
         access = {DefaultAccess.class}
     )
-    private Gender inferredRespondentGender;
+    private Gender inferredApplicant2Gender;
 
     @CCD(
         label = "Marriage date",
@@ -115,7 +117,7 @@ public class CaseData {
     private YesOrNo helpWithFeesNeedHelp;
 
     @CCD(
-        label = "Petitioner got marriage cert.?",
+        label = "Applicant 1 got marriage cert?",
         access = {DefaultAccess.class}
     )
     private YesOrNo screenHasMarriageCert;
@@ -162,68 +164,68 @@ public class CaseData {
         label = "First name(s)",
         access = {DefaultAccess.class}
     )
-    private String petitionerFirstName;
+    private String applicant1FirstName;
 
     @CCD(
         label = "Middle name(s)",
         access = {DefaultAccess.class}
     )
-    private String petitionerMiddleName;
+    private String applicant1MiddleName;
 
     @CCD(
         label = "Last name",
         access = {DefaultAccess.class}
     )
-    private String petitionerLastName;
+    private String applicant1LastName;
 
     @CCD(
-        label = "Petitioner's email address",
+        label = "Applicant 1's email address",
         typeOverride = Email,
         access = {DefaultAccess.class}
     )
-    private String petitionerEmail;
+    private String applicant1Email;
 
     @CCD(
-        label = "Petitioner has agreed to receive notifications and be served (delivered) court documents by email",
+        label = "Applicant 1 has agreed to receive notifications and be served (delivered) court documents by email",
         access = {DefaultAccess.class}
     )
-    private YesOrNo petitionerAgreedToReceiveEmails;
+    private YesOrNo applicant1AgreedToReceiveEmails;
 
     @CCD(
-        label = "Is the petitioner resident?",
+        label = "Is Applicant 1 resident?",
         access = {DefaultAccess.class}
     )
-    private YesOrNo jurisdictionPetitionerResidence;
+    private YesOrNo jurisdictionApplicant1Residence;
 
     @CCD(
-        label = "Is the respondent resident?",
+        label = "Is applicant 2 resident?",
         access = {DefaultAccess.class}
     )
-    private YesOrNo jurisdictionRespondentResidence;
+    private YesOrNo jurisdictionApplicant2Residence;
 
     @CCD(
-        label = "Is the petitioner domiciled?",
+        label = "Is Applicant 1 domiciled?",
         access = {DefaultAccess.class}
     )
-    private YesOrNo jurisdictionPetitionerDomicile;
+    private YesOrNo jurisdictionApplicant1Domicile;
 
     @CCD(
-        label = "Is the respondent domiciled?",
+        label = "Is applicant 2 domiciled?",
         access = {DefaultAccess.class}
     )
-    private YesOrNo jurisdictionRespondentDomicile;
+    private YesOrNo jurisdictionApplicant2Domicile;
 
     @CCD(
-        label = "Has the petitioner been resident for the last twelve months?",
+        label = "Has Applicant 1 been resident for the last twelve months?",
         access = {DefaultAccess.class}
     )
-    private YesOrNo jurisdictionPetHabituallyResLastTwelveMonths;
+    private YesOrNo jurisdictionApp1HabituallyResLastTwelveMonths;
 
     @CCD(
-        label = "Has the petitioner been resident for the last six months?",
+        label = "Has Applicant 1 been resident for the last six months?",
         access = {DefaultAccess.class}
     )
-    private YesOrNo jurisdictionPetHabituallyResLastSixMonths;
+    private YesOrNo jurisdictionApp1HabituallyResLastSixMonths;
 
     @CCD(
         label = "Is residual jurisdiction eligible?",
@@ -232,7 +234,7 @@ public class CaseData {
     private YesOrNo jurisdictionResidualEligible;
 
     @CCD(
-        label = "Were the both petitioner and respondent last habitually resident, and one still resides?",
+        label = "Were both applicant 1 and applicant 2 last habitually resident, and one still resides?",
         access = {DefaultAccess.class}
     )
     private YesOrNo jurisdictionBothLastHabituallyResident;
@@ -245,28 +247,28 @@ public class CaseData {
     private YesOrNo languagePreferenceWelsh;
 
     @CCD(
-        label = "Has the petitioner changed their name since they got married?",
-        hint = "Is the respondent’s current name different to their married name or the name shown on their "
+        label = "Has applicant 1 changed their name since they got married?",
+        hint = "Is applicant 1’s current name different to their married name or the name shown on their "
             + "marriage certificate?",
         access = {DefaultAccess.class}
     )
-    private YesOrNo petitionerNameDifferentToMarriageCertificate;
+    private YesOrNo applicant1NameDifferentToMarriageCertificate;
 
     @CCD(
-        label = "How did the petitioner change their name?",
+        label = "How did Applicant 1 change their name?",
         access = {DefaultAccess.class}
     )
-    private ChangedNameHow petitionerNameChangedHow;
+    private ChangedNameHow applicant1NameChangedHow;
 
     @CCD(
         label = "Provide details of how they changed their name",
         typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
-    private String petitionerNameChangedHowOtherDetails;
+    private String applicant1NameChangedHowOtherDetails;
 
     @CCD(
-        label = "Who is petitioner divorcing?",
+        label = "Who is Applicant 1 divorcing?",
         hint = "Husband or Wife?",
         typeOverride = FixedList,
         typeParameterOverride = "WhoDivorcing",
@@ -275,70 +277,64 @@ public class CaseData {
     private WhoDivorcing divorceWho;
 
     @CCD(
-        label = "The Petitioner's home address",
+        label = "Applicant 1's home address",
         access = {DefaultAccess.class}
     )
-    private AddressGlobalUK applicantHomeAddress;
+    private AddressGlobalUK applicant1HomeAddress;
 
     @CCD(
-        label = "Is petitioners home address an international address?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo petitionerHomeAddressIsInternational;
-
-    @CCD(
-        label = "Petitioner's phone number",
+        label = "Applicant 1's phone number",
         regex = "^[0-9 +().-]{9,}$",
         access = {DefaultAccess.class}
     )
-    private String petitionerPhoneNumber;
+    private String applicant1PhoneNumber;
 
     @CCD(
-        label = "Keep the petitioner's contact details private from the respondent?",
+        label = "Keep Applicant 1's contact details private from applicant 2?",
         typeOverride = FixedList,
         typeParameterOverride = "ConfidentialAddress",
         access = {DefaultAccess.class}
     )
-    private ConfidentialAddress petitionerContactDetailsConfidential;
+    private ConfidentialAddress applicant1ContactDetailsConfidential;
 
     @CCD(
-        label = "Respondent's First name(s)",
+        label = "Applicant 2's First name(s)",
         access = {DefaultAccess.class}
     )
-    private String respondentFirstName;
+    private String applicant2FirstName;
 
     @CCD(
-        label = "Respondent's Middle name(s)",
+        label = "Applicant 2's Middle name(s)",
         access = {DefaultAccess.class}
     )
-    private String respondentMiddleName;
+    private String applicant2MiddleName;
 
     @CCD(
-        label = "Respondent's Last name",
+        label = "Applicant 2's Last name",
         access = {DefaultAccess.class}
     )
-    private String respondentLastName;
+    private String applicant2LastName;
 
     @CCD(
         label = "Name changed since marriage?",
-        hint = "Is the respondent’s current name different to their married name or the name shown on their "
+        hint = "Is applicant 2’s current name different to their married name or the name shown on their "
             + "marriage certificate?",
         access = {DefaultAccess.class}
     )
-    private YesOrNo respondentNameAsOnMarriageCertificate;
+    private YesOrNo applicant2NameAsOnMarriageCertificate;
 
     @CCD(
         label = "Please explain, if known, how their name has changed since they were married.",
         typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
-    private String respNameDifferentToMarriageCertExplain;
+    private String app2NameDifferentToMarriageCertExplain;
 
     @CCD(
-        label = "Petitioner Solicitor’s name",
+        label = "Applicant 1 Solicitor’s name",
         access = {DefaultAccess.class}
     )
-    private String petitionerSolicitorName;
+    private String applicant1SolicitorName;
 
     @CCD(
         label = "Your reference number",
@@ -347,18 +343,18 @@ public class CaseData {
     private String solicitorReference;
 
     @CCD(
-        label = "Petitioner Solicitor Phone number",
+        label = "Applicant 1 Solicitor Phone number",
         regex = "^[0-9 +().-]{9,}$",
         access = {DefaultAccess.class}
     )
-    private String petitionerSolicitorPhone;
+    private String applicant1SolicitorPhone;
 
     @CCD(
-        label = "Petitioner Solicitor Email",
+        label = "Applicant 1 Solicitor Email",
         typeOverride = Email,
         access = {DefaultAccess.class}
     )
-    private String petitionerSolicitorEmail;
+    private String applicant1SolicitorEmail;
 
     @CCD(
         label = "I confirm I am willing to accept service of all correspondence and orders by email at the email address "
@@ -372,29 +368,29 @@ public class CaseData {
         typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
-    private String derivedPetitionerSolicitorAddress;
+    private String derivedApplicant1SolicitorAddress;
 
     @CCD(
         label = "Firm address/DX address",
         access = {DefaultAccess.class}
     )
-    private OrganisationPolicy<UserRole> petitionerOrganisationPolicy;
+    private OrganisationPolicy<UserRole> applicant1OrganisationPolicy;
 
     @CCD(
-        label = "Petitioner's full name as on marriage certificate",
-        hint = "Enter the petitioner's name exactly as it appears on the marriage certificate. "
+        label = "Applicant 1's full name as on marriage certificate",
+        hint = "Enter Applicant 1's name exactly as it appears on the marriage certificate. "
             + " Include any extra text such as \"formerly known as\"",
         access = {DefaultAccess.class}
     )
-    private String marriagePetitionerName;
+    private String marriageApplicant1Name;
 
     @CCD(
-        label = "Respondent's full name as on marriage certificate",
-        hint = "Enter the respondent's name exactly as it appears on the marriage certificate. "
+        label = "Applicant 2's full name as on marriage certificate",
+        hint = "Enter applicant 2's name exactly as it appears on the marriage certificate. "
             + " Include any extra text such as \"formerly known as\"",
         access = {DefaultAccess.class}
     )
-    private String marriageRespondentName;
+    private String marriageApplicant2Name;
 
     @CCD(
         label = "Is this an urgent jurisdiction case?",
@@ -410,13 +406,13 @@ public class CaseData {
     private String solUrgentCaseSupportingInformation;
 
     @CCD(
-        label = "Does the petitioner want to claim costs?",
+        label = "Does Applicant 1 want to claim costs?",
         access = {DefaultAccess.class}
     )
     private YesOrNo divorceCostsClaim;
 
     @CCD(
-        label = "Does the petitioner wish to apply for a financial order?",
+        label = "Does Applicant 1 wish to apply for a financial order?",
         hint = "The court will not start processing your request for a financial order until you submit the separate "
             + "application and pay the fee.",
         access = {DefaultAccess.class}
@@ -424,27 +420,27 @@ public class CaseData {
     private YesOrNo financialOrder;
 
     @CCD(
-        label = "Petitioner wants/will to apply to have the papers served to the respondent another way.",
+        label = "Applicant 1 wants/will to apply to have the papers served to applicant 2 another way.",
         hint = "For example by email, text message or social media. This is a separate application with "
             + "an additional fee, which will need to be reviewed by a judge.",
         access = {DefaultAccess.class}
     )
-    private YesOrNo petitionerWantsToHavePapersServedAnotherWay;
+    private YesOrNo applicant1WantsToHavePapersServedAnotherWay;
 
     @CCD(
-        label = "How would you like the respondent to be served?",
+        label = "How would you like applicant 2 to be served?",
         access = {DefaultAccess.class}
     )
     private SolServiceMethod solServiceMethod;
 
     @CCD(
-        label = "I have discussed the possibility of a reconciliation with the petitioner.",
+        label = "I have discussed the possibility of a reconciliation with Applicant 1.",
         access = {DefaultAccess.class}
     )
     private YesOrNo solStatementOfReconciliationCertify;
 
     @CCD(
-        label = "I have given the petitioner the names and addresses of persons qualified to help effect a reconciliation.",
+        label = "I have given Applicant 1 the names and addresses of persons qualified to help effect a reconciliation.",
         access = {DefaultAccess.class}
     )
     private YesOrNo solStatementOfReconciliationDiscussed;
@@ -458,13 +454,13 @@ public class CaseData {
     private YesOrNo prayerHasBeenGiven;
 
     @CCD(
-        label = "The petitioner believes that the facts stated in this application are true.",
+        label = "Applicant 1 believes that the facts stated in this application are true.",
         access = {DefaultAccess.class}
     )
     private YesOrNo statementOfTruth;
 
     @CCD(
-        label = "I am duly authorised by the petitioner to sign this statement.",
+        label = "I am duly authorised by Applicant 1 to sign this statement.",
         access = {DefaultAccess.class}
     )
     private YesOrNo solSignStatementOfTruth;
@@ -483,7 +479,7 @@ public class CaseData {
 
     @CCD(
         label = "Additional comments",
-        hint = "For the attention of court staff. These comments will not form part of the petition",
+        hint = "For the attention of court staff. These comments will not form part of the application",
         typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
@@ -547,36 +543,30 @@ public class CaseData {
         label = "Your partner's email address",
         access = {DefaultAccess.class}
     )
-    private String respondentEmailAddress;
+    private String applicant2EmailAddress;
 
     @CCD(
         label = "Do you know their email address",
         access = {DefaultAccess.class}
     )
-    private YesOrNo petitionerKnowsRespondentsEmailAddress;
+    private YesOrNo applicant1KnowsApplicant2EmailAddress;
 
     @CCD(
         label = "Do you know their address",
         access = {DefaultAccess.class}
     )
-    private YesOrNo petitionerKnowsRespondentsAddress;
+    private YesOrNo applicant1KnowsApplicant2Address;
 
     @CCD(
-        label = "The Respondent's home address",
-        hint = "If the respondent is to be served at their home address, enter the home address here and as the service "
+        label = "Applicant 2's home address",
+        hint = "If applicant 2 is to be served at their home address, enter the home address here and as the service "
             + "address below",
         access = {DefaultAccess.class}
     )
-    private AddressGlobalUK respondentHomeAddress;
+    private AddressGlobalUK applicant2HomeAddress;
 
     @CCD(
-        label = "Is respondents home address an international address?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo respondentHomeAddressIsInternational;
-
-    @CCD(
-        label = "Are there any existing or previous court proceedings relating to the petitioner's marriage, "
+        label = "Are there any existing or previous court proceedings relating to Applicant 1's marriage, "
             + "property or children?",
         access = {DefaultAccess.class}
     )
@@ -631,10 +621,10 @@ public class CaseData {
     private String selectedDivorceCentreSiteId;
 
     @CCD(
-        label = "Respondent's solicitor's reference",
+        label = "Applicant 2's solicitor's reference",
         access = {DefaultAccess.class}
     )
-    private String respondentSolicitorReference;
+    private String applicant2SolicitorReference;
 
     @CCD(
         label = "Documents generated",
@@ -645,64 +635,64 @@ public class CaseData {
     private List<ListValue<DivorceDocument>> documentsGenerated;
 
     @CCD(
-        label = "Is the respondent represented by a solicitor?",
+        label = "Is applicant 2 represented by a solicitor?",
         access = {DefaultAccess.class}
     )
-    private YesOrNo respondentSolicitorRepresented;
+    private YesOrNo applicant2SolicitorRepresented;
 
     @CCD(
-        label = "Respondent's solicitor's name",
+        label = "Applicant 2's solicitor's name",
         access = {DefaultAccess.class}
     )
-    private String respondentSolicitorName;
+    private String applicant2SolicitorName;
 
     @CCD(
-        label = "Respondent's solicitor's Phone number",
+        label = "Applicant 2's solicitor's Phone number",
         regex = "^[0-9 +().-]{9,}$",
         access = {DefaultAccess.class}
     )
-    private String respondentSolicitorPhone;
+    private String applicant2SolicitorPhone;
 
     @CCD(
-        label = "Respondent's solicitor's Email",
+        label = "Applicant 2's solicitor's Email",
         typeOverride = Email,
         access = {DefaultAccess.class}
     )
-    private String respondentSolicitorEmail;
+    private String applicant2SolicitorEmail;
 
     @CCD(
-        label = "Respondent's solicitor's firm/ DX address",
+        label = "Applicant 2's solicitor's firm/ DX address",
         typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
-    private String derivedRespondentSolicitorAddr;
+    private String derivedApplicant2SolicitorAddr;
 
     @CCD(
-        label = "Digital respondent case",
+        label = "Digital applicant 2 case",
         access = {DefaultAccess.class}
     )
-    private YesOrNo respSolDigital;
+    private YesOrNo app2SolDigital;
 
     @CCD(
-        label = "Respondent is using digital channel?",
+        label = "Applicant 2 is using digital channel?",
         access = {DefaultAccess.class}
     )
-    private YesOrNo respContactMethodIsDigital;
+    private YesOrNo app2ContactMethodIsDigital;
 
     @CCD(
-        label = "Respondent solicitor's firm",
-        hint = "Respondent Organisation Details",
+        label = "Applicant 2 solicitor's firm",
+        hint = "Applicant 2 Organisation Details",
         access = {DefaultAccess.class}
     )
-    private OrganisationPolicy<UserRole> respondentOrganisationPolicy;
+    private OrganisationPolicy<UserRole> applicant2OrganisationPolicy;
 
     @CCD(
-        label = "The Respondent's service address",
-        hint = "If the respondent is to be served at their home address, enter the home address here and as the service "
+        label = "Applicant 2's service address",
+        hint = "If applicant 2 is to be served at their home address, enter the home address here and as the service "
             + "address below",
         access = {DefaultAccess.class}
     )
-    private AddressGlobalUK respondentCorrespondenceAddress;
+    private AddressGlobalUK applicant2CorrespondenceAddress;
 
     @CCD(
         label = "Who is the financial order for?",
@@ -726,7 +716,7 @@ public class CaseData {
     private LocalDateTime dateSubmitted;
 
     @CCD(
-        label = "Case ID for previously Amended Case, which was challenged by respondent",
+        label = "Case ID for previously Amended Case, which was challenged by applicant 2",
         access = {DefaultAccess.class}
     )
     private CaseLink previousCaseId;
@@ -759,15 +749,24 @@ public class CaseData {
     }
 
     @JsonIgnore
-    public boolean hasDigitalDetailsForRespSol() {
-        return YES.equals(respSolDigital);
+    public boolean hasDigitalDetailsForApp2Sol() {
+        return YES.equals(app2SolDigital);
     }
 
     @JsonIgnore
-    public boolean hasRespondentOrgId() {
-        if (null != respondentOrganisationPolicy) {
-            String respondentOrgId = respondentOrganisationPolicy.getOrganisation().getOrganisationId();
-            return !Strings.isNullOrEmpty(respondentOrgId);
+    public boolean hasApplicant2OrgId() {
+        if (null != applicant2OrganisationPolicy) {
+            String applicant2OrgId = applicant2OrganisationPolicy.getOrganisation().getOrganisationId();
+            return !Strings.isNullOrEmpty(applicant2OrgId);
+        }
+        return false;
+    }
+
+    @JsonIgnore
+    public boolean hasApplicant1OrgId() {
+        if (null != applicant1OrganisationPolicy) {
+            String applicant1OrgId = applicant1OrganisationPolicy.getOrganisation().getOrganisationId();
+            return !Strings.isNullOrEmpty(applicant1OrgId);
         }
         return false;
     }

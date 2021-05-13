@@ -31,7 +31,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.WELSH;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_PETITION;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ENGLISH_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
@@ -41,12 +41,12 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class MiniPetitionDraftTest {
+public class MiniApplicationDraftTest {
 
     private static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(2021, 04, 28, 1, 0);
     private static final String DOC_URL = "http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003";
     private static final String DOC_BINARY_URL = "http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003/binary";
-    private static final String PDF_FILENAME = "draft-mini-petition-1616591401473378.pdf";
+    private static final String PDF_FILENAME = "draft-mini-application-1616591401473378.pdf";
     private static final String URL = "url";
     private static final String FILENAME = "filename";
     private static final String BINARY_URL = "binaryUrl";
@@ -61,7 +61,7 @@ public class MiniPetitionDraftTest {
     private CaseDataUpdaterChain caseDataUpdaterChain;
 
     @InjectMocks
-    private MiniPetitionDraft miniPetitionDraft;
+    private MiniApplicationDraft miniApplicationDraft;
 
     @Test
     void shouldReturnDocumentInfoWhenDocumentIsStoredAndGeneratedSuccessfullyForEnglishLanguage() {
@@ -82,7 +82,7 @@ public class MiniPetitionDraftTest {
 
         when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
 
-        CaseDataContext result = miniPetitionDraft.updateCaseData(caseDataContext, caseDataUpdaterChain);
+        CaseDataContext result = miniApplicationDraft.updateCaseData(caseDataContext, caseDataUpdaterChain);
         assertThat(result.getCaseData().getDocumentsGenerated()).hasSize(1);
 
         DivorceDocument divorceDocument = result.getCaseData().getDocumentsGenerated().get(0).getValue();
@@ -119,7 +119,7 @@ public class MiniPetitionDraftTest {
 
         when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
 
-        CaseDataContext updatedCaseDataContext = miniPetitionDraft.updateCaseData(caseDataContext, caseDataUpdaterChain);
+        CaseDataContext updatedCaseDataContext = miniApplicationDraft.updateCaseData(caseDataContext, caseDataUpdaterChain);
         assertThat(updatedCaseDataContext.getCaseData().getDocumentsGenerated()).hasSize(1);
 
         DivorceDocument divorceDocument = updatedCaseDataContext.getCaseData().getDocumentsGenerated().get(0).getValue();
@@ -162,7 +162,7 @@ public class MiniPetitionDraftTest {
             ENGLISH_TEMPLATE_ID
         );
 
-        assertThatThrownBy(() -> miniPetitionDraft.updateCaseData(caseDataContext(caseData), caseDataUpdaterChain))
+        assertThatThrownBy(() -> miniApplicationDraft.updateCaseData(caseDataContext(caseData), caseDataUpdaterChain))
             .isExactlyInstanceOf(FeignException.Unauthorized.class)
             .hasMessageContaining("s2s service not whitelisted");
     }
@@ -171,10 +171,10 @@ public class MiniPetitionDraftTest {
         when(docmosisTemplatesConfig.getTemplates()).thenReturn(
             Map.of(
                 ENGLISH, Map.of(
-                    DIVORCE_MINI_PETITION, ENGLISH_TEMPLATE_ID
+                    DIVORCE_MINI_APPLICATION, ENGLISH_TEMPLATE_ID
                 ),
                 WELSH, Map.of(
-                    DIVORCE_MINI_PETITION, WELSH_TEMPLATE_ID
+                    DIVORCE_MINI_APPLICATION, WELSH_TEMPLATE_ID
                 )
             )
         );

@@ -19,12 +19,12 @@ import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.WELSH;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_PETITION;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 
 @Component
 @Slf4j
-public class MiniPetitionDraft implements CaseDataUpdater {
+public class MiniApplicationDraft implements CaseDataUpdater {
 
     @Autowired
     private DocAssemblyService docAssemblyService;
@@ -47,7 +47,7 @@ public class MiniPetitionDraft implements CaseDataUpdater {
             languagePreference = WELSH;
         }
 
-        String templateName = docmosisTemplatesConfig.getTemplates().get(languagePreference).get(DIVORCE_MINI_PETITION);
+        String templateName = docmosisTemplatesConfig.getTemplates().get(languagePreference).get(DIVORCE_MINI_APPLICATION);
 
         DocumentInfo documentInfo = docAssemblyService.renderDocument(
             caseData,

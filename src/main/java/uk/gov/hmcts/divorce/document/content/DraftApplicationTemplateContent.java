@@ -20,8 +20,9 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_MIDDLE_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_POSTAL_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CHILDREN_OF_THE_APPLICANT_AND_THE_RESPONDENT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CHILDREN_OF_THE_APPLICANT_1_AND_APPLICANT_2;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONDITIONAL_ORDER_OF_DIVORCE_FROM;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COSTS_RELATED_TO_ENDING_THE_CIVIL_PARTNERSHIP;
@@ -44,13 +45,12 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_RELATIONSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.OF_THE_DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATIONSHIP;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_POSTAL_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TO_END_A_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TO_END_THE_CIVIL_PARTNERSHIP;
 
 @Component
 @Slf4j
-public class DraftPetitionTemplateContent {
+public class DraftApplicationTemplateContent {
 
     public Map<String, Object> apply(CaseData caseData, Long ccdCaseReference, LocalDate createdDate) {
         Map<String, Object> templateData = new HashMap<>();
@@ -77,16 +77,16 @@ public class DraftPetitionTemplateContent {
         templateData.put(CCD_CASE_REFERENCE, ccdCaseReference);
         templateData.put(ISSUE_DATE, createdDate.toString());
 
-        templateData.put(APPLICANT_1_FIRST_NAME, caseData.getPetitionerFirstName());
-        templateData.put(APPLICANT_1_MIDDLE_NAME, caseData.getPetitionerMiddleName());
-        templateData.put(APPLICANT_1_LAST_NAME, caseData.getPetitionerLastName());
+        templateData.put(APPLICANT_1_FIRST_NAME, caseData.getApplicant1FirstName());
+        templateData.put(APPLICANT_1_MIDDLE_NAME, caseData.getApplicant1MiddleName());
+        templateData.put(APPLICANT_1_LAST_NAME, caseData.getApplicant1LastName());
 
-        templateData.put(APPLICANT_2_FIRST_NAME, caseData.getRespondentFirstName());
-        templateData.put(APPLICANT_2_MIDDLE_NAME, caseData.getRespondentMiddleName());
-        templateData.put(APPLICANT_2_LAST_NAME, caseData.getRespondentLastName());
+        templateData.put(APPLICANT_2_FIRST_NAME, caseData.getApplicant2FirstName());
+        templateData.put(APPLICANT_2_MIDDLE_NAME, caseData.getApplicant2MiddleName());
+        templateData.put(APPLICANT_2_LAST_NAME, caseData.getApplicant2LastName());
 
-        templateData.put(APPLICANT_1_FULL_NAME, caseData.getMarriagePetitionerName());
-        templateData.put(APPLICANT_2_FULL_NAME, caseData.getMarriageRespondentName());
+        templateData.put(APPLICANT_1_FULL_NAME, caseData.getMarriageApplicant1Name());
+        templateData.put(APPLICANT_2_FULL_NAME, caseData.getMarriageApplicant2Name());
 
         templateData.put(MARRIAGE_DATE, caseData.getMarriageDate());
         templateData.put(COURT_CASE_DETAILS, caseData.getLegalProceedingsDetails());
@@ -99,27 +99,27 @@ public class DraftPetitionTemplateContent {
                 && caseData.getFinancialOrderFor().contains(FinancialOrderFor.CHILDREN);
 
         templateData.put(HAS_FINANCIAL_ORDERS_FOR_CHILD, hasFinancialOrdersForChild);
-        templateData.put(FINANCIAL_ORDER_CHILD, CHILDREN_OF_THE_APPLICANT_AND_THE_RESPONDENT);
+        templateData.put(FINANCIAL_ORDER_CHILD, CHILDREN_OF_THE_APPLICANT_1_AND_APPLICANT_2);
 
-        String respondentPostalAddress;
-        AddressGlobalUK respondentHomeAddress = caseData.getRespondentHomeAddress();
-        if (respondentHomeAddress == null) {
-            respondentPostalAddress = caseData.getDerivedRespondentSolicitorAddr();
+        String applicant2PostalAddress;
+        AddressGlobalUK applicant2HomeAddress = caseData.getApplicant2HomeAddress();
+        if (applicant2HomeAddress == null) {
+            applicant2PostalAddress = caseData.getDerivedApplicant2SolicitorAddr();
         } else {
-            respondentPostalAddress =
+            applicant2PostalAddress =
                 Stream.of(
-                    respondentHomeAddress.getAddressLine1(),
-                    respondentHomeAddress.getAddressLine2(),
-                    respondentHomeAddress.getAddressLine3(),
-                    respondentHomeAddress.getPostTown(),
-                    respondentHomeAddress.getCounty(),
-                    respondentHomeAddress.getPostCode(),
-                    respondentHomeAddress.getCountry()
+                    applicant2HomeAddress.getAddressLine1(),
+                    applicant2HomeAddress.getAddressLine2(),
+                    applicant2HomeAddress.getAddressLine3(),
+                    applicant2HomeAddress.getPostTown(),
+                    applicant2HomeAddress.getCounty(),
+                    applicant2HomeAddress.getPostCode(),
+                    applicant2HomeAddress.getCountry()
                     )
                     .filter(value -> value != null && !value.isEmpty())
                     .collect(Collectors.joining("\n"));
         }
-        templateData.put(RESPONDENT_POSTAL_ADDRESS, respondentPostalAddress);
+        templateData.put(APPLICANT_2_POSTAL_ADDRESS, applicant2PostalAddress);
 
         return templateData;
     }

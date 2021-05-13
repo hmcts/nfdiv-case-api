@@ -18,7 +18,7 @@ plugins {
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'org.springframework.boot' version '2.4.5'
   id 'com.github.ben-manes.versions' version '0.38.0'
-  id 'hmcts.ccd.sdk' version '0.19.27'
+  id 'hmcts.ccd.sdk' version '0.19.30'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -373,6 +373,17 @@ ccd {
   configDir = file('build/definitions')
 }
 
+tasks.register('stopCaseApiContainer') {
+  group = 'ccd tasks'
+
+  doFirst {
+    exec {
+      executable "sh"
+      args "-c", "docker stop nfdiv-case-api || exit 0"
+    }
+  }
+}
+
 def reloadCcd = tasks.register('reloadCcd') {
   group = 'ccd tasks'
   doLast {
@@ -384,11 +395,7 @@ def reloadCcd = tasks.register('reloadCcd') {
       commandLine './bin/process-and-import-ccd-definition.sh'
     }
     exec {
-      file('../.env').readLines().each() {
-        def (key, value) = it.tokenize('=')
-        environment key, value
-      }
-      commandLine 'docker-compose', '-f', '../docker-compose.yml', 'restart', 'nfdiv-case-api'
+      commandLine 'docker-compose', '-f', '../docker-compose.yml', 'up', 'nfdiv-case-api'
     }
   }
 }
@@ -396,3 +403,5 @@ def reloadCcd = tasks.register('reloadCcd') {
 reloadCcd.configure {
   dependsOn assemble, generateCCDConfig
 }
+
+generateCCDConfig.dependsOn stopCaseApiContainer
