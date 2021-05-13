@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.citizen;
 
 import io.restassured.response.Response;
-import net.javacrumbs.jsonunit.core.Option;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
@@ -50,7 +49,7 @@ public class PaymentMadeTest extends FunctionalTestSuite {
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
         assertThatJson(json(response.asString()))
-            .when(Option.IGNORING_ARRAY_ORDER)
+            .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(AWAITING_DOCUMENTS_RESPONSE)));
     }
 
