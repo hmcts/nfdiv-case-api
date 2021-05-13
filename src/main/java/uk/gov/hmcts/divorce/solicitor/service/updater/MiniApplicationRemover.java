@@ -22,18 +22,18 @@ public class MiniApplicationRemover implements CaseDataUpdater {
         final var caseId = caseDataContext.getCaseId();
         final var updatedCaseData = caseDataContext.copyOfCaseData();
 
-        log.info("Removing petition documents from case data and document management for {}", caseId);
+        log.info("Removing application documents from case data and document management for {}", caseId);
 
-        final var documentsExcludingPetition =
+        final var documentsExcludingApplication =
             draftApplicationRemovalService.removeDraftApplicationDocument(
                 caseDataContext.getCaseData().getDocumentsGenerated(),
                 caseId,
                 caseDataContext.getUserAuthToken()
             );
 
-        updatedCaseData.setDocumentsGenerated(documentsExcludingPetition);
+        updatedCaseData.setDocumentsGenerated(documentsExcludingApplication);
 
-        log.info("Successfully removed petition documents from case data for case id {}", caseId);
+        log.info("Successfully removed application documents from case data for case id {}", caseId);
 
         return caseDataUpdaterChain.processNext(caseDataContext.handlerContextWith(updatedCaseData));
     }

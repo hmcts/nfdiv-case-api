@@ -83,7 +83,7 @@ public class SolicitorUpdate implements CCDConfig<CaseData, State, UserRole> {
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Solicitor update petition about to submit callback invoked");
+        log.info("Solicitor update application about to submit callback invoked");
 
         final CaseData data = solicitorUpdateApplicationService.aboutToSubmit(
             details.getData(),
