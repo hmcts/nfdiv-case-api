@@ -59,6 +59,8 @@ public class PaymentMadeTest {
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmail() {
         final CaseData caseData = caseData();
         caseData.setApplicant1Email(TEST_USER_EMAIL);
+        caseData.setStatementOfTruth(YesOrNo.YES);
+        caseData.setSolSignStatementOfTruth(YesOrNo.YES);
 
         Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(SUCCESS).build();
         caseData.setPayments(singletonList(new ListValue<>("1", payment)));
