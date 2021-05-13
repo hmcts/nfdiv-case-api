@@ -21,9 +21,9 @@ import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_COSTS_
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.FINANCIAL_ORDER;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreate.SOLICITOR_CREATE;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
-import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.ABOUT_TO_SUBMIT_CALLBACK_URL;
-import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.MID_EVENT_CALLBACK_ABOUT_THE_SOL_URL;
-import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedCcdCallbackResponse;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.MID_EVENT_URL;
+import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
 public class SolicitorCreateTest extends FunctionalTestSuite {
@@ -38,14 +38,14 @@ public class SolicitorCreateTest extends FunctionalTestSuite {
         caseData.put(LANGUAGE_PREFERENCE_WELSH, NO);
         caseData.put(FINANCIAL_ORDER, NO);
 
-        Response response = triggerCallback(caseData, SOLICITOR_CREATE, ABOUT_TO_SUBMIT_CALLBACK_URL);
+        Response response = triggerCallback(caseData, SOLICITOR_CREATE, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
         // document_url and document_binary_url are ignored using ${json-unit.ignore}
         // assertion will fail if the above elements are missing actual value
         assertThatJson(response.asString())
-            .isEqualTo(json(expectedCcdCallbackResponse(
+            .isEqualTo(json(expectedResponse(
                 "classpath:responses/ccd-callback-solicitor-create-about-to-submit.json"
             )));
     }
@@ -58,14 +58,14 @@ public class SolicitorCreateTest extends FunctionalTestSuite {
         caseData.put(FINANCIAL_ORDER, NO);
         caseData.put(APPLICANT_1_ORGANISATION_POLICY, organisationPolicy());
 
-        Response response = triggerCallback(caseData, SOLICITOR_CREATE, MID_EVENT_CALLBACK_ABOUT_THE_SOL_URL);
+        Response response = triggerCallback(caseData, SOLICITOR_CREATE, MID_EVENT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
         // document_url and document_binary_url are ignored using ${json-unit.ignore}
         // assertion will fail if the above elements are missing actual value
         assertThatJson(response.asString())
-            .isEqualTo(json(expectedCcdCallbackResponse(
+            .isEqualTo(json(expectedResponse(
                 "classpath:responses/ccd-callback-solicitor-create-mid-event.json"
             )));
     }

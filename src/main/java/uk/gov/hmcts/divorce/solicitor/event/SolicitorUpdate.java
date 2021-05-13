@@ -55,7 +55,7 @@ public class SolicitorUpdate implements CCDConfig<CaseData, State, UserRole> {
     private SolicitorUpdateApplicationService solicitorUpdateApplicationService;
 
     @Autowired
-    HttpServletRequest request;
+    private HttpServletRequest request;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
