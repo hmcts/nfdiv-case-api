@@ -21,7 +21,7 @@
         "documentType": "divorceApplication",
         "documentEmailContent": null,
         "documentLink": {
-          "document_url": "url",
+          "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/18fe3e5e-bd24-41f9-9267-f91d7551d03a",
           "document_filename": "draft-mini-application-1234567890123456.pdf",
           "document_binary_url": "url"
         }
