@@ -7,22 +7,9 @@
     "divorceCostsClaim": "YES",
     "statementOfTruth": "YES",
     "solSignStatementOfTruth": "YES",
-    "documentsGenerated": [],
-    "payments": [{
-      "id": "1",
-      "value": {
-        "paymentDate": null,
-        "paymentFeeId": null,
-        "paymentAmount": 55000,
-        "paymentSiteId": null,
-        "paymentStatus": "success",
-        "paymentChannel": null,
-        "paymentReference": null,
-        "paymentTransactionId": null
-      }
-    }]
+    "documentsGenerated": []
   },
-  "errors": [],
+  "errors": ["Payment incomplete"],
   "warnings": null,
   "state": "SolicitorAwaitingPaymentConfirmation"
 }

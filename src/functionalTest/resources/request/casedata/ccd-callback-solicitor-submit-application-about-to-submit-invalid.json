@@ -5,12 +5,5 @@
   "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
   "divorceCostsClaim": "YES",
   "statementOfTruth": "YES",
-  "solSignStatementOfTruth": "YES",
-  "payments": [{
-    "id": "1",
-    "value": {
-      "paymentStatus": "success",
-      "paymentAmount": 55000
-    }
-  }]
+  "solSignStatementOfTruth": "YES"
 }

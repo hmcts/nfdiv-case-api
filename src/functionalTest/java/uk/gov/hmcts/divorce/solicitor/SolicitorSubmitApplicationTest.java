@@ -27,6 +27,10 @@ public class SolicitorSubmitApplicationTest extends FunctionalTestSuite {
         "classpath:request/casedata/ccd-callback-solicitor-submit-application-about-to-submit.json";
     private static final String VALID_ABOUT_TO_SUBMIT_RESPONSE =
         "classpath:responses/ccd-callback-solicitor-submit-application-about-to-submit.json";
+    private static final String INVALID_ABOUT_TO_SUBMIT_REQUEST =
+        "classpath:request/casedata/ccd-callback-solicitor-submit-application-about-to-submit-invalid.json";
+    private static final String INVALID_ABOUT_TO_SUBMIT_RESPONSE =
+        "classpath:responses/ccd-callback-solicitor-submit-application-about-to-submit-invalid.json";
 
     @Test
     public void shouldUpdateCaseDataWithOrderSummaryAndAddSolCaseRolesWhenIssueFeeIsSuccessfullyRetrieved() throws Exception {
@@ -54,7 +58,7 @@ public class SolicitorSubmitApplicationTest extends FunctionalTestSuite {
     }
 
     @Test
-    public void shouldChangeStateToAwaitingPaymentConfirmationIfValidCaseData() throws Exception {
+    public void shouldChangeStateToSubmittedIfPaymentProcessed() throws Exception {
         CallbackRequest request = CallbackRequest
             .builder()
             .eventId(SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)
@@ -74,6 +78,32 @@ public class SolicitorSubmitApplicationTest extends FunctionalTestSuite {
 
         assertEquals(
             expectedCcdCallbackResponse(VALID_ABOUT_TO_SUBMIT_RESPONSE),
+            response.asString(),
+            STRICT
+        );
+    }
+
+    @Test
+    public void shouldChangeStateToAwaitingPaymentConfirmationIfPaymentHasNotBeenProcessed() throws Exception {
+        CallbackRequest request = CallbackRequest
+            .builder()
+            .eventId(SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)
+            .caseDetails(
+                CaseDetails
+                    .builder()
+                    .id(1L)
+                    .data(caseData(INVALID_ABOUT_TO_SUBMIT_REQUEST))
+                    .state(SOTAgreementPayAndSubmitRequired.getName())
+                    .build()
+            )
+            .build();
+
+        final Response response = triggerCallback(request, ABOUT_TO_SUBMIT_CALLBACK_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertEquals(
+            expectedCcdCallbackResponse(INVALID_ABOUT_TO_SUBMIT_RESPONSE),
             response.asString(),
             STRICT
         );

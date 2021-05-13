@@ -132,7 +132,7 @@ public final class ValidationUtil {
     }
 
     public static boolean hasAwaitingDocuments(CaseData caseData) {
-        // TODO - use .equals() instead of ==
+        // TODO - use .equals() for string comparison instead of ==
         return caseData.getApplicant1WantsToHavePapersServedAnotherWay() == YesOrNo.YES
             || !isEmpty(caseData.getCannotUploadSupportingDocument());
     }
