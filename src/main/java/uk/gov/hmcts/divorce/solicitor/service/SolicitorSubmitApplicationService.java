@@ -17,11 +17,13 @@ import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
 import uk.gov.hmcts.divorce.solicitor.service.notification.ApplicantSubmittedNotification;
 import uk.gov.hmcts.divorce.solicitor.service.notification.SolicitorSubmittedNotification;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.ccd.sdk.type.Fee.getValueInPence;
 import static uk.gov.hmcts.divorce.common.model.State.SolicitorAwaitingPaymentConfirmation;
+import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 
 @Service
 @Slf4j
@@ -83,9 +85,18 @@ public class SolicitorSubmitApplicationService {
         applicantSubmittedNotification.send(caseData, caseId);
         solicitorSubmittedNotification.send(caseData, caseId);
 
+        State state = SolicitorAwaitingPaymentConfirmation;
+
+        List<String> submittedErrors = Submitted.validate(caseData);
+        if (submittedErrors.isEmpty()) {
+            caseData.setDateSubmitted(LocalDateTime.now());
+            state = Submitted;
+        }
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
-            .state(SolicitorAwaitingPaymentConfirmation)
+            .state(state)
+            .errors(submittedErrors)
             .build();
     }
 

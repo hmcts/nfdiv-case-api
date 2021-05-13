@@ -125,7 +125,6 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
         }
 
         return solicitorSubmitApplicationService.aboutToSubmit(caseData, details.getId(), httpServletRequest.getHeader(AUTHORIZATION));
-
     }
 
     private void updateApplicant2DigitalDetails(CaseData caseData) {
