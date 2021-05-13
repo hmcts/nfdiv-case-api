@@ -10,9 +10,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
+import uk.gov.hmcts.divorce.common.model.WhoDivorcing;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.notification.exception.NotificationException;
 import uk.gov.hmcts.divorce.payment.model.Payment;
@@ -35,6 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.hmcts.divorce.citizen.event.PaymentMade.PAYMENT_MADE;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICATION_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_ACTIONS;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.DECLINED;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
@@ -56,6 +60,10 @@ public class PaymentMadeTest {
     @Autowired
     @SuppressWarnings("PMD.UnusedPrivateField")
     private ApplicationSubmittedNotification notification;
+
+    @Autowired
+    @SuppressWarnings("PMD.UnusedPrivateField")
+    private ApplicationOutstandingActionNotification outstandingActionNotification;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -90,6 +98,36 @@ public class PaymentMadeTest {
 
         verify(notificationService)
             .sendEmail(eq(TEST_USER_EMAIL), eq(APPLICATION_SUBMITTED), anyMap(), eq(ENGLISH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    public void givenValidCaseDataWhenCallbackIsInvokedThenSendTwoEmail() throws Exception {
+        Map<String, Object> data = caseDataMap();
+        data.put("dateSubmitted", LocalDateTime.now());
+        data.put("divorceWho", WhoDivorcing.HUSBAND);
+        data.put("applicant1WantsToHavePapersServedAnotherWay", YesOrNo.YES);
+
+        Payment payment = Payment.builder()
+            .paymentAmount(55000)
+            .paymentStatus(SUCCESS)
+            .build();
+
+        data.put("payments", singletonList(new ListValue<>("1", payment)));
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .content(objectMapper.writeValueAsString(callbackRequest(data, PAYMENT_MADE)))
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(APPLICATION_SUBMITTED), anyMap(), eq(ENGLISH));
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(ENGLISH));
 
         verifyNoMoreInteractions(notificationService);
     }

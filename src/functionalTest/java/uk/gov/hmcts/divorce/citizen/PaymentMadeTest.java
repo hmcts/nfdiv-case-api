@@ -23,6 +23,11 @@ public class PaymentMadeTest extends FunctionalTestSuite {
     private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata-payment-made.json";
     private static final String RESPONSE = "classpath:responses/ccd-callback-casedata-payment-made.json";
 
+    private static final String AWAITING_DOCUMENTS_REQUEST =
+        "classpath:request/casedata/ccd-callback-casedata-payment-made-awaiting-documents.json";
+    private static final String AWAITING_DOCUMENTS_RESPONSE =
+        "classpath:responses/ccd-callback-casedata-payment-made-awaiting-documents.json";
+
     @Test
     public void shouldPassValidationAndGiveSuccessWhenCaseDataValid() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
@@ -31,6 +36,16 @@ public class PaymentMadeTest extends FunctionalTestSuite {
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
         assertThatJson(response.asString()).isEqualTo(json(expectedCcdCallbackResponse(RESPONSE)));
+    }
+
+    @Test
+    public void shouldPassValidationAndGiveSuccessWhenCaseDataValidAndAwaitingDocument() throws IOException {
+        Map<String, Object> request = caseData(AWAITING_DOCUMENTS_REQUEST);
+        Response response = triggerCallback(request, PAYMENT_MADE, ABOUT_TO_SUBMIT_CALLBACK_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(json(response.asString())).isEqualTo(json(expectedCcdCallbackResponse(AWAITING_DOCUMENTS_RESPONSE)));
     }
 
 }

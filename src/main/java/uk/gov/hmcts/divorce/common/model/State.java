@@ -8,6 +8,8 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import java.util.ArrayList;
 import java.util.List;
 
+import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.hasAwaitingDocuments;
+import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.isPaymentIncomplete;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.validateBasicCase;
 
 @RequiredArgsConstructor
@@ -52,9 +54,11 @@ public enum State {
         public List<String> validate(CaseData caseData) {
             List<String> errors = new ArrayList<>();
 
-            final int feePence = 55000; // TODO get from order summary
-            if (caseData.getPaymentTotal() < feePence) {
+            if (isPaymentIncomplete(caseData)) {
                 errors.add("Payment incomplete");
+            }
+            if (hasAwaitingDocuments(caseData)) {
+                errors.add("Awaiting documents");
             }
 
             return errors;
@@ -66,7 +70,28 @@ public enum State {
         label = "Solicitor - Awaiting Payment Confirmation",
         name = "Solicitor - Awaiting Payment Confirmation"
     )
-    SolicitorAwaitingPaymentConfirmation("SolicitorAwaitingPaymentConfirmation");
+    SolicitorAwaitingPaymentConfirmation("SolicitorAwaitingPaymentConfirmation"),
+
+    @JsonProperty("AwaitingDocuments")
+    @CCD(
+        label = "Case created and awaiting action by the petitioner",
+        name = "Awaiting petitioner"
+    )
+    AwaitingDocuments("AwaitingDocuments") {
+        @Override
+        public List<String> validate(CaseData caseData) {
+            List<String> errors = new ArrayList<>();
+
+            if (isPaymentIncomplete(caseData)) {
+                errors.add("Payment incomplete");
+            }
+            if (!hasAwaitingDocuments(caseData)) {
+                errors.add("No Awaiting documents");
+            }
+
+            return errors;
+        }
+    };
 
     private final String name;
 

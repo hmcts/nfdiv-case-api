@@ -1,0 +1,29 @@
+{
+  "divorceOrDissolution": "divorce",
+  "inferredApplicant1Gender": "female",
+  "inferredApplicant2Gender": "male",
+  "marriageDate": "2020-04-28",
+  "applicant1FirstName": "Billy",
+  "applicant1MiddleName": "B",
+  "applicant1LastName": "Bob",
+  "applicant1ContactDetailsConfidential": "keep",
+  "applicant1Email": "test@mailinator.com",
+  "applicant2FirstName": "test_first_name",
+  "applicant2LastName": "test_last_name",
+  "marriageApplicant1Name": "test_first_name test_last_name",
+  "financialOrder": "NO",
+  "prayerHasBeenGiven": "YES",
+  "statementOfTruth": "YES",
+  "jurisdictionApplicant1Residence": "YES",
+  "jurisdictionConnections": ["A"],
+  "cannotUploadSupportingDocument": ["marriageCertificate", "nameChangeEvidence"],
+  "marriedInUk": "YES",
+  "divorceWho": "husband",
+  "payments": [{
+    "id": "1",
+    "value": {
+      "paymentStatus": "success",
+      "paymentAmount": 55000
+    }
+  }]
+}
