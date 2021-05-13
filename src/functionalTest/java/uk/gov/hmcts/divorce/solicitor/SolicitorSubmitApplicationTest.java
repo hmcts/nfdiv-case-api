@@ -14,9 +14,9 @@ import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.divorce.common.model.State.SOTAgreementPayAndSubmitRequired;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorStatementOfTruthPaySubmit.SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
-import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.ABOUT_TO_START_CALLBACK_URL;
-import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.ABOUT_TO_SUBMIT_CALLBACK_URL;
-import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedCcdCallbackResponse;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
+import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
 public class SolicitorSubmitApplicationTest extends FunctionalTestSuite {
@@ -42,12 +42,12 @@ public class SolicitorSubmitApplicationTest extends FunctionalTestSuite {
             )
             .build();
 
-        Response response = triggerCallback(request, ABOUT_TO_START_CALLBACK_URL);
+        Response response = triggerCallback(request, ABOUT_TO_START_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
         assertEquals(
-            expectedCcdCallbackResponse(ABOUT_TO_START_RESPONSE),
+            expectedResponse(ABOUT_TO_START_RESPONSE),
             response.asString(),
             STRICT
         );
@@ -68,12 +68,12 @@ public class SolicitorSubmitApplicationTest extends FunctionalTestSuite {
             )
             .build();
 
-        final Response response = triggerCallback(request, ABOUT_TO_SUBMIT_CALLBACK_URL);
+        final Response response = triggerCallback(request, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
         assertEquals(
-            expectedCcdCallbackResponse(VALID_ABOUT_TO_SUBMIT_RESPONSE),
+            expectedResponse(VALID_ABOUT_TO_SUBMIT_RESPONSE),
             response.asString(),
             STRICT
         );

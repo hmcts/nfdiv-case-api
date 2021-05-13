@@ -10,12 +10,13 @@ import java.util.Map;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
+import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.divorce.citizen.event.PaymentMade.PAYMENT_MADE;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
-import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.ABOUT_TO_SUBMIT_CALLBACK_URL;
-import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedCcdCallbackResponse;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
+import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
 public class PaymentMadeTest extends FunctionalTestSuite {
@@ -31,21 +32,25 @@ public class PaymentMadeTest extends FunctionalTestSuite {
     @Test
     public void shouldPassValidationAndGiveSuccessWhenCaseDataValid() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
-        Response response = triggerCallback(request, PAYMENT_MADE, ABOUT_TO_SUBMIT_CALLBACK_URL);
+        Response response = triggerCallback(request, PAYMENT_MADE, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
-        assertThatJson(response.asString()).isEqualTo(json(expectedCcdCallbackResponse(RESPONSE)));
+        assertThatJson(response.asString())
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(RESPONSE)));
     }
 
     @Test
     public void shouldPassValidationAndGiveSuccessWhenCaseDataValidAndAwaitingDocument() throws IOException {
         Map<String, Object> request = caseData(AWAITING_DOCUMENTS_REQUEST);
-        Response response = triggerCallback(request, PAYMENT_MADE, ABOUT_TO_SUBMIT_CALLBACK_URL);
+        Response response = triggerCallback(request, PAYMENT_MADE, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
-        assertThatJson(json(response.asString())).isEqualTo(json(expectedCcdCallbackResponse(AWAITING_DOCUMENTS_RESPONSE)));
+        assertThatJson(json(response.asString()))
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(AWAITING_DOCUMENTS_RESPONSE)));
     }
 
 }
