@@ -7,6 +7,8 @@ import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 import static org.skyscreamer.jsonassert.JSONCompareMode.STRICT;
@@ -76,11 +78,8 @@ public class SolicitorSubmitApplicationTest extends FunctionalTestSuite {
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
-        assertEquals(
-            expectedResponse(VALID_ABOUT_TO_SUBMIT_RESPONSE),
-            response.asString(),
-            STRICT
-        );
+        assertThatJson(response.asString())
+            .isEqualTo(json(expectedResponse(VALID_ABOUT_TO_SUBMIT_RESPONSE)));
     }
 
     @Test
