@@ -6,6 +6,7 @@
   "divorceCostsClaim": "YES",
   "statementOfTruth": "YES",
   "solSignStatementOfTruth": "YES",
+  "applicant1WantsToHavePapersServedAnotherWay": "NO",
   "payments": [{
     "id": "1",
     "value": {

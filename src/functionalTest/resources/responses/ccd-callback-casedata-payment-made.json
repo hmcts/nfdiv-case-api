@@ -16,7 +16,9 @@
     "financialOrder": "NO",
     "prayerHasBeenGiven": "YES",
     "statementOfTruth": "YES",
+    "solSignStatementOfTruth": "YES",
     "jurisdictionApplicant1Residence": "YES",
+    "applicant1WantsToHavePapersServedAnotherWay": "NO",
     "jurisdictionConnections": ["A"],
     "payments": [{
       "id": "1",

@@ -8,6 +8,8 @@
     "statementOfTruth": "YES",
     "solSignStatementOfTruth": "YES",
     "documentsGenerated": [],
+    "dateSubmitted": "${json-unit.ignore}",
+    "applicant1WantsToHavePapersServedAnotherWay": "NO",
     "payments": [{
       "id": "1",
       "value": {
