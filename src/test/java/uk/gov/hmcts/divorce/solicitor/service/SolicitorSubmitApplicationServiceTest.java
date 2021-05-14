@@ -22,6 +22,10 @@ import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
 import uk.gov.hmcts.divorce.solicitor.service.notification.ApplicantSubmittedNotification;
 import uk.gov.hmcts.divorce.solicitor.service.notification.SolicitorSubmittedNotification;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +69,9 @@ public class SolicitorSubmitApplicationServiceTest {
 
     @Mock
     private DraftApplicationRemovalService draftApplicationRemovalService;
+
+    @Mock
+    private Clock clock;
 
     @InjectMocks
     private SolicitorSubmitApplicationService solicitorSubmitApplicationService;
@@ -193,12 +200,15 @@ public class SolicitorSubmitApplicationServiceTest {
 
         when(draftApplicationRemovalService.removeDraftApplicationDocument(generatedDocuments, caseId, APP_1_SOL_AUTH_TOKEN))
             .thenReturn(emptyList());
+        when(clock.instant()).thenReturn(Instant.now());
+        when(clock.getZone()).thenReturn(ZoneId.of("Etc/UTC"));
 
         final AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
             solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN);
 
         assertThat(aboutToStartOrSubmitResponse.getData().getDocumentsGenerated()).isEmpty();
         assertThat(aboutToStartOrSubmitResponse.getState()).isEqualTo(Submitted);
+        assertThat(aboutToStartOrSubmitResponse.getData().getDateSubmitted()).isEqualTo(LocalDateTime.now(clock));
         verify(applicantSubmittedNotification).send(caseData, caseId);
         verify(solicitorSubmittedNotification).send(caseData, caseId);
     }

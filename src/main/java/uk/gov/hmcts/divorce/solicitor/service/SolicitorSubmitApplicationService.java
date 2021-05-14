@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
 import uk.gov.hmcts.divorce.solicitor.service.notification.ApplicantSubmittedNotification;
 import uk.gov.hmcts.divorce.solicitor.service.notification.SolicitorSubmittedNotification;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -46,6 +47,9 @@ public class SolicitorSubmitApplicationService {
 
     @Autowired
     private DraftApplicationRemovalService draftApplicationRemovalService;
+
+    @Autowired
+    private Clock clock;
 
     public OrderSummary getOrderSummary() {
         FeeResponse feeResponse = feesAndPaymentsClient.getApplicationIssueFee(
@@ -89,7 +93,7 @@ public class SolicitorSubmitApplicationService {
 
         List<String> submittedErrors = Submitted.validate(caseData);
         if (submittedErrors.isEmpty()) {
-            caseData.setDateSubmitted(LocalDateTime.now());
+            caseData.setDateSubmitted(LocalDateTime.now(clock));
             state = Submitted;
         }
 
