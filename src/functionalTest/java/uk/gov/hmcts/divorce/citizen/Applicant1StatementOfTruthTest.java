@@ -17,8 +17,8 @@ import static org.skyscreamer.jsonassert.JSONCompareMode.STRICT;
 import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.divorce.citizen.event.Applicant1StatementOfTruth.APPLICANT_1_STATEMENT_OF_TRUTH;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
-import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.ABOUT_TO_START_CALLBACK_URL;
-import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedCcdCallbackResponse;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
+import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
 public class Applicant1StatementOfTruthTest extends FunctionalTestSuite {
@@ -32,12 +32,12 @@ public class Applicant1StatementOfTruthTest extends FunctionalTestSuite {
         Map<String, Object> request = caseData(REQUEST);
         request.put("marriageDate", LocalDate.now().minus(1, YEARS).minus(1, DAYS));
 
-        Response response = triggerCallback(request, APPLICANT_1_STATEMENT_OF_TRUTH, ABOUT_TO_START_CALLBACK_URL);
+        Response response = triggerCallback(request, APPLICANT_1_STATEMENT_OF_TRUTH, ABOUT_TO_START_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
         assertEquals(
-            expectedCcdCallbackResponse(RESPONSE).replace("2020-04-28", LocalDate.now().minus(1, YEARS).minus(1, DAYS).toString()),
+            expectedResponse(RESPONSE).replace("2020-04-28", LocalDate.now().minus(1, YEARS).minus(1, DAYS).toString()),
             response.asString(),
             STRICT
         );

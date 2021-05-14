@@ -1,9 +1,9 @@
 {
   "data": {
     "divorceOrDissolution": "divorce",
-    "applicant1FirstName": "John",
-    "applicant1LastName": "Smith",
-    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+    "applicant1FirstName": "test_first_name",
+    "applicant1LastName": "test_last_name",
+    "applicant1Email": "test@test.com",
     "languagePreferenceWelsh": "NO",
     "divorceCostsClaim": "YES",
     "financialOrder": "NO",
@@ -14,17 +14,17 @@
     "selectedDivorceCentreSiteId": "AA07",
     "documentsGenerated": [
       {
-        "id": "${json-unit.ignore}",
+        "id": "V2",
         "value": {
           "documentDateAdded": null,
           "documentComment": null,
-          "documentFileName": "draft-mini-application-1234567890123456.pdf",
+          "documentFileName": "draft-mini-application-1616591401473378.pdf",
           "documentType": "divorceApplication",
           "documentEmailContent": null,
           "documentLink": {
-            "document_url": "${json-unit.ignore}",
-            "document_filename": "draft-mini-application-1234567890123456.pdf",
-            "document_binary_url": "${json-unit.ignore}"
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/8d2bd0f2-80e9-4b0f-b38d-2c138b243e27",
+            "document_filename": "draft-mini-application-1616591401473378.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/8d2bd0f2-80e9-4b0f-b38d-2c138b243e27/binary"
           }
         }
       }

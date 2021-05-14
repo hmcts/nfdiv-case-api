@@ -24,9 +24,11 @@ import uk.gov.hmcts.divorce.payment.model.Payment;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
@@ -780,5 +782,19 @@ public class CaseData {
                 .filter(p -> SUCCESS.equals(p.getValue().getPaymentStatus()))
                 .map(p -> p.getValue().getPaymentAmount())
                 .reduce(0, Integer::sum);
+    }
+
+    @JsonIgnore
+    public void addToDocumentsGenerated(final ListValue<DivorceDocument> listValue) {
+
+        final List<ListValue<DivorceDocument>> documents = getDocumentsGenerated();
+
+        if (isEmpty(documents)) {
+            final List<ListValue<DivorceDocument>> documentList = new ArrayList<>();
+            documentList.add(listValue);
+            setDocumentsGenerated(documentList);
+        } else {
+            documents.add(listValue);
+        }
     }
 }

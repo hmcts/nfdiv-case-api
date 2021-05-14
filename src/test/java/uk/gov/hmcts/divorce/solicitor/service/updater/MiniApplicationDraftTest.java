@@ -8,16 +8,20 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.config.DocmosisTemplatesConfig;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
 import uk.gov.hmcts.divorce.document.DocAssemblyService;
+import uk.gov.hmcts.divorce.document.DocumentIdProvider;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentInfo;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static feign.Request.HttpMethod.POST;
@@ -26,6 +30,8 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -58,6 +64,9 @@ public class MiniApplicationDraftTest {
     private DocmosisTemplatesConfig docmosisTemplatesConfig;
 
     @Mock
+    private DocumentIdProvider documentIdProvider;
+
+    @Mock
     private CaseDataUpdaterChain caseDataUpdaterChain;
 
     @InjectMocks
@@ -65,10 +74,12 @@ public class MiniApplicationDraftTest {
 
     @Test
     void shouldReturnDocumentInfoWhenDocumentIsStoredAndGeneratedSuccessfullyForEnglishLanguage() {
-        CaseData caseData = caseData();
+
+        final var caseData = caseData();
         caseData.setLanguagePreferenceWelsh(NO);
 
-        CaseDataContext caseDataContext = caseDataContext(caseData);
+        final var caseDataContext = caseDataContext(caseData);
+        final var id = "doc id";
 
         when(docAssemblyService.renderDocument(
             caseData,
@@ -81,12 +92,15 @@ public class MiniApplicationDraftTest {
         mockDocmosisTemplateConfig();
 
         when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
+        when(documentIdProvider.documentId()).thenReturn(id);
 
-        CaseDataContext result = miniApplicationDraft.updateCaseData(caseDataContext, caseDataUpdaterChain);
+        final var result = miniApplicationDraft.updateCaseData(caseDataContext, caseDataUpdaterChain);
         assertThat(result.getCaseData().getDocumentsGenerated()).hasSize(1);
 
-        DivorceDocument divorceDocument = result.getCaseData().getDocumentsGenerated().get(0).getValue();
+        final ListValue<DivorceDocument> documentListValue = result.getCaseData().getDocumentsGenerated().get(0);
+        final var divorceDocument = documentListValue.getValue();
 
+        assertThat(documentListValue.getId()).isEqualTo(id);
         assertThat(divorceDocument.getDocumentType()).isEqualTo(DIVORCE_APPLICATION);
         assertThat(divorceDocument
             .getDocumentLink())
@@ -95,16 +109,17 @@ public class MiniApplicationDraftTest {
                 DOC_URL,
                 PDF_FILENAME,
                 DOC_BINARY_URL);
+
+        verify(documentIdProvider).documentId();
     }
 
     @Test
     void shouldReturnDocumentInfoWhenDocumentIsStoredAndGeneratedSuccessfullyForWelshLanguage() {
-        CaseData caseData = caseData();
+        final var caseData = caseData();
         caseData.setLanguagePreferenceWelsh(YES);
 
-        CaseDataContext caseDataContext = caseDataContext(caseData);
-
-        DocumentInfo documentInfo = documentInfo();
+        final var caseDataContext = caseDataContext(caseData);
+        final var id = "doc id";
 
         when(docAssemblyService
             .renderDocument(
@@ -113,17 +128,20 @@ public class MiniApplicationDraftTest {
                 LOCAL_DATE,
                 TEST_AUTHORIZATION_TOKEN,
                 WELSH_TEMPLATE_ID))
-            .thenReturn(documentInfo);
+            .thenReturn(documentInfo());
 
         mockDocmosisTemplateConfig();
 
         when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
+        when(documentIdProvider.documentId()).thenReturn(id);
 
-        CaseDataContext updatedCaseDataContext = miniApplicationDraft.updateCaseData(caseDataContext, caseDataUpdaterChain);
-        assertThat(updatedCaseDataContext.getCaseData().getDocumentsGenerated()).hasSize(1);
+        final var result = miniApplicationDraft.updateCaseData(caseDataContext, caseDataUpdaterChain);
+        assertThat(result.getCaseData().getDocumentsGenerated()).hasSize(1);
 
-        DivorceDocument divorceDocument = updatedCaseDataContext.getCaseData().getDocumentsGenerated().get(0).getValue();
+        final ListValue<DivorceDocument> documentListValue = result.getCaseData().getDocumentsGenerated().get(0);
+        final var divorceDocument = documentListValue.getValue();
 
+        assertThat(documentListValue.getId()).isEqualTo(id);
         assertThat(divorceDocument.getDocumentType()).isEqualTo(DIVORCE_APPLICATION);
         assertThat(divorceDocument
             .getDocumentLink())
@@ -132,6 +150,59 @@ public class MiniApplicationDraftTest {
                 DOC_URL,
                 PDF_FILENAME,
                 DOC_BINARY_URL);
+
+        verify(documentIdProvider).documentId();
+    }
+
+    @Test
+    void shouldReturnDocumentInfoIfOtherDocumentsAlreadySet() {
+
+        final DivorceDocument originalDocument = mock(DivorceDocument.class);
+        final String originalId = "original Id";
+        final String id = "doc id";
+
+        final var caseData = caseData();
+        final List<ListValue<DivorceDocument>> documents = new ArrayList<>();
+        documents.add(new ListValue<>(originalId, originalDocument));
+        caseData.setDocumentsGenerated(documents);
+        caseData.setLanguagePreferenceWelsh(NO);
+
+        final var caseDataContext = caseDataContext(caseData);
+
+        when(docAssemblyService.renderDocument(
+            caseData,
+            TEST_CASE_ID,
+            LOCAL_DATE,
+            TEST_AUTHORIZATION_TOKEN,
+            ENGLISH_TEMPLATE_ID
+        )).thenReturn(documentInfo());
+
+        mockDocmosisTemplateConfig();
+
+        when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
+        when(documentIdProvider.documentId()).thenReturn(id);
+
+        final var result = miniApplicationDraft.updateCaseData(caseDataContext, caseDataUpdaterChain);
+        assertThat(result.getCaseData().getDocumentsGenerated()).hasSize(2);
+
+        final ListValue<DivorceDocument> originalDocumentListValue = result.getCaseData().getDocumentsGenerated().get(0);
+        final ListValue<DivorceDocument> documentListValue = result.getCaseData().getDocumentsGenerated().get(1);
+
+        assertThat(originalDocumentListValue.getId()).isEqualTo(originalId);
+        assertThat(originalDocumentListValue.getValue()).isEqualTo(originalDocument);
+
+        final var divorceDocument = documentListValue.getValue();
+        assertThat(documentListValue.getId()).isEqualTo(id);
+        assertThat(divorceDocument.getDocumentType()).isEqualTo(DIVORCE_APPLICATION);
+        assertThat(divorceDocument
+            .getDocumentLink())
+            .extracting(URL, FILENAME, BINARY_URL)
+            .contains(
+                DOC_URL,
+                PDF_FILENAME,
+                DOC_BINARY_URL);
+
+        verify(documentIdProvider).documentId();
     }
 
     @Test

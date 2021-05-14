@@ -18,7 +18,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.divorce.citizen.event.SaveAndClose.SAVE_AND_CLOSE;
 import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
-import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.SUBMITTED_CALLBACK_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 
 @SpringBootTest
 public class ServiceAuthValidationTest extends FunctionalTestSuite {
@@ -46,7 +46,7 @@ public class ServiceAuthValidationTest extends FunctionalTestSuite {
                     .build()
             )
             .when()
-            .post(SUBMITTED_CALLBACK_URL);
+            .post(SUBMITTED_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(UNAUTHORIZED.value());
     }
@@ -72,7 +72,7 @@ public class ServiceAuthValidationTest extends FunctionalTestSuite {
                     .build()
             )
             .when()
-            .post(SUBMITTED_CALLBACK_URL);
+            .post(SUBMITTED_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(FORBIDDEN.value());
     }

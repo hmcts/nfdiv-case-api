@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.divorce.citizen.event.SaveAndClose.SAVE_AND_CLOSE;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
-import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.SUBMITTED_CALLBACK_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 
 @SpringBootTest
 public class SaveAndCloseTest extends FunctionalTestSuite {
@@ -22,7 +22,7 @@ public class SaveAndCloseTest extends FunctionalTestSuite {
     @Test
     public void shouldSendEmailWhenAllTemplateParamsAreValid() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
-        Response response = triggerCallback(request, SAVE_AND_CLOSE, SUBMITTED_CALLBACK_URL);
+        Response response = triggerCallback(request, SAVE_AND_CLOSE, SUBMITTED_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
     }
