@@ -5,10 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -21,15 +23,28 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 
-public final class PrdOrganisationUtil {
+@Component
+public class PrdOrganisationUtil {
 
-    public static final WireMockServer PRD_ORGANISATION_SERVER = new WireMockServer(wireMockConfig().dynamicPort());
+    private static final WireMockServer PRD_ORGANISATION_SERVER = new WireMockServer(wireMockConfig().dynamicPort());
 
-    private PrdOrganisationUtil() {
+    public static void start() {
+        if (!PRD_ORGANISATION_SERVER.isRunning()) {
+            PRD_ORGANISATION_SERVER.start();
+        }
     }
 
-    public static void stubGetOrganisationEndpoint(final String organisationId,
-                                                   final ObjectMapper objectMapper) throws JsonProcessingException {
+    public static void stopAndReset() {
+        if (PRD_ORGANISATION_SERVER.isRunning()) {
+            PRD_ORGANISATION_SERVER.stop();
+            PRD_ORGANISATION_SERVER.resetAll();
+        }
+    }
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    public void stubGetOrganisationEndpoint(final String organisationId) throws JsonProcessingException {
         PRD_ORGANISATION_SERVER.stubFor(WireMock.get("/refdata/external/v1/organisations")
             .withHeader(AUTHORIZATION, new EqualToPattern(TEST_AUTHORIZATION_TOKEN))
             .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(TEST_SERVICE_AUTH_TOKEN))
@@ -47,7 +62,7 @@ public final class PrdOrganisationUtil {
         );
     }
 
-    public static void stubGetOrganisationEndpointForFailure() {
+    public void stubGetOrganisationEndpointForFailure() {
         PRD_ORGANISATION_SERVER.stubFor(WireMock.get("/refdata/external/v1/organisations")
             .withHeader(AUTHORIZATION, new EqualToPattern(TEST_AUTHORIZATION_TOKEN))
             .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(TEST_SERVICE_AUTH_TOKEN))

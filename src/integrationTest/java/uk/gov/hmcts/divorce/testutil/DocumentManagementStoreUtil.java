@@ -6,6 +6,7 @@ import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
@@ -14,18 +15,28 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 
-public final class DocumentManagementStoreUtil {
+@Component
+public class DocumentManagementStoreUtil {
 
-    public static final String SERVICE_AUTH_TOKEN = "test-service-auth-token";
-    public static final WireMockServer DM_STORE_SERVER = new WireMockServer(wireMockConfig().dynamicPort());
+    private static final WireMockServer DM_STORE_SERVER = new WireMockServer(wireMockConfig().dynamicPort());
 
-    private DocumentManagementStoreUtil() {
+    public static void start() {
+        if (!DM_STORE_SERVER.isRunning()) {
+            DM_STORE_SERVER.start();
+        }
     }
 
-    public static void stubForDocumentManagement(String documentUuid, HttpStatus httpStatus) {
+    public static void stopAndReset() {
+        if (DM_STORE_SERVER.isRunning()) {
+            DM_STORE_SERVER.stop();
+            DM_STORE_SERVER.resetAll();
+        }
+    }
+
+    public void stubForDocumentManagement(final String documentUuid, final HttpStatus httpStatus) {
         DM_STORE_SERVER.stubFor(delete("/documents/" + documentUuid + "?permanent=true")
             .withHeader(AUTHORIZATION, new EqualToPattern(TEST_AUTHORIZATION_TOKEN))
-            .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(SERVICE_AUTH_TOKEN))
+            .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(SERVICE_AUTHORIZATION))
             .withHeader("user-id", new EqualToPattern("1"))
             .withHeader("user-roles", new EqualToPattern("caseworker-divorce-solicitor")
             )

@@ -41,12 +41,7 @@ import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_OR_DIS
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.FINANCIAL_ORDER;
 import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorUpdate.SOLICITOR_UPDATE;
-import static uk.gov.hmcts.divorce.testutil.DocumentAssemblyUtil.DOC_ASSEMBLY_SERVER;
-import static uk.gov.hmcts.divorce.testutil.DocumentAssemblyUtil.stubForDocAssembly;
-import static uk.gov.hmcts.divorce.testutil.DocumentManagementStoreUtil.DM_STORE_SERVER;
-import static uk.gov.hmcts.divorce.testutil.DocumentManagementStoreUtil.stubForDocumentManagement;
-import static uk.gov.hmcts.divorce.testutil.IdamUtil.IDAM_SERVER;
-import static uk.gov.hmcts.divorce.testutil.IdamUtil.stubForIdamDetails;
+import static uk.gov.hmcts.divorce.testutil.IdamUtil.SOLICITOR_ROLE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
@@ -70,8 +65,6 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 public class SolicitorUpdateTest {
 
     private static final String SOLICITOR_UPDATE_ABOUT_TO_SUBMIT = "classpath:solicitor-update-about-to-submit-response.json";
-    private static final String SERVICE_AUTH_TOKEN = "test-service-auth-token";
-    private static final String SOLICITOR_ROLE = "caseworker-divorce-solicitor";
     private static final String DOCUMENT_URL =
         "http://dm-store-aat.service.core-compute-aat.internal/documents/8d2bd0f2-80e9-4b0f-b38d-2c138b243e27";
 
@@ -80,6 +73,15 @@ public class SolicitorUpdateTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private IdamUtil idamUtil;
+
+    @Autowired
+    private DocumentAssemblyUtil documentAssemblyUtil;
+
+    @Autowired
+    private DocumentManagementStoreUtil documentManagementStoreUtil;
 
     @MockBean
     private AuthTokenGenerator serviceTokenGenerator;
@@ -92,32 +94,27 @@ public class SolicitorUpdateTest {
 
     @BeforeAll
     static void setUp() {
-        DOC_ASSEMBLY_SERVER.start();
-        IDAM_SERVER.start();
-        DM_STORE_SERVER.start();
+        DocumentAssemblyUtil.start();
+        IdamUtil.start();
+        DocumentManagementStoreUtil.start();
     }
 
     @AfterAll
     static void tearDown() {
-        DOC_ASSEMBLY_SERVER.stop();
-        DOC_ASSEMBLY_SERVER.resetAll();
-
-        IDAM_SERVER.stop();
-        IDAM_SERVER.resetAll();
-
-        DM_STORE_SERVER.stop();
-        DM_STORE_SERVER.resetAll();
+        DocumentAssemblyUtil.stopAndReset();
+        IdamUtil.stopAndReset();
+        DocumentManagementStoreUtil.stopAndReset();
     }
 
     @Test
     void givenValidCaseDataWithNoDraftDocumentWhenAboutToSubmitCallbackIsInvokedCaseDataIsSetCorrectly() throws Exception {
 
-        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTH_TOKEN);
+        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(documentIdProvider.documentId()).thenReturn("V2");
 
-        stubForDocAssembly();
+        documentAssemblyUtil.stubForDocAssembly();
 
-        final String jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+        final var jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -136,18 +133,18 @@ public class SolicitorUpdateTest {
     @Test
     void givenValidCaseDataWithDraftDocumentWhenAboutToSubmitCallbackIsInvokedCaseDataIsSetCorrectly() throws Exception {
 
-        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTH_TOKEN);
+        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(documentIdProvider.documentId()).thenReturn("V2");
 
-        stubForDocAssembly();
-        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, SOLICITOR_USER_ID, SOLICITOR_ROLE);
+        documentAssemblyUtil.stubForDocAssembly();
+        idamUtil.stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, SOLICITOR_USER_ID, SOLICITOR_ROLE);
 
-        String documentUuid = FilenameUtils.getName(DOCUMENT_URL);
-        stubForDocumentManagement(documentUuid, OK);
+        final var documentUuid = FilenameUtils.getName(DOCUMENT_URL);
+        documentManagementStoreUtil.stubForDocumentManagement(documentUuid, OK);
 
-        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTH_TOKEN);
+        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
 
-        final String jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+        final var jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
