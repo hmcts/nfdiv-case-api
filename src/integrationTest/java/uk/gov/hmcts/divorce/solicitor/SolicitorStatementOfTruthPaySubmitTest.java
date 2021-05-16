@@ -52,8 +52,11 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.APPLICANT_1_EMAIL;
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.APPLICANT_1_LAST_NAME;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.APPLICANT_1_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_COSTS_CLAIM;
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_OR_DISSOLUTION;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.SOL_STATEMENT_OF_TRUTH;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.STATEMENT_OF_TRUTH;
 import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.common.model.State.SOTAgreementPayAndSubmitRequired;
@@ -532,9 +535,10 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         caseData.put(APPLICANT_1_EMAIL, TEST_USER_EMAIL);
         caseData.put(DIVORCE_OR_DISSOLUTION, DIVORCE);
         caseData.put(DIVORCE_COSTS_CLAIM, YES);
-        caseData.put("statementOfTruth", YES);
-        caseData.put("solSignStatementOfTruth", YES);
-        caseData.put("applicant1SolicitorEmail", TEST_SOLICITOR_EMAIL);
+        caseData.put(STATEMENT_OF_TRUTH, YES);
+        caseData.put(SOL_STATEMENT_OF_TRUTH, YES);
+        caseData.put(APPLICANT_1_SOLICITOR_EMAIL, TEST_SOLICITOR_EMAIL);
+
 
         ListValue<Payment> payment = new ListValue<>(null, Payment
             .builder()
