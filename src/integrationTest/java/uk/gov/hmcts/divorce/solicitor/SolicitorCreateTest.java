@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.solicitor;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import org.junit.jupiter.api.AfterAll;
@@ -127,10 +128,7 @@ class SolicitorCreateTest {
     void shouldValidateApplicant1SolicitorOrgAndReturnNoErrorsWhenSolicitorBelongsToSelectedOrg() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        stubGetOrganisationEndpoint(objectMapper.writeValueAsString(
-            OrganisationsResponse.builder()
-                .organisationIdentifier(TEST_ORG_ID)
-                .build()));
+        stubGetOrganisationEndpoint(getOrganisationResponseWith(TEST_ORG_ID));
 
         final var jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(MID_EVENT_URL)
             .contentType(APPLICATION_JSON)
@@ -152,10 +150,7 @@ class SolicitorCreateTest {
     public void shouldValidateApplicant1SolicitorOrgAndReturnErrorWhenSolicitorDoesNotBelongsToSelectedOrg() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        stubGetOrganisationEndpoint(objectMapper.writeValueAsString(
-            OrganisationsResponse.builder()
-                .organisationIdentifier("TESTORG123")
-                .build()));
+        stubGetOrganisationEndpoint(getOrganisationResponseWith("TESTORG123"));
 
         final var jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(MID_EVENT_URL)
             .contentType(APPLICATION_JSON)
@@ -191,6 +186,13 @@ class SolicitorCreateTest {
             .andExpect(
                 result -> assertThat(result.getResolvedException()).isExactlyInstanceOf(FeignException.Forbidden.class)
             );
+    }
+
+    private String getOrganisationResponseWith(final String organisationId) throws JsonProcessingException {
+        return objectMapper.writeValueAsString(
+            OrganisationsResponse.builder()
+                .organisationIdentifier(organisationId)
+                .build());
     }
 
     private Map<String, Object> caseDataWithApplicant1Org() {
