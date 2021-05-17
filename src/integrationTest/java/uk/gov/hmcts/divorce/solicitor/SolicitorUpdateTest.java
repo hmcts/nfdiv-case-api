@@ -16,9 +16,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
-import uk.gov.hmcts.divorce.testutil.DocumentAssemblyUtil;
-import uk.gov.hmcts.divorce.testutil.DocumentManagementStoreUtil;
-import uk.gov.hmcts.divorce.testutil.IdamUtil;
+import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
+import uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock;
+import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.util.HashMap;
@@ -41,7 +41,10 @@ import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_OR_DIS
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.FINANCIAL_ORDER;
 import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorUpdate.SOLICITOR_UPDATE;
-import static uk.gov.hmcts.divorce.testutil.IdamUtil.SOLICITOR_ROLE;
+import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssembly;
+import static uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock.stubForDocumentManagement;
+import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SOLICITOR_ROLE;
+import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamDetails;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
@@ -59,9 +62,9 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ContextConfiguration(initializers = {
-    DocumentAssemblyUtil.PropertiesInitializer.class,
-    IdamUtil.PropertiesInitializer.class,
-    DocumentManagementStoreUtil.PropertiesInitializer.class})
+    DocAssemblyWireMock.PropertiesInitializer.class,
+    IdamWireMock.PropertiesInitializer.class,
+    DocManagementStoreWireMock.PropertiesInitializer.class})
 public class SolicitorUpdateTest {
 
     private static final String SOLICITOR_UPDATE_ABOUT_TO_SUBMIT = "classpath:solicitor-update-about-to-submit-response.json";
@@ -74,15 +77,6 @@ public class SolicitorUpdateTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
-    private IdamUtil idamUtil;
-
-    @Autowired
-    private DocumentAssemblyUtil documentAssemblyUtil;
-
-    @Autowired
-    private DocumentManagementStoreUtil documentManagementStoreUtil;
-
     @MockBean
     private AuthTokenGenerator serviceTokenGenerator;
 
@@ -94,16 +88,16 @@ public class SolicitorUpdateTest {
 
     @BeforeAll
     static void setUp() {
-        DocumentAssemblyUtil.start();
-        IdamUtil.start();
-        DocumentManagementStoreUtil.start();
+        DocAssemblyWireMock.start();
+        IdamWireMock.start();
+        DocManagementStoreWireMock.start();
     }
 
     @AfterAll
     static void tearDown() {
-        DocumentAssemblyUtil.stopAndReset();
-        IdamUtil.stopAndReset();
-        DocumentManagementStoreUtil.stopAndReset();
+        DocAssemblyWireMock.stopAndReset();
+        IdamWireMock.stopAndReset();
+        DocManagementStoreWireMock.stopAndReset();
     }
 
     @Test
@@ -112,7 +106,7 @@ public class SolicitorUpdateTest {
         when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(documentIdProvider.documentId()).thenReturn("V2");
 
-        documentAssemblyUtil.stubForDocAssembly();
+        stubForDocAssembly();
 
         final var jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -136,11 +130,11 @@ public class SolicitorUpdateTest {
         when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(documentIdProvider.documentId()).thenReturn("V2");
 
-        documentAssemblyUtil.stubForDocAssembly();
-        idamUtil.stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, SOLICITOR_USER_ID, SOLICITOR_ROLE);
+        stubForDocAssembly();
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, SOLICITOR_USER_ID, SOLICITOR_ROLE);
 
         final var documentUuid = FilenameUtils.getName(DOCUMENT_URL);
-        documentManagementStoreUtil.stubForDocumentManagement(documentUuid, OK);
+        stubForDocumentManagement(documentUuid, OK);
 
         when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
 

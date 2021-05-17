@@ -7,7 +7,6 @@ import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
 
@@ -25,12 +24,15 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 
-@Component
-public class IdamUtil {
+public final class IdamWireMock {
 
     public static final String SOLICITOR_ROLE = "caseworker-divorce-solicitor";
     public static final String CASEWORKER_ROLE = "caseworker-divorce";
+
     private static final WireMockServer IDAM_SERVER = new WireMockServer(wireMockConfig().dynamicPort());
+
+    private IdamWireMock() {
+    }
 
     public static void start() {
         if (!IDAM_SERVER.isRunning()) {
@@ -45,48 +47,45 @@ public class IdamUtil {
         }
     }
 
-    public void stubForIdamDetails(final String testAuthorizationToken,
-                                   final String solicitorUserId,
-                                   final String solicitorRole) {
+    public static void stubForIdamDetails(final String authorizationToken,
+                                          final String solicitorUserId,
+                                          final String solicitorRole) {
         IDAM_SERVER.stubFor(get("/details")
-            .withHeader(HttpHeaders.AUTHORIZATION, new EqualToPattern(BEARER + testAuthorizationToken))
+            .withHeader(HttpHeaders.AUTHORIZATION, new EqualToPattern(BEARER + authorizationToken))
             .willReturn(aResponse()
                 .withStatus(OK.value())
                 .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .withBody(getUserDetailsForRole(solicitorUserId, solicitorRole)))
-        );
+                .withBody(getUserDetailsForRole(solicitorUserId, solicitorRole))));
     }
 
-    public void stubForIdamToken() throws UnsupportedEncodingException {
+    public static void stubForIdamToken() throws UnsupportedEncodingException {
         IDAM_SERVER.stubFor(post("/o/token")
             .withRequestBody(new EqualToPattern(tokenBody()))
             .willReturn(aResponse()
                 .withStatus(OK.value())
                 .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .withBody("{ \"access_token\" : \"" + CASEWORKER_AUTH_TOKEN + "\" }")))
-        ;
+                .withBody("{ \"access_token\" : \"" + CASEWORKER_AUTH_TOKEN + "\" }")));
     }
 
-    public void stubForIdamFailure() {
+    public static void stubForIdamFailure() {
         IDAM_SERVER.stubFor(get("/details")
             .withHeader(HttpHeaders.AUTHORIZATION, new EqualToPattern(BEARER + TEST_AUTHORIZATION_TOKEN))
             .willReturn(aResponse()
                 .withStatus(HttpStatus.UNAUTHORIZED.value())
                 .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .withBody("Invalid idam credentials"))
-        );
+                .withBody("Invalid idam credentials")));
     }
 
     public static class PropertiesInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         @Override
         public void initialize(ConfigurableApplicationContext applicationContext) {
-            TestPropertyValues.of(
-                "idam.api.url=" + "http://localhost:" + IDAM_SERVER.port()
-            ).applyTo(applicationContext.getEnvironment());
+            TestPropertyValues
+                .of("idam.api.url=" + "http://localhost:" + IDAM_SERVER.port())
+                .applyTo(applicationContext.getEnvironment());
         }
     }
 
-    private static String getUserDetailsForRole(String userId, String role) {
+    private static String getUserDetailsForRole(final String userId, final String role) {
         return "{\"id\":\"" + userId
             + "\",\"email\":\"" + TEST_USER_EMAIL
             + "\",\"forename\":\"forename\",\"surname\":\"Surname\",\"roles\":[\"" + role + "\"]}";

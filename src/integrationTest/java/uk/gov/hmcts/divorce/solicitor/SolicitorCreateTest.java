@@ -17,8 +17,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
-import uk.gov.hmcts.divorce.testutil.DocumentAssemblyUtil;
-import uk.gov.hmcts.divorce.testutil.PrdOrganisationUtil;
+import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
+import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
+import uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.util.HashMap;
@@ -39,6 +40,9 @@ import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_COSTS_
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.FINANCIAL_ORDER;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreate.SOLICITOR_CREATE;
+import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssembly;
+import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.stubGetOrganisationEndpoint;
+import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.stubGetOrganisationEndpointForFailure;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_1_ORGANISATION_POLICY;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
@@ -60,8 +64,8 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ContextConfiguration(initializers = {
-    PrdOrganisationUtil.PropertiesInitializer.class,
-    DocumentAssemblyUtil.PropertiesInitializer.class})
+    PrdOrganisationWireMock.PropertiesInitializer.class,
+    DocAssemblyWireMock.PropertiesInitializer.class})
 class SolicitorCreateTest {
 
     private static final String SOLICITOR_CREATE_ABOUT_TO_SUBMIT = "classpath:solicitor-create-about-to-submit-response.json";
@@ -74,12 +78,6 @@ class SolicitorCreateTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
-    private PrdOrganisationUtil prdOrganisationUtil;
-
-    @Autowired
-    private DocumentAssemblyUtil documentAssemblyUtil;
-
     @MockBean
     private AuthTokenGenerator serviceTokenGenerator;
 
@@ -91,14 +89,14 @@ class SolicitorCreateTest {
 
     @BeforeAll
     static void setUp() {
-        DocumentAssemblyUtil.start();
-        PrdOrganisationUtil.start();
+        DocAssemblyWireMock.start();
+        PrdOrganisationWireMock.start();
     }
 
     @AfterAll
     static void tearDown() {
-        DocumentAssemblyUtil.stopAndReset();
-        PrdOrganisationUtil.stopAndReset();
+        DocAssemblyWireMock.stopAndReset();
+        PrdOrganisationWireMock.stopAndReset();
     }
 
     @Test
@@ -107,7 +105,7 @@ class SolicitorCreateTest {
         when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(documentIdProvider.documentId()).thenReturn("Divorce application");
 
-        documentAssemblyUtil.stubForDocAssembly();
+        stubForDocAssembly();
 
         final var jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -129,7 +127,10 @@ class SolicitorCreateTest {
     void shouldValidateApplicant1SolicitorOrgAndReturnNoErrorsWhenSolicitorBelongsToSelectedOrg() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        prdOrganisationUtil.stubGetOrganisationEndpoint(TEST_ORG_ID);
+        stubGetOrganisationEndpoint(objectMapper.writeValueAsString(
+            OrganisationsResponse.builder()
+                .organisationIdentifier(TEST_ORG_ID)
+                .build()));
 
         final var jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(MID_EVENT_URL)
             .contentType(APPLICATION_JSON)
@@ -151,7 +152,10 @@ class SolicitorCreateTest {
     public void shouldValidateApplicant1SolicitorOrgAndReturnErrorWhenSolicitorDoesNotBelongsToSelectedOrg() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        prdOrganisationUtil.stubGetOrganisationEndpoint("TESTORG123");
+        stubGetOrganisationEndpoint(objectMapper.writeValueAsString(
+            OrganisationsResponse.builder()
+                .organisationIdentifier("TESTORG123")
+                .build()));
 
         final var jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(MID_EVENT_URL)
             .contentType(APPLICATION_JSON)
@@ -173,7 +177,7 @@ class SolicitorCreateTest {
     public void shouldThrow403ForbiddenExceptionWhenServiceIsNotWhitelistedInReferenceData() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        prdOrganisationUtil.stubGetOrganisationEndpointForFailure();
+        stubGetOrganisationEndpointForFailure();
 
         mockMvc.perform(MockMvcRequestBuilders.post(MID_EVENT_URL)
             .contentType(APPLICATION_JSON)

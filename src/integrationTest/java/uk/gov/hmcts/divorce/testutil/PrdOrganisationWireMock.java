@@ -1,17 +1,13 @@
 package uk.gov.hmcts.divorce.testutil;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
-import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
@@ -23,10 +19,12 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 
-@Component
-public class PrdOrganisationUtil {
+public final class PrdOrganisationWireMock {
 
     private static final WireMockServer PRD_ORGANISATION_SERVER = new WireMockServer(wireMockConfig().dynamicPort());
+
+    private PrdOrganisationWireMock() {
+    }
 
     public static void start() {
         if (!PRD_ORGANISATION_SERVER.isRunning()) {
@@ -41,28 +39,19 @@ public class PrdOrganisationUtil {
         }
     }
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    public void stubGetOrganisationEndpoint(final String organisationId) throws JsonProcessingException {
+    public static void stubGetOrganisationEndpoint(final String organisationResponse) throws JsonProcessingException {
         PRD_ORGANISATION_SERVER.stubFor(WireMock.get("/refdata/external/v1/organisations")
             .withHeader(AUTHORIZATION, new EqualToPattern(TEST_AUTHORIZATION_TOKEN))
             .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(TEST_SERVICE_AUTH_TOKEN))
             .willReturn(aResponse()
                 .withStatus(OK.value())
                 .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .withBody(objectMapper.writeValueAsString(
-                    OrganisationsResponse
-                        .builder()
-                        .organisationIdentifier(organisationId)
-                        .build()
-                    )
-                )
+                .withBody(organisationResponse)
             )
         );
     }
 
-    public void stubGetOrganisationEndpointForFailure() {
+    public static void stubGetOrganisationEndpointForFailure() {
         PRD_ORGANISATION_SERVER.stubFor(WireMock.get("/refdata/external/v1/organisations")
             .withHeader(AUTHORIZATION, new EqualToPattern(TEST_AUTHORIZATION_TOKEN))
             .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(TEST_SERVICE_AUTH_TOKEN))
@@ -76,9 +65,9 @@ public class PrdOrganisationUtil {
     public static class PropertiesInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         @Override
         public void initialize(ConfigurableApplicationContext applicationContext) {
-            TestPropertyValues.of(
-                "prd.api.url=" + "http://localhost:" + PRD_ORGANISATION_SERVER.port()
-            ).applyTo(applicationContext.getEnvironment());
+            TestPropertyValues
+                .of("prd.api.url=" + "http://localhost:" + PRD_ORGANISATION_SERVER.port())
+                .applyTo(applicationContext.getEnvironment());
         }
     }
 }
