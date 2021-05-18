@@ -11,6 +11,7 @@
     <exclude name="JUnitTestContainsTooManyAsserts"/>
     <exclude name="JUnitAssertionsShouldIncludeMessage"/>
     <exclude name="JUnitTestsShouldIncludeAssert"/>
+    <exclude name="UnusedFormalParameter"/>
   </rule>
   <rule ref="category/java/bestpractices.xml/UnusedPrivateField">
     <properties>
