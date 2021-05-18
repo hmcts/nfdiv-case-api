@@ -10,27 +10,16 @@ public class UploadMarriageCertificate implements CcdPageConfiguration {
     public void addTo(final PageBuilder pageBuilder) {
 
         pageBuilder
-            .page("UploadMarriageCertificate")
-            .pageLabel("Upload the marriage certificate - Apply for a divorce")
+            .page("UploadSupportingDocuments")
+            .pageLabel("Upload the marriage certificate")
             .label(
-                "LabelSolAboutEditingApplication-UploadMarriageCertificate",
-                "You can make changes at the end of your application.")
-            .label(
-                "UploadPhotoOrScanMarriageCertificate-UploadMarriageCertificate",
-                "You need to upload a digital photo or scan of the marriage certificate.")
-            .label(
-                "UploadDocumentsToSendToCourt-UploadMarriageCertificate",
-                "You can also upload other documents that you need to send to the court, e.g.")
-            .label(
-                "CertifiedTranslation-UploadMarriageCertificate",
-                "• Certified translation of a non-English marriage certificate")
-            .label(
-                "ChangeOfNameDeed-UploadMarriageCertificate",
-                "• Change of name deed")
-            .label(
-                "DocumentTypes-UploadMarriageCertificate",
-                "The image must be of the entire document and has to be readable by court staff."
-                    + " You can upload jpg, bmp, tif, or PDF files (max file size 10MB per file)")
+                "LabelUploadDocumentsPara-1",
+                "You need to upload a digital photo or scan of the marriage certificate.<br /><br />"
+                    + "You can also upload other documents that you need to send to the court, e.g.<br /><br />"
+                    + "• Certified translation of a non-English marriage certificate<br />"
+                    + "• Change of name deed<br /><br />"
+                    + "The image must be of the entire document and has to be readable by court staff. "
+                    + "You can upload image files with jpg, jpeg, bmp, tif, tiff or PDF file extensions, maximum size 100MB per file")
             .optional(CaseData::getDocumentsUploaded);
     }
 }
