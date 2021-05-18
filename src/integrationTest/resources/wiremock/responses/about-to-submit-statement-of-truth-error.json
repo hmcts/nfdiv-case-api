@@ -6,7 +6,7 @@
     "applicant1Email": "test@test.com"
   },
   "errors": [
-    "Statement of truth for solicitor and applicant 1 needs to be accepted"
+    "Statement of truth must be accepted by the person making the application"
   ],
   "warnings": null,
   "state": "SOTAgreementPayAndSubmitRequired"

@@ -81,7 +81,6 @@ public class PaymentMadeTest {
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmail() throws Exception {
         Map<String, Object> data = caseDataMap();
         data.put("dateSubmitted", LocalDateTime.now());
-        data.put("statementOfTruth", YesOrNo.YES);
         data.put("solSignStatementOfTruth", YesOrNo.YES);
 
         Payment payment = Payment.builder()
@@ -160,7 +159,6 @@ public class PaymentMadeTest {
     public void givenSendEmailThrowsExceptionWhenCallbackIsInvokedThenReturnBadRequest() throws Exception {
         Map<String, Object> data = caseDataMap();
         data.put("dateSubmitted", LocalDateTime.now());
-        data.put("statementOfTruth", YesOrNo.YES);
         data.put("solSignStatementOfTruth", YesOrNo.YES);
 
         Payment payment = Payment.builder()

@@ -180,7 +180,7 @@ public class SolicitorSubmitApplicationServiceTest {
         List<ListValue<DivorceDocument>> generatedDocuments = singletonList(documentWithType(DIVORCE_APPLICATION));
         final CaseData caseData = CaseData.builder().build();
         caseData.setDocumentsGenerated(generatedDocuments);
-        caseData.setStatementOfTruth(YesOrNo.YES);
+        caseData.setStatementOfTruth(null);
         caseData.setSolSignStatementOfTruth(YesOrNo.YES);
 
         ListValue<Payment> payment = new ListValue<>(null, Payment
