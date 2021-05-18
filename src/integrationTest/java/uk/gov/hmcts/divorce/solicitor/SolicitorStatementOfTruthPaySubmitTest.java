@@ -60,7 +60,6 @@ import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.common.model.State.SOTAgreementPayAndSubmitRequired;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorStatementOfTruthPaySubmit.SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT;
 import static uk.gov.hmcts.divorce.testutil.CaseDataWireMock.stubForCcdCaseRoles;
@@ -260,12 +259,6 @@ public class SolicitorStatementOfTruthPaySubmitTest {
 
         verify(notificationService)
             .sendEmail(
-                eq(TEST_USER_EMAIL),
-                eq(SOL_APPLICANT_APPLICATION_SUBMITTED),
-                anyMap(),
-                eq(ENGLISH));
-        verify(notificationService)
-            .sendEmail(
                 eq(TEST_SOLICITOR_EMAIL),
                 eq(SOL_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED),
                 anyMap(),
@@ -294,12 +287,6 @@ public class SolicitorStatementOfTruthPaySubmitTest {
                 content().json(expectedCcdAboutToSubmitCallbackResponse())
             );
 
-        verify(notificationService)
-            .sendEmail(
-                eq(TEST_USER_EMAIL),
-                eq(SOL_APPLICANT_APPLICATION_SUBMITTED),
-                anyMap(),
-                eq(ENGLISH));
         verify(notificationService)
             .sendEmail(
                 eq(TEST_SOLICITOR_EMAIL),
@@ -346,12 +333,6 @@ public class SolicitorStatementOfTruthPaySubmitTest {
 
         verify(notificationService)
             .sendEmail(
-                eq(TEST_USER_EMAIL),
-                eq(SOL_APPLICANT_APPLICATION_SUBMITTED),
-                anyMap(),
-                eq(ENGLISH));
-        verify(notificationService)
-            .sendEmail(
                 eq(TEST_SOLICITOR_EMAIL),
                 eq(SOL_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED),
                 anyMap(),
@@ -383,9 +364,6 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .andExpect(
                 content().json(expectedCcdAboutToSubmitCallbackResponse())
             );
-
-        verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(SOL_APPLICANT_APPLICATION_SUBMITTED), anyMap(), eq(ENGLISH));
 
         verify(notificationService)
             .sendEmail(eq(TEST_SOLICITOR_EMAIL), eq(SOL_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED), anyMap(), eq(ENGLISH));

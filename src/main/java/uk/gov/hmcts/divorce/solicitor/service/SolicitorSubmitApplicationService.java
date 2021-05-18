@@ -75,6 +75,16 @@ public class SolicitorSubmitApplicationService {
         final Long caseId,
         final String userAuth
     ) {
+
+        State state = SolicitorAwaitingPaymentConfirmation;
+
+        List<String> submittedErrors = Submitted.validate(caseData);
+
+        if (submittedErrors.isEmpty()) {
+            caseData.setDateSubmitted(LocalDateTime.now(clock));
+            state = Submitted;
+        }
+
         final var caseDataUpdaters = asList(
             miniApplicationRemover,
             solicitorSubmitNotification
@@ -90,14 +100,6 @@ public class SolicitorSubmitApplicationService {
             .createWith(caseDataUpdaters)
             .processNext(caseDataContext)
             .getCaseData();
-
-        State state = SolicitorAwaitingPaymentConfirmation;
-
-        List<String> submittedErrors = Submitted.validate(updatedCaseData);
-        if (submittedErrors.isEmpty()) {
-            caseData.setDateSubmitted(LocalDateTime.now(clock));
-            state = Submitted;
-        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updatedCaseData)

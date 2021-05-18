@@ -8,7 +8,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
-import uk.gov.hmcts.divorce.solicitor.service.notification.ApplicantSubmittedNotification;
 import uk.gov.hmcts.divorce.solicitor.service.notification.SolicitorSubmittedNotification;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -25,9 +24,6 @@ class SolicitorSubmitNotificationsTest {
 
     @Mock
     private CaseDataUpdaterChain caseDataUpdaterChain;
-
-    @Mock
-    private ApplicantSubmittedNotification applicantSubmittedNotification;
 
     @Mock
     private SolicitorSubmittedNotification solicitorSubmittedNotification;
@@ -48,7 +44,6 @@ class SolicitorSubmitNotificationsTest {
 
         assertThat(result, is(caseDataContext));
 
-        verify(applicantSubmittedNotification).send(caseData, TEST_CASE_ID);
         verify(solicitorSubmittedNotification).send(caseData, TEST_CASE_ID);
     }
 }
