@@ -22,6 +22,8 @@ import static uk.gov.hmcts.divorce.common.model.JurisdictionConnections.APP_1_RE
 import static uk.gov.hmcts.divorce.common.model.JurisdictionConnections.APP_2_DOMICILED;
 import static uk.gov.hmcts.divorce.common.model.JurisdictionConnections.APP_2_RESIDENT;
 import static uk.gov.hmcts.divorce.common.model.JurisdictionConnections.RESIDUAL_JURISDICTION;
+import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.CANNOT_EXIST;
+import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.CONNECTION;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.EMPTY;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.addToErrorList;
 
@@ -30,8 +32,6 @@ import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.addToErrorLi
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 public class Jurisdiction {
-    public static final String CONNECTION = "Connection ";
-    public static final String CANNOT_EXIST = " cannot exist";
 
     @CCD(
         label = "Is Applicant 1 resident?",

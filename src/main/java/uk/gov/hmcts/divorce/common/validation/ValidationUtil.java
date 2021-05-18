@@ -18,6 +18,8 @@ public final class ValidationUtil {
     public static final String IN_THE_FUTURE = " can not be in the future.";
     public static final String EMPTY = " cannot be empty or null";
     public static final String MUST_BE_YES = " must be YES";
+    public static final String CONNECTION = "Connection ";
+    public static final String CANNOT_EXIST = " cannot exist";
     private static final int FEE_PENCE = 55000; // TODO get from order summary
 
     private ValidationUtil() {
