@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.solicitor;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import org.junit.jupiter.api.AfterAll;
@@ -17,10 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
-import uk.gov.hmcts.divorce.document.DocumentIdProvider;
-import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
-import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
-import uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock;
+import uk.gov.hmcts.divorce.testutil.PrdOrganisationUtil;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.util.HashMap;
@@ -31,6 +27,7 @@ import static org.mockito.Mockito.when;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 import static org.skyscreamer.jsonassert.JSONCompareMode.STRICT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -40,12 +37,10 @@ import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.APPLICANT_1_LA
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_COSTS_CLAIM;
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.FINANCIAL_ORDER;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreate.SOLICITOR_CREATE;
-import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssembly;
-import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.stubGetOrganisationEndpoint;
-import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.stubGetOrganisationEndpointForFailure;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_THE_SOL_MID_EVENT_URL;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
+import static uk.gov.hmcts.divorce.solicitor.event.SolicitorUpdateContactDetails.SOLICITOR_UPDATE_CONTACT_DETAILS;
+import static uk.gov.hmcts.divorce.testutil.PrdOrganisationUtil.PRD_ORGANISATION_SERVER;
+import static uk.gov.hmcts.divorce.testutil.PrdOrganisationUtil.stubGetOrganisationEndpoint;
+import static uk.gov.hmcts.divorce.testutil.PrdOrganisationUtil.stubGetOrganisationEndpointForFailure;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_1_ORGANISATION_POLICY;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
@@ -53,6 +48,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.LANGUAGE_PREFERENCE_WE
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_MID_EVENT_ERROR;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_MID_EVENT_RESPONSE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_UPDATE_CONTACT_MID_EVENT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
@@ -67,14 +63,9 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ContextConfiguration(initializers = {
-    PrdOrganisationWireMock.PropertiesInitializer.class,
-    DocAssemblyWireMock.PropertiesInitializer.class})
-class SolicitorCreateTest {
-
-    private static final String SOLICITOR_CREATE_ABOUT_TO_SUBMIT = "classpath:solicitor-create-about-to-submit-response.json";
-    private static final String SOLICITOR_CREATE_MID_EVENT = "classpath:solicitor-create-mid-event-response.json";
-    private static final String SOLICITOR_CREATE_MID_EVENT_ERROR = "classpath:solicitor-create-mid-event-error-response.json";
-    private static final String SERVICE_AUTH_TOKEN = "test-service-auth-token";
+    PrdOrganisationUtil.PropertiesInitializer.class
+})
+public class SolUpdateContactDetailsTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -88,56 +79,28 @@ class SolicitorCreateTest {
     @MockBean
     private WebMvcConfig webMvcConfig;
 
-    @MockBean
-    private DocumentIdProvider documentIdProvider;
-
     @BeforeAll
     static void setUp() {
-        DocAssemblyWireMock.start();
-        PrdOrganisationWireMock.start();
+        PRD_ORGANISATION_SERVER.start();
     }
 
     @AfterAll
     static void tearDown() {
-        DocAssemblyWireMock.stopAndReset();
-        PrdOrganisationWireMock.stopAndReset();
-    }
-
-    @Test
-    void givenValidCaseDataWhenAboutToSubmitCallbackIsInvokedCaseDataIsSetCorrectly() throws Exception {
-
-        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
-        when(documentIdProvider.documentId()).thenReturn("Divorce application");
-
-        stubForDocAssembly();
-
-        final var jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseData(), SOLICITOR_CREATE)))
-            .accept(APPLICATION_JSON))
-            .andExpect(
-                status().isOk()
-            )
-            .andReturn()
-            .getResponse()
-            .getContentAsString();
-
-        assertEquals(jsonStringResponse, expectedResponse(SOLICITOR_CREATE_ABOUT_TO_SUBMIT), STRICT);
+        PRD_ORGANISATION_SERVER.stop();
+        PRD_ORGANISATION_SERVER.resetAll();
     }
 
     @Test
     void shouldValidateApplicant1SolicitorOrgAndReturnNoErrorsWhenSolicitorBelongsToSelectedOrg() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        stubGetOrganisationEndpoint(getOrganisationResponseWith(TEST_ORG_ID));
+        stubGetOrganisationEndpoint(TEST_ORG_ID, objectMapper);
 
-        final var jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_THE_SOL_MID_EVENT_URL)
+        final String jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(SOLICITOR_UPDATE_CONTACT_MID_EVENT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant1Org(), SOLICITOR_CREATE)))
+            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant1Org(), SOLICITOR_UPDATE_CONTACT_DETAILS)))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
@@ -153,13 +116,13 @@ class SolicitorCreateTest {
     public void shouldValidateApplicant1SolicitorOrgAndReturnErrorWhenSolicitorDoesNotBelongsToSelectedOrg() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        stubGetOrganisationEndpoint(getOrganisationResponseWith("TESTORG123"));
+        stubGetOrganisationEndpoint("TESTORG123", objectMapper);
 
-        final var jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_THE_SOL_MID_EVENT_URL)
+        final String jsonStringResponse = mockMvc.perform(post(SOLICITOR_UPDATE_CONTACT_MID_EVENT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant1Org(), SOLICITOR_CREATE)))
+            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant1Org(), SOLICITOR_UPDATE_CONTACT_DETAILS)))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
@@ -177,11 +140,11 @@ class SolicitorCreateTest {
 
         stubGetOrganisationEndpointForFailure();
 
-        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_THE_SOL_MID_EVENT_URL)
+        mockMvc.perform(post(SOLICITOR_UPDATE_CONTACT_MID_EVENT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant1Org(), SOLICITOR_CREATE)))
+            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant1Org(), SOLICITOR_UPDATE_CONTACT_DETAILS)))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isForbidden()
@@ -191,21 +154,14 @@ class SolicitorCreateTest {
             );
     }
 
-    private String getOrganisationResponseWith(final String organisationId) throws JsonProcessingException {
-        return objectMapper.writeValueAsString(
-            OrganisationsResponse.builder()
-                .organisationIdentifier(organisationId)
-                .build());
-    }
-
     private Map<String, Object> caseDataWithApplicant1Org() {
-        Map<String, Object> caseData = caseData();
+        Map<String, Object> caseData = caseDataMap();
         caseData.put(APPLICANT_1_ORGANISATION_POLICY, organisationPolicy());
 
         return caseData;
     }
 
-    private Map<String, Object> caseData() {
+    private Map<String, Object> caseDataMap() {
         Map<String, Object> caseData = new HashMap<>();
         caseData.put(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME);
         caseData.put(APPLICANT_1_LAST_NAME, TEST_LAST_NAME);

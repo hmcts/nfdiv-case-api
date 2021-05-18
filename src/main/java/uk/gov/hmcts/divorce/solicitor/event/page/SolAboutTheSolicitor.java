@@ -47,7 +47,6 @@ public class SolAboutTheSolicitor implements CcdPageConfiguration {
             .mandatory(CaseData::getApplicant1SolicitorPhone)
             .mandatory(CaseData::getApplicant1SolicitorEmail)
             .mandatory(CaseData::getSolicitorAgreeToReceiveEmails)
-            .mandatory(CaseData::getDerivedApplicant1SolicitorAddress)
             .complex(CaseData::getApplicant1OrganisationPolicy)
             .complex(OrganisationPolicy::getOrganisation)
             .mandatory(Organisation::getOrganisationId)

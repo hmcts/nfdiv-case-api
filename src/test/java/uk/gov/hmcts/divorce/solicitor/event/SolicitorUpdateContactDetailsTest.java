@@ -3,11 +3,13 @@ package uk.gov.hmcts.divorce.solicitor.event;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
+import uk.gov.hmcts.divorce.solicitor.event.page.SolUpdateContactDetails;
 
 import java.util.Set;
 
@@ -17,6 +19,9 @@ import static uk.gov.hmcts.divorce.solicitor.event.SolicitorUpdateContactDetails
 
 @ExtendWith(MockitoExtension.class)
 public class SolicitorUpdateContactDetailsTest {
+
+    @Mock
+    private SolUpdateContactDetails solUpdateContactDetails;
 
     @InjectMocks
     private SolicitorUpdateContactDetails solicitorUpdateContactDetails;
