@@ -1,9 +1,9 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
-import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
@@ -25,12 +25,13 @@ public class SolicitorUpdateContactDetails implements CCDConfig<CaseData, State,
 
     public static final String SOLICITOR_UPDATE_CONTACT_DETAILS = "solicitor-update-contact-details";
 
-    private final CcdPageConfiguration page = new SolUpdateContactDetails();
+    @Autowired
+    private SolUpdateContactDetails solUpdateContactDetails;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final PageBuilder pageBuilder = addEventConfig(configBuilder);
-        page.addTo(pageBuilder);
+        solUpdateContactDetails.addTo(pageBuilder);
     }
 
     private PageBuilder addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

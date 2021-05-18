@@ -9,19 +9,19 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
-import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
+import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChainFactory;
 import uk.gov.hmcts.divorce.payment.FeesAndPaymentsClient;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
 import uk.gov.hmcts.divorce.payment.model.Payment;
-import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
-import uk.gov.hmcts.divorce.solicitor.service.notification.ApplicantSubmittedNotification;
-import uk.gov.hmcts.divorce.solicitor.service.notification.SolicitorSubmittedNotification;
+import uk.gov.hmcts.divorce.solicitor.service.updater.MiniApplicationRemover;
+import uk.gov.hmcts.divorce.solicitor.service.updater.SolicitorSubmitNotification;
 
-import java.util.List;
-
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.ccd.sdk.type.Fee.getValueInPence;
 import static uk.gov.hmcts.divorce.common.model.State.SolicitorAwaitingPaymentConfirmation;
+import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
 @Service
 @Slf4j
@@ -37,16 +37,16 @@ public class SolicitorSubmitApplicationService {
     private FeesAndPaymentsClient feesAndPaymentsClient;
 
     @Autowired
-    private ApplicantSubmittedNotification applicantSubmittedNotification;
+    private CaseDataUpdaterChainFactory caseDataUpdaterChainFactory;
 
     @Autowired
-    private SolicitorSubmittedNotification solicitorSubmittedNotification;
+    private MiniApplicationRemover miniApplicationRemover;
 
     @Autowired
-    private DraftApplicationRemovalService draftApplicationRemovalService;
+    private SolicitorSubmitNotification solicitorSubmitNotification;
 
     public OrderSummary getOrderSummary() {
-        FeeResponse feeResponse = feesAndPaymentsClient.getApplicationIssueFee(
+        final var feeResponse = feesAndPaymentsClient.getApplicationIssueFee(
             DEFAULT_CHANNEL,
             ISSUE_EVENT,
             FAMILY,
@@ -67,29 +67,29 @@ public class SolicitorSubmitApplicationService {
         final Long caseId,
         final String userAuth
     ) {
-        log.info("Removing application documents from case data and document management for {}", caseId);
+        final var caseDataUpdaters = asList(
+            miniApplicationRemover,
+            solicitorSubmitNotification
+        );
 
-        List<ListValue<DivorceDocument>> documentsExcludingApplication =
-            draftApplicationRemovalService.removeDraftApplicationDocument(
-                caseData.getDocumentsGenerated(),
-                caseId,
-                userAuth
-            );
+        final var caseDataContext = CaseDataContext.builder()
+            .caseData(caseData)
+            .caseId(caseId)
+            .userAuthToken(userAuth)
+            .build();
 
-        caseData.setDocumentsGenerated(documentsExcludingApplication);
-
-        log.info("Successfully removed application documents from case data for case id {}", caseId);
-
-        applicantSubmittedNotification.send(caseData, caseId);
-        solicitorSubmittedNotification.send(caseData, caseId);
+        final var updatedCaseData = caseDataUpdaterChainFactory
+            .createWith(caseDataUpdaters)
+            .processNext(caseDataContext)
+            .getCaseData();
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
+            .data(updatedCaseData)
             .state(SolicitorAwaitingPaymentConfirmation)
             .build();
     }
 
-    private ListValue<Fee> getFee(FeeResponse feeResponse) {
+    private ListValue<Fee> getFee(final FeeResponse feeResponse) {
         return ListValue
             .<Fee>builder()
             .value(
@@ -104,7 +104,7 @@ public class SolicitorSubmitApplicationService {
             .build();
     }
 
-    public Payment getDummyPayment(OrderSummary orderSummary) {
+    public Payment getDummyPayment(final OrderSummary orderSummary) {
         return Payment
             .builder()
             .paymentAmount(Integer.parseInt(orderSummary.getPaymentTotal()))
@@ -112,7 +112,7 @@ public class SolicitorSubmitApplicationService {
             .paymentFeeId("FEE0001")
             .paymentReference(orderSummary.getPaymentReference())
             .paymentSiteId("AA04")
-            .paymentStatus(PaymentStatus.SUCCESS)
+            .paymentStatus(SUCCESS)
             .paymentTransactionId("ge7po9h5bhbtbd466424src9tk")
             .build();
     }

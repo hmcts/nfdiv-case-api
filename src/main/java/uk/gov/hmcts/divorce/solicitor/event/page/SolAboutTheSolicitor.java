@@ -47,7 +47,6 @@ public class SolAboutTheSolicitor implements CcdPageConfiguration {
             .mandatory(CaseData::getApplicant1SolicitorPhone)
             .mandatory(CaseData::getApplicant1SolicitorEmail)
             .mandatory(CaseData::getSolicitorAgreeToReceiveEmails)
-            .mandatory(CaseData::getDerivedApplicant1SolicitorAddress)
             .complex(CaseData::getApplicant1OrganisationPolicy)
             .complex(OrganisationPolicy::getOrganisation)
             .mandatory(Organisation::getOrganisationId)
@@ -59,8 +58,6 @@ public class SolAboutTheSolicitor implements CcdPageConfiguration {
 
     }
 
-    // detailsBefore not used for this callback hence suppression
-    @SuppressWarnings("PMD.UnusedFormalParameter")
     private AboutToStartOrSubmitResponse<CaseData, State> midEvent(
         CaseDetails<CaseData, State> details,
         CaseDetails<CaseData, State> detailsBefore

@@ -13,39 +13,49 @@ import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.BEARER;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 
-public final class CaseDataUtil {
+public final class CaseDataWireMock {
 
-    public static final WireMockServer CASE_DATA_SERVER = new WireMockServer(wireMockConfig().dynamicPort());
-    public static final String CASE_WORKER_TOKEN = "test-caseworker-token";
-    public static final String SERVICE_AUTH_TOKEN = "test-service-auth-token";
+    private static final WireMockServer CASE_DATA_SERVER = new WireMockServer(wireMockConfig().dynamicPort());
 
-    private CaseDataUtil() {
+    private CaseDataWireMock() {
+    }
+
+    public static void start() {
+        if (!CASE_DATA_SERVER.isRunning()) {
+            CASE_DATA_SERVER.start();
+        }
+    }
+
+    public static void stopAndReset() {
+        if (CASE_DATA_SERVER.isRunning()) {
+            CASE_DATA_SERVER.stop();
+            CASE_DATA_SERVER.resetAll();
+        }
     }
 
     public static void stubForCcdCaseRoles() {
         CASE_DATA_SERVER.stubFor(put(urlMatching("/cases/[0-9]+/users/[0-9]+"))
-            .withHeader(HttpHeaders.AUTHORIZATION, new EqualToPattern(BEARER + CASE_WORKER_TOKEN))
-            .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(SERVICE_AUTH_TOKEN))
+            .withHeader(HttpHeaders.AUTHORIZATION, new EqualToPattern(BEARER + CASEWORKER_AUTH_TOKEN))
+            .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(SERVICE_AUTHORIZATION))
             .withRequestBody(new EqualToJsonPattern(
                 "{\"user_id\" : \"1\", \"case_roles\":[\"[CREATOR]\",\"[APPONESOLICITOR]\"]}",
                 true,
-                true)
-            )
+                true))
             .willReturn(aResponse().withStatus(200))
         );
     }
 
     public static void stubForCcdCaseRolesUpdateFailure() {
         CASE_DATA_SERVER.stubFor(put(urlMatching("/cases/[0-9]+/users/[0-9]+"))
-            .withHeader(HttpHeaders.AUTHORIZATION, new EqualToPattern(BEARER + CASE_WORKER_TOKEN))
-            .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(SERVICE_AUTH_TOKEN))
+            .withHeader(HttpHeaders.AUTHORIZATION, new EqualToPattern(BEARER + CASEWORKER_AUTH_TOKEN))
+            .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(SERVICE_AUTHORIZATION))
             .withRequestBody(new EqualToJsonPattern(
                 "{\"user_id\" : \"1\", \"case_roles\":[\"[CREATOR]\",\"[APPONESOLICITOR]\"]}",
                 true,
-                true)
-            )
+                true))
             .willReturn(aResponse().withStatus(403))
         );
     }
@@ -53,9 +63,9 @@ public final class CaseDataUtil {
     public static class PropertiesInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         @Override
         public void initialize(ConfigurableApplicationContext applicationContext) {
-            TestPropertyValues.of(
-                "core_case_data.api.url=" + "http://localhost:" + CASE_DATA_SERVER.port()
-            ).applyTo(applicationContext.getEnvironment());
+            TestPropertyValues
+                .of("core_case_data.api.url=" + "http://localhost:" + CASE_DATA_SERVER.port())
+                .applyTo(applicationContext.getEnvironment());
         }
     }
 }

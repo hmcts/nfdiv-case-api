@@ -8,43 +8,39 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.common.model.State;
-import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
+import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
+import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChainFactory;
 import uk.gov.hmcts.divorce.payment.FeesAndPaymentsClient;
-import uk.gov.hmcts.divorce.solicitor.service.notification.ApplicantSubmittedNotification;
-import uk.gov.hmcts.divorce.solicitor.service.notification.SolicitorSubmittedNotification;
+import uk.gov.hmcts.divorce.solicitor.service.updater.MiniApplicationRemover;
+import uk.gov.hmcts.divorce.solicitor.service.updater.SolicitorSubmitNotification;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import static feign.Request.HttpMethod.GET;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
+import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.common.model.State.SolicitorAwaitingPaymentConfirmation;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_1_SOL_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFeeResponse;
 
 @ExtendWith(MockitoExtension.class)
@@ -54,13 +50,13 @@ public class SolicitorSubmitApplicationServiceTest {
     private FeesAndPaymentsClient feesAndPaymentsClient;
 
     @Mock
-    private ApplicantSubmittedNotification applicantSubmittedNotification;
+    private CaseDataUpdaterChainFactory caseDataUpdaterChainFactory;
 
     @Mock
-    private SolicitorSubmittedNotification solicitorSubmittedNotification;
+    private MiniApplicationRemover miniApplicationRemover;
 
     @Mock
-    private DraftApplicationRemovalService draftApplicationRemovalService;
+    private SolicitorSubmitNotification solicitorSubmitNotification;
 
     @InjectMocks
     private SolicitorSubmitApplicationService solicitorSubmitApplicationService;
@@ -132,68 +128,32 @@ public class SolicitorSubmitApplicationServiceTest {
     }
 
     @Test
-    void shouldSendNotificationsAndSetStateForAboutToSubmit() {
+    void shouldCompleteStepsToUpdateApplication() {
 
-        final CaseData caseData = CaseData.builder().build();
-        final long caseId = 1L;
+        final var caseData = mock(CaseData.class);
+        final var caseDataUpdaterChain = mock(CaseDataUpdaterChain.class);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
-            solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN);
-
-        assertThat(aboutToStartOrSubmitResponse.getState()).isEqualTo(SolicitorAwaitingPaymentConfirmation);
-        verify(applicantSubmittedNotification).send(caseData, caseId);
-        verify(solicitorSubmittedNotification).send(caseData, caseId);
-    }
-
-    @Test
-    void shouldRemoveDraftApplicationAndNotifyApplicantAndSetStateForAboutToSubmit() {
-        List<ListValue<DivorceDocument>> generatedDocuments = singletonList(documentWithType(DIVORCE_APPLICATION));
-        final CaseData caseData = CaseData.builder().build();
-        caseData.setDocumentsGenerated(generatedDocuments);
-
-        final long caseId = 1L;
-
-        when(draftApplicationRemovalService.removeDraftApplicationDocument(generatedDocuments, caseId, APP_1_SOL_AUTH_TOKEN))
-            .thenReturn(emptyList());
-
-        final AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
-            solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN);
-
-        assertThat(aboutToStartOrSubmitResponse.getData().getDocumentsGenerated()).isEmpty();
-        assertThat(aboutToStartOrSubmitResponse.getState()).isEqualTo(SolicitorAwaitingPaymentConfirmation);
-        verify(applicantSubmittedNotification).send(caseData, caseId);
-        verify(solicitorSubmittedNotification).send(caseData, caseId);
-    }
-
-    @Test
-    public void shouldThrow403ForbiddenExceptionWhenDocumentManagementThrowsForbiddenException() {
-        final CaseData caseData = CaseData.builder().build();
-
-        final long caseId = 1L;
-
-        byte[] emptyBody = {};
-        Request request = Request.create(GET, EMPTY, Map.of(), emptyBody, UTF_8, null);
-
-        FeignException feignException = FeignException.errorStatus(
-            "serviceNotWhitelisted",
-            Response.builder()
-                .request(request)
-                .status(403)
-                .headers(Collections.emptyMap())
-                .reason("Service not whitelisted")
-                .build()
+        final var caseDataUpdaters = asList(
+            miniApplicationRemover,
+            solicitorSubmitNotification
         );
 
-        doThrow(feignException)
-            .when(draftApplicationRemovalService)
-            .removeDraftApplicationDocument(
-                isNull(),
-                anyLong(),
-                anyString()
-            );
+        final var caseDataContext = CaseDataContext.builder()
+            .caseData(caseData)
+            .caseId(TEST_CASE_ID)
+            .userAuthToken(TEST_AUTHORIZATION_TOKEN)
+            .build();
 
-        assertThatThrownBy(() -> solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN))
-            .hasMessageContaining("403 Service not whitelisted")
-            .isExactlyInstanceOf(FeignException.Forbidden.class);
+        when(caseDataUpdaterChainFactory.createWith(caseDataUpdaters)).thenReturn(caseDataUpdaterChain);
+        when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
+
+        final var response = solicitorSubmitApplicationService.aboutToSubmit(
+            caseData,
+            TEST_CASE_ID,
+            TEST_AUTHORIZATION_TOKEN
+        );
+
+        assertThat(response.getData()).isEqualTo(caseData);
+        assertThat(response.getState()).isEqualTo(SolicitorAwaitingPaymentConfirmation);
     }
 }

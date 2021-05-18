@@ -323,13 +323,6 @@ public class CaseData {
 
     @CCD(
         label = "Firm address/DX address",
-        typeOverride = TextArea,
-        access = {DefaultAccess.class}
-    )
-    private String derivedApplicant1SolicitorAddress;
-
-    @CCD(
-        label = "Firm address/DX address",
         access = {DefaultAccess.class}
     )
     private OrganisationPolicy<UserRole> applicant1OrganisationPolicy;

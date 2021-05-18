@@ -27,15 +27,15 @@ class SolicitorCourtDetailsTest {
     private SolicitorCourtDetails solicitorCourtDetails;
 
     @Test
-    void shouldSetSolictorCourtDetailsInGivenCaseData() {
+    void shouldSetSolicitorCourtDetailsInGivenCaseData() {
 
-        final CaseData caseData = CaseData.builder().build();
+        final var caseData = CaseData.builder().build();
 
         when(caseDataContext.copyOfCaseData()).thenReturn(caseData);
         when(caseDataContext.handlerContextWith(caseData)).thenReturn(caseDataContext);
         when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
 
-        final CaseDataContext result = solicitorCourtDetails.updateCaseData(this.caseDataContext, caseDataUpdaterChain);
+        final var result = solicitorCourtDetails.updateCaseData(this.caseDataContext, caseDataUpdaterChain);
 
         assertThat(result, is(caseDataContext));
 
