@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.solicitor;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import org.junit.jupiter.api.AfterAll;
@@ -16,7 +17,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
-import uk.gov.hmcts.divorce.testutil.PrdOrganisationUtil;
+import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
+import uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.util.HashMap;
@@ -38,9 +40,10 @@ import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_COSTS_
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.FINANCIAL_ORDER;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorUpdateContactDetails.SOLICITOR_UPDATE_CONTACT_DETAILS;
-import static uk.gov.hmcts.divorce.testutil.PrdOrganisationUtil.PRD_ORGANISATION_SERVER;
-import static uk.gov.hmcts.divorce.testutil.PrdOrganisationUtil.stubGetOrganisationEndpoint;
-import static uk.gov.hmcts.divorce.testutil.PrdOrganisationUtil.stubGetOrganisationEndpointForFailure;
+import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.start;
+import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.stopAndReset;
+import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.stubGetOrganisationEndpoint;
+import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.stubGetOrganisationEndpointForFailure;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_1_ORGANISATION_POLICY;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
@@ -63,7 +66,7 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ContextConfiguration(initializers = {
-    PrdOrganisationUtil.PropertiesInitializer.class
+    PrdOrganisationWireMock.PropertiesInitializer.class
 })
 public class SolUpdateContactDetailsTest {
 
@@ -81,20 +84,19 @@ public class SolUpdateContactDetailsTest {
 
     @BeforeAll
     static void setUp() {
-        PRD_ORGANISATION_SERVER.start();
+        start();
     }
 
     @AfterAll
     static void tearDown() {
-        PRD_ORGANISATION_SERVER.stop();
-        PRD_ORGANISATION_SERVER.resetAll();
+        stopAndReset();
     }
 
     @Test
     void shouldValidateApplicant1SolicitorOrgAndReturnNoErrorsWhenSolicitorBelongsToSelectedOrg() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        stubGetOrganisationEndpoint(TEST_ORG_ID, objectMapper);
+        stubGetOrganisationEndpoint(getOrganisationResponseWith(TEST_ORG_ID));
 
         final String jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(SOLICITOR_UPDATE_CONTACT_MID_EVENT_URL)
             .contentType(APPLICATION_JSON)
@@ -116,7 +118,7 @@ public class SolUpdateContactDetailsTest {
     public void shouldValidateApplicant1SolicitorOrgAndReturnErrorWhenSolicitorDoesNotBelongsToSelectedOrg() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        stubGetOrganisationEndpoint("TESTORG123", objectMapper);
+        stubGetOrganisationEndpoint(getOrganisationResponseWith("TESTORG123"));
 
         final String jsonStringResponse = mockMvc.perform(post(SOLICITOR_UPDATE_CONTACT_MID_EVENT_URL)
             .contentType(APPLICATION_JSON)
@@ -171,5 +173,12 @@ public class SolUpdateContactDetailsTest {
         caseData.put(FINANCIAL_ORDER, NO);
         caseData.put(LANGUAGE_PREFERENCE_WELSH, NO);
         return caseData;
+    }
+
+    private String getOrganisationResponseWith(final String organisationId) throws JsonProcessingException {
+        return objectMapper.writeValueAsString(
+            OrganisationsResponse.builder()
+                .organisationIdentifier(organisationId)
+                .build());
     }
 }
