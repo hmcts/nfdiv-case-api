@@ -16,7 +16,16 @@
       "OrgPolicyCaseAssignedRole": null
     },
     "divorceCostsClaim": "YES",
-    "financialOrder": "NO"
+    "financialOrder": "NO",
+    "jurisdictionApplicant1Residence":null,
+    "jurisdictionApplicant2Residence":null,
+    "jurisdictionApplicant1Domicile":null,
+    "jurisdictionApplicant2Domicile":null,
+    "jurisdictionApp1HabituallyResLastTwelveMonths":null,
+    "jurisdictionApp1HabituallyResLastSixMonths":null,
+    "jurisdictionResidualEligible":null,
+    "jurisdictionBothLastHabituallyResident":null,
+    "jurisdictionConnections":null
   },
   "errors": null,
   "warnings": null,
