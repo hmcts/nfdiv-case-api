@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.solicitor;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import org.apache.commons.io.FilenameUtils;
@@ -15,20 +16,16 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
-import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-import uk.gov.hmcts.divorce.testutil.CaseDataUtil;
-import uk.gov.hmcts.divorce.testutil.DocumentManagementStoreUtil;
-import uk.gov.hmcts.divorce.testutil.FeesUtil;
-import uk.gov.hmcts.divorce.testutil.IdamUtil;
-import uk.gov.hmcts.divorce.testutil.TestConstants;
+import uk.gov.hmcts.divorce.testutil.CaseDataWireMock;
+import uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock;
+import uk.gov.hmcts.divorce.testutil.FeesWireMock;
+import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.singletonList;
@@ -59,21 +56,21 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATI
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorStatementOfTruthPaySubmit.SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT;
-import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.CASE_DATA_SERVER;
-import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.stubForCcdCaseRoles;
-import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.stubForCcdCaseRolesUpdateFailure;
-import static uk.gov.hmcts.divorce.testutil.DocumentManagementStoreUtil.DM_STORE_SERVER;
-import static uk.gov.hmcts.divorce.testutil.DocumentManagementStoreUtil.stubForDocumentManagement;
-import static uk.gov.hmcts.divorce.testutil.FeesUtil.FEES_SERVER;
-import static uk.gov.hmcts.divorce.testutil.FeesUtil.stubForFeesLookup;
-import static uk.gov.hmcts.divorce.testutil.FeesUtil.stubForFeesNotFound;
-import static uk.gov.hmcts.divorce.testutil.IdamUtil.IDAM_SERVER;
-import static uk.gov.hmcts.divorce.testutil.IdamUtil.stubForIdamDetails;
-import static uk.gov.hmcts.divorce.testutil.IdamUtil.stubForIdamFailure;
-import static uk.gov.hmcts.divorce.testutil.IdamUtil.stubForIdamToken;
+import static uk.gov.hmcts.divorce.testutil.CaseDataWireMock.stubForCcdCaseRoles;
+import static uk.gov.hmcts.divorce.testutil.CaseDataWireMock.stubForCcdCaseRolesUpdateFailure;
+import static uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock.stubForDocumentManagement;
+import static uk.gov.hmcts.divorce.testutil.FeesWireMock.stubForFeesLookup;
+import static uk.gov.hmcts.divorce.testutil.FeesWireMock.stubForFeesNotFound;
+import static uk.gov.hmcts.divorce.testutil.IdamWireMock.CASEWORKER_ROLE;
+import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SOLICITOR_ROLE;
+import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamDetails;
+import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamFailure;
+import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamToken;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_USER_ID;
@@ -85,22 +82,18 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataMap;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFeeResponse;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ContextConfiguration(initializers = {
-    FeesUtil.PropertiesInitializer.class,
-    IdamUtil.PropertiesInitializer.class,
-    DocumentManagementStoreUtil.PropertiesInitializer.class,
-    CaseDataUtil.PropertiesInitializer.class})
+    FeesWireMock.PropertiesInitializer.class,
+    IdamWireMock.PropertiesInitializer.class,
+    DocManagementStoreWireMock.PropertiesInitializer.class,
+    CaseDataWireMock.PropertiesInitializer.class})
 public class SolicitorStatementOfTruthPaySubmitTest {
-
-    private static final String CASE_WORKER_TOKEN = "test-caseworker-token";
-    private static final String SOLICITOR_ROLE = "caseworker-divorce-solicitor";
-    private static final String CASEWORKER_ROLE = "caseworker-divorce";
-    private static final String SERVICE_AUTH_TOKEN = "test-service-auth-token";
 
     @Autowired
     private MockMvc mockMvc;
@@ -119,46 +112,37 @@ public class SolicitorStatementOfTruthPaySubmitTest {
 
     @BeforeAll
     static void setUp() {
-        IDAM_SERVER.start();
-        CASE_DATA_SERVER.start();
-        FEES_SERVER.start();
-        DM_STORE_SERVER.start();
+        IdamWireMock.start();
+        CaseDataWireMock.start();
+        FeesWireMock.start();
+        DocManagementStoreWireMock.start();
     }
 
     @AfterAll
     static void tearDown() {
-        IDAM_SERVER.stop();
-        IDAM_SERVER.resetAll();
-
-        CASE_DATA_SERVER.stop();
-        CASE_DATA_SERVER.resetAll();
-
-        FEES_SERVER.stop();
-        FEES_SERVER.resetAll();
-
-        DM_STORE_SERVER.stop();
-        DM_STORE_SERVER.resetAll();
+        IdamWireMock.stopAndReset();
+        CaseDataWireMock.stopAndReset();
+        FeesWireMock.stopAndReset();
+        DocManagementStoreWireMock.stopAndReset();
     }
 
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenOrderSummaryAndSolicitorRolesAreSet()
         throws Exception {
-        stubForFeesLookup(objectMapper);
 
+        stubForFeesLookup(getFeeResponseAsJson());
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, SOLICITOR_USER_ID, SOLICITOR_ROLE);
-
-        stubForIdamDetails(CASE_WORKER_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
-
+        stubForIdamDetails(CASEWORKER_AUTH_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken();
 
-        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTH_TOKEN);
+        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
 
         stubForCcdCaseRoles();
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_START_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(TestConstants.AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
             .content(objectMapper.writeValueAsString(callbackRequest(caseDataMap(), SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)))
             .accept(APPLICATION_JSON))
             .andExpect(
@@ -180,7 +164,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_START_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(TestConstants.AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
             .content(objectMapper.writeValueAsString(callbackRequest(caseDataMap(), SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)))
             .accept(APPLICATION_JSON))
             .andExpect(
@@ -198,14 +182,14 @@ public class SolicitorStatementOfTruthPaySubmitTest {
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedAndIdamUserRetrievalThrowsUnauthorizedThen401IsReturned()
         throws Exception {
-        stubForFeesLookup(objectMapper);
 
+        stubForFeesLookup(getFeeResponseAsJson());
         stubForIdamFailure();
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_START_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(TestConstants.AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
             .content(objectMapper.writeValueAsString(callbackRequest(caseDataMap(), SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)))
             .accept(APPLICATION_JSON))
             .andExpect(
@@ -223,22 +207,20 @@ public class SolicitorStatementOfTruthPaySubmitTest {
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedAndCcdCaseRolesUpdateThrowsForbiddenExceptionThen403IsReturned()
         throws Exception {
-        stubForFeesLookup(objectMapper);
 
+        stubForFeesLookup(getFeeResponseAsJson());
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, SOLICITOR_USER_ID, SOLICITOR_ROLE);
-
-        stubForIdamDetails(CASE_WORKER_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
-
+        stubForIdamDetails(CASEWORKER_AUTH_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken();
 
-        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTH_TOKEN);
+        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
 
         stubForCcdCaseRolesUpdateFailure();
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_START_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(TestConstants.AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
             .content(objectMapper.writeValueAsString(callbackRequest(caseDataMap(), SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)))
             .accept(APPLICATION_JSON))
             .andExpect(
@@ -256,7 +238,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(TestConstants.AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
             .content(objectMapper.writeValueAsString(callbackRequest(
                 caseDataWithStatementOfTruth(),
                 SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT,
@@ -288,24 +270,15 @@ public class SolicitorStatementOfTruthPaySubmitTest {
     @Test
     void givenValidCaseDataContainingDraftApplicationDocumentWhenAboutToSubmitCallbackIsInvokedThenDraftApplicationDocumentIsRemoved()
         throws Exception {
-        Map<String, Object> caseData = caseDataWithStatementOfTruth();
 
-        ListValue<DivorceDocument> documentListValue = documentWithType(DIVORCE_APPLICATION);
-
-        List<ListValue<DivorceDocument>> generatedDocuments = singletonList(documentListValue);
-        caseData.put("documentsGenerated", generatedDocuments);
-
-        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, SOLICITOR_USER_ID, SOLICITOR_ROLE);
-
-        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTH_TOKEN);
-
-        String documentUuid = FilenameUtils.getName(documentListValue.getValue().getDocumentLink().getUrl());
+        final var caseData = caseDataWithStatementOfTruth();
+        final var documentUuid = setupAuthorizationAndApplicationDocument(caseData);
         stubForDocumentManagement(documentUuid, OK);
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(TestConstants.AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
             .content(objectMapper.writeValueAsString(callbackRequest(
                 caseData,
                 SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT,
@@ -332,24 +305,15 @@ public class SolicitorStatementOfTruthPaySubmitTest {
     @Test
     void givenCaseDataWithApplicationDocumentAndServiceNotWhitelistedInDocStoreWhenAboutToSubmitCallbackIsInvokedThen403IsReturned()
         throws Exception {
-        Map<String, Object> caseData = caseDataWithStatementOfTruth();
 
-        ListValue<DivorceDocument> documentListValue = documentWithType(DIVORCE_APPLICATION);
-
-        List<ListValue<DivorceDocument>> generatedDocuments = singletonList(documentListValue);
-        caseData.put("documentsGenerated", generatedDocuments);
-
-        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, SOLICITOR_USER_ID, SOLICITOR_ROLE);
-
-        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTH_TOKEN);
-
-        String documentUuid = FilenameUtils.getName(documentListValue.getValue().getDocumentLink().getUrl());
+        final var caseData = caseDataWithStatementOfTruth();
+        final var documentUuid = setupAuthorizationAndApplicationDocument(caseData);
         stubForDocumentManagement(documentUuid, FORBIDDEN);
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(TestConstants.AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
             .content(objectMapper.writeValueAsString(callbackRequest(
                 caseData,
                 SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT,
@@ -366,24 +330,15 @@ public class SolicitorStatementOfTruthPaySubmitTest {
     @Test
     void givenCaseDataWithApplicationDocumentAndServiceAuthValidationFailsInDocStoreWhenAboutToSubmitCallbackIsInvokedThen401IsReturned()
         throws Exception {
-        Map<String, Object> caseData = caseDataWithStatementOfTruth();
 
-        ListValue<DivorceDocument> documentListValue = documentWithType(DIVORCE_APPLICATION);
-
-        List<ListValue<DivorceDocument>> generatedDocuments = singletonList(documentListValue);
-        caseData.put("documentsGenerated", generatedDocuments);
-
-        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, SOLICITOR_USER_ID, SOLICITOR_ROLE);
-
-        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTH_TOKEN);
-
-        String documentUuid = FilenameUtils.getName(documentListValue.getValue().getDocumentLink().getUrl());
+        final var caseData = caseDataWithStatementOfTruth();
+        final var documentUuid = setupAuthorizationAndApplicationDocument(caseData);
         stubForDocumentManagement(documentUuid, UNAUTHORIZED);
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(TestConstants.AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
             .content(objectMapper.writeValueAsString(callbackRequest(
                 caseData,
                 SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT,
@@ -405,7 +360,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(TestConstants.AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
             .content(objectMapper.writeValueAsString(callbackRequest(
                 caseDataMap(),
                 SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT,
@@ -419,6 +374,17 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             );
 
         verifyNoInteractions(notificationService);
+    }
+
+    private String setupAuthorizationAndApplicationDocument(Map<String, Object> caseData) {
+        final var documentListValue = documentWithType(DIVORCE_APPLICATION);
+        final var generatedDocuments = singletonList(documentListValue);
+
+        caseData.put("documentsGenerated", generatedDocuments);
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, SOLICITOR_USER_ID, SOLICITOR_ROLE);
+        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
+
+        return FilenameUtils.getName(documentListValue.getValue().getDocumentLink().getUrl());
     }
 
     private String expectedCcdCallbackResponse() throws IOException {
@@ -445,5 +411,8 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         caseData.put("applicant1SolicitorEmail", TEST_SOLICITOR_EMAIL);
         return caseData;
     }
-}
 
+    private String getFeeResponseAsJson() throws JsonProcessingException {
+        return objectMapper.writeValueAsString(getFeeResponse());
+    }
+}
