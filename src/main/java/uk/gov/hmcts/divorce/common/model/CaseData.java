@@ -195,7 +195,8 @@ public class CaseData {
     private YesOrNo applicant1AgreedToReceiveEmails;
 
     @JsonUnwrapped(prefix = "jurisdiction")
-    private Jurisdiction jurisdiction;
+    @Builder.Default
+    private Jurisdiction jurisdiction = new Jurisdiction();
 
     @CCD(
         label = "Is the language preference Welsh?",
@@ -738,13 +739,5 @@ public class CaseData {
         } else {
             documents.add(listValue);
         }
-    }
-
-    public Jurisdiction getJurisdiction() {
-        if (jurisdiction == null) {
-            jurisdiction = new Jurisdiction();
-        }
-
-        return jurisdiction;
     }
 }
