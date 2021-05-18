@@ -58,8 +58,6 @@ public class SolAboutTheSolicitor implements CcdPageConfiguration {
 
     }
 
-    // detailsBefore not used for this callback hence suppression
-    @SuppressWarnings("PMD.UnusedFormalParameter")
     private AboutToStartOrSubmitResponse<CaseData, State> midEvent(
         CaseDetails<CaseData, State> details,
         CaseDetails<CaseData, State> detailsBefore

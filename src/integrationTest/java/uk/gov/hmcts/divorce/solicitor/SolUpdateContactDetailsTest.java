@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.solicitor;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import feign.FeignException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -24,7 +23,6 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 import static org.skyscreamer.jsonassert.JSONCompareMode.STRICT;
@@ -43,7 +41,6 @@ import static uk.gov.hmcts.divorce.solicitor.event.SolicitorUpdateContactDetails
 import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.start;
 import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.stopAndReset;
 import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.stubGetOrganisationEndpoint;
-import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.stubGetOrganisationEndpointForFailure;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_1_ORGANISATION_POLICY;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
@@ -134,26 +131,6 @@ public class SolUpdateContactDetailsTest {
             .getContentAsString();
 
         assertEquals(jsonStringResponse, expectedResponse(SOLICITOR_MID_EVENT_ERROR), STRICT);
-    }
-
-    @Test
-    public void shouldThrow403ForbiddenExceptionWhenServiceIsNotWhitelistedInReferenceData() throws Exception {
-        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-
-        stubGetOrganisationEndpointForFailure();
-
-        mockMvc.perform(post(SOLICITOR_UPDATE_CONTACT_MID_EVENT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant1Org(), SOLICITOR_UPDATE_CONTACT_DETAILS)))
-            .accept(APPLICATION_JSON))
-            .andExpect(
-                status().isForbidden()
-            )
-            .andExpect(
-                result -> assertThat(result.getResolvedException()).isExactlyInstanceOf(FeignException.Forbidden.class)
-            );
     }
 
     private Map<String, Object> caseDataWithApplicant1Org() {
