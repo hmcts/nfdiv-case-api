@@ -10,7 +10,8 @@ public final class TestConstants {
     public static final String ABOUT_TO_START_URL = "/callbacks/about-to-start";
     public static final String ABOUT_TO_SUBMIT_URL = "/callbacks/about-to-submit";
     public static final String SUBMITTED_URL = "/callbacks/submitted";
-    public static final String MID_EVENT_URL = "/callbacks/mid-event?page=SolAboutTheSolicitor";
+    public static final String ABOUT_THE_SOL_MID_EVENT_URL = "/callbacks/mid-event?page=SolAboutTheSolicitor";
+    public static final String SOLICITOR_UPDATE_CONTACT_MID_EVENT_URL = "/callbacks/mid-event?page=SolUpdateContactDetails";
 
     public static final String AUTH_HEADER_VALUE = "auth-header-value";
     public static final String INVALID_AUTH_TOKEN = "invalid_token";
@@ -41,6 +42,9 @@ public final class TestConstants {
     public static final String TEST_ORG_ID = "ABC123";
     public static final String TEST_ORG_NAME = "TEST ORG";
     public static final String APPLICANT_1_ORGANISATION_POLICY = "applicant1OrganisationPolicy";
+
+    public static final String SOLICITOR_MID_EVENT_RESPONSE = "classpath:solicitor-mid-event-response.json";
+    public static final String SOLICITOR_MID_EVENT_ERROR = "classpath:solicitor-mid-event-error-response.json";
 
     private TestConstants() {
     }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,7 +31,6 @@ import java.util.Set;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
-import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
@@ -74,12 +74,6 @@ public class CaseData {
     private YesOrNo screenHasMarriageBroken;
 
     @CCD(
-        label = "Were applicant 1 and applicant 2 a same-sex couple when they got married?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo marriageIsSameSexCouple;
-
-    @CCD(
         label = "What is Applicant 1's gender?",
         hint = "Applicant 1’s gender is collected for statistical purposes only.",
         typeOverride = FixedList,
@@ -96,14 +90,6 @@ public class CaseData {
         access = {DefaultAccess.class}
     )
     private Gender inferredApplicant2Gender;
-
-    @CCD(
-        label = "Marriage date",
-        typeOverride = Date,
-        access = {DefaultAccess.class}
-    )
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate marriageDate;
 
     @CCD(
         label = "Help with fees reference",
@@ -131,36 +117,11 @@ public class CaseData {
     private YesOrNo helpWithFeesAppliedForFees;
 
     @CCD(
-        label = "Did the marriage take place in the UK?",
         access = {DefaultAccess.class}
     )
-    private YesOrNo marriedInUk;
-
-    @CCD(
-        label = "Marriage certificate in English?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo certificateInEnglish;
-
-    @CCD(
-        label = "Marriage certificate translation",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo certifiedTranslation;
-
-    @CCD(
-        label = "Country of marriage",
-        hint = "Enter the country in which the marriage took place",
-        access = {DefaultAccess.class}
-    )
-    private String countryName;
-
-    @CCD(
-        label = "Place of marriage",
-        hint = "Enter the place of marriage as it appears on the marriage certificate",
-        access = {DefaultAccess.class}
-    )
-    private String marriagePlaceOfMarriage;
+    @JsonUnwrapped(prefix = "marriage")
+    @Builder.Default
+    private MarriageDetails marriageDetails = new MarriageDetails();
 
     @CCD(
         label = "First name(s)",
@@ -193,53 +154,9 @@ public class CaseData {
     )
     private YesOrNo applicant1AgreedToReceiveEmails;
 
-    @CCD(
-        label = "Is Applicant 1 resident?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo jurisdictionApplicant1Residence;
-
-    @CCD(
-        label = "Is applicant 2 resident?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo jurisdictionApplicant2Residence;
-
-    @CCD(
-        label = "Is Applicant 1 domiciled?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo jurisdictionApplicant1Domicile;
-
-    @CCD(
-        label = "Is applicant 2 domiciled?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo jurisdictionApplicant2Domicile;
-
-    @CCD(
-        label = "Has Applicant 1 been resident for the last twelve months?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo jurisdictionApp1HabituallyResLastTwelveMonths;
-
-    @CCD(
-        label = "Has Applicant 1 been resident for the last six months?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo jurisdictionApp1HabituallyResLastSixMonths;
-
-    @CCD(
-        label = "Is residual jurisdiction eligible?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo jurisdictionResidualEligible;
-
-    @CCD(
-        label = "Were both applicant 1 and applicant 2 last habitually resident, and one still resides?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo jurisdictionBothLastHabituallyResident;
+    @JsonUnwrapped(prefix = "jurisdiction")
+    @Builder.Default
+    private Jurisdiction jurisdiction = new Jurisdiction();
 
     @CCD(
         label = "Is the language preference Welsh?",
@@ -364,13 +281,6 @@ public class CaseData {
         access = {DefaultAccess.class}
     )
     private YesOrNo solicitorAgreeToReceiveEmails;
-
-    @CCD(
-        label = "Firm address/DX address",
-        typeOverride = TextArea,
-        access = {DefaultAccess.class}
-    )
-    private String derivedApplicant1SolicitorAddress;
 
     @CCD(
         label = "Firm address/DX address",
@@ -525,13 +435,6 @@ public class CaseData {
         access = {DefaultAccess.class}
     )
     private YesOrNo lastNameChangedWhenMarried;
-
-    @CCD(
-        label = "Jurisdiction connections",
-        hint = "Tick all the reasons that apply:",
-        access = {DefaultAccess.class}
-    )
-    private Set<JurisdictionConnections> jurisdictionConnections;
 
     @CCD(
         label = "Legal connections",

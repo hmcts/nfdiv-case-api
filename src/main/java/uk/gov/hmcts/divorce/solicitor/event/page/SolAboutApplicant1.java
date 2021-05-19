@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.common.model.MarriageDetails;
 
 public class SolAboutApplicant1 implements CcdPageConfiguration {
 
@@ -12,9 +13,6 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
         pageBuilder
             .page("SolAboutApplicant1")
             .pageLabel("About applicant 1")
-            .label(
-                "LabelSolAboutEditingApplication-AboutApplicant1",
-                "You can make changes at the end of your application.")
             .mandatory(CaseData::getApplicant1FirstName)
             .optional(CaseData::getApplicant1MiddleName)
             .mandatory(CaseData::getApplicant1LastName)
@@ -27,7 +25,9 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
             .mandatory(CaseData::getApplicant1NameChangedHowOtherDetails, "applicant1NameChangedHow=\"other\"")
             .mandatory(CaseData::getDivorceWho)
             .mandatory(CaseData::getInferredApplicant1Gender)
-            .mandatory(CaseData::getMarriageIsSameSexCouple)
+            .complex(CaseData::getMarriageDetails)
+                .mandatory(MarriageDetails::getIsSameSexCouple)
+                .done()
             .mandatory(CaseData::getApplicant1HomeAddress)
             .optional(CaseData::getApplicant1PhoneNumber)
             .optional(CaseData::getApplicant1Email)

@@ -12,9 +12,6 @@ public class FinancialOrders implements CcdPageConfiguration {
         pageBuilder
             .page("FinancialOrders")
             .pageLabel("Financial orders")
-            .label(
-                "financialOrdersEditMessage",
-                "You can make changes at the end of your application.")
             .mandatory(CaseData::getFinancialOrder)
             .mandatory(
                 CaseData::getFinancialOrderFor,

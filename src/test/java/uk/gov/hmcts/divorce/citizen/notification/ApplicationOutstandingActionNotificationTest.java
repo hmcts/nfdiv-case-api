@@ -53,7 +53,7 @@ class ApplicationOutstandingActionNotificationTest {
     void shouldCallSendEmailForSupportingDocuments() {
         CaseData data = caseData();
         data.setDivorceWho(WhoDivorcing.HUSBAND);
-        data.setMarriedInUk(YesOrNo.NO);
+        data.getMarriageDetails().setMarriedInUk(YesOrNo.NO);
 
         Set<DocumentType> docs = new HashSet<>();
         docs.add(DocumentType.MARRIAGE_CERTIFICATE);
@@ -85,7 +85,7 @@ class ApplicationOutstandingActionNotificationTest {
     void shouldCallSendEmailForPapersServedAnotherWay() {
         CaseData data = caseData();
         data.setDivorceWho(WhoDivorcing.HUSBAND);
-        data.setMarriedInUk(YesOrNo.YES);
+        data.getMarriageDetails().setMarriedInUk(YesOrNo.YES);
         data.setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
 
         Set<DocumentType> docs = new HashSet<>();
@@ -123,7 +123,7 @@ class ApplicationOutstandingActionNotificationTest {
     void shouldCallSendEmailForCivil() {
         CaseData data = caseData();
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
-        data.setMarriedInUk(YesOrNo.YES);
+        data.getMarriageDetails().setMarriedInUk(YesOrNo.YES);
         data.setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
 
         Set<DocumentType> docs = new HashSet<>();

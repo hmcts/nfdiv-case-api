@@ -35,9 +35,6 @@ public class SolAboutTheSolicitor implements CcdPageConfiguration {
             .page("SolAboutTheSolicitor", this::midEvent)
             .pageLabel("About the Solicitor")
             .label(
-                "LabelSolAboutEditingApplication-AboutSolicitor",
-                "You can make changes at the end of your application.")
-            .label(
                 "LabelSolAboutTheSolPara-1",
                 "Please note that the information provided will be used as evidence by the court to decide if "
                     + "applicant 1 is entitled to legally end their marriage. **A copy of this form is sent to "
@@ -47,7 +44,6 @@ public class SolAboutTheSolicitor implements CcdPageConfiguration {
             .mandatory(CaseData::getApplicant1SolicitorPhone)
             .mandatory(CaseData::getApplicant1SolicitorEmail)
             .mandatory(CaseData::getSolicitorAgreeToReceiveEmails)
-            .mandatory(CaseData::getDerivedApplicant1SolicitorAddress)
             .complex(CaseData::getApplicant1OrganisationPolicy)
             .complex(OrganisationPolicy::getOrganisation)
             .mandatory(Organisation::getOrganisationId)
@@ -59,8 +55,6 @@ public class SolAboutTheSolicitor implements CcdPageConfiguration {
 
     }
 
-    // detailsBefore not used for this callback hence suppression
-    @SuppressWarnings("PMD.UnusedFormalParameter")
     private AboutToStartOrSubmitResponse<CaseData, State> midEvent(
         CaseDetails<CaseData, State> details,
         CaseDetails<CaseData, State> detailsBefore

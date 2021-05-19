@@ -108,7 +108,7 @@ public class ApplicationOutstandingActionNotification {
         for (DocumentType docType : caseData.getCannotUploadSupportingDocument()) {
             switch (docType) {
                 case MARRIAGE_CERTIFICATE:
-                    if (caseData.getMarriedInUk().toBoolean()) {
+                    if (caseData.getMarriageDetails().getMarriedInUk().toBoolean()) {
                         templateVars.put(CERTIFICATE, certificate);
                     } else {
                         templateVars.put(FOREIGN_CERTIFICATE, foreignCertificate);

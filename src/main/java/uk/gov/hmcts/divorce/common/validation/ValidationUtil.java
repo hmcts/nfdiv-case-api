@@ -4,24 +4,12 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.common.model.Gender;
-import uk.gov.hmcts.divorce.common.model.JurisdictionConnections;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static java.time.temporal.ChronoUnit.YEARS;
 import static org.springframework.util.CollectionUtils.isEmpty;
-import static uk.gov.hmcts.divorce.common.validation.JurisdictionConnectionsValidation.validateJurisdictionConnectionA;
-import static uk.gov.hmcts.divorce.common.validation.JurisdictionConnectionsValidation.validateJurisdictionConnectionB;
-import static uk.gov.hmcts.divorce.common.validation.JurisdictionConnectionsValidation.validateJurisdictionConnectionC;
-import static uk.gov.hmcts.divorce.common.validation.JurisdictionConnectionsValidation.validateJurisdictionConnectionD;
-import static uk.gov.hmcts.divorce.common.validation.JurisdictionConnectionsValidation.validateJurisdictionConnectionE;
-import static uk.gov.hmcts.divorce.common.validation.JurisdictionConnectionsValidation.validateJurisdictionConnectionF;
-import static uk.gov.hmcts.divorce.common.validation.JurisdictionConnectionsValidation.validateJurisdictionConnectionG;
-import static uk.gov.hmcts.divorce.common.validation.JurisdictionConnectionsValidation.validateJurisdictionConnectionH;
-import static uk.gov.hmcts.divorce.common.validation.JurisdictionConnectionsValidation.validateJurisdictionConnectionI;
 
 public final class ValidationUtil {
 
@@ -30,6 +18,8 @@ public final class ValidationUtil {
     public static final String IN_THE_FUTURE = " can not be in the future.";
     public static final String EMPTY = " cannot be empty or null";
     public static final String MUST_BE_YES = " must be YES";
+    public static final String CONNECTION = "Connection ";
+    public static final String CANNOT_EXIST = " cannot exist";
     private static final int FEE_PENCE = 55000; // TODO get from order summary
 
     private ValidationUtil() {
@@ -48,8 +38,8 @@ public final class ValidationUtil {
             "Applicant1ContactDetailsConfidential"), errorList);
         addToErrorList(checkIfYesOrNoIsNullOrEmptyOrNo(caseData.getPrayerHasBeenGiven(), "PrayerHasBeenGiven"), errorList);
         addToErrorList(checkIfYesOrNoIsNullOrEmptyOrNo(caseData.getStatementOfTruth(), "StatementOfTruth"), errorList);
-        addToErrorList(checkIfDateIsAllowed(caseData.getMarriageDate(), "MarriageDate"), errorList);
-        addListToErrorList(validateJurisdictionConnection(caseData), errorList);
+        addToErrorList(checkIfDateIsAllowed(caseData.getMarriageDetails().getDate(), "MarriageDate"), errorList);
+        addListToErrorList(caseData.getJurisdiction().validate(), errorList);
     }
 
     public static void addToErrorList(String error, List<String> errorList) {
@@ -135,28 +125,6 @@ public final class ValidationUtil {
         return caseData.getApplicant1WantsToHavePapersServedAnotherWay() != null
             && caseData.getApplicant1WantsToHavePapersServedAnotherWay().toBoolean()
             || !isEmpty(caseData.getCannotUploadSupportingDocument());
-    }
-
-    public static List<String> validateJurisdictionConnection(CaseData caseData) {
-        List<String> errorList = new ArrayList<>();
-
-        Set<JurisdictionConnections> jurisdictionConnections = caseData.getJurisdictionConnections();
-
-        if (jurisdictionConnections == null) {
-            errorList.add("JurisdictionConnections" + EMPTY);
-        } else {
-            addToErrorList(validateJurisdictionConnectionA(jurisdictionConnections, caseData), errorList);
-            addToErrorList(validateJurisdictionConnectionB(jurisdictionConnections, caseData), errorList);
-            addToErrorList(validateJurisdictionConnectionC(jurisdictionConnections, caseData), errorList);
-            addToErrorList(validateJurisdictionConnectionD(jurisdictionConnections, caseData), errorList);
-            addToErrorList(validateJurisdictionConnectionE(jurisdictionConnections, caseData), errorList);
-            addToErrorList(validateJurisdictionConnectionF(jurisdictionConnections, caseData), errorList);
-            addToErrorList(validateJurisdictionConnectionG(jurisdictionConnections, caseData), errorList);
-            addToErrorList(validateJurisdictionConnectionH(jurisdictionConnections, caseData), errorList);
-            addToErrorList(validateJurisdictionConnectionI(jurisdictionConnections, caseData), errorList);
-        }
-
-        return errorList;
     }
 
 }

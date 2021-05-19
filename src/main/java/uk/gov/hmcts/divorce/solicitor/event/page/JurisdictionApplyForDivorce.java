@@ -13,9 +13,6 @@ public class JurisdictionApplyForDivorce implements CcdPageConfiguration {
             .page("JurisdictionApplyForDivorce")
             .pageLabel("Jurisdiction - Apply for a divorce")
             .label(
-                "LabelSolAboutEditingApplication-Jurisdiction",
-                "You can make changes at the end of your application.")
-            .label(
                 "LabelSolJurisdictionPara-1",
                 "The court has legal power to deal with this application because the following applies:")
             .label(

@@ -11,6 +11,8 @@
     "node": ">=12.0.0"
   },
   "scripts": {
-    "prepublishOnly": "grep -rh \"public static final String\" ./src/main/ | sed \"s/    public static final String/export const/\" >> ./build/ts/index.ts"
+    "prepublishOnly": "npm run genCaseTypeConsts && npm run genEventNameConsts",
+    "genCaseTypeConsts": "grep -rh \"public static final String\" ./src/main/java/uk/gov/hmcts/divorce/ccd/NoFaultDivorce.java | sed \"s/    public static final String/export const/\" >> ./build/ts/index.ts",
+    "genEventNameConsts": "grep -rh \"public static final String\" ./src/main/java/uk/gov/hmcts/divorce/citizen/event | sed \"s/    public static final String/export const/\" >> ./build/ts/index.ts"
   }
 }

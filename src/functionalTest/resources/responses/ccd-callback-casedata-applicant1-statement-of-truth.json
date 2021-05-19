@@ -15,7 +15,21 @@
     "statementOfTruth": "YES",
     "solSignStatementOfTruth": "YES",
     "jurisdictionApplicant1Residence": "YES",
-    "jurisdictionConnections": ["A"]
+    "jurisdictionApplicant2Residence":null,
+    "jurisdictionApplicant1Domicile":null,
+    "jurisdictionApplicant2Domicile":null,
+    "jurisdictionApp1HabituallyResLastTwelveMonths":null,
+    "jurisdictionApp1HabituallyResLastSixMonths":null,
+    "jurisdictionResidualEligible":null,
+    "jurisdictionBothLastHabituallyResident":null,
+    "jurisdictionConnections": ["A"],
+    "marriageMarriedInUk":null,
+    "marriageCertificateInEnglish":null,
+    "marriageCertifiedTranslation":null,
+    "marriageCountryOfMarriage":null,
+    "marriagePlaceOfMarriage":null,
+    "marriageIsSameSexCouple":null
+
   },
   "errors": null,
   "state": "AwaitingPayment",
