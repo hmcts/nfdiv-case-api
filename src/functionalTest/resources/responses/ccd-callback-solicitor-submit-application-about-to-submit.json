@@ -22,7 +22,7 @@
     "marriageCountryOfMarriage":null,
     "marriagePlaceOfMarriage":null,
     "marriageDate":null,
-    "marriageIsSameSexCouple":null
+    "marriageIsSameSexCouple":null,
     "dateSubmitted": "${json-unit.ignore}",
     "applicant1WantsToHavePapersServedAnotherWay": "NO",
     "payments": [{

@@ -115,7 +115,7 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
 
         updateApplicant2DigitalDetails(caseData);
 
-        if (!caseData.hasSolSignStatementOfTruth()) {
+        if (!caseData.hasStatementOfTruth() && !caseData.hasSolSignStatementOfTruth()) {
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
