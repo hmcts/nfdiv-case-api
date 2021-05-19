@@ -12,9 +12,6 @@ public class OtherLegalProceedings implements CcdPageConfiguration {
         pageBuilder
             .page("OtherLegalProceedings")
             .pageLabel("Other legal proceedings")
-            .label(
-                "legalProceedingsEditMessage",
-                "You can make changes at the end of your application.")
             .mandatory(CaseData::getLegalProceedings)
             .mandatory(
                 CaseData::getLegalProceedingsDetails,
