@@ -16,12 +16,16 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.payment.model.Payment;
+import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
 import uk.gov.hmcts.divorce.testutil.CaseDataWireMock;
 import uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock;
 import uk.gov.hmcts.divorce.testutil.FeesWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
+import uk.gov.hmcts.divorce.testutil.TestConstants;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.io.IOException;
@@ -47,13 +51,14 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.APPLICANT_1_EMAIL;
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.APPLICANT_1_LAST_NAME;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.APPLICANT_1_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_COSTS_CLAIM;
 import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_OR_DISSOLUTION;
+import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.SOL_STATEMENT_OF_TRUTH;
 import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.common.model.State.SOTAgreementPayAndSubmitRequired;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorStatementOfTruthPaySubmit.SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT;
 import static uk.gov.hmcts.divorce.testutil.CaseDataWireMock.stubForCcdCaseRoles;
@@ -253,10 +258,78 @@ public class SolicitorStatementOfTruthPaySubmitTest {
 
         verify(notificationService)
             .sendEmail(
-                eq(TEST_USER_EMAIL),
-                eq(SOL_APPLICANT_APPLICATION_SUBMITTED),
+                eq(TEST_SOLICITOR_EMAIL),
+                eq(SOL_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED),
                 anyMap(),
                 eq(ENGLISH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    void givenValidCaseDataAndValidPaymentWhenAboutToSubmitCallbackIsInvokedThenStateIsChangedAndEmailIsSentToApplicant()
+        throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(TestConstants.AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(callbackRequest(
+                caseDataWithStatementOfTruth(),
+                SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT,
+                SOTAgreementPayAndSubmitRequired.name())))
+            .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk()
+            )
+            .andExpect(
+                content().json(expectedCcdAboutToSubmitCallbackResponse())
+            );
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_SOLICITOR_EMAIL),
+                eq(SOL_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED),
+                anyMap(),
+                eq(ENGLISH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    void givenValidCaseDataAndIncompletePaymentWhenAboutToSubmitCallbackIsInvokedThenStateIsNotChangedAndErrorIsReturned()
+        throws Exception {
+
+        Map<String, Object> caseData = caseDataWithStatementOfTruth();
+
+        ListValue<Payment> payment = new ListValue<>(null, Payment
+            .builder()
+            .paymentAmount(100)
+            .paymentChannel("online")
+            .paymentFeeId("FEE0001")
+            .paymentReference("paymentRef")
+            .paymentSiteId("AA04")
+            .paymentStatus(PaymentStatus.SUCCESS)
+            .paymentTransactionId("ge7po9h5bhbtbd466424src9tk")
+            .build());
+        caseData.put("payments", singletonList(payment));
+
+        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(TestConstants.AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(callbackRequest(
+                caseData,
+                SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT,
+                SOTAgreementPayAndSubmitRequired.name())))
+            .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk()
+            )
+            .andExpect(
+                content().json(expectedCcdAboutToSubmitCallbackPaymentErrorResponse())
+            );
+
         verify(notificationService)
             .sendEmail(
                 eq(TEST_SOLICITOR_EMAIL),
@@ -290,9 +363,6 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .andExpect(
                 content().json(expectedCcdAboutToSubmitCallbackResponse())
             );
-
-        verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(SOL_APPLICANT_APPLICATION_SUBMITTED), anyMap(), eq(ENGLISH));
 
         verify(notificationService)
             .sendEmail(eq(TEST_SOLICITOR_EMAIL), eq(SOL_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED), anyMap(), eq(ENGLISH));
@@ -395,6 +465,10 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         return expectedResponse("classpath:wiremock/responses/about-to-submit-statement-of-truth.json");
     }
 
+    private String expectedCcdAboutToSubmitCallbackPaymentErrorResponse() throws IOException {
+        return expectedResponse("classpath:wiremock/responses/about-to-submit-statement-of-truth-payment-error.json");
+    }
+
     private String expectedCcdAboutToSubmitCallbackErrorResponse() throws IOException {
         return expectedResponse("classpath:wiremock/responses/about-to-submit-statement-of-truth-error.json");
     }
@@ -406,9 +480,22 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         caseData.put(APPLICANT_1_EMAIL, TEST_USER_EMAIL);
         caseData.put(DIVORCE_OR_DISSOLUTION, DIVORCE);
         caseData.put(DIVORCE_COSTS_CLAIM, YES);
-        caseData.put("statementOfTruth", YES);
-        caseData.put("solSignStatementOfTruth", YES);
-        caseData.put("applicant1SolicitorEmail", TEST_SOLICITOR_EMAIL);
+        caseData.put(SOL_STATEMENT_OF_TRUTH, YES);
+        caseData.put(APPLICANT_1_SOLICITOR_EMAIL, TEST_SOLICITOR_EMAIL);
+
+
+        ListValue<Payment> payment = new ListValue<>(null, Payment
+            .builder()
+            .paymentAmount(55000)
+            .paymentChannel("online")
+            .paymentFeeId("FEE0001")
+            .paymentReference("paymentRef")
+            .paymentSiteId("AA04")
+            .paymentStatus(PaymentStatus.SUCCESS)
+            .paymentTransactionId("ge7po9h5bhbtbd466424src9tk")
+            .build());
+        caseData.put("payments", singletonList(payment));
+
         return caseData;
     }
 

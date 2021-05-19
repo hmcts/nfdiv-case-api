@@ -15,7 +15,7 @@
     "marriageApplicant1Name": "test_first_name test_last_name",
     "financialOrder": "NO",
     "prayerHasBeenGiven": "YES",
-    "statementOfTruth": "YES",
+    "solSignStatementOfTruth": "YES",
     "jurisdictionApplicant1Residence": "YES",
     "jurisdictionApplicant2Residence":null,
     "jurisdictionApplicant1Domicile":null,

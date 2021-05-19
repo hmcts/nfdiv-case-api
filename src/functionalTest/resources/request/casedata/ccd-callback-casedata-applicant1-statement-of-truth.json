@@ -12,6 +12,7 @@
   "financialOrder": "NO",
   "prayerHasBeenGiven": "YES",
   "statementOfTruth": "YES",
+  "solSignStatementOfTruth": "YES",
   "jurisdictionApplicant1Residence": "YES",
   "jurisdictionConnections": ["A"]
 }

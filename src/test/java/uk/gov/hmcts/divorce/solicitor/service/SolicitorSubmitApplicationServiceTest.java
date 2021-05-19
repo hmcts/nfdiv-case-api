@@ -9,21 +9,32 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChainFactory;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.payment.FeesAndPaymentsClient;
+import uk.gov.hmcts.divorce.payment.model.Payment;
+import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
 import uk.gov.hmcts.divorce.solicitor.service.updater.MiniApplicationRemover;
 import uk.gov.hmcts.divorce.solicitor.service.updater.SolicitorSubmitNotification;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static feign.Request.HttpMethod.GET;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -37,10 +48,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.common.model.State.SolicitorAwaitingPaymentConfirmation;
+import static uk.gov.hmcts.divorce.common.model.State.Submitted;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFeeResponse;
 
 @ExtendWith(MockitoExtension.class)
@@ -57,6 +71,9 @@ public class SolicitorSubmitApplicationServiceTest {
 
     @Mock
     private SolicitorSubmitNotification solicitorSubmitNotification;
+
+    @Mock
+    private Clock clock;
 
     @InjectMocks
     private SolicitorSubmitApplicationService solicitorSubmitApplicationService;
@@ -155,5 +172,55 @@ public class SolicitorSubmitApplicationServiceTest {
 
         assertThat(response.getData()).isEqualTo(caseData);
         assertThat(response.getState()).isEqualTo(SolicitorAwaitingPaymentConfirmation);
+    }
+
+    @Test
+    void shouldRemoveDraftApplicationAndNotifyApplicantAndSetStateToSubmittedForAboutToSubmit() {
+
+        List<ListValue<DivorceDocument>> generatedDocuments = singletonList(documentWithType(DIVORCE_APPLICATION));
+        final CaseData caseData = CaseData.builder().build();
+        caseData.setDocumentsGenerated(generatedDocuments);
+        caseData.setStatementOfTruth(null);
+        caseData.setSolSignStatementOfTruth(YesOrNo.YES);
+
+        ListValue<Payment> payment = new ListValue<>(null, Payment
+            .builder()
+            .paymentAmount(55000)
+            .paymentChannel("online")
+            .paymentFeeId("FEE0001")
+            .paymentReference("paymentRef")
+            .paymentSiteId("AA04")
+            .paymentStatus(PaymentStatus.SUCCESS)
+            .paymentTransactionId("ge7po9h5bhbtbd466424src9tk")
+            .build());
+
+        caseData.setPayments(singletonList(payment));
+
+        final var caseDataUpdaterChain = mock(CaseDataUpdaterChain.class);
+
+        final var caseDataUpdaters = asList(
+            miniApplicationRemover,
+            solicitorSubmitNotification
+        );
+
+        final var caseDataContext = CaseDataContext.builder()
+            .caseData(caseData)
+            .caseId(TEST_CASE_ID)
+            .userAuthToken(TEST_AUTHORIZATION_TOKEN)
+            .build();
+
+        when(caseDataUpdaterChainFactory.createWith(caseDataUpdaters)).thenReturn(caseDataUpdaterChain);
+        when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
+        when(clock.instant()).thenReturn(Instant.now());
+        when(clock.getZone()).thenReturn(ZoneId.of("Etc/UTC"));
+
+        final var response = solicitorSubmitApplicationService.aboutToSubmit(
+            caseData,
+            TEST_CASE_ID,
+            TEST_AUTHORIZATION_TOKEN
+        );
+
+        assertThat(response.getState()).isEqualTo(Submitted);
+        assertThat(response.getData().getDateSubmitted()).isEqualTo(LocalDateTime.now(clock));
     }
 }

@@ -17,10 +17,15 @@ import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.hmcts.divorce.solicitor.service.updater.MiniApplicationRemover;
 import uk.gov.hmcts.divorce.solicitor.service.updater.SolicitorSubmitNotification;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.ccd.sdk.type.Fee.getValueInPence;
 import static uk.gov.hmcts.divorce.common.model.State.SolicitorAwaitingPaymentConfirmation;
+import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
 @Service
@@ -45,6 +50,9 @@ public class SolicitorSubmitApplicationService {
     @Autowired
     private SolicitorSubmitNotification solicitorSubmitNotification;
 
+    @Autowired
+    private Clock clock;
+
     public OrderSummary getOrderSummary() {
         final var feeResponse = feesAndPaymentsClient.getApplicationIssueFee(
             DEFAULT_CHANNEL,
@@ -67,6 +75,16 @@ public class SolicitorSubmitApplicationService {
         final Long caseId,
         final String userAuth
     ) {
+
+        State state = SolicitorAwaitingPaymentConfirmation;
+
+        List<String> submittedErrors = Submitted.validate(caseData);
+
+        if (submittedErrors.isEmpty()) {
+            caseData.setDateSubmitted(LocalDateTime.now(clock));
+            state = Submitted;
+        }
+
         final var caseDataUpdaters = asList(
             miniApplicationRemover,
             solicitorSubmitNotification
@@ -85,7 +103,8 @@ public class SolicitorSubmitApplicationService {
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updatedCaseData)
-            .state(SolicitorAwaitingPaymentConfirmation)
+            .state(state)
+            .errors(submittedErrors)
             .build();
     }
 

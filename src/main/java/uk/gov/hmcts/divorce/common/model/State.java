@@ -60,6 +60,9 @@ public enum State {
             if (hasAwaitingDocuments(caseData)) {
                 errors.add("Awaiting documents");
             }
+            if (!caseData.hasStatementOfTruth() && !caseData.hasSolSignStatementOfTruth()) {
+                errors.add("Statement of truth must be accepted by the person making the application");
+            }
 
             return errors;
         }

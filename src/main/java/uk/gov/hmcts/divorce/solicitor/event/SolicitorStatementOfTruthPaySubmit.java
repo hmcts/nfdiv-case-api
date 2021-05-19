@@ -115,17 +115,16 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
 
         updateApplicant2DigitalDetails(caseData);
 
-        if (!caseData.hasStatementOfTruth() || !caseData.hasSolSignStatementOfTruth()) {
+        if (!caseData.hasStatementOfTruth() && !caseData.hasSolSignStatementOfTruth()) {
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .state(currentState)
-                .errors(singletonList("Statement of truth for solicitor and applicant 1 needs to be accepted"))
+                .errors(singletonList("Statement of truth must be accepted by the person making the application"))
                 .build();
         }
 
         return solicitorSubmitApplicationService.aboutToSubmit(caseData, details.getId(), httpServletRequest.getHeader(AUTHORIZATION));
-
     }
 
     private void updateApplicant2DigitalDetails(CaseData caseData) {

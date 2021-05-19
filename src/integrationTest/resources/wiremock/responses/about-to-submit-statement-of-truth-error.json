@@ -3,10 +3,10 @@
     "divorceOrDissolution": "divorce",
     "applicant1FirstName": "test_first_name",
     "applicant1LastName": "test_last_name",
-    "applicant1Email": "test@test.com",
+    "applicant1Email": "test@test.com"
   },
   "errors": [
-    "Statement of truth for solicitor and applicant 1 needs to be accepted"
+    "Statement of truth must be accepted by the person making the application"
   ],
   "warnings": null,
   "state": "SOTAgreementPayAndSubmitRequired"

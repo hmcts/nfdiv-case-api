@@ -6,7 +6,9 @@
     "applicant1Email": "test@test.com",
     "solSignStatementOfTruth": "YES"
   },
-  "errors": [],
+  "errors": [
+    "Payment incomplete"
+  ],
   "warnings": null,
-  "state": "Submitted"
+  "state": "SolicitorAwaitingPaymentConfirmation"
 }

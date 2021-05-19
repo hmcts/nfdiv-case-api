@@ -36,6 +36,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.divorce.citizen.event.PaymentMade.PAYMENT_MADE;
+import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.YES;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_ACTIONS;
@@ -81,6 +82,7 @@ public class PaymentMadeTest {
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmail() throws Exception {
         Map<String, Object> data = caseDataMap();
         data.put("dateSubmitted", LocalDateTime.now());
+        data.put("solSignStatementOfTruth", YES);
 
         Payment payment = Payment.builder()
             .paymentAmount(55000)
@@ -158,6 +160,7 @@ public class PaymentMadeTest {
     public void givenSendEmailThrowsExceptionWhenCallbackIsInvokedThenReturnBadRequest() throws Exception {
         Map<String, Object> data = caseDataMap();
         data.put("dateSubmitted", LocalDateTime.now());
+        data.put("solSignStatementOfTruth", YesOrNo.YES);
 
         Payment payment = Payment.builder()
             .paymentAmount(55000)

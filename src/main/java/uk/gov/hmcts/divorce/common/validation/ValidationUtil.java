@@ -122,7 +122,8 @@ public final class ValidationUtil {
     }
 
     public static boolean hasAwaitingDocuments(CaseData caseData) {
-        return caseData.getApplicant1WantsToHavePapersServedAnotherWay() == YesOrNo.YES
+        return caseData.getApplicant1WantsToHavePapersServedAnotherWay() != null
+            && caseData.getApplicant1WantsToHavePapersServedAnotherWay().toBoolean()
             || !isEmpty(caseData.getCannotUploadSupportingDocument());
     }
 

@@ -49,7 +49,8 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
 @ExtendWith(MockitoExtension.class)
 public class SolicitorStatementOfTruthPaySubmitTest {
 
-    private static final String STATEMENT_OF_TRUTH_ERROR_MESSAGE = "Statement of truth for solicitor and applicant 1 needs to be accepted";
+    private static final String STATEMENT_OF_TRUTH_ERROR_MESSAGE =
+        "Statement of truth must be accepted by the person making the application";
 
     @Mock
     private SolicitorSubmitApplicationService solicitorSubmitApplicationService;
@@ -141,11 +142,10 @@ public class SolicitorStatementOfTruthPaySubmitTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    void shouldReturnWithoutErrorIfStatementOfTruthAndSolStatementOfTruthAreSetToYes() {
+    void shouldReturnWithoutErrorIfStatementOfTruthOrSolStatementOfTruthAreSetToYes() {
 
         final long caseId = 1L;
         final CaseData caseData = CaseData.builder()
-            .statementOfTruth(YES)
             .solSignStatementOfTruth(YES)
             .build();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -173,47 +173,10 @@ public class SolicitorStatementOfTruthPaySubmitTest {
     }
 
     @Test
-    void shouldReturnErrorIfStatementOfTruthIsSetToNo() {
+    void shouldReturnErrorIfStatementOfTruthAndSolStatementOfTruthIsSetToNo() {
 
         final CaseData caseData = CaseData.builder().build();
         caseData.setStatementOfTruth(NO);
-        caseData.setSolSignStatementOfTruth(YES);
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setState(SOTAgreementPayAndSubmitRequired);
-        final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorStatementOfTruthPaySubmit
-            .aboutToSubmit(caseDetails, beforeCaseDetails);
-
-        assertThat(response.getData(), is(caseData));
-        assertThat(response.getState(), is(SOTAgreementPayAndSubmitRequired));
-        assertThat(response.getErrors(), contains(STATEMENT_OF_TRUTH_ERROR_MESSAGE));
-    }
-
-    @Test
-    void shouldReturnErrorIfStatementOfTruthIsNull() {
-
-        final CaseData caseData = CaseData.builder().build();
-        caseData.setSolSignStatementOfTruth(YES);
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setState(SOTAgreementPayAndSubmitRequired);
-        final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorStatementOfTruthPaySubmit
-            .aboutToSubmit(caseDetails, beforeCaseDetails);
-
-        assertThat(response.getData(), is(caseData));
-        assertThat(response.getState(), is(SOTAgreementPayAndSubmitRequired));
-        assertThat(response.getErrors(), contains(STATEMENT_OF_TRUTH_ERROR_MESSAGE));
-    }
-
-    @Test
-    void shouldReturnErrorIfSolStatementOfTruthIsSetToNo() {
-
-        final CaseData caseData = CaseData.builder().build();
-        caseData.setStatementOfTruth(YES);
         caseData.setSolSignStatementOfTruth(NO);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -229,21 +192,65 @@ public class SolicitorStatementOfTruthPaySubmitTest {
     }
 
     @Test
-    void shouldReturnErrorIfSolStatementOfTruthIsNull() {
+    void shouldReturnWithoutErrorIfStatementOfTruthIsNull() {
 
+        final long caseId = 1L;
         final CaseData caseData = CaseData.builder().build();
-        caseData.setStatementOfTruth(YES);
+        caseData.setSolSignStatementOfTruth(YES);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(caseId);
         caseDetails.setData(caseData);
         caseDetails.setState(SOTAgreementPayAndSubmitRequired);
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
+
+        AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
+            AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .state(Submitted)
+                .build();
+
+        when(solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN))
+            .thenReturn(aboutToStartOrSubmitResponse);
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(APP_1_SOL_AUTH_TOKEN);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorStatementOfTruthPaySubmit
             .aboutToSubmit(caseDetails, beforeCaseDetails);
 
         assertThat(response.getData(), is(caseData));
-        assertThat(response.getState(), is(SOTAgreementPayAndSubmitRequired));
-        assertThat(response.getErrors(), contains(STATEMENT_OF_TRUTH_ERROR_MESSAGE));
+        assertThat(response.getState(), is(Submitted));
+        assertThat(response.getErrors(), is(nullValue()));
+    }
+
+    @Test
+    void shouldReturnWithoutErrorIfSolStatementOfTruthIsNull() {
+
+        final long caseId = 1L;
+        final CaseData caseData = CaseData.builder().build();
+        caseData.setSolSignStatementOfTruth(YES);
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(caseId);
+        caseDetails.setData(caseData);
+        caseDetails.setState(SOTAgreementPayAndSubmitRequired);
+        final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
+
+        AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
+            AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .state(Submitted)
+                .build();
+
+        when(solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN))
+            .thenReturn(aboutToStartOrSubmitResponse);
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(APP_1_SOL_AUTH_TOKEN);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorStatementOfTruthPaySubmit
+            .aboutToSubmit(caseDetails, beforeCaseDetails);
+
+        assertThat(response.getData(), is(caseData));
+        assertThat(response.getState(), is(Submitted));
+        assertThat(response.getErrors(), is(nullValue()));
     }
 
     @Test
