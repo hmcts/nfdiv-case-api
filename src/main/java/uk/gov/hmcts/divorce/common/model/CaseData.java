@@ -52,7 +52,7 @@ public class CaseData {
     private static final int SUBMISSION_RESPONSE_DAYS = 14;
 
     @CCD(
-        label = "How does applicant 1 want to apply for the divorce?",
+        label = "Application type",
         access = {DefaultAccess.class},
         typeOverride = FixedList,
         typeParameterOverride = "ApplicationType"
@@ -60,7 +60,7 @@ public class CaseData {
     private ApplicationType applicationType;
 
     @CCD(
-        label = "Divorce or Dissolution?",
+        label = "Divorce or dissolution?",
         access = {DefaultAccess.class},
         typeOverride = FixedRadioList,
         typeParameterOverride = "DivorceOrDissolution"
@@ -74,7 +74,7 @@ public class CaseData {
     private YesOrNo screenHasMarriageBroken;
 
     @CCD(
-        label = "What is Applicant 1's gender?",
+        label = "Applicant 1's gender",
         hint = "Applicant 1’s gender is collected for statistical purposes only.",
         typeOverride = FixedList,
         typeParameterOverride = "Gender",
@@ -83,7 +83,7 @@ public class CaseData {
     private Gender inferredApplicant1Gender;
 
     @CCD(
-        label = "What is applicant 2's gender?",
+        label = "Applicant 2's gender",
         hint = "Applicant 2’s gender is collected for statistical purposes only.",
         typeOverride = FixedList,
         typeParameterOverride = "Gender",
@@ -124,19 +124,19 @@ public class CaseData {
     private MarriageDetails marriageDetails = new MarriageDetails();
 
     @CCD(
-        label = "First name(s)",
+        label = "Applicant 1's first name",
         access = {DefaultAccess.class}
     )
     private String applicant1FirstName;
 
     @CCD(
-        label = "Middle name(s)",
+        label = "Applicant 1's middle name(s)",
         access = {DefaultAccess.class}
     )
     private String applicant1MiddleName;
 
     @CCD(
-        label = "Last name",
+        label = "Applicant 1's last name",
         access = {DefaultAccess.class}
     )
     private String applicant1LastName;
@@ -180,14 +180,14 @@ public class CaseData {
     private ChangedNameHow applicant1NameChangedHow;
 
     @CCD(
-        label = "Provide details of how they changed their name",
+        label = "Details of how they changed their name",
         typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
     private String applicant1NameChangedHowOtherDetails;
 
     @CCD(
-        label = "Who is Applicant 1 divorcing?",
+        label = "Who is applicant 1 divorcing?",
         hint = "Husband or Wife?",
         typeOverride = FixedList,
         typeParameterOverride = "WhoDivorcing",
@@ -318,7 +318,7 @@ public class CaseData {
     private String solUrgentCaseSupportingInformation;
 
     @CCD(
-        label = "Does Applicant 1 want to claim costs?",
+        label = "Does applicant 1 want to claim costs?",
         access = {DefaultAccess.class}
     )
     private YesOrNo divorceCostsClaim;
@@ -418,7 +418,7 @@ public class CaseData {
     private DynamicList pbaNumbers;
 
     @CCD(
-        label = "Enter your reference",
+        label = "Fee account reference",
         hint = "This will appear on your statement to help you identify this payment",
         access = {DefaultAccess.class}
     )
@@ -445,19 +445,19 @@ public class CaseData {
 
 
     @CCD(
-        label = "Your partner's email address",
+        label = "Applicant 2's email address",
         access = {DefaultAccess.class}
     )
     private String applicant2EmailAddress;
 
     @CCD(
-        label = "Do you know their email address",
+        label = "Is applicant 2's email address known?",
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant1KnowsApplicant2EmailAddress;
 
     @CCD(
-        label = "Do you know their address",
+        label = "Is applicant 2's home address known?",
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant1KnowsApplicant2Address;
@@ -585,7 +585,7 @@ public class CaseData {
     private YesOrNo app2ContactMethodIsDigital;
 
     @CCD(
-        label = "Applicant 2 solicitor's firm",
+        label = "Applicant 2's solicitor's firm address or DX number",
         hint = "Applicant 2 Organisation Details",
         access = {DefaultAccess.class}
     )
@@ -614,7 +614,7 @@ public class CaseData {
     private List<ListValue<Payment>> payments;
 
     @CCD(
-        label = "Date of submission",
+        label = "Date submitted to HMCTS",
         access = {DefaultAccess.class}
     )
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
