@@ -25,7 +25,14 @@
     "jurisdictionApp1HabituallyResLastSixMonths":null,
     "jurisdictionResidualEligible":null,
     "jurisdictionBothLastHabituallyResident":null,
-    "jurisdictionConnections":null
+    "jurisdictionConnections":null,
+    "marriageMarriedInUk":null,
+    "marriageCertificateInEnglish":null,
+    "marriageCertifiedTranslation":null,
+    "marriageCountryOfMarriage":null,
+    "marriagePlaceOfMarriage":null,
+    "marriageDate":null,
+    "marriageIsSameSexCouple":null
   },
   "errors": null,
   "warnings": null,

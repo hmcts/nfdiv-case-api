@@ -25,6 +25,12 @@
     "jurisdictionResidualEligible":null,
     "jurisdictionBothLastHabituallyResident":null,
     "jurisdictionConnections": ["A"],
+    "marriageMarriedInUk":null,
+    "marriageCertificateInEnglish":null,
+    "marriageCertifiedTranslation":null,
+    "marriageCountryOfMarriage":null,
+    "marriagePlaceOfMarriage":null,
+    "marriageIsSameSexCouple":null,
     "payments": [{
       "id": "1",
       "value": {

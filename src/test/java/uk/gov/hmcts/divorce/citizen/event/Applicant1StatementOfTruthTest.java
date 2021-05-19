@@ -98,7 +98,7 @@ class Applicant1StatementOfTruthTest {
         caseData.setPrayerHasBeenGiven(YesOrNo.YES);
         caseData.setMarriageApplicant1Name("Full name");
         caseData.setStatementOfTruth(YesOrNo.YES);
-        caseData.setMarriageDate(LocalDate.now().minus(2, ChronoUnit.YEARS));
+        caseData.getMarriageDetails().setDate(LocalDate.now().minus(2, ChronoUnit.YEARS));
         Jurisdiction jurisdiction = new Jurisdiction();
         jurisdiction.setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_LAST_RESIDENT));
         jurisdiction.setBothLastHabituallyResident(YesOrNo.YES);

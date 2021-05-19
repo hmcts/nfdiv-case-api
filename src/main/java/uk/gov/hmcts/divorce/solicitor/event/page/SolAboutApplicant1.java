@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.common.model.MarriageDetails;
 
 public class SolAboutApplicant1 implements CcdPageConfiguration {
 
@@ -27,7 +28,9 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
             .mandatory(CaseData::getApplicant1NameChangedHowOtherDetails, "applicant1NameChangedHow=\"other\"")
             .mandatory(CaseData::getDivorceWho)
             .mandatory(CaseData::getInferredApplicant1Gender)
-            .mandatory(CaseData::getMarriageIsSameSexCouple)
+            .complex(CaseData::getMarriageDetails)
+                .mandatory(MarriageDetails::getIsSameSexCouple)
+                .done()
             .mandatory(CaseData::getApplicant1HomeAddress)
             .optional(CaseData::getApplicant1PhoneNumber)
             .optional(CaseData::getApplicant1Email)

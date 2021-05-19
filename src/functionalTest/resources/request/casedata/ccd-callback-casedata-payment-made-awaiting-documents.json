@@ -17,7 +17,7 @@
   "jurisdictionApplicant1Residence": "YES",
   "jurisdictionConnections": ["A"],
   "cannotUploadSupportingDocument": ["marriageCertificate", "nameChangeEvidence"],
-  "marriedInUk": "YES",
+  "marriageMarriedInUk": "YES",
   "divorceWho": "husband",
   "payments": [{
     "id": "1",
