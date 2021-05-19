@@ -34,7 +34,7 @@ import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.addToErrorLi
 public class Jurisdiction {
 
     @CCD(
-        label = "Is Applicant 1 resident?",
+        label = "Is applicant 1 resident?",
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant1Residence;
@@ -46,7 +46,7 @@ public class Jurisdiction {
     private YesOrNo applicant2Residence;
 
     @CCD(
-        label = "Is Applicant 1 domiciled?",
+        label = "Is applicant 1 domiciled?",
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant1Domicile;
