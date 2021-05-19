@@ -13,9 +13,6 @@ public class MarriageCertificateDetails implements CcdPageConfiguration {
         pageBuilder
             .page("MarriageCertificateDetails")
             .pageLabel("Marriage certificate details")
-            .label(
-                "marriageCertDetailsEditMessage",
-                "You can make changes at the end of your application.")
             .complex(CaseData::getMarriageDetails)
                 .mandatory(MarriageDetails::getDate)
                 .done()
