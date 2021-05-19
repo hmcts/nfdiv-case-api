@@ -21,35 +21,41 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
 public class MarriageDetails {
 
     @CCD(
-        label = "Did the marriage take place in the UK?"
+        label = "Did the marriage take place in the UK?",
+        access = {DefaultAccess.class}
     )
     private YesOrNo marriedInUk;
 
     @CCD(
-        label = "Marriage certificate in English?"
+        label = "Marriage certificate in English?",
+        access = {DefaultAccess.class}
     )
     private YesOrNo certificateInEnglish;
 
     @CCD(
-        label = "Marriage certificate translation"
+        label = "Marriage certificate translation",
+        access = {DefaultAccess.class}
     )
     private YesOrNo certifiedTranslation;
 
     @CCD(
         label = "Country of marriage",
-        hint = "Enter the country in which the marriage took place"
+        hint = "Enter the country in which the marriage took place",
+        access = {DefaultAccess.class}
     )
     private String countryOfMarriage;
 
     @CCD(
         label = "Place of marriage",
-        hint = "Enter the place of marriage as it appears on the marriage certificate"
+        hint = "Enter the place of marriage as it appears on the marriage certificate",
+        access = {DefaultAccess.class}
     )
     private String placeOfMarriage;
 
     @CCD(
         label = "Marriage date",
-        typeOverride = Date
+        typeOverride = Date,
+        access = {DefaultAccess.class}
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
