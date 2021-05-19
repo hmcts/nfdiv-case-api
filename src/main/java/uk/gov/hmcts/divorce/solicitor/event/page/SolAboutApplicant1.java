@@ -5,6 +5,11 @@ import uk.gov.hmcts.divorce.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.MarriageDetails;
 
+import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.JOINT_APPLICATION_CONDITION;
+import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLE_APPLICATION_CONDITION;
+import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_JOINT_PREVIEW_BANNER;
+import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_PREVIEW_BANNER;
+
 public class SolAboutApplicant1 implements CcdPageConfiguration {
 
     @Override
@@ -13,6 +18,14 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
         pageBuilder
             .page("SolAboutApplicant1")
             .pageLabel("About applicant 1")
+            .label(
+                "LabelNFDBanner-AboutApplicant1",
+                SOLICITOR_NFD_PREVIEW_BANNER,
+                SOLE_APPLICATION_CONDITION)
+            .label(
+                "LabelNFJointDBanner-AboutApplicant1",
+                SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
+                JOINT_APPLICATION_CONDITION)
             .mandatory(CaseData::getApplicant1FirstName)
             .optional(CaseData::getApplicant1MiddleName)
             .mandatory(CaseData::getApplicant1LastName)

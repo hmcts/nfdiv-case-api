@@ -17,6 +17,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.common.model.UserRole.APPLICANT_1_SOLICITOR;
+import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.JOINT_APPLICATION_CONDITION;
+import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLE_APPLICATION_CONDITION;
+import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_JOINT_PREVIEW_BANNER;
+import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_PREVIEW_BANNER;
 
 @Component
 @Slf4j
@@ -35,6 +39,14 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
         pageBuilder
             .page("Applicant2ServiceDetails", this::midEvent)
             .pageLabel("Applicant 2 service details")
+            .label(
+                "LabelNFDBanner-Applicant2ServiceDetails",
+                SOLICITOR_NFD_PREVIEW_BANNER,
+                SOLE_APPLICATION_CONDITION)
+            .label(
+                "LabelNFJointDBanner-Applicant2ServiceDetails",
+                SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
+                JOINT_APPLICATION_CONDITION)
             .mandatory(CaseData::getApplicant2SolicitorRepresented)
             .optional(CaseData::getApplicant2OrgContactInformation, "applicant2SolicitorRepresented=\"NeverShow\"")
             .mandatory(CaseData::getApplicant2SolicitorName, "applicant2SolicitorRepresented=\"Yes\"")
