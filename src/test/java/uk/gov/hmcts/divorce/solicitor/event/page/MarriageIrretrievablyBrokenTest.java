@@ -32,6 +32,10 @@ class MarriageIrretrievablyBrokenTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
         assertEquals(response.getErrors().size(), 1);
+        assertEquals(
+            response.getErrors().get(0),
+            "To continue, the applicant must believe and declare that their marriage has irrevocably broken"
+        );
     }
 
     @Test
