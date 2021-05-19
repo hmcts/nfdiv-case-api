@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.common.model.Gender;
+import uk.gov.hmcts.divorce.common.model.Jurisdiction;
 import uk.gov.hmcts.divorce.common.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
@@ -98,8 +99,10 @@ class Applicant1StatementOfTruthTest {
         caseData.setMarriageApplicant1Name("Full name");
         caseData.setStatementOfTruth(YesOrNo.YES);
         caseData.setMarriageDate(LocalDate.now().minus(2, ChronoUnit.YEARS));
-        caseData.setJurisdictionConnections(Set.of(JurisdictionConnections.APP_1_APP_2_LAST_RESIDENT));
-        caseData.setJurisdictionBothLastHabituallyResident(YesOrNo.YES);
+        Jurisdiction jurisdiction = new Jurisdiction();
+        jurisdiction.setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_LAST_RESIDENT));
+        jurisdiction.setBothLastHabituallyResident(YesOrNo.YES);
+        caseData.setJurisdiction(jurisdiction);
         return caseData;
     }
 
