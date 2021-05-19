@@ -13,9 +13,6 @@ public class ClaimForCosts implements CcdPageConfiguration {
             .page("ClaimForCosts")
             .pageLabel("Claim for costs")
             .label(
-                "claimForCostsEditMessage",
-                "You can make changes at the end of your application.")
-            .label(
                 "LabelClaimForCostsPara-1",
                 "A claim for costs can include all the fees applicant 1 has to pay during the divorce, such as "
                     + "application fees, solicitor fees and any extra court fees.")

@@ -12,9 +12,6 @@ public class SolAboutApplicant2 implements CcdPageConfiguration {
         pageBuilder
             .page("SolAboutApplicant2")
             .pageLabel("About applicant 2")
-            .label(
-                "LabelSolAboutEditingApplication-AboutApplicant2",
-                "You can make changes at the end of your application.")
             .mandatory(CaseData::getApplicant2FirstName)
             .optional(CaseData::getApplicant2MiddleName)
             .mandatory(CaseData::getApplicant2LastName)
