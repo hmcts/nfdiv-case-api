@@ -75,6 +75,7 @@ public class CaseData {
 
     @CCD(
         label = "Applicant 1's gender",
+        hint = "Applicant 1’s gender is collected for statistical purposes only.",
         typeOverride = FixedList,
         typeParameterOverride = "Gender",
         access = {DefaultAccess.class}
@@ -83,6 +84,7 @@ public class CaseData {
 
     @CCD(
         label = "Applicant 2's gender",
+        hint = "Applicant 2’s gender is collected for statistical purposes only.",
         typeOverride = FixedList,
         typeParameterOverride = "Gender",
         access = {DefaultAccess.class}
@@ -186,6 +188,7 @@ public class CaseData {
 
     @CCD(
         label = "Who is applicant 1 divorcing?",
+        hint = "Husband or Wife?",
         typeOverride = FixedList,
         typeParameterOverride = "WhoDivorcing",
         access = {DefaultAccess.class}
@@ -416,6 +419,7 @@ public class CaseData {
 
     @CCD(
         label = "Fee account reference",
+        hint = "This will appear on your statement to help you identify this payment",
         access = {DefaultAccess.class}
     )
     private String feeAccountReference;
@@ -582,6 +586,7 @@ public class CaseData {
 
     @CCD(
         label = "Applicant 2's solicitor's firm address or DX number",
+        hint = "Applicant 2 Organisation Details",
         access = {DefaultAccess.class}
     )
     private OrganisationPolicy<UserRole> applicant2OrganisationPolicy;
