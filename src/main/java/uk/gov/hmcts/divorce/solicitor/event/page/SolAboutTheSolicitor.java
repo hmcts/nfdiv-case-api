@@ -39,12 +39,12 @@ public class SolAboutTheSolicitor implements CcdPageConfiguration {
                 "Please note that the information provided will be used as evidence by the court to decide if "
                     + "applicant 1 is entitled to legally end their marriage. **A copy of this form is sent to "
                     + "applicant 2**")
-            .mandatory(CaseData::getApplicant1SolicitorName)
-            .mandatory(CaseData::getSolicitorReference)
-            .mandatory(CaseData::getApplicant1SolicitorPhone)
-            .mandatory(CaseData::getApplicant1SolicitorEmail)
+            .mandatory(CaseData::getApplicant1SolicitorName, null, null, "Your name")
+            .mandatory(CaseData::getSolicitorReference, null, null, "Your reference")
+            .mandatory(CaseData::getApplicant1SolicitorPhone, null, null, "Your phone number")
+            .mandatory(CaseData::getApplicant1SolicitorEmail, null, null, "Your email address")
             .mandatory(CaseData::getSolicitorAgreeToReceiveEmails)
-            .complex(CaseData::getApplicant1OrganisationPolicy)
+            .complex(CaseData::getApplicant1OrganisationPolicy, null, "Your firm's address or DX number")
             .complex(OrganisationPolicy::getOrganisation)
             .mandatory(Organisation::getOrganisationId)
             .done()

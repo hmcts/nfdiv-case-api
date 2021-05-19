@@ -19,7 +19,10 @@ public class MarriageCertificateDetails implements CcdPageConfiguration {
             .mandatory(CaseData::getMarriageApplicant1Name)
             .mandatory(CaseData::getMarriageApplicant2Name)
             .complex(CaseData::getMarriageDetails)
-                .mandatory(MarriageDetails::getMarriedInUk)
+                .mandatory(
+                    MarriageDetails::getMarriedInUk, null, null,
+                    "Did the marriage take place in the UK?"
+                )
                 .mandatory(
                     MarriageDetails::getPlaceOfMarriage,
                     "marriageMarriedInUk=\"No\""

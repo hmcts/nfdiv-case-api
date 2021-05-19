@@ -240,14 +240,27 @@ public class CaseData {
             + "marriage certificate?",
         access = {DefaultAccess.class}
     )
-    private YesOrNo applicant2NameAsOnMarriageCertificate;
+    private YesOrNo applicant2NameDifferentToMarriageCertificate;
 
     @CCD(
-        label = "Please explain, if known, how their name has changed since they were married.",
+        label = "How did Applicant 2 change their name?",
+        access = {DefaultAccess.class}
+    )
+    private ChangedNameHow applicant2NameChangedHow;
+
+    @CCD(
+        label = "How applicant 2 changed their name",
         typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
-    private String app2NameDifferentToMarriageCertExplain;
+    private String applicant2NameChangedHowOtherDetails;
+
+    @CCD(
+        label = "Include a welsh copy of all generated divorce documents for Applicant 2?",
+        hint = "An english copy will always be included",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo applicant2WelshLanguagePreference;
 
     @CCD(
         label = "Applicant 1 Solicitor’s name",
