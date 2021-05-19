@@ -13,6 +13,13 @@
     "jurisdictionResidualEligible":null,
     "jurisdictionBothLastHabituallyResident":null,
     "jurisdictionConnections": null,
+    "marriageMarriedInUk":null,
+    "marriageCertificateInEnglish":null,
+    "marriageCertifiedTranslation":null,
+    "marriageCountryOfMarriage":null,
+    "marriagePlaceOfMarriage":null,
+    "marriageDate":null,
+    "marriageIsSameSexCouple":null,
     "solApplicationFeeOrderSummary": {
       "PaymentTotal": "55000",
       "PaymentReference": null,

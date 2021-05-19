@@ -88,7 +88,7 @@ public class DraftApplicationTemplateContent {
         templateData.put(APPLICANT_1_FULL_NAME, caseData.getMarriageApplicant1Name());
         templateData.put(APPLICANT_2_FULL_NAME, caseData.getMarriageApplicant2Name());
 
-        templateData.put(MARRIAGE_DATE, caseData.getMarriageDate());
+        templateData.put(MARRIAGE_DATE, caseData.getMarriageDetails().getDate());
         templateData.put(COURT_CASE_DETAILS, caseData.getLegalProceedingsDetails());
 
         templateData.put(HAS_COST_ORDERS, caseData.getDivorceCostsClaim().toBoolean());

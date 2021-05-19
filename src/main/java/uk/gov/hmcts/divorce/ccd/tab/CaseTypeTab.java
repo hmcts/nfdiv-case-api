@@ -17,10 +17,10 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field(CaseData::getDivorceOrDissolution)
             .field(CaseData::getInferredApplicant1Gender)
             .field(CaseData::getInferredApplicant2Gender)
-            .field(CaseData::getMarriageIsSameSexCouple)
-            .field(CaseData::getMarriageDate)
-            .field(CaseData::getMarriedInUk)
-            .field(CaseData::getCertificateInEnglish);
+            .field("marriageIsSameSexCouple")
+            .field("marriageDate")
+            .field("marriageMarriedInUk")
+            .field("marriageCertificateInEnglish");
 
         configBuilder.tab("paymentDetailsCourtAdmin", "Payment")
             .field(CaseData::getHelpWithFeesReferenceNumber);

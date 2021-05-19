@@ -14,6 +14,13 @@
     "jurisdictionResidualEligible":null,
     "jurisdictionBothLastHabituallyResident":null,
     "jurisdictionConnections": null,
+    "marriageMarriedInUk":null,
+    "marriageCertificateInEnglish":null,
+    "marriageCertifiedTranslation":null,
+    "marriageCountryOfMarriage":null,
+    "marriagePlaceOfMarriage":null,
+    "marriageDate":null,
+    "marriageIsSameSexCouple":null,
     "applicant1OrganisationPolicy": {
       "Organisation": {
         "OrganisationID": "HEBFGBR",
