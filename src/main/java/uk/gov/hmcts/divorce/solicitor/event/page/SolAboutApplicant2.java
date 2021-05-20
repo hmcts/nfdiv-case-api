@@ -21,7 +21,7 @@ public class SolAboutApplicant2 implements CcdPageConfiguration {
                 CaseData::getApplicant2NameChangedHow,
                 "applicant2NameDifferentToMarriageCertificate=\"Yes\"", null,
                 "How did they change their name?")
-            .optional(
+            .mandatory(
                 CaseData::getApplicant2NameChangedHowOtherDetails,
                 "applicant2NameChangedHow=\"other\"",
                 null,
