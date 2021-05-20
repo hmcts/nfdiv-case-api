@@ -41,16 +41,16 @@
       ]
     },
     "payments": [{
-      "id": "1",
+      "id": null,
       "value": {
         "paymentDate": null,
-        "paymentFeeId": null,
+        "paymentFeeId": "FEE0001",
         "paymentAmount": 55000,
-        "paymentSiteId": null,
+        "paymentSiteId": "AA04",
         "paymentStatus": "success",
-        "paymentChannel": null,
+        "paymentChannel": "online",
         "paymentReference": null,
-        "paymentTransactionId": null
+        "paymentTransactionId": "ge7po9h5bhbtbd466424src9tk"
       }
     }]
   },
