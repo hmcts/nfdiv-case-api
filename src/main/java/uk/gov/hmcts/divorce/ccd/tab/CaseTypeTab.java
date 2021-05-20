@@ -15,6 +15,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
         configBuilder.tab("applicationDetails", "Application")
             .field(CaseData::getDivorceOrDissolution)
+            .field(CaseData::getApplicationType)
             .field(CaseData::getInferredApplicant1Gender)
             .field(CaseData::getInferredApplicant2Gender)
             .field("marriageIsSameSexCouple")
