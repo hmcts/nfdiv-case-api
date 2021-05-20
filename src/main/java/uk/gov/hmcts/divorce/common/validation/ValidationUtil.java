@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.common.model.Gender;
 import java.time.LocalDate;
 import java.util.List;
 
+import static java.lang.Integer.parseInt;
 import static java.time.temporal.ChronoUnit.YEARS;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -20,7 +21,6 @@ public final class ValidationUtil {
     public static final String MUST_BE_YES = " must be YES";
     public static final String CONNECTION = "Connection ";
     public static final String CANNOT_EXIST = " cannot exist";
-    private static final int FEE_PENCE = 55000; // TODO get from order summary
 
     private ValidationUtil() {
     }
@@ -118,7 +118,7 @@ public final class ValidationUtil {
     }
 
     public static boolean isPaymentIncomplete(CaseData caseData) {
-        return caseData.getPaymentTotal() < FEE_PENCE;
+        return caseData.getPaymentTotal() < parseInt(caseData.getSolApplicationFeeOrderSummary().getPaymentTotal());
     }
 
     public static boolean hasAwaitingDocuments(CaseData caseData) {

@@ -17,6 +17,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.payment.model.Payment;
@@ -483,6 +484,8 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         caseData.put(SOL_STATEMENT_OF_TRUTH, YES);
         caseData.put(APPLICANT_1_SOLICITOR_EMAIL, TEST_SOLICITOR_EMAIL);
 
+        OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
+        caseData.put("solApplicationFeeOrderSummary", orderSummary);
 
         ListValue<Payment> payment = new ListValue<>(null, Payment
             .builder()

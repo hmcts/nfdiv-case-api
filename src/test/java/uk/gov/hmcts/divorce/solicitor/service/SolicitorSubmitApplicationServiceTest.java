@@ -147,7 +147,14 @@ public class SolicitorSubmitApplicationServiceTest {
     @Test
     void shouldCompleteStepsToUpdateApplication() {
 
-        final var caseData = mock(CaseData.class);
+        List<ListValue<DivorceDocument>> generatedDocuments = singletonList(documentWithType(DIVORCE_APPLICATION));
+        final CaseData caseData = CaseData.builder().build();
+        caseData.setDocumentsGenerated(generatedDocuments);
+        caseData.setStatementOfTruth(null);
+        caseData.setSolSignStatementOfTruth(YesOrNo.YES);
+        final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
+        caseData.setSolApplicationFeeOrderSummary(orderSummary);
+
         final var caseDataUpdaterChain = mock(CaseDataUpdaterChain.class);
 
         final var caseDataUpdaters = asList(
@@ -182,6 +189,8 @@ public class SolicitorSubmitApplicationServiceTest {
         caseData.setDocumentsGenerated(generatedDocuments);
         caseData.setStatementOfTruth(null);
         caseData.setSolSignStatementOfTruth(YesOrNo.YES);
+        final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
+        caseData.setSolApplicationFeeOrderSummary(orderSummary);
 
         ListValue<Payment> payment = new ListValue<>(null, Payment
             .builder()
