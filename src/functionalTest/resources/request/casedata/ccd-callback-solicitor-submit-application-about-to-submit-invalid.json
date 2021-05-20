@@ -4,5 +4,20 @@
   "applicant1LastName": "Smith",
   "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
   "divorceCostsClaim": "YES",
-  "solSignStatementOfTruth": "YES"
+  "solSignStatementOfTruth": "YES",
+  "solApplicationFeeOrderSummary": {
+    "PaymentTotal": "55000",
+    "PaymentReference": null,
+    "Fees": [
+      {
+        "id": null,
+        "value": {
+          "FeeDescription": "Filing an application for a divorce, nullity or civil partnership dissolution",
+          "FeeVersion": "5",
+          "FeeCode": "FEE0002",
+          "FeeAmount": "55000"
+        }
+      }
+    ]
+  }
 }
