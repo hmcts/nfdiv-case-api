@@ -18,6 +18,7 @@ import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.FINANCIAL_ORDE
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreate.SOLICITOR_CREATE;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationContactInformation;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
@@ -32,6 +33,7 @@ public class SolicitorCreateTest extends FunctionalTestSuite {
         caseData.put(DIVORCE_COSTS_CLAIM, YES);
         caseData.put(LANGUAGE_PREFERENCE_WELSH, NO);
         caseData.put(FINANCIAL_ORDER, NO);
+        caseData.put("applicant2OrgContactInformation", organisationContactInformation());
 
         Response response = triggerCallback(caseData, SOLICITOR_CREATE, ABOUT_TO_SUBMIT_URL);
 
