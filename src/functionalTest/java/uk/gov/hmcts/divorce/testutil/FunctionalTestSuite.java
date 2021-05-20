@@ -5,6 +5,7 @@ import io.restassured.response.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.TestPropertySource;
+import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInformation;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
@@ -91,7 +92,8 @@ public abstract class FunctionalTestSuite {
                 "languagePreferenceWelsh", "NO",
                 "divorceOrDissolution", "divorce",
                 "financialOrder", "NO",
-                "divorceCostsClaim", "NO"
+                "divorceCostsClaim", "NO",
+                "applicant2OrgContactInformation", organisationContactInformation()
             ))
             .build();
 
@@ -160,5 +162,16 @@ public abstract class FunctionalTestSuite {
             .body(request)
             .when()
             .post(url);
+    }
+
+    public static OrganisationContactInformation organisationContactInformation() {
+        return OrganisationContactInformation
+            .builder()
+            .addressLine1("addressLine1")
+            .addressLine2("addressLine2")
+            .addressLine3("addressLine3")
+            .townCity("townCity")
+            .country("country")
+            .build();
     }
 }
