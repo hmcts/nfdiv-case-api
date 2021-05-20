@@ -17,6 +17,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.payment.model.Payment;
@@ -297,50 +298,6 @@ public class SolicitorStatementOfTruthPaySubmitTest {
     }
 
     @Test
-    void givenValidCaseDataAndIncompletePaymentWhenAboutToSubmitCallbackIsInvokedThenStateIsNotChangedAndErrorIsReturned()
-        throws Exception {
-
-        Map<String, Object> caseData = caseDataWithStatementOfTruth();
-
-        ListValue<Payment> payment = new ListValue<>(null, Payment
-            .builder()
-            .paymentAmount(100)
-            .paymentChannel("online")
-            .paymentFeeId("FEE0001")
-            .paymentReference("paymentRef")
-            .paymentSiteId("AA04")
-            .paymentStatus(PaymentStatus.SUCCESS)
-            .paymentTransactionId("ge7po9h5bhbtbd466424src9tk")
-            .build());
-        caseData.put("payments", singletonList(payment));
-
-        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(TestConstants.AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(
-                caseData,
-                SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT,
-                SOTAgreementPayAndSubmitRequired.name())))
-            .accept(APPLICATION_JSON))
-            .andExpect(
-                status().isOk()
-            )
-            .andExpect(
-                content().json(expectedCcdAboutToSubmitCallbackPaymentErrorResponse())
-            );
-
-        verify(notificationService)
-            .sendEmail(
-                eq(TEST_SOLICITOR_EMAIL),
-                eq(SOL_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED),
-                anyMap(),
-                eq(ENGLISH));
-
-        verifyNoMoreInteractions(notificationService);
-    }
-
-    @Test
     void givenValidCaseDataContainingDraftApplicationDocumentWhenAboutToSubmitCallbackIsInvokedThenDraftApplicationDocumentIsRemoved()
         throws Exception {
 
@@ -483,6 +440,8 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         caseData.put(SOL_STATEMENT_OF_TRUTH, YES);
         caseData.put(APPLICANT_1_SOLICITOR_EMAIL, TEST_SOLICITOR_EMAIL);
 
+        OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
+        caseData.put("solApplicationFeeOrderSummary", orderSummary);
 
         ListValue<Payment> payment = new ListValue<>(null, Payment
             .builder()

@@ -90,16 +90,6 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
             details.getId()
         );
 
-        log.info("Setting dummy payment to mock payment process");
-        if (caseData.getPayments() == null || caseData.getPayments().isEmpty()) {
-            List<ListValue<Payment>> payments = new ArrayList<>();
-            payments.add(new ListValue<>(null, solicitorSubmitApplicationService.getDummyPayment(orderSummary)));
-            caseData.setPayments(payments);
-        } else {
-            caseData.getPayments()
-                .add(new ListValue<>(null, solicitorSubmitApplicationService.getDummyPayment(orderSummary)));
-        }
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
@@ -112,6 +102,18 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
 
         final CaseData caseData = details.getData();
         final State currentState = details.getState();
+
+        log.info("Setting dummy payment to mock payment process");
+        if (caseData.getPayments() == null || caseData.getPayments().isEmpty()) {
+            List<ListValue<Payment>> payments = new ArrayList<>();
+            payments.add(new ListValue<>(null,
+                solicitorSubmitApplicationService.getDummyPayment(caseData.getSolApplicationFeeOrderSummary())));
+            caseData.setPayments(payments);
+        } else {
+            caseData.getPayments()
+                .add(new ListValue<>(null,
+                    solicitorSubmitApplicationService.getDummyPayment(caseData.getSolApplicationFeeOrderSummary())));
+        }
 
         updateApplicant2DigitalDetails(caseData);
 

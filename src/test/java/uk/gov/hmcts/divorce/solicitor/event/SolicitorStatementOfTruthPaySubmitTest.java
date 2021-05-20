@@ -28,6 +28,7 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 
 import static java.lang.Integer.parseInt;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -82,7 +83,6 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             solicitorStatementOfTruthPaySubmit.aboutToStart(caseDetails);
 
         assertThat(response.getData().getSolApplicationFeeOrderSummary(), is(orderSummary));
-        assertThat(response.getData().getPayments().size(), is(1));
         verify(ccdAccessService).addApplicant1SolicitorRole(
             authorization,
             caseId
@@ -120,11 +120,8 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
-        when(solicitorSubmitApplicationService.getOrderSummary()).thenReturn(orderSummary);
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(authorization);
-
         final AboutToStartOrSubmitResponse<CaseData, State> response =
-            solicitorStatementOfTruthPaySubmit.aboutToStart(caseDetails);
+            solicitorStatementOfTruthPaySubmit.aboutToSubmit(caseDetails, new CaseDetails<>());
 
         assertThat(response.getData().getPayments().size(), is(2));
     }
@@ -298,6 +295,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .app2ContactMethodIsDigital(YES)
             .applicant2SolicitorRepresented(YES)
             .applicant2OrganisationPolicy(organisationPolicy)
+            .payments(singletonList(new ListValue<Payment>(null, null)))
             .build();
 
         assertThat(response.getData(), is(expectedCaseData));

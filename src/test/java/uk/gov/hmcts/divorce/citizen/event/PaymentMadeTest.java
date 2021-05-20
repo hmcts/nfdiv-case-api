@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotification;
@@ -62,6 +63,9 @@ public class PaymentMadeTest {
         caseData.setStatementOfTruth(YesOrNo.YES);
         caseData.setSolSignStatementOfTruth(YesOrNo.YES);
 
+        OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
+        caseData.setSolApplicationFeeOrderSummary(orderSummary);
+
         Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(SUCCESS).build();
         caseData.setPayments(singletonList(new ListValue<>("1", payment)));
 
@@ -77,6 +81,9 @@ public class PaymentMadeTest {
     public void givenInvalidPaymentWhenThenDontSendEmail() {
         final CaseData caseData = caseData();
         caseData.setApplicant1Email(TEST_USER_EMAIL);
+
+        OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
+        caseData.setSolApplicationFeeOrderSummary(orderSummary);
 
         Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(DECLINED).build();
         caseData.setPayments(singletonList(new ListValue<>("1", payment)));
@@ -97,6 +104,8 @@ public class PaymentMadeTest {
 
         Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(SUCCESS).build();
         caseData.setPayments(singletonList(new ListValue<>("1", payment)));
+        final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
+        caseData.setSolApplicationFeeOrderSummary(orderSummary);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -117,6 +126,9 @@ public class PaymentMadeTest {
         docs.add(DocumentType.MARRIAGE_CERTIFICATE);
         docs.add(DocumentType.NAME_CHANGE_EVIDENCE);
         caseData.setCannotUploadSupportingDocument(docs);
+
+        OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
+        caseData.setSolApplicationFeeOrderSummary(orderSummary);
 
         Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(SUCCESS).build();
         caseData.setPayments(singletonList(new ListValue<>("1", payment)));

@@ -34,22 +34,7 @@
           }
         }
       ]
-    },
-    "payments": [
-      {
-        "id": null,
-        "value": {
-          "paymentDate": null,
-          "paymentFeeId": "FEE0001",
-          "paymentAmount": 55000,
-          "paymentSiteId": "AA04",
-          "paymentStatus": "success",
-          "paymentChannel": "online",
-          "paymentReference": null,
-          "paymentTransactionId": "ge7po9h5bhbtbd466424src9tk"
-        }
-      }
-    ]
+    }
   },
   "errors": null,
   "warnings": null,

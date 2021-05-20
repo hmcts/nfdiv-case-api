@@ -10,6 +10,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotification;
@@ -84,6 +85,9 @@ public class PaymentMadeTest {
         data.put("dateSubmitted", LocalDateTime.now());
         data.put("solSignStatementOfTruth", YES);
 
+        OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
+        data.put("solApplicationFeeOrderSummary", orderSummary);
+
         Payment payment = Payment.builder()
             .paymentAmount(55000)
             .paymentStatus(SUCCESS)
@@ -110,6 +114,9 @@ public class PaymentMadeTest {
         data.put("dateSubmitted", LocalDateTime.now());
         data.put("divorceWho", WhoDivorcing.HUSBAND);
         data.put("applicant1WantsToHavePapersServedAnotherWay", YesOrNo.YES);
+
+        OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
+        data.put("solApplicationFeeOrderSummary", orderSummary);
 
         Payment payment = Payment.builder()
             .paymentAmount(55000)
@@ -139,6 +146,9 @@ public class PaymentMadeTest {
         Map<String, Object> data = caseDataMap();
         data.put("dateSubmitted", LocalDateTime.now());
 
+        OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
+        data.put("solApplicationFeeOrderSummary", orderSummary);
+
         Payment payment = Payment.builder()
             .paymentAmount(55000)
             .paymentStatus(DECLINED)
@@ -161,6 +171,9 @@ public class PaymentMadeTest {
         Map<String, Object> data = caseDataMap();
         data.put("dateSubmitted", LocalDateTime.now());
         data.put("solSignStatementOfTruth", YesOrNo.YES);
+
+        OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
+        data.put("solApplicationFeeOrderSummary", orderSummary);
 
         Payment payment = Payment.builder()
             .paymentAmount(55000)

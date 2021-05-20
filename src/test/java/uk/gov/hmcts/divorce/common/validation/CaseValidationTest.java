@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.common.validation;
 
 import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.payment.model.Payment;
@@ -133,12 +134,17 @@ public class CaseValidationTest {
     @Test
     public void shouldReturnTrueWhenPaymentIsIncompleted() {
         CaseData caseData = new CaseData();
+        OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
+        caseData.setSolApplicationFeeOrderSummary(orderSummary);
+
         assertTrue(isPaymentIncomplete(caseData));
     }
 
     @Test
     public void shouldReturnFalseWhenPaymentIsCompleted() {
         CaseData caseData = new CaseData();
+        OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
+        caseData.setSolApplicationFeeOrderSummary(orderSummary);
         Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(SUCCESS).build();
         caseData.setPayments(singletonList(new ListValue<>("1", payment)));
         assertFalse(isPaymentIncomplete(caseData));

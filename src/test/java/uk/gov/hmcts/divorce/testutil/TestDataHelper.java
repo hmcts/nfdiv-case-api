@@ -74,6 +74,8 @@ public class TestDataHelper {
         caseDataMap.put("applicant1LastName", TEST_LAST_NAME);
         caseDataMap.put("divorceOrDissolution", DIVORCE);
         caseDataMap.put("applicant1Email", TEST_USER_EMAIL);
+        caseDataMap.put("solApplicationFeeOrderSummary",
+            OrderSummary.builder().paymentTotal("55000").build());
         return caseDataMap;
     }
 

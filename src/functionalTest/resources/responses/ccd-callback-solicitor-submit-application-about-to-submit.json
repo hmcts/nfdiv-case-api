@@ -25,17 +25,32 @@
     "marriageIsSameSexCouple":null,
     "dateSubmitted": "${json-unit.ignore}",
     "applicant1WantsToHavePapersServedAnotherWay": "NO",
+    "solApplicationFeeOrderSummary": {
+      "PaymentTotal": "55000",
+      "PaymentReference": null,
+      "Fees": [
+        {
+          "id": null,
+          "value": {
+            "FeeDescription": "Filing an application for a divorce, nullity or civil partnership dissolution",
+            "FeeVersion": "5",
+            "FeeCode": "FEE0002",
+            "FeeAmount": "55000"
+          }
+        }
+      ]
+    },
     "payments": [{
-      "id": "1",
+      "id": null,
       "value": {
         "paymentDate": null,
-        "paymentFeeId": null,
+        "paymentFeeId": "FEE0001",
         "paymentAmount": 55000,
-        "paymentSiteId": null,
+        "paymentSiteId": "AA04",
         "paymentStatus": "success",
-        "paymentChannel": null,
+        "paymentChannel": "online",
         "paymentReference": null,
-        "paymentTransactionId": null
+        "paymentTransactionId": "ge7po9h5bhbtbd466424src9tk"
       }
     }]
   },

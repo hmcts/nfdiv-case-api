@@ -6,11 +6,19 @@
   "divorceCostsClaim": "YES",
   "solSignStatementOfTruth": "YES",
   "applicant1WantsToHavePapersServedAnotherWay": "NO",
-  "payments": [{
-    "id": "1",
-    "value": {
-      "paymentStatus": "success",
-      "paymentAmount": 55000
-    }
-  }]
+  "solApplicationFeeOrderSummary": {
+    "PaymentTotal": "55000",
+    "PaymentReference": null,
+    "Fees": [
+      {
+        "id": null,
+        "value": {
+          "FeeDescription": "Filing an application for a divorce, nullity or civil partnership dissolution",
+          "FeeVersion": "5",
+          "FeeCode": "FEE0002",
+          "FeeAmount": "55000"
+        }
+      }
+    ]
+  }
 }
