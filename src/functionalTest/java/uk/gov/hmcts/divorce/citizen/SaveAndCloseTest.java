@@ -27,4 +27,13 @@ public class SaveAndCloseTest extends FunctionalTestSuite {
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
     }
 
+    @Test
+    public void shouldSendWelshEmailWhenAllTemplateParamsAreValid() throws IOException {
+        Map<String, Object> request = caseData(REQUEST);
+        request.put("languagePreferenceWelsh", "YES");
+        Response response = triggerCallback(request, SAVE_AND_CLOSE, SUBMITTED_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
+
 }
