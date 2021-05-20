@@ -20,12 +20,5 @@
         }
       }
     ]
-  },
-  "payments": [{
-    "id": "1",
-    "value": {
-      "paymentStatus": "success",
-      "paymentAmount": 55000
-    }
-  }]
+  }
 }
