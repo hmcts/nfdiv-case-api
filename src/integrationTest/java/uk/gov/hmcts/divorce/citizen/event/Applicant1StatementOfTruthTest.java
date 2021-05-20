@@ -29,7 +29,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataMap;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithOrderSummary;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseDataMap;
 
 
@@ -67,7 +67,7 @@ public class Applicant1StatementOfTruthTest {
         mockMvc.perform(post(ABOUT_TO_START_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseDataMap(), APPLICANT_1_STATEMENT_OF_TRUTH)))
+            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithOrderSummary(), APPLICANT_1_STATEMENT_OF_TRUTH)))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().json(expectedCcdAboutToStartCallbackErrorResponse()));

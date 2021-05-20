@@ -34,7 +34,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataMap;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithOrderSummary;
 
 
 @ExtendWith(SpringExtension.class)
@@ -69,7 +69,7 @@ public class SaveAndCloseTest {
         mockMvc.perform(post(SUBMITTED_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseDataMap(), SAVE_AND_CLOSE)))
+            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithOrderSummary(), SAVE_AND_CLOSE)))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
@@ -100,7 +100,7 @@ public class SaveAndCloseTest {
         mockMvc.perform(post(SUBMITTED_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseDataMap(), SAVE_AND_CLOSE)))
+            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithOrderSummary(), SAVE_AND_CLOSE)))
             .accept(APPLICATION_JSON))
             .andExpect(status().isBadRequest())
             .andExpect(content().string("All template params not passed"));

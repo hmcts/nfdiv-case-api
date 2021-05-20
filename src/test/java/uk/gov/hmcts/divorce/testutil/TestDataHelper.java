@@ -1,20 +1,22 @@
 package uk.gov.hmcts.divorce.testutil;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import feign.FeignException;
 import feign.Request;
 import feign.Response;
 import uk.gov.hmcts.ccd.sdk.type.Document;
-import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
-import uk.gov.hmcts.divorce.common.model.Gender;
+import uk.gov.hmcts.divorce.common.model.Jurisdiction;
 import uk.gov.hmcts.divorce.common.model.JurisdictionConnections;
+import uk.gov.hmcts.divorce.common.model.MarriageDetails;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
@@ -35,10 +37,12 @@ import static feign.Request.HttpMethod.GET;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static java.time.temporal.ChronoUnit.YEARS;
-import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static uk.gov.hmcts.ccd.sdk.type.Fee.getValueInPence;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
+import static uk.gov.hmcts.divorce.common.model.Gender.FEMALE;
+import static uk.gov.hmcts.divorce.common.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
@@ -53,6 +57,9 @@ public class TestDataHelper {
 
     public static final LocalDate LOCAL_DATE = LocalDate.of(2021, 04, 28);
     public static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(2021, 04, 28, 1, 0);
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final TypeReference<HashMap<String, Object>> TYPE_REFERENCE = new TypeReference<>() {
+    };
 
     private TestDataHelper() {
 
@@ -68,49 +75,59 @@ public class TestDataHelper {
             .build();
     }
 
-    public static Map<String, Object> caseDataMap() {
-        Map<String, Object> caseDataMap = new HashMap<>();
-        caseDataMap.put("applicant1FirstName", TEST_FIRST_NAME);
-        caseDataMap.put("applicant1MiddleName", TEST_MIDDLE_NAME);
-        caseDataMap.put("applicant1LastName", TEST_LAST_NAME);
-        caseDataMap.put("divorceOrDissolution", DIVORCE);
-        caseDataMap.put("applicant1Email", TEST_USER_EMAIL);
-        caseDataMap.put("solApplicationFeeOrderSummary",
-            OrderSummary.builder().paymentTotal("55000").build());
-        return caseDataMap;
+    public static CaseData caseDataWithOrderSummary() {
+        return CaseData
+            .builder()
+            .applicant1FirstName(TEST_FIRST_NAME)
+            .applicant1MiddleName(TEST_MIDDLE_NAME)
+            .applicant1LastName(TEST_LAST_NAME)
+            .divorceOrDissolution(DIVORCE)
+            .applicant1Email(TEST_USER_EMAIL)
+            .solApplicationFeeOrderSummary(OrderSummary.builder().paymentTotal("55000").build())
+            .build();
     }
 
-    public static Map<String, Object> validApplicant1CaseDataMap() {
-        Map<String, Object> caseDataMap = new HashMap<>();
-        caseDataMap.put("applicant1FirstName", TEST_FIRST_NAME);
-        caseDataMap.put("applicant1MiddleName", TEST_MIDDLE_NAME);
-        caseDataMap.put("applicant1LastName", TEST_LAST_NAME);
-        caseDataMap.put("applicant2FirstName", TEST_FIRST_NAME);
-        caseDataMap.put("applicant2LastName", TEST_LAST_NAME);
-        caseDataMap.put("financialOrder", YesOrNo.NO);
-        caseDataMap.put("inferredApplicant1Gender", Gender.FEMALE);
-        caseDataMap.put("inferredApplicant2Gender", Gender.MALE);
-        caseDataMap.put("marriageApplicant1Name", TEST_FIRST_NAME + " " + TEST_LAST_NAME);
-        caseDataMap.put("applicant1ContactDetailsConfidential", ConfidentialAddress.KEEP);
-        caseDataMap.put("prayerHasBeenGiven", YesOrNo.YES);
-        caseDataMap.put("statementOfTruth", YesOrNo.YES);
-        caseDataMap.put("marriageDate", LocalDate.now().minus(1, YEARS).minus(1, DAYS));
-        caseDataMap.put("jurisdictionApplicant1Residence", YesOrNo.YES);
-        caseDataMap.put("jurisdictionConnections", Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
-        return caseDataMap;
+    public static CaseData validApplicant1CaseDataMap() {
+        var marriageDetails = new MarriageDetails();
+        marriageDetails.setDate(LocalDate.now().minus(1, YEARS).minus(1, DAYS));
+
+        var jurisdiction = new Jurisdiction();
+        jurisdiction.setApplicant1Residence(YES);
+        jurisdiction.setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
+
+        return CaseData
+            .builder()
+            .applicant1FirstName(TEST_FIRST_NAME)
+            .applicant1MiddleName(TEST_MIDDLE_NAME)
+            .applicant1LastName(TEST_LAST_NAME)
+            .applicant2FirstName(TEST_FIRST_NAME)
+            .applicant2LastName(TEST_LAST_NAME)
+            .financialOrder(NO)
+            .inferredApplicant1Gender(FEMALE)
+            .inferredApplicant2Gender(MALE)
+            .marriageApplicant1Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME)
+            .applicant1ContactDetailsConfidential(ConfidentialAddress.KEEP)
+            .prayerHasBeenGiven(YES)
+            .statementOfTruth(YES)
+            .marriageDetails(marriageDetails)
+            .jurisdiction(jurisdiction)
+            .build();
+
     }
 
     public static CallbackRequest callbackRequest() {
-        return callbackRequest(caseDataMap());
+        return callbackRequest(caseDataWithOrderSummary());
     }
 
-    public static CallbackRequest callbackRequest(final Map<String, Object> caseData) {
+    public static CallbackRequest callbackRequest(CaseData caseData) {
+        OBJECT_MAPPER.registerModule(new JavaTimeModule());
+
         return CallbackRequest
             .builder()
             .caseDetails(
                 CaseDetails
                     .builder()
-                    .data(caseData)
+                    .data(OBJECT_MAPPER.convertValue(caseData, TYPE_REFERENCE))
                     .id(TEST_CASE_ID)
                     .createdDate(LOCAL_DATE_TIME)
                     .build()
@@ -118,15 +135,17 @@ public class TestDataHelper {
             .build();
     }
 
-    public static CallbackRequest callbackRequest(final Map<String, Object> caseData,
+    public static CallbackRequest callbackRequest(final CaseData caseData,
                                                   final String eventId) {
+        OBJECT_MAPPER.registerModule(new JavaTimeModule());
+
         return CallbackRequest
             .builder()
             .eventId(eventId)
             .caseDetails(
                 CaseDetails
                     .builder()
-                    .data(caseData)
+                    .data(OBJECT_MAPPER.convertValue(caseData, TYPE_REFERENCE))
                     .id(TEST_CASE_ID)
                     .createdDate(LOCAL_DATE_TIME)
                     .build()
@@ -134,14 +153,14 @@ public class TestDataHelper {
             .build();
     }
 
-    public static CallbackRequest callbackRequest(final Map<String, Object> caseData, String eventId, String state) {
+    public static CallbackRequest callbackRequest(final CaseData caseData, String eventId, String state) {
         return CallbackRequest
             .builder()
             .eventId(eventId)
             .caseDetails(
                 CaseDetails
                     .builder()
-                    .data(caseData)
+                    .data(OBJECT_MAPPER.convertValue(caseData, TYPE_REFERENCE))
                     .state(state)
                     .id(TEST_CASE_ID)
                     .build()
@@ -157,32 +176,6 @@ public class TestDataHelper {
             .description(ISSUE_FEE)
             .version(1)
             .build();
-    }
-
-    public static OrderSummary getDefaultOrderSummary() {
-        return OrderSummary
-            .builder()
-            .fees(singletonList(getDefaultFeeItem()))
-            .build();
-    }
-
-    public static ListValue<Fee> getFeeItem(double feeAmount, String feeCode, String description, int version) {
-        return ListValue
-            .<Fee>builder()
-            .value(
-                Fee
-                    .builder()
-                    .amount(getValueInPence(feeAmount))
-                    .code(feeCode)
-                    .description(description)
-                    .version(String.valueOf(version))
-                    .build()
-            )
-            .build();
-    }
-
-    public static ListValue<Fee> getDefaultFeeItem() {
-        return getFeeItem(10.50, FEE_CODE, "Issue Application Fee", 1);
     }
 
     public static FeignException feignException(int status, String reason) {
