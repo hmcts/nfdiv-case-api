@@ -14,6 +14,7 @@ import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorUpdate.SOLICITOR_UPDATE;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationContactInformation;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
@@ -25,6 +26,7 @@ public class SolicitorUpdateTest extends FunctionalTestSuite {
     public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessful() throws Exception {
 
         final Map<String, Object> caseData = caseData(REQUEST);
+        caseData.put("applicant2OrgContactInformation", organisationContactInformation());
 
         final Response response = triggerCallback(caseData, SOLICITOR_UPDATE, ABOUT_TO_SUBMIT_URL);
 

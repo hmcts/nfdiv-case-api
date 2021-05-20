@@ -36,6 +36,8 @@ public class MiniApplicationDraft implements CaseDataUpdater {
 
         final var updatedCaseData = caseDataContext.copyOfCaseData();
 
+        log.info("MiniApplicationDraft  {} ", updatedCaseData.getApplicant2OrgContactInformation());
+
         final var templateName = docmosisTemplatesConfig
             .getTemplates()
             .get(updatedCaseData.getLanguagePreference())

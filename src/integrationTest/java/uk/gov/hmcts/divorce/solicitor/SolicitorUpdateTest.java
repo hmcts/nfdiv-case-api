@@ -56,6 +56,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationContactInformation;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @ExtendWith(SpringExtension.class)
@@ -166,6 +167,7 @@ public class SolicitorUpdateTest {
         caseData.put("divorceClaimFrom", singletonList("applicant2"));
         caseData.put("divorceUnit", "serviceCentre");
         caseData.put("selectedDivorceCentreSiteId", "AA07");
+        caseData.put("applicant2OrgContactInformation", organisationContactInformation());
         return caseData;
     }
 

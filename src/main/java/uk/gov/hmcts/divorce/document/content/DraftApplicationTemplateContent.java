@@ -104,7 +104,20 @@ public class DraftApplicationTemplateContent {
         String applicant2PostalAddress;
         AddressGlobalUK applicant2HomeAddress = caseData.getApplicant2HomeAddress();
         if (applicant2HomeAddress == null) {
-            applicant2PostalAddress = caseData.getDerivedApplicant2SolicitorAddr();
+            var orgContactInformation = caseData.getApplicant2OrgContactInformation();
+
+            applicant2PostalAddress =
+                Stream.of(
+                    orgContactInformation.getAddressLine1(),
+                    orgContactInformation.getAddressLine2(),
+                    orgContactInformation.getAddressLine3(),
+                    orgContactInformation.getTownCity(),
+                    orgContactInformation.getCounty(),
+                    orgContactInformation.getPostCode(),
+                    orgContactInformation.getCountry()
+                )
+                    .filter(value -> value != null && !value.isEmpty())
+                    .collect(Collectors.joining("\n"));
         } else {
             applicant2PostalAddress =
                 Stream.of(
@@ -115,7 +128,7 @@ public class DraftApplicationTemplateContent {
                     applicant2HomeAddress.getCounty(),
                     applicant2HomeAddress.getPostCode(),
                     applicant2HomeAddress.getCountry()
-                    )
+                )
                     .filter(value -> value != null && !value.isEmpty())
                     .collect(Collectors.joining("\n"));
         }

@@ -22,6 +22,7 @@ import uk.gov.hmcts.divorce.common.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.payment.model.Payment;
+import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInformation;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -566,13 +567,6 @@ public class CaseData {
     private String applicant2SolicitorEmail;
 
     @CCD(
-        label = "Applicant 2's solicitor's firm/ DX address",
-        typeOverride = TextArea,
-        access = {DefaultAccess.class}
-    )
-    private String derivedApplicant2SolicitorAddr;
-
-    @CCD(
         label = "Digital applicant 2 case",
         access = {DefaultAccess.class}
     )
@@ -590,6 +584,12 @@ public class CaseData {
         access = {DefaultAccess.class}
     )
     private OrganisationPolicy<UserRole> applicant2OrganisationPolicy;
+
+    @CCD(
+        label = "Applicant 2 solicitor's firm",
+        access = {DefaultAccess.class}
+    )
+    private OrganisationContactInformation applicant2OrgContactInformation;
 
     @CCD(
         label = "Applicant 2's service address",

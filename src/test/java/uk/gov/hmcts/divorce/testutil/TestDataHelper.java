@@ -19,6 +19,7 @@ import uk.gov.hmcts.divorce.common.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
+import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInformation;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
@@ -230,6 +231,17 @@ public class TestDataHelper {
                 .organisationName("Test Organisation")
                 .organisationId(TEST_ORG_ID)
                 .build())
+            .build();
+    }
+
+    public static OrganisationContactInformation organisationContactInformation() {
+        return OrganisationContactInformation
+            .builder()
+            .addressLine1("addressLine1")
+            .addressLine2("addressLine2")
+            .addressLine3("addressLine3")
+            .townCity("townCity")
+            .country("country")
             .build();
     }
 }

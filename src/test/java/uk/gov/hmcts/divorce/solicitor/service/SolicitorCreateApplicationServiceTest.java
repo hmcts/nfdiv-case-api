@@ -30,6 +30,7 @@ import java.util.Map;
 import static feign.Request.HttpMethod.GET;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -38,12 +39,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationContactInformation;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
 
 @ExtendWith(MockitoExtension.class)
@@ -74,7 +78,6 @@ class SolicitorCreateApplicationServiceTest {
 
     @Test
     void shouldCompleteStepsToCreateApplication() {
-
         final CaseData caseData = mock(CaseData.class);
         final CaseDataUpdaterChain caseDataUpdaterChain = mock(CaseDataUpdaterChain.class);
 
@@ -221,5 +224,82 @@ class SolicitorCreateApplicationServiceTest {
         ))
             .hasMessageContaining("403 Service not whitelisted")
             .isExactlyInstanceOf(FeignException.Forbidden.class);
+    }
+
+    @Test
+    void shouldSetApplicant2OrgContactInformationWhenApplicant2IsRepresentedBySolicitorAndIsDigital() {
+        CaseData caseData = caseData();
+        caseData.setApplicant1OrganisationPolicy(organisationPolicy());
+        caseData.setApplicant2OrganisationPolicy(organisationPolicy());
+        caseData.setApp2SolDigital(YES);
+        caseData.setApplicant2SolicitorRepresented(YES);
+
+        OrganisationsResponse organisationsResponse = OrganisationsResponse
+            .builder()
+            .organisationIdentifier(TEST_ORG_ID)
+            .contactInformation(singletonList(organisationContactInformation()))
+            .build();
+
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        when(organisationClient.getUserOrganisation(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN))
+            .thenReturn(organisationsResponse);
+
+        AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
+            solicitorCreateApplicationService.setApplicant2SolOrganisationInfo(
+                caseData,
+                TEST_CASE_ID,
+                TEST_AUTHORIZATION_TOKEN
+            );
+
+        CaseData expectedCaseData = caseData.toBuilder().build();
+        expectedCaseData.setApplicant2OrgContactInformation(organisationContactInformation());
+
+        assertThat(aboutToStartOrSubmitResponse.getData()).isEqualTo(expectedCaseData);
+        assertThat(aboutToStartOrSubmitResponse.getErrors()).isNull();
+        assertThat(aboutToStartOrSubmitResponse.getWarnings()).isNull();
+
+        verify(authTokenGenerator).generate();
+        verify(organisationClient).getUserOrganisation(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN);
+
+        verifyNoMoreInteractions(authTokenGenerator, organisationClient);
+    }
+
+    @Test
+    public void shouldNotSetApplicant2OrgContactInformationWhenApplicant2IsRepresentedBySolicitorAndIsNotDigital() {
+        CaseData caseData = caseData();
+        caseData.setApplicant1OrganisationPolicy(organisationPolicy());
+        caseData.setApp2SolDigital(NO);
+        caseData.setApplicant2SolicitorRepresented(YES);
+
+        AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
+            solicitorCreateApplicationService.setApplicant2SolOrganisationInfo(
+                caseData,
+                TEST_CASE_ID,
+                TEST_AUTHORIZATION_TOKEN
+            );
+
+        assertThat(aboutToStartOrSubmitResponse.getData()).isEqualTo(caseData);
+        assertThat(aboutToStartOrSubmitResponse.getErrors()).isNull();
+        assertThat(aboutToStartOrSubmitResponse.getWarnings()).isNull();
+    }
+
+    @Test
+    public void shouldNotSetApplicant2OrgContactInformationWhenApplicant2IsNotRepresentedBySolicitor() {
+        CaseData caseData = caseData();
+        caseData.setApplicant1OrganisationPolicy(organisationPolicy());
+        caseData.setApp2SolDigital(NO);
+        caseData.setApplicant2SolicitorRepresented(NO);
+
+        AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
+            solicitorCreateApplicationService.setApplicant2SolOrganisationInfo(
+                caseData,
+                TEST_CASE_ID,
+                TEST_AUTHORIZATION_TOKEN
+            );
+
+        assertThat(aboutToStartOrSubmitResponse.getData()).isEqualTo(caseData);
+        assertThat(aboutToStartOrSubmitResponse.getErrors()).isNull();
+        assertThat(aboutToStartOrSubmitResponse.getWarnings()).isNull();
     }
 }

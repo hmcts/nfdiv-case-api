@@ -54,6 +54,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationContactInformation;
 
 @ExtendWith(MockitoExtension.class)
 public class DraftApplicationTemplateContentTest {
@@ -66,6 +67,7 @@ public class DraftApplicationTemplateContentTest {
         CaseData caseData = caseData();
         caseData.setDivorceCostsClaim(YES);
         caseData.setFinancialOrder(NO);
+        caseData.setApplicant2OrgContactInformation(organisationContactInformation());
 
         Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
 
@@ -88,7 +90,7 @@ public class DraftApplicationTemplateContentTest {
             entry(MARRIAGE_OR_RELATIONSHIP, MARRIAGE),
             entry(COURT_CASE_DETAILS, null),
             entry(MARRIAGE_DATE, null),
-            entry(APPLICANT_2_POSTAL_ADDRESS, null),
+            entry(APPLICANT_2_POSTAL_ADDRESS, "addressLine1\naddressLine2\naddressLine3\ntownCity\ncountry"),
             entry(APPLICANT_2_FIRST_NAME, null),
             entry(APPLICANT_2_FULL_NAME, null),
             entry(APPLICANT_2_LAST_NAME, null)
@@ -101,6 +103,7 @@ public class DraftApplicationTemplateContentTest {
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.setDivorceCostsClaim(NO);
         caseData.setFinancialOrder(NO);
+        caseData.setApplicant2OrgContactInformation(organisationContactInformation());
 
         Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
 
@@ -123,7 +126,7 @@ public class DraftApplicationTemplateContentTest {
             entry(MARRIAGE_OR_RELATIONSHIP, RELATIONSHIP),
             entry(COURT_CASE_DETAILS, null),
             entry(MARRIAGE_DATE, null),
-            entry(APPLICANT_2_POSTAL_ADDRESS, null),
+            entry(APPLICANT_2_POSTAL_ADDRESS, "addressLine1\naddressLine2\naddressLine3\ntownCity\ncountry"),
             entry(APPLICANT_2_FIRST_NAME, null),
             entry(APPLICANT_2_FULL_NAME, null),
             entry(APPLICANT_2_LAST_NAME, null)

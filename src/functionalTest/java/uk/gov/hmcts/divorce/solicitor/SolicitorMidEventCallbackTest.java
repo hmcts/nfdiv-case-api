@@ -51,8 +51,6 @@ public class SolicitorMidEventCallbackTest extends FunctionalTestSuite {
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
-        // document_url and document_binary_url are ignored using ${json-unit.ignore}
-        // assertion will fail if the above elements are missing actual value
         assertThatJson(response.asString())
             .isEqualTo(json(expectedResponse(
                 "classpath:responses/ccd-callback-solicitor-create-mid-event.json"
