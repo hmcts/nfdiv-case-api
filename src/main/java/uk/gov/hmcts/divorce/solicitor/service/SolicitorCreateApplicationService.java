@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdater;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChainFactory;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
+import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 import uk.gov.hmcts.divorce.solicitor.service.updater.ClaimsCost;
 import uk.gov.hmcts.divorce.solicitor.service.updater.MiniApplicationDraft;
 import uk.gov.hmcts.divorce.solicitor.service.updater.SolicitorCourtDetails;
@@ -20,6 +21,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static org.springframework.util.CollectionUtils.firstElement;
 
 @Service
 @Slf4j
@@ -104,6 +106,31 @@ public class SolicitorCreateApplicationService {
                 .build();
         }
 
+        return AboutToStartOrSubmitResponse
+            .<CaseData, State>builder()
+            .data(caseData)
+            .build();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> setApplicant2SolOrganisationInfo(
+        final CaseData caseData,
+        final Long caseId,
+        final String userAuth
+    ) {
+        if (caseData.getApplicant2SolicitorRepresented().toBoolean() && caseData.getApp2SolDigital().toBoolean()) {
+            OrganisationsResponse organisationsResponse = organisationClient.getUserOrganisation(userAuth, authTokenGenerator.generate());
+
+            String solicitorUserOrgId = organisationsResponse.getOrganisationIdentifier();
+
+            log.info("Solicitor organisation {} retrieved from Prd Api for case id {} ", solicitorUserOrgId, caseId);
+
+            caseData.setApplicant2OrgContactInformation(firstElement(organisationsResponse.getContactInformation()));
+
+            return AboutToStartOrSubmitResponse
+                .<CaseData, State>builder()
+                .data(caseData)
+                .build();
+        }
         return AboutToStartOrSubmitResponse
             .<CaseData, State>builder()
             .data(caseData)

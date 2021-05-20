@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.document.content;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -56,6 +57,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
+@Disabled
 public class DraftApplicationTemplateContentTest {
 
     @InjectMocks

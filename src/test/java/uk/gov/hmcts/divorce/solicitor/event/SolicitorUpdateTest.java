@@ -53,7 +53,7 @@ class SolicitorUpdateTest {
     }
 
     @Test
-    void shouldReturnCaseData() throws Exception {
+    void shouldReturnCaseData() {
 
         final var auth = "authorization";
         final var caseData = caseData();
