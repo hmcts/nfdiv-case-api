@@ -298,50 +298,6 @@ public class SolicitorStatementOfTruthPaySubmitTest {
     }
 
     @Test
-    void givenValidCaseDataAndIncompletePaymentWhenAboutToSubmitCallbackIsInvokedThenStateIsNotChangedAndErrorIsReturned()
-        throws Exception {
-
-        Map<String, Object> caseData = caseDataWithStatementOfTruth();
-
-        ListValue<Payment> payment = new ListValue<>(null, Payment
-            .builder()
-            .paymentAmount(100)
-            .paymentChannel("online")
-            .paymentFeeId("FEE0001")
-            .paymentReference("paymentRef")
-            .paymentSiteId("AA04")
-            .paymentStatus(PaymentStatus.SUCCESS)
-            .paymentTransactionId("ge7po9h5bhbtbd466424src9tk")
-            .build());
-        caseData.put("payments", singletonList(payment));
-
-        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(TestConstants.AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(
-                caseData,
-                SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT,
-                SOTAgreementPayAndSubmitRequired.name())))
-            .accept(APPLICATION_JSON))
-            .andExpect(
-                status().isOk()
-            )
-            .andExpect(
-                content().json(expectedCcdAboutToSubmitCallbackPaymentErrorResponse())
-            );
-
-        verify(notificationService)
-            .sendEmail(
-                eq(TEST_SOLICITOR_EMAIL),
-                eq(SOL_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED),
-                anyMap(),
-                eq(ENGLISH));
-
-        verifyNoMoreInteractions(notificationService);
-    }
-
-    @Test
     void givenValidCaseDataContainingDraftApplicationDocumentWhenAboutToSubmitCallbackIsInvokedThenDraftApplicationDocumentIsRemoved()
         throws Exception {
 
