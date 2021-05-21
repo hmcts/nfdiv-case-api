@@ -4,6 +4,11 @@ import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 
+import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.JOINT_APPLICATION_CONDITION;
+import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLE_APPLICATION_CONDITION;
+import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_JOINT_PREVIEW_BANNER;
+import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_PREVIEW_BANNER;
+
 public class JurisdictionApplyForDivorce implements CcdPageConfiguration {
 
     @Override
@@ -12,6 +17,14 @@ public class JurisdictionApplyForDivorce implements CcdPageConfiguration {
         pageBuilder
             .page("JurisdictionApplyForDivorce")
             .pageLabel("Jurisdiction - Apply for a divorce")
+            .label(
+                "LabelNFDBanner-JurisdictionApplyForDivorce",
+                SOLICITOR_NFD_PREVIEW_BANNER,
+                SOLE_APPLICATION_CONDITION)
+            .label(
+                "LabelNFDJointBanner-JurisdictionApplyForDivorce",
+                SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
+                JOINT_APPLICATION_CONDITION)
             .label(
                 "LabelSolJurisdictionPara-1",
                 "The court has legal power to deal with this application because the following applies:")
