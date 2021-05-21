@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.document.content.DraftApplicationTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DocAssemblyRequest;
 import uk.gov.hmcts.divorce.document.model.DocAssemblyResponse;
@@ -17,6 +18,7 @@ import uk.gov.hmcts.divorce.document.model.DocumentInfo;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -32,10 +34,13 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ENGLISH_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataMap;
 
 @ExtendWith(MockitoExtension.class)
 public class DocAssemblyServiceTest {
@@ -62,7 +67,7 @@ public class DocAssemblyServiceTest {
     @Test
     public void shouldGenerateAndStoreDraftApplicationAndReturnDocumentUrl() {
         CaseData caseData = caseData();
-        Map<String, Object> caseDataMap = caseDataMap();
+        Map<String, Object> caseDataMap = expectedCaseData();
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(applicationTemplateMapper.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(caseDataMap);
@@ -112,7 +117,7 @@ public class DocAssemblyServiceTest {
     @Test
     public void shouldReturn401UnauthorizedExceptionWhenServiceIsNotWhitelistedInDocAssemblyService() {
         CaseData caseData = caseData();
-        Map<String, Object> caseDataMap = caseDataMap();
+        Map<String, Object> caseDataMap = expectedCaseData();
 
         when(applicationTemplateMapper.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(caseDataMap);
 
@@ -158,5 +163,15 @@ public class DocAssemblyServiceTest {
             ))
             .isExactlyInstanceOf(FeignException.Unauthorized.class)
             .hasMessageContaining("s2s service not whitelisted");
+    }
+
+    public static Map<String, Object> expectedCaseData() {
+        Map<String, Object> caseDataMap = new HashMap<>();
+        caseDataMap.put("petitionerFirstName", TEST_FIRST_NAME);
+        caseDataMap.put("petitionerMiddleName", TEST_MIDDLE_NAME);
+        caseDataMap.put("petitionerLastName", TEST_LAST_NAME);
+        caseDataMap.put("divorceOrDissolution", DivorceOrDissolution.DIVORCE);
+        caseDataMap.put("petitionerEmail", TEST_USER_EMAIL);
+        return caseDataMap;
     }
 }

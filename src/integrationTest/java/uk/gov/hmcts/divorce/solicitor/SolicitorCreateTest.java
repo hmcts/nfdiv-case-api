@@ -16,15 +16,13 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
+import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -34,23 +32,14 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.APPLICANT_1_EMAIL;
-import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.APPLICANT_1_FIRST_NAME;
-import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.APPLICANT_1_LAST_NAME;
-import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_COSTS_CLAIM;
-import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_OR_DISSOLUTION;
-import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.FINANCIAL_ORDER;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreate.SOLICITOR_CREATE;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssembly;
 import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.stubGetOrganisationEndpoint;
 import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.stubGetOrganisationEndpointForFailure;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_THE_SOL_MID_EVENT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_1_ORGANISATION_POLICY;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_ORGANISATION_POLICY;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.LANGUAGE_PREFERENCE_WELSH;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_MID_EVENT_ERROR;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_MID_EVENT_RESPONSE;
@@ -197,31 +186,30 @@ class SolicitorCreateTest {
                 .build());
     }
 
-    private Map<String, Object> caseDataWithApplicant1Org() {
-        Map<String, Object> caseData = caseData();
-        caseData.put(APPLICANT_1_ORGANISATION_POLICY, organisationPolicy());
-
+    private CaseData caseDataWithApplicant1Org() {
+        CaseData caseData = caseData();
+        caseData.setApplicant1OrganisationPolicy(organisationPolicy());
         return caseData;
     }
 
-    private static Map<String, Object> caseDataWithApplicant1AndApplicant2Org() {
-        Map<String, Object> caseData = caseData();
-        caseData.put(APPLICANT_1_ORGANISATION_POLICY, organisationPolicy());
-        caseData.put(APPLICANT_2_ORGANISATION_POLICY, organisationPolicy());
-        caseData.put("applicant2OrgContactInformation", organisationContactInformation());
-
+    private static CaseData caseDataWithApplicant1AndApplicant2Org() {
+        CaseData caseData = caseData();
+        caseData.setApplicant1OrganisationPolicy(organisationPolicy());
+        caseData.setApplicant2OrganisationPolicy(organisationPolicy());
+        caseData.setApplicant2OrgContactInformation(organisationContactInformation());
         return caseData;
     }
 
-    private static Map<String, Object> caseData() {
-        Map<String, Object> caseData = new HashMap<>();
-        caseData.put(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME);
-        caseData.put(APPLICANT_1_LAST_NAME, TEST_LAST_NAME);
-        caseData.put(APPLICANT_1_EMAIL, TEST_USER_EMAIL);
-        caseData.put(DIVORCE_OR_DISSOLUTION, DivorceOrDissolution.DIVORCE);
-        caseData.put(DIVORCE_COSTS_CLAIM, YES);
-        caseData.put(FINANCIAL_ORDER, NO);
-        caseData.put(LANGUAGE_PREFERENCE_WELSH, NO);
-        return caseData;
+    private static CaseData caseData() {
+        return CaseData
+            .builder()
+            .applicant1FirstName(TEST_FIRST_NAME)
+            .applicant1LastName(TEST_LAST_NAME)
+            .applicant1Email(TEST_USER_EMAIL)
+            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
+            .divorceCostsClaim(YES)
+            .financialOrder(NO)
+            .languagePreferenceWelsh(NO)
+            .build();
     }
 }

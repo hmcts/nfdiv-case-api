@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNot
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
+import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.WhoDivorcing;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.notification.exception.NotificationException;
@@ -23,7 +24,6 @@ import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.service.notify.NotificationClientException;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.anyMap;
@@ -37,7 +37,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.divorce.citizen.event.PaymentMade.PAYMENT_MADE;
-import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.YES;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_ACTIONS;
@@ -48,7 +47,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataMap;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithOrderSummary;
 
 
 @ExtendWith(SpringExtension.class)
@@ -81,19 +80,19 @@ public class PaymentMadeTest {
 
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmail() throws Exception {
-        Map<String, Object> data = caseDataMap();
-        data.put("dateSubmitted", LocalDateTime.now());
-        data.put("solSignStatementOfTruth", YES);
+        CaseData data = caseDataWithOrderSummary();
+        data.setDateSubmitted(LocalDateTime.now());
+        data.setSolSignStatementOfTruth(YesOrNo.YES);
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        data.put("solApplicationFeeOrderSummary", orderSummary);
+        data.setSolApplicationFeeOrderSummary(orderSummary);
 
         Payment payment = Payment.builder()
             .paymentAmount(55000)
             .paymentStatus(SUCCESS)
             .build();
 
-        data.put("payments", singletonList(new ListValue<>("1", payment)));
+        data.setPayments(singletonList(new ListValue<>("1", payment)));
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -110,20 +109,21 @@ public class PaymentMadeTest {
 
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendTwoEmail() throws Exception {
-        Map<String, Object> data = caseDataMap();
-        data.put("dateSubmitted", LocalDateTime.now());
-        data.put("divorceWho", WhoDivorcing.HUSBAND);
-        data.put("applicant1WantsToHavePapersServedAnotherWay", YesOrNo.YES);
+        CaseData data = caseDataWithOrderSummary();
+        data.setDateSubmitted(LocalDateTime.now());
+        data.setDivorceWho(WhoDivorcing.HUSBAND);
+        data.setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
+
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        data.put("solApplicationFeeOrderSummary", orderSummary);
+        data.setSolApplicationFeeOrderSummary(orderSummary);
 
         Payment payment = Payment.builder()
             .paymentAmount(55000)
             .paymentStatus(SUCCESS)
             .build();
 
-        data.put("payments", singletonList(new ListValue<>("1", payment)));
+        data.setPayments(singletonList(new ListValue<>("1", payment)));
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -143,18 +143,18 @@ public class PaymentMadeTest {
 
     @Test
     public void givenDeclinedPaymentDontSendNotification() throws Exception {
-        Map<String, Object> data = caseDataMap();
-        data.put("dateSubmitted", LocalDateTime.now());
+        CaseData data = caseDataWithOrderSummary();
+        data.setDateSubmitted(LocalDateTime.now());
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        data.put("solApplicationFeeOrderSummary", orderSummary);
+        data.setSolApplicationFeeOrderSummary(orderSummary);
 
         Payment payment = Payment.builder()
             .paymentAmount(55000)
             .paymentStatus(DECLINED)
             .build();
 
-        data.put("payments", singletonList(new ListValue<>("1", payment)));
+        data.setPayments(singletonList(new ListValue<>("1", payment)));
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -168,19 +168,20 @@ public class PaymentMadeTest {
 
     @Test
     public void givenSendEmailThrowsExceptionWhenCallbackIsInvokedThenReturnBadRequest() throws Exception {
-        Map<String, Object> data = caseDataMap();
-        data.put("dateSubmitted", LocalDateTime.now());
-        data.put("solSignStatementOfTruth", YesOrNo.YES);
+        CaseData data = caseDataWithOrderSummary();
+        data.setDateSubmitted(LocalDateTime.now());
+
+        data.setSolSignStatementOfTruth(YesOrNo.YES);
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        data.put("solApplicationFeeOrderSummary", orderSummary);
+        data.setSolApplicationFeeOrderSummary(orderSummary);
 
         Payment payment = Payment.builder()
             .paymentAmount(55000)
             .paymentStatus(SUCCESS)
             .build();
 
-        data.put("payments", singletonList(new ListValue<>("1", payment)));
+        data.setPayments(singletonList(new ListValue<>("1", payment)));
 
         doThrow(new NotificationException(new NotificationClientException("All template params not passed")))
             .when(notificationService).sendEmail(

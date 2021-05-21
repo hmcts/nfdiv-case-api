@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
+import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
@@ -30,8 +31,6 @@ import uk.gov.hmcts.divorce.testutil.TestConstants;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
@@ -49,13 +48,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.APPLICANT_1_EMAIL;
-import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.APPLICANT_1_FIRST_NAME;
-import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.APPLICANT_1_LAST_NAME;
-import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.APPLICANT_1_SOLICITOR_EMAIL;
-import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_COSTS_CLAIM;
-import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.DIVORCE_OR_DISSOLUTION;
-import static uk.gov.hmcts.divorce.ccd.search.CaseFieldsConstants.SOL_STATEMENT_OF_TRUTH;
 import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.common.model.State.SOTAgreementPayAndSubmitRequired;
@@ -86,7 +78,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataMap;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithOrderSummary;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFeeResponse;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
@@ -149,7 +141,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseDataMap(), SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)))
+            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithOrderSummary(), SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
@@ -171,7 +163,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseDataMap(), SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)))
+            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithOrderSummary(), SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isNotFound()
@@ -196,7 +188,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseDataMap(), SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)))
+            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithOrderSummary(), SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isUnauthorized()
@@ -227,7 +219,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseDataMap(), SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)))
+            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithOrderSummary(), SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isForbidden()
@@ -389,7 +381,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
             .content(objectMapper.writeValueAsString(callbackRequest(
-                caseDataMap(),
+                caseDataWithOrderSummary(),
                 SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT,
                 SOTAgreementPayAndSubmitRequired.name())))
             .accept(APPLICATION_JSON))
@@ -403,11 +395,11 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         verifyNoInteractions(notificationService);
     }
 
-    private String setupAuthorizationAndApplicationDocument(Map<String, Object> caseData) {
+    private String setupAuthorizationAndApplicationDocument(CaseData caseData) {
         final var documentListValue = documentWithType(DIVORCE_APPLICATION);
         final var generatedDocuments = singletonList(documentListValue);
 
-        caseData.put("documentsGenerated", generatedDocuments);
+        caseData.setDocumentsGenerated(generatedDocuments);
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, SOLICITOR_USER_ID, SOLICITOR_ROLE);
         when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
 
@@ -430,18 +422,8 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         return expectedResponse("classpath:wiremock/responses/about-to-submit-statement-of-truth-error.json");
     }
 
-    private Map<String, Object> caseDataWithStatementOfTruth() {
-        Map<String, Object> caseData = new HashMap<>();
-        caseData.put(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME);
-        caseData.put(APPLICANT_1_LAST_NAME, TEST_LAST_NAME);
-        caseData.put(APPLICANT_1_EMAIL, TEST_USER_EMAIL);
-        caseData.put(DIVORCE_OR_DISSOLUTION, DIVORCE);
-        caseData.put(DIVORCE_COSTS_CLAIM, YES);
-        caseData.put(SOL_STATEMENT_OF_TRUTH, YES);
-        caseData.put(APPLICANT_1_SOLICITOR_EMAIL, TEST_SOLICITOR_EMAIL);
-
+    private CaseData caseDataWithStatementOfTruth() {
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        caseData.put("solApplicationFeeOrderSummary", orderSummary);
 
         ListValue<Payment> payment = new ListValue<>(null, Payment
             .builder()
@@ -453,9 +435,19 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .paymentStatus(PaymentStatus.SUCCESS)
             .paymentTransactionId("ge7po9h5bhbtbd466424src9tk")
             .build());
-        caseData.put("payments", singletonList(payment));
 
-        return caseData;
+        return CaseData
+            .builder()
+            .applicant1FirstName(TEST_FIRST_NAME)
+            .applicant1LastName(TEST_LAST_NAME)
+            .applicant1Email(TEST_USER_EMAIL)
+            .divorceOrDissolution(DIVORCE)
+            .divorceCostsClaim(YES)
+            .solSignStatementOfTruth(YES)
+            .applicant1SolicitorEmail(TEST_SOLICITOR_EMAIL)
+            .solApplicationFeeOrderSummary(orderSummary)
+            .payments(singletonList(payment))
+            .build();
     }
 
     private String getFeeResponseAsJson() throws JsonProcessingException {
