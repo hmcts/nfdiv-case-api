@@ -34,8 +34,8 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.common.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.common.model.State.SOTAgreementPayAndSubmitRequired;
-import static uk.gov.hmcts.divorce.common.model.State.SolicitorAwaitingPaymentConfirmation;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
@@ -149,7 +149,7 @@ public class SolicitorStatementOfTruthPaySubmit implements CCDConfig<CaseData, S
         if (String.valueOf(feesPaid).equals(caseData.getSolApplicationFeeOrderSummary().getPaymentTotal())) {
             details.setState(Submitted);
         } else {
-            details.setState(SolicitorAwaitingPaymentConfirmation);
+            details.setState(AwaitingPayment);
         }
 
         return SubmittedCallbackResponse.builder().build();

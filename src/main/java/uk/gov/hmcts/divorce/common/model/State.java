@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.common.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
@@ -16,17 +15,15 @@ import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.validateBasi
 @Getter
 public enum State {
 
-    @JsonProperty("Draft")
     @CCD(
-        label = "Draft",
-        name = "Draft"
+        name = "Draft",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
     Draft("Draft"),
 
-    @JsonProperty("AwaitingPayment")
     @CCD(
-        label = "Awaiting Payment",
-        name = "Awaiting Payment"
+        name = "Awaiting Payment",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
     AwaitingPayment("AwaitingPayment") {
         @Override
@@ -37,17 +34,35 @@ public enum State {
         }
     },
 
-    @JsonProperty("SOTAgreementPayAndSubmitRequired")
     @CCD(
-        label = "Statement of Truth, Pay and Submit Required",
-        name = "Statement of Truth, Pay and Submit Required"
+        name = "Statement of Truth, Pay and Submit Required",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
     SOTAgreementPayAndSubmitRequired("SOTAgreementPayAndSubmitRequired"),
 
-    @JsonProperty("Submitted")
     @CCD(
-        label = "Application paid and submitted",
-        name = "Application submitted"
+        name = "Application paid and submitted - awaiting documents",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
+    )
+    AwaitingDocuments("AwaitingDocuments") {
+        @Override
+        public List<String> validate(CaseData caseData) {
+            List<String> errors = new ArrayList<>();
+
+            if (isPaymentIncomplete(caseData)) {
+                errors.add("Payment incomplete");
+            }
+            if (!hasAwaitingDocuments(caseData)) {
+                errors.add("No Awaiting documents");
+            }
+
+            return errors;
+        }
+    },
+
+    @CCD(
+        name = "Application paid and submitted",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
     Submitted("Submitted") {
         @Override
@@ -62,34 +77,6 @@ public enum State {
             }
             if (!caseData.hasStatementOfTruth() && !caseData.hasSolSignStatementOfTruth()) {
                 errors.add("Statement of truth must be accepted by the person making the application");
-            }
-
-            return errors;
-        }
-    },
-
-    @JsonProperty("SolicitorAwaitingPaymentConfirmation")
-    @CCD(
-        label = "Solicitor - Awaiting Payment Confirmation",
-        name = "Solicitor - Awaiting Payment Confirmation"
-    )
-    SolicitorAwaitingPaymentConfirmation("SolicitorAwaitingPaymentConfirmation"),
-
-    @JsonProperty("AwaitingDocuments")
-    @CCD(
-        label = "Case created and awaiting action by applicant 1",
-        name = "Awaiting applicant 1"
-    )
-    AwaitingDocuments("AwaitingDocuments") {
-        @Override
-        public List<String> validate(CaseData caseData) {
-            List<String> errors = new ArrayList<>();
-
-            if (isPaymentIncomplete(caseData)) {
-                errors.add("Payment incomplete");
-            }
-            if (!hasAwaitingDocuments(caseData)) {
-                errors.add("No Awaiting documents");
             }
 
             return errors;
