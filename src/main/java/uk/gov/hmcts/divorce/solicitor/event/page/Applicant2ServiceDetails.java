@@ -11,24 +11,19 @@ import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
-import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
-import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
-import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.divorce.solicitor.service.SolicitorCreateApplicationService;
 
 import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.util.CollectionUtils.firstElement;
 import static uk.gov.hmcts.divorce.common.model.UserRole.APPLICANT_1_SOLICITOR;
 
 @Component
 @Slf4j
 public class Applicant2ServiceDetails implements CcdPageConfiguration {
-    @Autowired
-    private OrganisationClient organisationClient;
 
     @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private SolicitorCreateApplicationService solicitorCreateApplicationService;
 
     @Autowired
     private HttpServletRequest request;
@@ -36,6 +31,7 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {
+
         pageBuilder
             .page("Applicant2ServiceDetails", this::midEvent)
             .pageLabel("Applicant 2 service details")
@@ -69,30 +65,11 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
         CaseDetails<CaseData, State> details,
         CaseDetails<CaseData, State> detailsBefore
     ) {
-        CaseData caseData = details.getData();
-
         log.info("Mid-event callback triggered for Applicant2ServiceDetails");
-
-        if (caseData.getApplicant2SolicitorRepresented().toBoolean() && caseData.getApp2SolDigital().toBoolean()) {
-            OrganisationsResponse organisationsResponse = organisationClient.getUserOrganisation(
-                request.getHeader(AUTHORIZATION),
-                authTokenGenerator.generate()
-            );
-
-            String solicitorUserOrgId = organisationsResponse.getOrganisationIdentifier();
-
-            log.info("Solicitor organisation {} retrieved from Prd Api for case id {} ", solicitorUserOrgId, details.getId());
-
-            caseData.setApplicant2OrgContactInformation(firstElement(organisationsResponse.getContactInformation()));
-
-            return AboutToStartOrSubmitResponse
-                .<CaseData, State>builder()
-                .data(caseData)
-                .build();
-        }
-        return AboutToStartOrSubmitResponse
-            .<CaseData, State>builder()
-            .data(caseData)
-            .build();
+        return solicitorCreateApplicationService.setApplicant2SolOrganisationInfo(
+            details.getData(),
+            details.getId(),
+            request.getHeader(AUTHORIZATION)
+        );
     }
 }
