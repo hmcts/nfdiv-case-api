@@ -22,7 +22,7 @@ public enum State {
     Draft("Draft"),
 
     @CCD(
-        name = "Awaiting Payment",
+        name = "Awaiting payment",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
     AwaitingPayment("AwaitingPayment") {
