@@ -22,7 +22,7 @@ public class ClaimForCosts implements CcdPageConfiguration {
                 SOLICITOR_NFD_PREVIEW_BANNER,
                 SOLE_APPLICATION_CONDITION)
             .label(
-                "LabelNFJointDBanner-ClaimForCosts",
+                "LabelNFDJointBanner-ClaimForCosts",
                 SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
                 JOINT_APPLICATION_CONDITION)
             .label(

@@ -29,7 +29,7 @@ public class MarriageIrretrievablyBroken implements CcdPageConfiguration {
                 SOLICITOR_NFD_PREVIEW_BANNER,
                 SOLE_APPLICATION_CONDITION)
             .label(
-                "LabelNFJointDBanner-MarriageIrretrievablyBroken",
+                "LabelNFDJointBanner-MarriageIrretrievablyBroken",
                 SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
                 JOINT_APPLICATION_CONDITION)
             .label(

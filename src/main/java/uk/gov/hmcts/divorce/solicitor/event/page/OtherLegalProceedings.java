@@ -22,7 +22,7 @@ public class OtherLegalProceedings implements CcdPageConfiguration {
                 SOLICITOR_NFD_PREVIEW_BANNER,
                 SOLE_APPLICATION_CONDITION)
             .label(
-                "LabelNFJointDBanner-OtherLegalProceedings",
+                "LabelNFDJointBanner-OtherLegalProceedings",
                 SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
                 JOINT_APPLICATION_CONDITION)
             .mandatory(CaseData::getLegalProceedings)

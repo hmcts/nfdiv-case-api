@@ -23,7 +23,7 @@ public class MarriageCertificateDetails implements CcdPageConfiguration {
                 SOLICITOR_NFD_PREVIEW_BANNER,
                 SOLE_APPLICATION_CONDITION)
             .label(
-                "LabelNFJointDBanner-MarriageCertificateDetails",
+                "LabelNFDJointBanner-MarriageCertificateDetails",
                 SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
                 JOINT_APPLICATION_CONDITION)
             .complex(CaseData::getMarriageDetails)

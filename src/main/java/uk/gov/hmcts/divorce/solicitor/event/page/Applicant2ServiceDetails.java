@@ -44,7 +44,7 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
                 SOLICITOR_NFD_PREVIEW_BANNER,
                 SOLE_APPLICATION_CONDITION)
             .label(
-                "LabelNFJointDBanner-Applicant2ServiceDetails",
+                "LabelNFDJointBanner-Applicant2ServiceDetails",
                 SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
                 JOINT_APPLICATION_CONDITION)
             .mandatory(CaseData::getApplicant2SolicitorRepresented)

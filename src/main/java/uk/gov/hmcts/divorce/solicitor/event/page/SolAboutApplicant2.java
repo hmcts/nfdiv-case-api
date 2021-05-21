@@ -22,7 +22,7 @@ public class SolAboutApplicant2 implements CcdPageConfiguration {
                 SOLICITOR_NFD_PREVIEW_BANNER,
                 SOLE_APPLICATION_CONDITION)
             .label(
-                "LabelNFJointDBanner-AboutApplicant2",
+                "LabelNFDJointBanner-AboutApplicant2",
                 SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
                 JOINT_APPLICATION_CONDITION)
             .mandatory(CaseData::getApplicant2FirstName)
