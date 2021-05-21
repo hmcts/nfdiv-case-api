@@ -40,7 +40,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingPayment;
-import static uk.gov.hmcts.divorce.common.model.State.SOTAgreementPayAndSubmitRequired;
+import static uk.gov.hmcts.divorce.common.model.State.Draft;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorStatementOfTruthPaySubmit.SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_1_SOL_AUTH_TOKEN;
@@ -148,7 +148,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
-        caseDetails.setState(SOTAgreementPayAndSubmitRequired);
+        caseDetails.setState(Draft);
 
         AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
             AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -177,14 +177,14 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         caseData.setSolSignStatementOfTruth(NO);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
-        caseDetails.setState(SOTAgreementPayAndSubmitRequired);
+        caseDetails.setState(Draft);
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorStatementOfTruthPaySubmit
             .aboutToSubmit(caseDetails, beforeCaseDetails);
 
         assertThat(response.getData(), is(caseData));
-        assertThat(response.getState(), is(SOTAgreementPayAndSubmitRequired));
+        assertThat(response.getState(), is(Draft));
         assertThat(response.getErrors(), contains(STATEMENT_OF_TRUTH_ERROR_MESSAGE));
     }
 
@@ -197,7 +197,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(caseId);
         caseDetails.setData(caseData);
-        caseDetails.setState(SOTAgreementPayAndSubmitRequired);
+        caseDetails.setState(Draft);
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
 
         AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
@@ -228,7 +228,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(caseId);
         caseDetails.setData(caseData);
-        caseDetails.setState(SOTAgreementPayAndSubmitRequired);
+        caseDetails.setState(Draft);
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
 
         AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
@@ -272,7 +272,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
-        caseDetails.setState(SOTAgreementPayAndSubmitRequired);
+        caseDetails.setState(Draft);
 
         AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
             AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -315,7 +315,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
-        caseDetails.setState(SOTAgreementPayAndSubmitRequired);
+        caseDetails.setState(Draft);
 
         AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
             AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -348,7 +348,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
-        caseDetails.setState(SOTAgreementPayAndSubmitRequired);
+        caseDetails.setState(Draft);
 
         AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
             AboutToStartOrSubmitResponse.<CaseData, State>builder()

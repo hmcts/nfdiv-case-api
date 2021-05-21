@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 import static org.skyscreamer.jsonassert.JSONCompareMode.STRICT;
 import static org.springframework.http.HttpStatus.OK;
-import static uk.gov.hmcts.divorce.common.model.State.SOTAgreementPayAndSubmitRequired;
+import static uk.gov.hmcts.divorce.common.model.State.Draft;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorStatementOfTruthPaySubmit.SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
@@ -65,7 +65,7 @@ public class SolicitorSubmitApplicationTest extends FunctionalTestSuite {
                     .builder()
                     .id(1L)
                     .data(caseData(VALID_ABOUT_TO_SUBMIT_REQUEST))
-                    .state(SOTAgreementPayAndSubmitRequired.getName())
+                    .state(Draft.getName())
                     .build()
             )
             .build();

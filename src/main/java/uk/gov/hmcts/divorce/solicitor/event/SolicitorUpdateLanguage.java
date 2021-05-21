@@ -10,7 +10,7 @@ import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.LanguagePreference;
 
-import static uk.gov.hmcts.divorce.common.model.State.SOTAgreementPayAndSubmitRequired;
+import static uk.gov.hmcts.divorce.common.model.State.Draft;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
@@ -38,7 +38,7 @@ public class SolicitorUpdateLanguage implements CCDConfig<CaseData, State, UserR
 
         return new PageBuilder(configBuilder
             .event(SOLICITOR_UPDATE_LANGUAGE)
-            .forStates(SOTAgreementPayAndSubmitRequired, Submitted)
+            .forStates(Draft, Submitted)
             .name("Update Language")
             .description("Update Language")
             .displayOrder(3)

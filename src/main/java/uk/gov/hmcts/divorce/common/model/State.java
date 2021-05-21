@@ -35,12 +35,6 @@ public enum State {
     },
 
     @CCD(
-        name = "Statement of Truth, Pay and Submit Required",
-        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
-    )
-    SOTAgreementPayAndSubmitRequired("SOTAgreementPayAndSubmitRequired"),
-
-    @CCD(
         name = "Application paid and submitted - awaiting documents",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
