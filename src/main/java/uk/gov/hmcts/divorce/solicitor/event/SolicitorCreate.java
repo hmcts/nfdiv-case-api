@@ -12,6 +12,9 @@ import uk.gov.hmcts.divorce.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
+import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
+import uk.gov.hmcts.divorce.common.updater.CaseDataUpdater;
+import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChainFactory;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2ServiceDetails;
 import uk.gov.hmcts.divorce.solicitor.event.page.ClaimForCosts;
 import uk.gov.hmcts.divorce.solicitor.event.page.FinancialOrders;
@@ -25,7 +28,9 @@ import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant2;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutTheSolicitor;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolHowDoYouWantToApplyForDivorce;
 import uk.gov.hmcts.divorce.solicitor.event.page.UploadMarriageCertificate;
-import uk.gov.hmcts.divorce.solicitor.service.SolicitorCreateApplicationService;
+import uk.gov.hmcts.divorce.solicitor.service.updater.ClaimsCost;
+import uk.gov.hmcts.divorce.solicitor.service.updater.MiniApplicationDraft;
+import uk.gov.hmcts.divorce.solicitor.service.updater.SolicitorCourtDetails;
 
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -55,7 +60,16 @@ public class SolicitorCreate implements CCDConfig<CaseData, State, UserRole> {
     private Applicant2ServiceDetails applicant2ServiceDetails;
 
     @Autowired
-    private SolicitorCreateApplicationService solicitorCreateApplicationService;
+    private ClaimsCost claimsCost;
+
+    @Autowired
+    private SolicitorCourtDetails solicitorCourtDetails;
+
+    @Autowired
+    private MiniApplicationDraft miniApplicationDraft;
+
+    @Autowired
+    private CaseDataUpdaterChainFactory caseDataUpdaterChainFactory;
 
     @Autowired
     private HttpServletRequest request;
@@ -87,12 +101,24 @@ public class SolicitorCreate implements CCDConfig<CaseData, State, UserRole> {
                                                                        CaseDetails<CaseData, State> beforeDetails) {
         log.info("Solicitor create application about to submit callback invoked");
 
-        final CaseData data = solicitorCreateApplicationService.aboutToSubmit(
-            details.getData(),
-            details.getId(),
-            details.getCreatedDate().toLocalDate(),
-            request.getHeader(AUTHORIZATION)
-        );
+        CaseData caseData = details.getData();
+
+        final List<CaseDataUpdater> caseDataUpdaters = asList(
+            claimsCost,
+            solicitorCourtDetails,
+            miniApplicationDraft);
+
+        final CaseDataContext caseDataContext = CaseDataContext.builder()
+            .caseData(caseData)
+            .caseId(details.getId())
+            .createdDate(details.getCreatedDate().toLocalDate())
+            .userAuthToken(request.getHeader(AUTHORIZATION))
+            .build();
+
+        final CaseData data = caseDataUpdaterChainFactory
+            .createWith(caseDataUpdaters)
+            .processNext(caseDataContext)
+            .getCaseData();
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
