@@ -8,7 +8,6 @@ import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 
 import static uk.gov.hmcts.divorce.common.model.State.Draft;
-import static uk.gov.hmcts.divorce.common.model.State.SOTAgreementPayAndSubmitRequired;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_LA;
@@ -34,12 +33,8 @@ public class NoFaultDivorce implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.grant(Draft, CREATE_READ_UPDATE, CITIZEN);
         configBuilder.grant(Draft, READ, CASEWORKER_DIVORCE_COURTADMIN_BETA);
         configBuilder.grant(Draft, READ, CASEWORKER_DIVORCE_COURTADMIN);
-        configBuilder.grant(Draft, READ, CASEWORKER_DIVORCE_SOLICITOR);
-        configBuilder.grant(Draft, READ, CASEWORKER_DIVORCE_SUPERUSER);
+        configBuilder.grant(Draft, CREATE_READ_UPDATE, CASEWORKER_DIVORCE_SOLICITOR);
+        configBuilder.grant(Draft, CREATE_READ_UPDATE, CASEWORKER_DIVORCE_SUPERUSER);
         configBuilder.grant(Draft, READ, CASEWORKER_DIVORCE_COURTADMIN_LA);
-
-        configBuilder.grant(SOTAgreementPayAndSubmitRequired, CREATE_READ_UPDATE, CASEWORKER_DIVORCE_SOLICITOR);
-        configBuilder.grant(SOTAgreementPayAndSubmitRequired, CREATE_READ_UPDATE, CASEWORKER_DIVORCE_SUPERUSER);
-        configBuilder.grant(SOTAgreementPayAndSubmitRequired, READ, CASEWORKER_DIVORCE_COURTADMIN_LA);
     }
 }

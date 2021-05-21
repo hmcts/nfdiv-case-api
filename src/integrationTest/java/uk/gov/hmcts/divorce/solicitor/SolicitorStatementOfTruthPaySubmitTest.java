@@ -50,7 +50,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.common.model.State.SOTAgreementPayAndSubmitRequired;
+import static uk.gov.hmcts.divorce.common.model.State.Draft;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorStatementOfTruthPaySubmit.SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT;
@@ -240,7 +240,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .content(objectMapper.writeValueAsString(callbackRequest(
                 caseDataWithStatementOfTruth(),
                 SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT,
-                SOTAgreementPayAndSubmitRequired.name())))
+                Draft.name())))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
@@ -270,7 +270,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .content(objectMapper.writeValueAsString(callbackRequest(
                 caseDataWithStatementOfTruth(),
                 SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT,
-                SOTAgreementPayAndSubmitRequired.name())))
+                Draft.name())))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
@@ -304,7 +304,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .content(objectMapper.writeValueAsString(callbackRequest(
                 caseData,
                 SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT,
-                SOTAgreementPayAndSubmitRequired.name())))
+                Draft.name())))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
@@ -336,7 +336,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .content(objectMapper.writeValueAsString(callbackRequest(
                 caseData,
                 SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT,
-                SOTAgreementPayAndSubmitRequired.name())))
+                Draft.name())))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isForbidden()
@@ -361,7 +361,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .content(objectMapper.writeValueAsString(callbackRequest(
                 caseData,
                 SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT,
-                SOTAgreementPayAndSubmitRequired.name())))
+                Draft.name())))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isUnauthorized()
@@ -383,7 +383,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .content(objectMapper.writeValueAsString(callbackRequest(
                 caseDataWithOrderSummary(),
                 SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT,
-                SOTAgreementPayAndSubmitRequired.name())))
+                Draft.name())))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()

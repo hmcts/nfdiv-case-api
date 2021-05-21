@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Arrays.asList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static uk.gov.hmcts.divorce.common.model.State.SOTAgreementPayAndSubmitRequired;
+import static uk.gov.hmcts.divorce.common.model.State.Draft;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_LA;
@@ -101,7 +101,7 @@ public class SolicitorUpdate implements CCDConfig<CaseData, State, UserRole> {
 
         return new PageBuilder(configBuilder
             .event(SOLICITOR_UPDATE)
-            .forState(SOTAgreementPayAndSubmitRequired)
+            .forState(Draft)
             .name("Amend divorce application")
             .description("Amend divorce application")
             .displayOrder(2)

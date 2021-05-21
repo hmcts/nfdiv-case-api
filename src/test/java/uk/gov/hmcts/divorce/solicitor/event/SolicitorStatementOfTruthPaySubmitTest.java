@@ -39,8 +39,8 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.common.model.State.SOTAgreementPayAndSubmitRequired;
-import static uk.gov.hmcts.divorce.common.model.State.SolicitorAwaitingPaymentConfirmation;
+import static uk.gov.hmcts.divorce.common.model.State.AwaitingPayment;
+import static uk.gov.hmcts.divorce.common.model.State.Draft;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorStatementOfTruthPaySubmit.SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_1_SOL_AUTH_TOKEN;
@@ -148,12 +148,12 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
-        caseDetails.setState(SOTAgreementPayAndSubmitRequired);
+        caseDetails.setState(Draft);
 
         AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
             AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
-                .state(SolicitorAwaitingPaymentConfirmation)
+                .state(AwaitingPayment)
                 .build();
 
         when(solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN))
@@ -165,7 +165,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .aboutToSubmit(caseDetails, new CaseDetails<>());
 
         assertThat(response.getData(), is(caseData));
-        assertThat(response.getState(), is(SolicitorAwaitingPaymentConfirmation));
+        assertThat(response.getState(), is(AwaitingPayment));
         assertThat(response.getErrors(), is(nullValue()));
     }
 
@@ -177,14 +177,14 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         caseData.setSolSignStatementOfTruth(NO);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
-        caseDetails.setState(SOTAgreementPayAndSubmitRequired);
+        caseDetails.setState(Draft);
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorStatementOfTruthPaySubmit
             .aboutToSubmit(caseDetails, beforeCaseDetails);
 
         assertThat(response.getData(), is(caseData));
-        assertThat(response.getState(), is(SOTAgreementPayAndSubmitRequired));
+        assertThat(response.getState(), is(Draft));
         assertThat(response.getErrors(), contains(STATEMENT_OF_TRUTH_ERROR_MESSAGE));
     }
 
@@ -197,7 +197,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(caseId);
         caseDetails.setData(caseData);
-        caseDetails.setState(SOTAgreementPayAndSubmitRequired);
+        caseDetails.setState(Draft);
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
 
         AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
@@ -228,7 +228,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(caseId);
         caseDetails.setData(caseData);
-        caseDetails.setState(SOTAgreementPayAndSubmitRequired);
+        caseDetails.setState(Draft);
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
 
         AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
@@ -272,12 +272,12 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
-        caseDetails.setState(SOTAgreementPayAndSubmitRequired);
+        caseDetails.setState(Draft);
 
         AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
             AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
-                .state(SolicitorAwaitingPaymentConfirmation)
+                .state(AwaitingPayment)
                 .build();
 
         when(solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN))
@@ -299,7 +299,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .build();
 
         assertThat(response.getData(), is(expectedCaseData));
-        assertThat(response.getState(), is(SolicitorAwaitingPaymentConfirmation));
+        assertThat(response.getState(), is(AwaitingPayment));
         assertThat(response.getErrors(), is(nullValue()));
     }
 
@@ -315,12 +315,12 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
-        caseDetails.setState(SOTAgreementPayAndSubmitRequired);
+        caseDetails.setState(Draft);
 
         AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
             AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
-                .state(SolicitorAwaitingPaymentConfirmation)
+                .state(AwaitingPayment)
                 .build();
 
         when(solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN))
@@ -332,7 +332,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .aboutToSubmit(caseDetails, new CaseDetails<>());
 
         assertThat(response.getData(), is(caseData));
-        assertThat(response.getState(), is(SolicitorAwaitingPaymentConfirmation));
+        assertThat(response.getState(), is(AwaitingPayment));
         assertThat(response.getErrors(), is(nullValue()));
     }
 
@@ -348,12 +348,12 @@ public class SolicitorStatementOfTruthPaySubmitTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
-        caseDetails.setState(SOTAgreementPayAndSubmitRequired);
+        caseDetails.setState(Draft);
 
         AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
             AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
-                .state(SolicitorAwaitingPaymentConfirmation)
+                .state(AwaitingPayment)
                 .build();
 
         when(solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN))
@@ -365,7 +365,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
             .aboutToSubmit(caseDetails, new CaseDetails<>());
 
         assertThat(response.getData(), is(caseData));
-        assertThat(response.getState(), is(SolicitorAwaitingPaymentConfirmation));
+        assertThat(response.getState(), is(AwaitingPayment));
         assertThat(response.getErrors(), is(nullValue()));
     }
 
@@ -405,7 +405,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
     }
 
     @Test
-    void shouldSetStateToSolicitorAwaitingPaymentConfirmationIfPaymentNotYetSuccessful() {
+    void shouldSetStateToAwaitingPaymentIfPaymentNotYetSuccessful() {
         final long caseId = 1L;
         final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("1000").build();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -436,11 +436,11 @@ public class SolicitorStatementOfTruthPaySubmitTest {
 
         solicitorStatementOfTruthPaySubmit.submitted(caseDetails, beforeCaseDetails);
 
-        assertThat(caseDetails.getState(), is(SolicitorAwaitingPaymentConfirmation));
+        assertThat(caseDetails.getState(), is(AwaitingPayment));
     }
 
     @Test
-    void shouldSetStateToSolicitorAwaitingPaymentConfirmationWhenHelpWithFeesIsSelectedAndNoPaymentIsMade() {
+    void shouldSetStateToAwaitingPaymentWhenHelpWithFeesIsSelectedAndNoPaymentIsMade() {
         final long caseId = 1L;
         final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("1000").build();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -455,6 +455,6 @@ public class SolicitorStatementOfTruthPaySubmitTest {
 
         solicitorStatementOfTruthPaySubmit.submitted(caseDetails, beforeCaseDetails);
 
-        assertThat(caseDetails.getState(), is(SolicitorAwaitingPaymentConfirmation));
+        assertThat(caseDetails.getState(), is(AwaitingPayment));
     }
 }

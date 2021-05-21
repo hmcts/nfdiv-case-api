@@ -47,7 +47,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.common.model.State.SolicitorAwaitingPaymentConfirmation;
+import static uk.gov.hmcts.divorce.common.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
@@ -178,7 +178,7 @@ public class SolicitorSubmitApplicationServiceTest {
         );
 
         assertThat(response.getData()).isEqualTo(caseData);
-        assertThat(response.getState()).isEqualTo(SolicitorAwaitingPaymentConfirmation);
+        assertThat(response.getState()).isEqualTo(AwaitingPayment);
     }
 
     @Test

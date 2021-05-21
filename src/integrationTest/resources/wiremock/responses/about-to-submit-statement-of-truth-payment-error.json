@@ -10,5 +10,5 @@
     "Payment incomplete"
   ],
   "warnings": null,
-  "state": "SolicitorAwaitingPaymentConfirmation"
+  "state": "AwaitingPayment"
 }
