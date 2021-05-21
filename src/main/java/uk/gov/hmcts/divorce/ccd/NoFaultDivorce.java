@@ -21,7 +21,7 @@ import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 @Component
 public class NoFaultDivorce implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String CASE_TYPE = "NO_FAULT_DIVORCE10";
+    public static final String CASE_TYPE = "NO_FAULT_DIVORCE11";
     public static final String JURISDICTION = "DIVORCE";
 
     @Override

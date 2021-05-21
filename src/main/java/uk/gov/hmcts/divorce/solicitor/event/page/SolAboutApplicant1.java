@@ -16,15 +16,18 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
             .mandatory(CaseData::getApplicant1FirstName)
             .optional(CaseData::getApplicant1MiddleName)
             .mandatory(CaseData::getApplicant1LastName)
-            .mandatory(CaseData::getApplicant1NameDifferentToMarriageCertificate)
+            .mandatory(CaseData::getApplicant1NameDifferentToMarriageCertificate, null, null,
+                "Is applicant 1's name different to that on their marriage certificate?")
             .label(
                 "LabelSolAboutApp1Para-2",
                 "About Applicant 1",
                 "applicant1NameDifferentToMarriageCertificate=\"Yes\"")
-            .mandatory(CaseData::getApplicant1NameChangedHow, "applicant1NameDifferentToMarriageCertificate=\"Yes\"")
-            .mandatory(CaseData::getApplicant1NameChangedHowOtherDetails, "applicant1NameChangedHow=\"other\"")
-            .mandatory(CaseData::getDivorceWho)
-            .mandatory(CaseData::getInferredApplicant1Gender)
+            .mandatory(CaseData::getApplicant1NameChangedHow, "applicant1NameDifferentToMarriageCertificate=\"Yes\"", null,
+                "How did they change their name?")
+            .mandatory(CaseData::getApplicant1NameChangedHowOtherDetails, "applicant1NameChangedHow=\"other\"", null,
+                "If not through marriage or deed poll, please provide details of how they legally changed they name")
+            .mandatory(CaseData::getDivorceWho, null, null, null, "Their husband or wife")
+            .mandatory(CaseData::getInferredApplicant1Gender, null, null, "What is applicant 1's gender?")
             .complex(CaseData::getMarriageDetails)
                 .mandatory(MarriageDetails::getIsSameSexCouple)
                 .done()
