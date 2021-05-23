@@ -1,17 +1,16 @@
 {
   "data": {
     "divorceOrDissolution": "divorce",
+    "marriageMarriedInUk": null,
+    "marriageCertificateInEnglish": null,
+    "marriageCertifiedTranslation": null,
+    "marriageCountryOfMarriage": null,
+    "marriagePlaceOfMarriage": null,
+    "marriageDate": null,
+    "marriageIsSameSexCouple": null,
     "applicant1FirstName": "test_first_name",
     "applicant1LastName": "test_last_name",
     "applicant1Email": "test@test.com",
-    "languagePreferenceWelsh": "NO",
-    "divorceCostsClaim": "YES",
-    "financialOrder": "NO",
-    "divorceClaimFrom": [
-      "applicant2"
-    ],
-    "divorceUnit": "serviceCentre",
-    "selectedDivorceCentreSiteId": "AA07",
     "jurisdictionApplicant1Residence": null,
     "jurisdictionApplicant2Residence": null,
     "jurisdictionApplicant1Domicile": null,
@@ -21,13 +20,24 @@
     "jurisdictionResidualEligible": null,
     "jurisdictionBothLastHabituallyResident": null,
     "jurisdictionConnections": null,
-    "marriageMarriedInUk": null,
-    "marriageCertificateInEnglish": null,
-    "marriageCertifiedTranslation": null,
-    "marriageCountryOfMarriage": null,
-    "marriagePlaceOfMarriage": null,
-    "marriageDate": null,
-    "marriageIsSameSexCouple": null,
+    "languagePreferenceWelsh": "NO",
+    "applicant1OrganisationPolicy": {
+      "Organisation": {
+        "OrganisationID": "ABC123",
+        "OrganisationName": "Test Organisation"
+      },
+      "PreviousOrganisations": null,
+      "OrgPolicyReference": null,
+      "PrepopulateToUsersOrganisation": null,
+      "OrgPolicyCaseAssignedRole": null
+    },
+    "divorceCostsClaim": "YES",
+    "financialOrder": "NO",
+    "divorceClaimFrom": [
+      "applicant2"
+    ],
+    "divorceUnit": "serviceCentre",
+    "selectedDivorceCentreSiteId": "AA07",
     "documentsGenerated": [
       {
         "id": "Divorce application",
@@ -45,16 +55,6 @@
         }
       }
     ],
-    "applicant1OrganisationPolicy": {
-      "Organisation": {
-        "OrganisationID": "ABC123",
-        "OrganisationName": "Test Organisation"
-      },
-      "PreviousOrganisations": null,
-      "OrgPolicyReference": null,
-      "PrepopulateToUsersOrganisation": null,
-      "OrgPolicyCaseAssignedRole": null
-    },
     "applicant2OrganisationPolicy": {
       "Organisation": {
         "OrganisationID": "ABC123",
@@ -64,15 +64,6 @@
       "OrgPolicyReference": null,
       "PrepopulateToUsersOrganisation": null,
       "OrgPolicyCaseAssignedRole": null
-    },
-    "applicant2OrgContactInformation": {
-      "addressLine1": "addressLine1",
-      "addressLine2": "addressLine2",
-      "addressLine3": "addressLine3",
-      "country": "country",
-      "county": null,
-      "postCode": null,
-      "townCity": "townCity"
     }
   },
   "errors": null,

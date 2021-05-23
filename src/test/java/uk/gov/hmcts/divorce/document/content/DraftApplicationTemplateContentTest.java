@@ -3,14 +3,23 @@ package uk.gov.hmcts.divorce.document.content;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
+import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInformation;
+import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.util.Map;
 
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DISSOLUTION;
@@ -48,16 +57,24 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.OF
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATIONSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TO_END_A_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TO_END_THE_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationContactInformation;
 
 @ExtendWith(MockitoExtension.class)
 public class DraftApplicationTemplateContentTest {
+
+    @Mock
+    private AuthTokenGenerator authTokenGenerator;
+
+    @Mock
+    private OrganisationClient organisationClient;
 
     @InjectMocks
     private DraftApplicationTemplateContent templateContent;
@@ -67,9 +84,12 @@ public class DraftApplicationTemplateContentTest {
         CaseData caseData = caseData();
         caseData.setDivorceCostsClaim(YES);
         caseData.setFinancialOrder(NO);
-        caseData.setApplicant2OrgContactInformation(organisationContactInformation());
 
-        Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(organisationClient.getUserOrganisation(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN))
+            .thenReturn(organisationResponse());
+
+        Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE, TEST_AUTHORIZATION_TOKEN);
 
         assertThat(templateData).contains(
             entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
@@ -90,22 +110,29 @@ public class DraftApplicationTemplateContentTest {
             entry(MARRIAGE_OR_RELATIONSHIP, MARRIAGE),
             entry(COURT_CASE_DETAILS, null),
             entry(MARRIAGE_DATE, null),
-            entry(APPLICANT_2_POSTAL_ADDRESS, "addressLine1\naddressLine2\naddressLine3\ntownCity\ncountry"),
+            entry(APPLICANT_2_POSTAL_ADDRESS, "line1\nline2\ncity\npostcode"),
             entry(APPLICANT_2_FIRST_NAME, null),
             entry(APPLICANT_2_FULL_NAME, null),
             entry(APPLICANT_2_LAST_NAME, null)
         );
+
+        verify(authTokenGenerator).generate();
+        verify(organisationClient).getUserOrganisation(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN);
+        verifyNoMoreInteractions(authTokenGenerator, organisationClient);
     }
 
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForDissolution() {
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(organisationClient.getUserOrganisation(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN))
+            .thenReturn(organisationResponse());
+
         CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.setDivorceCostsClaim(NO);
         caseData.setFinancialOrder(NO);
-        caseData.setApplicant2OrgContactInformation(organisationContactInformation());
 
-        Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
+        Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE, TEST_AUTHORIZATION_TOKEN);
 
         assertThat(templateData).contains(
             entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
@@ -126,11 +153,15 @@ public class DraftApplicationTemplateContentTest {
             entry(MARRIAGE_OR_RELATIONSHIP, RELATIONSHIP),
             entry(COURT_CASE_DETAILS, null),
             entry(MARRIAGE_DATE, null),
-            entry(APPLICANT_2_POSTAL_ADDRESS, "addressLine1\naddressLine2\naddressLine3\ntownCity\ncountry"),
+            entry(APPLICANT_2_POSTAL_ADDRESS, "line1\nline2\ncity\npostcode"),
             entry(APPLICANT_2_FIRST_NAME, null),
             entry(APPLICANT_2_FULL_NAME, null),
             entry(APPLICANT_2_LAST_NAME, null)
         );
+
+        verify(authTokenGenerator).generate();
+        verify(organisationClient).getUserOrganisation(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN);
+        verifyNoMoreInteractions(authTokenGenerator, organisationClient);
     }
 
     @Test
@@ -150,10 +181,27 @@ public class DraftApplicationTemplateContentTest {
         caseData.setFinancialOrder(NO);
         caseData.setApplicant2HomeAddress(address);
 
-        Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
+        Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE, TEST_AUTHORIZATION_TOKEN);
 
         assertThat(templateData).contains(
             entry(APPLICANT_2_POSTAL_ADDRESS, "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom")
         );
+    }
+
+    private OrganisationsResponse organisationResponse() {
+        return OrganisationsResponse
+            .builder()
+            .organisationIdentifier(TEST_ORG_ID)
+            .contactInformation(singletonList(
+                OrganisationContactInformation
+                    .builder()
+                    .postCode("postcode")
+                    .addressLine1("line1")
+                    .addressLine2("line2")
+                    .townCity("city")
+                    .build()
+                )
+            )
+            .build();
     }
 }

@@ -50,8 +50,8 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationContactInformation;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationResponseWith;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @ExtendWith(SpringExtension.class)
@@ -94,14 +94,16 @@ class SolicitorCreateTest {
     @Test
     void givenValidCaseDataWhenAboutToSubmitCallbackIsInvokedCaseDataIsSetCorrectly() throws Exception {
 
-        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Divorce application");
 
         stubForDocAssembly();
 
+        stubGetOrganisationEndpoint(organisationResponseWith(TEST_ORG_ID));
+
         final var jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
             .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant1AndApplicant2Org(), SOLICITOR_CREATE)))
             .accept(APPLICATION_JSON))
@@ -196,7 +198,6 @@ class SolicitorCreateTest {
         CaseData caseData = caseData();
         caseData.setApplicant1OrganisationPolicy(organisationPolicy());
         caseData.setApplicant2OrganisationPolicy(organisationPolicy());
-        caseData.setApplicant2OrgContactInformation(organisationContactInformation());
         return caseData;
     }
 

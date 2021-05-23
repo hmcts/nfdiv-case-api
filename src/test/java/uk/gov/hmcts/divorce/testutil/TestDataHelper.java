@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.testutil;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -22,6 +23,7 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInformation;
+import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
@@ -37,6 +39,7 @@ import static feign.Request.HttpMethod.GET;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static java.time.temporal.ChronoUnit.YEARS;
+import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -236,5 +239,20 @@ public class TestDataHelper {
             .townCity("townCity")
             .country("country")
             .build();
+    }
+
+    public static String organisationResponseWith(final String organisationId) throws JsonProcessingException {
+        return OBJECT_MAPPER.writeValueAsString(
+            OrganisationsResponse.builder()
+                .organisationIdentifier(organisationId)
+                .contactInformation(singletonList(OrganisationContactInformation
+                        .builder()
+                        .addressLine1("addressLine1")
+                        .addressLine2("addressLine2")
+                        .postCode("postCode")
+                        .build()
+                    )
+                )
+                .build());
     }
 }

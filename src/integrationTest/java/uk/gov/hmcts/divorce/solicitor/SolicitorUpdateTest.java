@@ -25,6 +25,7 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
+import uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.util.Set;
@@ -45,6 +46,7 @@ import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemb
 import static uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock.stubForDocumentManagement;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SOLICITOR_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamDetails;
+import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.stubGetOrganisationEndpoint;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
@@ -53,9 +55,11 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationContactInformation;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationResponseWith;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @ExtendWith(SpringExtension.class)
@@ -64,7 +68,9 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 @ContextConfiguration(initializers = {
     DocAssemblyWireMock.PropertiesInitializer.class,
     IdamWireMock.PropertiesInitializer.class,
-    DocManagementStoreWireMock.PropertiesInitializer.class})
+    DocManagementStoreWireMock.PropertiesInitializer.class,
+    PrdOrganisationWireMock.PropertiesInitializer.class
+})
 public class SolicitorUpdateTest {
 
     private static final String SOLICITOR_UPDATE_ABOUT_TO_SUBMIT = "classpath:solicitor-update-about-to-submit-response.json";
@@ -91,6 +97,7 @@ public class SolicitorUpdateTest {
         DocAssemblyWireMock.start();
         IdamWireMock.start();
         DocManagementStoreWireMock.start();
+        PrdOrganisationWireMock.start();
     }
 
     @AfterAll
@@ -98,19 +105,22 @@ public class SolicitorUpdateTest {
         DocAssemblyWireMock.stopAndReset();
         IdamWireMock.stopAndReset();
         DocManagementStoreWireMock.stopAndReset();
+        PrdOrganisationWireMock.stopAndReset();
     }
 
     @Test
     void givenValidCaseDataWithNoDraftDocumentWhenAboutToSubmitCallbackIsInvokedCaseDataIsSetCorrectly() throws Exception {
 
-        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("V2");
 
         stubForDocAssembly();
 
+        stubGetOrganisationEndpoint(organisationResponseWith(TEST_ORG_ID));
+
         final var jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
             .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithNoDocument(), SOLICITOR_UPDATE)))
             .accept(APPLICATION_JSON))
@@ -127,16 +137,17 @@ public class SolicitorUpdateTest {
     @Test
     void givenValidCaseDataWithDraftDocumentWhenAboutToSubmitCallbackIsInvokedCaseDataIsSetCorrectly() throws Exception {
 
-        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("V2");
 
         stubForDocAssembly();
+
+        stubGetOrganisationEndpoint(organisationResponseWith(TEST_ORG_ID));
+
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, SOLICITOR_USER_ID, SOLICITOR_ROLE);
 
         final var documentUuid = FilenameUtils.getName(DOCUMENT_URL);
         stubForDocumentManagement(documentUuid, OK);
-
-        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
 
         final var jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -167,7 +178,6 @@ public class SolicitorUpdateTest {
             .divorceClaimFrom(Set.of(ClaimsCostFrom.APPLICANT_2))
             .divorceUnit(Court.SERVICE_CENTRE)
             .selectedDivorceCentreSiteId("AA07")
-            .applicant2OrgContactInformation(organisationContactInformation())
             .build();
     }
 

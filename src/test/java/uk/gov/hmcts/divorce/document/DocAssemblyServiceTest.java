@@ -70,7 +70,7 @@ public class DocAssemblyServiceTest {
         Map<String, Object> caseDataMap = expectedCaseData();
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(applicationTemplateMapper.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(caseDataMap);
+        when(applicationTemplateMapper.apply(caseData, TEST_CASE_ID, LOCAL_DATE, TEST_AUTHORIZATION_TOKEN)).thenReturn(caseDataMap);
 
         DocAssemblyRequest docAssemblyRequest =
             DocAssemblyRequest
@@ -110,7 +110,7 @@ public class DocAssemblyServiceTest {
             TEST_SERVICE_AUTH_TOKEN,
             docAssemblyRequest
         );
-        verify(applicationTemplateMapper).apply(caseData, TEST_CASE_ID, LOCAL_DATE);
+        verify(applicationTemplateMapper).apply(caseData, TEST_CASE_ID, LOCAL_DATE, TEST_AUTHORIZATION_TOKEN);
         verifyNoMoreInteractions(authTokenGenerator, docAssemblyClient, applicationTemplateMapper);
     }
 
@@ -119,7 +119,7 @@ public class DocAssemblyServiceTest {
         CaseData caseData = caseData();
         Map<String, Object> caseDataMap = expectedCaseData();
 
-        when(applicationTemplateMapper.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(caseDataMap);
+        when(applicationTemplateMapper.apply(caseData, TEST_CASE_ID, LOCAL_DATE, TEST_AUTHORIZATION_TOKEN)).thenReturn(caseDataMap);
 
         byte[] emptyBody = {};
         Request request = Request.create(POST, EMPTY, Map.of(), emptyBody, UTF_8, null);

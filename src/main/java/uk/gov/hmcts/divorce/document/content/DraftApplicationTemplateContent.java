@@ -1,10 +1,15 @@
 package uk.gov.hmcts.divorce.document.content;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.FinancialOrderFor;
+import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
+import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInformation;
+import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -12,6 +17,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.springframework.util.CollectionUtils.firstElement;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
@@ -52,7 +58,18 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TO
 @Slf4j
 public class DraftApplicationTemplateContent {
 
-    public Map<String, Object> apply(CaseData caseData, Long ccdCaseReference, LocalDate createdDate) {
+    @Autowired
+    private OrganisationClient organisationClient;
+
+    @Autowired
+    private AuthTokenGenerator authTokenGenerator;
+
+    public Map<String, Object> apply(
+        CaseData caseData,
+        Long ccdCaseReference,
+        LocalDate createdDate,
+        String userAuth
+    ) {
         Map<String, Object> templateData = new HashMap<>();
 
         log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
@@ -103,8 +120,15 @@ public class DraftApplicationTemplateContent {
 
         String applicant2PostalAddress;
         AddressGlobalUK applicant2HomeAddress = caseData.getApplicant2HomeAddress();
+
         if (applicant2HomeAddress == null) {
-            var orgContactInformation = caseData.getApplicant2OrgContactInformation();
+            OrganisationsResponse organisationsResponse = organisationClient.getUserOrganisation(userAuth, authTokenGenerator.generate());
+
+            log.info("Solicitor organisation {} retrieved from Prd Api for case id {} ",
+                organisationsResponse.getOrganisationIdentifier(),
+                ccdCaseReference);
+
+            OrganisationContactInformation orgContactInformation = firstElement(organisationsResponse.getContactInformation());
 
             applicant2PostalAddress =
                 Stream.of(

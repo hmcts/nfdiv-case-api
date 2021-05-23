@@ -10,7 +10,6 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
-import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2ServiceDetails;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutTheSolicitor;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorCreateApplicationService;
 
@@ -31,9 +30,6 @@ class SolicitorCreateTest {
 
     @Mock
     private SolicitorCreateApplicationService solicitorCreateApplicationService;
-
-    @Mock
-    private Applicant2ServiceDetails applicant2ServiceDetails;
 
     @Mock
     private HttpServletRequest httpServletRequest;

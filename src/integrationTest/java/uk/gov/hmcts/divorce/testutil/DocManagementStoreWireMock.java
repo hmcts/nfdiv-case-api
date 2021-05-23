@@ -13,6 +13,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 
 public final class DocManagementStoreWireMock {
 
@@ -37,7 +38,7 @@ public final class DocManagementStoreWireMock {
     public static void stubForDocumentManagement(final String documentUuid, final HttpStatus httpStatus) {
         DM_STORE_SERVER.stubFor(delete("/documents/" + documentUuid + "?permanent=true")
             .withHeader(AUTHORIZATION, new EqualToPattern(TEST_AUTHORIZATION_TOKEN))
-            .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(SERVICE_AUTHORIZATION))
+            .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(TEST_SERVICE_AUTH_TOKEN))
             .withHeader("user-id", new EqualToPattern("1"))
             .withHeader("user-roles", new EqualToPattern("caseworker-divorce-solicitor"))
             .willReturn(aResponse().withStatus(httpStatus.value())));
