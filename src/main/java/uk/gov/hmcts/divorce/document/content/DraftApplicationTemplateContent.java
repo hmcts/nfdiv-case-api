@@ -7,7 +7,6 @@ import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.FinancialOrderFor;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
-import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInformation;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
@@ -128,7 +127,9 @@ public class DraftApplicationTemplateContent {
                 organisationsResponse.getOrganisationIdentifier(),
                 ccdCaseReference);
 
-            OrganisationContactInformation orgContactInformation = firstElement(organisationsResponse.getContactInformation());
+            var orgContactInformation = firstElement(organisationsResponse.getContactInformation());
+
+            assert orgContactInformation != null;
 
             applicant2PostalAddress =
                 Stream.of(
