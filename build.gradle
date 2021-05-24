@@ -316,7 +316,8 @@ bootRun {
       systemProperty 'IDAM_CASEWORKER_PASSWORD', getVaultSecret('idam-caseworker-password')
       systemProperty 'IDAM_SOLICITOR_USERNAME', getVaultSecret('idam-solicitor-username')
       systemProperty 'IDAM_SOLICITOR_PASSWORD', getVaultSecret('idam-solicitor-password')
-      systemProperty 'IDAM_CLIENT_SECRET', getVaultSecret('idam-secret')    }
+      systemProperty 'IDAM_CLIENT_SECRET', getVaultSecret('idam-secret')
+    }
   }
 }
 
@@ -343,7 +344,9 @@ functional {
       systemProperty 'IDAM_CASEWORKER_PASSWORD', getVaultSecret('idam-caseworker-password')
       systemProperty 'IDAM_SOLICITOR_USERNAME', getVaultSecret('idam-solicitor-username')
       systemProperty 'IDAM_SOLICITOR_PASSWORD', getVaultSecret('idam-solicitor-password')
-      systemProperty 'OAUTH2_CLIENT_SECRET', getVaultSecret('idam-secret')    }
+      systemProperty 'OAUTH2_CLIENT_SECRET', getVaultSecret('idam-secret')
+      systemProperty 'APP2_SOL_TEST_EMAIL', getVaultSecret('app2-solicitor-test-email')
+    }
   }
 }
 

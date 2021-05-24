@@ -50,6 +50,18 @@ public final class PrdOrganisationWireMock {
         );
     }
 
+    public static void stubGetOrganisationByEmailEndpoint(final String organisationResponse) {
+        PRD_ORGANISATION_SERVER.stubFor(WireMock.get("/refdata/external/v1/organisations/pbas")
+            .withHeader(AUTHORIZATION, new EqualToPattern(TEST_AUTHORIZATION_TOKEN))
+            .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(TEST_SERVICE_AUTH_TOKEN))
+            .willReturn(aResponse()
+                .withStatus(OK.value())
+                .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                .withBody(organisationResponse)
+            )
+        );
+    }
+
     public static void stubGetOrganisationEndpointForFailure() {
         PRD_ORGANISATION_SERVER.stubFor(WireMock.get("/refdata/external/v1/organisations")
             .withHeader(AUTHORIZATION, new EqualToPattern(TEST_AUTHORIZATION_TOKEN))

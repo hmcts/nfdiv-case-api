@@ -75,6 +75,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
@@ -299,7 +300,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
             .content(objectMapper.writeValueAsString(callbackRequest(
                 caseData,
@@ -401,7 +402,7 @@ public class SolicitorStatementOfTruthPaySubmitTest {
 
         caseData.setDocumentsGenerated(generatedDocuments);
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, SOLICITOR_USER_ID, SOLICITOR_ROLE);
-        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         return FilenameUtils.getName(documentListValue.getValue().getDocumentLink().getUrl());
     }
