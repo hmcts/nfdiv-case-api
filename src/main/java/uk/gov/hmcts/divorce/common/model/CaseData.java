@@ -290,6 +290,12 @@ public class CaseData {
     private String applicant1SolicitorEmail;
 
     @CCD(
+        label = "Is applicant 1 represented by a solicitor?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo applicant1SolicitorRepresented;
+
+    @CCD(
         label = "I confirm I am willing to accept service of all correspondence and orders by email at the email address "
             + "stated above.",
         access = {DefaultAccess.class}
