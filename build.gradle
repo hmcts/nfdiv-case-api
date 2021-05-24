@@ -37,7 +37,6 @@ sourceSets {
       runtimeClasspath += main.output
       srcDir file('src/functionalTest/java')
     }
-    resources.srcDir file('src/functionalTest/resources')
   }
 
   integrationTest {
@@ -46,7 +45,6 @@ sourceSets {
       runtimeClasspath += main.output
       srcDir file('src/integrationTest/java')
     }
-    resources.srcDir file('src/integrationTest/resources')
   }
 
   smokeTest {
@@ -55,7 +53,6 @@ sourceSets {
       runtimeClasspath += main.output
       srcDir file('src/smokeTest/java')
     }
-    resources.srcDir file('src/smokeTest/resources')
   }
 }
 
@@ -322,9 +319,6 @@ bootRun {
       systemProperty 'IDAM_CLIENT_SECRET', getVaultSecret('idam-secret')    }
   }
 }
-
-processFunctionalTestResources { duplicatesStrategy = DuplicatesStrategy.EXCLUDE }
-processIntegrationTestResources { duplicatesStrategy = DuplicatesStrategy.EXCLUDE }
 
 bootJar {
   getArchiveFileName().set(provider {
