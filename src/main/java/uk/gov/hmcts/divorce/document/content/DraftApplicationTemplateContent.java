@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.springframework.util.CollectionUtils.firstElement;
+import static org.springframework.util.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
@@ -121,28 +122,7 @@ public class DraftApplicationTemplateContent {
         AddressGlobalUK applicant2HomeAddress = caseData.getApplicant2HomeAddress();
 
         if (applicant2HomeAddress == null) {
-            OrganisationsResponse organisationsResponse = organisationClient.getUserOrganisation(userAuth, authTokenGenerator.generate());
-
-            log.info("Solicitor organisation {} retrieved from Prd Api for case id {} ",
-                organisationsResponse.getOrganisationIdentifier(),
-                ccdCaseReference);
-
-            var orgContactInformation = firstElement(organisationsResponse.getContactInformation());
-
-            assert orgContactInformation != null;
-
-            applicant2PostalAddress =
-                Stream.of(
-                    orgContactInformation.getAddressLine1(),
-                    orgContactInformation.getAddressLine2(),
-                    orgContactInformation.getAddressLine3(),
-                    orgContactInformation.getTownCity(),
-                    orgContactInformation.getCounty(),
-                    orgContactInformation.getPostCode(),
-                    orgContactInformation.getCountry()
-                )
-                    .filter(value -> value != null && !value.isEmpty())
-                    .collect(Collectors.joining("\n"));
+            applicant2PostalAddress = populateApplicant2PostAddress(caseData, ccdCaseReference, userAuth);
         } else {
             applicant2PostalAddress =
                 Stream.of(
@@ -160,5 +140,42 @@ public class DraftApplicationTemplateContent {
         templateData.put(APPLICANT_2_POSTAL_ADDRESS, applicant2PostalAddress);
 
         return templateData;
+    }
+
+    private String populateApplicant2PostAddress(CaseData caseData, Long ccdCaseReference, String userAuth) {
+        OrganisationsResponse organisationsResponse = organisationClient.getUserOrganisationByEmail(
+            userAuth,
+            authTokenGenerator.generate(),
+            caseData.getApplicant2SolicitorEmail()
+        );
+
+        if (isEmpty(organisationsResponse.getContactInformation())) {
+            log.info("Cannot retrieve applicant 2 solicitor organisation details from Prd Api for case id {}",
+                ccdCaseReference
+            );
+
+            return null;
+        }
+
+        log.info("Solicitor organisation {} retrieved from Prd Api for case id {} for applicant 2 solicitor ",
+            organisationsResponse.getOrganisationIdentifier(),
+            ccdCaseReference
+        );
+
+        var orgContactInformation = firstElement(organisationsResponse.getContactInformation());
+
+        assert orgContactInformation != null;
+
+        return Stream.of(
+            orgContactInformation.getAddressLine1(),
+            orgContactInformation.getAddressLine2(),
+            orgContactInformation.getAddressLine3(),
+            orgContactInformation.getTownCity(),
+            orgContactInformation.getCounty(),
+            orgContactInformation.getPostCode(),
+            orgContactInformation.getCountry()
+        )
+            .filter(value -> value != null && !value.isEmpty())
+            .collect(Collectors.joining("\n"));
     }
 }

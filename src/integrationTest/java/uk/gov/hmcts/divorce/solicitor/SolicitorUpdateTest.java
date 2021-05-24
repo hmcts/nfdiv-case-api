@@ -46,6 +46,7 @@ import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemb
 import static uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock.stubForDocumentManagement;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SOLICITOR_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamDetails;
+import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.stubGetOrganisationByEmailEndpoint;
 import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.stubGetOrganisationEndpoint;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
@@ -116,7 +117,7 @@ public class SolicitorUpdateTest {
 
         stubForDocAssembly();
 
-        stubGetOrganisationEndpoint(organisationResponseWith(TEST_ORG_ID));
+        stubGetOrganisationByEmailEndpoint(organisationResponseWith(TEST_ORG_ID));
 
         final var jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)

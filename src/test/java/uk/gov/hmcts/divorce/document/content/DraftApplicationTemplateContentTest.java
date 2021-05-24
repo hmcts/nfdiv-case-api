@@ -64,6 +64,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -84,9 +85,10 @@ public class DraftApplicationTemplateContentTest {
         CaseData caseData = caseData();
         caseData.setDivorceCostsClaim(YES);
         caseData.setFinancialOrder(NO);
+        caseData.setApplicant2SolicitorEmail(TEST_SOLICITOR_EMAIL);
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(organisationClient.getUserOrganisation(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN))
+        when(organisationClient.getUserOrganisationByEmail(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, TEST_SOLICITOR_EMAIL))
             .thenReturn(organisationResponse());
 
         Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE, TEST_AUTHORIZATION_TOKEN);
@@ -117,19 +119,20 @@ public class DraftApplicationTemplateContentTest {
         );
 
         verify(authTokenGenerator).generate();
-        verify(organisationClient).getUserOrganisation(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN);
+        verify(organisationClient).getUserOrganisationByEmail(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, TEST_SOLICITOR_EMAIL);
         verifyNoMoreInteractions(authTokenGenerator, organisationClient);
     }
 
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForDissolution() {
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(organisationClient.getUserOrganisation(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN))
+        when(organisationClient.getUserOrganisationByEmail(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, TEST_SOLICITOR_EMAIL))
             .thenReturn(organisationResponse());
 
         CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.setDivorceCostsClaim(NO);
+        caseData.setApplicant2SolicitorEmail(TEST_SOLICITOR_EMAIL);
         caseData.setFinancialOrder(NO);
 
         Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE, TEST_AUTHORIZATION_TOKEN);
@@ -160,7 +163,7 @@ public class DraftApplicationTemplateContentTest {
         );
 
         verify(authTokenGenerator).generate();
-        verify(organisationClient).getUserOrganisation(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN);
+        verify(organisationClient).getUserOrganisationByEmail(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, TEST_SOLICITOR_EMAIL);
         verifyNoMoreInteractions(authTokenGenerator, organisationClient);
     }
 

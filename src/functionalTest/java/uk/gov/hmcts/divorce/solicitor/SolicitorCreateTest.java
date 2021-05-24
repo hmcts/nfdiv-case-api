@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.solicitor;
 
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 
@@ -27,6 +28,9 @@ public class SolicitorCreateTest extends FunctionalTestSuite {
     private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata.json";
     private static final String LANGUAGE_PREFERENCE_WELSH = "languagePreferenceWelsh";
 
+    @Value("${app2-sol-test-email}")
+    private String applicant2SolicitorTestEmail;
+
     @Test
     public void shouldUpdateCaseDataWithClaimCostsAndCourtDetailsWhenAboutToSubmitCallbackIsSuccessful() throws Exception {
         Map<String, Object> caseData = caseData(REQUEST);
@@ -34,6 +38,7 @@ public class SolicitorCreateTest extends FunctionalTestSuite {
         caseData.put(LANGUAGE_PREFERENCE_WELSH, NO);
         caseData.put(FINANCIAL_ORDER, NO);
         caseData.put("applicant2OrgContactInformation", organisationContactInformation());
+        caseData.put("applicant2SolicitorEmail", applicant2SolicitorTestEmail);
 
         Response response = triggerCallback(caseData, SOLICITOR_CREATE, ABOUT_TO_SUBMIT_URL);
 
