@@ -53,7 +53,7 @@ public class SolicitorMidEventCallbackTest extends FunctionalTestSuite {
 
         assertThatJson(response.asString())
             .isEqualTo(json(expectedResponse(
-                "classpath:responses/ccd-callback-solicitor-create-mid-event.json"
+                "classpath:responses/response-solicitor-create-mid-event.json"
             )));
     }
 

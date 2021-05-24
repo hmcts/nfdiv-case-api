@@ -36,7 +36,7 @@ public class SolicitorUpdateTest extends FunctionalTestSuite {
         // assertion will fail if the above elements are missing actual value
         assertThatJson(response.asString())
             .isEqualTo(json(expectedResponse(
-                "classpath:responses/ccd-callback-solicitor-update-about-to-submit.json"
+                "classpath:responses/response-solicitor-update-about-to-submit.json"
             )));
     }
 }

@@ -323,6 +323,9 @@ bootRun {
   }
 }
 
+processFunctionalTestResources { duplicatesStrategy = DuplicatesStrategy.EXCLUDE }
+processIntegrationTestResources { duplicatesStrategy = DuplicatesStrategy.EXCLUDE }
+
 bootJar {
   getArchiveFileName().set(provider {
     'nfdiv-case-api.jar'

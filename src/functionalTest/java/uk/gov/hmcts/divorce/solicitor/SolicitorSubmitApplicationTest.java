@@ -24,11 +24,11 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 public class SolicitorSubmitApplicationTest extends FunctionalTestSuite {
 
     private static final String ABOUT_TO_SUBMIT_REQUEST = "classpath:request/casedata/ccd-callback-casedata.json";
-    private static final String ABOUT_TO_START_RESPONSE = "classpath:responses/ccd-callback-submit-application.json";
+    private static final String ABOUT_TO_START_RESPONSE = "classpath:responses/response-solicitor-submit-application.json";
     private static final String VALID_ABOUT_TO_SUBMIT_REQUEST =
         "classpath:request/casedata/ccd-callback-solicitor-submit-application-about-to-submit.json";
     private static final String VALID_ABOUT_TO_SUBMIT_RESPONSE =
-        "classpath:responses/ccd-callback-solicitor-submit-application-about-to-submit.json";
+        "classpath:responses/response-solicitor-submit-application-about-to-submit.json";
 
     @Test
     public void shouldUpdateCaseDataWithOrderSummaryAndAddSolCaseRolesWhenIssueFeeIsSuccessfullyRetrieved() throws Exception {

@@ -25,7 +25,7 @@ public class Applicant1StatementOfTruthTest extends FunctionalTestSuite {
 
     private static final String REQUEST =
         "classpath:request/casedata/ccd-callback-casedata-applicant1-statement-of-truth.json";
-    private static final String RESPONSE = "classpath:responses/ccd-callback-casedata-applicant1-statement-of-truth.json";
+    private static final String RESPONSE = "classpath:responses/response-applicant1-statement-of-truth.json";
 
     @Test
     public void shouldPassValidationAndGiveSuccessWhenCaseDataValid() throws IOException {
