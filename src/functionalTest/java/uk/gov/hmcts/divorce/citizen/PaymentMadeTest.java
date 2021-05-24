@@ -22,12 +22,12 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 public class PaymentMadeTest extends FunctionalTestSuite {
 
     private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata-payment-made.json";
-    private static final String RESPONSE = "classpath:responses/ccd-callback-casedata-payment-made.json";
+    private static final String RESPONSE = "classpath:responses/response-payment-made.json";
 
     private static final String AWAITING_DOCUMENTS_REQUEST =
         "classpath:request/casedata/ccd-callback-casedata-payment-made-awaiting-documents.json";
     private static final String AWAITING_DOCUMENTS_RESPONSE =
-        "classpath:responses/ccd-callback-casedata-payment-made-awaiting-documents.json";
+        "classpath:responses/response-payment-made-awaiting-documents.json";
 
     @Test
     public void shouldPassValidationAndGiveSuccessWhenCaseDataValid() throws IOException {

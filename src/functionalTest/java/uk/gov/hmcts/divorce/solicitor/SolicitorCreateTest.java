@@ -43,7 +43,7 @@ public class SolicitorCreateTest extends FunctionalTestSuite {
         // assertion will fail if the above elements are missing actual value
         assertThatJson(response.asString())
             .isEqualTo(json(expectedResponse(
-                "classpath:responses/ccd-callback-solicitor-create-about-to-submit.json"
+                "classpath:responses/response-solicitor-create-about-to-submit.json"
             )));
     }
 }
