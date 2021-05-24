@@ -632,6 +632,13 @@ public class CaseData {
     )
     private CaseLink previousCaseId;
 
+    @CCD(
+        label = "Due Date",
+        access = {DefaultAccess.class}
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate dueDate;
+
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
         return this.getLanguagePreferenceWelsh() == null || this.getLanguagePreferenceWelsh().equals(YesOrNo.NO)
