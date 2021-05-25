@@ -15,7 +15,7 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static uk.gov.hmcts.divorce.citizen.event.SaveAndClose.SAVE_AND_CLOSE;
+import static uk.gov.hmcts.divorce.citizen.event.CitizenSaveAndClose.CITIZEN_SAVE_AND_CLOSE;
 import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
@@ -36,7 +36,7 @@ public class ServiceAuthValidationTest extends FunctionalTestSuite {
             .body(
                 CallbackRequest
                     .builder()
-                    .eventId(SAVE_AND_CLOSE)
+                    .eventId(CITIZEN_SAVE_AND_CLOSE)
                     .caseDetails(
                         CaseDetails
                             .builder()
@@ -62,7 +62,7 @@ public class ServiceAuthValidationTest extends FunctionalTestSuite {
             .body(
                 CallbackRequest
                     .builder()
-                    .eventId(SAVE_AND_CLOSE)
+                    .eventId(CITIZEN_SAVE_AND_CLOSE)
                     .caseDetails(
                         CaseDetails
                             .builder()

@@ -10,19 +10,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInformation;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 import uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
-import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.when;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 import static org.skyscreamer.jsonassert.JSONCompareMode.STRICT;
@@ -32,17 +29,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreateApplication.SOLICITOR_CREATE;
+import static uk.gov.hmcts.divorce.solicitor.event.SolicitorUpdateContactDetails.SOLICITOR_UPDATE_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.start;
 import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.stopAndReset;
 import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.stubGetOrganisationEndpoint;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.APP2_SERVICE_DETAILS_MID_EVENT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.SOL_APP2_SERVICE_DETAILS_MID_EVENT_ERROR;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.SOL_APP2_SERVICE_DETAILS_MID_EVENT_RESPONSE;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.SOL_NOT_REPRESENTED_APP2_MID_EVENT_ERROR;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_MID_EVENT_ERROR;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_MID_EVENT_RESPONSE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_UPDATE_CONTACT_MID_EVENT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
@@ -56,11 +52,10 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-@AutoConfigureWireMock(port = 0)
 @ContextConfiguration(initializers = {
     PrdOrganisationWireMock.PropertiesInitializer.class
 })
-public class Applicant2ServiceDetailsTest {
+public class SolicitorUpdateContactDetailsTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -85,16 +80,16 @@ public class Applicant2ServiceDetailsTest {
     }
 
     @Test
-    void shouldSetApplicant2OrgContactInformationWhenApplicant2IsRepresentedBySolicitorAndIsDigital() throws Exception {
+    void shouldValidateApplicant1SolicitorOrgAndReturnNoErrorsWhenSolicitorBelongsToSelectedOrg() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubGetOrganisationEndpoint(getOrganisationResponseWith(TEST_ORG_ID));
 
-        final String jsonStringResponse = mockMvc.perform(post(APP2_SERVICE_DETAILS_MID_EVENT_URL)
+        final String jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(SOLICITOR_UPDATE_CONTACT_MID_EVENT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseData(YES, YES), SOLICITOR_CREATE)))
+            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant1Org(), SOLICITOR_UPDATE_CONTACT_DETAILS)))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
@@ -103,20 +98,20 @@ public class Applicant2ServiceDetailsTest {
             .getResponse()
             .getContentAsString();
 
-        assertEquals(jsonStringResponse, expectedResponse(SOL_APP2_SERVICE_DETAILS_MID_EVENT_RESPONSE), STRICT);
+        assertEquals(jsonStringResponse, expectedResponse(SOLICITOR_MID_EVENT_RESPONSE), STRICT);
     }
 
     @Test
-    public void shouldNotSetApplicant2OrgContactInformationWhenApplicant2IsRepresentedBySolicitorAndIsNotDigital() throws Exception {
+    public void shouldValidateApplicant1SolicitorOrgAndReturnErrorWhenSolicitorDoesNotBelongsToSelectedOrg() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubGetOrganisationEndpoint(getOrganisationResponseWith("TESTORG123"));
 
-        final String jsonStringResponse = mockMvc.perform(post(APP2_SERVICE_DETAILS_MID_EVENT_URL)
+        final String jsonStringResponse = mockMvc.perform(post(SOLICITOR_UPDATE_CONTACT_MID_EVENT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseData(NO, YES), SOLICITOR_CREATE)))
+            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant1Org(), SOLICITOR_UPDATE_CONTACT_DETAILS)))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
@@ -125,32 +120,16 @@ public class Applicant2ServiceDetailsTest {
             .getResponse()
             .getContentAsString();
 
-        assertEquals(jsonStringResponse, expectedResponse(SOL_APP2_SERVICE_DETAILS_MID_EVENT_ERROR), STRICT);
+        assertEquals(jsonStringResponse, expectedResponse(SOLICITOR_MID_EVENT_ERROR), STRICT);
     }
 
-    @Test
-    public void shouldNotSetApplicant2OrgContactInformationWhenApplicant2IsNotRepresentedBySolicitor() throws Exception {
-        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-
-        stubGetOrganisationEndpoint(getOrganisationResponseWith("TESTORG123"));
-
-        final String jsonStringResponse = mockMvc.perform(post(APP2_SERVICE_DETAILS_MID_EVENT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseData(NO, NO), SOLICITOR_CREATE)))
-            .accept(APPLICATION_JSON))
-            .andExpect(
-                status().isOk()
-            )
-            .andReturn()
-            .getResponse()
-            .getContentAsString();
-
-        assertEquals(jsonStringResponse, expectedResponse(SOL_NOT_REPRESENTED_APP2_MID_EVENT_ERROR), STRICT);
+    private CaseData caseDataWithApplicant1Org() {
+        CaseData caseData = caseData();
+        caseData.setApplicant1OrganisationPolicy(organisationPolicy());
+        return caseData;
     }
 
-    private CaseData caseData(YesOrNo isApp2SolDigital, YesOrNo isApp2SolRepresented) {
+    private CaseData caseData() {
         return CaseData
             .builder()
             .applicant1FirstName(TEST_FIRST_NAME)
@@ -160,10 +139,6 @@ public class Applicant2ServiceDetailsTest {
             .divorceCostsClaim(YES)
             .financialOrder(NO)
             .languagePreferenceWelsh(NO)
-            .applicant1OrganisationPolicy(organisationPolicy())
-            .applicant2OrganisationPolicy(organisationPolicy())
-            .applicant2SolicitorRepresented(isApp2SolRepresented)
-            .app2SolDigital(isApp2SolDigital)
             .build();
     }
 
@@ -171,14 +146,6 @@ public class Applicant2ServiceDetailsTest {
         return objectMapper.writeValueAsString(
             OrganisationsResponse.builder()
                 .organisationIdentifier(organisationId)
-                .contactInformation(singletonList(OrganisationContactInformation
-                        .builder()
-                        .addressLine1("addressLine1")
-                        .addressLine2("addressLine2")
-                        .postCode("postCode")
-                        .build()
-                    )
-                )
                 .build());
     }
 }
