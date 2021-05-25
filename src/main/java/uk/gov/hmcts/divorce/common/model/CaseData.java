@@ -22,7 +22,6 @@ import uk.gov.hmcts.divorce.common.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.payment.model.Payment;
-import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInformation;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -288,6 +287,12 @@ public class CaseData {
         access = {DefaultAccess.class}
     )
     private String applicant1SolicitorEmail;
+
+    @CCD(
+        label = "Is applicant 1 represented by a solicitor?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo applicant1SolicitorRepresented;
 
     @CCD(
         label = "I confirm I am willing to accept service of all correspondence and orders by email at the email address "
@@ -597,12 +602,6 @@ public class CaseData {
         access = {DefaultAccess.class}
     )
     private OrganisationPolicy<UserRole> applicant2OrganisationPolicy;
-
-    @CCD(
-        label = "Applicant 2 solicitor's firm",
-        access = {DefaultAccess.class}
-    )
-    private OrganisationContactInformation applicant2OrgContactInformation;
 
     @CCD(
         label = "Applicant 2's service address",

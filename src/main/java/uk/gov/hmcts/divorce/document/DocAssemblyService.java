@@ -43,7 +43,7 @@ public class DocAssemblyService {
         String templateName
     ) {
 
-        Map<String, Object> templateData = templateContent.apply(caseData, caseId, createDate);
+        Map<String, Object> templateData = templateContent.apply(caseData, caseId, createDate,authorisation);
 
         DocAssemblyRequest docAssemblyRequest =
             DocAssemblyRequest

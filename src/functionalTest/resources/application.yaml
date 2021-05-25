@@ -59,3 +59,5 @@ document_management:
 prd:
   api:
     url: ${PRD_API_BASEURL:http://rd-professional-api-aat.service.core-compute-aat.internal}
+
+app2-sol-test-email: ${APP2_SOL_TEST_EMAIL}

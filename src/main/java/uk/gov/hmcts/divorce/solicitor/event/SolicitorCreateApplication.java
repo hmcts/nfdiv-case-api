@@ -52,9 +52,6 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
     private SolAboutTheSolicitor solAboutTheSolicitor;
 
     @Autowired
-    private Applicant2ServiceDetails applicant2ServiceDetails;
-
-    @Autowired
     private SolicitorCreateApplicationService solicitorCreateApplicationService;
 
     @Autowired
@@ -69,7 +66,7 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
             solAboutTheSolicitor,
             new SolAboutApplicant1(),
             new SolAboutApplicant2(),
-            applicant2ServiceDetails,
+            new Applicant2ServiceDetails(),
             new MarriageCertificateDetails(),
             new OtherLegalProceedings(),
             new FinancialOrders(),

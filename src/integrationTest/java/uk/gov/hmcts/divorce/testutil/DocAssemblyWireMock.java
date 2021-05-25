@@ -18,6 +18,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.util.ResourceUtils.getFile;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 
 public final class DocAssemblyWireMock {
 
@@ -43,7 +44,7 @@ public final class DocAssemblyWireMock {
         DOC_ASSEMBLY_SERVER.stubFor(
             post("/api/template-renditions")
                 .withHeader(HttpHeaders.AUTHORIZATION, new EqualToPattern(TEST_AUTHORIZATION_TOKEN))
-                .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(SERVICE_AUTHORIZATION))
+                .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(TEST_SERVICE_AUTH_TOKEN))
                 .willReturn(aResponse()
                     .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                     .withBody(expectedDocAssemblyResponse("classpath:wiremock/responses/dg-assembly-response.json")))

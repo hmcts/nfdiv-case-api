@@ -39,20 +39,12 @@ public final class TestConstants {
     public static final String ENGLISH_TEMPLATE_ID = "divorceminiapplication";
     public static final String WELSH_TEMPLATE_ID = "FL-DIV-GNO-WEL-00256.docx";
     public static final String BEARER = "Bearer ";
-    public static final String LANGUAGE_PREFERENCE_WELSH = "languagePreferenceWelsh";
     public static final String TEST_ORG_ID = "ABC123";
     public static final String TEST_ORG_NAME = "TEST ORG";
-    public static final String APPLICANT_1_ORGANISATION_POLICY = "applicant1OrganisationPolicy";
-    public static final String APPLICANT_2_ORGANISATION_POLICY = "applicant2OrganisationPolicy";
 
     public static final String SOLICITOR_MID_EVENT_RESPONSE = "classpath:solicitor-mid-event-response.json";
-    public static final String SOL_APP2_SERVICE_DETAILS_MID_EVENT_RESPONSE
-        = "classpath:solicitor-app2-service-details-mid-event-response.json";
     public static final String SOLICITOR_MID_EVENT_ERROR = "classpath:solicitor-mid-event-error-response.json";
-    public static final String SOL_APP2_SERVICE_DETAILS_MID_EVENT_ERROR
-        = "classpath:sol-app2-service-details-mid-event-error-response.json";
-    public static final String SOL_NOT_REPRESENTED_APP2_MID_EVENT_ERROR
-        = "classpath:sol-not-represented-app2-mid-event-error-response.json";
+
 
     private TestConstants() {
     }
