@@ -64,6 +64,7 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
         final List<CcdPageConfiguration> pages = asList(
             new SolHowDoYouWantToApplyForDivorce(),
             solAboutTheSolicitor,
+            new MarriageIrretrievablyBroken(),
             new SolAboutApplicant1(),
             new SolAboutApplicant2(),
             new Applicant2ServiceDetails(),
@@ -73,8 +74,7 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
             new ClaimForCosts(),
             new UploadMarriageCertificate(),
             new LanguagePreference(),
-            new JurisdictionApplyForDivorce(),
-            new MarriageIrretrievablyBroken()
+            new JurisdictionApplyForDivorce()
         );
 
         pages.forEach(page -> page.addTo(pageBuilder));
