@@ -17,9 +17,7 @@ import java.util.Map;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DISSOLUTION;
@@ -57,14 +55,12 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.OF
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATIONSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TO_END_A_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TO_END_THE_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.LINE_1_LINE_2_CITY_POSTCODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -85,13 +81,9 @@ public class DraftApplicationTemplateContentTest {
         CaseData caseData = caseData();
         caseData.setDivorceCostsClaim(YES);
         caseData.setFinancialOrder(NO);
-        caseData.setApplicant2SolicitorEmail(TEST_SOLICITOR_EMAIL);
+        caseData.setDerivedApplicant2SolicitorAddr(LINE_1_LINE_2_CITY_POSTCODE);
 
-        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(organisationClient.getUserOrganisationByEmail(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, TEST_SOLICITOR_EMAIL))
-            .thenReturn(organisationResponse());
-
-        Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE, TEST_AUTHORIZATION_TOKEN);
+        Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
 
         assertThat(templateData).contains(
             entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
@@ -112,30 +104,24 @@ public class DraftApplicationTemplateContentTest {
             entry(MARRIAGE_OR_RELATIONSHIP, MARRIAGE),
             entry(COURT_CASE_DETAILS, null),
             entry(MARRIAGE_DATE, null),
-            entry(APPLICANT_2_POSTAL_ADDRESS, "line1\nline2\ncity\npostcode"),
+            entry(APPLICANT_2_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
             entry(APPLICANT_2_FIRST_NAME, null),
             entry(APPLICANT_2_FULL_NAME, null),
             entry(APPLICANT_2_LAST_NAME, null)
         );
 
-        verify(authTokenGenerator).generate();
-        verify(organisationClient).getUserOrganisationByEmail(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, TEST_SOLICITOR_EMAIL);
-        verifyNoMoreInteractions(authTokenGenerator, organisationClient);
+        verifyNoMoreInteractions(authTokenGenerator);
     }
 
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForDissolution() {
-        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(organisationClient.getUserOrganisationByEmail(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, TEST_SOLICITOR_EMAIL))
-            .thenReturn(organisationResponse());
-
         CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.setDivorceCostsClaim(NO);
-        caseData.setApplicant2SolicitorEmail(TEST_SOLICITOR_EMAIL);
         caseData.setFinancialOrder(NO);
+        caseData.setDerivedApplicant2SolicitorAddr(LINE_1_LINE_2_CITY_POSTCODE);
 
-        Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE, TEST_AUTHORIZATION_TOKEN);
+        Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
 
         assertThat(templateData).contains(
             entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
@@ -156,15 +142,13 @@ public class DraftApplicationTemplateContentTest {
             entry(MARRIAGE_OR_RELATIONSHIP, RELATIONSHIP),
             entry(COURT_CASE_DETAILS, null),
             entry(MARRIAGE_DATE, null),
-            entry(APPLICANT_2_POSTAL_ADDRESS, "line1\nline2\ncity\npostcode"),
+            entry(APPLICANT_2_POSTAL_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
             entry(APPLICANT_2_FIRST_NAME, null),
             entry(APPLICANT_2_FULL_NAME, null),
             entry(APPLICANT_2_LAST_NAME, null)
         );
 
-        verify(authTokenGenerator).generate();
-        verify(organisationClient).getUserOrganisationByEmail(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, TEST_SOLICITOR_EMAIL);
-        verifyNoMoreInteractions(authTokenGenerator, organisationClient);
+        verifyNoMoreInteractions(authTokenGenerator);
     }
 
     @Test
@@ -184,7 +168,7 @@ public class DraftApplicationTemplateContentTest {
         caseData.setFinancialOrder(NO);
         caseData.setApplicant2HomeAddress(address);
 
-        Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE, TEST_AUTHORIZATION_TOKEN);
+        Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
 
         assertThat(templateData).contains(
             entry(APPLICANT_2_POSTAL_ADDRESS, "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom")
