@@ -33,6 +33,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field(CaseData::getApplicant1HomeAddress, "applicant1ContactDetailsConfidential=\"share\"")
             .field(CaseData::getApplicant1PhoneNumber, "applicant1ContactDetailsConfidential=\"share\"")
             .field(CaseData::getDivorceWho)
+            .field(CaseData::getApplicant1SolicitorRepresented)
             .field("LabelApplicant1sSolicitor-Heading",
                 "applicant1SolicitorRepresented=\"Yes\"",
                 "#### Applicant 1's Solicitor")
