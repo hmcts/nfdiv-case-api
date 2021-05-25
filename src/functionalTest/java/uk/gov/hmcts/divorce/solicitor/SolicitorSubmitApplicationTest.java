@@ -15,7 +15,7 @@ import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 import static org.skyscreamer.jsonassert.JSONCompareMode.STRICT;
 import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.divorce.common.model.State.Draft;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorStatementOfTruthPaySubmit.SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT;
+import static uk.gov.hmcts.divorce.solicitor.event.SolicitorSubmitApplication.SOLICITOR_SUBMIT;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
@@ -36,7 +36,7 @@ public class SolicitorSubmitApplicationTest extends FunctionalTestSuite {
     public void shouldUpdateCaseDataWithOrderSummaryAndAddSolCaseRolesWhenIssueFeeIsSuccessfullyRetrieved() throws Exception {
         CallbackRequest request = CallbackRequest
             .builder()
-            .eventId(SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)
+            .eventId(SOLICITOR_SUBMIT)
             .caseDetails(
                 CaseDetails
                     .builder()
@@ -61,7 +61,7 @@ public class SolicitorSubmitApplicationTest extends FunctionalTestSuite {
     public void shouldChangeStateToSubmittedIfPaymentProcessed() throws Exception {
         CallbackRequest request = CallbackRequest
             .builder()
-            .eventId(SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)
+            .eventId(SOLICITOR_SUBMIT)
             .caseDetails(
                 CaseDetails
                     .builder()
