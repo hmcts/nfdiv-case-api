@@ -14,6 +14,7 @@ import java.util.List;
 
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.common.model.State.Draft;
+import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_UPDATE;
@@ -30,7 +31,7 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
 
         configBuilder
             .event(CITIZEN_SUBMIT)
-            .forStates(Draft)
+            .forStateTransition(Draft, Submitted)
             .name("Applicant 1 Statement of Truth")
             .description("Applicant 1 confirms SOT")
             .aboutToStartCallback(this::aboutToStart)
