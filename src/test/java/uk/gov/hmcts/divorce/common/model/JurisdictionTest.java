@@ -114,6 +114,17 @@ public class JurisdictionTest {
     }
 
     @Test
+    public void shouldReturnErrorWhenJurisdictionConnectionIsJ() {
+        Jurisdiction jurisdiction = new Jurisdiction();
+
+        jurisdiction.setConnections(Set.of(JurisdictionConnections.APP_1_RESIDENT));
+
+        List<String> errors = jurisdiction.validate();
+
+        assertThat(errors, contains(CONNECTION + JurisdictionConnections.APP_1_RESIDENT + CANNOT_EXIST));
+    }
+
+    @Test
     public void shouldReturnErrorWhenJurisdictionConnectionsIsNull() {
         Jurisdiction jurisdiction = new Jurisdiction();
 

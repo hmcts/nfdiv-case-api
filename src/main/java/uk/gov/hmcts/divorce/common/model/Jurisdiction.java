@@ -17,6 +17,7 @@ import static uk.gov.hmcts.divorce.common.model.JurisdictionConnections.APP_1_AP
 import static uk.gov.hmcts.divorce.common.model.JurisdictionConnections.APP_1_APP_2_LAST_RESIDENT;
 import static uk.gov.hmcts.divorce.common.model.JurisdictionConnections.APP_1_APP_2_RESIDENT;
 import static uk.gov.hmcts.divorce.common.model.JurisdictionConnections.APP_1_DOMICILED;
+import static uk.gov.hmcts.divorce.common.model.JurisdictionConnections.APP_1_RESIDENT;
 import static uk.gov.hmcts.divorce.common.model.JurisdictionConnections.APP_1_RESIDENT_SIX_MONTHS;
 import static uk.gov.hmcts.divorce.common.model.JurisdictionConnections.APP_1_RESIDENT_TWELVE_MONTHS;
 import static uk.gov.hmcts.divorce.common.model.JurisdictionConnections.APP_2_DOMICILED;
@@ -103,6 +104,7 @@ public class Jurisdiction {
             addToErrorList(validateJurisdictionConnectionG(), errorList);
             addToErrorList(validateJurisdictionConnectionH(), errorList);
             addToErrorList(validateJurisdictionConnectionI(), errorList);
+            addToErrorList(validateJurisdictionConnectionJ(), errorList);
         }
 
         return errorList;
@@ -171,6 +173,13 @@ public class Jurisdiction {
     private String validateJurisdictionConnectionI() {
         if (connections.contains(APP_2_DOMICILED) && applicant2Domicile != YesOrNo.YES) {
             return CONNECTION + APP_2_DOMICILED + CANNOT_EXIST;
+        }
+        return null;
+    }
+
+    private String validateJurisdictionConnectionJ() {
+        if (connections.contains(APP_1_RESIDENT) && applicant1Residence != YesOrNo.YES) {
+            return CONNECTION + APP_1_RESIDENT + CANNOT_EXIST;
         }
         return null;
     }
