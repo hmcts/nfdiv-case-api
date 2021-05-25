@@ -23,7 +23,7 @@ public class LegalProceeding {
     @CCD(
         label = "Case relates to",
         typeOverride = FixedList,
-        typeParameterOverride = "DocumentType"
+        typeParameterOverride = "LegalProceedingsRelated"
     )
     private Set<LegalProceedingsRelated> caseRelatesTo;
 
