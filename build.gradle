@@ -345,7 +345,6 @@ functional {
       systemProperty 'IDAM_SOLICITOR_USERNAME', getVaultSecret('idam-solicitor-username')
       systemProperty 'IDAM_SOLICITOR_PASSWORD', getVaultSecret('idam-solicitor-password')
       systemProperty 'OAUTH2_CLIENT_SECRET', getVaultSecret('idam-secret')
-      systemProperty 'APP2_SOL_TEST_EMAIL', getVaultSecret('app2-solicitor-test-email')
     }
   }
 }

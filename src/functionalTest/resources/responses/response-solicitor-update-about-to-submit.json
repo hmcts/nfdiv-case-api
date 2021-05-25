@@ -7,7 +7,6 @@
     "languagePreferenceWelsh": "NO",
     "divorceCostsClaim": "YES",
     "financialOrder": "NO",
-    "applicant2SolicitorEmail": "${json-unit.ignore}",
     "divorceClaimFrom": [
       "applicant2"
     ],

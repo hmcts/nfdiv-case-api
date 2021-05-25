@@ -33,6 +33,7 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
             .mandatory(CaseData::getApplicant2SolicitorReference, "applicant2SolicitorRepresented=\"Yes\"")
             .mandatory(CaseData::getApplicant2SolicitorPhone, "applicant2SolicitorRepresented=\"Yes\"")
             .mandatory(CaseData::getApplicant2SolicitorEmail, "applicant2SolicitorRepresented=\"Yes\"")
+            .mandatory(CaseData::getDerivedApplicant2SolicitorAddr, "applicant2SolicitorRepresented=\"Yes\"")
             .label(
                 "LabelApplicant2ServiceDetails-DigitalOrPaper",
                 "If applicant 2 solicitor's firm is registered with MyHMCTS, you can assign the case to them. "
