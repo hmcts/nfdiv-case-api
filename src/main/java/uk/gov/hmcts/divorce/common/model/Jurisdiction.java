@@ -111,7 +111,9 @@ public class Jurisdiction {
     }
 
     private String validateJurisdictionConnectionA() {
-        if (connections.contains(APP_1_APP_2_RESIDENT) && applicant1Residence != YesOrNo.YES && applicant2Residence != YesOrNo.YES) {
+        if (connections.contains(APP_1_APP_2_RESIDENT)
+            && (applicant1Residence != YesOrNo.YES
+            || applicant2Residence != YesOrNo.YES)) {
             return CONNECTION + APP_1_APP_2_RESIDENT + CANNOT_EXIST;
         }
         return null;
@@ -133,8 +135,8 @@ public class Jurisdiction {
 
     private String validateJurisdictionConnectionD() {
         if (connections.contains(APP_1_RESIDENT_TWELVE_MONTHS)
-            && applicant1Residence != YesOrNo.YES
-            && app1HabituallyResLastTwelveMonths != YesOrNo.YES) {
+            && (applicant1Residence != YesOrNo.YES
+            || app1HabituallyResLastTwelveMonths != YesOrNo.YES)) {
             return CONNECTION + APP_1_RESIDENT_TWELVE_MONTHS + CANNOT_EXIST;
         }
         return null;
@@ -142,15 +144,17 @@ public class Jurisdiction {
 
     private String validateJurisdictionConnectionE() {
         if (connections.contains(APP_1_RESIDENT_SIX_MONTHS)
-            && applicant1Residence != YesOrNo.YES
-            && app1HabituallyResLastSixMonths != YesOrNo.YES) {
+            && (applicant1Residence != YesOrNo.YES
+            || app1HabituallyResLastSixMonths != YesOrNo.YES)) {
             return CONNECTION + APP_1_RESIDENT_SIX_MONTHS + CANNOT_EXIST;
         }
         return null;
     }
 
     private String validateJurisdictionConnectionF() {
-        if (connections.contains(APP_1_APP_2_DOMICILED) && applicant1Domicile != YesOrNo.YES && applicant2Domicile != YesOrNo.YES) {
+        if (connections.contains(APP_1_APP_2_DOMICILED)
+            && (applicant1Domicile != YesOrNo.YES
+            || applicant2Domicile != YesOrNo.YES)) {
             return CONNECTION + APP_1_APP_2_DOMICILED + CANNOT_EXIST;
         }
         return null;
