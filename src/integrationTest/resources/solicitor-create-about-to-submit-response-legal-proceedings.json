@@ -49,9 +49,9 @@
     "legalProceedingsByCase": [{
       "id": "1",
       "value": {
-        "caseNumber": "",
+        "caseNumber": "12345",
         "caseRelatesTo": ["property"],
-        "caseDetail": ""
+        "caseDetail": "A little bit of detail"
       }
     }],
     "legalProceedingsOther": "Some info about my other legal cases"

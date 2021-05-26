@@ -236,9 +236,9 @@ class SolicitorCreateApplicationTest {
         LegalProceeding legalProceeding =
             LegalProceeding
                 .builder()
-                .caseNumber("")
+                .caseNumber("12345")
                 .caseRelatesTo(Set.of(PROPERTY))
-                .caseDetail("")
+                .caseDetail("A little bit of detail")
                 .build();
         List<ListValue<LegalProceeding>> legalProceedings = singletonList(new ListValue<>("1", legalProceeding));
 
