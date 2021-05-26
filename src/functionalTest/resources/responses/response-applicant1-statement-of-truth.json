@@ -15,7 +15,7 @@
     "statementOfTruth": "YES",
     "solSignStatementOfTruth": "YES",
     "jurisdictionApplicant1Residence": "YES",
-    "jurisdictionApplicant2Residence":null,
+    "jurisdictionApplicant2Residence":"YES",
     "jurisdictionApplicant1Domicile":null,
     "jurisdictionApplicant2Domicile":null,
     "jurisdictionApp1HabituallyResLastTwelveMonths":null,

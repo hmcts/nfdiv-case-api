@@ -15,6 +15,7 @@
   "prayerHasBeenGiven": "YES",
   "solSignStatementOfTruth": "YES",
   "jurisdictionApplicant1Residence": "YES",
+  "jurisdictionApplicant2Residence": "YES",
   "jurisdictionConnections": ["A"],
   "cannotUploadSupportingDocument": ["marriageCertificate", "nameChangeEvidence"],
   "marriageMarriedInUk": "YES",
