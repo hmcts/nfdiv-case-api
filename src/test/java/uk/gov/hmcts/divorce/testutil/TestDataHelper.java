@@ -21,6 +21,8 @@ import uk.gov.hmcts.divorce.common.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
+import uk.gov.hmcts.divorce.payment.model.Payment;
+import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInformation;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
@@ -51,13 +53,14 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 
 public class TestDataHelper {
 
     public static final LocalDate LOCAL_DATE = LocalDate.of(2021, 04, 28);
     public static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(2021, 04, 28, 1, 0);
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().findAndRegisterModules();
     private static final TypeReference<HashMap<String, Object>> TYPE_REFERENCE = new TypeReference<>() {
     };
 
@@ -114,6 +117,34 @@ public class TestDataHelper {
             .jurisdiction(jurisdiction)
             .build();
 
+    }
+
+    public static CaseData caseDataWithStatementOfTruth() {
+        OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
+
+        ListValue<Payment> payment = new ListValue<>(null, Payment
+            .builder()
+            .paymentAmount(55000)
+            .paymentChannel("online")
+            .paymentFeeId("FEE0001")
+            .paymentReference("paymentRef")
+            .paymentSiteId("AA04")
+            .paymentStatus(PaymentStatus.SUCCESS)
+            .paymentTransactionId("ge7po9h5bhbtbd466424src9tk")
+            .build());
+
+        return CaseData
+            .builder()
+            .applicant1FirstName(TEST_FIRST_NAME)
+            .applicant1LastName(TEST_LAST_NAME)
+            .applicant1Email(TEST_USER_EMAIL)
+            .divorceOrDissolution(DIVORCE)
+            .divorceCostsClaim(YES)
+            .solSignStatementOfTruth(YES)
+            .applicant1SolicitorEmail(TEST_SOLICITOR_EMAIL)
+            .solApplicationFeeOrderSummary(orderSummary)
+            .payments(singletonList(payment))
+            .build();
     }
 
     public static CallbackRequest callbackRequest() {
