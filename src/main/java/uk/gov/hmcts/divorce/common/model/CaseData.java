@@ -586,6 +586,13 @@ public class CaseData {
     private String applicant2SolicitorEmail;
 
     @CCD(
+        label = "Applicant 2's solicitor's firm/ DX address",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
+    )
+    private String derivedApplicant2SolicitorAddr;
+
+    @CCD(
         label = "Digital applicant 2 case",
         access = {DefaultAccess.class}
     )
