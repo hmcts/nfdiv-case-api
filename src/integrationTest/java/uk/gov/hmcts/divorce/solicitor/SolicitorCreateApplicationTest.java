@@ -15,15 +15,21 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
+import uk.gov.hmcts.divorce.common.model.LegalProceeding;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
+import java.util.List;
+import java.util.Set;
+
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
@@ -32,6 +38,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.common.model.LegalProceedingsRelated.PROPERTY;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreateApplication.SOLICITOR_CREATE;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssembly;
 import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.stubGetOrganisationEndpoint;
@@ -62,6 +69,8 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 class SolicitorCreateApplicationTest {
 
     private static final String SOLICITOR_CREATE_ABOUT_TO_SUBMIT = "classpath:solicitor-create-about-to-submit-response.json";
+    private static final String SOLICITOR_CREATE_ABOUT_TO_SUBMIT_WITH_LEGAL_PROCEEDINGS =
+        "classpath:solicitor-create-about-to-submit-response-legal-proceedings.json";
 
     @Autowired
     private MockMvc mockMvc;
@@ -112,6 +121,30 @@ class SolicitorCreateApplicationTest {
             .getContentAsString();
 
         assertEquals(jsonStringResponse, expectedResponse(SOLICITOR_CREATE_ABOUT_TO_SUBMIT), STRICT);
+    }
+
+    @Test
+    void givenValidCaseDataWithLegalProceedingsWhenAboutToSubmitCallbackIsInvokedCaseDataIsSetCorrectly() throws Exception {
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(documentIdProvider.documentId()).thenReturn("Divorce application");
+
+        stubForDocAssembly();
+
+        final var jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithLegalProceedings(), SOLICITOR_CREATE)))
+            .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk()
+            )
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        assertEquals(jsonStringResponse, expectedResponse(SOLICITOR_CREATE_ABOUT_TO_SUBMIT_WITH_LEGAL_PROCEEDINGS), STRICT);
     }
 
     @Test
@@ -195,6 +228,23 @@ class SolicitorCreateApplicationTest {
         CaseData caseData = caseData();
         caseData.setApplicant1OrganisationPolicy(organisationPolicy());
         caseData.setApplicant2OrganisationPolicy(organisationPolicy());
+        return caseData;
+    }
+
+    private static CaseData caseDataWithLegalProceedings() {
+        CaseData caseData = caseData();
+        LegalProceeding legalProceeding =
+            LegalProceeding
+                .builder()
+                .caseNumber("12345")
+                .caseRelatesTo(Set.of(PROPERTY))
+                .caseDetail("A little bit of detail")
+                .build();
+        List<ListValue<LegalProceeding>> legalProceedings = singletonList(new ListValue<>("1", legalProceeding));
+
+        caseData.setLegalProceedings(YES);
+        caseData.setLegalProceedingsByCase(legalProceedings);
+        caseData.setLegalProceedingsOther("Some info about my other legal cases");
         return caseData;
     }
 

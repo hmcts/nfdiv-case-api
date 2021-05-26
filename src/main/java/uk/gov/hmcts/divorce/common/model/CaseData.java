@@ -497,19 +497,20 @@ public class CaseData {
     private YesOrNo legalProceedings;
 
     @CCD(
-        label = "Legal proceeding details",
-        hint = "Include the case number(s), if known.",
+        label = "Cases of ongoing legal proceedings",
+        typeOverride = Collection,
+        typeParameterOverride = "LegalProceeding",
+        access = {DefaultAccess.class}
+    )
+    private List<ListValue<LegalProceeding>> legalProceedingsByCase;
+
+    @CCD(
+        label = "Any other information about existing legal proceedings",
+        hint = "If case numbers are unknown, own",
         typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
-    private String legalProceedingsDetails;
-
-
-    @CCD(
-        label = "What do the legal proceedings relate to?",
-        access = {DefaultAccess.class}
-    )
-    private Set<LegalProceedingsRelated> legalProceedingsRelated;
+    private String legalProceedingsOther;
 
     @CCD(
         label = "Claim costs from",
