@@ -24,8 +24,10 @@ import static uk.gov.hmcts.divorce.common.model.State.Draft;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 
 @Component
 @Slf4j
@@ -46,7 +48,9 @@ public class CitizenAddPayment implements CCDConfig<CaseData, State, UserRole> {
             .forStateTransition(Draft, AwaitingPayment)
             .name("Payment made")
             .description("Payment made")
+            .retries(120, 120)
             .grant(CREATE_READ_UPDATE, CITIZEN, CASEWORKER_DIVORCE_COURTADMIN, CASEWORKER_DIVORCE_COURTADMIN_BETA)
+            .grant(READ, CASEWORKER_DIVORCE_SUPERUSER)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
 
