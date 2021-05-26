@@ -96,6 +96,7 @@ public class TestDataHelper {
 
         var jurisdiction = new Jurisdiction();
         jurisdiction.setApplicant1Residence(YES);
+        jurisdiction.setApplicant2Residence(YES);
         jurisdiction.setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
 
         return CaseData

@@ -16,6 +16,7 @@
   "prayerHasBeenGiven": "YES",
   "solSignStatementOfTruth": "YES",
   "jurisdictionApplicant1Residence": "YES",
+  "jurisdictionApplicant2Residence": "YES",
   "jurisdictionConnections": ["A"],
   "solApplicationFeeOrderSummary": {
     "PaymentTotal": "55000",
