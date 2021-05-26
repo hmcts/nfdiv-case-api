@@ -50,7 +50,7 @@
       "id": "1",
       "value": {
         "caseNumber": "12345",
-        "caseRelatesTo": ["property"],
+        "caseRelatesTo": "property",
         "caseDetail": "A little bit of detail"
       }
     }],
