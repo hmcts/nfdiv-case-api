@@ -13,7 +13,7 @@ public class SolPayAccount implements CcdPageConfiguration {
             .page("SolPayAccount")
             .pageLabel("Pay account")
             .showCondition("solPaymentHowToPay=\"feePayByAccount\"")
-            .mandatory(CaseData::getPbaNumbers)
+            .optional(CaseData::getPbaNumbers)
             .mandatory(CaseData::getFeeAccountReference);
     }
 }
