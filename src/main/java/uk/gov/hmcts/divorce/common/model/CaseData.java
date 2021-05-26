@@ -667,6 +667,13 @@ public class CaseData {
     )
     private YesOrNo hwfAmountOutstanding;
 
+    @CCD(
+        label = "All documents uploaded",
+        hint = "Select yes to submit the case, if all documents have been uploaded",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo documentUploadComplete;
+
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
         return this.getLanguagePreferenceWelsh() == null || this.getLanguagePreferenceWelsh().equals(YesOrNo.NO)
