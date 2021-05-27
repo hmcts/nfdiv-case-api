@@ -27,7 +27,6 @@ import uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.util.List;
-import java.util.Set;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -237,7 +236,7 @@ class SolicitorCreateApplicationTest {
             LegalProceeding
                 .builder()
                 .caseNumber("12345")
-                .caseRelatesTo(Set.of(PROPERTY))
+                .caseRelatesTo(PROPERTY)
                 .caseDetail("A little bit of detail")
                 .build();
         List<ListValue<LegalProceeding>> legalProceedings = singletonList(new ListValue<>("1", legalProceeding));
