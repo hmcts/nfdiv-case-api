@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Optional.ofNullable;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
@@ -92,7 +93,10 @@ public class DraftApplicationTemplateContent {
         templateData.put(APPLICANT_1_FULL_NAME, caseData.getMarriageApplicant1Name());
         templateData.put(APPLICANT_2_FULL_NAME, caseData.getMarriageApplicant2Name());
 
-        templateData.put(MARRIAGE_DATE, caseData.getMarriageDetails().getDate());
+        templateData.put(MARRIAGE_DATE,
+            ofNullable(caseData.getMarriageDetails().getDate())
+                .map(LocalDate::toString)
+                .orElse(null));
         templateData.put(COURT_CASE_DETAILS, caseData.getLegalProceedingsOther());
 
         templateData.put(HAS_COST_ORDERS, caseData.getDivorceCostsClaim().toBoolean());
