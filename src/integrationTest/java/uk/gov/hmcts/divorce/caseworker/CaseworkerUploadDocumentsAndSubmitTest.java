@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.common.model.State;
 
 import java.io.IOException;
 
@@ -87,7 +88,7 @@ public class CaseworkerUploadDocumentsAndSubmitTest {
             .andExpect(
                 status().isOk()
             )
-            .andExpect(content().json(awaitingDocumentsStateResponse()));
+            .andExpect(content().json(responseWithStateOf(AwaitingDocuments)));
     }
 
     @Test
@@ -108,16 +109,11 @@ public class CaseworkerUploadDocumentsAndSubmitTest {
             .andExpect(
                 status().isOk()
             )
-            .andExpect(content().json(submittedStateResponse()));
+            .andExpect(content().json(responseWithStateOf(Submitted)));
     }
 
-    private String awaitingDocumentsStateResponse() throws IOException {
+    private String responseWithStateOf(final State state) throws IOException {
         return expectedResponse("classpath:caseworker-document-upload-about-to-submit-response.json")
-            .replace("<state>", AwaitingDocuments.getName());
-    }
-
-    private String submittedStateResponse() throws IOException {
-        return expectedResponse("classpath:caseworker-document-upload-about-to-submit-response.json")
-            .replace("<state>", Submitted.getName());
+            .replace("<state>", state.getName());
     }
 }
