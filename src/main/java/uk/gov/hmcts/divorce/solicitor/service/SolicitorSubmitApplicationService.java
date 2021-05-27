@@ -22,8 +22,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.ccd.sdk.type.Fee.getValueInPence;
+import static uk.gov.hmcts.divorce.common.model.SolToPay.FEES_HELP_WITH;
+import static uk.gov.hmcts.divorce.common.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
@@ -77,12 +80,17 @@ public class SolicitorSubmitApplicationService {
     ) {
 
         State state = AwaitingPayment;
+        List<String> submittedErrors = emptyList();
 
-        List<String> submittedErrors = Submitted.validate(caseData);
+        if (FEES_HELP_WITH.equals(caseData.getSolPaymentHowToPay())) {
+            state = AwaitingHWFDecision;
+        } else {
+            submittedErrors = Submitted.validate(caseData);
 
-        if (submittedErrors.isEmpty()) {
-            caseData.setDateSubmitted(LocalDateTime.now(clock));
-            state = Submitted;
+            if (submittedErrors.isEmpty()) {
+                caseData.setDateSubmitted(LocalDateTime.now(clock));
+                state = Submitted;
+            }
         }
 
         final var caseDataUpdaters = asList(

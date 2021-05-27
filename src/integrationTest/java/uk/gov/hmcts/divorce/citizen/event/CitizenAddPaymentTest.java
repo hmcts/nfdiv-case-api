@@ -1,6 +1,8 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +57,8 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithOrderSumm
 @AutoConfigureMockMvc
 public class CitizenAddPaymentTest {
 
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -66,9 +70,6 @@ public class CitizenAddPaymentTest {
     @SuppressWarnings("PMD.UnusedPrivateField")
     private ApplicationOutstandingActionNotification outstandingActionNotification;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @MockBean
     private NotificationService notificationService;
 
@@ -77,6 +78,11 @@ public class CitizenAddPaymentTest {
 
     @MockBean
     private WebMvcConfig webMvcConfig;
+
+    @BeforeAll
+    static void setUp() {
+        OBJECT_MAPPER.registerModule(new JavaTimeModule());
+    }
 
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmail() throws Exception {
@@ -97,7 +103,7 @@ public class CitizenAddPaymentTest {
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest(data, CITIZEN_ADD_PAYMENT)))
+            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_ADD_PAYMENT)))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
@@ -128,7 +134,7 @@ public class CitizenAddPaymentTest {
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest(data, CITIZEN_ADD_PAYMENT)))
+            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_ADD_PAYMENT)))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
@@ -159,7 +165,7 @@ public class CitizenAddPaymentTest {
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest(data, CITIZEN_ADD_PAYMENT)))
+            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_ADD_PAYMENT)))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
@@ -193,7 +199,7 @@ public class CitizenAddPaymentTest {
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest(data, CITIZEN_ADD_PAYMENT)))
+            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_ADD_PAYMENT)))
             .accept(APPLICATION_JSON))
             .andExpect(status().isBadRequest())
             .andExpect(content().string("All template params not passed"));

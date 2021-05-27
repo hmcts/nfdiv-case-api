@@ -415,10 +415,6 @@ public class SolicitorSubmitApplicationTest {
         return expectedResponse("classpath:wiremock/responses/about-to-submit-statement-of-truth.json");
     }
 
-    private String expectedCcdAboutToSubmitCallbackPaymentErrorResponse() throws IOException {
-        return expectedResponse("classpath:wiremock/responses/about-to-submit-statement-of-truth-payment-error.json");
-    }
-
     private String expectedCcdAboutToSubmitCallbackErrorResponse() throws IOException {
         return expectedResponse("classpath:wiremock/responses/about-to-submit-statement-of-truth-error.json");
     }
