@@ -16,17 +16,17 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
             .label(
                 "LabelSolStatementOfTruthPara-1.1",
                 "• That the marriage be dissolved as it has broken down irretrievably",
-                "divorceCostsClaim=\"Yes\" AND financialOrder=\"Yes\"")
+                "divorceCostsClaim=\"No\" AND financialOrder=\"No\"")
             .label(
                 "LabelSolStatementOfTruthPara-1.2",
                     "• That the marriage be dissolved as it has broken down irretrievably<br />"
                         + "• That a costs order may be granted.",
-                    "divorceCostsClaim=\"Yes\" AND financialOrder=\"Yes\"")
+                    "divorceCostsClaim=\"Yes\" AND financialOrder=\"No\"")
             .label(
                 "LabelSolStatementOfTruthPara-1.3",
                 "• That the marriage be dissolved as it has broken down irretrievably<br />"
                     + "• That a financial order may be granted.",
-                    "divorceCostsClaim=\"Yes\" AND financialOrder=\"Yes\"")
+                    "divorceCostsClaim=\"No\" AND financialOrder=\"Yes\"")
             .label(
                 "LabelSolStatementOfTruthPara-1.4",
                 "• That the marriage be dissolved as it has broken down irretrievably.<br />"
