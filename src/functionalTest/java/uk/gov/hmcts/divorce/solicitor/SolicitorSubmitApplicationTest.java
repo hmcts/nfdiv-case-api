@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.solicitor;
 
 import io.restassured.response.Response;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
@@ -32,7 +31,6 @@ public class SolicitorSubmitApplicationTest extends FunctionalTestSuite {
         "classpath:responses/response-solicitor-submit-application-about-to-submit.json";
 
     @Test
-    @Disabled // temporarily disabling till new code gets deployed on non staging
     public void shouldUpdateCaseDataWithOrderSummaryAndAddSolCaseRolesWhenIssueFeeIsSuccessfullyRetrieved() throws Exception {
         CallbackRequest request = CallbackRequest
             .builder()
