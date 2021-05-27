@@ -653,6 +653,20 @@ public class CaseData {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dueDate;
 
+    @CCD(
+        label = "Is HWF Reference OK for the full amount?",
+        access = {DefaultAccess.class},
+        hint = "Select \"Yes\" if it covers entire amount or \"No\" if doesn't"
+    )
+    private YesOrNo hwfCodeValidForFullAmount;
+
+    @CCD(
+        label = "Is amount different or invalid reference?",
+        access = {DefaultAccess.class},
+        hint = "Select \"Yes\" for different amount or \"No\" for invalid reference"
+    )
+    private YesOrNo hwfAmountOutstanding;
+
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
         return this.getLanguagePreferenceWelsh() == null || this.getLanguagePreferenceWelsh().equals(YesOrNo.NO)
@@ -708,10 +722,10 @@ public class CaseData {
         return payments == null
             ? 0
             : payments
-                .stream()
-                .filter(p -> SUCCESS.equals(p.getValue().getPaymentStatus()))
-                .map(p -> p.getValue().getPaymentAmount())
-                .reduce(0, Integer::sum);
+            .stream()
+            .filter(p -> SUCCESS.equals(p.getValue().getPaymentStatus()))
+            .map(p -> p.getValue().getPaymentAmount())
+            .reduce(0, Integer::sum);
     }
 
     @JsonIgnore

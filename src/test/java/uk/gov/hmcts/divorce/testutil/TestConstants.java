@@ -12,7 +12,6 @@ public final class TestConstants {
     public static final String SUBMITTED_URL = "/callbacks/submitted";
     public static final String ABOUT_THE_SOL_MID_EVENT_URL = "/callbacks/mid-event?page=SolAboutTheSolicitor";
     public static final String SOLICITOR_UPDATE_CONTACT_MID_EVENT_URL = "/callbacks/mid-event?page=SolUpdateContactDetails";
-    public static final String APP2_SERVICE_DETAILS_MID_EVENT_URL = "/callbacks/mid-event?page=Applicant2ServiceDetails";
 
     public static final String AUTH_HEADER_VALUE = "auth-header-value";
     public static final String INVALID_AUTH_TOKEN = "invalid_token";
