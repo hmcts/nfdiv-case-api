@@ -16,13 +16,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-import uk.gov.hmcts.divorce.payment.model.Payment;
-import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
 import uk.gov.hmcts.divorce.testutil.CaseDataWireMock;
 import uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock;
 import uk.gov.hmcts.divorce.testutil.FeesWireMock;
@@ -47,8 +43,6 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.common.model.State.Draft;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
@@ -73,13 +67,11 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithOrderSummary;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithStatementOfTruth;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFeeResponse;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
@@ -417,34 +409,6 @@ public class SolicitorSubmitApplicationTest {
 
     private String expectedCcdAboutToSubmitCallbackErrorResponse() throws IOException {
         return expectedResponse("classpath:wiremock/responses/about-to-submit-statement-of-truth-error.json");
-    }
-
-    private CaseData caseDataWithStatementOfTruth() {
-        OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-
-        ListValue<Payment> payment = new ListValue<>(null, Payment
-            .builder()
-            .paymentAmount(55000)
-            .paymentChannel("online")
-            .paymentFeeId("FEE0001")
-            .paymentReference("paymentRef")
-            .paymentSiteId("AA04")
-            .paymentStatus(PaymentStatus.SUCCESS)
-            .paymentTransactionId("ge7po9h5bhbtbd466424src9tk")
-            .build());
-
-        return CaseData
-            .builder()
-            .applicant1FirstName(TEST_FIRST_NAME)
-            .applicant1LastName(TEST_LAST_NAME)
-            .applicant1Email(TEST_USER_EMAIL)
-            .divorceOrDissolution(DIVORCE)
-            .divorceCostsClaim(YES)
-            .solSignStatementOfTruth(YES)
-            .applicant1SolicitorEmail(TEST_SOLICITOR_EMAIL)
-            .solApplicationFeeOrderSummary(orderSummary)
-            .payments(singletonList(payment))
-            .build();
     }
 
     private String getFeeResponseAsJson() throws JsonProcessingException {
