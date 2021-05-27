@@ -5,8 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
-
-import java.util.Set;
+import uk.gov.hmcts.divorce.common.model.access.DefaultAccess;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
@@ -18,20 +17,23 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 public class LegalProceeding {
 
     @CCD(
-        label = "Case number"
+        label = "Case number",
+        access = {DefaultAccess.class}
     )
     private String caseNumber;
 
     @CCD(
         label = "Case relates to",
         typeOverride = FixedList,
-        typeParameterOverride = "LegalProceedingsRelated"
+        typeParameterOverride = "LegalProceedingsRelated",
+        access = {DefaultAccess.class}
     )
-    private Set<LegalProceedingsRelated> caseRelatesTo;
+    private LegalProceedingsRelated caseRelatesTo;
 
     @CCD(
         label = "Case details",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
     )
     private String caseDetail;
 }
