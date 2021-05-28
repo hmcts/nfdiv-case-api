@@ -4,6 +4,13 @@ import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 
+import static uk.gov.hmcts.ccd.sdk.api.DisplayContext.Mandatory;
+import static uk.gov.hmcts.ccd.sdk.api.DisplayContext.Optional;
+import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.JOINT_APPLICATION_CONDITION;
+import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLE_APPLICATION_CONDITION;
+import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_JOINT_PREVIEW_BANNER;
+import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_PREVIEW_BANNER;
+
 public class OtherLegalProceedings implements CcdPageConfiguration {
 
     @Override
@@ -12,10 +19,26 @@ public class OtherLegalProceedings implements CcdPageConfiguration {
         pageBuilder
             .page("OtherLegalProceedings")
             .pageLabel("Other legal proceedings")
+            .label(
+                "LabelNFDBanner-OtherLegalProceedings",
+                SOLICITOR_NFD_PREVIEW_BANNER,
+                SOLE_APPLICATION_CONDITION)
+            .label(
+                "LabelNFDJointBanner-OtherLegalProceedings",
+                SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
+                JOINT_APPLICATION_CONDITION)
             .mandatory(CaseData::getLegalProceedings)
+            .complex(CaseData::getLegalProceedingsByCase, "legalProceedings=\"Yes\"")
+                .field("caseNumber", Optional)
+                .field("caseRelatesTo", Mandatory)
+                .field("caseDetail", Optional)
+                .done()
             .mandatory(
-                CaseData::getLegalProceedingsDetails,
-                "legalProceedings=\"Yes\""
+                CaseData::getLegalProceedingsOther,
+                "legalProceedings=\"Yes\"",
+                null,
+                "Please providing any additional information",
+                "Include proceedings where case numbers are unknown"
             );
     }
 }

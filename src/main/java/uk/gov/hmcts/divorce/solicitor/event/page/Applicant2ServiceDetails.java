@@ -7,6 +7,10 @@ import uk.gov.hmcts.divorce.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 
 import static uk.gov.hmcts.divorce.common.model.UserRole.APPLICANT_1_SOLICITOR;
+import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.JOINT_APPLICATION_CONDITION;
+import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLE_APPLICATION_CONDITION;
+import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_JOINT_PREVIEW_BANNER;
+import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_PREVIEW_BANNER;
 
 public class Applicant2ServiceDetails implements CcdPageConfiguration {
 
@@ -16,6 +20,14 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
         pageBuilder
             .page("Applicant2ServiceDetails")
             .pageLabel("Applicant 2 service details")
+            .label(
+                "LabelNFDBanner-Applicant2ServiceDetails",
+                SOLICITOR_NFD_PREVIEW_BANNER,
+                SOLE_APPLICATION_CONDITION)
+            .label(
+                "LabelNFDJointBanner-Applicant2ServiceDetails",
+                SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
+                JOINT_APPLICATION_CONDITION)
             .mandatory(CaseData::getApplicant2SolicitorRepresented)
             .mandatory(CaseData::getApplicant2SolicitorName, "applicant2SolicitorRepresented=\"Yes\"")
             .mandatory(CaseData::getApplicant2SolicitorReference, "applicant2SolicitorRepresented=\"Yes\"")

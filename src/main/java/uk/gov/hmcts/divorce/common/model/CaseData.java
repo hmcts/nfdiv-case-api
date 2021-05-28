@@ -240,14 +240,27 @@ public class CaseData {
             + "marriage certificate?",
         access = {DefaultAccess.class}
     )
-    private YesOrNo applicant2NameAsOnMarriageCertificate;
+    private YesOrNo applicant2NameDifferentToMarriageCertificate;
 
     @CCD(
-        label = "Please explain, if known, how their name has changed since they were married.",
+        label = "How did Applicant 2 change their name?",
+        access = {DefaultAccess.class}
+    )
+    private ChangedNameHow applicant2NameChangedHow;
+
+    @CCD(
+        label = "How applicant 2 changed their name",
         typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
-    private String app2NameDifferentToMarriageCertExplain;
+    private String applicant2NameChangedHowOtherDetails;
+
+    @CCD(
+        label = "Include a welsh copy of all generated divorce documents for Applicant 2?",
+        hint = "An english copy will always be included",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo applicant2WelshLanguagePreference;
 
     @CCD(
         label = "Applicant 1 Solicitor’s name",
@@ -274,6 +287,12 @@ public class CaseData {
         access = {DefaultAccess.class}
     )
     private String applicant1SolicitorEmail;
+
+    @CCD(
+        label = "Is applicant 1 represented by a solicitor?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo applicant1SolicitorRepresented;
 
     @CCD(
         label = "I confirm I am willing to accept service of all correspondence and orders by email at the email address "
@@ -478,19 +497,20 @@ public class CaseData {
     private YesOrNo legalProceedings;
 
     @CCD(
-        label = "Legal proceeding details",
-        hint = "Include the case number(s), if known.",
+        label = "Cases of ongoing legal proceedings",
+        typeOverride = Collection,
+        typeParameterOverride = "LegalProceeding",
+        access = {DefaultAccess.class}
+    )
+    private List<ListValue<LegalProceeding>> legalProceedingsByCase;
+
+    @CCD(
+        label = "Any other information about existing legal proceedings",
+        hint = "If case numbers are unknown, own",
         typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
-    private String legalProceedingsDetails;
-
-
-    @CCD(
-        label = "What do the legal proceedings relate to?",
-        access = {DefaultAccess.class}
-    )
-    private Set<LegalProceedingsRelated> legalProceedingsRelated;
+    private String legalProceedingsOther;
 
     @CCD(
         label = "Claim costs from",
@@ -626,6 +646,34 @@ public class CaseData {
     )
     private CaseLink previousCaseId;
 
+    @CCD(
+        label = "Due Date",
+        access = {DefaultAccess.class}
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate dueDate;
+
+    @CCD(
+        label = "Is HWF Reference OK for the full amount?",
+        access = {DefaultAccess.class},
+        hint = "Select \"Yes\" if it covers entire amount or \"No\" if doesn't"
+    )
+    private YesOrNo hwfCodeValidForFullAmount;
+
+    @CCD(
+        label = "Is amount different or invalid reference?",
+        access = {DefaultAccess.class},
+        hint = "Select \"Yes\" for different amount or \"No\" for invalid reference"
+    )
+    private YesOrNo hwfAmountOutstanding;
+
+    @CCD(
+        label = "All documents uploaded",
+        hint = "Select yes to submit the case, if all documents have been uploaded",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo documentUploadComplete;
+
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
         return this.getLanguagePreferenceWelsh() == null || this.getLanguagePreferenceWelsh().equals(YesOrNo.NO)
@@ -681,10 +729,10 @@ public class CaseData {
         return payments == null
             ? 0
             : payments
-                .stream()
-                .filter(p -> SUCCESS.equals(p.getValue().getPaymentStatus()))
-                .map(p -> p.getValue().getPaymentAmount())
-                .reduce(0, Integer::sum);
+            .stream()
+            .filter(p -> SUCCESS.equals(p.getValue().getPaymentStatus()))
+            .map(p -> p.getValue().getPaymentAmount())
+            .reduce(0, Integer::sum);
     }
 
     @JsonIgnore

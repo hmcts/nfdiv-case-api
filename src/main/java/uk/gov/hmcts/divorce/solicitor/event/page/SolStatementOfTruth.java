@@ -15,13 +15,24 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
             .label("LabelSolStatementOfTruthPara-1", "## Applicant 1 is applying to the court")
             .label(
                 "LabelSolStatementOfTruthPara-1.1",
-                "That the marriage be dissolved as it has broken down irretrievably.")
+                "• That the marriage be dissolved as it has broken down irretrievably",
+                "divorceCostsClaim=\"No\" AND financialOrder=\"No\"")
             .label(
                 "LabelSolStatementOfTruthPara-1.2",
-                "That a costs order may be granted.")
+                    "• That the marriage be dissolved as it has broken down irretrievably<br />"
+                        + "• That a costs order may be granted.",
+                    "divorceCostsClaim=\"Yes\" AND financialOrder=\"No\"")
             .label(
                 "LabelSolStatementOfTruthPara-1.3",
-                "That a financial order may be granted.")
+                "• That the marriage be dissolved as it has broken down irretrievably<br />"
+                    + "• That a financial order may be granted.",
+                    "divorceCostsClaim=\"No\" AND financialOrder=\"Yes\"")
+            .label(
+                "LabelSolStatementOfTruthPara-1.4",
+                "• That the marriage be dissolved as it has broken down irretrievably.<br />"
+                    + "• That a costs order may be granted.<br />"
+                    + "• That a financial order may be granted.",
+                    "divorceCostsClaim=\"Yes\" AND financialOrder=\"Yes\"")
             .mandatory(CaseData::getSolUrgentCase)
             .optional(CaseData::getSolUrgentCaseSupportingInformation, "solUrgentCase=\"Yes\"")
             .mandatoryNoSummary(CaseData::getDivorceCostsClaim, "statementOfTruth=\"ALWAYS_HIDE\"")

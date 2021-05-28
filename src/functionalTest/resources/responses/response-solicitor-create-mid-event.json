@@ -1,0 +1,40 @@
+{
+  "data": {
+    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+    "applicant1FirstName": "John",
+    "applicant1LastName": "Smith",
+    "applicant1OrganisationPolicy": {
+      "OrgPolicyCaseAssignedRole": null,
+      "OrgPolicyReference": null,
+      "Organisation": {
+        "OrganisationID": "HEBFGBR",
+        "OrganisationName": "Test Organisation"
+      },
+      "PrepopulateToUsersOrganisation": null,
+      "PreviousOrganisations": null
+    },
+    "divorceCostsClaim": "YES",
+    "divorceOrDissolution": "divorce",
+    "financialOrder": "NO",
+    "jurisdictionApp1HabituallyResLastSixMonths": null,
+    "jurisdictionApp1HabituallyResLastTwelveMonths": null,
+    "jurisdictionApplicant1Domicile": null,
+    "jurisdictionApplicant1Residence": null,
+    "jurisdictionApplicant2Domicile": null,
+    "jurisdictionApplicant2Residence": null,
+    "jurisdictionBothLastHabituallyResident": null,
+    "jurisdictionConnections": null,
+    "jurisdictionResidualEligible": null,
+    "languagePreferenceWelsh": "NO",
+    "marriageCertificateInEnglish": null,
+    "marriageCertifiedTranslation": null,
+    "marriageCountryOfMarriage": null,
+    "marriageDate": null,
+    "marriageIsSameSexCouple": null,
+    "marriageMarriedInUk": null,
+    "marriagePlaceOfMarriage": null
+  },
+  "errors": null,
+  "state": null,
+  "warnings": null
+}

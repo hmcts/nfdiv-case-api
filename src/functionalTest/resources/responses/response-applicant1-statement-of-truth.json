@@ -1,0 +1,37 @@
+{
+  "data": {
+    "inferredApplicant1Gender": "female",
+    "inferredApplicant2Gender": "male",
+    "marriageDate": "2020-04-28",
+    "applicant1FirstName": "test_first_name",
+    "applicant1MiddleName": "test_middle_name",
+    "applicant1LastName": "test_last_name",
+    "applicant1ContactDetailsConfidential": "keep",
+    "applicant2FirstName": "test_first_name",
+    "applicant2LastName": "test_last_name",
+    "marriageApplicant1Name": "test_first_name test_last_name",
+    "financialOrder": "NO",
+    "prayerHasBeenGiven": "YES",
+    "statementOfTruth": "YES",
+    "solSignStatementOfTruth": "YES",
+    "jurisdictionApplicant1Residence": "YES",
+    "jurisdictionApplicant2Residence":"YES",
+    "jurisdictionApplicant1Domicile":null,
+    "jurisdictionApplicant2Domicile":null,
+    "jurisdictionApp1HabituallyResLastTwelveMonths":null,
+    "jurisdictionApp1HabituallyResLastSixMonths":null,
+    "jurisdictionResidualEligible":null,
+    "jurisdictionBothLastHabituallyResident":null,
+    "jurisdictionConnections": ["A"],
+    "marriageMarriedInUk":null,
+    "marriageCertificateInEnglish":null,
+    "marriageCertifiedTranslation":null,
+    "marriageCountryOfMarriage":null,
+    "marriagePlaceOfMarriage":null,
+    "marriageIsSameSexCouple":null
+
+  },
+  "errors": null,
+  "state": "AwaitingPayment",
+  "warnings": null
+}

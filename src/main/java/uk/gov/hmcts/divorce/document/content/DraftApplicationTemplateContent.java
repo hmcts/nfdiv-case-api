@@ -52,7 +52,11 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TO
 @Slf4j
 public class DraftApplicationTemplateContent {
 
-    public Map<String, Object> apply(CaseData caseData, Long ccdCaseReference, LocalDate createdDate) {
+    public Map<String, Object> apply(
+        CaseData caseData,
+        Long ccdCaseReference,
+        LocalDate createdDate
+    ) {
         Map<String, Object> templateData = new HashMap<>();
 
         log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
@@ -89,7 +93,7 @@ public class DraftApplicationTemplateContent {
         templateData.put(APPLICANT_2_FULL_NAME, caseData.getMarriageApplicant2Name());
 
         templateData.put(MARRIAGE_DATE, caseData.getMarriageDetails().getDate());
-        templateData.put(COURT_CASE_DETAILS, caseData.getLegalProceedingsDetails());
+        templateData.put(COURT_CASE_DETAILS, caseData.getLegalProceedingsOther());
 
         templateData.put(HAS_COST_ORDERS, caseData.getDivorceCostsClaim().toBoolean());
         templateData.put(HAS_FINANCIAL_ORDERS, caseData.getFinancialOrder().toBoolean());
@@ -103,6 +107,7 @@ public class DraftApplicationTemplateContent {
 
         String applicant2PostalAddress;
         AddressGlobalUK applicant2HomeAddress = caseData.getApplicant2HomeAddress();
+
         if (applicant2HomeAddress == null) {
             applicant2PostalAddress = caseData.getDerivedApplicant2SolicitorAddr();
         } else {
@@ -115,7 +120,7 @@ public class DraftApplicationTemplateContent {
                     applicant2HomeAddress.getCounty(),
                     applicant2HomeAddress.getPostCode(),
                     applicant2HomeAddress.getCountry()
-                    )
+                )
                     .filter(value -> value != null && !value.isEmpty())
                     .collect(Collectors.joining("\n"));
         }

@@ -1,0 +1,68 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "inferredApplicant1Gender": "female",
+    "inferredApplicant2Gender": "male",
+    "marriageDate": "2020-04-28",
+    "dateSubmitted": "${json-unit.ignore}",
+    "applicant1FirstName": "Billy",
+    "applicant1MiddleName": "B",
+    "applicant1LastName": "Bob",
+    "applicant1ContactDetailsConfidential": "keep",
+    "applicant1Email": "test@mailinator.com",
+    "applicant2FirstName": "test_first_name",
+    "applicant2LastName": "test_last_name",
+    "marriageApplicant1Name": "test_first_name test_last_name",
+    "financialOrder": "NO",
+    "prayerHasBeenGiven": "YES",
+    "solSignStatementOfTruth": "YES",
+    "jurisdictionApplicant1Residence": "YES",
+    "jurisdictionApplicant2Residence":"YES",
+    "jurisdictionApplicant1Domicile":null,
+    "jurisdictionApplicant2Domicile":null,
+    "jurisdictionApp1HabituallyResLastTwelveMonths":null,
+    "jurisdictionApp1HabituallyResLastSixMonths":null,
+    "jurisdictionResidualEligible":null,
+    "jurisdictionBothLastHabituallyResident":null,
+    "jurisdictionConnections": ["A"],
+    "marriageMarriedInUk": "YES",
+    "marriageCertificateInEnglish":null,
+    "marriageCertifiedTranslation":null,
+    "marriageCountryOfMarriage":null,
+    "marriagePlaceOfMarriage":null,
+    "marriageIsSameSexCouple":null,
+    "cannotUploadSupportingDocument": ["marriageCertificate", "nameChangeEvidence"],
+    "divorceWho": "husband",
+    "solApplicationFeeOrderSummary": {
+      "PaymentTotal": "55000",
+      "PaymentReference": null,
+      "Fees": [
+        {
+          "id": null,
+          "value": {
+            "FeeDescription": "Filing an application for a divorce, nullity or civil partnership dissolution",
+            "FeeVersion": "5",
+            "FeeCode": "FEE0002",
+            "FeeAmount": "55000"
+          }
+        }
+      ]
+    },
+    "payments": [{
+      "id": "1",
+      "value": {
+        "paymentDate": null,
+        "paymentFeeId": null,
+        "paymentAmount": 55000,
+        "paymentSiteId": null,
+        "paymentStatus": "success",
+        "paymentChannel": null,
+        "paymentReference": null,
+        "paymentTransactionId": null
+      }
+    }]
+  },
+  "errors": [],
+  "state": "AwaitingDocuments",
+  "warnings": null
+}

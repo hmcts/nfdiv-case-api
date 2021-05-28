@@ -13,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.common.model.SolToPay;
 import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChainFactory;
@@ -47,7 +48,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.common.model.State.SolicitorAwaitingPaymentConfirmation;
+import static uk.gov.hmcts.divorce.common.model.State.AwaitingHWFDecision;
+import static uk.gov.hmcts.divorce.common.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
@@ -147,7 +149,14 @@ public class SolicitorSubmitApplicationServiceTest {
     @Test
     void shouldCompleteStepsToUpdateApplication() {
 
-        final var caseData = mock(CaseData.class);
+        List<ListValue<DivorceDocument>> generatedDocuments = singletonList(documentWithType(DIVORCE_APPLICATION));
+        final CaseData caseData = CaseData.builder().build();
+        caseData.setDocumentsGenerated(generatedDocuments);
+        caseData.setStatementOfTruth(null);
+        caseData.setSolSignStatementOfTruth(YesOrNo.YES);
+        final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
+        caseData.setSolApplicationFeeOrderSummary(orderSummary);
+
         final var caseDataUpdaterChain = mock(CaseDataUpdaterChain.class);
 
         final var caseDataUpdaters = asList(
@@ -171,7 +180,46 @@ public class SolicitorSubmitApplicationServiceTest {
         );
 
         assertThat(response.getData()).isEqualTo(caseData);
-        assertThat(response.getState()).isEqualTo(SolicitorAwaitingPaymentConfirmation);
+        assertThat(response.getState()).isEqualTo(AwaitingPayment);
+    }
+
+    @Test
+    void shouldSetStateToAwaitingHWfDecisionWhenPaymentMethodIsHwf() {
+
+        List<ListValue<DivorceDocument>> generatedDocuments = singletonList(documentWithType(DIVORCE_APPLICATION));
+        final CaseData caseData = CaseData.builder().build();
+        caseData.setDocumentsGenerated(generatedDocuments);
+        caseData.setStatementOfTruth(null);
+        caseData.setSolSignStatementOfTruth(YesOrNo.YES);
+        caseData.setSolPaymentHowToPay(SolToPay.FEES_HELP_WITH);
+
+        final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
+        caseData.setSolApplicationFeeOrderSummary(orderSummary);
+
+        final var caseDataUpdaterChain = mock(CaseDataUpdaterChain.class);
+
+        final var caseDataUpdaters = asList(
+            miniApplicationRemover,
+            solicitorSubmitNotification
+        );
+
+        final var caseDataContext = CaseDataContext.builder()
+            .caseData(caseData)
+            .caseId(TEST_CASE_ID)
+            .userAuthToken(TEST_AUTHORIZATION_TOKEN)
+            .build();
+
+        when(caseDataUpdaterChainFactory.createWith(caseDataUpdaters)).thenReturn(caseDataUpdaterChain);
+        when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
+
+        final var response = solicitorSubmitApplicationService.aboutToSubmit(
+            caseData,
+            TEST_CASE_ID,
+            TEST_AUTHORIZATION_TOKEN
+        );
+
+        assertThat(response.getData()).isEqualTo(caseData);
+        assertThat(response.getState()).isEqualTo(AwaitingHWFDecision);
     }
 
     @Test
@@ -182,6 +230,8 @@ public class SolicitorSubmitApplicationServiceTest {
         caseData.setDocumentsGenerated(generatedDocuments);
         caseData.setStatementOfTruth(null);
         caseData.setSolSignStatementOfTruth(YesOrNo.YES);
+        final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
+        caseData.setSolApplicationFeeOrderSummary(orderSummary);
 
         ListValue<Payment> payment = new ListValue<>(null, Payment
             .builder()

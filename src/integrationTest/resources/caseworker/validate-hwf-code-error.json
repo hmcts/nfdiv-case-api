@@ -1,0 +1,30 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "marriageMarriedInUk": null,
+    "marriageCertificateInEnglish": null,
+    "marriageCertifiedTranslation": null,
+    "marriageCountryOfMarriage": null,
+    "marriagePlaceOfMarriage": null,
+    "marriageDate": null,
+    "marriageIsSameSexCouple": null,
+    "applicant1FirstName": "test_first_name",
+    "applicant1MiddleName": "test_middle_name",
+    "applicant1LastName": "test_last_name",
+    "applicant1Email": "test@test.com",
+    "jurisdictionApplicant1Residence": null,
+    "jurisdictionApplicant2Residence": null,
+    "jurisdictionApplicant1Domicile": null,
+    "jurisdictionApplicant2Domicile": null,
+    "jurisdictionApp1HabituallyResLastTwelveMonths": null,
+    "jurisdictionApp1HabituallyResLastSixMonths": null,
+    "jurisdictionResidualEligible": null,
+    "jurisdictionBothLastHabituallyResident": null,
+    "jurisdictionConnections": null
+  },
+  "errors": [
+    "Case State is not valid for event Validate HWF Code"
+  ],
+  "warnings": null,
+  "state": null
+}

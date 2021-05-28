@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.testutil;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
@@ -39,7 +38,7 @@ public final class PrdOrganisationWireMock {
         }
     }
 
-    public static void stubGetOrganisationEndpoint(final String organisationResponse) throws JsonProcessingException {
+    public static void stubGetOrganisationEndpoint(final String organisationResponse) {
         PRD_ORGANISATION_SERVER.stubFor(WireMock.get("/refdata/external/v1/organisations")
             .withHeader(AUTHORIZATION, new EqualToPattern(TEST_AUTHORIZATION_TOKEN))
             .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(TEST_SERVICE_AUTH_TOKEN))

@@ -15,10 +15,26 @@
   "prayerHasBeenGiven": "YES",
   "solSignStatementOfTruth": "YES",
   "jurisdictionApplicant1Residence": "YES",
+  "jurisdictionApplicant2Residence": "YES",
   "jurisdictionConnections": ["A"],
   "cannotUploadSupportingDocument": ["marriageCertificate", "nameChangeEvidence"],
   "marriageMarriedInUk": "YES",
   "divorceWho": "husband",
+  "solApplicationFeeOrderSummary": {
+    "PaymentTotal": "55000",
+    "PaymentReference": null,
+    "Fees": [
+      {
+        "id": null,
+        "value": {
+          "FeeDescription": "Filing an application for a divorce, nullity or civil partnership dissolution",
+          "FeeVersion": "5",
+          "FeeCode": "FEE0002",
+          "FeeAmount": "55000"
+        }
+      }
+    ]
+  },
   "payments": [{
     "id": "1",
     "value": {

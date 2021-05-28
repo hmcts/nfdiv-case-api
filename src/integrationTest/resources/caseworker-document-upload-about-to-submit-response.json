@@ -1,0 +1,11 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "applicant1FirstName": "test_first_name",
+    "applicant1LastName": "test_last_name",
+    "applicant1Email": "test@test.com",
+    "solSignStatementOfTruth": "YES"
+  },
+  "warnings": null,
+  "state": "<state>"
+}

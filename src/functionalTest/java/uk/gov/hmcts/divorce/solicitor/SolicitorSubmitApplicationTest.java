@@ -13,8 +13,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 import static org.skyscreamer.jsonassert.JSONCompareMode.STRICT;
 import static org.springframework.http.HttpStatus.OK;
-import static uk.gov.hmcts.divorce.common.model.State.SOTAgreementPayAndSubmitRequired;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorStatementOfTruthPaySubmit.SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT;
+import static uk.gov.hmcts.divorce.common.model.State.Draft;
+import static uk.gov.hmcts.divorce.solicitor.event.SolicitorSubmitApplication.SOLICITOR_SUBMIT;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
@@ -24,21 +24,17 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 public class SolicitorSubmitApplicationTest extends FunctionalTestSuite {
 
     private static final String ABOUT_TO_SUBMIT_REQUEST = "classpath:request/casedata/ccd-callback-casedata.json";
-    private static final String ABOUT_TO_START_RESPONSE = "classpath:responses/ccd-callback-submit-application.json";
+    private static final String ABOUT_TO_START_RESPONSE = "classpath:responses/response-solicitor-submit-application.json";
     private static final String VALID_ABOUT_TO_SUBMIT_REQUEST =
         "classpath:request/casedata/ccd-callback-solicitor-submit-application-about-to-submit.json";
     private static final String VALID_ABOUT_TO_SUBMIT_RESPONSE =
-        "classpath:responses/ccd-callback-solicitor-submit-application-about-to-submit.json";
-    private static final String INVALID_ABOUT_TO_SUBMIT_REQUEST =
-        "classpath:request/casedata/ccd-callback-solicitor-submit-application-about-to-submit-invalid.json";
-    private static final String INVALID_ABOUT_TO_SUBMIT_RESPONSE =
-        "classpath:responses/ccd-callback-solicitor-submit-application-about-to-submit-invalid.json";
+        "classpath:responses/response-solicitor-submit-application-about-to-submit.json";
 
     @Test
     public void shouldUpdateCaseDataWithOrderSummaryAndAddSolCaseRolesWhenIssueFeeIsSuccessfullyRetrieved() throws Exception {
         CallbackRequest request = CallbackRequest
             .builder()
-            .eventId(SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)
+            .eventId(SOLICITOR_SUBMIT)
             .caseDetails(
                 CaseDetails
                     .builder()
@@ -63,13 +59,13 @@ public class SolicitorSubmitApplicationTest extends FunctionalTestSuite {
     public void shouldChangeStateToSubmittedIfPaymentProcessed() throws Exception {
         CallbackRequest request = CallbackRequest
             .builder()
-            .eventId(SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)
+            .eventId(SOLICITOR_SUBMIT)
             .caseDetails(
                 CaseDetails
                     .builder()
                     .id(1L)
                     .data(caseData(VALID_ABOUT_TO_SUBMIT_REQUEST))
-                    .state(SOTAgreementPayAndSubmitRequired.getName())
+                    .state(Draft.getName())
                     .build()
             )
             .build();
@@ -80,31 +76,5 @@ public class SolicitorSubmitApplicationTest extends FunctionalTestSuite {
 
         assertThatJson(response.asString())
             .isEqualTo(json(expectedResponse(VALID_ABOUT_TO_SUBMIT_RESPONSE)));
-    }
-
-    @Test
-    public void shouldChangeStateToAwaitingPaymentConfirmationIfPaymentHasNotBeenProcessed() throws Exception {
-        CallbackRequest request = CallbackRequest
-            .builder()
-            .eventId(SOLICITOR_STATEMENT_OF_TRUTH_PAY_SUBMIT)
-            .caseDetails(
-                CaseDetails
-                    .builder()
-                    .id(1L)
-                    .data(caseData(INVALID_ABOUT_TO_SUBMIT_REQUEST))
-                    .state(SOTAgreementPayAndSubmitRequired.getName())
-                    .build()
-            )
-            .build();
-
-        final Response response = triggerCallback(request, ABOUT_TO_SUBMIT_URL);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK.value());
-
-        assertEquals(
-            expectedResponse(INVALID_ABOUT_TO_SUBMIT_RESPONSE),
-            response.asString(),
-            STRICT
-        );
     }
 }

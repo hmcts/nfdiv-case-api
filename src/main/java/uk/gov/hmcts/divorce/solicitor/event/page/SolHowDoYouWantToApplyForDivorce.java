@@ -4,6 +4,8 @@ import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 
+import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_PREVIEW_BANNER;
+
 public class SolHowDoYouWantToApplyForDivorce implements CcdPageConfiguration {
 
     @Override
@@ -12,6 +14,7 @@ public class SolHowDoYouWantToApplyForDivorce implements CcdPageConfiguration {
         pageBuilder
             .page("howDoYouWantToApplyForDivorce")
             .pageLabel("How do you want to apply for the divorce?")
+            .label("LabelNFDBanner-ApplyForDivorce", SOLICITOR_NFD_PREVIEW_BANNER)
             .label("solHowDoYouWantToApplyForDivorcePara-1", "Applicant 1 can apply for the divorce on their"
                 + " own (as a 'sole applicant') or with their husband or wife (in a 'joint application').")
             .label("solHowDoYouWantToApplyForDivorceHeader-1", "### Applying as a sole applicant")
@@ -26,7 +29,10 @@ public class SolHowDoYouWantToApplyForDivorce implements CcdPageConfiguration {
             .label("solHowDoYouWantToApplyForDivorcePara-4", "*How applicant 1 divides their money"
                 + " and property is dealt with separately. It should not affect the decision on whether to do a sole"
                 + " or a joint application.*")
-            .mandatory(CaseData::getApplicationType)
-            .mandatory(CaseData::getDivorceOrDissolution);
+            .mandatory(CaseData::getApplicationType, null, null,
+                "How does applicant 1 want to apply for the divorce?",
+                "Applicant 2 must agree with a joint application in its entirety.")
+            .mandatory(CaseData::getDivorceOrDissolution, null, null,
+                "Is the application for a divorce or dissolution?");
     }
 }

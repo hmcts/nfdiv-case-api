@@ -16,9 +16,9 @@ plugins {
   id 'org.owasp.dependencycheck' version '6.1.6'
   id 'org.sonarqube' version '3.2.0'
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-  id 'org.springframework.boot' version '2.4.5'
-  id 'com.github.ben-manes.versions' version '0.38.0'
-  id 'hmcts.ccd.sdk' version '0.20.6'
+  id 'org.springframework.boot' version '2.5.0'
+  id 'com.github.ben-manes.versions' version '0.39.0'
+  id 'hmcts.ccd.sdk' version '0.20.11'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -37,7 +37,6 @@ sourceSets {
       runtimeClasspath += main.output
       srcDir file('src/functionalTest/java')
     }
-    resources.srcDir file('src/functionalTest/resources')
   }
 
   integrationTest {
@@ -46,7 +45,6 @@ sourceSets {
       runtimeClasspath += main.output
       srcDir file('src/integrationTest/java')
     }
-    resources.srcDir file('src/integrationTest/resources')
   }
 
   smokeTest {
@@ -55,7 +53,6 @@ sourceSets {
       runtimeClasspath += main.output
       srcDir file('src/smokeTest/java')
     }
-    resources.srcDir file('src/smokeTest/resources')
   }
 }
 
@@ -253,15 +250,15 @@ dependencies {
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: versions.jackson
 
-  compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.14.1'
-  compile group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.14.1'
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.14.1'
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.14.1'
 
-  compile group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.43'
-  compile group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '9.0.43'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.43'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '9.0.43'
 
-  compile group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
-  compile group: 'uk.gov.hmcts.reform', name: 'service-auth-provider-client', version: versions.s2sClient
+  implementation group: 'uk.gov.hmcts.reform', name: 'service-auth-provider-client', version: versions.s2sClient
 
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
@@ -281,7 +278,7 @@ dependencies {
   testImplementation group: 'org.assertj', name: 'assertj-core', version: versions.assertJ
   testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '3.0.2'
 
-  testCompile group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  testImplementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
@@ -319,7 +316,8 @@ bootRun {
       systemProperty 'IDAM_CASEWORKER_PASSWORD', getVaultSecret('idam-caseworker-password')
       systemProperty 'IDAM_SOLICITOR_USERNAME', getVaultSecret('idam-solicitor-username')
       systemProperty 'IDAM_SOLICITOR_PASSWORD', getVaultSecret('idam-solicitor-password')
-      systemProperty 'IDAM_CLIENT_SECRET', getVaultSecret('idam-secret')    }
+      systemProperty 'IDAM_CLIENT_SECRET', getVaultSecret('idam-secret')
+    }
   }
 }
 
@@ -346,7 +344,8 @@ functional {
       systemProperty 'IDAM_CASEWORKER_PASSWORD', getVaultSecret('idam-caseworker-password')
       systemProperty 'IDAM_SOLICITOR_USERNAME', getVaultSecret('idam-solicitor-username')
       systemProperty 'IDAM_SOLICITOR_PASSWORD', getVaultSecret('idam-solicitor-password')
-      systemProperty 'OAUTH2_CLIENT_SECRET', getVaultSecret('idam-secret')    }
+      systemProperty 'OAUTH2_CLIENT_SECRET', getVaultSecret('idam-secret')
+    }
   }
 }
 
