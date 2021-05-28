@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.solicitor;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import org.apache.commons.io.FilenameUtils;
@@ -73,7 +72,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithOrderSummary;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithStatementOfTruth;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFeeResponse;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFeeResponseAsJson;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @ExtendWith(SpringExtension.class)
@@ -409,9 +408,5 @@ public class SolicitorSubmitApplicationTest {
 
     private String expectedCcdAboutToSubmitCallbackErrorResponse() throws IOException {
         return expectedResponse("classpath:wiremock/responses/about-to-submit-statement-of-truth-error.json");
-    }
-
-    private String getFeeResponseAsJson() throws JsonProcessingException {
-        return objectMapper.writeValueAsString(getFeeResponse());
     }
 }

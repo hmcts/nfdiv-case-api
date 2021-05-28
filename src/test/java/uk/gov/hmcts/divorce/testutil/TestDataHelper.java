@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.testutil;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -87,7 +88,7 @@ public class TestDataHelper {
             .applicant1LastName(TEST_LAST_NAME)
             .divorceOrDissolution(DIVORCE)
             .applicant1Email(TEST_USER_EMAIL)
-            .solApplicationFeeOrderSummary(OrderSummary.builder().paymentTotal("55000").build())
+            .applicationFeeOrderSummary(OrderSummary.builder().paymentTotal("55000").build())
             .build();
     }
 
@@ -143,7 +144,7 @@ public class TestDataHelper {
             .divorceCostsClaim(YES)
             .solSignStatementOfTruth(YES)
             .applicant1SolicitorEmail(TEST_SOLICITOR_EMAIL)
-            .solApplicationFeeOrderSummary(orderSummary)
+            .applicationFeeOrderSummary(orderSummary)
             .payments(singletonList(payment))
             .build();
     }
@@ -269,5 +270,9 @@ public class TestDataHelper {
             .townCity("townCity")
             .country("country")
             .build();
+    }
+
+    public static String getFeeResponseAsJson() throws JsonProcessingException {
+        return OBJECT_MAPPER.writeValueAsString(getFeeResponse());
     }
 }

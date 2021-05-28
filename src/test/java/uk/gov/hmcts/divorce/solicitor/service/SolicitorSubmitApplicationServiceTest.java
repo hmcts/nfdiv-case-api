@@ -155,7 +155,7 @@ public class SolicitorSubmitApplicationServiceTest {
         caseData.setStatementOfTruth(null);
         caseData.setSolSignStatementOfTruth(YesOrNo.YES);
         final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        caseData.setSolApplicationFeeOrderSummary(orderSummary);
+        caseData.setApplicationFeeOrderSummary(orderSummary);
 
         final var caseDataUpdaterChain = mock(CaseDataUpdaterChain.class);
 
@@ -194,7 +194,7 @@ public class SolicitorSubmitApplicationServiceTest {
         caseData.setSolPaymentHowToPay(SolToPay.FEES_HELP_WITH);
 
         final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        caseData.setSolApplicationFeeOrderSummary(orderSummary);
+        caseData.setApplicationFeeOrderSummary(orderSummary);
 
         final var caseDataUpdaterChain = mock(CaseDataUpdaterChain.class);
 
@@ -231,7 +231,7 @@ public class SolicitorSubmitApplicationServiceTest {
         caseData.setStatementOfTruth(null);
         caseData.setSolSignStatementOfTruth(YesOrNo.YES);
         final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        caseData.setSolApplicationFeeOrderSummary(orderSummary);
+        caseData.setApplicationFeeOrderSummary(orderSummary);
 
         ListValue<Payment> payment = new ListValue<>(null, Payment
             .builder()

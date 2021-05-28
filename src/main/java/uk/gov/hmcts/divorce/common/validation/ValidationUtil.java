@@ -118,7 +118,7 @@ public final class ValidationUtil {
     }
 
     public static boolean isPaymentIncomplete(CaseData caseData) {
-        return caseData.getPaymentTotal() < parseInt(caseData.getSolApplicationFeeOrderSummary().getPaymentTotal());
+        return caseData.getPaymentTotal() < parseInt(caseData.getApplicationFeeOrderSummary().getPaymentTotal());
     }
 
     public static boolean hasAwaitingDocuments(CaseData caseData) {

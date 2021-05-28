@@ -11,7 +11,7 @@ public class SolPaymentSummary implements CcdPageConfiguration {
 
         pageBuilder
             .page("SolPaymentSummary")
-            .mandatory(CaseData::getSolApplicationFeeOrderSummary)
+            .mandatory(CaseData::getApplicationFeeOrderSummary)
             .label(
                 "LabelSolPaySummaryFeeAccountPara-1",
                 "Payment Method: Fee Account",

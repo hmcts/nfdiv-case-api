@@ -2,10 +2,27 @@
   "data": {
     "inferredApplicant1Gender": "female",
     "inferredApplicant2Gender": "male",
-    "marriageDate": "2020-04-28",
+    "marriageMarriedInUk": null,
+    "marriageCertificateInEnglish": null,
+    "marriageCertifiedTranslation": null,
+    "marriageCountryOfMarriage": null,
+    "marriagePlaceOfMarriage": null,
+    "marriageDate": "${json-unit.ignore}",
+    "marriageIsSameSexCouple": null,
     "applicant1FirstName": "test_first_name",
     "applicant1MiddleName": "test_middle_name",
     "applicant1LastName": "test_last_name",
+    "jurisdictionApplicant1Residence": "YES",
+    "jurisdictionApplicant2Residence": "YES",
+    "jurisdictionApplicant1Domicile": null,
+    "jurisdictionApplicant2Domicile": null,
+    "jurisdictionApp1HabituallyResLastTwelveMonths": null,
+    "jurisdictionApp1HabituallyResLastSixMonths": null,
+    "jurisdictionResidualEligible": null,
+    "jurisdictionBothLastHabituallyResident": null,
+    "jurisdictionConnections": [
+      "A"
+    ],
     "applicant1ContactDetailsConfidential": "keep",
     "applicant2FirstName": "test_first_name",
     "applicant2LastName": "test_last_name",
@@ -14,24 +31,38 @@
     "prayerHasBeenGiven": "YES",
     "statementOfTruth": "YES",
     "solSignStatementOfTruth": "YES",
-    "jurisdictionApplicant1Residence": "YES",
-    "jurisdictionApplicant2Residence":"YES",
-    "jurisdictionApplicant1Domicile":null,
-    "jurisdictionApplicant2Domicile":null,
-    "jurisdictionApp1HabituallyResLastTwelveMonths":null,
-    "jurisdictionApp1HabituallyResLastSixMonths":null,
-    "jurisdictionResidualEligible":null,
-    "jurisdictionBothLastHabituallyResident":null,
-    "jurisdictionConnections": ["A"],
-    "marriageMarriedInUk":null,
-    "marriageCertificateInEnglish":null,
-    "marriageCertifiedTranslation":null,
-    "marriageCountryOfMarriage":null,
-    "marriagePlaceOfMarriage":null,
-    "marriageIsSameSexCouple":null
-
+    "applicationFeeOrderSummary": {
+      "PaymentReference": null,
+      "Fees": [
+        {
+          "id": null,
+          "value": {
+            "FeeAmount": "55000",
+            "FeeCode": "FEE0002",
+            "FeeDescription": "Filing an application for a divorce, nullity or civil partnership dissolution",
+            "FeeVersion": "5"
+          }
+        }
+      ],
+      "PaymentTotal": "55000"
+    },
+    "payments": [
+      {
+        "id": "${json-unit.ignore}",
+        "value": {
+          "paymentDate": null,
+          "paymentFeeId": null,
+          "paymentAmount": 55000,
+          "paymentSiteId": null,
+          "paymentStatus": "inProgress",
+          "paymentChannel": null,
+          "paymentReference": null,
+          "paymentTransactionId": null
+        }
+      }
+    ]
   },
   "errors": null,
-  "state": "AwaitingPayment",
-  "warnings": null
+  "warnings": null,
+  "state": "AwaitingPayment"
 }

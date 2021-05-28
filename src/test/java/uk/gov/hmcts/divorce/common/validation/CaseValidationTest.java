@@ -135,7 +135,7 @@ public class CaseValidationTest {
     public void shouldReturnTrueWhenPaymentIsIncompleted() {
         CaseData caseData = new CaseData();
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        caseData.setSolApplicationFeeOrderSummary(orderSummary);
+        caseData.setApplicationFeeOrderSummary(orderSummary);
 
         assertTrue(isPaymentIncomplete(caseData));
     }
@@ -144,7 +144,7 @@ public class CaseValidationTest {
     public void shouldReturnFalseWhenPaymentIsCompleted() {
         CaseData caseData = new CaseData();
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        caseData.setSolApplicationFeeOrderSummary(orderSummary);
+        caseData.setApplicationFeeOrderSummary(orderSummary);
         Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(SUCCESS).build();
         caseData.setPayments(singletonList(new ListValue<>("1", payment)));
         assertFalse(isPaymentIncomplete(caseData));

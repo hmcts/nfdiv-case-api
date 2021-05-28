@@ -18,7 +18,7 @@
   "jurisdictionApplicant1Residence": "YES",
   "jurisdictionApplicant2Residence": "YES",
   "jurisdictionConnections": ["A"],
-  "solApplicationFeeOrderSummary": {
+  "applicationFeeOrderSummary": {
     "PaymentTotal": "55000",
     "PaymentReference": null,
     "Fees": [

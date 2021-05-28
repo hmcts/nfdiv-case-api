@@ -104,7 +104,7 @@ class CaseworkerUploadDocumentsAndSubmitTest {
 
         final var caseData = CaseData.builder()
             .payments(singletonList(payment))
-            .solApplicationFeeOrderSummary(orderSummary)
+            .applicationFeeOrderSummary(orderSummary)
             .solSignStatementOfTruth(YES)
             .documentUploadComplete(YES)
             .applicant1WantsToHavePapersServedAnotherWay(YES)

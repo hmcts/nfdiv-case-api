@@ -64,7 +64,7 @@ public class CitizenAddPaymentTest {
         caseData.setSolSignStatementOfTruth(YesOrNo.YES);
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        caseData.setSolApplicationFeeOrderSummary(orderSummary);
+        caseData.setApplicationFeeOrderSummary(orderSummary);
 
         Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(SUCCESS).build();
         caseData.setPayments(singletonList(new ListValue<>("1", payment)));
@@ -83,7 +83,7 @@ public class CitizenAddPaymentTest {
         caseData.setApplicant1Email(TEST_USER_EMAIL);
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        caseData.setSolApplicationFeeOrderSummary(orderSummary);
+        caseData.setApplicationFeeOrderSummary(orderSummary);
 
         Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(DECLINED).build();
         caseData.setPayments(singletonList(new ListValue<>("1", payment)));
@@ -105,7 +105,7 @@ public class CitizenAddPaymentTest {
         Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(SUCCESS).build();
         caseData.setPayments(singletonList(new ListValue<>("1", payment)));
         final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        caseData.setSolApplicationFeeOrderSummary(orderSummary);
+        caseData.setApplicationFeeOrderSummary(orderSummary);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -128,7 +128,7 @@ public class CitizenAddPaymentTest {
         caseData.setCannotUploadSupportingDocument(docs);
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        caseData.setSolApplicationFeeOrderSummary(orderSummary);
+        caseData.setApplicationFeeOrderSummary(orderSummary);
 
         Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(SUCCESS).build();
         caseData.setPayments(singletonList(new ListValue<>("1", payment)));

@@ -25,7 +25,7 @@
     "marriageIsSameSexCouple":null,
     "dateSubmitted": "${json-unit.ignore}",
     "applicant1WantsToHavePapersServedAnotherWay": "NO",
-    "solApplicationFeeOrderSummary": {
+    "applicationFeeOrderSummary": {
       "PaymentTotal": "55000",
       "PaymentReference": null,
       "Fees": [

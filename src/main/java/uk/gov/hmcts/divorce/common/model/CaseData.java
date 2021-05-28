@@ -447,7 +447,7 @@ public class CaseData {
         label = "Here are your order details",
         access = {DefaultAccess.class}
     )
-    private OrderSummary solApplicationFeeOrderSummary;
+    private OrderSummary applicationFeeOrderSummary;
 
     @CCD(
         label = "Did you change your last name when you got married?",

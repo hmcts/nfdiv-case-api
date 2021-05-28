@@ -20,7 +20,7 @@
   "cannotUploadSupportingDocument": ["marriageCertificate", "nameChangeEvidence"],
   "marriageMarriedInUk": "YES",
   "divorceWho": "husband",
-  "solApplicationFeeOrderSummary": {
+  "applicationFeeOrderSummary": {
     "PaymentTotal": "55000",
     "PaymentReference": null,
     "Fees": [
