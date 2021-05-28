@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
@@ -54,8 +55,11 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
         log.info("Submit application about to start callback invoked");
 
         CaseData caseDataCopy = details.getData().toBuilder().build();
-        caseDataCopy.setApplicationFeeOrderSummary(solicitorSubmitApplicationService.getOrderSummary());
-        caseDataCopy.setPayments(singletonList(createPendingPayment()));
+        OrderSummary orderSummary = solicitorSubmitApplicationService.getOrderSummary();
+        caseDataCopy.setApplicationFeeOrderSummary(orderSummary);
+
+        ListValue<Payment> paymentListValue = createPendingPayment(orderSummary.getPaymentTotal());
+        caseDataCopy.setPayments(singletonList(paymentListValue));
 
         log.info("Validating case data");
         final List<String> validationErrors = AwaitingPayment.validate(caseDataCopy);
@@ -78,10 +82,10 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
             .build();
     }
 
-    private ListValue<Payment> createPendingPayment() {
+    private ListValue<Payment> createPendingPayment(String paymentTotal) {
         Payment payment = Payment
             .builder()
-            .paymentAmount(55000)
+            .paymentAmount(Integer.valueOf(paymentTotal))
             .paymentStatus(IN_PROGRESS)
             .build();
 

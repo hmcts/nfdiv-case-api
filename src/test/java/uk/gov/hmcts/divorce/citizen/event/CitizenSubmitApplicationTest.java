@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitApplication.CITIZEN_SUBMIT;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.IN_PROGRESS;
@@ -59,10 +60,19 @@ class CitizenSubmitApplicationTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
+        var orderSummary = orderSummary();
+
+        when(solicitorSubmitApplicationService.getOrderSummary())
+            .thenReturn(
+                orderSummary()
+            );
+
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToStart(caseDetails);
 
         assertThat(response.getErrors().size()).isEqualTo(13);
         assertThat(response.getErrors().get(0)).isEqualTo("Applicant1FirstName cannot be empty or null");
+
+        verify(solicitorSubmitApplicationService).getOrderSummary();
     }
 
     @Test
@@ -75,10 +85,19 @@ class CitizenSubmitApplicationTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
+        var orderSummary = orderSummary();
+
+        when(solicitorSubmitApplicationService.getOrderSummary())
+            .thenReturn(
+                orderSummary()
+            );
+
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToStart(caseDetails);
 
         assertThat(response.getErrors().size()).isEqualTo(1);
         assertThat(response.getErrors().get(0)).isEqualTo("PrayerHasBeenGiven must be YES");
+
+        verify(solicitorSubmitApplicationService).getOrderSummary();
     }
 
     @Test
@@ -91,14 +110,11 @@ class CitizenSubmitApplicationTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
-        var orderSummary = OrderSummary
-            .builder()
-            .paymentTotal("55000")
-            .build();
+        var orderSummary = orderSummary();
 
         when(solicitorSubmitApplicationService.getOrderSummary())
             .thenReturn(
-                orderSummary
+                orderSummary()
             );
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToStart(caseDetails);
@@ -108,6 +124,15 @@ class CitizenSubmitApplicationTest {
         assertThat(response.getData().getPayments())
             .usingElementComparatorIgnoringFields("id") // id is random uuid
             .containsExactlyInAnyOrder(pendingPayment());
+
+        verify(solicitorSubmitApplicationService).getOrderSummary();
+    }
+
+    private OrderSummary orderSummary() {
+        return OrderSummary
+            .builder()
+            .paymentTotal("55000")
+            .build();
     }
 
     private CaseData setValidCaseData(CaseData caseData) {

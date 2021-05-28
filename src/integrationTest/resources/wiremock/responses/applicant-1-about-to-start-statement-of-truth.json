@@ -51,7 +51,7 @@
         "value": {
           "paymentDate": null,
           "paymentFeeId": null,
-          "paymentAmount": 55000,
+          "paymentAmount": 1000,
           "paymentSiteId": null,
           "paymentStatus": "inProgress",
           "paymentChannel": null,
