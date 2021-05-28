@@ -91,7 +91,7 @@ public class CitizenAddPaymentTest {
         data.setSolSignStatementOfTruth(YesOrNo.YES);
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        data.setSolApplicationFeeOrderSummary(orderSummary);
+        data.setApplicationFeeOrderSummary(orderSummary);
 
         Payment payment = Payment.builder()
             .paymentAmount(55000)
@@ -122,7 +122,7 @@ public class CitizenAddPaymentTest {
 
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        data.setSolApplicationFeeOrderSummary(orderSummary);
+        data.setApplicationFeeOrderSummary(orderSummary);
 
         Payment payment = Payment.builder()
             .paymentAmount(55000)
@@ -153,7 +153,7 @@ public class CitizenAddPaymentTest {
         data.setDateSubmitted(LocalDateTime.now());
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        data.setSolApplicationFeeOrderSummary(orderSummary);
+        data.setApplicationFeeOrderSummary(orderSummary);
 
         Payment payment = Payment.builder()
             .paymentAmount(55000)
@@ -180,7 +180,7 @@ public class CitizenAddPaymentTest {
         data.setSolSignStatementOfTruth(YesOrNo.YES);
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        data.setSolApplicationFeeOrderSummary(orderSummary);
+        data.setApplicationFeeOrderSummary(orderSummary);
 
         Payment payment = Payment.builder()
             .paymentAmount(55000)

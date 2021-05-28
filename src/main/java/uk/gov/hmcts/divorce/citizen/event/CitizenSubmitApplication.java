@@ -1,29 +1,39 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
+import uk.gov.hmcts.divorce.payment.model.Payment;
+import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitApplicationService;
 
 import java.util.List;
+import java.util.UUID;
 
+import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.common.model.State.Draft;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
+import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.IN_PROGRESS;
 
 @Slf4j
 @Component
 public class CitizenSubmitApplication implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CITIZEN_SUBMIT = "citizen-submit-application";
+
+    @Autowired
+    private SolicitorSubmitApplicationService solicitorSubmitApplicationService;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -43,28 +53,43 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
 
         log.info("Submit application about to start callback invoked");
 
-        final CaseData caseData = details.getData();
+        CaseData caseDataCopy = details.getData().toBuilder().build();
+        caseDataCopy.setApplicationFeeOrderSummary(solicitorSubmitApplicationService.getOrderSummary());
+        caseDataCopy.setPayments(singletonList(createPendingPayment()));
 
         log.info("Validating case data");
-        final List<String> validationErrors = AwaitingPayment.validate(caseData);
+        final List<String> validationErrors = AwaitingPayment.validate(caseDataCopy);
 
         if (!validationErrors.isEmpty()) {
             log.info("Validation errors: ");
-            for (String error:validationErrors) {
+            for (String error : validationErrors) {
                 log.info(error);
             }
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
+                .data(caseDataCopy)
                 .errors(validationErrors)
                 .state(Draft)
                 .build();
         }
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .state(AwaitingPayment)
-                .build();
+            .data(caseDataCopy)
+            .state(AwaitingPayment)
+            .build();
     }
 
+    private ListValue<Payment> createPendingPayment() {
+        Payment payment = Payment
+            .builder()
+            .paymentAmount(55000)
+            .paymentStatus(IN_PROGRESS)
+            .build();
+
+        return ListValue
+            .<Payment>builder()
+            .value(payment)
+            .id(UUID.randomUUID().toString())
+            .build();
+    }
 }
 

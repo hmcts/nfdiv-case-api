@@ -3,10 +3,13 @@ package uk.gov.hmcts.divorce.citizen.event;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.ConfidentialAddress;
@@ -15,30 +18,37 @@ import uk.gov.hmcts.divorce.common.model.Jurisdiction;
 import uk.gov.hmcts.divorce.common.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
+import uk.gov.hmcts.divorce.payment.model.Payment;
+import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitApplicationService;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Set;
+import java.util.UUID;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitApplication.CITIZEN_SUBMIT;
+import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.IN_PROGRESS;
 
 @ExtendWith(MockitoExtension.class)
 class CitizenSubmitApplicationTest {
 
+    @Mock
+    private SolicitorSubmitApplicationService solicitorSubmitApplicationService;
+
     @InjectMocks
     private CitizenSubmitApplication citizenSubmitApplication;
+    private OrderSummary orderSummary;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
-
         final Set<State> stateSet = Set.of(State.class.getEnumConstants());
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = new ConfigBuilderImpl<>(CaseData.class, stateSet);
 
         citizenSubmitApplication.configure(configBuilder);
 
-        assertThat(configBuilder.getEvents().get(0).getId(), is(CITIZEN_SUBMIT));
+        assertThat(configBuilder.getEvents().get(0).getId()).isEqualTo(CITIZEN_SUBMIT);
     }
 
     @Test
@@ -51,8 +61,8 @@ class CitizenSubmitApplicationTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToStart(caseDetails);
 
-        assertThat(response.getErrors().size(), is(13));
-        assertThat(response.getErrors().get(0), is("Applicant1FirstName cannot be empty or null"));
+        assertThat(response.getErrors().size()).isEqualTo(13);
+        assertThat(response.getErrors().get(0)).isEqualTo("Applicant1FirstName cannot be empty or null");
     }
 
     @Test
@@ -67,12 +77,12 @@ class CitizenSubmitApplicationTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToStart(caseDetails);
 
-        assertThat(response.getErrors().size(), is(1));
-        assertThat(response.getErrors().get(0), is("PrayerHasBeenGiven must be YES"));
+        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors().get(0)).isEqualTo("PrayerHasBeenGiven must be YES");
     }
 
     @Test
-    public void givenEventStartedWithValidCaseThenChangeState() {
+    public void givenEventStartedWithValidCaseThenChangeStateAndSetOrderSummaryAndPendingPayment() {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = CaseData.builder().build();
@@ -81,9 +91,23 @@ class CitizenSubmitApplicationTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
+        var orderSummary = OrderSummary
+            .builder()
+            .paymentTotal("55000")
+            .build();
+
+        when(solicitorSubmitApplicationService.getOrderSummary())
+            .thenReturn(
+                orderSummary
+            );
+
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToStart(caseDetails);
 
-        assertThat(response.getState(), is(State.AwaitingPayment));
+        assertThat(response.getState()).isEqualTo(State.AwaitingPayment);
+        assertThat(response.getData().getApplicationFeeOrderSummary()).isEqualTo(orderSummary);
+        assertThat(response.getData().getPayments())
+            .usingElementComparatorIgnoringFields("id") // id is random uuid
+            .containsExactlyInAnyOrder(pendingPayment());
     }
 
     private CaseData setValidCaseData(CaseData caseData) {
@@ -104,6 +128,21 @@ class CitizenSubmitApplicationTest {
         jurisdiction.setBothLastHabituallyResident(YesOrNo.YES);
         caseData.setJurisdiction(jurisdiction);
         return caseData;
+    }
+
+    private ListValue<Payment> pendingPayment() {
+        Payment payment = Payment
+            .builder()
+            .paymentAmount(55000)
+            .paymentStatus(IN_PROGRESS)
+            .build();
+
+        ListValue<Payment> listValuePayment = ListValue
+            .<Payment>builder()
+            .value(payment)
+            .id(UUID.randomUUID().toString())
+            .build();
+        return listValuePayment;
     }
 
 }

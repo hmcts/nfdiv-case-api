@@ -82,7 +82,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         log.info("Retrieving order summary");
         final OrderSummary orderSummary = solicitorSubmitApplicationService.getOrderSummary();
         final CaseData caseData = details.getData();
-        caseData.setSolApplicationFeeOrderSummary(orderSummary);
+        caseData.setApplicationFeeOrderSummary(orderSummary);
 
         log.info("Adding Applicant 1 solicitor case roles");
         ccdAccessService.addApplicant1SolicitorRole(
@@ -107,12 +107,12 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         if (caseData.getPayments() == null || caseData.getPayments().isEmpty()) {
             List<ListValue<Payment>> payments = new ArrayList<>();
             payments.add(new ListValue<>(null,
-                solicitorSubmitApplicationService.getDummyPayment(caseData.getSolApplicationFeeOrderSummary())));
+                solicitorSubmitApplicationService.getDummyPayment(caseData.getApplicationFeeOrderSummary())));
             caseData.setPayments(payments);
         } else {
             caseData.getPayments()
                 .add(new ListValue<>(null,
-                    solicitorSubmitApplicationService.getDummyPayment(caseData.getSolApplicationFeeOrderSummary())));
+                    solicitorSubmitApplicationService.getDummyPayment(caseData.getApplicationFeeOrderSummary())));
         }
 
         updateApplicant2DigitalDetails(caseData);
@@ -146,7 +146,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             .mapToInt(payment -> payment.getValue().getPaymentAmount())
             .sum();
 
-        if (String.valueOf(feesPaid).equals(caseData.getSolApplicationFeeOrderSummary().getPaymentTotal())) {
+        if (String.valueOf(feesPaid).equals(caseData.getApplicationFeeOrderSummary().getPaymentTotal())) {
             details.setState(Submitted);
         } else {
             details.setState(AwaitingPayment);
