@@ -20,7 +20,6 @@ import java.util.stream.Stream;
 
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingPayment;
-import static uk.gov.hmcts.divorce.common.model.State.Draft;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
@@ -45,7 +44,7 @@ public class CitizenAddPayment implements CCDConfig<CaseData, State, UserRole> {
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder
             .event(CITIZEN_ADD_PAYMENT)
-            .forStateTransition(Draft, AwaitingPayment)
+            .forState(AwaitingPayment)
             .name("Payment made")
             .description("Payment made")
             .retries(120, 120)
@@ -56,8 +55,11 @@ public class CitizenAddPayment implements CCDConfig<CaseData, State, UserRole> {
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
+        log.info("Add payment about to start callback invoked");
+
         CaseData data = details.getData();
 
+        log.info("Validating case data");
         List<String> submittedErrors = Submitted.validate(data);
         List<String> awaitingDocumentsErrors = AwaitingDocuments.validate(data);
         State state = details.getState();
@@ -79,6 +81,13 @@ public class CitizenAddPayment implements CCDConfig<CaseData, State, UserRole> {
             outstandingActionNotification.send(data, details.getId());
             state = AwaitingDocuments;
             errors.clear();
+        }
+
+        if (!errors.isEmpty()) {
+            log.info("Validation errors: ");
+            for (String error:errors) {
+                log.info(error);
+            }
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
