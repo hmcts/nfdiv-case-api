@@ -11,9 +11,9 @@ import java.util.Map;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 import static java.time.temporal.ChronoUnit.YEARS;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
-import static org.skyscreamer.jsonassert.JSONCompareMode.STRICT;
 import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitApplication.CITIZEN_SUBMIT;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
@@ -36,11 +36,10 @@ public class CitizenSubmitApplicationTest extends FunctionalTestSuite {
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
-        assertEquals(
-            expectedResponse(RESPONSE).replace("2020-04-28", LocalDate.now().minus(1, YEARS).minus(1, DAYS).toString()),
-            response.asString(),
-            STRICT
-        );
+        // marriageDate and payments.id are ignored using ${json-unit.ignore}
+        // assertion will fail if the above elements are missing actual value
+        assertThatJson(response.asString())
+            .isEqualTo(json(expectedResponse(RESPONSE)));
     }
 
 }

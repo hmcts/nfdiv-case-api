@@ -2,10 +2,27 @@
   "data": {
     "inferredApplicant1Gender": "female",
     "inferredApplicant2Gender": "male",
-    "marriageDate": "2020-04-29",
+    "marriageMarriedInUk": null,
+    "marriageCertificateInEnglish": null,
+    "marriageCertifiedTranslation": null,
+    "marriageCountryOfMarriage": null,
+    "marriagePlaceOfMarriage": null,
+    "marriageDate": "${json-unit.ignore}",
+    "marriageIsSameSexCouple": null,
     "applicant1FirstName": "test_first_name",
     "applicant1MiddleName": "test_middle_name",
     "applicant1LastName": "test_last_name",
+    "jurisdictionApplicant1Residence": "YES",
+    "jurisdictionApplicant2Residence": "YES",
+    "jurisdictionApplicant1Domicile": null,
+    "jurisdictionApplicant2Domicile": null,
+    "jurisdictionApp1HabituallyResLastTwelveMonths": null,
+    "jurisdictionApp1HabituallyResLastSixMonths": null,
+    "jurisdictionResidualEligible": null,
+    "jurisdictionBothLastHabituallyResident": null,
+    "jurisdictionConnections": [
+      "A"
+    ],
     "applicant1ContactDetailsConfidential": "keep",
     "applicant2FirstName": "test_first_name",
     "applicant2LastName": "test_last_name",
@@ -13,10 +30,38 @@
     "financialOrder": "NO",
     "prayerHasBeenGiven": "YES",
     "statementOfTruth": "YES",
-    "jurisdictionApplicant1Residence": "YES",
-    "jurisdictionConnections": ["A"]
+    "applicationFeeOrderSummary": {
+      "PaymentReference": null,
+      "Fees": [
+        {
+          "id": null,
+          "value": {
+            "FeeAmount": "1000",
+            "FeeCode": "FEECODE1",
+            "FeeDescription": "Issue Fee",
+            "FeeVersion": "1"
+          }
+        }
+      ],
+      "PaymentTotal": "1000"
+    },
+    "payments": [
+      {
+        "id": "${json-unit.ignore}",
+        "value": {
+          "paymentDate": null,
+          "paymentFeeId": null,
+          "paymentAmount": 1000,
+          "paymentSiteId": null,
+          "paymentStatus": "inProgress",
+          "paymentChannel": null,
+          "paymentReference": null,
+          "paymentTransactionId": null
+        }
+      }
+    ]
   },
   "errors": null,
-  "state": "AwaitingPayment",
-  "warnings": null
+  "warnings": null,
+  "state": "AwaitingPayment"
 }

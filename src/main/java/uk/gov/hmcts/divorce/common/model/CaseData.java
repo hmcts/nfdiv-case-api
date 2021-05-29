@@ -447,7 +447,7 @@ public class CaseData {
         label = "Here are your order details",
         access = {DefaultAccess.class}
     )
-    private OrderSummary solApplicationFeeOrderSummary;
+    private OrderSummary applicationFeeOrderSummary;
 
     @CCD(
         label = "Did you change your last name when you got married?",
@@ -653,6 +653,27 @@ public class CaseData {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dueDate;
 
+    @CCD(
+        label = "Is HWF Reference OK for the full amount?",
+        access = {DefaultAccess.class},
+        hint = "Select \"Yes\" if it covers entire amount or \"No\" if doesn't"
+    )
+    private YesOrNo hwfCodeValidForFullAmount;
+
+    @CCD(
+        label = "Is amount different or invalid reference?",
+        access = {DefaultAccess.class},
+        hint = "Select \"Yes\" for different amount or \"No\" for invalid reference"
+    )
+    private YesOrNo hwfAmountOutstanding;
+
+    @CCD(
+        label = "All documents uploaded",
+        hint = "Select yes to submit the case, if all documents have been uploaded",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo documentUploadComplete;
+
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
         return this.getLanguagePreferenceWelsh() == null || this.getLanguagePreferenceWelsh().equals(YesOrNo.NO)
@@ -708,10 +729,10 @@ public class CaseData {
         return payments == null
             ? 0
             : payments
-                .stream()
-                .filter(p -> SUCCESS.equals(p.getValue().getPaymentStatus()))
-                .map(p -> p.getValue().getPaymentAmount())
-                .reduce(0, Integer::sum);
+            .stream()
+            .filter(p -> SUCCESS.equals(p.getValue().getPaymentStatus()))
+            .map(p -> p.getValue().getPaymentAmount())
+            .reduce(0, Integer::sum);
     }
 
     @JsonIgnore

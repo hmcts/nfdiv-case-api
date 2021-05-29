@@ -32,7 +32,7 @@
     "marriageCountryOfMarriage":null,
     "marriagePlaceOfMarriage":null,
     "marriageIsSameSexCouple":null,
-    "solApplicationFeeOrderSummary": {
+    "applicationFeeOrderSummary": {
       "PaymentTotal": "55000",
       "PaymentReference": null,
       "Fees": [

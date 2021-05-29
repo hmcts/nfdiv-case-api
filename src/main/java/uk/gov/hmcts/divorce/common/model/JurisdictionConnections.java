@@ -47,7 +47,7 @@ public enum JurisdictionConnections implements HasLabel {
 
     @JsonProperty("J")
     @JsonPropertyDescription("Applicant 1 habitually resides in England and Wales")
-    APP_1_RESIDENT("J");
+    APP_1_RESIDENT_JOINT("J");
 
     private final String label;
 }

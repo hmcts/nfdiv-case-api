@@ -38,7 +38,6 @@ public class CaseworkerAwaitingDocuments implements CCDConfig<CaseData, State, U
             .grant(READ, CASEWORKER_DIVORCE_SOLICITOR, CASEWORKER_DIVORCE_SUPERUSER, CASEWORKER_DIVORCE_COURTADMIN_LA))
             .page("caseworkerAwaitingDocuments")
             .pageLabel("Update Due Date")
-            .optional(CaseData::getDueDate)
-        ;
+            .optional(CaseData::getDueDate);
     }
 }

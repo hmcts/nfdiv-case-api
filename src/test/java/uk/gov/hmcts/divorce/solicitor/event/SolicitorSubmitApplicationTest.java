@@ -82,7 +82,7 @@ public class SolicitorSubmitApplicationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             solicitorSubmitApplication.aboutToStart(caseDetails);
 
-        assertThat(response.getData().getSolApplicationFeeOrderSummary(), is(orderSummary));
+        assertThat(response.getData().getApplicationFeeOrderSummary(), is(orderSummary));
         verify(ccdAccessService).addApplicant1SolicitorRole(
             authorization,
             caseId
@@ -393,7 +393,7 @@ public class SolicitorSubmitApplicationTest {
         List<ListValue<Payment>> payments = new ArrayList<>();
         payments.add(paymentListValue);
         final CaseData caseData = CaseData.builder()
-            .solApplicationFeeOrderSummary(orderSummary)
+            .applicationFeeOrderSummary(orderSummary)
             .payments(payments)
             .build();
         caseDetails.setData(caseData);
@@ -428,7 +428,7 @@ public class SolicitorSubmitApplicationTest {
         List<ListValue<Payment>> payments = new ArrayList<>();
         payments.add(paymentListValue);
         final CaseData caseData = CaseData.builder()
-            .solApplicationFeeOrderSummary(orderSummary)
+            .applicationFeeOrderSummary(orderSummary)
             .payments(payments)
             .build();
         caseDetails.setData(caseData);
@@ -447,7 +447,7 @@ public class SolicitorSubmitApplicationTest {
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
 
         final CaseData caseData = CaseData.builder()
-            .solApplicationFeeOrderSummary(orderSummary)
+            .applicationFeeOrderSummary(orderSummary)
             .helpWithFeesAppliedForFees(YES)
             .build();
         caseDetails.setData(caseData);

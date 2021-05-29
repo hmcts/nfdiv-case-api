@@ -54,6 +54,8 @@ public enum State {
         }
     },
 
+    AwaitingHWFDecision("AwaitingHWFDecision"),
+
     @CCD(
         name = "Application paid and submitted",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"

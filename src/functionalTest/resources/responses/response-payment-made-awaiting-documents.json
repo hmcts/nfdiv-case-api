@@ -33,7 +33,7 @@
     "marriageIsSameSexCouple":null,
     "cannotUploadSupportingDocument": ["marriageCertificate", "nameChangeEvidence"],
     "divorceWho": "husband",
-    "solApplicationFeeOrderSummary": {
+    "applicationFeeOrderSummary": {
       "PaymentTotal": "55000",
       "PaymentReference": null,
       "Fees": [
