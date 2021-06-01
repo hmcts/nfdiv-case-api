@@ -29,6 +29,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenAddPayment.CITIZEN_ADD_PAYMENT;
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.common.model.State.Draft;
+import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.CANCELLED;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.DECLINED;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
@@ -54,6 +56,28 @@ public class CitizenAddPaymentTest {
         citizenAddPayment.configure(configBuilder);
 
         assertThat(configBuilder.getEvents().get(0).getId(), is(CITIZEN_ADD_PAYMENT));
+    }
+
+    @Test
+    public void givenUnsuccessfulPaymentCaseDataWhenCallbackIsInvokedThenSetToDraft() {
+        final CaseData caseData = caseData();
+        caseData.setApplicant1Email(TEST_USER_EMAIL);
+        caseData.setStatementOfTruth(YesOrNo.YES);
+        caseData.setSolSignStatementOfTruth(YesOrNo.YES);
+
+        OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
+        caseData.setApplicationFeeOrderSummary(orderSummary);
+
+        Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(CANCELLED).build();
+        caseData.setPayments(singletonList(new ListValue<>("1", payment)));
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse response = citizenAddPayment.aboutToSubmit(details, details);
+
+        verifyNoInteractions(notification);
+        assertThat(response.getState(), is(Draft));
     }
 
     @Test

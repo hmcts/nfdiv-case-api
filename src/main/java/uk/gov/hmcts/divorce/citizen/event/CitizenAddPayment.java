@@ -56,7 +56,7 @@ public class CitizenAddPayment implements CCDConfig<CaseData, State, UserRole> {
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Add payment about to start callback invoked");
+        log.info("Add payment about to submit callback invoked");
 
         CaseData data = details.getData();
 
@@ -68,7 +68,7 @@ public class CitizenAddPayment implements CCDConfig<CaseData, State, UserRole> {
             .collect(Collectors.toList());
 
         if (data.wasLastPaymentUnsuccessful()) {
-            log.info("Payment canceled {}", details.getId());
+            log.info("Case {} payment canceled", details.getId());
 
             state = Draft;
             errors.clear();

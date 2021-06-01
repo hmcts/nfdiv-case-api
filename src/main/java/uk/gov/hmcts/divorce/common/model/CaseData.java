@@ -739,7 +739,7 @@ public class CaseData {
     public Boolean wasLastPaymentUnsuccessful() {
         return payments != null && payments
             .stream()
-            .reduce((first, second) -> second)
+            .reduce((previous, current) -> current)
             .get()
             .getValue()
             .getPaymentStatus() != SUCCESS;
