@@ -17,8 +17,6 @@ import uk.gov.hmcts.divorce.payment.model.Payment;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingHWFDecision;
@@ -58,33 +56,39 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
         log.info("Submit application about to start callback invoked");
 
         CaseData caseDataCopy = details.getData().toBuilder().build();
-        OrderSummary orderSummary = paymentService.getOrderSummary();
-        caseDataCopy.setApplicationFeeOrderSummary(orderSummary);
-
-        ListValue<Payment> paymentListValue = createPendingPayment(orderSummary.getPaymentTotal());
-        caseDataCopy.setPayments(singletonList(paymentListValue));
 
         log.info("Validating case data");
         final List<String> validationErrors = AwaitingPayment.validate(caseDataCopy);
-        final List<String> hwfValidationErrors = AwaitingHWFDecision.validate(caseDataCopy);
-        List<String> errors = Stream.concat(validationErrors.stream(), hwfValidationErrors.stream())
-            .collect(Collectors.toList());
 
-        if (!errors.isEmpty()) {
+        if (!validationErrors.isEmpty()) {
             log.info("Validation errors: ");
-            for (String error : errors) {
+            for (String error : validationErrors) {
                 log.info(error);
             }
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseDataCopy)
-                .errors(errors)
+                .errors(validationErrors)
                 .state(Draft)
                 .build();
         }
+
+        State state;
+        if (caseDataCopy.getHelpWithFeesAppliedForFees().toBoolean()) {
+            state = AwaitingHWFDecision;
+        } else {
+            OrderSummary orderSummary = paymentService.getOrderSummary();
+            caseDataCopy.setApplicationFeeOrderSummary(orderSummary);
+
+            ListValue<Payment> paymentListValue = createPendingPayment(orderSummary.getPaymentTotal());
+            caseDataCopy.setPayments(singletonList(paymentListValue));
+
+            state = AwaitingPayment;
+        }
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseDataCopy)
-            .state(caseDataCopy.getHelpWithFeesAppliedForFees().toBoolean() ? AwaitingHWFDecision : AwaitingPayment)
+            .state(state)
             .build();
     }
 
