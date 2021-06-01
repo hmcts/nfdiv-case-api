@@ -17,8 +17,11 @@ import uk.gov.hmcts.divorce.payment.model.Payment;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Collections.singletonList;
+import static uk.gov.hmcts.divorce.common.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.common.model.State.Draft;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
@@ -63,22 +66,25 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
 
         log.info("Validating case data");
         final List<String> validationErrors = AwaitingPayment.validate(caseDataCopy);
+        final List<String> hwfValidationErrors = AwaitingHWFDecision.validate(caseDataCopy);
+        List<String> errors = Stream.concat(validationErrors.stream(), hwfValidationErrors.stream())
+            .collect(Collectors.toList());
 
-        if (!validationErrors.isEmpty()) {
+        if (!errors.isEmpty()) {
             log.info("Validation errors: ");
-            for (String error : validationErrors) {
+            for (String error : errors) {
                 log.info(error);
             }
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseDataCopy)
-                .errors(validationErrors)
+                .errors(errors)
                 .state(Draft)
                 .build();
         }
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseDataCopy)
-            .state(AwaitingPayment)
+            .state(caseDataCopy.getHelpWithFeesAppliedForFees().toBoolean() ? AwaitingHWFDecision : AwaitingPayment)
             .build();
     }
 

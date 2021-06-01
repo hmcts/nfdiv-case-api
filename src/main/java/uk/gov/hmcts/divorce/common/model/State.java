@@ -54,7 +54,23 @@ public enum State {
         }
     },
 
-    AwaitingHWFDecision("AwaitingHWFDecision"),
+    @CCD(
+        name = "Application submitted and awaiting HWF decision",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
+    )
+    AwaitingHWFDecision("AwaitingHWFDecision") {
+        @Override
+        public List<String> validate(CaseData caseData) {
+            List<String> errors = new ArrayList<>();
+
+            if (caseData.getHelpWithFeesAppliedForFees().toBoolean()
+                && caseData.getHelpWithFeesReferenceNumber().isEmpty()) {
+                errors.add("Incomplete HWF reference number");
+            }
+
+            return errors;
+        }
+    },
 
     @CCD(
         name = "Application paid and submitted",
