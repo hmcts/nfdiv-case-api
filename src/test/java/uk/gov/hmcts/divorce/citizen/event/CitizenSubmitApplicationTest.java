@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.common.model.Jurisdiction;
 import uk.gov.hmcts.divorce.common.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
+import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitApplicationService;
 
@@ -37,6 +38,9 @@ class CitizenSubmitApplicationTest {
 
     @Mock
     private SolicitorSubmitApplicationService solicitorSubmitApplicationService;
+
+    @Mock
+    private PaymentService paymentService;
 
     @InjectMocks
     private CitizenSubmitApplication citizenSubmitApplication;
@@ -62,7 +66,7 @@ class CitizenSubmitApplicationTest {
 
         var orderSummary = orderSummary();
 
-        when(solicitorSubmitApplicationService.getOrderSummary())
+        when(paymentService.getOrderSummary())
             .thenReturn(
                 orderSummary()
             );
@@ -72,7 +76,7 @@ class CitizenSubmitApplicationTest {
         assertThat(response.getErrors().size()).isEqualTo(13);
         assertThat(response.getErrors().get(0)).isEqualTo("Applicant1FirstName cannot be empty or null");
 
-        verify(solicitorSubmitApplicationService).getOrderSummary();
+        verify(paymentService).getOrderSummary();
     }
 
     @Test
@@ -87,7 +91,7 @@ class CitizenSubmitApplicationTest {
 
         var orderSummary = orderSummary();
 
-        when(solicitorSubmitApplicationService.getOrderSummary())
+        when(paymentService.getOrderSummary())
             .thenReturn(
                 orderSummary()
             );
@@ -97,7 +101,7 @@ class CitizenSubmitApplicationTest {
         assertThat(response.getErrors().size()).isEqualTo(1);
         assertThat(response.getErrors().get(0)).isEqualTo("PrayerHasBeenGiven must be YES");
 
-        verify(solicitorSubmitApplicationService).getOrderSummary();
+        verify(paymentService).getOrderSummary();
     }
 
     @Test
@@ -112,7 +116,7 @@ class CitizenSubmitApplicationTest {
 
         var orderSummary = orderSummary();
 
-        when(solicitorSubmitApplicationService.getOrderSummary())
+        when(paymentService.getOrderSummary())
             .thenReturn(
                 orderSummary()
             );
@@ -125,7 +129,7 @@ class CitizenSubmitApplicationTest {
             .usingElementComparatorIgnoringFields("id") // id is random uuid
             .containsExactlyInAnyOrder(pendingPayment());
 
-        verify(solicitorSubmitApplicationService).getOrderSummary();
+        verify(paymentService).getOrderSummary();
     }
 
     private OrderSummary orderSummary() {

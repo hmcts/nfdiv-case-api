@@ -1,14 +1,10 @@
 package uk.gov.hmcts.divorce.solicitor.service;
 
-import feign.FeignException;
-import feign.Request;
-import feign.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
@@ -18,7 +14,6 @@ import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChainFactory;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
-import uk.gov.hmcts.divorce.payment.FeesAndPaymentsClient;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
 import uk.gov.hmcts.divorce.solicitor.service.updater.MiniApplicationRemover;
@@ -28,42 +23,23 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-import static feign.Request.HttpMethod.GET;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.tuple;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFeeResponse;
 
 @ExtendWith(MockitoExtension.class)
 public class SolicitorSubmitApplicationServiceTest {
-
-    @Mock
-    private FeesAndPaymentsClient feesAndPaymentsClient;
 
     @Mock
     private CaseDataUpdaterChainFactory caseDataUpdaterChainFactory;
@@ -79,72 +55,6 @@ public class SolicitorSubmitApplicationServiceTest {
 
     @InjectMocks
     private SolicitorSubmitApplicationService solicitorSubmitApplicationService;
-
-    @Test
-    public void shouldReturnOrderSummaryWhenFeeEventIsAvailable() {
-        doReturn(getFeeResponse())
-            .when(feesAndPaymentsClient)
-            .getApplicationIssueFee(
-                anyString(),
-                anyString(),
-                anyString(),
-                anyString(),
-                anyString(),
-                isNull()
-            );
-
-        OrderSummary orderSummary = solicitorSubmitApplicationService.getOrderSummary();
-        assertThat(orderSummary.getPaymentReference()).isNull();
-        assertThat(orderSummary.getPaymentTotal()).isEqualTo(String.valueOf(1000));// in pence
-        assertThat(orderSummary.getFees())
-            .extracting("value", Fee.class)
-            .extracting("description", "version", "code", "amount")
-            .contains(tuple(ISSUE_FEE, "1", FEE_CODE, "1000")
-            );
-
-        verify(feesAndPaymentsClient)
-            .getApplicationIssueFee(
-                anyString(),
-                anyString(),
-                anyString(),
-                anyString(),
-                anyString(),
-                isNull()
-            );
-
-        verifyNoMoreInteractions(feesAndPaymentsClient);
-    }
-
-    @Test
-    public void shouldThrowFeignExceptionWhenFeeEventIsNotAvailable() {
-        byte[] emptyBody = {};
-        Request request = Request.create(GET, EMPTY, Map.of(), emptyBody, UTF_8, null);
-
-        FeignException feignException = FeignException.errorStatus(
-            "feeLookupNotFound",
-            Response.builder()
-                .request(request)
-                .status(404)
-                .headers(Collections.emptyMap())
-                .reason("Fee Not found")
-                .build()
-        );
-
-        doThrow(feignException)
-            .when(feesAndPaymentsClient)
-            .getApplicationIssueFee(
-                anyString(),
-                anyString(),
-                anyString(),
-                anyString(),
-                anyString(),
-                isNull()
-            );
-
-        assertThatThrownBy(() -> solicitorSubmitApplicationService.getOrderSummary())
-            .hasMessageContaining("404 Fee Not found")
-            .isExactlyInstanceOf(FeignException.NotFound.class);
-    }
 
     @Test
     void shouldCompleteStepsToUpdateApplication() {
