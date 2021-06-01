@@ -12,8 +12,8 @@ import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
+import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.payment.model.Payment;
-import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitApplicationService;
 
 import java.util.List;
 import java.util.UUID;
@@ -36,7 +36,7 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
     public static final String CITIZEN_SUBMIT = "citizen-submit-application";
 
     @Autowired
-    private SolicitorSubmitApplicationService solicitorSubmitApplicationService;
+    private PaymentService paymentService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -58,7 +58,7 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
 
         CaseData data = details.getData();
         CaseData caseDataCopy = data.toBuilder().build();
-        OrderSummary orderSummary = solicitorSubmitApplicationService.getOrderSummary();
+        OrderSummary orderSummary = paymentService.getOrderSummary();
         caseDataCopy.setApplicationFeeOrderSummary(orderSummary);
 
         if (data.getPayments() == null || data.getPayments().isEmpty()) {

@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
+import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.hmcts.divorce.solicitor.event.page.HelpWithFees;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayAccount;
@@ -56,6 +57,9 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
     private SolicitorSubmitApplicationService solicitorSubmitApplicationService;
 
     @Autowired
+    private PaymentService paymentService;
+
+    @Autowired
     private CcdAccessService ccdAccessService;
 
     @Autowired
@@ -80,7 +84,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         log.info("Submit application about to start callback invoked");
 
         log.info("Retrieving order summary");
-        final OrderSummary orderSummary = solicitorSubmitApplicationService.getOrderSummary();
+        final OrderSummary orderSummary = paymentService.getOrderSummary();
         final CaseData caseData = details.getData();
         caseData.setApplicationFeeOrderSummary(orderSummary);
 
