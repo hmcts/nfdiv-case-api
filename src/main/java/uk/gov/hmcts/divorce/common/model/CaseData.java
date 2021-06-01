@@ -734,6 +734,16 @@ public class CaseData {
     }
 
     @JsonIgnore
+    public Boolean wasLastPaymentUnsuccessful() {
+        return payments != null && payments
+            .stream()
+            .reduce((previous, current) -> current)
+            .get()
+            .getValue()
+            .getPaymentStatus() != SUCCESS;
+    }
+
+    @JsonIgnore
     public void addToDocumentsGenerated(final ListValue<DivorceDocument> listValue) {
 
         final List<ListValue<DivorceDocument>> documents = getDocumentsGenerated();

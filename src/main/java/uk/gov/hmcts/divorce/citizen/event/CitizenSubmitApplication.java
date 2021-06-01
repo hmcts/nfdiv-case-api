@@ -21,6 +21,8 @@ import java.util.UUID;
 import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.common.model.State.Draft;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_UPDATE;
@@ -37,29 +39,32 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
     private PaymentService paymentService;
 
     @Override
-    public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+    public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         configBuilder
             .event(CITIZEN_SUBMIT)
-            .forStates(Draft)
+            .forStates(Draft, AwaitingPayment)
             .name("Applicant 1 Statement of Truth")
             .description("Applicant 1 confirms SOT")
-            .aboutToStartCallback(this::aboutToStart)
             .retries(120, 120)
-            .grant(CREATE_READ_UPDATE, CITIZEN)
-            .grant(READ, CASEWORKER_DIVORCE_SUPERUSER);
+            .grant(CREATE_READ_UPDATE, CITIZEN, CASEWORKER_DIVORCE_COURTADMIN, CASEWORKER_DIVORCE_COURTADMIN_BETA)
+            .grant(READ, CASEWORKER_DIVORCE_SUPERUSER)
+            .aboutToSubmitCallback(this::aboutToSubmit);
     }
 
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
-
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
+                                                                       CaseDetails<CaseData, State> beforeDetails) {
         log.info("Submit application about to start callback invoked");
 
-        CaseData caseDataCopy = details.getData().toBuilder().build();
+        CaseData data = details.getData();
+        CaseData caseDataCopy = data.toBuilder().build();
         OrderSummary orderSummary = paymentService.getOrderSummary();
         caseDataCopy.setApplicationFeeOrderSummary(orderSummary);
 
-        ListValue<Payment> paymentListValue = createPendingPayment(orderSummary.getPaymentTotal());
-        caseDataCopy.setPayments(singletonList(paymentListValue));
+        if (data.getPayments() == null || data.getPayments().isEmpty()) {
+            ListValue<Payment> paymentListValue = createPendingPayment(orderSummary.getPaymentTotal());
+            caseDataCopy.setPayments(singletonList(paymentListValue));
+        }
 
         log.info("Validating case data");
         final List<String> validationErrors = AwaitingPayment.validate(caseDataCopy);

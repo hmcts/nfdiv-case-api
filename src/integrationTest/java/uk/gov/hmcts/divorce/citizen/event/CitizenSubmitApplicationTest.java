@@ -34,7 +34,7 @@ import static org.springframework.util.ResourceUtils.getFile;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitApplication.CITIZEN_SUBMIT;
 import static uk.gov.hmcts.divorce.testutil.FeesWireMock.stubForFeesLookup;
 import static uk.gov.hmcts.divorce.testutil.FeesWireMock.stubForFeesNotFound;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
@@ -76,7 +76,7 @@ public class CitizenSubmitApplicationTest {
     public void givenValidCaseDataThenReturnResponseWithNoErrors() throws Exception {
         stubForFeesLookup(TestDataHelper.getFeeResponseAsJson());
 
-        String actualResponse = mockMvc.perform(post(ABOUT_TO_START_URL)
+        String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .content(objectMapper.writeValueAsString(callbackRequest(validApplicant1CaseDataMap(), CITIZEN_SUBMIT)))
@@ -97,7 +97,7 @@ public class CitizenSubmitApplicationTest {
         throws Exception {
         stubForFeesNotFound();
 
-        mockMvc.perform(post(ABOUT_TO_START_URL)
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithOrderSummary(), CITIZEN_SUBMIT)))
@@ -116,7 +116,7 @@ public class CitizenSubmitApplicationTest {
 
     @Test
     public void givenInvalidCaseDataThenReturnResponseWithErrors() throws Exception {
-        mockMvc.perform(post(ABOUT_TO_START_URL)
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithOrderSummary(), CITIZEN_SUBMIT)))
@@ -127,7 +127,7 @@ public class CitizenSubmitApplicationTest {
 
     @Test
     public void givenRequestBodyIsNullWhenEndpointInvokedThenReturnBadRequest() throws Exception {
-        mockMvc.perform(post(ABOUT_TO_START_URL)
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
