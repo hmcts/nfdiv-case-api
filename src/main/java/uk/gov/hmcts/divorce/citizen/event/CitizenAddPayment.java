@@ -20,7 +20,6 @@ import java.util.stream.Stream;
 
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingPayment;
-import static uk.gov.hmcts.divorce.common.model.State.Draft;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
@@ -45,7 +44,7 @@ public class CitizenAddPayment implements CCDConfig<CaseData, State, UserRole> {
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder
             .event(CITIZEN_ADD_PAYMENT)
-            .forStates(Draft, AwaitingDocuments, AwaitingPayment)
+            .forState(AwaitingPayment)
             .name("Payment made")
             .description("Payment made")
             .retries(120, 120)
