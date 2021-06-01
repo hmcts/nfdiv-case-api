@@ -76,8 +76,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field(CaseData::getDivorceClaimFrom, "divorceCostsClaim=\"YES\"")
             .field("LabelOtherLegalProceedings-Heading", null, "### Other legal proceedings")
             .field(CaseData::getLegalProceedings)
-            .field(CaseData::getLegalProceedingsByCase, "legalProceedings=\"YES\"")
-            .field(CaseData::getLegalProceedingsOther, "legalProceedings=\"YES\"")
+            .field(CaseData::getLegalProceedingsRelated, "legalProceedings=\"YES\"")
+            .field(CaseData::getLegalProceedingsDetails, "legalProceedings=\"YES\"")
             .field("LabelFinancialOrder-Heading", null, "### Financial order")
             .field(CaseData::getFinancialOrder)
             .field(CaseData::getFinancialOrderFor, "financialOrder=\"YES\"");
