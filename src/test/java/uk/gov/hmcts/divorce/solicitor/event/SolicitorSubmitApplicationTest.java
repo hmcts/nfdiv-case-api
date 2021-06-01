@@ -15,6 +15,7 @@ import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
+import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
@@ -57,6 +58,9 @@ public class SolicitorSubmitApplicationTest {
     private SolicitorSubmitApplicationService solicitorSubmitApplicationService;
 
     @Mock
+    private PaymentService paymentService;
+
+    @Mock
     private CcdAccessService ccdAccessService;
 
     @Mock
@@ -76,7 +80,7 @@ public class SolicitorSubmitApplicationTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
-        when(solicitorSubmitApplicationService.getOrderSummary()).thenReturn(orderSummary);
+        when(paymentService.getOrderSummary()).thenReturn(orderSummary);
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(authorization);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
