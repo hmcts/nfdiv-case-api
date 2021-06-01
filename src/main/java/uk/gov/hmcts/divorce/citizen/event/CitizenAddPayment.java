@@ -89,13 +89,6 @@ public class CitizenAddPayment implements CCDConfig<CaseData, State, UserRole> {
             errors.clear();
         }
 
-        if (!errors.isEmpty()) {
-            log.info("Validation errors: ");
-            for (String error:errors) {
-                log.info(error);
-            }
-        }
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
             .state(state)
