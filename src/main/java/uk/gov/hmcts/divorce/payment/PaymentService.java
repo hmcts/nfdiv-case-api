@@ -6,11 +6,9 @@ import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
-import uk.gov.hmcts.divorce.payment.model.Payment;
 
 import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.ccd.sdk.type.Fee.getValueInPence;
-import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
 @Service
 public class PaymentService {
