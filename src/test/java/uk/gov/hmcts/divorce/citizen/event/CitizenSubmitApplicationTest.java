@@ -133,7 +133,7 @@ class CitizenSubmitApplicationTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToStart(caseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getState()).isEqualTo(State.AwaitingHWFDecision);
         assertThat(response.getData().getPayments()).isNull();

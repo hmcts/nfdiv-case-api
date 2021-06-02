@@ -59,13 +59,6 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
 
         CaseData data = details.getData();
         CaseData caseDataCopy = data.toBuilder().build();
-        OrderSummary orderSummary = paymentService.getOrderSummary();
-        caseDataCopy.setApplicationFeeOrderSummary(orderSummary);
-
-        if (data.getPayments() == null || data.getPayments().isEmpty()) {
-            ListValue<Payment> paymentListValue = createPendingPayment(orderSummary.getPaymentTotal());
-            caseDataCopy.setPayments(singletonList(paymentListValue));
-        }
 
         log.info("Validating case data");
         final List<String> validationErrors = AwaitingPayment.validate(caseDataCopy);
@@ -90,8 +83,10 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
             OrderSummary orderSummary = paymentService.getOrderSummary();
             caseDataCopy.setApplicationFeeOrderSummary(orderSummary);
 
-            ListValue<Payment> paymentListValue = createPendingPayment(orderSummary.getPaymentTotal());
-            caseDataCopy.setPayments(singletonList(paymentListValue));
+            if (data.getPayments() == null || data.getPayments().isEmpty()) {
+                ListValue<Payment> paymentListValue = createPendingPayment(orderSummary.getPaymentTotal());
+                caseDataCopy.setPayments(singletonList(paymentListValue));
+            }
 
             state = AwaitingPayment;
         }
