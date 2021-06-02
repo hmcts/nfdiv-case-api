@@ -19,12 +19,15 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.common.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.common.model.State.Draft;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 
 @Component
 @Slf4j
@@ -42,24 +45,34 @@ public class CitizenAddPayment implements CCDConfig<CaseData, State, UserRole> {
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder
             .event(CITIZEN_ADD_PAYMENT)
-            .initialState(Draft)
+            .forState(AwaitingPayment)
             .name("Payment made")
             .description("Payment made")
+            .retries(120, 120)
             .grant(CREATE_READ_UPDATE, CITIZEN, CASEWORKER_DIVORCE_COURTADMIN, CASEWORKER_DIVORCE_COURTADMIN_BETA)
+            .grant(READ, CASEWORKER_DIVORCE_SUPERUSER)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
+        log.info("Add payment about to submit callback invoked");
+
         CaseData data = details.getData();
 
+        log.info("Validating case data");
         List<String> submittedErrors = Submitted.validate(data);
         List<String> awaitingDocumentsErrors = AwaitingDocuments.validate(data);
         State state = details.getState();
         List<String> errors = Stream.concat(submittedErrors.stream(), awaitingDocumentsErrors.stream())
             .collect(Collectors.toList());
 
-        if (submittedErrors.isEmpty()) {
+        if (data.wasLastPaymentUnsuccessful()) {
+            log.info("Case {} payment canceled", details.getId());
+
+            state = Draft;
+            errors.clear();
+        } else if (submittedErrors.isEmpty()) {
             log.info("Case {} submitted", details.getId());
             data.setDateSubmitted(LocalDateTime.now());
 

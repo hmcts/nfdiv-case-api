@@ -4,7 +4,7 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath group: 'cz.habarta.typescript-generator', name: 'typescript-generator-gradle-plugin', version: '2.31.861'
+    classpath group: 'cz.habarta.typescript-generator', name: 'typescript-generator-gradle-plugin', version: '2.32.889'
   }
 }
 
@@ -192,7 +192,7 @@ def versions = [
   ccdStoreClient    : '4.7.6',
   idamClient        : '2.0.0',
   jackson           : '2.12.3',
-  junit             : '5.7.1',
+  junit             : '5.7.2',
   junitPlatform     : '1.7.2',
   lombok            : '1.18.12',
   reformsJavaLogging: '5.1.7',

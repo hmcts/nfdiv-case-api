@@ -497,20 +497,18 @@ public class CaseData {
     private YesOrNo legalProceedings;
 
     @CCD(
-        label = "Cases of ongoing legal proceedings",
-        typeOverride = Collection,
-        typeParameterOverride = "LegalProceeding",
+        label = "What do the legal proceedings relate to?",
         access = {DefaultAccess.class}
     )
-    private List<ListValue<LegalProceeding>> legalProceedingsByCase;
+    private Set<LegalProceedingsRelated> legalProceedingsRelated;
 
     @CCD(
-        label = "Any other information about existing legal proceedings",
-        hint = "If case numbers are unknown, own",
+        label = "Legal proceeding details",
+        hint = "Include the case number(s), if known.",
         typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
-    private String legalProceedingsOther;
+    private String legalProceedingsDetails;
 
     @CCD(
         label = "Claim costs from",
@@ -733,6 +731,16 @@ public class CaseData {
             .filter(p -> SUCCESS.equals(p.getValue().getPaymentStatus()))
             .map(p -> p.getValue().getPaymentAmount())
             .reduce(0, Integer::sum);
+    }
+
+    @JsonIgnore
+    public Boolean wasLastPaymentUnsuccessful() {
+        return payments != null && payments
+            .stream()
+            .reduce((previous, current) -> current)
+            .get()
+            .getValue()
+            .getPaymentStatus() != SUCCESS;
     }
 
     @JsonIgnore

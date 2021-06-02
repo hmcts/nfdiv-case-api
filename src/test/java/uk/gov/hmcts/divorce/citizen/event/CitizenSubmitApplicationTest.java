@@ -64,7 +64,7 @@ class CitizenSubmitApplicationTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToStart(caseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getErrors().size()).isEqualTo(13);
         assertThat(response.getErrors().get(0)).isEqualTo("Applicant1FirstName cannot be empty or null");
@@ -87,7 +87,7 @@ class CitizenSubmitApplicationTest {
                 orderSummary()
             );
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToStart(caseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getErrors().size()).isEqualTo(1);
         assertThat(response.getErrors().get(0)).isEqualTo("PrayerHasBeenGiven must be YES");
@@ -112,7 +112,7 @@ class CitizenSubmitApplicationTest {
                 orderSummary()
             );
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToStart(caseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getState()).isEqualTo(State.AwaitingPayment);
         assertThat(response.getData().getApplicationFeeOrderSummary()).isEqualTo(orderSummary);
