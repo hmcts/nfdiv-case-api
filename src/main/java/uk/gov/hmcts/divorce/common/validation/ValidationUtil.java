@@ -26,15 +26,15 @@ public final class ValidationUtil {
     }
 
     public static void validateBasicCase(CaseData caseData, List<String> errorList) {
-        addToErrorList(checkIfStringNullOrEmpty(caseData.getApplicant1FirstName(), "Applicant1FirstName"), errorList);
-        addToErrorList(checkIfStringNullOrEmpty(caseData.getApplicant1LastName(), "Applicant1LastName"), errorList);
-        addToErrorList(checkIfStringNullOrEmpty(caseData.getApplicant2FirstName(), "Applicant2FirstName"), errorList);
-        addToErrorList(checkIfStringNullOrEmpty(caseData.getApplicant2LastName(), "Applicant2LastName"), errorList);
+        addToErrorList(checkIfStringNullOrEmpty(caseData.getApplicant1().getFirstName(), "Applicant1FirstName"), errorList);
+        addToErrorList(checkIfStringNullOrEmpty(caseData.getApplicant1().getLastName(), "Applicant1LastName"), errorList);
+        addToErrorList(checkIfStringNullOrEmpty(caseData.getApplicant2().getFirstName(), "Applicant2FirstName"), errorList);
+        addToErrorList(checkIfStringNullOrEmpty(caseData.getApplicant2().getLastName(), "Applicant2LastName"), errorList);
         addToErrorList(checkIfYesOrNoNullOrEmpty(caseData.getFinancialOrder(), "FinancialOrder"), errorList);
         addToErrorList(checkIfGenderNullOrEmpty(caseData.getInferredApplicant1Gender(), "InferredApplicant1Gender"), errorList);
         addToErrorList(checkIfGenderNullOrEmpty(caseData.getInferredApplicant2Gender(), "InferredApplicant2Gender"), errorList);
         addToErrorList(checkIfStringNullOrEmpty(caseData.getMarriageApplicant1Name(), "MarriageApplicant1Name"), errorList);
-        addToErrorList(checkIfConfidentialAddressNullOrEmpty(caseData.getApplicant1ContactDetailsConfidential(),
+        addToErrorList(checkIfConfidentialAddressNullOrEmpty(caseData.getApplicant1().getContactDetailsConfidential(),
             "Applicant1ContactDetailsConfidential"), errorList);
         addToErrorList(checkIfYesOrNoIsNullOrEmptyOrNo(caseData.getPrayerHasBeenGiven(), "PrayerHasBeenGiven"), errorList);
         addToErrorList(checkIfYesOrNoIsNullOrEmptyOrNo(caseData.getStatementOfTruth(), "StatementOfTruth"), errorList);

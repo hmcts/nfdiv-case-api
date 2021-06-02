@@ -53,10 +53,10 @@ public class ApplicationOutstandingActionNotification {
         log.info("Sending application outstanding actions notification for case : {}", id);
 
         notificationService.sendEmail(
-            caseData.getApplicant1Email(),
+            caseData.getApplicant1().getEmail(),
             OUTSTANDING_ACTIONS,
             templateVars,
-            caseData.getLanguagePreference()
+            caseData.getApplicant1().getLanguagePreference()
         );
     }
 

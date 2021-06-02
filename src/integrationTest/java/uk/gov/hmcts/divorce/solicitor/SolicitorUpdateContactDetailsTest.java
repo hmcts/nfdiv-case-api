@@ -29,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
+import static uk.gov.hmcts.divorce.solicitor.SolicitorCreateApplicationTest.getApplicant;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorUpdateContactDetails.SOLICITOR_UPDATE_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.start;
 import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.stopAndReset;
@@ -40,11 +41,8 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_MID_EVENT_ER
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_MID_EVENT_RESPONSE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_UPDATE_CONTACT_MID_EVENT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
@@ -132,13 +130,10 @@ public class SolicitorUpdateContactDetailsTest {
     private CaseData caseData() {
         return CaseData
             .builder()
-            .applicant1FirstName(TEST_FIRST_NAME)
-            .applicant1LastName(TEST_LAST_NAME)
-            .applicant1Email(TEST_USER_EMAIL)
+            .applicant1(getApplicant())
             .divorceOrDissolution(DIVORCE)
             .divorceCostsClaim(YES)
             .financialOrder(NO)
-            .languagePreferenceWelsh(NO)
             .build();
     }
 

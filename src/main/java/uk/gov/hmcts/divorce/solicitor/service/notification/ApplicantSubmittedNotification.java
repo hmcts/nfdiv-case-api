@@ -35,7 +35,7 @@ public class ApplicantSubmittedNotification {
 
     public void send(final CaseData caseData, final Long caseId) {
 
-        final String applicant1Email = caseData.getApplicant1Email();
+        final String applicant1Email = caseData.getApplicant1().getEmail();
         final Map<String, String> templateVars = commonContent.templateVarsFor(caseData);
         templateVars.put(APPLICATION_REFERENCE, formatId(caseId));
 
@@ -56,7 +56,7 @@ public class ApplicantSubmittedNotification {
                 applicant1Email,
                 templateName,
                 templateVars,
-                caseData.getLanguagePreference());
+                caseData.getApplicant1().getLanguagePreference());
 
             log.info(logMessage, caseId);
 

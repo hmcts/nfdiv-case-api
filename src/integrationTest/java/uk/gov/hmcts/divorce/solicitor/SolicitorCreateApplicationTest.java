@@ -16,6 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
+import uk.gov.hmcts.divorce.common.model.Applicant;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
@@ -46,6 +47,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_MID_EVENT_RE
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
@@ -198,16 +200,23 @@ class SolicitorCreateApplicationTest {
         return caseData;
     }
 
+    public static Applicant getApplicant() {
+        return Applicant.builder()
+            .firstName(TEST_FIRST_NAME)
+            .middleName(TEST_MIDDLE_NAME)
+            .lastName(TEST_LAST_NAME)
+            .email(TEST_USER_EMAIL)
+            .languagePreferenceWelsh(NO)
+            .build();
+    }
+
     private static CaseData caseData() {
         return CaseData
             .builder()
-            .applicant1FirstName(TEST_FIRST_NAME)
-            .applicant1LastName(TEST_LAST_NAME)
-            .applicant1Email(TEST_USER_EMAIL)
+            .applicant1(getApplicant())
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .divorceCostsClaim(YES)
             .financialOrder(NO)
-            .languagePreferenceWelsh(NO)
             .build();
     }
 }

@@ -23,6 +23,7 @@ import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_SOLICITOR_AMENDED_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 
 @ExtendWith(MockitoExtension.class)
 class SolicitorSubmittedNotificationTest {
@@ -42,9 +43,11 @@ class SolicitorSubmittedNotificationTest {
         final String applicant1SolicitorEmail = "test@somewher.com";
         final Map<String, String> templateVars = new HashMap<>();
         final CaseData caseData = CaseData.builder()
+            .applicant1(getApplicant())
             .applicant1SolicitorEmail(applicant1SolicitorEmail)
-            .languagePreferenceWelsh(NO)
             .build();
+
+        caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
 
         when(commonContent.templateVarsFor(caseData)).thenReturn(templateVars);
 
@@ -65,10 +68,12 @@ class SolicitorSubmittedNotificationTest {
         final String applicant1SolicitorEmail = "test@somewher.com";
         final Map<String, String> templateVars = new HashMap<>();
         final CaseData caseData = CaseData.builder()
+            .applicant1(getApplicant())
             .applicant1SolicitorEmail(applicant1SolicitorEmail)
-            .languagePreferenceWelsh(NO)
             .previousCaseId(new CaseLink("Ref"))
             .build();
+
+        caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
 
         when(commonContent.templateVarsFor(caseData)).thenReturn(templateVars);
 
@@ -87,8 +92,10 @@ class SolicitorSubmittedNotificationTest {
     void shouldNotNotifyApplicantSolicitorIfNoEmailSet() {
 
         final CaseData caseData = CaseData.builder()
-            .languagePreferenceWelsh(NO)
+            .applicant1(getApplicant())
             .build();
+
+        caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
 
         solicitorSubmittedNotification.send(caseData, 1L);
 
