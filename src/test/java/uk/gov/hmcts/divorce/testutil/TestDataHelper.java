@@ -81,15 +81,9 @@ public class TestDataHelper {
     }
 
     public static CaseData caseDataWithOrderSummary() {
-        return CaseData
-            .builder()
-            .applicant1FirstName(TEST_FIRST_NAME)
-            .applicant1MiddleName(TEST_MIDDLE_NAME)
-            .applicant1LastName(TEST_LAST_NAME)
-            .divorceOrDissolution(DIVORCE)
-            .applicant1Email(TEST_USER_EMAIL)
-            .applicationFeeOrderSummary(OrderSummary.builder().paymentTotal("55000").build())
-            .build();
+        CaseData caseData = validApplicant1CaseDataMap();
+        caseData.setApplicationFeeOrderSummary(OrderSummary.builder().paymentTotal("55000").build());
+        return caseData;
     }
 
     public static CaseData validApplicant1CaseDataMap() {
@@ -109,6 +103,7 @@ public class TestDataHelper {
             .applicant2FirstName(TEST_FIRST_NAME)
             .applicant2LastName(TEST_LAST_NAME)
             .financialOrder(NO)
+            .helpWithFeesAppliedForFees(NO)
             .inferredApplicant1Gender(FEMALE)
             .inferredApplicant2Gender(MALE)
             .marriageApplicant1Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME)

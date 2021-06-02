@@ -80,19 +80,10 @@ class CitizenSubmitApplicationTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
-        var orderSummary = orderSummary();
-
-        when(paymentService.getOrderSummary())
-            .thenReturn(
-                orderSummary()
-            );
-
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getErrors().size()).isEqualTo(1);
         assertThat(response.getErrors().get(0)).isEqualTo("PrayerHasBeenGiven must be YES");
-
-        verify(paymentService).getOrderSummary();
     }
 
     @Test
@@ -124,7 +115,7 @@ class CitizenSubmitApplicationTest {
     }
 
     @Test
-    public void givenEventStartedWithValidCaseThenChangeStateAwaitingHWFDecision() {
+    public void givenEventStartedWithValidCaseThenChangeStateAwaitingHwfDecision() {
         final long caseId = 2L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = CaseData.builder().build();
