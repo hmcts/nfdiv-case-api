@@ -83,5 +83,5 @@ public class MarriageDetails {
         label = "Issue application anyway?",
         access = {DefaultAccess.class}
     )
-    private YesOrNo issueApplicationWithoutMarriageCertificate ;
+    private YesOrNo issueApplicationWithoutMarriageCertificate;
 }
