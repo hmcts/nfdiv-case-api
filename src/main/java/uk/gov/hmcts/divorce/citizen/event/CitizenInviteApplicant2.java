@@ -31,7 +31,7 @@ public class CitizenInviteApplicant2 implements CCDConfig<CaseData, State, UserR
         configBuilder
             .event(CITIZEN_INVITE_APPLICANT_2)
             .initialState(Draft)
-            .name("Send Application to Applicant 2 for review")
+            .name("Invite Applicant 2")
             .description("Send Application to Applicant 2 for review")
             .grant(CREATE_READ_UPDATE, CITIZEN)
             .displayOrder(1)
