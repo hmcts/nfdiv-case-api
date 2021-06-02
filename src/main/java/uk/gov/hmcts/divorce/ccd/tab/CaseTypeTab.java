@@ -99,7 +99,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("marriagePlaceOfMarriage", "marriageMarriedInUk=\"NO\"")
             .field("marriageCountryOfMarriage", "marriageMarriedInUk=\"NO\"")
             .field("marriageCertifyMarriageCertificateIsCorrect")
-            .field("marriageMarriageCertificateIsIncorrectDetails", "marriageIssueApplicationWithoutMarriageCertificate!=\"*\"")
-            .field("marriageIssueApplicationWithoutMarriageCertificate", "marriageCertifyMarriageCertificateIsCorrect!=\"*\"");
+            .field("marriageMarriageCertificateIsIncorrectDetails", "marriageCertifyMarriageCertificateIsCorrect=\"NO\"")
+            .field("marriageIssueApplicationWithoutMarriageCertificate", "marriageCertifyMarriageCertificateIsCorrect=\"NO\"");
     }
 }

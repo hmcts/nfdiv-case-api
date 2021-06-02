@@ -30,21 +30,19 @@ public class VerifyMarriageCertificate implements CCDConfig<CaseData, State, Use
             .forAllStates()
             .name("Verify marriage certificate")
             .description("Verify marriage certificate")
-            .displayOrder(1)
             .showSummary()
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_SOLICITOR, CASEWORKER_DIVORCE_COURTADMIN)
             .grant(READ,
                 CASEWORKER_DIVORCE_SUPERUSER,
                 CASEWORKER_DIVORCE_COURTADMIN_BETA,
-                CASEWORKER_DIVORCE_COURTADMIN_LA)
-        )
+                CASEWORKER_DIVORCE_COURTADMIN_LA))
             .page("marriageCertificateDetailsVerification")
-            .pageLabel("Verify Marriage Certificate Details")
+            .pageLabel("Marriage Certificate Details")
             .label("LabelNFDBanner-MarriageIrretrievablyBroken", SOLICITOR_NFD_PREVIEW_BANNER)
             .complex(CaseData::getMarriageDetails)
                 .mandatory(MarriageDetails::getCertifyMarriageCertificateIsCorrect)
-                .mandatory(MarriageDetails::getMarriageCertificateIsIncorrectDetails)
+                .mandatory(MarriageDetails::getMarriageCertificateIsIncorrectDetails,"marriageCertifyMarriageCertificateIsCorrect=\"No\"")
                 .mandatory(MarriageDetails::getIssueApplicationWithoutMarriageCertificate)
                 .done();
     }
