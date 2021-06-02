@@ -44,10 +44,6 @@ public class CitizenInviteApplicant2Test {
 
         assertThat(response.getData().getInvitePin()).isNotBlank();
         assertThat(response.getData().getInvitePin().length()).isEqualTo(8);
-        assertThat(response.getData().getInvitePin().contains("I")).isFalse();
-        assertThat(response.getData().getInvitePin().contains("O")).isFalse();
-        assertThat(response.getData().getInvitePin().contains("U")).isFalse();
-        assertThat(response.getData().getInvitePin().contains("0")).isFalse();
-        assertThat(response.getData().getInvitePin().contains("1")).isFalse();
+        assertThat(response.getData().getInvitePin()).doesNotContain("I","O","U","0","1");
     }
 }
