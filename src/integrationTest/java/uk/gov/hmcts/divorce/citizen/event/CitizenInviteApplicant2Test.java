@@ -14,12 +14,17 @@ import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.notification.pin.PinGenerationService;
 
-import static org.mockito.Mockito.verify;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.util.ResourceUtils.getFile;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenInviteApplicant2.CITIZEN_INVITE_APPLICANT_2;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
@@ -38,9 +43,6 @@ public class CitizenInviteApplicant2Test {
     private MockMvc mockMvc;
 
     @MockBean
-    private PinGenerationService pinGenerationService;
-
-    @MockBean
     private RequestInterceptor requestInterceptor;
 
     @MockBean
@@ -55,13 +57,24 @@ public class CitizenInviteApplicant2Test {
     public void givenValidCaseDataWhenCallbackIsInvokedThenGeneratePin() throws Exception {
         CaseData data = caseData();
 
-        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+        String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_INVITE_APPLICANT_2)))
             .accept(APPLICATION_JSON))
-            .andExpect(status().isOk());
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
 
-        verify(pinGenerationService).generatePin();
+        assertThatJson(actualResponse)
+            .isEqualTo(json(expectedCcdAboutToStartCallbackSuccessfulResponse()));
+    }
+
+    private String expectedCcdAboutToStartCallbackSuccessfulResponse() throws IOException {
+        File validCaseDataJsonFile = getFile(
+            "classpath:wiremock/responses/about-to-submit-invite-applicant-2.json");
+
+        return new String(Files.readAllBytes(validCaseDataJsonFile.toPath()));
     }
 }

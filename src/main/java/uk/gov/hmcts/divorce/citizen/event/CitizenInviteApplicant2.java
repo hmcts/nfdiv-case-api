@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -10,7 +10,8 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
-import uk.gov.hmcts.divorce.notification.pin.PinGenerationService;
+
+import java.security.SecureRandom;
 
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.common.model.State.Draft;
@@ -21,10 +22,8 @@ import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_U
 @Component
 public class CitizenInviteApplicant2 implements CCDConfig<CaseData, State, UserRole> {
 
+    private static final String ALLOWED_CHARS = "ABCDEFGJKLMNPRSTVWXYZ23456789";
     public static final String CITIZEN_INVITE_APPLICANT_2 = "citizen-invite-applicant2";
-
-    @Autowired
-    private PinGenerationService pinGenerationService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -44,15 +43,20 @@ public class CitizenInviteApplicant2 implements CCDConfig<CaseData, State, UserR
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
         CaseData data = details.getData();
+
         log.info("Generating pin to allow Applicant 2 to access the joint application");
-        final String pin = pinGenerationService.generatePin();
+        final String pin = generatePin();
         data.setInvitePin(pin);
 
-        // TODO - send email (to be done in NFDIV-689)
+        // TODO - send email to applicant 2 (to be done in NFDIV-689)
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
             .state(AwaitingApplicant2Response)
             .build();
+    }
+
+    private String generatePin() {
+        return RandomStringUtils.random(8, 0, ALLOWED_CHARS.length(), false, false, ALLOWED_CHARS.toCharArray(), new SecureRandom());
     }
 }
