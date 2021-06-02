@@ -44,7 +44,7 @@ public class CitizenSubmitApplicationTest extends FunctionalTestSuite {
     }
 
     @Test
-    public void shouldPassValidationAndGiveSuccessWhenCaseDataValid2() throws IOException {
+    public void shouldPassValidationAndGiveSuccessWhenHelpWithFeesApplied() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
         request.put("marriageDate", LocalDate.now().minus(1, YEARS).minus(1, DAYS));
         request.put("helpWithFeesAppliedForFees", "YES");
