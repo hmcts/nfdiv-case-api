@@ -44,7 +44,7 @@ public class CitizenInviteApplicant2 implements CCDConfig<CaseData, State, UserR
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
         CaseData data = details.getData();
-        log.info("");
+        log.info("Generating pin to allow Applicant 2 to access the joint application");
         final String pin = pinGenerationService.generatePin();
         data.setInvitePin(pin);
 
