@@ -31,6 +31,9 @@
     "marriageCountryOfMarriage":null,
     "marriagePlaceOfMarriage":null,
     "marriageIsSameSexCouple":null,
+    "marriageCertifyMarriageCertificateIsCorrect": null,
+    "marriageMarriageCertificateIsIncorrectDetails": null,
+    "marriageIssueApplicationWithoutMarriageCertificate": null,
     "cannotUploadSupportingDocument": ["marriageCertificate", "nameChangeEvidence"],
     "divorceWho": "husband",
     "applicationFeeOrderSummary": {
