@@ -48,6 +48,9 @@
     "marriagePlaceOfMarriage": null,
     "marriageDate": null,
     "marriageIsSameSexCouple": null,
+    "marriageCertifyMarriageCertificateIsCorrect": null,
+    "marriageMarriageCertificateIsIncorrectDetails": null,
+    "marriageIssueApplicationWithoutMarriageCertificate": null,
     "documentsGenerated": [
       {
         "id": "${json-unit.ignore}",

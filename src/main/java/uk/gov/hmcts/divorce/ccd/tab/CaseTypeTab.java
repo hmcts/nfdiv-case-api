@@ -92,5 +92,15 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("documents", "Documents")
             .field(CaseData::getDocumentsGenerated)
             .field(CaseData::getDocumentsUploaded);
+
+        configBuilder.tab("marriageDetails", "Marriage Certificate")
+            .field(CaseData::getMarriageApplicant1Name)
+            .field(CaseData::getMarriageApplicant2Name)
+            .field("marriageMarriedInUk")
+            .field("marriagePlaceOfMarriage", "marriageMarriedInUk=\"NO\"")
+            .field("marriageCountryOfMarriage", "marriageMarriedInUk=\"NO\"")
+            .field("marriageCertifyMarriageCertificateIsCorrect")
+            .field("marriageMarriageCertificateIsIncorrectDetails", "marriageCertifyMarriageCertificateIsCorrect=\"NO\"")
+            .field("marriageIssueApplicationWithoutMarriageCertificate", "marriageCertifyMarriageCertificateIsCorrect=\"NO\"");
     }
 }

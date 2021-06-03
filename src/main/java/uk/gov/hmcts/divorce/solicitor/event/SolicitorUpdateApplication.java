@@ -108,8 +108,11 @@ public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, Us
             .showSummary()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .explicitGrants()
-            .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_SOLICITOR, CASEWORKER_DIVORCE_COURTADMIN, CASEWORKER_DIVORCE_COURTADMIN_BETA)
+            .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_SOLICITOR)
             .grant(READ_UPDATE, CASEWORKER_DIVORCE_SUPERUSER)
-            .grant(READ, CASEWORKER_DIVORCE_COURTADMIN_LA));
+            .grant(READ,
+                CASEWORKER_DIVORCE_COURTADMIN_BETA,
+                CASEWORKER_DIVORCE_COURTADMIN,
+                CASEWORKER_DIVORCE_COURTADMIN_LA));
     }
 }
