@@ -367,14 +367,6 @@ public class CaseData {
     private YesOrNo applicant1KnowsApplicant2Address;
 
     @CCD(
-        label = "Applicant 2's home address",
-        hint = "If applicant 2 is to be served at their home address, enter the home address here and as the service "
-            + "address below",
-        access = {DefaultAccess.class}
-    )
-    private AddressGlobalUK applicant2HomeAddress;
-
-    @CCD(
         label = "Are there any existing or previous court proceedings relating to Applicant 1's marriage, "
             + "property or children?",
         access = {DefaultAccess.class}

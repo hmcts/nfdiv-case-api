@@ -4,6 +4,7 @@ import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.model.Applicant;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 
 import static uk.gov.hmcts.divorce.common.model.UserRole.APPLICANT_1_SOLICITOR;
@@ -50,7 +51,9 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
                 APPLICANT_1_SOLICITOR)
             .optional(OrganisationPolicy::getOrgPolicyReference, "applicant1NameChanged=\"NeverShow\"")
             .done()
-            .optional(CaseData::getApplicant2HomeAddress, "applicant2SolicitorRepresented=\"No\"")
+            .complex(CaseData::getApplicant2)
+                .optional(Applicant::getHomeAddress, "applicant2SolicitorRepresented=\"No\"")
+                .done()
             .mandatory(CaseData::getApplicant2CorrespondenceAddress, "applicant2SolicitorRepresented=\"No\"");
     }
 }

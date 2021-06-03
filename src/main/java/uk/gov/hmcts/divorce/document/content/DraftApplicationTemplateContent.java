@@ -110,7 +110,7 @@ public class DraftApplicationTemplateContent {
         templateData.put(FINANCIAL_ORDER_CHILD, CHILDREN_OF_THE_APPLICANT_1_AND_APPLICANT_2);
 
         String applicant2PostalAddress;
-        AddressGlobalUK applicant2HomeAddress = caseData.getApplicant2HomeAddress();
+        AddressGlobalUK applicant2HomeAddress = caseData.getApplicant2().getHomeAddress();
 
         if (applicant2HomeAddress == null) {
             applicant2PostalAddress = caseData.getDerivedApplicant2SolicitorAddr();
