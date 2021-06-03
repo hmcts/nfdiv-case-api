@@ -549,6 +549,12 @@ public class CaseData {
     )
     private YesOrNo documentUploadComplete;
 
+    @CCD(
+        label = "Applicant 2 Invite Access Pin",
+        access = {DefaultAccess.class}
+    )
+    private String invitePin;
+
     @JsonIgnore
     public LocalDate getDateOfSubmissionResponse() {
         return dateSubmitted == null ? null : dateSubmitted.plusDays(SUBMISSION_RESPONSE_DAYS).toLocalDate();
