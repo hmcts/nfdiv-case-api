@@ -25,6 +25,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.FIRST_NAME
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.RELATIONSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.RELATIONSHIP_COURT_HEADER;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 
 @ExtendWith(MockitoExtension.class)
 class CommonContentTest {
@@ -46,9 +47,11 @@ class CommonContentTest {
         final String lastName = "Smith";
         final CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DIVORCE)
-            .applicant1FirstName(firstName)
-            .applicant1LastName(lastName)
+            .applicant1(getApplicant())
             .build();
+
+        caseData.getApplicant1().setFirstName(firstName);
+        caseData.getApplicant1().setLastName(lastName);
 
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(configTemplateVars);
 
@@ -73,9 +76,11 @@ class CommonContentTest {
         final String lastName = "Smith";
         final CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DISSOLUTION)
-            .applicant1FirstName(firstName)
-            .applicant1LastName(lastName)
+            .applicant1(getApplicant())
             .build();
+
+        caseData.getApplicant1().setFirstName(firstName);
+        caseData.getApplicant1().setLastName(lastName);
 
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(configTemplateVars);
 

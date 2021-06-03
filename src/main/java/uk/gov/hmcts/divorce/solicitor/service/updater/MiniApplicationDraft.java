@@ -38,7 +38,7 @@ public class MiniApplicationDraft implements CaseDataUpdater {
 
         final var templateName = docmosisTemplatesConfig
             .getTemplates()
-            .get(updatedCaseData.getLanguagePreference())
+            .get(updatedCaseData.getApplicant1().getLanguagePreference())
             .get(DIVORCE_MINI_APPLICATION);
 
         final var documentInfo = docAssemblyService.renderDocument(

@@ -61,7 +61,7 @@ public class CitizenAddPaymentTest {
     @Test
     public void givenUnsuccessfulPaymentCaseDataWhenCallbackIsInvokedThenSetToDraft() {
         final CaseData caseData = caseData();
-        caseData.setApplicant1Email(TEST_USER_EMAIL);
+        caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
         caseData.setStatementOfTruth(YesOrNo.YES);
         caseData.setSolSignStatementOfTruth(YesOrNo.YES);
 
@@ -83,7 +83,7 @@ public class CitizenAddPaymentTest {
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmail() {
         final CaseData caseData = caseData();
-        caseData.setApplicant1Email(TEST_USER_EMAIL);
+        caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
         caseData.setStatementOfTruth(YesOrNo.YES);
         caseData.setSolSignStatementOfTruth(YesOrNo.YES);
 
@@ -104,7 +104,7 @@ public class CitizenAddPaymentTest {
     @Test
     public void givenInvalidPaymentWhenThenDontSendEmail() {
         final CaseData caseData = caseData();
-        caseData.setApplicant1Email(TEST_USER_EMAIL);
+        caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
         caseData.setApplicationFeeOrderSummary(orderSummary);
@@ -123,7 +123,7 @@ public class CitizenAddPaymentTest {
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendOutstandingActionEmail() {
         final CaseData caseData = caseData();
-        caseData.setApplicant1Email(TEST_USER_EMAIL);
+        caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
         caseData.setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
 
         Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(SUCCESS).build();
@@ -144,7 +144,7 @@ public class CitizenAddPaymentTest {
     @Test
     public void givenCallbackIsInvokedThenSendOutstandingActionEmailForCannotUploadSupportingDocument() {
         final CaseData caseData = caseData();
-        caseData.setApplicant1Email(TEST_USER_EMAIL);
+        caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
 
         Set<DocumentType> docs = new HashSet<>();
         docs.add(DocumentType.MARRIAGE_CERTIFICATE);

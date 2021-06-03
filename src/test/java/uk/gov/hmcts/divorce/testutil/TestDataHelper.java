@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
+import uk.gov.hmcts.divorce.common.model.Applicant;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
@@ -70,12 +71,18 @@ public class TestDataHelper {
 
     }
 
+    public static Applicant getApplicant() {
+        return Applicant.builder()
+            .firstName(TEST_FIRST_NAME)
+            .middleName(TEST_MIDDLE_NAME)
+            .lastName(TEST_LAST_NAME)
+            .email(TEST_USER_EMAIL)
+            .build();
+    }
+
     public static CaseData caseData() {
         return CaseData.builder()
-            .applicant1FirstName(TEST_FIRST_NAME)
-            .applicant1MiddleName(TEST_MIDDLE_NAME)
-            .applicant1LastName(TEST_LAST_NAME)
-            .applicant1Email(TEST_USER_EMAIL)
+            .applicant1(getApplicant())
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .build();
     }
@@ -83,11 +90,8 @@ public class TestDataHelper {
     public static CaseData caseDataWithOrderSummary() {
         return CaseData
             .builder()
-            .applicant1FirstName(TEST_FIRST_NAME)
-            .applicant1MiddleName(TEST_MIDDLE_NAME)
-            .applicant1LastName(TEST_LAST_NAME)
+            .applicant1(getApplicant())
             .divorceOrDissolution(DIVORCE)
-            .applicant1Email(TEST_USER_EMAIL)
             .applicationFeeOrderSummary(OrderSummary.builder().paymentTotal("55000").build())
             .build();
     }
@@ -101,19 +105,18 @@ public class TestDataHelper {
         jurisdiction.setApplicant2Residence(YES);
         jurisdiction.setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
 
+        var applicant1 = getApplicant();
+        applicant1.setContactDetailsConfidential(ConfidentialAddress.KEEP);
+
         return CaseData
             .builder()
-            .applicant1FirstName(TEST_FIRST_NAME)
-            .applicant1MiddleName(TEST_MIDDLE_NAME)
-            .applicant1LastName(TEST_LAST_NAME)
-            .applicant2FirstName(TEST_FIRST_NAME)
-            .applicant2LastName(TEST_LAST_NAME)
+            .applicant1(applicant1)
+            .applicant2(getApplicant())
             .financialOrder(NO)
             .helpWithFeesAppliedForFees(NO)
             .inferredApplicant1Gender(FEMALE)
             .inferredApplicant2Gender(MALE)
             .marriageApplicant1Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME)
-            .applicant1ContactDetailsConfidential(ConfidentialAddress.KEEP)
             .prayerHasBeenGiven(YES)
             .statementOfTruth(YES)
             .marriageDetails(marriageDetails)
@@ -138,9 +141,7 @@ public class TestDataHelper {
 
         return CaseData
             .builder()
-            .applicant1FirstName(TEST_FIRST_NAME)
-            .applicant1LastName(TEST_LAST_NAME)
-            .applicant1Email(TEST_USER_EMAIL)
+            .applicant1(getApplicant())
             .divorceOrDissolution(DIVORCE)
             .divorceCostsClaim(YES)
             .solSignStatementOfTruth(YES)

@@ -19,19 +19,19 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field(CaseData::getApplicationType)
             .field(CaseData::getDivorceOrDissolution)
             .field("LabelApplicant1-Heading", null, "### Applicant 1")
-            .field(CaseData::getApplicant1FirstName)
-            .field(CaseData::getApplicant1MiddleName)
-            .field(CaseData::getApplicant1LastName)
+            .field("applicant1FirstName")
+            .field("applicant1MiddleName")
+            .field("applicant1LastName")
             .field(CaseData::getInferredApplicant1Gender)
-            .field(CaseData::getApplicant1NameDifferentToMarriageCertificate)
-            .field(CaseData::getApplicant1NameChangedHow, "applicant1NameDifferentToMarriageCertificate=\"YES\"")
-            .field(CaseData::getApplicant1NameChangedHowOtherDetails, "applicant1NameChangedHow=\"other\"")
+            .field("applicant1NameDifferentToMarriageCertificate")
+            .field("applicant1NameChangedHow", "applicant1NameDifferentToMarriageCertificate=\"YES\"")
+            .field("applicant1NameChangedHowOtherDetails", "applicant1NameChangedHow=\"other\"")
             .field("LabelApplicant1DetailsAreConfidential-Heading",
                 "applicant1ContactDetailsConfidential=\"keep\"",
                 "#### Applicant 1's contact details are confidential")
-            .field(CaseData::getApplicant1ContactDetailsConfidential)
-            .field(CaseData::getApplicant1HomeAddress, "applicant1ContactDetailsConfidential=\"share\"")
-            .field(CaseData::getApplicant1PhoneNumber, "applicant1ContactDetailsConfidential=\"share\"")
+            .field("applicant1ContactDetailsConfidential")
+            .field("applicant1HomeAddress", "applicant1ContactDetailsConfidential=\"share\"")
+            .field("applicant1PhoneNumber", "applicant1ContactDetailsConfidential=\"share\"")
             .field(CaseData::getDivorceWho)
             .field(CaseData::getApplicant1SolicitorRepresented)
             .field("LabelApplicant1sSolicitor-Heading",
@@ -43,13 +43,13 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field(CaseData::getApplicant1OrganisationPolicy, "applicant1SolicitorRepresented=\"YES\"")
             .field(CaseData::getSolicitorReference, "applicant1SolicitorRepresented=\"YES\"")
             .field("LabelApplicant2-Heading", null, "### Applicant 2")
-            .field(CaseData::getApplicant2FirstName)
-            .field(CaseData::getApplicant2MiddleName)
-            .field(CaseData::getApplicant2LastName)
+            .field("applicant2FirstName")
+            .field("applicant2MiddleName")
+            .field("applicant2LastName")
             .field(CaseData::getInferredApplicant2Gender)
-            .field(CaseData::getApplicant2NameDifferentToMarriageCertificate)
-            .field(CaseData::getApplicant2NameChangedHow, "applicant2NameDifferentToMarriageCertificate=\"YES\"")
-            .field(CaseData::getApplicant2NameChangedHowOtherDetails, "applicant2NameChangedHow=\"other\"")
+            .field("applicant2NameDifferentToMarriageCertificate")
+            .field("applicant2NameChangedHow", "applicant2NameDifferentToMarriageCertificate=\"YES\"")
+            .field("applicant2NameChangedHowOtherDetails", "applicant2NameChangedHow=\"other\"")
             .field(CaseData::getApplicant2SolicitorRepresented)
             .field("LabelApplicant2sSolicitor-Heading",
                 "applicant2SolicitorRepresented=\"YES\"",
@@ -86,7 +86,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field(CaseData::getHelpWithFeesReferenceNumber);
 
         configBuilder.tab("languageDetails", "Language")
-            .field(CaseData::getLanguagePreferenceWelsh);
+            .field("applicant1LanguagePreferenceWelsh", null, "Applicant 1's language preference")
+            .field("applicant2LanguagePreferenceWelsh", null, "Applicant 2's language preference");
 
         configBuilder.tab("documents", "Documents")
             .field(CaseData::getDocumentsGenerated)

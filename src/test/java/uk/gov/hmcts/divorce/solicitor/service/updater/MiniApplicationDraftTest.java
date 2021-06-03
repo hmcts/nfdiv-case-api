@@ -76,7 +76,7 @@ public class MiniApplicationDraftTest {
     void shouldReturnDocumentInfoWhenDocumentIsStoredAndGeneratedSuccessfullyForEnglishLanguage() {
 
         final var caseData = caseData();
-        caseData.setLanguagePreferenceWelsh(NO);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
 
         final var caseDataContext = caseDataContext(caseData);
         final var id = "doc id";
@@ -116,7 +116,7 @@ public class MiniApplicationDraftTest {
     @Test
     void shouldReturnDocumentInfoWhenDocumentIsStoredAndGeneratedSuccessfullyForWelshLanguage() {
         final var caseData = caseData();
-        caseData.setLanguagePreferenceWelsh(YES);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
 
         final var caseDataContext = caseDataContext(caseData);
         final var id = "doc id";
@@ -165,7 +165,7 @@ public class MiniApplicationDraftTest {
         final List<ListValue<DivorceDocument>> documents = new ArrayList<>();
         documents.add(new ListValue<>(originalId, originalDocument));
         caseData.setDocumentsGenerated(documents);
-        caseData.setLanguagePreferenceWelsh(NO);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
 
         final var caseDataContext = caseDataContext(caseData);
 
@@ -223,7 +223,7 @@ public class MiniApplicationDraftTest {
         mockDocmosisTemplateConfig();
 
         CaseData caseData = caseData();
-        caseData.setLanguagePreferenceWelsh(NO);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
 
         doThrow(feignException).when(docAssemblyService).renderDocument(
             caseData,

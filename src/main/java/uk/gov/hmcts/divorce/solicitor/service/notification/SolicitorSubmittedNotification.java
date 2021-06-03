@@ -56,7 +56,7 @@ public class SolicitorSubmittedNotification {
                 applicant1SolicitorEmail,
                 templateName,
                 templateVars,
-                caseData.getLanguagePreference());
+                caseData.getApplicant1().getLanguagePreference());
 
             log.info(logMessage, caseId);
 
