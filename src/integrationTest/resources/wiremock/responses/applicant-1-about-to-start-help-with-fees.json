@@ -49,6 +49,7 @@
     "applicant2MiddleName": "test_middle_name",
     "applicant2LastName": "test_last_name",
     "marriageApplicant1Name": "test_first_name test_last_name",
+    "marriageApplicant2Name": null,
     "financialOrder": "NO",
     "prayerHasBeenGiven": "YES",
     "statementOfTruth": "YES"
