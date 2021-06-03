@@ -55,7 +55,7 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Submit application about to start callback invoked");
+        log.info("Submit application about to submit callback invoked");
 
         CaseData data = details.getData();
         CaseData caseDataCopy = data.toBuilder().build();
@@ -77,7 +77,7 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
         }
 
         State state;
-        if (caseDataCopy.getHelpWithFeesAppliedForFees().toBoolean()) {
+        if (caseDataCopy.getHelpWithFeesAppliedForFees() != null && caseDataCopy.getHelpWithFeesAppliedForFees().toBoolean()) {
             state = AwaitingHWFDecision;
         } else {
             OrderSummary orderSummary = paymentService.getOrderSummary();
