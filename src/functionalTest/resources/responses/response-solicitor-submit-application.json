@@ -20,6 +20,9 @@
     "marriagePlaceOfMarriage": null,
     "marriageDate": null,
     "marriageIsSameSexCouple": null,
+    "marriageCertifyMarriageCertificateIsCorrect": null,
+    "marriageMarriageCertificateIsIncorrectDetails": null,
+    "marriageIssueApplicationWithoutMarriageCertificate": null,
     "applicationFeeOrderSummary": {
       "PaymentTotal": "55000",
       "PaymentReference": null,
