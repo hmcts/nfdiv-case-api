@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.common.model.MarriageDetails;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 
+import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_LA;
@@ -26,7 +27,7 @@ public class VerifyMarriageCertificate implements CCDConfig<CaseData, State, Use
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(VERIFY_MARRIAGE_CERTIFICATE_DETAILS)
-            .forAllStates()
+            .forStates(Submitted)
             .name("Verify marriage certificate")
             .description("Verify marriage certificate")
             .showSummary()
