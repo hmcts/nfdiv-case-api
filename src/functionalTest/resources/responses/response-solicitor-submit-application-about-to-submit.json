@@ -23,6 +23,9 @@
     "marriagePlaceOfMarriage":null,
     "marriageDate":null,
     "marriageIsSameSexCouple":null,
+    "marriageCertifyMarriageCertificateIsCorrect": null,
+    "marriageMarriageCertificateIsIncorrectDetails": null,
+    "marriageIssueApplicationWithoutMarriageCertificate": null,
     "dateSubmitted": "${json-unit.ignore}",
     "applicant1WantsToHavePapersServedAnotherWay": "NO",
     "applicationFeeOrderSummary": {

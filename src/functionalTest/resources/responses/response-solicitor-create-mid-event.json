@@ -32,7 +32,10 @@
     "marriageDate": null,
     "marriageIsSameSexCouple": null,
     "marriageMarriedInUk": null,
-    "marriagePlaceOfMarriage": null
+    "marriagePlaceOfMarriage": null,
+    "marriageCertifyMarriageCertificateIsCorrect": null,
+    "marriageMarriageCertificateIsIncorrectDetails": null,
+    "marriageIssueApplicationWithoutMarriageCertificate": null
   },
   "errors": null,
   "state": null,
