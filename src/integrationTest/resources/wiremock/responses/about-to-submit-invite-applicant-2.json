@@ -21,6 +21,9 @@
     "jurisdictionResidualEligible": null,
     "jurisdictionBothLastHabituallyResident": null,
     "jurisdictionConnections": null,
+    "marriageCertifyMarriageCertificateIsCorrect": null,
+    "marriageIssueApplicationWithoutMarriageCertificate": null,
+    "marriageMarriageCertificateIsIncorrectDetails": null,
     "invitePin": "${json-unit.any-string}"
   },
   "errors": null,
