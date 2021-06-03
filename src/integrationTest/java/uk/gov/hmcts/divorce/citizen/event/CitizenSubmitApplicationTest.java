@@ -13,8 +13,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
+import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.testutil.FeesWireMock;
 import uk.gov.hmcts.divorce.testutil.TestDataHelper;
 
@@ -38,7 +41,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithOrderSummary;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseDataMap;
 
 
@@ -93,14 +96,40 @@ public class CitizenSubmitApplicationTest {
     }
 
     @Test
+    public void givenValidCaseDataWithHwfThenReturnResponseWithNoErrors() throws Exception {
+        stubForFeesLookup(TestDataHelper.getFeeResponseAsJson());
+
+        CaseData caseData = validApplicant1CaseDataMap();
+        caseData.setHelpWithFeesAppliedForFees(YesOrNo.YES);
+
+        String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .content(objectMapper.writeValueAsString(callbackRequest(caseData, CITIZEN_SUBMIT)))
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        // marriageDate and payments.id are ignored using ${json-unit.ignore}
+        // assertion will fail if the above elements are missing actual value
+        assertThatJson(actualResponse)
+            .isEqualTo(json(expectedCcdAboutToStartCallbackWithHwfSuccessfulResponse()));
+    }
+
+    @Test
     public void givenFeeEventIsNotAvailableWhenAboutToStartCallbackIsInvokedThenReturn404FeeEventNotFound()
         throws Exception {
         stubForFeesNotFound();
 
+        CaseData caseData = validApplicant1CaseDataMap();
+        caseData.setApplicationFeeOrderSummary(OrderSummary.builder().paymentTotal("55000").build());
+
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithOrderSummary(), CITIZEN_SUBMIT)))
+            .content(objectMapper.writeValueAsString(callbackRequest(caseData, CITIZEN_SUBMIT)))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isNotFound()
@@ -119,7 +148,7 @@ public class CitizenSubmitApplicationTest {
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithOrderSummary(), CITIZEN_SUBMIT)))
+            .content(objectMapper.writeValueAsString(callbackRequest(caseData(), CITIZEN_SUBMIT)))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().json(expectedCcdAboutToStartCallbackErrorResponse()));
@@ -144,6 +173,13 @@ public class CitizenSubmitApplicationTest {
     private String expectedCcdAboutToStartCallbackSuccessfulResponse() throws IOException {
         File validCaseDataJsonFile = getFile(
             "classpath:wiremock/responses/applicant-1-about-to-start-statement-of-truth.json");
+
+        return new String(Files.readAllBytes(validCaseDataJsonFile.toPath()));
+    }
+
+    private String expectedCcdAboutToStartCallbackWithHwfSuccessfulResponse() throws IOException {
+        File validCaseDataJsonFile = getFile(
+            "classpath:wiremock/responses/applicant-1-about-to-start-help-with-fees.json");
 
         return new String(Files.readAllBytes(validCaseDataJsonFile.toPath()));
     }

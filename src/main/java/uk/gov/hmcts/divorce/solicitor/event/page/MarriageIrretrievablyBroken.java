@@ -58,7 +58,6 @@ public class MarriageIrretrievablyBroken implements CcdPageConfiguration {
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
             .errors(errors)
             .build();
     }

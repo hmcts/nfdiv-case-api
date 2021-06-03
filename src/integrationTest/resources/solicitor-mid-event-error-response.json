@@ -1,39 +1,5 @@
 {
-  "data": {
-    "divorceOrDissolution": "divorce",
-    "applicant1FirstName": "test_first_name",
-    "applicant1LastName": "test_last_name",
-    "applicant1Email": "test@test.com",
-    "languagePreferenceWelsh": "NO",
-    "jurisdictionApplicant1Residence":null,
-    "jurisdictionApplicant2Residence":null,
-    "jurisdictionApplicant1Domicile":null,
-    "jurisdictionApplicant2Domicile":null,
-    "jurisdictionApp1HabituallyResLastTwelveMonths":null,
-    "jurisdictionApp1HabituallyResLastSixMonths":null,
-    "jurisdictionResidualEligible":null,
-    "jurisdictionBothLastHabituallyResident":null,
-    "jurisdictionConnections":null,
-    "marriageMarriedInUk":null,
-    "marriageCertificateInEnglish":null,
-    "marriageCertifiedTranslation":null,
-    "marriageCountryOfMarriage":null,
-    "marriagePlaceOfMarriage":null,
-    "marriageDate":null,
-    "marriageIsSameSexCouple":null,
-    "applicant1OrganisationPolicy": {
-      "Organisation": {
-        "OrganisationID": "ABC123",
-        "OrganisationName": "Test Organisation"
-      },
-      "PreviousOrganisations": null,
-      "OrgPolicyReference": null,
-      "PrepopulateToUsersOrganisation": null,
-      "OrgPolicyCaseAssignedRole": null
-    },
-    "divorceCostsClaim": "YES",
-    "financialOrder": "NO"
-  },
+  "data": null,
   "errors": [
     "Please select an organisation you belong to"
   ],

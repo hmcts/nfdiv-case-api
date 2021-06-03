@@ -129,7 +129,7 @@ class SolicitorCreateApplicationApplicationServiceTest {
                 TEST_AUTHORIZATION_TOKEN
             );
 
-        assertThat(aboutToStartOrSubmitResponse.getData()).isEqualTo(caseData);
+        assertThat(aboutToStartOrSubmitResponse.getData()).isNull();
         assertThat(aboutToStartOrSubmitResponse.getErrors()).isNull();
         assertThat(aboutToStartOrSubmitResponse.getWarnings()).isNull();
 
@@ -161,7 +161,7 @@ class SolicitorCreateApplicationApplicationServiceTest {
                 TEST_AUTHORIZATION_TOKEN
             );
 
-        assertThat(aboutToStartOrSubmitResponse.getData()).isEqualTo(caseData);
+        assertThat(aboutToStartOrSubmitResponse.getData()).isNull();
         assertThat(aboutToStartOrSubmitResponse.getErrors()).containsExactly("Please select an organisation you belong to");
         assertThat(aboutToStartOrSubmitResponse.getWarnings()).isNull();
 
@@ -182,7 +182,7 @@ class SolicitorCreateApplicationApplicationServiceTest {
                 TEST_AUTHORIZATION_TOKEN
             );
 
-        assertThat(aboutToStartOrSubmitResponse.getData()).isEqualTo(caseData);
+        assertThat(aboutToStartOrSubmitResponse.getData()).isNull();
         assertThat(aboutToStartOrSubmitResponse.getErrors()).containsExactly("Please select an organisation");
         assertThat(aboutToStartOrSubmitResponse.getWarnings()).isNull();
 

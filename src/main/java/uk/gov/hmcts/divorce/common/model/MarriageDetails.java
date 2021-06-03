@@ -66,4 +66,22 @@ public class MarriageDetails {
     )
     private YesOrNo isSameSexCouple;
 
+    @CCD(
+        label = "Is the marriage certificate correct?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo certifyMarriageCertificateIsCorrect;
+
+    @CCD(
+        label = "Why is the Marriage certification incorrect",
+        hint = "e.g. wrong names, misspellings, poor quality photo or scan, damaged, or missing entirely",
+        access = {DefaultAccess.class}
+    )
+    private String marriageCertificateIsIncorrectDetails;
+
+    @CCD(
+        label = "Issue application anyway?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo issueApplicationWithoutMarriageCertificate;
 }

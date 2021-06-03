@@ -22,6 +22,12 @@ public enum State {
     Draft("Draft"),
 
     @CCD(
+        name = "Awaiting Applicant 2 Response",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
+    )
+    AwaitingApplicant2Response("AwaitingApplicant2Response"),
+
+    @CCD(
         name = "Awaiting payment",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
@@ -54,6 +60,10 @@ public enum State {
         }
     },
 
+    @CCD(
+        name = "Application submitted and awaiting HWF decision",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
+    )
     AwaitingHWFDecision("AwaitingHWFDecision"),
 
     @CCD(

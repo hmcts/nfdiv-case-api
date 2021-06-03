@@ -64,6 +64,7 @@ public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, Us
         final List<CcdPageConfiguration> pages = asList(
             new SolHowDoYouWantToApplyForDivorce(),
             solAboutTheSolicitor,
+            new MarriageIrretrievablyBroken(),
             new SolAboutApplicant1(),
             new SolAboutApplicant2(),
             new Applicant2ServiceDetails(),
@@ -73,8 +74,7 @@ public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, Us
             new ClaimForCosts(),
             new UploadMarriageCertificate(),
             new LanguagePreference(),
-            new JurisdictionApplyForDivorce(),
-            new MarriageIrretrievablyBroken()
+            new JurisdictionApplyForDivorce()
         );
 
         pages.forEach(page -> page.addTo(pageBuilder));
@@ -108,8 +108,11 @@ public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, Us
             .showSummary()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .explicitGrants()
-            .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_SOLICITOR, CASEWORKER_DIVORCE_COURTADMIN, CASEWORKER_DIVORCE_COURTADMIN_BETA)
+            .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_SOLICITOR)
             .grant(READ_UPDATE, CASEWORKER_DIVORCE_SUPERUSER)
-            .grant(READ, CASEWORKER_DIVORCE_COURTADMIN_LA));
+            .grant(READ,
+                CASEWORKER_DIVORCE_COURTADMIN_BETA,
+                CASEWORKER_DIVORCE_COURTADMIN,
+                CASEWORKER_DIVORCE_COURTADMIN_LA));
     }
 }

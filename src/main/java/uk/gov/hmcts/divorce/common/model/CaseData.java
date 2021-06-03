@@ -672,6 +672,12 @@ public class CaseData {
     )
     private YesOrNo documentUploadComplete;
 
+    @CCD(
+        label = "Applicant 2 Invite Access Pin",
+        access = {DefaultAccess.class}
+    )
+    private String invitePin;
+
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
         return this.getLanguagePreferenceWelsh() == null || this.getLanguagePreferenceWelsh().equals(YesOrNo.NO)

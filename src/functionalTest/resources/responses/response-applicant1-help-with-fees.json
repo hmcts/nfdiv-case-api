@@ -12,6 +12,7 @@
     "marriageCertifyMarriageCertificateIsCorrect": null,
     "marriageMarriageCertificateIsIncorrectDetails": null,
     "marriageIssueApplicationWithoutMarriageCertificate": null,
+    "helpWithFeesAppliedForFees": "YES",
     "applicant1FirstName": "test_first_name",
     "applicant1MiddleName": "test_middle_name",
     "applicant1LastName": "test_last_name",
@@ -31,42 +32,11 @@
     "applicant2LastName": "test_last_name",
     "marriageApplicant1Name": "test_first_name test_last_name",
     "financialOrder": "NO",
-    "helpWithFeesAppliedForFees": "NO",
     "prayerHasBeenGiven": "YES",
     "statementOfTruth": "YES",
-    "solSignStatementOfTruth": "YES",
-    "applicationFeeOrderSummary": {
-      "PaymentReference": null,
-      "Fees": [
-        {
-          "id": null,
-          "value": {
-            "FeeAmount": "55000",
-            "FeeCode": "FEE0002",
-            "FeeDescription": "Filing an application for a divorce, nullity or civil partnership dissolution",
-            "FeeVersion": "5"
-          }
-        }
-      ],
-      "PaymentTotal": "55000"
-    },
-    "payments": [
-      {
-        "id": "${json-unit.ignore}",
-        "value": {
-          "paymentDate": null,
-          "paymentFeeId": null,
-          "paymentAmount": 55000,
-          "paymentSiteId": null,
-          "paymentStatus": "inProgress",
-          "paymentChannel": null,
-          "paymentReference": null,
-          "paymentTransactionId": null
-        }
-      }
-    ]
+    "solSignStatementOfTruth": "YES"
   },
   "errors": null,
   "warnings": null,
-  "state": "AwaitingPayment"
+  "state": "AwaitingHWFDecision"
 }

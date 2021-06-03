@@ -4,7 +4,14 @@ import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 
+import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.JOINT_APPLICATION_CONDITION;
+import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLE_APPLICATION_CONDITION;
+import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_JOINT_PREVIEW_BANNER;
+import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_PREVIEW_BANNER;
+
 public class SolStatementOfTruth implements CcdPageConfiguration {
+
+    private static final String ALWAYS_HIDE = "statementOfTruth=\"ALWAYS_HIDE\"";
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {
@@ -12,6 +19,15 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
         pageBuilder
             .page("SolStatementOfTruth")
             .pageLabel("Statement of truth and reconciliation")
+            .mandatoryNoSummary(CaseData::getApplicationType, ALWAYS_HIDE)
+            .label(
+                "LabelNFDBanner-SolStatementOfTruth",
+                SOLICITOR_NFD_PREVIEW_BANNER,
+                SOLE_APPLICATION_CONDITION)
+            .label(
+                "LabelNFDJointBanner-SolStatementOfTruth",
+                SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
+                JOINT_APPLICATION_CONDITION)
             .label("LabelSolStatementOfTruthPara-1", "## Applicant 1 is applying to the court")
             .label(
                 "LabelSolStatementOfTruthPara-1.1",
@@ -35,8 +51,8 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
                     "divorceCostsClaim=\"Yes\" AND financialOrder=\"Yes\"")
             .mandatory(CaseData::getSolUrgentCase)
             .optional(CaseData::getSolUrgentCaseSupportingInformation, "solUrgentCase=\"Yes\"")
-            .mandatoryNoSummary(CaseData::getDivorceCostsClaim, "statementOfTruth=\"ALWAYS_HIDE\"")
-            .mandatoryNoSummary(CaseData::getFinancialOrder, "statementOfTruth=\"ALWAYS_HIDE\"")
+            .mandatoryNoSummary(CaseData::getDivorceCostsClaim, ALWAYS_HIDE)
+            .mandatoryNoSummary(CaseData::getFinancialOrder, ALWAYS_HIDE)
             .label("LabelSolServiceMethod", "## Service method")
             .mandatory(CaseData::getSolServiceMethod)
             .label(
