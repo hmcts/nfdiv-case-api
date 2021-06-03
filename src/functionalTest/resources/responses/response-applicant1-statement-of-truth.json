@@ -49,7 +49,7 @@
     "applicant2LastName": "test_last_name",
     "marriageApplicant1Name": "test_first_name test_last_name",
     "financialOrder": "NO",
-    "helpWithFeesAppliedForFees": "NO",
+    "helpWithFeesNeedHelp": "NO",
     "prayerHasBeenGiven": "YES",
     "statementOfTruth": "YES",
     "solSignStatementOfTruth": "YES",

@@ -47,7 +47,7 @@ public class CitizenSubmitApplicationTest extends FunctionalTestSuite {
     public void shouldPassValidationAndGiveSuccessWhenHelpWithFeesApplied() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
         request.put("marriageDate", LocalDate.now().minus(1, YEARS).minus(1, DAYS));
-        request.put("helpWithFeesAppliedForFees", "YES");
+        request.put("helpWithFeesNeedHelp", "YES");
 
         Response response = triggerCallback(request, CITIZEN_SUBMIT, ABOUT_TO_SUBMIT_URL);
 
