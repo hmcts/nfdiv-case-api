@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
+import uk.gov.hmcts.divorce.common.model.Applicant;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -42,8 +43,7 @@ class ApplicantSubmittedNotificationTest {
         final String applicant1Email = "test@somewher.com";
         final Map<String, String> templateVars = new HashMap<>();
         final CaseData caseData = CaseData.builder()
-            .applicant1Email(applicant1Email)
-            .languagePreferenceWelsh(NO)
+            .applicant1(Applicant.builder().email(applicant1Email).languagePreferenceWelsh(NO).build())
             .build();
 
         when(commonContent.templateVarsFor(caseData)).thenReturn(templateVars);
@@ -65,8 +65,7 @@ class ApplicantSubmittedNotificationTest {
         final String applicant1Email = "test@somewher.com";
         final Map<String, String> templateVars = new HashMap<>();
         final CaseData caseData = CaseData.builder()
-            .applicant1Email(applicant1Email)
-            .languagePreferenceWelsh(NO)
+            .applicant1(Applicant.builder().email(applicant1Email).languagePreferenceWelsh(NO).build())
             .previousCaseId(new CaseLink("Ref"))
             .build();
 
@@ -87,7 +86,7 @@ class ApplicantSubmittedNotificationTest {
     void shouldNotNotifyApplicantIfNoEmailSet() {
 
         final CaseData caseData = CaseData.builder()
-            .languagePreferenceWelsh(NO)
+            .applicant1(Applicant.builder().languagePreferenceWelsh(NO).build())
             .build();
 
         applicationSubmittedNotification.send(caseData, 1L);

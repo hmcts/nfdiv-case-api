@@ -32,6 +32,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitApplication.CITIZEN_SUBMIT;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.IN_PROGRESS;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 
 @ExtendWith(MockitoExtension.class)
 class CitizenSubmitApplicationTest {
@@ -138,15 +139,13 @@ class CitizenSubmitApplicationTest {
     }
 
     private CaseData setValidCaseData(CaseData caseData) {
-        caseData.setApplicant1FirstName("First Name");
-        caseData.setApplicant1LastName("Last Name");
-        caseData.setApplicant2FirstName("First Name");
-        caseData.setApplicant2LastName("Last Name");
+        caseData.setApplicant1(getApplicant());
+        caseData.getApplicant1().setContactDetailsConfidential(ConfidentialAddress.KEEP);
+        caseData.setApplicant2(getApplicant());
         caseData.setFinancialOrder(YesOrNo.NO);
         caseData.setHelpWithFeesAppliedForFees(YesOrNo.NO);
         caseData.setInferredApplicant1Gender(Gender.FEMALE);
         caseData.setInferredApplicant2Gender(Gender.MALE);
-        caseData.setApplicant1ContactDetailsConfidential(ConfidentialAddress.KEEP);
         caseData.setPrayerHasBeenGiven(YesOrNo.YES);
         caseData.setMarriageApplicant1Name("Full name");
         caseData.setStatementOfTruth(YesOrNo.YES);

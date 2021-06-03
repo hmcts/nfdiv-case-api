@@ -34,10 +34,10 @@ public class ApplicationSubmittedNotification {
         log.info("Sending application submitted notification for case : {}", id);
 
         notificationService.sendEmail(
-            caseData.getApplicant1Email(),
+            caseData.getApplicant1().getEmail(),
             APPLICATION_SUBMITTED,
             templateVars,
-            caseData.getLanguagePreference()
+            caseData.getApplicant1().getLanguagePreference()
         );
     }
 }

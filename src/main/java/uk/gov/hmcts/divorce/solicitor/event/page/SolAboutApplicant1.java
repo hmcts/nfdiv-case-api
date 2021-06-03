@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.model.Applicant;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.MarriageDetails;
 
@@ -27,21 +28,32 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
                 "LabelNFDJointBanner-SolAboutApplicant1",
                 SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
                 JOINT_APPLICATION_CONDITION)
-            .mandatory(CaseData::getApplicant1FirstName)
-            .optional(CaseData::getApplicant1MiddleName)
-            .mandatory(CaseData::getApplicant1LastName)
-            .mandatory(CaseData::getApplicant1NameDifferentToMarriageCertificate,
-                null,
-                null,
-                "Is applicant 1's name different to that on their marriage certificate?")
-            .mandatory(CaseData::getApplicant1NameChangedHow,
-                "applicant1NameDifferentToMarriageCertificate=\"Yes\"",
-                null,
-                "How did they change their name?")
-            .mandatory(CaseData::getApplicant1NameChangedHowOtherDetails,
-                "applicant1NameChangedHow=\"other\"",
-                null,
-                "If not through marriage or deed poll, please provide details of how they legally changed they name")
+            .complex(CaseData::getApplicant1)
+                .mandatory(Applicant::getFirstName,
+                    null,
+                    null,
+                    "Applicant 1's first name")
+                .optional(Applicant::getMiddleName,
+                    null,
+                    null,
+                    "Applicant 1's middle name")
+                .mandatory(Applicant::getLastName,
+                    null,
+                    null,
+                    "Applicant 1's last name")
+                .mandatory(Applicant::getNameDifferentToMarriageCertificate,
+                    null,
+                    null,
+                    "Is applicant 1's name different to that on their marriage certificate?")
+                .mandatory(Applicant::getNameChangedHow,
+                    "applicant1NameDifferentToMarriageCertificate=\"Yes\"",
+                    null,
+                    "How did they change their name?")
+                .mandatory(Applicant::getNameChangedHowOtherDetails,
+                    "applicant1NameChangedHow=\"other\"",
+                    null,
+                    "If not through marriage or deed poll, please provide details of how they legally changed they name")
+                .done()
             .mandatory(CaseData::getDivorceWho,
                 null,
                 null,
@@ -54,10 +66,24 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
             .complex(CaseData::getMarriageDetails)
                 .mandatory(MarriageDetails::getIsSameSexCouple)
                 .done()
-            .mandatory(CaseData::getApplicant1Email)
-            .optional(CaseData::getApplicant1PhoneNumber)
-            .optional(CaseData::getApplicant1HomeAddress)
-            .label("LabelHorizontalLine1-SolAboutApplicant1", DARK_HORIZONTAL_RULE)
-            .mandatory(CaseData::getApplicant1ContactDetailsConfidential);
+            .complex(CaseData::getApplicant1)
+                .mandatory(Applicant::getEmail,
+                    null,
+                    null,
+                    "Applicant 1's email address")
+                .optional(Applicant::getPhoneNumber,
+                    null,
+                    null,
+                    "Applicant 1's phone number")
+                .optional(Applicant::getHomeAddress,
+                    null,
+                    null,
+                    "Applicant 1's home address")
+                .label("LabelHorizontalLine1-SolAboutApplicant1", DARK_HORIZONTAL_RULE)
+                .mandatory(Applicant::getContactDetailsConfidential,
+                    null,
+                    null,
+                    "Keep Applicant 1's contact details private from applicant 2?")
+                .done();
     }
 }

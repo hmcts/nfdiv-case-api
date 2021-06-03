@@ -82,13 +82,13 @@ public class DraftApplicationTemplateContent {
         templateData.put(CCD_CASE_REFERENCE, ccdCaseReference);
         templateData.put(ISSUE_DATE, createdDate.toString());
 
-        templateData.put(APPLICANT_1_FIRST_NAME, caseData.getApplicant1FirstName());
-        templateData.put(APPLICANT_1_MIDDLE_NAME, caseData.getApplicant1MiddleName());
-        templateData.put(APPLICANT_1_LAST_NAME, caseData.getApplicant1LastName());
+        templateData.put(APPLICANT_1_FIRST_NAME, caseData.getApplicant1().getFirstName());
+        templateData.put(APPLICANT_1_MIDDLE_NAME, caseData.getApplicant1().getMiddleName());
+        templateData.put(APPLICANT_1_LAST_NAME, caseData.getApplicant1().getLastName());
 
-        templateData.put(APPLICANT_2_FIRST_NAME, caseData.getApplicant2FirstName());
-        templateData.put(APPLICANT_2_MIDDLE_NAME, caseData.getApplicant2MiddleName());
-        templateData.put(APPLICANT_2_LAST_NAME, caseData.getApplicant2LastName());
+        templateData.put(APPLICANT_2_FIRST_NAME, caseData.getApplicant2().getFirstName());
+        templateData.put(APPLICANT_2_MIDDLE_NAME, caseData.getApplicant2().getMiddleName());
+        templateData.put(APPLICANT_2_LAST_NAME, caseData.getApplicant2().getLastName());
 
         templateData.put(APPLICANT_1_FULL_NAME, caseData.getMarriageApplicant1Name());
         templateData.put(APPLICANT_2_FULL_NAME, caseData.getMarriageApplicant2Name());
@@ -110,7 +110,7 @@ public class DraftApplicationTemplateContent {
         templateData.put(FINANCIAL_ORDER_CHILD, CHILDREN_OF_THE_APPLICANT_1_AND_APPLICANT_2);
 
         String applicant2PostalAddress;
-        AddressGlobalUK applicant2HomeAddress = caseData.getApplicant2HomeAddress();
+        AddressGlobalUK applicant2HomeAddress = caseData.getApplicant2().getHomeAddress();
 
         if (applicant2HomeAddress == null) {
             applicant2PostalAddress = caseData.getDerivedApplicant2SolicitorAddr();

@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.model.Applicant;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
@@ -44,6 +45,8 @@ public class SolicitorUpdateLanguage implements CCDConfig<CaseData, State, UserR
             .page("langPref")
             .pageLabel("Select Language")
             .label("LabelNFDBanner-MarriageIrretrievablyBroken", SOLICITOR_NFD_PREVIEW_BANNER)
-            .mandatory(CaseData::getLanguagePreferenceWelsh);
+            .complex(CaseData::getApplicant1)
+                .mandatory(Applicant::getLanguagePreferenceWelsh)
+                .done();
     }
 }

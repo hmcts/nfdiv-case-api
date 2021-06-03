@@ -36,8 +36,6 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.common.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -73,6 +71,17 @@ public class CaseData {
     )
     private YesOrNo screenHasMarriageBroken;
 
+    @CCD(access = {DefaultAccess.class})
+    @JsonUnwrapped(prefix = "applicant1")
+    @Builder.Default
+    private Applicant applicant1 = new Applicant();
+
+    @CCD(access = {DefaultAccess.class})
+    @JsonUnwrapped(prefix = "applicant2")
+    @Builder.Default
+    private Applicant applicant2 = new Applicant();
+
+    // TODO move to Applicant
     @CCD(
         label = "Applicant 1's gender",
         hint = "Applicant 1’s gender is collected for statistical purposes only.",
@@ -82,6 +91,7 @@ public class CaseData {
     )
     private Gender inferredApplicant1Gender;
 
+    // TODO move to Applicant
     @CCD(
         label = "Applicant 2's gender",
         hint = "Applicant 2’s gender is collected for statistical purposes only.",
@@ -123,68 +133,9 @@ public class CaseData {
     @Builder.Default
     private MarriageDetails marriageDetails = new MarriageDetails();
 
-    @CCD(
-        label = "Applicant 1's first name",
-        access = {DefaultAccess.class}
-    )
-    private String applicant1FirstName;
-
-    @CCD(
-        label = "Applicant 1's middle name(s)",
-        access = {DefaultAccess.class}
-    )
-    private String applicant1MiddleName;
-
-    @CCD(
-        label = "Applicant 1's last name",
-        access = {DefaultAccess.class}
-    )
-    private String applicant1LastName;
-
-    @CCD(
-        label = "Applicant 1's email address",
-        typeOverride = Email,
-        access = {DefaultAccess.class}
-    )
-    private String applicant1Email;
-
-    @CCD(
-        label = "Applicant 1 has agreed to receive notifications and be served (delivered) court documents by email",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo applicant1AgreedToReceiveEmails;
-
     @JsonUnwrapped(prefix = "jurisdiction")
     @Builder.Default
     private Jurisdiction jurisdiction = new Jurisdiction();
-
-    @CCD(
-        label = "Is the language preference Welsh?",
-        access = {DefaultAccess.class},
-        hint = "Select \"No\" for English or \"Yes\" for bilingual"
-    )
-    private YesOrNo languagePreferenceWelsh;
-
-    @CCD(
-        label = "Has applicant 1 changed their name since they got married?",
-        hint = "Is applicant 1’s current name different to their married name or the name shown on their "
-            + "marriage certificate?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo applicant1NameDifferentToMarriageCertificate;
-
-    @CCD(
-        label = "How did Applicant 1 change their name?",
-        access = {DefaultAccess.class}
-    )
-    private ChangedNameHow applicant1NameChangedHow;
-
-    @CCD(
-        label = "Details of how they changed their name",
-        typeOverride = TextArea,
-        access = {DefaultAccess.class}
-    )
-    private String applicant1NameChangedHowOtherDetails;
 
     @CCD(
         label = "Who is applicant 1 divorcing?",
@@ -196,78 +147,12 @@ public class CaseData {
     private WhoDivorcing divorceWho;
 
     @CCD(
-        label = "Applicant 1's home address",
-        access = {DefaultAccess.class}
-    )
-    private AddressGlobalUK applicant1HomeAddress;
-
-    @CCD(
-        label = "Applicant 1's phone number",
-        regex = "^[0-9 +().-]{9,}$",
-        access = {DefaultAccess.class}
-    )
-    private String applicant1PhoneNumber;
-
-    @CCD(
-        label = "Keep Applicant 1's contact details private from applicant 2?",
-        typeOverride = FixedList,
-        typeParameterOverride = "ConfidentialAddress",
-        access = {DefaultAccess.class}
-    )
-    private ConfidentialAddress applicant1ContactDetailsConfidential;
-
-    @CCD(
-        label = "Applicant 2's First name(s)",
-        access = {DefaultAccess.class}
-    )
-    private String applicant2FirstName;
-
-    @CCD(
-        label = "Applicant 2's Middle name(s)",
-        access = {DefaultAccess.class}
-    )
-    private String applicant2MiddleName;
-
-    @CCD(
-        label = "Applicant 2's Last name",
-        access = {DefaultAccess.class}
-    )
-    private String applicant2LastName;
-
-    @CCD(
-        label = "Name changed since marriage?",
-        hint = "Is applicant 2’s current name different to their married name or the name shown on their "
-            + "marriage certificate?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo applicant2NameDifferentToMarriageCertificate;
-
-    @CCD(
-        label = "How did Applicant 2 change their name?",
-        access = {DefaultAccess.class}
-    )
-    private ChangedNameHow applicant2NameChangedHow;
-
-    @CCD(
-        label = "How applicant 2 changed their name",
-        typeOverride = TextArea,
-        access = {DefaultAccess.class}
-    )
-    private String applicant2NameChangedHowOtherDetails;
-
-    @CCD(
-        label = "Include a welsh copy of all generated divorce documents for Applicant 2?",
-        hint = "An english copy will always be included",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo applicant2WelshLanguagePreference;
-
-    @CCD(
         label = "Applicant 1 Solicitor’s name",
         access = {DefaultAccess.class}
     )
     private String applicant1SolicitorName;
 
+    // TODO applicant1SolicitorReference + Make ApplicantSolicitor
     @CCD(
         label = "Your reference number",
         access = {DefaultAccess.class}
@@ -482,14 +367,6 @@ public class CaseData {
     private YesOrNo applicant1KnowsApplicant2Address;
 
     @CCD(
-        label = "Applicant 2's home address",
-        hint = "If applicant 2 is to be served at their home address, enter the home address here and as the service "
-            + "address below",
-        access = {DefaultAccess.class}
-    )
-    private AddressGlobalUK applicant2HomeAddress;
-
-    @CCD(
         label = "Are there any existing or previous court proceedings relating to Applicant 1's marriage, "
             + "property or children?",
         access = {DefaultAccess.class}
@@ -677,13 +554,6 @@ public class CaseData {
         access = {DefaultAccess.class}
     )
     private String invitePin;
-
-    @JsonIgnore
-    public LanguagePreference getLanguagePreference() {
-        return this.getLanguagePreferenceWelsh() == null || this.getLanguagePreferenceWelsh().equals(YesOrNo.NO)
-            ? ENGLISH
-            : WELSH;
-    }
 
     @JsonIgnore
     public LocalDate getDateOfSubmissionResponse() {

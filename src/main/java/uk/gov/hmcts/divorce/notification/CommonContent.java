@@ -31,8 +31,8 @@ public class CommonContent {
 
         final HashMap<String, String> templateVars = new HashMap<>();
 
-        templateVars.put(FIRST_NAME, caseData.getApplicant1FirstName());
-        templateVars.put(LAST_NAME, caseData.getApplicant1LastName());
+        templateVars.put(FIRST_NAME, caseData.getApplicant1().getFirstName());
+        templateVars.put(LAST_NAME, caseData.getApplicant1().getLastName());
 
         Map<String, String> configTemplateVars = emailTemplatesConfig.getTemplateVars();
 
