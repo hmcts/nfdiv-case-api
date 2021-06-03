@@ -39,7 +39,7 @@ public class VerifyMarriageCertificate implements CCDConfig<CaseData, State, Use
                 CASEWORKER_DIVORCE_COURTADMIN_LA))
             .page("marriageCertificateDetailsVerification")
             .pageLabel("Marriage Certificate Details")
-            .label("LabelNFDBanner-MarriageIrretrievablyBroken", SOLICITOR_NFD_PREVIEW_BANNER)
+            .label("LabelNFDBanner-VerifyMarriageCert", SOLICITOR_NFD_PREVIEW_BANNER)
             .complex(CaseData::getMarriageDetails)
                 .mandatory(MarriageDetails::getCertifyMarriageCertificateIsCorrect)
                 .mandatory(MarriageDetails::getMarriageCertificateIsIncorrectDetails,"marriageCertifyMarriageCertificateIsCorrect=\"No\"")

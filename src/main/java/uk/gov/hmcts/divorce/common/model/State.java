@@ -87,7 +87,13 @@ public enum State {
 
             return errors;
         }
-    };
+    },
+
+    @CCD(
+        name = "Application issued",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
+    )
+    Issued("Issued");
 
     private final String name;
 
@@ -95,5 +101,5 @@ public enum State {
         return null;
     }
 
-}
+    }
 

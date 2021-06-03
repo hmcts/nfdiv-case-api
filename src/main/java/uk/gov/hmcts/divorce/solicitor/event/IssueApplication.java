@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.common.model.MarriageDetails;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 
+import static uk.gov.hmcts.divorce.common.model.State.Issued;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
@@ -27,7 +28,7 @@ public class IssueApplication implements CCDConfig<CaseData, State, UserRole> {
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(ISSUE_APPLICATION)
-            .forStates(Submitted)
+            .forStateTransition(Submitted,Issued)
             .name("Issue Application")
             .description("Issue Application")
             .showSummary()
@@ -40,7 +41,7 @@ public class IssueApplication implements CCDConfig<CaseData, State, UserRole> {
                 CASEWORKER_DIVORCE_COURTADMIN_LA))
             .page("issueApplication")
             .pageLabel("Issue Divorce Application")
-            .label("LabelNFDBanner-MarriageIrretrievablyBroken", SOLICITOR_NFD_PREVIEW_BANNER)
+            .label("LabelNFDBanner-IssueApplication", SOLICITOR_NFD_PREVIEW_BANNER)
             .complex(CaseData::getMarriageDetails)
                 .optional(MarriageDetails::getDate)
                 .optional(MarriageDetails::getApplicant1Name)
