@@ -113,7 +113,7 @@ public class TestDataHelper {
             .applicant1(applicant1)
             .applicant2(getApplicant())
             .financialOrder(NO)
-            .helpWithFeesAppliedForFees(NO)
+            .helpWithFeesNeedHelp(NO)
             .inferredApplicant1Gender(FEMALE)
             .inferredApplicant2Gender(MALE)
             .marriageApplicant1Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME)
