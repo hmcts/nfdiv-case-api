@@ -78,7 +78,6 @@ public class SolicitorCreateApplicationService {
             log.error("CaseId: {}, Applicant 1 org policy is not populated", caseId);
             return AboutToStartOrSubmitResponse
                 .<CaseData, State>builder()
-                .data(caseData)
                 .errors(singletonList("Please select an organisation"))
                 .build();
         }
@@ -99,14 +98,12 @@ public class SolicitorCreateApplicationService {
             log.error("CaseId: {}, wrong organisation selected {} != {}", caseId, solicitorSelectedOrgId, solicitorUserOrgId);
             return AboutToStartOrSubmitResponse
                 .<CaseData, State>builder()
-                .data(caseData)
                 .errors(singletonList("Please select an organisation you belong to"))
                 .build();
         }
 
         return AboutToStartOrSubmitResponse
             .<CaseData, State>builder()
-            .data(caseData)
             .build();
     }
 }
