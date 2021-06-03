@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static java.util.Collections.singletonList;
+import static uk.gov.hmcts.divorce.common.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.common.model.State.Draft;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
@@ -58,13 +59,6 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
 
         CaseData data = details.getData();
         CaseData caseDataCopy = data.toBuilder().build();
-        OrderSummary orderSummary = paymentService.getOrderSummary();
-        caseDataCopy.setApplicationFeeOrderSummary(orderSummary);
-
-        if (data.getPayments() == null || data.getPayments().isEmpty()) {
-            ListValue<Payment> paymentListValue = createPendingPayment(orderSummary.getPaymentTotal());
-            caseDataCopy.setPayments(singletonList(paymentListValue));
-        }
 
         log.info("Validating case data");
         final List<String> validationErrors = AwaitingPayment.validate(caseDataCopy);
@@ -81,9 +75,25 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
                 .state(Draft)
                 .build();
         }
+
+        State state;
+        if (caseDataCopy.getHelpWithFeesAppliedForFees().toBoolean()) {
+            state = AwaitingHWFDecision;
+        } else {
+            OrderSummary orderSummary = paymentService.getOrderSummary();
+            caseDataCopy.setApplicationFeeOrderSummary(orderSummary);
+
+            if (data.getPayments() == null || data.getPayments().isEmpty()) {
+                ListValue<Payment> paymentListValue = createPendingPayment(orderSummary.getPaymentTotal());
+                caseDataCopy.setPayments(singletonList(paymentListValue));
+            }
+
+            state = AwaitingPayment;
+        }
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseDataCopy)
-            .state(AwaitingPayment)
+            .state(state)
             .build();
     }
 

@@ -64,19 +64,10 @@ class CitizenSubmitApplicationTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
-        var orderSummary = orderSummary();
-
-        when(paymentService.getOrderSummary())
-            .thenReturn(
-                orderSummary()
-            );
-
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getErrors().size()).isEqualTo(13);
         assertThat(response.getErrors().get(0)).isEqualTo("Applicant1FirstName cannot be empty or null");
-
-        verify(paymentService).getOrderSummary();
     }
 
     @Test
@@ -89,19 +80,10 @@ class CitizenSubmitApplicationTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
-        var orderSummary = orderSummary();
-
-        when(paymentService.getOrderSummary())
-            .thenReturn(
-                orderSummary()
-            );
-
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getErrors().size()).isEqualTo(1);
         assertThat(response.getErrors().get(0)).isEqualTo("PrayerHasBeenGiven must be YES");
-
-        verify(paymentService).getOrderSummary();
     }
 
     @Test
@@ -132,6 +114,22 @@ class CitizenSubmitApplicationTest {
         verify(paymentService).getOrderSummary();
     }
 
+    @Test
+    public void givenEventStartedWithValidCaseThenChangeStateAwaitingHwfDecision() {
+        final long caseId = 2L;
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        CaseData caseData = CaseData.builder().build();
+        setValidCaseData(caseData).setHelpWithFeesAppliedForFees(YesOrNo.YES);
+
+        caseDetails.setData(caseData);
+        caseDetails.setId(caseId);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getState()).isEqualTo(State.AwaitingHWFDecision);
+        assertThat(response.getData().getPayments()).isNull();
+    }
+
     private OrderSummary orderSummary() {
         return OrderSummary
             .builder()
@@ -145,6 +143,7 @@ class CitizenSubmitApplicationTest {
         caseData.setApplicant2FirstName("First Name");
         caseData.setApplicant2LastName("Last Name");
         caseData.setFinancialOrder(YesOrNo.NO);
+        caseData.setHelpWithFeesAppliedForFees(YesOrNo.NO);
         caseData.setInferredApplicant1Gender(Gender.FEMALE);
         caseData.setInferredApplicant2Gender(Gender.MALE);
         caseData.setApplicant1ContactDetailsConfidential(ConfidentialAddress.KEEP);
