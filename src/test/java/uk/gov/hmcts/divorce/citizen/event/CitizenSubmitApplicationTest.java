@@ -147,7 +147,7 @@ class CitizenSubmitApplicationTest {
         caseData.setInferredApplicant1Gender(Gender.FEMALE);
         caseData.setInferredApplicant2Gender(Gender.MALE);
         caseData.setPrayerHasBeenGiven(YesOrNo.YES);
-        caseData.setMarriageApplicant1Name("Full name");
+        caseData.getMarriageDetails().setApplicant1Name("Full name");
         caseData.setStatementOfTruth(YesOrNo.YES);
         caseData.getMarriageDetails().setDate(LocalDate.now().minus(2, ChronoUnit.YEARS));
         Jurisdiction jurisdiction = new Jurisdiction();
