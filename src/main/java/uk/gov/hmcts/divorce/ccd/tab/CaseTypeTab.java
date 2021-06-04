@@ -69,8 +69,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("marriageCountryOfMarriage", "marriageMarriedInUk=\"NO\"")
             .field("marriageCertificateInEnglish")
             .field("marriageCertifiedTranslation", "marriageCertificateInEnglish=\"NO\"")
-            .field(CaseData::getMarriageApplicant1Name)
-            .field(CaseData::getMarriageApplicant2Name)
+            .field("marriageApplicant1Name")
+            .field("marriageApplicant2Name")
             .field("LabelClaimCosts-Heading", null, "### Claim costs")
             .field(CaseData::getDivorceCostsClaim)
             .field(CaseData::getDivorceClaimFrom, "divorceCostsClaim=\"YES\"")
@@ -94,8 +94,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field(CaseData::getDocumentsUploaded);
 
         configBuilder.tab("marriageDetails", "Marriage Certificate")
-            .field(CaseData::getMarriageApplicant1Name)
-            .field(CaseData::getMarriageApplicant2Name)
+            .field("marriageApplicant1Name")
+            .field("marriageApplicant2Name")
             .field("marriageMarriedInUk")
             .field("marriagePlaceOfMarriage", "marriageMarriedInUk=\"NO\"")
             .field("marriageCountryOfMarriage", "marriageMarriedInUk=\"NO\"")

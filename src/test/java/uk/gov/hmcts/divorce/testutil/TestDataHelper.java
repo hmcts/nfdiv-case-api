@@ -105,6 +105,7 @@ public class TestDataHelper {
     public static CaseData validApplicant1CaseDataMap() {
         var marriageDetails = new MarriageDetails();
         marriageDetails.setDate(LocalDate.now().minus(1, YEARS).minus(1, DAYS));
+        marriageDetails.setApplicant1Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME);
 
         var jurisdiction = new Jurisdiction();
         jurisdiction.setApplicant1Residence(YES);
@@ -120,7 +121,6 @@ public class TestDataHelper {
             .applicant2(getApplicant(MALE))
             .financialOrder(NO)
             .helpWithFeesNeedHelp(NO)
-            .marriageApplicant1Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME)
             .prayerHasBeenGiven(YES)
             .statementOfTruth(YES)
             .marriageDetails(marriageDetails)

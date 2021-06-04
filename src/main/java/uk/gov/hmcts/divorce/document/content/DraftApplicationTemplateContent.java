@@ -90,8 +90,8 @@ public class DraftApplicationTemplateContent {
         templateData.put(APPLICANT_2_MIDDLE_NAME, caseData.getApplicant2().getMiddleName());
         templateData.put(APPLICANT_2_LAST_NAME, caseData.getApplicant2().getLastName());
 
-        templateData.put(APPLICANT_1_FULL_NAME, caseData.getMarriageApplicant1Name());
-        templateData.put(APPLICANT_2_FULL_NAME, caseData.getMarriageApplicant2Name());
+        templateData.put(APPLICANT_1_FULL_NAME, caseData.getMarriageDetails().getApplicant1Name());
+        templateData.put(APPLICANT_2_FULL_NAME, caseData.getMarriageDetails().getApplicant2Name());
 
         templateData.put(MARRIAGE_DATE,
             ofNullable(caseData.getMarriageDetails().getDate())

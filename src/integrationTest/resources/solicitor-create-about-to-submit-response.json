@@ -1,6 +1,8 @@
 {
   "data": {
     "divorceOrDissolution": "divorce",
+    "marriageApplicant1Name": null,
+    "marriageApplicant2Name": null,
     "marriageMarriedInUk": null,
     "marriageCertificateInEnglish": null,
     "marriageCertifiedTranslation": null,
