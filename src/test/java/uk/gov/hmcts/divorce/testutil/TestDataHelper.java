@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.common.model.Applicant;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
+import uk.gov.hmcts.divorce.common.model.Gender;
 import uk.gov.hmcts.divorce.common.model.Jurisdiction;
 import uk.gov.hmcts.divorce.common.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.common.model.MarriageDetails;
@@ -72,11 +73,16 @@ public class TestDataHelper {
     }
 
     public static Applicant getApplicant() {
+        return getApplicant(FEMALE);
+    }
+
+    public static Applicant getApplicant(Gender gender) {
         return Applicant.builder()
             .firstName(TEST_FIRST_NAME)
             .middleName(TEST_MIDDLE_NAME)
             .lastName(TEST_LAST_NAME)
             .email(TEST_USER_EMAIL)
+            .gender(gender)
             .build();
     }
 
@@ -111,11 +117,9 @@ public class TestDataHelper {
         return CaseData
             .builder()
             .applicant1(applicant1)
-            .applicant2(getApplicant())
+            .applicant2(getApplicant(MALE))
             .financialOrder(NO)
             .helpWithFeesNeedHelp(NO)
-            .inferredApplicant1Gender(FEMALE)
-            .inferredApplicant2Gender(MALE)
             .marriageApplicant1Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME)
             .prayerHasBeenGiven(YES)
             .statementOfTruth(YES)

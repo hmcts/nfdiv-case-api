@@ -59,10 +59,12 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
                 null,
                 null,
                 "Their husband or wife")
-            .mandatory(CaseData::getInferredApplicant1Gender,
-                null,
-                null,
-                "What is applicant 1's gender?")
+            .complex(CaseData::getApplicant1)
+                .mandatory(Applicant::getGender,
+                    null,
+                    null,
+                    "What is applicant 1's gender?")
+                .done()
             .complex(CaseData::getMarriageDetails)
                 .mandatory(MarriageDetails::getIsSameSexCouple)
                 .done()

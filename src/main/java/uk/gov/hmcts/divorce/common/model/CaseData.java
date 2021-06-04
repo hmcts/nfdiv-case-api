@@ -81,26 +81,6 @@ public class CaseData {
     @Builder.Default
     private Applicant applicant2 = new Applicant();
 
-    // TODO move to Applicant
-    @CCD(
-        label = "Applicant 1's gender",
-        hint = "Applicant 1’s gender is collected for statistical purposes only.",
-        typeOverride = FixedList,
-        typeParameterOverride = "Gender",
-        access = {DefaultAccess.class}
-    )
-    private Gender inferredApplicant1Gender;
-
-    // TODO move to Applicant
-    @CCD(
-        label = "Applicant 2's gender",
-        hint = "Applicant 2’s gender is collected for statistical purposes only.",
-        typeOverride = FixedList,
-        typeParameterOverride = "Gender",
-        access = {DefaultAccess.class}
-    )
-    private Gender inferredApplicant2Gender;
-
     @CCD(
         label = "Help with fees reference",
         regex = "([Hh][Ww][Ff]-?)?[0-9a-zA-Z]{3}-?[0-9a-zA-Z]{3}$",

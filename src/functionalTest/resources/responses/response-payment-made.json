@@ -1,8 +1,8 @@
 {
   "data": {
     "divorceOrDissolution": "divorce",
-    "inferredApplicant1Gender": "female",
-    "inferredApplicant2Gender": "male",
+    "applicant1Gender": "female",
+    "applicant2Gender": "male",
     "marriageDate": "2020-04-28",
     "dateSubmitted": "${json-unit.ignore}",
     "applicant1FirstName": "Billy",

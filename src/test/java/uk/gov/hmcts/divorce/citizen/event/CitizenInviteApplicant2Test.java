@@ -34,7 +34,7 @@ public class CitizenInviteApplicant2Test {
     }
 
     @Test
-    public void givenValidCaseDataWhenCallbackIsInvokedThenGeneratePin() throws Exception {
+    public void givenValidCaseDataWhenCallbackIsInvokedThenGeneratePin() {
         final CaseData caseData = caseData();
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
