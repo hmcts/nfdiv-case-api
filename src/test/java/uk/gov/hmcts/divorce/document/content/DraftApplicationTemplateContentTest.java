@@ -7,11 +7,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.common.model.MarriageDetails;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInformation;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 import static java.util.Collections.singletonList;
@@ -100,7 +102,7 @@ public class DraftApplicationTemplateContentTest {
             entry(HAS_COST_ORDERS, true),
             entry(HAS_FINANCIAL_ORDERS, false),
             entry(HAS_FINANCIAL_ORDERS_FOR_CHILD, false),
-            entry(ISSUE_DATE, "2021-04-28"),
+            entry(ISSUE_DATE, "28 April 2021"),
             entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE),
             entry(MARRIAGE_OR_RELATIONSHIP, MARRIAGE),
             entry(COURT_CASE_DETAILS, null),
@@ -138,7 +140,7 @@ public class DraftApplicationTemplateContentTest {
             entry(HAS_COST_ORDERS, false),
             entry(HAS_FINANCIAL_ORDERS, false),
             entry(HAS_FINANCIAL_ORDERS_FOR_CHILD, false),
-            entry(ISSUE_DATE, "2021-04-28"),
+            entry(ISSUE_DATE, "28 April 2021"),
             entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP),
             entry(MARRIAGE_OR_RELATIONSHIP, RELATIONSHIP),
             entry(COURT_CASE_DETAILS, null),
@@ -147,6 +149,27 @@ public class DraftApplicationTemplateContentTest {
             entry(APPLICANT_2_FIRST_NAME, null),
             entry(APPLICANT_2_FULL_NAME, null),
             entry(APPLICANT_2_LAST_NAME, null)
+        );
+
+        verifyNoMoreInteractions(authTokenGenerator);
+    }
+
+    @Test
+    public void shouldConvertMarriageDateToCorrectFormat() {
+        CaseData caseData = caseData();
+        MarriageDetails marriageDetails = new MarriageDetails();
+        marriageDetails.setDate(LocalDate.of(2019, 06, 4));
+
+        caseData.setDivorceOrDissolution(DISSOLUTION);
+        caseData.setDivorceCostsClaim(NO);
+        caseData.setFinancialOrder(NO);
+        caseData.setDerivedApplicant2SolicitorAddr(LINE_1_LINE_2_CITY_POSTCODE);
+        caseData.setMarriageDetails(marriageDetails);
+
+        Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
+
+        assertThat(templateData).contains(
+            entry(MARRIAGE_DATE, "4 June 2019")
         );
 
         verifyNoMoreInteractions(authTokenGenerator);
