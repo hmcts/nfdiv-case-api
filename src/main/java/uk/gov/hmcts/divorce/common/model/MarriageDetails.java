@@ -21,6 +21,22 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
 public class MarriageDetails {
 
     @CCD(
+        label = "Applicant 1's full name as on marriage certificate",
+        hint = "Enter Applicant 1's name exactly as it appears on the marriage certificate. "
+            + " Include any extra text such as \"formerly known as\"",
+        access = {DefaultAccess.class}
+    )
+    private String applicant1Name;
+
+    @CCD(
+        label = "Applicant 2's full name as on marriage certificate",
+        hint = "Enter applicant 2's name exactly as it appears on the marriage certificate. "
+            + " Include any extra text such as \"formerly known as\"",
+        access = {DefaultAccess.class}
+    )
+    private String applicant2Name;
+
+    @CCD(
         label = "Did the marriage take place in the UK?",
         access = {DefaultAccess.class}
     )

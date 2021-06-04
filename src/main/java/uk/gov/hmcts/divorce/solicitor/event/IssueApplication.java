@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.common.model.MarriageDetails;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 
+import static uk.gov.hmcts.divorce.common.model.State.Issued;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
@@ -20,30 +21,32 @@ import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_PREVIEW_BANNER;
 
 @Component
-public class VerifyMarriageCertificate implements CCDConfig<CaseData, State, UserRole> {
-    public static final String VERIFY_MARRIAGE_CERTIFICATE_DETAILS = "verify-marriage-certificate";
+public class IssueApplication implements CCDConfig<CaseData, State, UserRole> {
+    public static final String ISSUE_APPLICATION = "issue-application";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(VERIFY_MARRIAGE_CERTIFICATE_DETAILS)
-            .forStates(Submitted)
-            .name("Verify marriage certificate")
-            .description("Verify marriage certificate")
+            .event(ISSUE_APPLICATION)
+            .forStateTransition(Submitted,Issued)
+            .name("Issue Application")
+            .description("Issue Application")
             .showSummary()
             .explicitGrants()
-            .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_SOLICITOR, CASEWORKER_DIVORCE_COURTADMIN)
+            .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_COURTADMIN)
             .grant(READ,
+                CASEWORKER_DIVORCE_SOLICITOR,
                 CASEWORKER_DIVORCE_SUPERUSER,
                 CASEWORKER_DIVORCE_COURTADMIN_BETA,
                 CASEWORKER_DIVORCE_COURTADMIN_LA))
-            .page("marriageCertificateDetailsVerification")
-            .pageLabel("Marriage Certificate Details")
-            .label("LabelNFDBanner-VerifyMarriageCert", SOLICITOR_NFD_PREVIEW_BANNER)
+            .page("issueApplication")
+            .pageLabel("Issue Divorce Application")
+            .label("LabelNFDBanner-IssueApplication", SOLICITOR_NFD_PREVIEW_BANNER)
             .complex(CaseData::getMarriageDetails)
-                .mandatory(MarriageDetails::getCertifyMarriageCertificateIsCorrect)
-                .mandatory(MarriageDetails::getMarriageCertificateIsIncorrectDetails,"marriageCertifyMarriageCertificateIsCorrect=\"No\"")
-                .mandatory(MarriageDetails::getIssueApplicationWithoutMarriageCertificate)
+                .optional(MarriageDetails::getDate)
+                .optional(MarriageDetails::getApplicant1Name)
+                .optional(MarriageDetails::getApplicant2Name)
+                .mandatory(MarriageDetails::getPlaceOfMarriage)
                 .done();
     }
 }

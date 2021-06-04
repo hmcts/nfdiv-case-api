@@ -28,9 +28,9 @@ public class MarriageCertificateDetails implements CcdPageConfiguration {
                 JOINT_APPLICATION_CONDITION)
             .complex(CaseData::getMarriageDetails)
                 .mandatory(MarriageDetails::getDate)
+                .mandatory(MarriageDetails::getApplicant1Name)
+                .mandatory(MarriageDetails::getApplicant2Name)
                 .done()
-            .mandatory(CaseData::getMarriageApplicant1Name)
-            .mandatory(CaseData::getMarriageApplicant2Name)
             .complex(CaseData::getMarriageDetails)
                 .mandatory(
                     MarriageDetails::getMarriedInUk, null, null,

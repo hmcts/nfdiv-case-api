@@ -1,6 +1,8 @@
 {
   "data": {
     "divorceOrDissolution": "divorce",
+    "marriageApplicant1Name": null,
+    "marriageApplicant2Name": null,
     "inferredApplicant1Gender": "female",
     "inferredApplicant2Gender": "male",
     "marriageDate": "2020-04-28",

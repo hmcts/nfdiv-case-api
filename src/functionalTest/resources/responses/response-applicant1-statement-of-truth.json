@@ -48,6 +48,7 @@
     "applicant2FirstName": "test_first_name",
     "applicant2LastName": "test_last_name",
     "marriageApplicant1Name": "test_first_name test_last_name",
+    "marriageApplicant2Name": null,
     "financialOrder": "NO",
     "helpWithFeesNeedHelp": "NO",
     "prayerHasBeenGiven": "YES",

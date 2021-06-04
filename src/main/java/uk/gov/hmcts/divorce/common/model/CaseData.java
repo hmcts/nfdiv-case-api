@@ -193,22 +193,6 @@ public class CaseData {
     private OrganisationPolicy<UserRole> applicant1OrganisationPolicy;
 
     @CCD(
-        label = "Applicant 1's full name as on marriage certificate",
-        hint = "Enter Applicant 1's name exactly as it appears on the marriage certificate. "
-            + " Include any extra text such as \"formerly known as\"",
-        access = {DefaultAccess.class}
-    )
-    private String marriageApplicant1Name;
-
-    @CCD(
-        label = "Applicant 2's full name as on marriage certificate",
-        hint = "Enter applicant 2's name exactly as it appears on the marriage certificate. "
-            + " Include any extra text such as \"formerly known as\"",
-        access = {DefaultAccess.class}
-    )
-    private String marriageApplicant2Name;
-
-    @CCD(
         label = "Is this an urgent jurisdiction case?",
         access = {DefaultAccess.class}
     )
