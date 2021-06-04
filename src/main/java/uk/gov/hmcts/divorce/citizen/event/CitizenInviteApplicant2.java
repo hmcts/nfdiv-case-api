@@ -12,6 +12,9 @@ import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 
 import java.security.SecureRandom;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.common.model.State.Draft;
@@ -47,6 +50,7 @@ public class CitizenInviteApplicant2 implements CCDConfig<CaseData, State, UserR
         log.info("Generating pin to allow Applicant 2 to access the joint application");
         final String pin = generatePin();
         data.setInvitePin(pin);
+        data.setApplicant2DueDate(LocalDateTime.now().plus(2, ChronoUnit.WEEKS));
 
         // TODO - send email to applicant 2 (to be done in NFDIV-689)
 
