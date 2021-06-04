@@ -71,12 +71,10 @@ public class CaseData {
     )
     private YesOrNo screenHasMarriageBroken;
 
-    @CCD(access = {DefaultAccess.class})
     @JsonUnwrapped(prefix = "applicant1")
     @Builder.Default
     private Applicant applicant1 = new Applicant();
 
-    @CCD(access = {DefaultAccess.class})
     @JsonUnwrapped(prefix = "applicant2")
     @Builder.Default
     private Applicant applicant2 = new Applicant();
