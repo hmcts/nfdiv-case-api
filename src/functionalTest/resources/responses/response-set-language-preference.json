@@ -4,7 +4,6 @@
     "applicant1FirstName": "John",
     "applicant1LastName": "Smith",
     "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
-    "applicant1Email": null,
     "applicant1AgreedToReceiveEmails": null,
     "applicant1HomeAddress": null,
     "applicant1NameChangedHow": null,
