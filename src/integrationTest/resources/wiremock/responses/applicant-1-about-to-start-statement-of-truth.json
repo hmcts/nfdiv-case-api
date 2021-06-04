@@ -1,7 +1,7 @@
 {
   "data": {
-    "inferredApplicant1Gender": "female",
-    "inferredApplicant2Gender": "male",
+    "applicant1Gender": "female",
+    "applicant2Gender": "male",
     "marriageMarriedInUk": null,
     "marriageCertificateInEnglish": null,
     "marriageCertifiedTranslation": null,

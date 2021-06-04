@@ -26,84 +26,93 @@ import static uk.gov.hmcts.divorce.common.model.LanguagePreference.WELSH;
 public class Applicant {
 
     @CCD(
-        label = "Applicant's first name",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        label = "Applicant's first name"
     )
     private String firstName;
 
     @CCD(
-        label = "Applicant's middle name(s)",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        label = "Applicant's middle name(s)"
     )
     private String middleName;
 
     @CCD(
-        label = "Applicant's last name",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        label = "Applicant's last name"
     )
     private String lastName;
 
     @CCD(
+        access = {DefaultAccess.class},
         label = "Applicant's email address",
-        typeOverride = Email,
-        access = {DefaultAccess.class}
+        typeOverride = Email
     )
     private String email;
 
     @CCD(
-        label = "Applicant 1 has agreed to receive notifications and be served (delivered) court documents by email",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        label = "Applicant 1 has agreed to receive notifications and be served (delivered) court documents by email"
     )
     private YesOrNo agreedToReceiveEmails;
 
     @CCD(
-        label = "Is the language preference Welsh?",
         access = {DefaultAccess.class},
+        label = "Is the language preference Welsh?",
         hint = "Select \"No\" for English or \"Yes\" for bilingual"
     )
     private YesOrNo languagePreferenceWelsh;
 
     @CCD(
+        access = {DefaultAccess.class},
         label = "Has applicant 1 changed their name since they got married?",
         hint = "Is applicant 1’s current name different to their married name or the name shown on their "
-            + "marriage certificate?",
-        access = {DefaultAccess.class}
+            + "marriage certificate?"
     )
     private YesOrNo nameDifferentToMarriageCertificate;
 
     @CCD(
-        label = "How did Applicant 1 change their name?",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        label = "How did Applicant 1 change their name?"
     )
     private ChangedNameHow nameChangedHow;
 
     @CCD(
+        access = {DefaultAccess.class},
         label = "Details of how they changed their name",
-        typeOverride = TextArea,
-        access = {DefaultAccess.class}
+        typeOverride = TextArea
     )
     private String nameChangedHowOtherDetails;
 
     @CCD(
-        label = "Applicant's home address",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        label = "Applicant's home address"
     )
     private AddressGlobalUK homeAddress;
 
     @CCD(
+        access = {DefaultAccess.class},
         label = "Applicant's phone number",
-        regex = "^[0-9 +().-]{9,}$",
-        access = {DefaultAccess.class}
+        regex = "^[0-9 +().-]{9,}$"
     )
     private String phoneNumber;
 
     @CCD(
+        access = {DefaultAccess.class},
         label = "Keep Applicant's contact details private?",
         typeOverride = FixedList,
-        typeParameterOverride = "ConfidentialAddress",
-        access = {DefaultAccess.class}
+        typeParameterOverride = "ConfidentialAddress"
     )
     private ConfidentialAddress contactDetailsConfidential;
+
+    @CCD(
+        access = {DefaultAccess.class},
+        label = "Applicant's gender",
+        hint = "Applicant’s gender is collected for statistical purposes only.",
+        typeOverride = FixedList,
+        typeParameterOverride = "Gender"
+    )
+    private Gender gender;
 
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {

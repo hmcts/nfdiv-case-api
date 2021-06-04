@@ -15,6 +15,8 @@
     "applicant1NameChangedHowOtherDetails": null,
     "applicant1LanguagePreferenceWelsh": null,
     "applicant1ContactDetailsConfidential": null,
+    "applicant1Gender": null,
+    "applicant2Gender": null,
     "applicant2FirstName": null,
     "applicant2MiddleName": null,
     "applicant2LastName": null,

@@ -13,6 +13,8 @@
     "marriageCertifyMarriageCertificateIsCorrect": null,
     "marriageMarriageCertificateIsIncorrectDetails": null,
     "marriageIssueApplicationWithoutMarriageCertificate": null,
+    "applicant1Gender": null,
+    "applicant2Gender": null,
     "applicant1FirstName": "test_first_name",
     "applicant1MiddleName": "test_middle_name",
     "applicant1LastName": "test_last_name",
