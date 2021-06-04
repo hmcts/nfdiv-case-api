@@ -49,7 +49,7 @@
     "marriageIssueApplicationWithoutMarriageCertificate": null,
     "marriageMarriageCertificateIsIncorrectDetails": null,
     "invitePin": "${json-unit.any-string}",
-    "applicant2DueDate": "${json-unit.ignore}"
+    "dueDate": "${json-unit.ignore}"
   },
   "errors": null,
   "warnings": null,

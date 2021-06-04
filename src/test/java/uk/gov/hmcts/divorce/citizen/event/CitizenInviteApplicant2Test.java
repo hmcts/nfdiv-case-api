@@ -42,7 +42,7 @@ public class CitizenInviteApplicant2Test {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenInviteApplicant2.aboutToSubmit(details, details);
 
-        assertThat(response.getData().getApplicant2DueDate()).isNotNull();
+        assertThat(response.getData().getDueDate()).isNotNull();
     }
 
     @Test

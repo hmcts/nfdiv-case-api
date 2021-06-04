@@ -517,12 +517,6 @@ public class CaseData {
     )
     private String invitePin;
 
-    @CCD(
-        label = "Due Date for Applicant 2 to complete their part of the application",
-        access = {DefaultAccess.class}
-    )
-    private LocalDateTime applicant2DueDate;
-
     @JsonIgnore
     public LocalDate getDateOfSubmissionResponse() {
         return dateSubmitted == null ? null : dateSubmitted.plusDays(SUBMISSION_RESPONSE_DAYS).toLocalDate();
