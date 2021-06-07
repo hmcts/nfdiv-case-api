@@ -48,7 +48,8 @@
     "marriageCertifyMarriageCertificateIsCorrect": null,
     "marriageIssueApplicationWithoutMarriageCertificate": null,
     "marriageMarriageCertificateIsIncorrectDetails": null,
-    "invitePin": "${json-unit.any-string}"
+    "invitePin": "${json-unit.any-string}",
+    "dueDate": "${json-unit.ignore}"
   },
   "errors": null,
   "warnings": null,
