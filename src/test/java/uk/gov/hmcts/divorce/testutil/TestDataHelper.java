@@ -46,6 +46,7 @@ import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.common.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.common.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.common.model.Gender.MALE;
@@ -125,6 +126,30 @@ public class TestDataHelper {
             .statementOfTruth(YES)
             .marriageDetails(marriageDetails)
             .jurisdiction(jurisdiction)
+            .build();
+
+    }
+
+    public static CaseData validJointApplicant1CaseDataMap() {
+        var marriageDetails = new MarriageDetails();
+        marriageDetails.setDate(LocalDate.now().minus(1, YEARS).minus(1, DAYS));
+
+        var jurisdiction = new Jurisdiction();
+        jurisdiction.setApplicant1Residence(YES);
+        jurisdiction.setApplicant2Residence(YES);
+        jurisdiction.setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
+
+        var applicant1 = getApplicant();
+        applicant1.setContactDetailsConfidential(ConfidentialAddress.KEEP);
+
+        return CaseData
+            .builder()
+            .applicant1(getApplicant())
+            .financialOrder(NO)
+            .helpWithFeesNeedHelp(NO)
+            .marriageDetails(marriageDetails)
+            .jurisdiction(jurisdiction)
+            .applicationType(JOINT_APPLICATION)
             .build();
 
     }
