@@ -16,6 +16,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.common.model.Solicitor;
+import uk.gov.hmcts.divorce.common.model.SubField;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 import uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -78,16 +80,18 @@ public class SolicitorUpdateContactDetailsTest {
     }
 
     @Test
+    // TODO FIX
     void shouldValidateApplicant1SolicitorOrgAndReturnNoErrorsWhenSolicitorBelongsToSelectedOrg() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubGetOrganisationEndpoint(getOrganisationResponseWith(TEST_ORG_ID));
-
+        var caseData = caseDataWithApplicant1Org();
+        caseData.getApplicant1().setField(new SubField("Derp"));
         final String jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(SOLICITOR_UPDATE_CONTACT_MID_EVENT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant1Org(), SOLICITOR_UPDATE_CONTACT_DETAILS)))
+            .content(objectMapper.writeValueAsString(callbackRequest(caseData, SOLICITOR_UPDATE_CONTACT_DETAILS)))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
@@ -96,7 +100,7 @@ public class SolicitorUpdateContactDetailsTest {
             .getResponse()
             .getContentAsString();
 
-        assertEquals(jsonStringResponse, expectedResponse(SOLICITOR_MID_EVENT_RESPONSE), STRICT);
+        assertEquals(expectedResponse(SOLICITOR_MID_EVENT_RESPONSE), jsonStringResponse, STRICT);
     }
 
     @Test
@@ -118,12 +122,12 @@ public class SolicitorUpdateContactDetailsTest {
             .getResponse()
             .getContentAsString();
 
-        assertEquals(jsonStringResponse, expectedResponse(SOLICITOR_MID_EVENT_ERROR), STRICT);
+        assertEquals(expectedResponse(SOLICITOR_MID_EVENT_ERROR), jsonStringResponse, STRICT);
     }
 
     private CaseData caseDataWithApplicant1Org() {
         CaseData caseData = caseData();
-        caseData.setApplicant1OrganisationPolicy(organisationPolicy());
+        caseData.getApplicant1().setSolicitor(Solicitor.builder().organisationPolicy(organisationPolicy()).build());
         return caseData;
     }
 

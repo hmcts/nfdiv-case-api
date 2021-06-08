@@ -19,6 +19,7 @@ import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.model.Applicant;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
+import uk.gov.hmcts.divorce.common.model.Solicitor;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
@@ -189,14 +190,14 @@ class SolicitorCreateApplicationTest {
 
     private CaseData caseDataWithApplicant1Org() {
         CaseData caseData = caseData();
-        caseData.setApplicant1OrganisationPolicy(organisationPolicy());
+        caseData.getApplicant1().setSolicitor(Solicitor.builder().organisationPolicy(organisationPolicy()).build());
         return caseData;
     }
 
     private static CaseData caseDataWithApplicant1AndApplicant2Org() {
         CaseData caseData = caseData();
-        caseData.setApplicant1OrganisationPolicy(organisationPolicy());
-        caseData.setApplicant2OrganisationPolicy(organisationPolicy());
+        caseData.getApplicant1().setSolicitor(Solicitor.builder().organisationPolicy(organisationPolicy()).build());
+        caseData.getApplicant2().setSolicitor(Solicitor.builder().organisationPolicy(organisationPolicy()).build());
         return caseData;
     }
 

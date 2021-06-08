@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.MarriageDetails;
+import uk.gov.hmcts.divorce.common.model.Solicitor;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInformation;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
@@ -84,7 +85,9 @@ public class DraftApplicationTemplateContentTest {
         CaseData caseData = caseData();
         caseData.setDivorceCostsClaim(YES);
         caseData.setFinancialOrder(NO);
-        caseData.setDerivedApplicant2SolicitorAddr(LINE_1_LINE_2_CITY_POSTCODE);
+        caseData.getApplicant2().setSolicitor(
+            Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
+        );
 
         Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
 
@@ -122,7 +125,9 @@ public class DraftApplicationTemplateContentTest {
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.setDivorceCostsClaim(NO);
         caseData.setFinancialOrder(NO);
-        caseData.setDerivedApplicant2SolicitorAddr(LINE_1_LINE_2_CITY_POSTCODE);
+        caseData.getApplicant2().setSolicitor(
+            Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
+        );
 
         Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
 
@@ -163,8 +168,10 @@ public class DraftApplicationTemplateContentTest {
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.setDivorceCostsClaim(NO);
         caseData.setFinancialOrder(NO);
-        caseData.setDerivedApplicant2SolicitorAddr(LINE_1_LINE_2_CITY_POSTCODE);
         caseData.setMarriageDetails(marriageDetails);
+        caseData.getApplicant2().setSolicitor(
+            Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
+        );
 
         Map<String, Object> templateData = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
 
