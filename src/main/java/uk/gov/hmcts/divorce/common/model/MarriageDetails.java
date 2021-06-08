@@ -29,8 +29,8 @@ public class MarriageDetails {
     private String applicant1Name;
 
     @CCD(
-        label = "Applicant 2's full name as on marriage certificate",
-        hint = "Enter applicant 2's name exactly as it appears on the marriage certificate. "
+        label = "The respondent's full name as on marriage certificate",
+        hint = "Enter the respondent's name exactly as it appears on the marriage certificate. "
             + " Include any extra text such as \"formerly known as\"",
         access = {DefaultAccess.class}
     )
@@ -77,7 +77,7 @@ public class MarriageDetails {
     private LocalDate date;
 
     @CCD(
-        label = "Were the applicant and applicant 2 a same-sex couple when they got married?",
+        label = "Were the applicant and the respondent a same-sex couple when they got married?",
         access = {DefaultAccess.class}
     )
     private YesOrNo isSameSexCouple;

@@ -85,7 +85,7 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
                 .mandatory(Applicant::getContactDetailsConfidential,
                     null,
                     null,
-                    "Keep the applicant's contact details private from applicant 2?")
+                    "Keep the applicant's contact details private from the respondent?")
                 .done();
     }
 }

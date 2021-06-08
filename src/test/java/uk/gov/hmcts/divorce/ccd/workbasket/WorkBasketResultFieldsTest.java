@@ -50,7 +50,7 @@ class WorkBasketResultFieldsTest {
                     null,
                     null),
                 tuple("applicant2LastName",
-                    "Applicant 2 Last Name",
+                    "The Respondent's Last Name",
                     null,
                     null)
             );

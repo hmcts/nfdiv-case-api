@@ -42,7 +42,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field(CaseData::getApplicant1SolicitorEmail, "applicant1SolicitorRepresented=\"Yes\"")
             .field(CaseData::getApplicant1OrganisationPolicy, "applicant1SolicitorRepresented=\"Yes\"")
             .field(CaseData::getSolicitorReference, "applicant1SolicitorRepresented=\"Yes\"")
-            .field("LabelApplicant2-Heading", null, "### Applicant 2")
+            .field("LabelApplicant2-Heading", null, "### The respondent")
             .field("applicant2FirstName")
             .field("applicant2MiddleName")
             .field("applicant2LastName")
@@ -53,7 +53,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field(CaseData::getApplicant2SolicitorRepresented)
             .field("LabelApplicant2sSolicitor-Heading",
                 "applicant2SolicitorRepresented=\"Yes\"",
-                "#### Applicant 2's Solicitor")
+                "#### The respondent's solicitor")
             .field(CaseData::getApplicant2SolicitorName, "applicant2SolicitorRepresented=\"Yes\"")
             .field(CaseData::getApplicant2SolicitorPhone, "applicant2SolicitorRepresented=\"Yes\"")
             .field(CaseData::getApplicant2SolicitorEmail, "applicant2SolicitorRepresented=\"Yes\"")
@@ -87,7 +87,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
         configBuilder.tab("languageDetails", "Language")
             .field("applicant1LanguagePreferenceWelsh", null, "The applicant's language preference")
-            .field("applicant2LanguagePreferenceWelsh", null, "Applicant 2's language preference");
+            .field("applicant2LanguagePreferenceWelsh", null, "The respondent's language preference");
 
         configBuilder.tab("documents", "Documents")
             .field(CaseData::getDocumentsGenerated)

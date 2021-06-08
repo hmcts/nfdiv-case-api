@@ -41,7 +41,7 @@ public class Jurisdiction {
     private YesOrNo applicant1Residence;
 
     @CCD(
-        label = "Is applicant 2 resident?",
+        label = "Is the respondent resident?",
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant2Residence;
@@ -53,7 +53,7 @@ public class Jurisdiction {
     private YesOrNo applicant1Domicile;
 
     @CCD(
-        label = "Is applicant 2 domiciled?",
+        label = "Is the respondent domiciled?",
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant2Domicile;
@@ -77,7 +77,7 @@ public class Jurisdiction {
     private YesOrNo residualEligible;
 
     @CCD(
-        label = "Were both the applicant and applicant 2 last habitually resident, and one still resides?",
+        label = "Were both the applicant and the respondent last habitually resident, and one still resides?",
         access = {DefaultAccess.class}
     )
     private YesOrNo bothLastHabituallyResident;

@@ -199,7 +199,7 @@ public class CaseData {
     private YesOrNo financialOrder;
 
     @CCD(
-        label = "The applicant wants/will to apply to have the papers served to applicant 2 another way.",
+        label = "The applicant wants/will to apply to have the papers served to the respondent another way.",
         hint = "For example by email, text message or social media. This is a separate application with "
             + "an additional fee, which will need to be reviewed by a judge.",
         access = {DefaultAccess.class}
@@ -207,7 +207,7 @@ public class CaseData {
     private YesOrNo applicant1WantsToHavePapersServedAnotherWay;
 
     @CCD(
-        label = "How would you like applicant 2 to be served?",
+        label = "How would you like the respondent to be served?",
         access = {DefaultAccess.class}
     )
     private SolServiceMethod solServiceMethod;
@@ -312,19 +312,19 @@ public class CaseData {
 
 
     @CCD(
-        label = "Applicant 2's email address",
+        label = "The respondent's email address",
         access = {DefaultAccess.class}
     )
     private String applicant2EmailAddress;
 
     @CCD(
-        label = "Is applicant 2's email address known?",
+        label = "Is the respondent's email address known?",
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant1KnowsApplicant2EmailAddress;
 
     @CCD(
-        label = "Is applicant 2's home address known?",
+        label = "Is the respondent's home address known?",
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant1KnowsApplicant2Address;
@@ -384,7 +384,7 @@ public class CaseData {
     private String selectedDivorceCentreSiteId;
 
     @CCD(
-        label = "Applicant 2's solicitor's reference",
+        label = "The respondent's solicitor's reference",
         access = {DefaultAccess.class}
     )
     private String applicant2SolicitorReference;
@@ -398,60 +398,60 @@ public class CaseData {
     private List<ListValue<DivorceDocument>> documentsGenerated;
 
     @CCD(
-        label = "Is applicant 2 represented by a solicitor?",
+        label = "Is the respondent represented by a solicitor?",
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant2SolicitorRepresented;
 
     @CCD(
-        label = "Applicant 2's solicitor's name",
+        label = "The respondent's solicitor's name",
         access = {DefaultAccess.class}
     )
     private String applicant2SolicitorName;
 
     @CCD(
-        label = "Applicant 2's solicitor's Phone number",
+        label = "The respondent's solicitor's phone number",
         regex = "^[0-9 +().-]{9,}$",
         access = {DefaultAccess.class}
     )
     private String applicant2SolicitorPhone;
 
     @CCD(
-        label = "Applicant 2's solicitor's Email",
+        label = "The respondent's solicitor's email",
         typeOverride = Email,
         access = {DefaultAccess.class}
     )
     private String applicant2SolicitorEmail;
 
     @CCD(
-        label = "Applicant 2's solicitor's firm/ DX address",
+        label = "The respondent's solicitor's firm/ DX address",
         typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
     private String derivedApplicant2SolicitorAddr;
 
     @CCD(
-        label = "Digital applicant 2 case",
+        label = "Digital respondent case",
         access = {DefaultAccess.class}
     )
     private YesOrNo app2SolDigital;
 
     @CCD(
-        label = "Applicant 2 is using digital channel?",
+        label = "The respondent is using digital channel?",
         access = {DefaultAccess.class}
     )
     private YesOrNo app2ContactMethodIsDigital;
 
     @CCD(
-        label = "Applicant 2's solicitor's firm address or DX number",
-        hint = "Applicant 2 Organisation Details",
+        label = "The respondent's solicitor's firm address or DX number",
+        hint = "The respondent organisation details",
         access = {DefaultAccess.class}
     )
     private OrganisationPolicy<UserRole> applicant2OrganisationPolicy;
 
     @CCD(
-        label = "Applicant 2's service address",
-        hint = "If applicant 2 is to be served at their home address, enter the home address here and as the service "
+        label = "The respondent's service address",
+        hint = "If The respondent is to be served at their home address, enter the home address here and as the service "
             + "address below",
         access = {DefaultAccess.class}
     )
@@ -479,7 +479,7 @@ public class CaseData {
     private LocalDateTime dateSubmitted;
 
     @CCD(
-        label = "Case ID for previously Amended Case, which was challenged by applicant 2",
+        label = "Case ID for previously Amended Case, which was challenged by the respondent",
         access = {DefaultAccess.class}
     )
     private CaseLink previousCaseId;
@@ -513,7 +513,7 @@ public class CaseData {
     private YesOrNo documentUploadComplete;
 
     @CCD(
-        label = "Applicant 2 Invite Access Pin",
+        label = "The respondent invite access pin",
         access = {DefaultAccess.class}
     )
     private String invitePin;

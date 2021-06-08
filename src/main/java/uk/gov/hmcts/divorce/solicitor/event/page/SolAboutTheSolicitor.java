@@ -50,7 +50,7 @@ public class SolAboutTheSolicitor implements CcdPageConfiguration {
                 "LabelSolAboutTheSolPara-1",
                 "Please note that the information provided will be used as evidence by the court to decide if "
                     + "the applicant is entitled to legally end their marriage. **A copy of this form is sent to "
-                    + "applicant 2**")
+                    + "the respondent**")
             .mandatory(CaseData::getApplicant1SolicitorName, null, null, "Your name")
             .mandatory(CaseData::getSolicitorReference, null, null, "Your reference")
             .mandatory(CaseData::getApplicant1SolicitorPhone, null, null, "Your phone number")
