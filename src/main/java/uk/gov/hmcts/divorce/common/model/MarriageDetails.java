@@ -21,8 +21,8 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
 public class MarriageDetails {
 
     @CCD(
-        label = "Applicant 1's full name as on marriage certificate",
-        hint = "Enter Applicant 1's name exactly as it appears on the marriage certificate. "
+        label = "The applicant's full name as on marriage certificate",
+        hint = "Enter the applicant's name exactly as it appears on the marriage certificate. "
             + " Include any extra text such as \"formerly known as\"",
         access = {DefaultAccess.class}
     )
@@ -77,7 +77,7 @@ public class MarriageDetails {
     private LocalDate date;
 
     @CCD(
-        label = "Were applicant 1 and applicant 2 a same-sex couple when they got married?",
+        label = "Were the applicant and applicant 2 a same-sex couple when they got married?",
         access = {DefaultAccess.class}
     )
     private YesOrNo isSameSexCouple;

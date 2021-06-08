@@ -18,7 +18,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field(CaseData::getDateSubmitted)
             .field(CaseData::getApplicationType)
             .field(CaseData::getDivorceOrDissolution)
-            .field("LabelApplicant1-Heading", null, "### Applicant 1")
+            .field("LabelApplicant1-Heading", null, "### The applicant")
             .field("applicant1FirstName")
             .field("applicant1MiddleName")
             .field("applicant1LastName")
@@ -28,7 +28,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1NameChangedHowOtherDetails", "applicant1NameChangedHow=\"other\"")
             .field("LabelApplicant1DetailsAreConfidential-Heading",
                 "applicant1ContactDetailsConfidential=\"keep\"",
-                "#### Applicant 1's contact details are confidential")
+                "#### The applicant's contact details are confidential")
             .field("applicant1ContactDetailsConfidential")
             .field("applicant1HomeAddress", "applicant1ContactDetailsConfidential=\"share\"")
             .field("applicant1PhoneNumber", "applicant1ContactDetailsConfidential=\"share\"")
@@ -36,7 +36,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field(CaseData::getApplicant1SolicitorRepresented)
             .field("LabelApplicant1sSolicitor-Heading",
                 "applicant1SolicitorRepresented=\"Yes\"",
-                "#### Applicant 1's Solicitor")
+                "#### The applicant's solicitor")
             .field(CaseData::getApplicant1SolicitorName, "applicant1SolicitorRepresented=\"Yes\"")
             .field(CaseData::getApplicant1SolicitorPhone, "applicant1SolicitorRepresented=\"Yes\"")
             .field(CaseData::getApplicant1SolicitorEmail, "applicant1SolicitorRepresented=\"Yes\"")
@@ -86,7 +86,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field(CaseData::getHelpWithFeesReferenceNumber);
 
         configBuilder.tab("languageDetails", "Language")
-            .field("applicant1LanguagePreferenceWelsh", null, "Applicant 1's language preference")
+            .field("applicant1LanguagePreferenceWelsh", null, "The applicant's language preference")
             .field("applicant2LanguagePreferenceWelsh", null, "Applicant 2's language preference");
 
         configBuilder.tab("documents", "Documents")

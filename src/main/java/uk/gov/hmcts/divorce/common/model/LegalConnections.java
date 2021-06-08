@@ -13,25 +13,25 @@ public enum LegalConnections implements HasLabel {
     COURTS_RESIDUAL_JURISDICTION("The courts of England and Wales have residual jurisdiction"),
 
     @JsonProperty("B")
-    APP_1_APP_2_DOMICILED("Applicant 1 and Applicant 2 are both domiciled in England and Wales"),
+    APP_1_APP_2_DOMICILED("The applicant and Applicant 2 are both domiciled in England and Wales"),
 
     @JsonProperty("C")
-    APP_1_DOMICILED_RESIDENT("Applicant 1 is domiciled and habitually resident in England and Wales and has resided "
+    APP_1_DOMICILED_RESIDENT("The applicant is domiciled and habitually resident in England and Wales and has resided "
         + "there for at least six months immediately prior to the application"),
 
     @JsonProperty("D")
-    APP_1_RESIDENT("Applicant 1 is habitually resident in England and Wales and has resided there for at least a year "
+    APP_1_RESIDENT("The applicant is habitually resident in England and Wales and has resided there for at least a year "
         + "immediately prior to the presentation of the application"),
 
     @JsonProperty("E")
     APP_2_RESIDENT("Applicant 2 is habitually resident in England and Wales"),
 
     @JsonProperty("F")
-    APP_1_APP_2_ONE_RESIDENT("Applicant 1 and Applicant 2 were last habitually resident in England and Wales and one "
+    APP_1_APP_2_ONE_RESIDENT("The applicant and Applicant 2 were last habitually resident in England and Wales and one "
         + "of them still resides there"),
 
     @JsonProperty("G")
-    APP_1_APP_2_RESIDENT("Applicant 1 and Applicant 2 are habitually resident in England and Wales");
+    APP_1_APP_2_RESIDENT("The applicant and Applicant 2 are habitually resident in England and Wales");
 
     private final String label;
 }

@@ -88,7 +88,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         final CaseData caseData = details.getData();
         caseData.setApplicationFeeOrderSummary(orderSummary);
 
-        log.info("Adding Applicant 1 solicitor case roles");
+        log.info("Adding the applicant's solicitor case roles");
         ccdAccessService.addApplicant1SolicitorRole(
             httpServletRequest.getHeader(AUTHORIZATION),
             details.getId()

@@ -48,6 +48,6 @@ public class CcdAccessService {
             new CaseUser(solicitorUserId, caseRoles)
         );
 
-        log.info("Successfully added applicant 1 solicitor roles to case Id {} ", caseId);
+        log.info("Successfully added the applicant's solicitor roles to case Id {} ", caseId);
     }
 }

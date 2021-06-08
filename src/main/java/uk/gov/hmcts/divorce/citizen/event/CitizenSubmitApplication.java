@@ -45,8 +45,8 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
         configBuilder
             .event(CITIZEN_SUBMIT)
             .forStates(Draft, AwaitingPayment)
-            .name("Applicant 1 Statement of Truth")
-            .description("Applicant 1 confirms SOT")
+            .name("The Applicant's Statement of Truth")
+            .description("The applicant confirms SOT")
             .retries(120, 120)
             .grant(CREATE_READ_UPDATE, CITIZEN, CASEWORKER_DIVORCE_COURTADMIN, CASEWORKER_DIVORCE_COURTADMIN_BETA)
             .grant(READ, CASEWORKER_DIVORCE_SUPERUSER)

@@ -23,7 +23,7 @@
     "hasCostOrders": true,
     "hasFinancialOrders": true,
     "hasFinancialOrdersForChild": true,
-    "financialOrderChild": ", and for the children of applicant 1 and applicant 2",
+    "financialOrderChild": ", and for the children of the applicant and applicant 2",
     "applicant2PostalAddress": "London"
   },
   "outputType": "PDF",
