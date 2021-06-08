@@ -5,7 +5,7 @@
     "applicant1LastName": "test_last_name",
     "applicant1Email": "test@test.com",
     "applicant1SolicitorEmail": "solicitor@test.com",
-    "solSignStatementOfTruth": "YES"
+    "solSignStatementOfTruth": "Yes"
   },
   "errors": [],
   "warnings": null,

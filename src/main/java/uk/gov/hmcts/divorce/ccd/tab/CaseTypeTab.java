@@ -24,7 +24,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1LastName")
             .field("applicant1Gender")
             .field("applicant1NameDifferentToMarriageCertificate")
-            .field("applicant1NameChangedHow", "applicant1NameDifferentToMarriageCertificate=\"YES\"")
+            .field("applicant1NameChangedHow", "applicant1NameDifferentToMarriageCertificate=\"Yes\"")
             .field("applicant1NameChangedHowOtherDetails", "applicant1NameChangedHow=\"other\"")
             .field("LabelApplicant1DetailsAreConfidential-Heading",
                 "applicant1ContactDetailsConfidential=\"keep\"",
@@ -35,52 +35,52 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field(CaseData::getDivorceWho)
             .field("applicant1SolicitorRepresented")
             .field("LabelApplicant1sSolicitor-Heading",
-                "applicant1SolicitorRepresented=\"YES\"",
+                "applicant1SolicitorRepresented=\"Yes\"",
                 "#### Applicant 1's Solicitor")
-            .field("applicant1SolicitorName", "applicant1SolicitorRepresented=\"YES\"")
-            .field("applicant1SolicitorPhone", "applicant1SolicitorRepresented=\"YES\"")
-            .field("applicant1SolicitorEmail", "applicant1SolicitorRepresented=\"YES\"")
-            .field("applicant1SolicitorOrganisationPolicy", "applicant1SolicitorRepresented=\"YES\"")
-            .field("applicant1SolicitorReference", "applicant1SolicitorRepresented=\"YES\"")
+            .field("applicant1SolicitorName", "applicant1SolicitorRepresented=\"Yes\"")
+            .field("applicant1SolicitorPhone", "applicant1SolicitorRepresented=\"Yes\"")
+            .field("applicant1SolicitorEmail", "applicant1SolicitorRepresented=\"Yes\"")
+            .field("applicant1SolicitorOrganisationPolicy", "applicant1SolicitorRepresented=\"Yes\"")
+            .field("applicant1SolicitorReference", "applicant1SolicitorRepresented=\"Yes\"")
             .field("LabelApplicant2-Heading", null, "### Applicant 2")
             .field("applicant2FirstName")
             .field("applicant2MiddleName")
             .field("applicant2LastName")
             .field("applicant2Gender")
             .field("applicant2NameDifferentToMarriageCertificate")
-            .field("applicant2NameChangedHow", "applicant2NameDifferentToMarriageCertificate=\"YES\"")
+            .field("applicant2NameChangedHow", "applicant2NameDifferentToMarriageCertificate=\"Yes\"")
             .field("applicant2NameChangedHowOtherDetails", "applicant2NameChangedHow=\"other\"")
             .field("applicant2SolicitorRepresented")
             .field("LabelApplicant2sSolicitor-Heading",
-                "applicant2SolicitorRepresented=\"YES\"",
+                "applicant2SolicitorRepresented=\"Yes\"",
                 "#### Applicant 2's Solicitor")
-            .field("applicant2SolicitorName", "applicant2SolicitorRepresented=\"YES\"")
-            .field("applicant2SolicitorPhone", "applicant2SolicitorRepresented=\"YES\"")
-            .field("applicant2SolicitorEmail", "applicant2SolicitorRepresented=\"YES\"")
-            .field("applicant2SolicitorOrganisationPolicy", "applicant2SolicitorRepresented=\"YES\"")
-            .field("applicant2SolicitorReference", "applicant2SolicitorRepresented=\"YES\"")
+            .field("applicant2SolicitorName", "applicant2SolicitorRepresented=\"Yes\"")
+            .field("applicant2SolicitorPhone", "applicant2SolicitorRepresented=\"Yes\"")
+            .field("applicant2SolicitorEmail", "applicant2SolicitorRepresented=\"Yes\"")
+            .field("applicant2SolicitorOrganisationPolicy", "applicant2SolicitorRepresented=\"Yes\"")
+            .field("applicant2SolicitorReference", "applicant2SolicitorRepresented=\"Yes\"")
             .field("applicant2CorrespondenceAddress")
             .field(CaseData::getLegalConnections)
             .field("LabelMarriage-Heading", null, "### Marriage and certificate")
             .field("marriageDate")
             .field("marriageIsSameSexCouple")
             .field("marriageMarriedInUk")
-            .field("marriagePlaceOfMarriage", "marriageMarriedInUk=\"NO\"")
-            .field("marriageCountryOfMarriage", "marriageMarriedInUk=\"NO\"")
+            .field("marriagePlaceOfMarriage", "marriageMarriedInUk=\"No\"")
+            .field("marriageCountryOfMarriage", "marriageMarriedInUk=\"No\"")
             .field("marriageCertificateInEnglish")
-            .field("marriageCertifiedTranslation", "marriageCertificateInEnglish=\"NO\"")
+            .field("marriageCertifiedTranslation", "marriageCertificateInEnglish=\"No\"")
             .field("marriageApplicant1Name")
             .field("marriageApplicant2Name")
             .field("LabelClaimCosts-Heading", null, "### Claim costs")
             .field(CaseData::getDivorceCostsClaim)
-            .field(CaseData::getDivorceClaimFrom, "divorceCostsClaim=\"YES\"")
+            .field(CaseData::getDivorceClaimFrom, "divorceCostsClaim=\"Yes\"")
             .field("LabelOtherLegalProceedings-Heading", null, "### Other legal proceedings")
             .field(CaseData::getLegalProceedings)
-            .field(CaseData::getLegalProceedingsRelated, "legalProceedings=\"YES\"")
-            .field(CaseData::getLegalProceedingsDetails, "legalProceedings=\"YES\"")
+            .field(CaseData::getLegalProceedingsRelated, "legalProceedings=\"Yes\"")
+            .field(CaseData::getLegalProceedingsDetails, "legalProceedings=\"Yes\"")
             .field("LabelFinancialOrder-Heading", null, "### Financial order")
             .field(CaseData::getFinancialOrder)
-            .field(CaseData::getFinancialOrderFor, "financialOrder=\"YES\"");
+            .field(CaseData::getFinancialOrderFor, "financialOrder=\"Yes\"");
 
         configBuilder.tab("paymentDetailsCourtAdmin", "Payment")
             .field(CaseData::getHelpWithFeesReferenceNumber);
@@ -97,10 +97,10 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("marriageApplicant1Name")
             .field("marriageApplicant2Name")
             .field("marriageMarriedInUk")
-            .field("marriagePlaceOfMarriage", "marriageMarriedInUk=\"NO\"")
-            .field("marriageCountryOfMarriage", "marriageMarriedInUk=\"NO\"")
+            .field("marriagePlaceOfMarriage", "marriageMarriedInUk=\"No\"")
+            .field("marriageCountryOfMarriage", "marriageMarriedInUk=\"No\"")
             .field("marriageCertifyMarriageCertificateIsCorrect")
-            .field("marriageMarriageCertificateIsIncorrectDetails", "marriageCertifyMarriageCertificateIsCorrect=\"NO\"")
-            .field("marriageIssueApplicationWithoutMarriageCertificate", "marriageCertifyMarriageCertificateIsCorrect=\"NO\"");
+            .field("marriageMarriageCertificateIsIncorrectDetails", "marriageCertifyMarriageCertificateIsCorrect=\"No\"")
+            .field("marriageIssueApplicationWithoutMarriageCertificate", "marriageCertifyMarriageCertificateIsCorrect=\"No\"");
     }
 }

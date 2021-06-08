@@ -33,7 +33,7 @@
     "applicant1NameDifferentToMarriageCertificate": null,
     "applicant1PhoneNumber": null,
     "applicant1NameChangedHowOtherDetails": null,
-    "applicant1LanguagePreferenceWelsh": "NO",
+    "applicant1LanguagePreferenceWelsh": "No",
     "applicant1ContactDetailsConfidential": null,
     "applicant1CorrespondenceAddress": null,
     "applicant1SolicitorRepresented": null,
@@ -84,8 +84,8 @@
       "PrepopulateToUsersOrganisation": null,
       "OrgPolicyCaseAssignedRole": null
     },
-    "divorceCostsClaim": "YES",
-    "financialOrder": "NO",
+    "divorceCostsClaim": "Yes",
+    "financialOrder": "No",
     "divorceClaimFrom": [
       "applicant2"
     ],
