@@ -6,7 +6,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class Document {
-    final String name;
-    final byte[] data;
-    final int count;
+    private final String name;
+    private final byte[] data;
+    private final int count;
 }
