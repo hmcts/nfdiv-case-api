@@ -92,8 +92,6 @@ public class Applicant {
     )
     private Gender gender;
 
-    private SubField field;
-
     @CCD(
         label = "Applicant's service address",
         hint = "If applicant is to be served at their home address, enter the home address here and as the service "

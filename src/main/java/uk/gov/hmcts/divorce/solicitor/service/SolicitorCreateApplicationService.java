@@ -74,13 +74,7 @@ public class SolicitorCreateApplicationService {
         final Long caseId,
         final String userAuth
     ) {
-        if (caseData.getApplicant1().getField().getValue() == null) {
-            log.error("CaseId: {}, Value not populated", caseId);
-            return AboutToStartOrSubmitResponse
-                .<CaseData, State>builder()
-                .errors(singletonList("Please the nested value"))
-                .build();
-        }
+
         if (caseData.getApplicant1().getSolicitor() == null || !caseData.getApplicant1().getSolicitor().hasOrgId()) {
             log.error("CaseId: {}, Applicant 1 org policy is not populated", caseId);
             return AboutToStartOrSubmitResponse

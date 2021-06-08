@@ -34,7 +34,6 @@
     "applicant1SolicitorEmail": null,
     "applicant1SolicitorIsDigital": null,
     "applicant1SolicitorName": null,
-    "applicant1SolicitorOrganisationPolicy": null,
     "applicant1SolicitorPhone": null,
     "applicant1SolicitorReference": null,
     "applicant2CorrespondenceAddress": null,
@@ -44,7 +43,6 @@
     "applicant2SolicitorEmail": null,
     "applicant2SolicitorIsDigital": null,
     "applicant2SolicitorName": null,
-    "applicant2SolicitorOrganisationPolicy": null,
     "applicant2SolicitorPhone": null,
     "applicant2SolicitorReference": null,
     "applicant2FirstName": null,
@@ -68,7 +66,7 @@
     "jurisdictionResidualEligible": null,
     "jurisdictionBothLastHabituallyResident": null,
     "jurisdictionConnections": null,
-    "applicant1OrganisationPolicy": {
+    "applicant1SolicitorOrganisationPolicy": {
       "Organisation": {
         "OrganisationID": "ABC123",
         "OrganisationName": "Test Organisation"
@@ -102,7 +100,7 @@
         }
       }
     ],
-    "applicant2OrganisationPolicy": {
+    "applicant2SolicitorOrganisationPolicy": {
       "Organisation": {
         "OrganisationID": "ABC123",
         "OrganisationName": "Test Organisation"
