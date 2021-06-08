@@ -8,7 +8,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 public class Print {
-    private final List<Document> documents;
+    private final List<Letter> letters;
     private final String caseId;
     private final String caseRef;
     private final String letterType;

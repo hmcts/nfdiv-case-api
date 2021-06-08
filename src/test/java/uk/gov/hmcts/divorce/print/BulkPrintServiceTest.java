@@ -7,7 +7,7 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.divorce.print.model.Document;
+import uk.gov.hmcts.divorce.print.model.Letter;
 import uk.gov.hmcts.divorce.print.model.Print;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.sendletter.api.SendLetterApi;
@@ -62,13 +62,13 @@ class BulkPrintServiceTest {
                 uuid
             ));
 
-        List<Document> documents = List.of(
-            new Document(
+        List<Letter> letters = List.of(
+            new Letter(
                 "fileName1",
                 firstFile,
                 1
             ),
-            new Document(
+            new Letter(
                 "fileName2",
                 secondFile,
                 2
@@ -76,7 +76,7 @@ class BulkPrintServiceTest {
         );
 
         Print print = new Print(
-            documents,
+            letters,
             "1234",
             "5678",
             "letterType"

@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class Document {
+public class Letter {
     private final String name;
     private final byte[] data;
     private final int count;

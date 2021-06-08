@@ -27,7 +27,7 @@ public class BulkPrintService {
     private final AuthTokenGenerator authTokenGenerator;
 
     public UUID print(Print print) {
-        List<Document> documents = print.getDocuments().stream()
+        List<Document> documents = print.getLetters().stream()
             .map(document ->
                 new Document(
                     getEncoder().encodeToString(document.getData()),
