@@ -209,19 +209,18 @@ public class CcdAccessServiceTest {
                 new CaseUser(APP_2_CITIZEN_USER_ID, Set.of(CREATOR.getRole(), APPLICANT_2.getRole()))
             );
 
-        assertThatCode(() -> ccdAccessService.addApplicant1SolicitorRole(APP_1_SOL_AUTH_TOKEN, TEST_CASE_ID))
+        assertThatCode(() -> ccdAccessService.linkApplicant2ToApplication(APP_2_AUTH_TOKEN, TEST_CASE_ID))
             .doesNotThrowAnyException();
 
-        verify(idamService).retrieveUser(APP_1_SOL_AUTH_TOKEN);
-        verify(idamService).retrieveCaseWorkerDetails();
+        verify(idamService).retrieveUser(APP_2_AUTH_TOKEN);
         verify(authTokenGenerator).generate();
         verify(caseUserApi)
             .updateCaseRolesForUser(
-                CASEWORKER_AUTH_TOKEN,
+                APP_2_AUTH_TOKEN,
                 TEST_SERVICE_AUTH_TOKEN,
                 String.valueOf(TEST_CASE_ID),
-                SOLICITOR_USER_ID,
-                new CaseUser(SOLICITOR_USER_ID, Set.of(CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole()))
+                APP_2_CITIZEN_USER_ID,
+                new CaseUser(APP_2_CITIZEN_USER_ID, Set.of(CREATOR.getRole(), APPLICANT_2.getRole()))
             );
 
         verifyNoMoreInteractions(idamService, authTokenGenerator, caseUserApi);

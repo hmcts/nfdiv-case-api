@@ -21,7 +21,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenInviteApplicant2.CITIZEN_INVITE_APPLICANT_2;
+import static uk.gov.hmcts.divorce.citizen.event.CitizenLinkApplication.CITIZEN_LINK_APPLICANT_2;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
@@ -43,7 +43,7 @@ public class CitizenLinkApplicationTest {
 
         citizenLinkApplication.configure(configBuilder);
 
-        assertThat(configBuilder.getEvents().get(0).getId()).isEqualTo(CITIZEN_INVITE_APPLICANT_2);
+        assertThat(configBuilder.getEvents().get(0).getId()).isEqualTo(CITIZEN_LINK_APPLICANT_2);
     }
 
     @Test

@@ -15,7 +15,6 @@ import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenInviteApplicant2.CITIZEN_INVITE_APPLICANT_2;
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_UPDATE;
@@ -30,11 +29,13 @@ public class CitizenLinkApplication implements CCDConfig<CaseData, State, UserRo
     @Autowired
     private HttpServletRequest httpServletRequest;
 
+    public static final String CITIZEN_LINK_APPLICANT_2 = "citizen-link-applicant2";
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder
-            .event(CITIZEN_INVITE_APPLICANT_2)
-            .initialState(AwaitingApplicant2Response)
+            .event(CITIZEN_LINK_APPLICANT_2)
+            .forState(AwaitingApplicant2Response)
             .name("Link Applicant 2 to case")
             .description("Link Applicant 2 to case to enable completion of joint application")
             .grant(CREATE_READ_UPDATE, CITIZEN)

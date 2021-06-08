@@ -25,7 +25,7 @@ public final class TestConstants {
 
     public static final String APP_1_SOL_AUTH_TOKEN = "Bearer App1SolAuthToken";
     public static final String CASEWORKER_AUTH_TOKEN = "Bearer CaseWorkerAuthToken";
-    public static final String APP_2_AUTH_TOKEN = "Bearer CaseWorkerAuthToken";
+    public static final String APP_2_AUTH_TOKEN = "Bearer CitizenAuthToken";
     public static final String SOLICITOR_USER_ID = "1";
     public static final String CASEWORKER_USER_ID = "2";
     public static final String APP_2_CITIZEN_USER_ID = "3";
