@@ -97,3 +97,6 @@ document_management:
 prd:
   api:
     url: ${PRD_API_BASEURL:http://rd-professional-api-aat.service.core-compute-aat.internal}
+
+send-letter:
+  url: ${SEND_LETTER_SERIVCE_BASEURL:http://localhost:4021}

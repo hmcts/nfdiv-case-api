@@ -1,0 +1,15 @@
+package uk.gov.hmcts.divorce.print.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+import java.util.List;
+
+@AllArgsConstructor
+@Getter
+public class Print {
+    private final List<Document> documents;
+    private final String caseId;
+    private final String caseRef;
+    private final String letterType;
+}
