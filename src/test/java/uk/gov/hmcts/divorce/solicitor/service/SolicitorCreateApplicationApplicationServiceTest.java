@@ -10,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.common.model.Solicitor;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdater;
@@ -111,9 +110,7 @@ class SolicitorCreateApplicationApplicationServiceTest {
     @Test
     public void shouldValidateApplicant1SolicitorOrgAndReturnNoErrorsWhenSolicitorBelongsToSelectedOrg() {
         CaseData caseData = caseData();
-        caseData.getApplicant1().setSolicitor(
-            Solicitor.builder().organisationPolicy(organisationPolicy()).build()
-        );
+        caseData.setApplicant1OrganisationPolicy(organisationPolicy());
 
         OrganisationsResponse organisationsResponse = OrganisationsResponse
             .builder()
@@ -145,9 +142,7 @@ class SolicitorCreateApplicationApplicationServiceTest {
     @Test
     public void shouldValidateApplicant1SolicitorOrgAndReturnErrorWhenSolicitorDoesNotBelongsToSelectedOrg() {
         CaseData caseData = caseData();
-        caseData.getApplicant1().setSolicitor(
-            Solicitor.builder().organisationPolicy(organisationPolicy()).build()
-        );
+        caseData.setApplicant1OrganisationPolicy(organisationPolicy()); // default org identifier = ABC123
 
         OrganisationsResponse organisationsResponse = OrganisationsResponse
             .builder()
@@ -216,9 +211,7 @@ class SolicitorCreateApplicationApplicationServiceTest {
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         CaseData caseData = caseData();
-        caseData.getApplicant1().setSolicitor(
-            Solicitor.builder().organisationPolicy(organisationPolicy()).build()
-        );
+        caseData.setApplicant1OrganisationPolicy(organisationPolicy());
 
         assertThatThrownBy(() -> solicitorCreateApplicationService.validateSolicitorOrganisation(
             caseData,

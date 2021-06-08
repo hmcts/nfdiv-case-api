@@ -12,7 +12,7 @@ public final class CaseFieldsConstants {
     public static final String DIVORCE_COSTS_CLAIM = "divorceCostsClaim";
     public static final String DIVORCE_OR_DISSOLUTION = "divorceOrDissolution";
     public static final String FINANCIAL_ORDER = "financialOrder";
-    public static final String APPLICANT_1_ORGANISATION_POLICY = "applicant1SolicitorOrganisationPolicy";
+    public static final String APPLICANT_1_ORGANISATION_POLICY = "applicant1OrganisationPolicy";
     public static final String STATEMENT_OF_TRUTH = "statementOfTruth";
     public static final String SOL_STATEMENT_OF_TRUTH = "solSignStatementOfTruth";
 

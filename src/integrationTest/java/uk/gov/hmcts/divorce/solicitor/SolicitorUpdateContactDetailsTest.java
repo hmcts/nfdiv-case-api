@@ -16,7 +16,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.common.model.Solicitor;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 import uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -97,7 +96,7 @@ public class SolicitorUpdateContactDetailsTest {
             .getResponse()
             .getContentAsString();
 
-        assertEquals(expectedResponse(SOLICITOR_MID_EVENT_RESPONSE), jsonStringResponse, STRICT);
+        assertEquals(jsonStringResponse, expectedResponse(SOLICITOR_MID_EVENT_RESPONSE), STRICT);
     }
 
     @Test
@@ -119,12 +118,12 @@ public class SolicitorUpdateContactDetailsTest {
             .getResponse()
             .getContentAsString();
 
-        assertEquals(expectedResponse(SOLICITOR_MID_EVENT_ERROR), jsonStringResponse, STRICT);
+        assertEquals(jsonStringResponse, expectedResponse(SOLICITOR_MID_EVENT_ERROR), STRICT);
     }
 
     private CaseData caseDataWithApplicant1Org() {
         CaseData caseData = caseData();
-        caseData.getApplicant1().setSolicitor(Solicitor.builder().organisationPolicy(organisationPolicy()).build());
+        caseData.setApplicant1OrganisationPolicy(organisationPolicy());
         return caseData;
     }
 

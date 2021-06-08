@@ -116,7 +116,7 @@ public class DraftApplicationTemplateContent {
         AddressGlobalUK applicant2HomeAddress = caseData.getApplicant2().getHomeAddress();
 
         if (applicant2HomeAddress == null) {
-            applicant2PostalAddress = caseData.getApplicant2().getSolicitor().getAddress();
+            applicant2PostalAddress = caseData.getDerivedApplicant2SolicitorAddr();
         } else {
             applicant2PostalAddress =
                 Stream.of(
