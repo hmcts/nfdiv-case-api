@@ -21,7 +21,7 @@
     "jurisdictionResidualEligible": null,
     "jurisdictionBothLastHabituallyResident": null,
     "jurisdictionConnections": null,
-    "hwfCodeValidForFullAmount": "YES"
+    "hwfCodeValidForFullAmount": "Yes"
   },
   "errors": null,
   "warnings": null,
