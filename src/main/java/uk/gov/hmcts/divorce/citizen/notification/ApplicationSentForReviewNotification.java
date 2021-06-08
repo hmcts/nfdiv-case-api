@@ -4,16 +4,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.common.model.Gender;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICATION_SENT_FOR_REVIEW;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_ANSWERS_SENT_FOR_REVIEW;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.dateTimeFormatter;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_APPLICATION;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_OR_DISSOLUTION;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.PARTNER;
 
 @Component
 @Slf4j
@@ -29,14 +30,29 @@ public class ApplicationSentForReviewNotification {
     public void send(CaseData caseData, Long id) {
         Map<String, String> templateVars = commonContent.templateVarsFor(caseData);
 
-        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDateOfSubmissionResponse().format(dateTimeFormatter));
-        templateVars.put(APPLICATION_REFERENCE, formatId(id));
+        templateVars.put("date plus two weeks", caseData.getDateOfSubmissionResponse().format(dateTimeFormatter));
+        templateVars.put(DIVORCE_APPLICATION, DIVORCE_APPLICATION);
+
+        if (caseData.getDivorceOrDissolution().isDivorce()) {
+            templateVars.put(DIVORCE_OR_DISSOLUTION, "divorce application");
+            if (caseData.getApplicant2().getGender().equals(Gender.MALE)) {
+                templateVars.put(PARTNER, "Husband");
+            } else {
+                templateVars.put(PARTNER, "Wife");
+            }
+            templateVars.put("civilpartnership.case@justice.gov.uk/contactdivorce@justice.gov.uk", "contactdivorce@justice.gov.uk");
+        } else {
+            templateVars.put(DIVORCE_OR_DISSOLUTION, "application to end your civil partnership");
+            templateVars.put(PARTNER, "civil partner");
+            templateVars.put("civilpartnership.case@justice.gov.uk/contactdivorce@justice.gov.uk", "civilpartnership.case@justice.gov.uk");
+        }
+
 
         log.info("Sending application awaiting review for case : {}", id);
 
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
-            APPLICATION_SENT_FOR_REVIEW,
+            JOINT_APPLICANT1_ANSWERS_SENT_FOR_REVIEW,
             templateVars,
             caseData.getApplicant1().getLanguagePreference()
         );

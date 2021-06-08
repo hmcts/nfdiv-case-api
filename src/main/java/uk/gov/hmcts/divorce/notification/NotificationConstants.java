@@ -4,7 +4,7 @@ public final class NotificationConstants {
     public static final String FIRST_NAME = "first name";
     public static final String LAST_NAME = "last name";
     public static final String RELATIONSHIP = "relationship";
-    public static final String PARTNER = "partner";
+    public static final String PARTNER = "husband / wife / civil partner";
 
     public static final String DIVORCE_APPLICATION = "divorce application";
     public static final String APPLICATION_TO_END_CIVIL_PARTNERSHIP = "application to end your civil partnership";
@@ -30,6 +30,8 @@ public final class NotificationConstants {
 
     public static final String SUBMISSION_RESPONSE_DATE = "date of response";
     public static final String APPLICATION_REFERENCE = "reference number";
+
+    public static final String DIVORCE_OR_DISSOLUTION = "divorce application / application to end your civil partnership";
 
     private NotificationConstants() {
     }

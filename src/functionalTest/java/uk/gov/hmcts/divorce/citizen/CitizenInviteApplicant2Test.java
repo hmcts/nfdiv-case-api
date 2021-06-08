@@ -6,11 +6,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.Map;
 
-import static java.time.temporal.ChronoUnit.DAYS;
-import static java.time.temporal.ChronoUnit.YEARS;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
@@ -30,7 +27,6 @@ public class CitizenInviteApplicant2Test extends FunctionalTestSuite {
     @Test
     public void shouldSendEmailWhenAllTemplateParamsAreValid() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
-        request.put("marriageDate", LocalDate.now().minus(1, YEARS).minus(1, DAYS));
 
         Response response = triggerCallback(request, CITIZEN_INVITE_APPLICANT_2, ABOUT_TO_SUBMIT_URL);
 

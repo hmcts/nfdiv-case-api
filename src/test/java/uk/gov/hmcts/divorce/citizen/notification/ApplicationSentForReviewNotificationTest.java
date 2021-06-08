@@ -19,7 +19,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICATION_SENT_FOR_REVIEW;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_ANSWERS_SENT_FOR_REVIEW;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
@@ -50,7 +50,7 @@ public class ApplicationSentForReviewNotificationTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
-            eq(APPLICATION_SENT_FOR_REVIEW),
+            eq(JOINT_APPLICANT1_ANSWERS_SENT_FOR_REVIEW),
             argThat(allOf(
                 hasEntry(SUBMISSION_RESPONSE_DATE, "5 May 2021"),
                 hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456")
