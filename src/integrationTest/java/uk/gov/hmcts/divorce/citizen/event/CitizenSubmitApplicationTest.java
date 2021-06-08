@@ -145,10 +145,13 @@ public class CitizenSubmitApplicationTest {
 
     @Test
     public void givenInvalidCaseDataThenReturnResponseWithErrors() throws Exception {
+        var data = caseData();
+        data.getApplicant1().setGender(null);
+
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseData(), CITIZEN_SUBMIT)))
+            .content(objectMapper.writeValueAsString(callbackRequest(data, CITIZEN_SUBMIT)))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().json(expectedCcdAboutToStartCallbackErrorResponse()));

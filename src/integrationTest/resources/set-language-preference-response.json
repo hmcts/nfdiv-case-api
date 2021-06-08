@@ -4,8 +4,8 @@
     "applicant1FirstName": "test_first_name",
     "applicant1LastName": "test_last_name",
     "applicant1Email": "test@test.com",
-    "languagePreferenceWelsh": "NO",
-    "divorceCostsClaim": "YES"
+    "languagePreferenceWelsh": "No",
+    "divorceCostsClaim": "Yes"
   },
   "errors": null,
   "warnings": null,

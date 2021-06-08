@@ -36,6 +36,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.IN_PROGRESS;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -71,35 +72,13 @@ public class CaseData {
     )
     private YesOrNo screenHasMarriageBroken;
 
-    @CCD(access = {DefaultAccess.class})
     @JsonUnwrapped(prefix = "applicant1")
     @Builder.Default
     private Applicant applicant1 = new Applicant();
 
-    @CCD(access = {DefaultAccess.class})
     @JsonUnwrapped(prefix = "applicant2")
     @Builder.Default
     private Applicant applicant2 = new Applicant();
-
-    // TODO move to Applicant
-    @CCD(
-        label = "Applicant 1's gender",
-        hint = "Applicant 1’s gender is collected for statistical purposes only.",
-        typeOverride = FixedList,
-        typeParameterOverride = "Gender",
-        access = {DefaultAccess.class}
-    )
-    private Gender inferredApplicant1Gender;
-
-    // TODO move to Applicant
-    @CCD(
-        label = "Applicant 2's gender",
-        hint = "Applicant 2’s gender is collected for statistical purposes only.",
-        typeOverride = FixedList,
-        typeParameterOverride = "Gender",
-        access = {DefaultAccess.class}
-    )
-    private Gender inferredApplicant2Gender;
 
     @CCD(
         label = "Help with fees reference",
@@ -591,6 +570,16 @@ public class CaseData {
             .filter(p -> SUCCESS.equals(p.getValue().getPaymentStatus()))
             .map(p -> p.getValue().getPaymentAmount())
             .reduce(0, Integer::sum);
+    }
+
+    @JsonIgnore
+    public Boolean isLastPaymentInProgress() {
+        return payments != null && payments
+            .stream()
+            .reduce((previous, current) -> current)
+            .get()
+            .getValue()
+            .getPaymentStatus() == IN_PROGRESS;
     }
 
     @JsonIgnore

@@ -50,9 +50,9 @@ public class SolAboutApplicant2 implements CcdPageConfiguration {
                     "applicant2NameChangedHow=\"other\"",
                     null,
                     "If not through marriage or deed poll, please provide details of how they legally changed they name")
+                .mandatory(Applicant::getGender, null, null,
+                        "What is applicant 2's gender?")
                 .done()
-            .mandatory(CaseData::getInferredApplicant2Gender, null, null,
-                    "What is applicant 2's gender?")
             .complex(CaseData::getApplicant2)
                 .optional(Applicant::getLanguagePreferenceWelsh, null, null,
                 "If known, please specify if applicant 2 will want their document also in welsh",

@@ -34,7 +34,19 @@ public class CitizenInviteApplicant2Test {
     }
 
     @Test
-    public void givenValidCaseDataWhenCallbackIsInvokedThenGeneratePin() throws Exception {
+    void shouldAddApplicant2DueDateToCaseData() {
+        final CaseData caseData = caseData();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenInviteApplicant2.aboutToSubmit(details, details);
+
+        assertThat(response.getData().getDueDate()).isNotNull();
+    }
+
+    @Test
+    public void givenValidCaseDataWhenCallbackIsInvokedThenGeneratePin() {
         final CaseData caseData = caseData();
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
