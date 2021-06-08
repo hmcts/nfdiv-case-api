@@ -20,7 +20,15 @@
     "applicant1LastName": "test_last_name",
     "applicant1Email": "test@test.com",
     "applicant1AgreedToReceiveEmails": null,
-    "applicant1HomeAddress": null,
+    "applicant1HomeAddress": {
+      "AddressLine1": "line 1",
+      "AddressLine2": null,
+      "AddressLine3": null,
+      "Country": null,
+      "County": null,
+      "PostTown": "town",
+      "PostCode": "postcode"
+    },
     "applicant1NameChangedHow": null,
     "applicant1NameDifferentToMarriageCertificate": null,
     "applicant1PhoneNumber": null,
