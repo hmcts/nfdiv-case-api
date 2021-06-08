@@ -93,7 +93,10 @@ public enum State {
         name = "Application issued",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
-    Issued("Issued");
+    Issued("Issued"),
+
+    ConditionalOrderComplete("ConditionalOrderComplete"),
+    FinalOrderComplete("FinalOrderComplete");
 
     private final String name;
 
