@@ -1,7 +1,7 @@
 {
   "data": {
-    "inferredApplicant1Gender": "female",
-    "inferredApplicant2Gender": "male",
+    "applicant1Gender": "female",
+    "applicant2Gender": "male",
     "marriageMarriedInUk": null,
     "marriageCertificateInEnglish": null,
     "marriageCertifiedTranslation": null,
@@ -33,8 +33,8 @@
     "applicant2NameChangedHowOtherDetails": null,
     "applicant2PhoneNumber": null,
     "applicant2ContactDetailsConfidential": null,
-    "jurisdictionApplicant1Residence": "YES",
-    "jurisdictionApplicant2Residence": "YES",
+    "jurisdictionApplicant1Residence": "Yes",
+    "jurisdictionApplicant2Residence": "Yes",
     "jurisdictionApplicant1Domicile": null,
     "jurisdictionApplicant2Domicile": null,
     "jurisdictionApp1HabituallyResLastTwelveMonths": null,
@@ -49,11 +49,11 @@
     "applicant2LastName": "test_last_name",
     "marriageApplicant1Name": "test_first_name test_last_name",
     "marriageApplicant2Name": null,
-    "financialOrder": "NO",
-    "helpWithFeesNeedHelp": "NO",
-    "prayerHasBeenGiven": "YES",
-    "statementOfTruth": "YES",
-    "solSignStatementOfTruth": "YES",
+    "financialOrder": "No",
+    "helpWithFeesNeedHelp": "No",
+    "prayerHasBeenGiven": "Yes",
+    "statementOfTruth": "Yes",
+    "solSignStatementOfTruth": "Yes",
     "applicationFeeOrderSummary": {
       "PaymentReference": null,
       "Fees": [

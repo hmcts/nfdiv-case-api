@@ -1,7 +1,7 @@
 {
   "data": {
-    "inferredApplicant1Gender": "female",
-    "inferredApplicant2Gender": "male",
+    "applicant1Gender": "female",
+    "applicant2Gender": "male",
     "marriageMarriedInUk": null,
     "marriageCertificateInEnglish": null,
     "marriageCertifiedTranslation": null,
@@ -12,7 +12,7 @@
     "marriageCertifyMarriageCertificateIsCorrect": null,
     "marriageMarriageCertificateIsIncorrectDetails": null,
     "marriageIssueApplicationWithoutMarriageCertificate": null,
-    "helpWithFeesNeedHelp": "NO",
+    "helpWithFeesNeedHelp": "No",
     "applicant1FirstName": "test_first_name",
     "applicant1MiddleName": "test_middle_name",
     "applicant1LastName": "test_last_name",
@@ -25,8 +25,8 @@
     "applicant1PhoneNumber": null,
     "applicant1NameChangedHowOtherDetails": null,
     "applicant1ContactDetailsConfidential": "keep",
-    "jurisdictionApplicant1Residence": "YES",
-    "jurisdictionApplicant2Residence": "YES",
+    "jurisdictionApplicant1Residence": "Yes",
+    "jurisdictionApplicant2Residence": "Yes",
     "jurisdictionApplicant1Domicile": null,
     "jurisdictionApplicant2Domicile": null,
     "jurisdictionApp1HabituallyResLastTwelveMonths": null,
@@ -50,9 +50,9 @@
     "applicant2ContactDetailsConfidential": null,
     "marriageApplicant1Name": "test_first_name test_last_name",
     "marriageApplicant2Name": null,
-    "financialOrder": "NO",
-    "prayerHasBeenGiven": "YES",
-    "statementOfTruth": "YES",
+    "financialOrder": "No",
+    "prayerHasBeenGiven": "Yes",
+    "statementOfTruth": "Yes",
     "applicationFeeOrderSummary": {
       "PaymentReference": null,
       "Fees": [

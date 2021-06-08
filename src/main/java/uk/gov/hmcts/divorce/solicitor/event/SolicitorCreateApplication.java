@@ -69,12 +69,12 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
             new SolAboutApplicant2(),
             new Applicant2ServiceDetails(),
             new MarriageCertificateDetails(),
+            new JurisdictionApplyForDivorce(),
             new OtherLegalProceedings(),
             new FinancialOrders(),
             new ClaimForCosts(),
             new UploadMarriageCertificate(),
-            new LanguagePreference(),
-            new JurisdictionApplyForDivorce()
+            new LanguagePreference()
         );
 
         pages.forEach(page -> page.addTo(pageBuilder));

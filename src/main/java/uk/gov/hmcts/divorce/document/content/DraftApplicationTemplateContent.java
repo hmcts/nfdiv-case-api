@@ -7,6 +7,7 @@ import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.FinancialOrderFor;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -53,6 +54,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TO
 @Slf4j
 public class DraftApplicationTemplateContent {
 
+    private static final DateTimeFormatter TEMPLATE_DATE_FORMAT = DateTimeFormatter.ofPattern("d MMMM yyyy");
+
     public Map<String, Object> apply(
         CaseData caseData,
         Long ccdCaseReference,
@@ -80,7 +83,7 @@ public class DraftApplicationTemplateContent {
         }
 
         templateData.put(CCD_CASE_REFERENCE, ccdCaseReference);
-        templateData.put(ISSUE_DATE, createdDate.toString());
+        templateData.put(ISSUE_DATE, createdDate.format(TEMPLATE_DATE_FORMAT));
 
         templateData.put(APPLICANT_1_FIRST_NAME, caseData.getApplicant1().getFirstName());
         templateData.put(APPLICANT_1_MIDDLE_NAME, caseData.getApplicant1().getMiddleName());
@@ -95,7 +98,7 @@ public class DraftApplicationTemplateContent {
 
         templateData.put(MARRIAGE_DATE,
             ofNullable(caseData.getMarriageDetails().getDate())
-                .map(LocalDate::toString)
+                .map(marriageDate -> marriageDate.format(TEMPLATE_DATE_FORMAT))
                 .orElse(null));
         templateData.put(COURT_CASE_DETAILS, caseData.getLegalProceedingsDetails());
 
