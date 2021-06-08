@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.common.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -43,13 +42,9 @@ class SolicitorSubmittedNotificationTest {
 
         final String applicant1SolicitorEmail = "test@somewher.com";
         final Map<String, String> templateVars = new HashMap<>();
-        final var applicant = getApplicant();
-        applicant.setSolicitor(
-            Solicitor.builder().email(applicant1SolicitorEmail).build()
-        );
-
         final CaseData caseData = CaseData.builder()
-            .applicant1(applicant)
+            .applicant1(getApplicant())
+            .applicant1SolicitorEmail(applicant1SolicitorEmail)
             .build();
 
         caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
@@ -72,13 +67,9 @@ class SolicitorSubmittedNotificationTest {
 
         final String applicant1SolicitorEmail = "test@somewher.com";
         final Map<String, String> templateVars = new HashMap<>();
-        final var applicant = getApplicant();
-        applicant.setSolicitor(
-            Solicitor.builder().email(applicant1SolicitorEmail).build()
-        );
-
         final CaseData caseData = CaseData.builder()
-            .applicant1(applicant)
+            .applicant1(getApplicant())
+            .applicant1SolicitorEmail(applicant1SolicitorEmail)
             .previousCaseId(new CaseLink("Ref"))
             .build();
 

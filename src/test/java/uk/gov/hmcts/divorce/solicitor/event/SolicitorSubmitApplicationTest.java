@@ -13,7 +13,6 @@ import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.common.model.Solicitor;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 import uk.gov.hmcts.divorce.payment.PaymentService;
@@ -270,9 +269,9 @@ public class SolicitorSubmitApplicationTest {
         final CaseData caseData = CaseData.builder()
             .statementOfTruth(YES)
             .solSignStatementOfTruth(YES)
+            .app2SolDigital(YES)
+            .applicant2OrganisationPolicy(organisationPolicy)
             .build();
-
-        caseData.getApplicant2().setSolicitor(Solicitor.builder().isDigital(YES).organisationPolicy(organisationPolicy).build());
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -296,12 +295,12 @@ public class SolicitorSubmitApplicationTest {
         final CaseData expectedCaseData = CaseData.builder()
             .statementOfTruth(YES)
             .solSignStatementOfTruth(YES)
+            .app2SolDigital(YES)
             .app2ContactMethodIsDigital(YES)
+            .applicant2SolicitorRepresented(YES)
+            .applicant2OrganisationPolicy(organisationPolicy)
             .payments(singletonList(new ListValue<Payment>(null, null)))
             .build();
-
-        expectedCaseData.getApplicant2().setSolicitor(Solicitor.builder().isDigital(YES).organisationPolicy(organisationPolicy).build());
-        expectedCaseData.getApplicant2().setSolicitorRepresented(YES);
 
         assertThat(response.getData(), is(expectedCaseData));
         assertThat(response.getState(), is(AwaitingPayment));
@@ -314,9 +313,8 @@ public class SolicitorSubmitApplicationTest {
         final CaseData caseData = CaseData.builder()
             .statementOfTruth(YES)
             .solSignStatementOfTruth(YES)
+            .app2SolDigital(NO)
             .build();
-
-        caseData.getApplicant1().setSolicitor(Solicitor.builder().isDigital(NO).build());
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -348,9 +346,8 @@ public class SolicitorSubmitApplicationTest {
         final CaseData caseData = CaseData.builder()
             .statementOfTruth(YES)
             .solSignStatementOfTruth(YES)
+            .app2SolDigital(YES)
             .build();
-
-        caseData.getApplicant1().setSolicitor(Solicitor.builder().isDigital(YES).build());
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);

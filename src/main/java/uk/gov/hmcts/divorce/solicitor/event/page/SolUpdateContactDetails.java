@@ -9,9 +9,7 @@ import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.common.model.Applicant;
 import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.common.model.Solicitor;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorCreateApplicationService;
 
@@ -35,18 +33,13 @@ public class SolUpdateContactDetails implements CcdPageConfiguration {
         pageBuilder
             .page("SolUpdateContactDetails",this::midEvent)
             .pageLabel("Update contact details")
-            .complex(CaseData::getApplicant1)
-                .complex(Applicant::getSolicitor)
-                    .mandatory(Solicitor::getName, null, null, "Your name")
-                    .mandatory(Solicitor::getPhone, null, null, "Your phone number")
-                    .mandatory(Solicitor::getEmail, null, null, "Your email")
-                    .mandatory(Solicitor::getAgreeToReceiveEmails)
-                    .complex(Solicitor::getOrganisationPolicy)
-                        .complex(OrganisationPolicy::getOrganisation)
-                            .mandatory(Organisation::getOrganisationId)
-                        .done()
-                    .done()
-                .done()
+            .mandatory(CaseData::getApplicant1SolicitorName)
+            .mandatory(CaseData::getApplicant1SolicitorPhone)
+            .mandatory(CaseData::getApplicant1SolicitorEmail)
+            .mandatory(CaseData::getSolicitorAgreeToReceiveEmails)
+            .complex(CaseData::getApplicant1OrganisationPolicy)
+            .complex(OrganisationPolicy::getOrganisation)
+            .mandatory(Organisation::getOrganisationId)
             .done();
     }
 
