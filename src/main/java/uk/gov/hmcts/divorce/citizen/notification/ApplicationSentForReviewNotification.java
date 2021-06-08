@@ -12,7 +12,6 @@ import java.util.Map;
 
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_ANSWERS_SENT_FOR_REVIEW;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.dateTimeFormatter;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PARTNER;
 
@@ -31,7 +30,6 @@ public class ApplicationSentForReviewNotification {
         Map<String, String> templateVars = commonContent.templateVarsFor(caseData);
 
         templateVars.put("date plus two weeks", caseData.getDateOfSubmissionResponse().format(dateTimeFormatter));
-        templateVars.put(DIVORCE_APPLICATION, DIVORCE_APPLICATION);
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateVars.put(DIVORCE_OR_DISSOLUTION, "divorce application");

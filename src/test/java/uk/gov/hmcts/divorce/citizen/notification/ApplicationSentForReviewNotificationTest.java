@@ -21,6 +21,8 @@ import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_ANSWERS_SENT_FOR_REVIEW;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_OR_DISSOLUTION;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.PARTNER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseDataMap;
@@ -52,8 +54,10 @@ public class ApplicationSentForReviewNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT1_ANSWERS_SENT_FOR_REVIEW),
             argThat(allOf(
-                hasEntry(SUBMISSION_RESPONSE_DATE, "5 May 2021"),
-                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456")
+                hasEntry("date plus two weeks", "5 May 2021"),
+                hasEntry("civilpartnership.case@justice.gov.uk/contactdivorce@justice.gov.uk", "contactdivorce@justice.gov.uk"),
+                hasEntry(DIVORCE_OR_DISSOLUTION, "divorce application"),
+                hasEntry(PARTNER, "Husband")
             )),
             eq(ENGLISH)
         );

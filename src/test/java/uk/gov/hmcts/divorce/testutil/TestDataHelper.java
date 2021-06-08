@@ -90,6 +90,7 @@ public class TestDataHelper {
     public static CaseData caseData() {
         return CaseData.builder()
             .applicant1(getApplicant())
+            .applicant2(getApplicant(MALE))
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .build();
     }
@@ -145,6 +146,8 @@ public class TestDataHelper {
         return CaseData
             .builder()
             .applicant1(getApplicant())
+            .divorceOrDissolution(DIVORCE)
+            .applicant2(getApplicant(MALE))
             .financialOrder(NO)
             .helpWithFeesNeedHelp(NO)
             .marriageDetails(marriageDetails)
