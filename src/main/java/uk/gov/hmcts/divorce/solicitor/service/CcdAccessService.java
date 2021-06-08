@@ -12,6 +12,7 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 import java.util.Set;
 
 import static uk.gov.hmcts.divorce.common.model.UserRole.APPLICANT_1_SOLICITOR;
+import static uk.gov.hmcts.divorce.common.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CREATOR;
 
 @Service
@@ -49,5 +50,22 @@ public class CcdAccessService {
         );
 
         log.info("Successfully added applicant 1 solicitor roles to case Id {} ", caseId);
+    }
+
+    public void linkApplicant2ToApplication(String userToken, Long caseId) {
+        User applicant2User = idamService.retrieveUser(userToken);
+        String userId = applicant2User.getUserDetails().getId();
+
+        Set<String> caseRoles = Set.of(CREATOR.getRole(), APPLICANT_2.getRole());
+
+        caseUserApi.updateCaseRolesForUser(
+            userToken,
+            authTokenGenerator.generate(),
+            String.valueOf(caseId),
+            userId,
+            new CaseUser(userId, caseRoles)
+        );
+
+        log.info("Successfully linked applicant 2 to case Id {} ", caseId);
     }
 }

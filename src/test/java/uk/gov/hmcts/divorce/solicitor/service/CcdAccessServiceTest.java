@@ -24,11 +24,15 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.common.model.UserRole.APPLICANT_1_SOLICITOR;
+import static uk.gov.hmcts.divorce.common.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_1_SOL_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_2_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_2_CITIZEN_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_USER_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASEWORKER_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
@@ -181,6 +185,46 @@ public class CcdAccessServiceTest {
         verify(authTokenGenerator).generate();
 
         verifyNoMoreInteractions(idamService, authTokenGenerator);
+    }
+
+    @Test
+    public void shouldNotThrowAnyExceptionWhenLinkApplicant2ToApplicationIsInvoked() {
+        User applicant2User = getIdamUser(APP_2_AUTH_TOKEN, APP_2_CITIZEN_USER_ID, TEST_APPLICANT_2_EMAIL);
+
+        when(idamService.retrieveUser(APP_2_AUTH_TOKEN))
+            .thenReturn(applicant2User);
+
+        when(authTokenGenerator.generate())
+            .thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        doNothing()
+            .when(
+                caseUserApi
+            )
+            .updateCaseRolesForUser(
+                APP_2_AUTH_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN,
+                String.valueOf(TEST_CASE_ID),
+                APP_2_CITIZEN_USER_ID,
+                new CaseUser(APP_2_CITIZEN_USER_ID, Set.of(CREATOR.getRole(), APPLICANT_2.getRole()))
+            );
+
+        assertThatCode(() -> ccdAccessService.addApplicant1SolicitorRole(APP_1_SOL_AUTH_TOKEN, TEST_CASE_ID))
+            .doesNotThrowAnyException();
+
+        verify(idamService).retrieveUser(APP_1_SOL_AUTH_TOKEN);
+        verify(idamService).retrieveCaseWorkerDetails();
+        verify(authTokenGenerator).generate();
+        verify(caseUserApi)
+            .updateCaseRolesForUser(
+                CASEWORKER_AUTH_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN,
+                String.valueOf(TEST_CASE_ID),
+                SOLICITOR_USER_ID,
+                new CaseUser(SOLICITOR_USER_ID, Set.of(CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole()))
+            );
+
+        verifyNoMoreInteractions(idamService, authTokenGenerator, caseUserApi);
     }
 
     private User getIdamUser(String authToken, String userId, String email) {
