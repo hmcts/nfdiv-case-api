@@ -75,7 +75,7 @@ public class SolicitorCreateApplicationService {
         final String userAuth
     ) {
         if (!caseData.hasApplicant1OrgId()) {
-            log.error("CaseId: {}, Applicant 1 org policy is not populated", caseId);
+            log.error("CaseId: {}, the applicant org policy is not populated", caseId);
             return AboutToStartOrSubmitResponse
                 .<CaseData, State>builder()
                 .errors(singletonList("Please select an organisation"))

@@ -31,7 +31,7 @@ public class CaseworkerAwaitingDocuments implements CCDConfig<CaseData, State, U
             .event(CASEWORKER_AWAITING_DOCUMENTS)
             .forStateTransition(Submitted, AwaitingDocuments)
             .name("Awaiting documents")
-            .description("Awaiting documents from applicant 1")
+            .description("Awaiting documents from the applicant")
             .displayOrder(3)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_COURTADMIN_BETA, CASEWORKER_DIVORCE_COURTADMIN)

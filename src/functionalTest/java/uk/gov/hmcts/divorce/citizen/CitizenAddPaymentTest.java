@@ -21,13 +21,49 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 @SpringBootTest
 public class CitizenAddPaymentTest extends FunctionalTestSuite {
 
-    private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata-payment-made.json";
-    private static final String RESPONSE = "classpath:responses/response-payment-made.json";
+    private static final String PAYMENT_IN_PROGRESS_REQUEST =
+        "classpath:request/casedata/ccd-callback-casedata-payment-in-progress.json";
+    private static final String PAYMENT_IN_PROGRESS_RESPONSE =
+        "classpath:responses/response-payment-in-progress.json";
+
+    private static final String PAYMENT_CANCELLED_REQUEST =
+        "classpath:request/casedata/ccd-callback-casedata-payment-cancelled.json";
+    private static final String PAYMENT_CANCELLED_RESPONSE =
+        "classpath:responses/response-payment-cancelled.json";
+
+    private static final String REQUEST =
+        "classpath:request/casedata/ccd-callback-casedata-payment-made.json";
+    private static final String RESPONSE =
+        "classpath:responses/response-payment-made.json";
 
     private static final String AWAITING_DOCUMENTS_REQUEST =
         "classpath:request/casedata/ccd-callback-casedata-payment-made-awaiting-documents.json";
     private static final String AWAITING_DOCUMENTS_RESPONSE =
         "classpath:responses/response-payment-made-awaiting-documents.json";
+
+    @Test
+    public void shouldPassValidationAndGiveSuccessWhenCaseDataValidWaitingForPayment() throws IOException {
+        Map<String, Object> request = caseData(PAYMENT_IN_PROGRESS_REQUEST);
+        Response response = triggerCallback(request, CITIZEN_ADD_PAYMENT, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(PAYMENT_IN_PROGRESS_RESPONSE)));
+    }
+
+    @Test
+    public void shouldPassValidationAndGiveSuccessWhenCaseDataValidLastPaymentCancelled() throws IOException {
+        Map<String, Object> request = caseData(PAYMENT_CANCELLED_REQUEST);
+        Response response = triggerCallback(request, CITIZEN_ADD_PAYMENT, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(PAYMENT_CANCELLED_RESPONSE)));
+    }
 
     @Test
     public void shouldPassValidationAndGiveSuccessWhenCaseDataValid() throws IOException {

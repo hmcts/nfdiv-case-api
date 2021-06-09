@@ -27,8 +27,9 @@ public class ClaimForCosts implements CcdPageConfiguration {
                 JOINT_APPLICATION_CONDITION)
             .label(
                 "LabelClaimForCostsPara-1",
-                "A claim for costs can include all the fees applicant 1 has to pay during the divorce, such as "
+                "A claim for costs can include all the fees the applicant has to pay during the divorce, such as "
                     + "application fees, solicitor fees and any extra court fees.")
-            .mandatory(CaseData::getDivorceCostsClaim);
+            .mandatory(CaseData::getDivorceCostsClaim)
+            .optional(CaseData::getDivorceClaimFrom, "divorceCostsClaim=\"Yes\"");
     }
 }

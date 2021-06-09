@@ -45,7 +45,7 @@ class WorkBasketInputFieldsTest {
                     "PostCode",
                     null),
                 tuple("applicant1LastName",
-                    "Applicant 1 Last Name",
+                    "The applicant's Last Name",
                     null,
                     null)
             );

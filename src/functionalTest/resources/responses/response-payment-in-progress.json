@@ -1,21 +1,14 @@
 {
   "data": {
+    "divorceOrDissolution": "divorce",
     "applicant1Gender": "female",
     "applicant2Gender": "male",
-    "marriageMarriedInUk": null,
-    "marriageCertificateInEnglish": null,
-    "marriageCertifiedTranslation": null,
-    "marriageCountryOfMarriage": null,
-    "marriagePlaceOfMarriage": null,
-    "marriageDate": "${json-unit.ignore}",
-    "marriageIsSameSexCouple": null,
-    "marriageCertifyMarriageCertificateIsCorrect": null,
-    "marriageMarriageCertificateIsIncorrectDetails": null,
-    "marriageIssueApplicationWithoutMarriageCertificate": null,
-    "applicant1FirstName": "test_first_name",
-    "applicant1MiddleName": "test_middle_name",
-    "applicant1LastName": "test_last_name",
-    "applicant1Email": null,
+    "marriageDate": "2020-04-28",
+    "applicant1FirstName": "Billy",
+    "applicant1MiddleName": "B",
+    "applicant1LastName": "Bob",
+    "applicant1ContactDetailsConfidential": "keep",
+    "applicant1Email": "test@mailinator.com",
     "applicant1AgreedToReceiveEmails": null,
     "applicant1HomeAddress": null,
     "applicant1NameChangedHow": null,
@@ -33,7 +26,15 @@
     "applicant2NameChangedHowOtherDetails": null,
     "applicant2PhoneNumber": null,
     "applicant2ContactDetailsConfidential": null,
+    "applicant2FirstName": "test_first_name",
+    "applicant2LastName": "test_last_name",
+    "marriageApplicant1Name": "test_first_name test_last_name",
+    "marriageApplicant2Name": null,
+    "financialOrder": "No",
+    "prayerHasBeenGiven": "Yes",
+    "solSignStatementOfTruth": "Yes",
     "jurisdictionApplicant1Residence": "Yes",
+    "applicant1WantsToHavePapersServedAnotherWay": "No",
     "jurisdictionApplicant2Residence": "Yes",
     "jurisdictionApplicant1Domicile": null,
     "jurisdictionApplicant2Domicile": null,
@@ -41,37 +42,34 @@
     "jurisdictionApp1HabituallyResLastSixMonths": null,
     "jurisdictionResidualEligible": null,
     "jurisdictionBothLastHabituallyResident": null,
-    "jurisdictionConnections": [
-      "A"
-    ],
-    "applicant1ContactDetailsConfidential": "keep",
-    "applicant2FirstName": "test_first_name",
-    "applicant2LastName": "test_last_name",
-    "marriageApplicant1Name": "test_first_name test_last_name",
-    "marriageApplicant2Name": null,
-    "financialOrder": "No",
-    "helpWithFeesNeedHelp": "No",
-    "prayerHasBeenGiven": "Yes",
-    "statementOfTruth": "Yes",
-    "solSignStatementOfTruth": "Yes",
+    "jurisdictionConnections": ["A"],
+    "marriageMarriedInUk": null,
+    "marriageCertificateInEnglish": null,
+    "marriageCertifiedTranslation": null,
+    "marriageCountryOfMarriage": null,
+    "marriagePlaceOfMarriage": null,
+    "marriageIsSameSexCouple": null,
+    "marriageCertifyMarriageCertificateIsCorrect": null,
+    "marriageMarriageCertificateIsIncorrectDetails": null,
+    "marriageIssueApplicationWithoutMarriageCertificate": null,
     "applicationFeeOrderSummary": {
+      "PaymentTotal": "55000",
       "PaymentReference": null,
       "Fees": [
         {
           "id": null,
           "value": {
-            "FeeAmount": "55000",
-            "FeeCode": "FEE0002",
             "FeeDescription": "Filing an application for a divorce, nullity or civil partnership dissolution",
-            "FeeVersion": "5"
+            "FeeVersion": "5",
+            "FeeCode": "FEE0002",
+            "FeeAmount": "55000"
           }
         }
-      ],
-      "PaymentTotal": "55000"
+      ]
     },
     "payments": [
       {
-        "id": "${json-unit.ignore}",
+        "id": "1",
         "value": {
           "paymentDate": null,
           "paymentFeeId": null,
@@ -85,7 +83,7 @@
       }
     ]
   },
-  "errors": null,
-  "warnings": null,
-  "state": "AwaitingPayment"
+  "errors": [],
+  "state": "AwaitingPayment",
+  "warnings": null
 }

@@ -10,7 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 public enum ClaimsCostFrom implements HasLabel {
 
     @JsonProperty("applicant2")
-    APPLICANT_2("Applicant 2");
+    APPLICANT_2("The respondent");
 
     private final String label;
 }

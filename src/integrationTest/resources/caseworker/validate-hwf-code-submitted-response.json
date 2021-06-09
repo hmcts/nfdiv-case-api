@@ -38,7 +38,7 @@
         }
       }
     ],
-    "hwfCodeValidForFullAmount": "YES"
+    "hwfCodeValidForFullAmount": "Yes"
   },
   "errors": null,
   "warnings": null,

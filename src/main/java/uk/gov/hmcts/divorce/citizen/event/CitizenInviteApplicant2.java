@@ -38,8 +38,8 @@ public class CitizenInviteApplicant2 implements CCDConfig<CaseData, State, UserR
         configBuilder
             .event(CITIZEN_INVITE_APPLICANT_2)
             .forStateTransition(Draft, AwaitingApplicant2Response)
-            .name("Invite Applicant 2")
-            .description("Send Application to Applicant 2 for review")
+            .name("Invite The Respondent")
+            .description("Send Application to the respondent for review")
             .grant(CREATE_READ_UPDATE, CITIZEN)
             .displayOrder(1)
             .retries(120, 120)
@@ -51,7 +51,7 @@ public class CitizenInviteApplicant2 implements CCDConfig<CaseData, State, UserR
 
         CaseData data = details.getData();
 
-        log.info("Generating pin to allow Applicant 2 to access the joint application");
+        log.info("Generating pin to allow the respondent to access the joint application");
         final String pin = generatePin();
         data.setInvitePin(pin);
         data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));

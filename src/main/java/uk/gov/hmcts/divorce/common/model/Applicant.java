@@ -52,7 +52,7 @@ public class Applicant {
 
     @CCD(
         access = {DefaultAccess.class},
-        label = "Applicant 1 has agreed to receive notifications and be served (delivered) court documents by email"
+        label = "The applicant has agreed to receive notifications and be served (delivered) court documents by email"
     )
     private YesOrNo agreedToReceiveEmails;
 
@@ -65,15 +65,15 @@ public class Applicant {
 
     @CCD(
         access = {DefaultAccess.class},
-        label = "Has applicant 1 changed their name since they got married?",
-        hint = "Is applicant 1’s current name different to their married name or the name shown on their "
+        label = "Has the applicant changed their name since they got married?",
+        hint = "Is the applicant’s current name different to their married name or the name shown on their "
             + "marriage certificate?"
     )
     private YesOrNo nameDifferentToMarriageCertificate;
 
     @CCD(
         access = {DefaultAccess.class},
-        label = "How did Applicant 1 change their name?"
+        label = "How did the applicant change their name?"
     )
     private ChangedNameHow nameChangedHow;
 

@@ -4,7 +4,7 @@
     "applicant1FirstName": "test_first_name",
     "applicant1LastName": "test_last_name",
     "applicant1Email": "test@test.com",
-    "solSignStatementOfTruth": "YES"
+    "solSignStatementOfTruth": "Yes"
   },
   "warnings": null,
   "state": "<state>"

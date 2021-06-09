@@ -36,6 +36,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.IN_PROGRESS;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -66,7 +67,7 @@ public class CaseData {
     private DivorceOrDissolution divorceOrDissolution;
 
     @CCD(
-        label = "Has applicant 1's marriage broken down irretrievably?",
+        label = "Has the applicant's marriage broken down irretrievably?",
         access = {DefaultAccess.class}
     )
     private YesOrNo screenHasMarriageBroken;
@@ -93,7 +94,7 @@ public class CaseData {
     private YesOrNo helpWithFeesNeedHelp;
 
     @CCD(
-        label = "Applicant 1 got marriage cert?",
+        label = "The applicant has marriage cert?",
         access = {DefaultAccess.class}
     )
     private YesOrNo screenHasMarriageCert;
@@ -116,7 +117,7 @@ public class CaseData {
     private Jurisdiction jurisdiction = new Jurisdiction();
 
     @CCD(
-        label = "Who is applicant 1 divorcing?",
+        label = "Who is the applicant divorcing?",
         hint = "Husband or Wife?",
         typeOverride = FixedList,
         typeParameterOverride = "WhoDivorcing",
@@ -125,7 +126,7 @@ public class CaseData {
     private WhoDivorcing divorceWho;
 
     @CCD(
-        label = "Applicant 1 Solicitor’s name",
+        label = "The applicant's solicitor’s name",
         access = {DefaultAccess.class}
     )
     private String applicant1SolicitorName;
@@ -138,21 +139,21 @@ public class CaseData {
     private String solicitorReference;
 
     @CCD(
-        label = "Applicant 1 Solicitor Phone number",
+        label = "The applicant's solicitor's phone number",
         regex = "^[0-9 +().-]{9,}$",
         access = {DefaultAccess.class}
     )
     private String applicant1SolicitorPhone;
 
     @CCD(
-        label = "Applicant 1 Solicitor Email",
+        label = "The applicant's solicitor's email",
         typeOverride = Email,
         access = {DefaultAccess.class}
     )
     private String applicant1SolicitorEmail;
 
     @CCD(
-        label = "Is applicant 1 represented by a solicitor?",
+        label = "Is the applicant represented by a solicitor?",
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant1SolicitorRepresented;
@@ -184,13 +185,13 @@ public class CaseData {
     private String solUrgentCaseSupportingInformation;
 
     @CCD(
-        label = "Does applicant 1 want to claim costs?",
+        label = "Does the applicant want to claim costs?",
         access = {DefaultAccess.class}
     )
     private YesOrNo divorceCostsClaim;
 
     @CCD(
-        label = "Does Applicant 1 wish to apply for a financial order?",
+        label = "Does the applicant wish to apply for a financial order?",
         hint = "The court will not start processing your request for a financial order until you submit the separate "
             + "application and pay the fee.",
         access = {DefaultAccess.class}
@@ -198,7 +199,7 @@ public class CaseData {
     private YesOrNo financialOrder;
 
     @CCD(
-        label = "Applicant 1 wants/will to apply to have the papers served to applicant 2 another way.",
+        label = "The applicant wants/will to apply to have the papers served to the respondent another way.",
         hint = "For example by email, text message or social media. This is a separate application with "
             + "an additional fee, which will need to be reviewed by a judge.",
         access = {DefaultAccess.class}
@@ -206,19 +207,19 @@ public class CaseData {
     private YesOrNo applicant1WantsToHavePapersServedAnotherWay;
 
     @CCD(
-        label = "How would you like applicant 2 to be served?",
+        label = "How would you like the respondent to be served?",
         access = {DefaultAccess.class}
     )
     private SolServiceMethod solServiceMethod;
 
     @CCD(
-        label = "I have discussed the possibility of a reconciliation with Applicant 1.",
+        label = "I have discussed the possibility of a reconciliation with the applicant.",
         access = {DefaultAccess.class}
     )
     private YesOrNo solStatementOfReconciliationCertify;
 
     @CCD(
-        label = "I have given Applicant 1 the names and addresses of persons qualified to help effect a reconciliation.",
+        label = "I have given the applicant the names and addresses of persons qualified to help effect a reconciliation.",
         access = {DefaultAccess.class}
     )
     private YesOrNo solStatementOfReconciliationDiscussed;
@@ -232,13 +233,13 @@ public class CaseData {
     private YesOrNo prayerHasBeenGiven;
 
     @CCD(
-        label = "Applicant 1 believes that the facts stated in this application are true.",
+        label = "The applicant believes that the facts stated in this application are true.",
         access = {DefaultAccess.class}
     )
     private YesOrNo statementOfTruth;
 
     @CCD(
-        label = "I am duly authorised by Applicant 1 to sign this statement.",
+        label = "I am duly authorised by the applicant to sign this statement.",
         access = {DefaultAccess.class}
     )
     private YesOrNo solSignStatementOfTruth;
@@ -311,25 +312,25 @@ public class CaseData {
 
 
     @CCD(
-        label = "Applicant 2's email address",
+        label = "The respondent's email address",
         access = {DefaultAccess.class}
     )
     private String applicant2EmailAddress;
 
     @CCD(
-        label = "Is applicant 2's email address known?",
+        label = "Is the respondent's email address known?",
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant1KnowsApplicant2EmailAddress;
 
     @CCD(
-        label = "Is applicant 2's home address known?",
+        label = "Is the respondent's home address known?",
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant1KnowsApplicant2Address;
 
     @CCD(
-        label = "Are there any existing or previous court proceedings relating to Applicant 1's marriage, "
+        label = "Are there any existing or previous court proceedings relating to the applicant's marriage, "
             + "property or children?",
         access = {DefaultAccess.class}
     )
@@ -383,7 +384,7 @@ public class CaseData {
     private String selectedDivorceCentreSiteId;
 
     @CCD(
-        label = "Applicant 2's solicitor's reference",
+        label = "The respondent's solicitor's reference",
         access = {DefaultAccess.class}
     )
     private String applicant2SolicitorReference;
@@ -397,60 +398,60 @@ public class CaseData {
     private List<ListValue<DivorceDocument>> documentsGenerated;
 
     @CCD(
-        label = "Is applicant 2 represented by a solicitor?",
+        label = "Is the respondent represented by a solicitor?",
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant2SolicitorRepresented;
 
     @CCD(
-        label = "Applicant 2's solicitor's name",
+        label = "The respondent's solicitor's name",
         access = {DefaultAccess.class}
     )
     private String applicant2SolicitorName;
 
     @CCD(
-        label = "Applicant 2's solicitor's Phone number",
+        label = "The respondent's solicitor's phone number",
         regex = "^[0-9 +().-]{9,}$",
         access = {DefaultAccess.class}
     )
     private String applicant2SolicitorPhone;
 
     @CCD(
-        label = "Applicant 2's solicitor's Email",
+        label = "The respondent's solicitor's email",
         typeOverride = Email,
         access = {DefaultAccess.class}
     )
     private String applicant2SolicitorEmail;
 
     @CCD(
-        label = "Applicant 2's solicitor's firm/ DX address",
+        label = "The respondent's solicitor's firm/ DX address",
         typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
     private String derivedApplicant2SolicitorAddr;
 
     @CCD(
-        label = "Digital applicant 2 case",
+        label = "Digital respondent case",
         access = {DefaultAccess.class}
     )
     private YesOrNo app2SolDigital;
 
     @CCD(
-        label = "Applicant 2 is using digital channel?",
+        label = "The respondent is using digital channel?",
         access = {DefaultAccess.class}
     )
     private YesOrNo app2ContactMethodIsDigital;
 
     @CCD(
-        label = "Applicant 2's solicitor's firm address or DX number",
-        hint = "Applicant 2 Organisation Details",
+        label = "The respondent's solicitor's firm address or DX number",
+        hint = "The respondent organisation details",
         access = {DefaultAccess.class}
     )
     private OrganisationPolicy<UserRole> applicant2OrganisationPolicy;
 
     @CCD(
-        label = "Applicant 2's service address",
-        hint = "If applicant 2 is to be served at their home address, enter the home address here and as the service "
+        label = "The respondent's service address",
+        hint = "If The respondent is to be served at their home address, enter the home address here and as the service "
             + "address below",
         access = {DefaultAccess.class}
     )
@@ -478,7 +479,7 @@ public class CaseData {
     private LocalDateTime dateSubmitted;
 
     @CCD(
-        label = "Case ID for previously Amended Case, which was challenged by applicant 2",
+        label = "Case ID for previously Amended Case, which was challenged by the respondent",
         access = {DefaultAccess.class}
     )
     private CaseLink previousCaseId;
@@ -512,7 +513,7 @@ public class CaseData {
     private YesOrNo documentUploadComplete;
 
     @CCD(
-        label = "Applicant 2 Invite Access Pin",
+        label = "The respondent invite access pin",
         access = {DefaultAccess.class}
     )
     private String invitePin;
@@ -569,6 +570,16 @@ public class CaseData {
             .filter(p -> SUCCESS.equals(p.getValue().getPaymentStatus()))
             .map(p -> p.getValue().getPaymentAmount())
             .reduce(0, Integer::sum);
+    }
+
+    @JsonIgnore
+    public Boolean isLastPaymentInProgress() {
+        return payments != null && payments
+            .stream()
+            .reduce((previous, current) -> current)
+            .get()
+            .getValue()
+            .getPaymentStatus() == IN_PROGRESS;
     }
 
     @JsonIgnore

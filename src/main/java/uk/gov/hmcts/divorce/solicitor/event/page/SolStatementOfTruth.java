@@ -28,27 +28,27 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
                 "LabelNFDJointBanner-SolStatementOfTruth",
                 SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
                 JOINT_APPLICATION_CONDITION)
-            .label("LabelSolStatementOfTruthPara-1", "## Applicant 1 is applying to the court")
+            .label("LabelSolStatementOfTruthPara-1", "## The applicant is applying to the court")
             .label(
                 "LabelSolStatementOfTruthPara-1.1",
                 "• That the marriage be dissolved as it has broken down irretrievably",
                 "divorceCostsClaim=\"No\" AND financialOrder=\"No\"")
             .label(
                 "LabelSolStatementOfTruthPara-1.2",
-                    "• That the marriage be dissolved as it has broken down irretrievably<br />"
-                        + "• That a costs order may be granted.",
-                    "divorceCostsClaim=\"Yes\" AND financialOrder=\"No\"")
+                "- That the marriage be dissolved as it has broken down irretrievably\n"
+                    + "- That a costs order may be granted.",
+                "divorceCostsClaim=\"Yes\" AND financialOrder=\"No\"")
             .label(
                 "LabelSolStatementOfTruthPara-1.3",
-                "• That the marriage be dissolved as it has broken down irretrievably<br />"
-                    + "• That a financial order may be granted.",
-                    "divorceCostsClaim=\"No\" AND financialOrder=\"Yes\"")
+                "- That the marriage be dissolved as it has broken down irretrievably\n"
+                    + "- That a financial order may be granted.",
+                "divorceCostsClaim=\"No\" AND financialOrder=\"Yes\"")
             .label(
                 "LabelSolStatementOfTruthPara-1.4",
-                "• That the marriage be dissolved as it has broken down irretrievably.<br />"
-                    + "• That a costs order may be granted.<br />"
-                    + "• That a financial order may be granted.",
-                    "divorceCostsClaim=\"Yes\" AND financialOrder=\"Yes\"")
+                "- That the marriage be dissolved as it has broken down irretrievably.\n"
+                    + "- That a costs order may be granted.\n"
+                    + "- That a financial order may be granted.",
+                "divorceCostsClaim=\"Yes\" AND financialOrder=\"Yes\"")
             .mandatory(CaseData::getSolUrgentCase)
             .optional(CaseData::getSolUrgentCaseSupportingInformation, "solUrgentCase=\"Yes\"")
             .mandatoryNoSummary(CaseData::getDivorceCostsClaim, ALWAYS_HIDE)
@@ -69,11 +69,9 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
             .mandatory(CaseData::getSolStatementOfReconciliationName)
             .mandatory(CaseData::getSolStatementOfReconciliationFirm)
             .label(
-                "LabelSolStatementOTruthPara-7",
-                "You could be fined or imprisoned for contempt of court if you deliberately submit false information.")
-            .label(
-                "LabelSolStatementOTruthPara-8",
-                "If you have any comments you would like to make to the court staff regarding the application "
+                "LabelSolStatementOTruthPara-2",
+                "You could be fined or imprisoned for contempt of court if you deliberately submit false information.\n\n"
+                    + "If you have any comments you would like to make to the court staff regarding the application "
                     + "you may include them below.")
             .optionalNoSummary(CaseData::getStatementOfReconciliationComments)
             .readonlyNoSummary(CaseData::getSolApplicationFeeInPounds);
