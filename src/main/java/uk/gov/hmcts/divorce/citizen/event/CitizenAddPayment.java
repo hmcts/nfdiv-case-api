@@ -67,7 +67,12 @@ public class CitizenAddPayment implements CCDConfig<CaseData, State, UserRole> {
         List<String> errors = Stream.concat(submittedErrors.stream(), awaitingDocumentsErrors.stream())
             .collect(Collectors.toList());
 
-        if (data.wasLastPaymentUnsuccessful()) {
+        if (data.isLastPaymentInProgress()) {
+            log.info("Case {} payment in progress", details.getId());
+
+            state = AwaitingPayment;
+            errors.clear();
+        } else if (data.wasLastPaymentUnsuccessful()) {
             log.info("Case {} payment canceled", details.getId());
 
             state = Draft;
