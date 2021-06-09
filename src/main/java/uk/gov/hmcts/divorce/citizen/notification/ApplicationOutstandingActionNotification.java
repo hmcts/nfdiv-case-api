@@ -82,7 +82,9 @@ public class ApplicationOutstandingActionNotification {
         templateVars.put(PAPERS_SERVED_ANOTHER_WAY_TITLE,
             String.format(papersServedAnotherWayTitle, getPapers(caseData.getDivorceOrDissolution())));
         templateVars.put(PAPERS_SERVED_ANOTHER_WAY_PARAGRAPH,
-            String.format(papersServedAnotherWayParagraph, commonContent.getService(caseData.getDivorceOrDissolution()), commonContent.getPartner(caseData)));
+            String.format(papersServedAnotherWayParagraph,
+                commonContent.getService(caseData.getDivorceOrDissolution()),
+                commonContent.getPartner(caseData)));
         templateVars.put(PAPERS_SERVED_ANOTHER_WAY_APPLY,
             "You can apply here: https://www.gov.uk/government/publications/form-d11-application-notice");
     }
