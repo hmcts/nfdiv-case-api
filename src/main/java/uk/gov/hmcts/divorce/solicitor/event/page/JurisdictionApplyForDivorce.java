@@ -42,7 +42,7 @@ public class JurisdictionApplyForDivorce implements CcdPageConfiguration {
                     + "In addition, in the case of a same-sex marriage, "
                     + "the court may have residual jurisdiction if the following apply:\n"
                     + "- The applicant and the respondent married each other in England and Wales; and\n"
-                    + "- Neither the applicant nor the respondent is able to apple for a divorce in any other country; and\n"
+                    + "- Neither the applicant nor the respondent is able to apply for a divorce in any other country; and\n"
                     + "- It would be in the interests of justice for the court to consider the application "
                     + "(this may apply if, for example, the applicant's or the respondent's home country doesn't "
                     + "allow divorce between same-sex couples)."
