@@ -10,7 +10,6 @@ import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
-import java.util.Locale;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_ACTIONS;
@@ -60,15 +59,6 @@ public class ApplicationOutstandingActionNotification {
         );
     }
 
-    private String getService(DivorceOrDissolution divorceOrDissolution) {
-        return divorceOrDissolution.isDivorce() ? "divorce" : "civil partnership";
-    }
-
-    private String getPartner(CaseData caseData) {
-        return caseData.getDivorceOrDissolution().isDivorce()
-            ? caseData.getDivorceWho().getLabel().toLowerCase(Locale.UK) : "civil partner";
-    }
-
     private String getPapers(DivorceOrDissolution divorceOrDissolution) {
         return divorceOrDissolution.isDivorce() ?  "divorce papers" : "papers";
     }
@@ -92,7 +82,7 @@ public class ApplicationOutstandingActionNotification {
         templateVars.put(PAPERS_SERVED_ANOTHER_WAY_TITLE,
             String.format(papersServedAnotherWayTitle, getPapers(caseData.getDivorceOrDissolution())));
         templateVars.put(PAPERS_SERVED_ANOTHER_WAY_PARAGRAPH,
-            String.format(papersServedAnotherWayParagraph, getService(caseData.getDivorceOrDissolution()), getPartner(caseData)));
+            String.format(papersServedAnotherWayParagraph, commonContent.getService(caseData.getDivorceOrDissolution()), commonContent.getPartner(caseData)));
         templateVars.put(PAPERS_SERVED_ANOTHER_WAY_APPLY,
             "You can apply here: https://www.gov.uk/government/publications/form-d11-application-notice");
     }

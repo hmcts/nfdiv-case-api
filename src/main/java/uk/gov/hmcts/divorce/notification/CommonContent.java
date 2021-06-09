@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TO_END_CIVIL_PARTNERSHIP;
@@ -47,5 +49,14 @@ public class CommonContent {
         }
 
         return templateVars;
+    }
+
+    public String getService(DivorceOrDissolution divorceOrDissolution) {
+        return divorceOrDissolution.isDivorce() ? "divorce" : "civil partnership";
+    }
+
+    public String getPartner(CaseData caseData) {
+        return caseData.getDivorceOrDissolution().isDivorce()
+            ? caseData.getDivorceWho().getLabel().toLowerCase(Locale.UK) : "civil partner";
     }
 }
