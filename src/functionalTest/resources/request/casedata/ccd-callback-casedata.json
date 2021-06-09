@@ -2,7 +2,7 @@
   "divorceOrDissolution": "divorce",
   "applicant1FirstName": "John",
   "applicant1LastName": "Smith",
-  "applicant1Email": "simulate-delivered@notifications.service.gov.uk"
+  "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
   "marriageDate": "2020-04-28",
   "divorceWho": "husband"
 }
