@@ -19,7 +19,7 @@ public enum UserRole implements HasRole {
     APPLICANT_2_SOLICITOR("[APPTWOSOLICITOR]", "CRU"),
     APPLICANT_1_SOLICITOR("[APPONESOLICITOR]", "CRU"),
     CREATOR("[CREATOR]", "CRU"),
-    APPLICANT_2("[APPLICANT2]", "CRU");
+    APPLICANT_2("[APPTWO]", "CRU");
 
     @JsonValue
     private final String role;
