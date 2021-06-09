@@ -99,5 +99,4 @@ prd:
     url: ${PRD_API_BASEURL:http://rd-professional-api-aat.service.core-compute-aat.internal}
 
 send-letter:
-  url: ${SEND_LETTER_SERIVCE_BASEURL:http://rpe-send-letter-service-aat.service.core-compute-aat.internal"
-}
+  url: ${SEND_LETTER_SERVICE_BASEURL:http://rpe-send-letter-service-aat.service.core-compute-aat.internal}
