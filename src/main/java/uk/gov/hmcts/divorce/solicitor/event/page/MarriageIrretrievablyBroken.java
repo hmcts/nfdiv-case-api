@@ -34,12 +34,12 @@ public class MarriageIrretrievablyBroken implements CcdPageConfiguration {
                 JOINT_APPLICATION_CONDITION)
             .label(
                 "marriageIrretrievablyBrokenPara-1",
-                "The marriage must have irretrievably broken down for applicant 1 to get a divorce. "
+                "The marriage must have irretrievably broken down for the applicant to get a divorce. "
                     + "This means it cannot be saved.")
             .mandatory(CaseData::getScreenHasMarriageBroken)
             .label(
                 "MarriageNotIrretrievablyBroken",
-                "The marriage must have irretrievably broken down for applicant 1 to get a divorce. "
+                "The marriage must have irretrievably broken down for the applicant to get a divorce. "
                     + "This is the law in England and Wales.",
                 "screenHasMarriageBroken=\"No\""
             );

@@ -63,7 +63,7 @@ public class CaseData {
     private DivorceOrDissolution divorceOrDissolution;
 
     @CCD(
-        label = "Has applicant 1's marriage broken down irretrievably?",
+        label = "Has the applicant's marriage broken down irretrievably?",
         access = {DefaultAccess.class}
     )
     private YesOrNo screenHasMarriageBroken;
@@ -92,7 +92,7 @@ public class CaseData {
     private YesOrNo helpWithFeesNeedHelp;
 
     @CCD(
-        label = "Applicant 1 got marriage cert?",
+        label = "The applicant has marriage cert?",
         access = {DefaultAccess.class}
     )
     private YesOrNo screenHasMarriageCert;
@@ -115,7 +115,7 @@ public class CaseData {
     private Jurisdiction jurisdiction = new Jurisdiction();
 
     @CCD(
-        label = "Who is applicant 1 divorcing?",
+        label = "Who is the applicant divorcing?",
         hint = "Husband or Wife?",
         typeOverride = FixedList,
         typeParameterOverride = "WhoDivorcing",
@@ -137,13 +137,13 @@ public class CaseData {
     private String solUrgentCaseSupportingInformation;
 
     @CCD(
-        label = "Does applicant 1 want to claim costs?",
+        label = "Does the applicant want to claim costs?",
         access = {DefaultAccess.class}
     )
     private YesOrNo divorceCostsClaim;
 
     @CCD(
-        label = "Does Applicant 1 wish to apply for a financial order?",
+        label = "Does the applicant wish to apply for a financial order?",
         hint = "The court will not start processing your request for a financial order until you submit the separate "
             + "application and pay the fee.",
         access = {DefaultAccess.class}
@@ -151,7 +151,7 @@ public class CaseData {
     private YesOrNo financialOrder;
 
     @CCD(
-        label = "Applicant 1 wants/will to apply to have the papers served to applicant 2 another way.",
+        label = "The applicant wants/will to apply to have the papers served to the respondent another way.",
         hint = "For example by email, text message or social media. This is a separate application with "
             + "an additional fee, which will need to be reviewed by a judge.",
         access = {DefaultAccess.class}
@@ -159,19 +159,19 @@ public class CaseData {
     private YesOrNo applicant1WantsToHavePapersServedAnotherWay;
 
     @CCD(
-        label = "How would you like applicant 2 to be served?",
+        label = "How would you like the respondent to be served?",
         access = {DefaultAccess.class}
     )
     private SolServiceMethod solServiceMethod;
 
     @CCD(
-        label = "I have discussed the possibility of a reconciliation with Applicant 1.",
+        label = "I have discussed the possibility of a reconciliation with the applicant.",
         access = {DefaultAccess.class}
     )
     private YesOrNo solStatementOfReconciliationCertify;
 
     @CCD(
-        label = "I have given Applicant 1 the names and addresses of persons qualified to help effect a reconciliation.",
+        label = "I have given the applicant the names and addresses of persons qualified to help effect a reconciliation.",
         access = {DefaultAccess.class}
     )
     private YesOrNo solStatementOfReconciliationDiscussed;
@@ -185,13 +185,13 @@ public class CaseData {
     private YesOrNo prayerHasBeenGiven;
 
     @CCD(
-        label = "Applicant 1 believes that the facts stated in this application are true.",
+        label = "The applicant believes that the facts stated in this application are true.",
         access = {DefaultAccess.class}
     )
     private YesOrNo statementOfTruth;
 
     @CCD(
-        label = "I am duly authorised by Applicant 1 to sign this statement.",
+        label = "I am duly authorised by the applicant to sign this statement.",
         access = {DefaultAccess.class}
     )
     private YesOrNo solSignStatementOfTruth;
@@ -265,26 +265,26 @@ public class CaseData {
 
     // TODO: rename this as applicant2InviteEmailAddress?
     @CCD(
-        label = "Applicant 2's email address",
+        label = "The respondent's email address",
         access = {DefaultAccess.class}
     )
     private String applicant2EmailAddress;
 
     @CCD(
-        label = "Is applicant 2's email address known?",
+        label = "Is the respondent's email address known?",
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant1KnowsApplicant2EmailAddress;
 
     @CCD(
-        label = "Is applicant 2's home address known?",
+        label = "Is the respondent's home address known?",
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant1KnowsApplicant2Address;
 
     // TODO: move into LegalProceedings?
     @CCD(
-        label = "Are there any existing or previous court proceedings relating to Applicant 1's marriage, "
+        label = "Are there any existing or previous court proceedings relating to the applicant's marriage, "
             + "property or children?",
         access = {DefaultAccess.class}
     )
@@ -374,7 +374,7 @@ public class CaseData {
     private LocalDateTime dateSubmitted;
 
     @CCD(
-        label = "Case ID for previously Amended Case, which was challenged by applicant 2",
+        label = "Case ID for previously Amended Case, which was challenged by the respondent",
         access = {DefaultAccess.class}
     )
     private CaseLink previousCaseId;
@@ -408,7 +408,7 @@ public class CaseData {
     private YesOrNo documentUploadComplete;
 
     @CCD(
-        label = "Applicant 2 Invite Access Pin",
+        label = "The respondent invite access pin",
         access = {DefaultAccess.class}
     )
     private String invitePin;

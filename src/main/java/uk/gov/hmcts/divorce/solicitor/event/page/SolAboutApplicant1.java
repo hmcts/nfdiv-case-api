@@ -19,7 +19,7 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
 
         pageBuilder
             .page("SolAboutApplicant1")
-            .pageLabel("About applicant 1")
+            .pageLabel("About the applicant")
             .label(
                 "LabelNFDBanner-SolAboutApplicant1",
                 SOLICITOR_NFD_PREVIEW_BANNER,
@@ -32,19 +32,19 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
                 .mandatory(Applicant::getFirstName,
                     null,
                     null,
-                    "Applicant 1's first name")
+                    "The applicant's first name")
                 .optional(Applicant::getMiddleName,
                     null,
                     null,
-                    "Applicant 1's middle name")
+                    "The applicant's middle name")
                 .mandatory(Applicant::getLastName,
                     null,
                     null,
-                    "Applicant 1's last name")
+                    "The applicant's last name")
                 .mandatory(Applicant::getNameDifferentToMarriageCertificate,
                     null,
                     null,
-                    "Is applicant 1's name different to that on their marriage certificate?")
+                    "Is the applicant's name different to that on their marriage certificate?")
                 .mandatory(Applicant::getNameChangedHow,
                     "applicant1NameDifferentToMarriageCertificate=\"Yes\"",
                     null,
@@ -63,7 +63,7 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
                 .mandatory(Applicant::getGender,
                     null,
                     null,
-                    "What is applicant 1's gender?")
+                    "What is the applicant's gender?")
                 .done()
             .complex(CaseData::getMarriageDetails)
                 .mandatory(MarriageDetails::getIsSameSexCouple)
@@ -72,20 +72,20 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
                 .mandatory(Applicant::getEmail,
                     null,
                     null,
-                    "Applicant 1's email address")
+                    "The applicant's email address")
                 .optional(Applicant::getPhoneNumber,
                     null,
                     null,
-                    "Applicant 1's phone number")
+                    "The applicant's phone number")
                 .optional(Applicant::getHomeAddress,
                     null,
                     null,
-                    "Applicant 1's home address")
+                    "The applicant's home address")
                 .label("LabelHorizontalLine1-SolAboutApplicant1", DARK_HORIZONTAL_RULE)
                 .mandatory(Applicant::getContactDetailsConfidential,
                     null,
                     null,
-                    "Keep Applicant 1's contact details private from applicant 2?")
+                    "Keep the applicant's contact details private from the respondent?")
                 .done();
     }
 }

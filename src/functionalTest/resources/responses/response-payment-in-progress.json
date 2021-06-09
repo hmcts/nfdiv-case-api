@@ -1,0 +1,89 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "applicant1Gender": "female",
+    "applicant2Gender": "male",
+    "marriageDate": "2020-04-28",
+    "applicant1FirstName": "Billy",
+    "applicant1MiddleName": "B",
+    "applicant1LastName": "Bob",
+    "applicant1ContactDetailsConfidential": "keep",
+    "applicant1Email": "test@mailinator.com",
+    "applicant1AgreedToReceiveEmails": null,
+    "applicant1HomeAddress": null,
+    "applicant1NameChangedHow": null,
+    "applicant1NameDifferentToMarriageCertificate": null,
+    "applicant1PhoneNumber": null,
+    "applicant1NameChangedHowOtherDetails": null,
+    "applicant1LanguagePreferenceWelsh": null,
+    "applicant2MiddleName": null,
+    "applicant2AgreedToReceiveEmails": null,
+    "applicant2Email": null,
+    "applicant2HomeAddress": null,
+    "applicant2LanguagePreferenceWelsh": null,
+    "applicant2NameChangedHow": null,
+    "applicant2NameDifferentToMarriageCertificate": null,
+    "applicant2NameChangedHowOtherDetails": null,
+    "applicant2PhoneNumber": null,
+    "applicant2ContactDetailsConfidential": null,
+    "applicant2FirstName": "test_first_name",
+    "applicant2LastName": "test_last_name",
+    "marriageApplicant1Name": "test_first_name test_last_name",
+    "marriageApplicant2Name": null,
+    "financialOrder": "No",
+    "prayerHasBeenGiven": "Yes",
+    "solSignStatementOfTruth": "Yes",
+    "jurisdictionApplicant1Residence": "Yes",
+    "applicant1WantsToHavePapersServedAnotherWay": "No",
+    "jurisdictionApplicant2Residence": "Yes",
+    "jurisdictionApplicant1Domicile": null,
+    "jurisdictionApplicant2Domicile": null,
+    "jurisdictionApp1HabituallyResLastTwelveMonths": null,
+    "jurisdictionApp1HabituallyResLastSixMonths": null,
+    "jurisdictionResidualEligible": null,
+    "jurisdictionBothLastHabituallyResident": null,
+    "jurisdictionConnections": ["A"],
+    "marriageMarriedInUk": null,
+    "marriageCertificateInEnglish": null,
+    "marriageCertifiedTranslation": null,
+    "marriageCountryOfMarriage": null,
+    "marriagePlaceOfMarriage": null,
+    "marriageIsSameSexCouple": null,
+    "marriageCertifyMarriageCertificateIsCorrect": null,
+    "marriageMarriageCertificateIsIncorrectDetails": null,
+    "marriageIssueApplicationWithoutMarriageCertificate": null,
+    "applicationFeeOrderSummary": {
+      "PaymentTotal": "55000",
+      "PaymentReference": null,
+      "Fees": [
+        {
+          "id": null,
+          "value": {
+            "FeeDescription": "Filing an application for a divorce, nullity or civil partnership dissolution",
+            "FeeVersion": "5",
+            "FeeCode": "FEE0002",
+            "FeeAmount": "55000"
+          }
+        }
+      ]
+    },
+    "payments": [
+      {
+        "id": "1",
+        "value": {
+          "paymentDate": null,
+          "paymentFeeId": null,
+          "paymentAmount": 55000,
+          "paymentSiteId": null,
+          "paymentStatus": "inProgress",
+          "paymentChannel": null,
+          "paymentReference": null,
+          "paymentTransactionId": null
+        }
+      }
+    ]
+  },
+  "errors": [],
+  "state": "AwaitingPayment",
+  "warnings": null
+}

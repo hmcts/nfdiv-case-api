@@ -28,7 +28,7 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
                 "LabelNFDJointBanner-SolStatementOfTruth",
                 SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
                 JOINT_APPLICATION_CONDITION)
-            .label("LabelSolStatementOfTruthPara-1", "## Applicant 1 is applying to the court")
+            .label("LabelSolStatementOfTruthPara-1", "## The applicant is applying to the court")
             .label(
                 "LabelSolStatementOfTruthPara-1.1",
                 "• That the marriage be dissolved as it has broken down irretrievably",

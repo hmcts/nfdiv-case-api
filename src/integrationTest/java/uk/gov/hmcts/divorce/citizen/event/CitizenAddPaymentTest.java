@@ -42,7 +42,9 @@ import static uk.gov.hmcts.divorce.citizen.event.CitizenAddPayment.CITIZEN_ADD_P
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_ACTIONS;
+import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.CANCELLED;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.DECLINED;
+import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.IN_PROGRESS;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
@@ -82,6 +84,58 @@ public class CitizenAddPaymentTest {
     @BeforeAll
     static void setUp() {
         OBJECT_MAPPER.registerModule(new JavaTimeModule());
+    }
+
+    @Test
+    public void givenLastAddedPaymentIsInProgress() throws Exception {
+        CaseData data = caseDataWithOrderSummary();
+        data.setDateSubmitted(LocalDateTime.now());
+        data.setSolSignStatementOfTruth(YesOrNo.YES);
+
+        OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
+        data.setApplicationFeeOrderSummary(orderSummary);
+
+        Payment payment = Payment.builder()
+            .paymentAmount(55000)
+            .paymentStatus(IN_PROGRESS)
+            .build();
+
+        data.setPayments(singletonList(new ListValue<>("1", payment)));
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_ADD_PAYMENT)))
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    public void givenLastAddedPaymentWasCanceled() throws Exception {
+        CaseData data = caseDataWithOrderSummary();
+        data.setDateSubmitted(LocalDateTime.now());
+        data.setSolSignStatementOfTruth(YesOrNo.YES);
+
+        OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
+        data.setApplicationFeeOrderSummary(orderSummary);
+
+        Payment payment = Payment.builder()
+            .paymentAmount(55000)
+            .paymentStatus(CANCELLED)
+            .build();
+
+        data.setPayments(singletonList(new ListValue<>("1", payment)));
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_ADD_PAYMENT)))
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+        verifyNoInteractions(notificationService);
     }
 
     @Test

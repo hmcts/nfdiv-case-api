@@ -42,15 +42,15 @@ class WorkBasketResultFieldsTest {
                     null,
                     null),
                 tuple("applicant1HomeAddress",
-                    "Applicant 1 Post Code",
+                    "Applicant's Post Code",
                     "PostCode",
                     null),
                 tuple("applicant1LastName",
-                    "Applicant 1 Last Name",
+                    "Applicant's Last Name",
                     null,
                     null),
                 tuple("applicant2LastName",
-                    "Applicant 2 Last Name",
+                    "Respondent's Last Name",
                     null,
                     null)
             );

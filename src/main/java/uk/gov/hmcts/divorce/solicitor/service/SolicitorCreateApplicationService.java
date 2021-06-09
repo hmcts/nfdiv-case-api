@@ -76,7 +76,7 @@ public class SolicitorCreateApplicationService {
     ) {
 
         if (caseData.getApplicant1().getSolicitor() == null || !caseData.getApplicant1().getSolicitor().hasOrgId()) {
-            log.error("CaseId: {}, Applicant 1 org policy is not populated", caseId);
+            log.error("CaseId: {}, the applicant org policy is not populated", caseId);
             return AboutToStartOrSubmitResponse
                 .<CaseData, State>builder()
                 .errors(singletonList("Please select an organisation"))

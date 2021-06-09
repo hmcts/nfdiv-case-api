@@ -21,7 +21,7 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
 
         pageBuilder
             .page("Applicant2ServiceDetails")
-            .pageLabel("Applicant 2 service details")
+            .pageLabel("The respondent service details")
             .label(
                 "LabelNFDBanner-Applicant2ServiceDetails",
                 SOLICITOR_NFD_PREVIEW_BANNER,
@@ -40,9 +40,9 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
                     .mandatory(Solicitor::getAddress, "applicant2SolicitorRepresented=\"Yes\"")
                     .label(
                         "LabelApplicant2ServiceDetails-DigitalOrPaper",
-                        "If applicant 2 solicitor's firm is registered with MyHMCTS, you can assign the case to them. "
-                            + "This will allow applicant 2 solicitor to respond digitally. If you cannot find applicant 2 "
-                            + "solicitor, a paper AOS pack will be sent to applicant 2's solicitor's address entered above.",
+                        "If the respondent's solicitor's firm is registered with MyHMCTS, you can assign the case to them. "
+                            + "This will allow the respondent's solicitor to respond digitally. If you cannot find the respondent's "
+                            + "solicitor, a paper AOS pack will be sent to the respondent's solicitor's address entered above.",
                         "applicant2SolicitorRepresented=\"Yes\"")
                     .mandatory(Solicitor::getIsDigital, "applicant2SolicitorRepresented=\"Yes\"")
                     .complex(Solicitor::getOrganisationPolicy, "applicant2SolicitorIsDigital=\"Yes\"")
