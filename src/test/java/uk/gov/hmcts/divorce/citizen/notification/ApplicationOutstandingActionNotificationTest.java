@@ -95,6 +95,8 @@ class ApplicationOutstandingActionNotificationTest {
 
         final HashMap<String, String> templateVars = new HashMap<>();
         when(commonContent.templateVarsFor(data)).thenReturn(templateVars);
+        when(commonContent.getPartner(data)).thenReturn(WhoDivorcing.HUSBAND.getLabel().toLowerCase());
+        when(commonContent.getService(data.getDivorceOrDissolution())).thenReturn("divorce");
 
         notification.send(data, 1234567890123456L);
 
