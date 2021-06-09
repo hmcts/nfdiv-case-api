@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.common.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
@@ -53,6 +54,7 @@ public class Solicitor {
     private YesOrNo agreeToReceiveEmails;
 
     @CCD(label = "Firm address/DX address")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private OrganisationPolicy<UserRole> organisationPolicy;
 
     @CCD(
