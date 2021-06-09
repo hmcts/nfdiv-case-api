@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
+import uk.gov.hmcts.divorce.common.model.WhoDivorcing;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.io.File;
@@ -38,7 +38,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -69,8 +68,7 @@ public class CitizenInviteApplicant2Test {
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenGeneratePinAndSendEmail() throws Exception {
         CaseData data = caseData();
-        data.setDivorceOrDissolution(DivorceOrDissolution.DIVORCE);
-        data.setDateSubmitted(LOCAL_DATE_TIME);
+        data.setDivorceWho(WhoDivorcing.HUSBAND);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)

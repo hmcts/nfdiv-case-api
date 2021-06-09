@@ -90,7 +90,6 @@ public class TestDataHelper {
     public static CaseData caseData() {
         return CaseData.builder()
             .applicant1(getApplicant())
-            .applicant2(getApplicant(MALE))
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .build();
     }
@@ -127,32 +126,6 @@ public class TestDataHelper {
             .statementOfTruth(YES)
             .marriageDetails(marriageDetails)
             .jurisdiction(jurisdiction)
-            .build();
-
-    }
-
-    public static CaseData validJointApplicant1CaseDataMap() {
-        var marriageDetails = new MarriageDetails();
-        marriageDetails.setDate(LocalDate.now().minus(1, YEARS).minus(1, DAYS));
-
-        var jurisdiction = new Jurisdiction();
-        jurisdiction.setApplicant1Residence(YES);
-        jurisdiction.setApplicant2Residence(YES);
-        jurisdiction.setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
-
-        var applicant1 = getApplicant();
-        applicant1.setContactDetailsConfidential(ConfidentialAddress.KEEP);
-
-        return CaseData
-            .builder()
-            .applicant1(getApplicant())
-            .divorceOrDissolution(DIVORCE)
-            .applicant2(getApplicant(MALE))
-            .financialOrder(NO)
-            .helpWithFeesNeedHelp(NO)
-            .marriageDetails(marriageDetails)
-            .jurisdiction(jurisdiction)
-            .applicationType(JOINT_APPLICATION)
             .build();
 
     }

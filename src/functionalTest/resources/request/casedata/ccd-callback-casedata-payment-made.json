@@ -11,6 +11,7 @@
   "applicant2FirstName": "test_first_name",
   "applicant2LastName": "test_last_name",
   "marriageApplicant1Name": "test_first_name test_last_name",
+  "marriageApplicant2Name": null,
   "applicant1WantsToHavePapersServedAnotherWay": "NO",
   "financialOrder": "NO",
   "prayerHasBeenGiven": "YES",

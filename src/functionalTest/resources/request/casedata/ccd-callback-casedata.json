@@ -3,9 +3,6 @@
   "applicant1FirstName": "John",
   "applicant1LastName": "Smith",
   "applicant1Email": "simulate-delivered@notifications.service.gov.uk"
-  "marriageDate": "2020-04-28"
   "marriageDate": "2020-04-28",
-  "applicant1Gender": "female",
-  "applicant2Gender": "male",
   "divorceWho": "husband"
 }

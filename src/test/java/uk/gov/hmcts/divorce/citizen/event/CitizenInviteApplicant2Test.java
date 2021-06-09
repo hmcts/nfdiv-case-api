@@ -55,19 +55,14 @@ public class CitizenInviteApplicant2Test {
 
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenGeneratePinAndSendEmail() {
-        final long caseId = 1L;
         final CaseData caseData = caseData();
-        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
-        caseData.setPrayerHasBeenGiven(YesOrNo.NO);
-        caseData.setStatementOfTruth(YesOrNo.NO);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
-        details.setId(caseId);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenInviteApplicant2.aboutToSubmit(details, details);
 
-        verify(applicationSentForReviewNotification).send(caseData, caseId);
+        verify(applicationSentForReviewNotification).send(caseData, details.getId());
 
         assertThat(response.getData().getInvitePin()).isNotBlank();
         assertThat(response.getData().getInvitePin().length()).isEqualTo(8);

@@ -25,7 +25,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.PARTNER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseDataMap;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -42,7 +42,7 @@ public class ApplicationSentForReviewNotificationTest {
 
     @Test
     void shouldSendEmailToApplicant1WhileInAwaitingApplicant2ResponseState() {
-        CaseData data = validJointApplicant1CaseDataMap();
+        CaseData data = caseData();
         data.setDueDate(LOCAL_DATE);
         data.setDivorceWho(WhoDivorcing.HUSBAND);
         final HashMap<String, String> templateVars = new HashMap<>();

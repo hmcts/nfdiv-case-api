@@ -31,8 +31,6 @@ public final class NotificationConstants {
     public static final String SUBMISSION_RESPONSE_DATE = "date of response";
     public static final String APPLICATION_REFERENCE = "reference number";
 
-    public static final String DIVORCE_OR_DISSOLUTION = "divorce application / application to end your civil partnership";
-
     private NotificationConstants() {
     }
 }
