@@ -6,7 +6,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.common.model.WhoDivorcing;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -44,10 +43,10 @@ public class ApplicationSentForReviewNotificationTest {
     void shouldSendEmailToApplicant1WhileInAwaitingApplicant2ResponseState() {
         CaseData data = caseData();
         data.setDueDate(LOCAL_DATE);
-        data.setDivorceWho(WhoDivorcing.HUSBAND);
         final HashMap<String, String> templateVars = new HashMap<>();
 
         when(commonContent.templateVarsFor(data)).thenReturn(templateVars);
+        when(commonContent.getPartner(data)).thenReturn("husband");
 
         notification.send(data, 1234567890123456L);
 
@@ -61,5 +60,6 @@ public class ApplicationSentForReviewNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).templateVarsFor(data);
+        verify(commonContent).getPartner(data);
     }
 }
