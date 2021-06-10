@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.common.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -35,11 +36,11 @@ public class SolicitorSubmittedNotification {
 
     public void send(final CaseData caseData, final Long caseId) {
 
-        final String applicant1SolicitorEmail = caseData.getApplicant1SolicitorEmail();
+        final Solicitor solicitor = caseData.getApplicant1().getSolicitor();
         final Map<String, String> templateVars = commonContent.templateVarsFor(caseData);
         templateVars.put(APPLICATION_REFERENCE, formatId(caseId));
 
-        if (isNotEmpty(applicant1SolicitorEmail)) {
+        if (solicitor != null && isNotEmpty(solicitor.getEmail())) {
 
             final EmailTemplateName templateName;
             final String logMessage;
@@ -53,7 +54,7 @@ public class SolicitorSubmittedNotification {
             }
 
             notificationService.sendEmail(
-                applicant1SolicitorEmail,
+                solicitor.getEmail(),
                 templateName,
                 templateVars,
                 caseData.getApplicant1().getLanguagePreference());
