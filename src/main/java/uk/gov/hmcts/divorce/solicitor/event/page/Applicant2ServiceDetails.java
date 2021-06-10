@@ -6,8 +6,9 @@ import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.model.Applicant;
 import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.common.model.Solicitor;
 
-import static uk.gov.hmcts.divorce.common.model.UserRole.APPLICANT_1_SOLICITOR;
+import static uk.gov.hmcts.divorce.common.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.JOINT_APPLICATION_CONDITION;
 import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLE_APPLICATION_CONDITION;
 import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_JOINT_PREVIEW_BANNER;
@@ -20,7 +21,7 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
 
         pageBuilder
             .page("Applicant2ServiceDetails")
-            .pageLabel("Applicant 2 service details")
+            .pageLabel("The respondent service details")
             .label(
                 "LabelNFDBanner-Applicant2ServiceDetails",
                 SOLICITOR_NFD_PREVIEW_BANNER,
@@ -29,31 +30,33 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
                 "LabelNFDJointBanner-Applicant2ServiceDetails",
                 SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
                 JOINT_APPLICATION_CONDITION)
-            .mandatory(CaseData::getApplicant2SolicitorRepresented)
-            .mandatory(CaseData::getApplicant2SolicitorName, "applicant2SolicitorRepresented=\"Yes\"")
-            .mandatory(CaseData::getApplicant2SolicitorReference, "applicant2SolicitorRepresented=\"Yes\"")
-            .mandatory(CaseData::getApplicant2SolicitorPhone, "applicant2SolicitorRepresented=\"Yes\"")
-            .mandatory(CaseData::getApplicant2SolicitorEmail, "applicant2SolicitorRepresented=\"Yes\"")
-            .mandatory(CaseData::getDerivedApplicant2SolicitorAddr, "applicant2SolicitorRepresented=\"Yes\"")
-            .label(
-                "LabelApplicant2ServiceDetails-DigitalOrPaper",
-                "If applicant 2 solicitor's firm is registered with MyHMCTS, you can assign the case to them. "
-                    + "This will allow applicant 2 solicitor to respond digitally. If you cannot find applicant 2 "
-                    + "solicitor, a paper AOS pack will be sent to applicant 2's solicitor's address entered above.",
-                "applicant2SolicitorRepresented=\"Yes\"")
-            .mandatory(CaseData::getApp2SolDigital, "applicant2SolicitorRepresented=\"Yes\"")
-            .complex(CaseData::getApplicant2OrganisationPolicy, "app2SolDigital=\"Yes\"")
-            .complex(OrganisationPolicy::getOrganisation)
-            .mandatory(Organisation::getOrganisationId)
-            .done()
-            .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole,
-                "applicant1NameChanged=\"NeverShow\"",
-                APPLICANT_1_SOLICITOR)
-            .optional(OrganisationPolicy::getOrgPolicyReference, "applicant1NameChanged=\"NeverShow\"")
-            .done()
             .complex(CaseData::getApplicant2)
+                .mandatory(Applicant::getSolicitorRepresented, null, null, "Is the respondent represented by a solicitor?")
+                .complex(Applicant::getSolicitor)
+                    .mandatory(Solicitor::getName, "applicant2SolicitorRepresented=\"Yes\"")
+                    .mandatory(Solicitor::getReference, "applicant2SolicitorRepresented=\"Yes\"")
+                    .mandatory(Solicitor::getPhone, "applicant2SolicitorRepresented=\"Yes\"")
+                    .mandatory(Solicitor::getEmail, "applicant2SolicitorRepresented=\"Yes\"")
+                    .mandatory(Solicitor::getAddress, "applicant2SolicitorRepresented=\"Yes\"")
+                    .label(
+                        "LabelApplicant2ServiceDetails-DigitalOrPaper",
+                        "If the respondent's solicitor's firm is registered with MyHMCTS, you can assign the case to them. "
+                            + "This will allow the respondent's solicitor to respond digitally. If you cannot find the respondent's "
+                            + "solicitor, a paper AOS pack will be sent to the respondent's solicitor's address entered above.",
+                        "applicant2SolicitorRepresented=\"Yes\"")
+                    .mandatory(Solicitor::getIsDigital, "applicant2SolicitorRepresented=\"Yes\"")
+                    .complex(Solicitor::getOrganisationPolicy, "applicant2SolicitorIsDigital=\"Yes\"")
+                        .complex(OrganisationPolicy::getOrganisation)
+                            .mandatory(Organisation::getOrganisationId)
+                            .done()
+                        .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole,
+                            "applicant1NameChanged=\"NeverShow\"",
+                            APPLICANT_2_SOLICITOR)
+                        .optional(OrganisationPolicy::getOrgPolicyReference, "applicant1NameChanged=\"NeverShow\"")
+                        .done()
+                    .done()
                 .optional(Applicant::getHomeAddress, "applicant2SolicitorRepresented=\"No\"")
-                .done()
-            .mandatory(CaseData::getApplicant2CorrespondenceAddress, "applicant2SolicitorRepresented=\"No\"");
+                .mandatory(Applicant::getCorrespondenceAddress, "applicant2SolicitorRepresented=\"No\"")
+            .done();
     }
 }

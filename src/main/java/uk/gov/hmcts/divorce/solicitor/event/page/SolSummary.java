@@ -28,7 +28,7 @@ public class SolSummary implements CcdPageConfiguration {
                     + "## What happens next\n\n"
                     + "### Please continue to submit your application on the next screen.\n\n"
                     + "The application will be checked. If it’s correct, you’ll be sent a notice of issue. "
-                    + "Applicant 2 will also receive a copy of the application unless you have chosen to personally effect service.\n\n"
+                    + "The respondent will also receive a copy of the application unless you have chosen to personally effect service.\n\n"
                     + "Contact the divorce centre if you don't hear anything back after 3 weeks.\n"
                     + "- Phone: 0300 303 0642 (Monday to Friday, 8.30am to 5pm)\n"
                     + "- Email: contactdivorce@justice.gov.uk\n\n"

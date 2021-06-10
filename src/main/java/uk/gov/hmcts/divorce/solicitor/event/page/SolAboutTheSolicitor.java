@@ -9,7 +9,9 @@ import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.model.Applicant;
 import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.common.model.Solicitor;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorCreateApplicationService;
 
@@ -49,22 +51,26 @@ public class SolAboutTheSolicitor implements CcdPageConfiguration {
             .label(
                 "LabelSolAboutTheSolPara-1",
                 "Please note that the information provided will be used as evidence by the court to decide if "
-                    + "applicant 1 is entitled to legally end their marriage. **A copy of this form is sent to "
-                    + "applicant 2**")
-            .mandatory(CaseData::getApplicant1SolicitorName, null, null, "Your name")
-            .mandatory(CaseData::getSolicitorReference, null, null, "Your reference")
-            .mandatory(CaseData::getApplicant1SolicitorPhone, null, null, "Your phone number")
-            .mandatory(CaseData::getApplicant1SolicitorEmail, null, null, "Your email address")
-            .mandatory(CaseData::getSolicitorAgreeToReceiveEmails)
-            .complex(CaseData::getApplicant1OrganisationPolicy, null, "Your firm's address or DX number")
-            .complex(OrganisationPolicy::getOrganisation)
-            .mandatory(Organisation::getOrganisationId)
-            .done()
-            .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole,
-                "applicant1NameChanged=\"NeverShow\"",
-                APPLICANT_1_SOLICITOR)
-            .optional(OrganisationPolicy::getOrgPolicyReference, "applicant1NameChanged=\"NeverShow\"");
-
+                    + "the applicant is entitled to legally end their marriage. **A copy of this form is sent to "
+                    + "the respondent**")
+            .complex(CaseData::getApplicant1)
+                .complex(Applicant::getSolicitor)
+                    .mandatory(Solicitor::getName, null, null, "Your name")
+                    .mandatory(Solicitor::getReference, null, null, "Your reference")
+                    .mandatory(Solicitor::getPhone, null, null, "Your phone number")
+                    .mandatory(Solicitor::getEmail, null, null, "Your email address")
+                    .mandatory(Solicitor::getAgreeToReceiveEmails)
+                    .complex(Solicitor::getOrganisationPolicy, null, "Your firm's address or DX number")
+                        .complex(OrganisationPolicy::getOrganisation)
+                            .mandatory(Organisation::getOrganisationId)
+                            .done()
+                        .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole,
+                            "applicant1NameChanged=\"NeverShow\"",
+                            APPLICANT_1_SOLICITOR)
+                        .optional(OrganisationPolicy::getOrgPolicyReference, "applicant1NameChanged=\"NeverShow\"")
+                    .done()
+                .done()
+            .done();
     }
 
     private AboutToStartOrSubmitResponse<CaseData, State> midEvent(
