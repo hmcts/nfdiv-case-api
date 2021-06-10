@@ -8,7 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
-import uk.gov.hmcts.divorce.common.model.WhoDivorcing;
+import uk.gov.hmcts.divorce.common.model.Gender;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -35,6 +35,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.PAPERS_SER
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PAPERS_SERVED_ANOTHER_WAY_TITLE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant2;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationOutstandingActionNotificationTest {
@@ -52,7 +53,7 @@ class ApplicationOutstandingActionNotificationTest {
     @SuppressWarnings("squid:S6068")
     void shouldCallSendEmailForSupportingDocuments() {
         CaseData data = caseData();
-        data.setDivorceWho(WhoDivorcing.HUSBAND);
+        data.setApplicant2(getApplicant2(Gender.MALE));
         data.getMarriageDetails().setMarriedInUk(YesOrNo.NO);
 
         Set<DocumentType> docs = new HashSet<>();
@@ -84,7 +85,7 @@ class ApplicationOutstandingActionNotificationTest {
     @SuppressWarnings("squid:S6068")
     void shouldCallSendEmailForPapersServedAnotherWay() {
         CaseData data = caseData();
-        data.setDivorceWho(WhoDivorcing.HUSBAND);
+        data.setApplicant2(getApplicant2(Gender.MALE));
         data.getMarriageDetails().setMarriedInUk(YesOrNo.YES);
         data.setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
 
@@ -95,7 +96,7 @@ class ApplicationOutstandingActionNotificationTest {
 
         final HashMap<String, String> templateVars = new HashMap<>();
         when(commonContent.templateVarsFor(data)).thenReturn(templateVars);
-        when(commonContent.getPartner(data)).thenReturn(WhoDivorcing.HUSBAND.getLabel().toLowerCase());
+        when(commonContent.getPartner(data)).thenReturn("husband");
         when(commonContent.getService(data.getDivorceOrDissolution())).thenReturn("divorce");
 
         notification.send(data, 1234567890123456L);

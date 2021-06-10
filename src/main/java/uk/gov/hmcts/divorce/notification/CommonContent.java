@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
+import uk.gov.hmcts.divorce.common.model.Gender;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -57,6 +58,6 @@ public class CommonContent {
 
     public String getPartner(CaseData caseData) {
         return caseData.getDivorceOrDissolution().isDivorce()
-            ? caseData.getDivorceWho().getLabel().toLowerCase(Locale.UK) : "civil partner";
+            ? caseData.getApplicant2().getGender() == Gender.MALE ? "husband" : "wife" : "civil partner";
     }
 }

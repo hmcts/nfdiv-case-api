@@ -69,7 +69,6 @@
     "marriageMarriageCertificateIsIncorrectDetails": null,
     "marriageIssueApplicationWithoutMarriageCertificate": null,
     "cannotUploadSupportingDocument": ["marriageCertificate", "nameChangeEvidence"],
-    "divorceWho": "husband",
     "applicationFeeOrderSummary": {
       "PaymentTotal": "55000",
       "PaymentReference": null,

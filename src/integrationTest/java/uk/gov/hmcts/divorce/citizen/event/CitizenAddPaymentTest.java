@@ -19,7 +19,7 @@ import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotificatio
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.common.model.WhoDivorcing;
+import uk.gov.hmcts.divorce.common.model.Gender;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.notification.exception.NotificationException;
 import uk.gov.hmcts.divorce.payment.model.Payment;
@@ -52,6 +52,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithOrderSummary;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant2;
 
 
 @ExtendWith(SpringExtension.class)
@@ -171,7 +172,7 @@ public class CitizenAddPaymentTest {
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendTwoEmail() throws Exception {
         CaseData data = caseDataWithOrderSummary();
         data.setDateSubmitted(LocalDateTime.now());
-        data.setDivorceWho(WhoDivorcing.HUSBAND);
+        data.setApplicant2(getApplicant2(Gender.MALE));
         data.setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
 
 
