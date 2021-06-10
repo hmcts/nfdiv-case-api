@@ -8,7 +8,7 @@ import uk.gov.hmcts.divorce.common.model.Applicant;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.Solicitor;
 
-import static uk.gov.hmcts.divorce.common.model.UserRole.APPLICANT_1_SOLICITOR;
+import static uk.gov.hmcts.divorce.common.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.JOINT_APPLICATION_CONDITION;
 import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLE_APPLICATION_CONDITION;
 import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_JOINT_PREVIEW_BANNER;
@@ -31,7 +31,7 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
                 SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
                 JOINT_APPLICATION_CONDITION)
             .complex(CaseData::getApplicant2)
-                .mandatory(Applicant::getSolicitorRepresented, null, null, "Is applicant 2 represented by a solicitor?")
+                .mandatory(Applicant::getSolicitorRepresented, null, null, "Is the respondent represented by a solicitor?")
                 .complex(Applicant::getSolicitor)
                     .mandatory(Solicitor::getName, "applicant2SolicitorRepresented=\"Yes\"")
                     .mandatory(Solicitor::getReference, "applicant2SolicitorRepresented=\"Yes\"")
@@ -51,7 +51,7 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
                             .done()
                         .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole,
                             "applicant1NameChanged=\"NeverShow\"",
-                            APPLICANT_1_SOLICITOR)
+                            APPLICANT_2_SOLICITOR)
                         .optional(OrganisationPolicy::getOrgPolicyReference, "applicant1NameChanged=\"NeverShow\"")
                         .done()
                     .done()

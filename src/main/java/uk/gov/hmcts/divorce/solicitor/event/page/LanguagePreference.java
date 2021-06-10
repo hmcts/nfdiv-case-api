@@ -27,7 +27,12 @@ public class LanguagePreference implements CcdPageConfiguration {
                 SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
                 JOINT_APPLICATION_CONDITION)
             .complex(CaseData::getApplicant1)
-                .mandatory(Applicant::getLanguagePreferenceWelsh)
+                .mandatory(Applicant::getLanguagePreferenceWelsh,
+                    null,
+                    null,
+                    "Include a Welsh copy of all generated divorce documents for Applicant 1?",
+                    "An english copy will always be included"
+                )
                 .done();
     }
 }
