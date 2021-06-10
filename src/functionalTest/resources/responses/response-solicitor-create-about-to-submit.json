@@ -6,6 +6,7 @@
     "applicant1FirstName": "John",
     "applicant1LastName": "Smith",
     "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+    "divorceWho": "wife",
     "applicant1LanguagePreferenceWelsh": null,
     "applicant1MiddleName": null,
     "applicant1AgreedToReceiveEmails": null,
