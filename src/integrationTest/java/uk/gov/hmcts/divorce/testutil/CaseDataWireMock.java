@@ -51,10 +51,10 @@ public final class CaseDataWireMock {
 
     public static void stubForCitizenCcdCaseRoles() {
         CASE_DATA_SERVER.stubFor(put(urlMatching("/cases/[0-9]+/users/[0-9]+"))
-            .withHeader(HttpHeaders.AUTHORIZATION, new EqualToPattern(TEST_AUTHORIZATION_TOKEN))
+            .withHeader(HttpHeaders.AUTHORIZATION, new EqualToPattern(BEARER + CASEWORKER_AUTH_TOKEN))
             .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(SERVICE_AUTHORIZATION))
             .withRequestBody(new EqualToJsonPattern(
-                "{\"user_id\" : \"3\", \"case_roles\":[\"[APPLICANTTWO]\",\"[CREATOR]\"]}",
+                "{\"user_id\" : \"3\", \"case_roles\":[\"[APPLICANTTWO]\"]}",
                 true,
                 true))
             .willReturn(aResponse().withStatus(200))

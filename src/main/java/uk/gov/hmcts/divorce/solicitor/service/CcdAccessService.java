@@ -57,7 +57,7 @@ public class CcdAccessService {
         User applicant2User = idamService.retrieveUser(userToken);
         String userId = applicant2User.getUserDetails().getId();
 
-        Set<String> caseRoles = Set.of(CREATOR.getRole(), APPLICANT_2.getRole());
+        Set<String> caseRoles = Set.of(APPLICANT_2.getRole());
 
         caseUserApi.updateCaseRolesForUser(
             caseworkerUser.getAuthToken(),

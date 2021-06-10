@@ -190,9 +190,13 @@ public class CcdAccessServiceTest {
     @Test
     public void shouldNotThrowAnyExceptionWhenLinkApplicant2ToApplicationIsInvoked() {
         User applicant2User = getIdamUser(APP_2_AUTH_TOKEN, APP_2_CITIZEN_USER_ID, TEST_APPLICANT_2_EMAIL);
+        User caseworkerUser = getIdamUser(CASEWORKER_AUTH_TOKEN, CASEWORKER_USER_ID, TEST_CASEWORKER_USER_EMAIL);
 
         when(idamService.retrieveUser(APP_2_AUTH_TOKEN))
             .thenReturn(applicant2User);
+
+        when(idamService.retrieveCaseWorkerDetails())
+            .thenReturn(caseworkerUser);
 
         when(authTokenGenerator.generate())
             .thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -202,11 +206,11 @@ public class CcdAccessServiceTest {
                 caseUserApi
             )
             .updateCaseRolesForUser(
-                APP_2_AUTH_TOKEN,
+                CASEWORKER_AUTH_TOKEN,
                 TEST_SERVICE_AUTH_TOKEN,
                 String.valueOf(TEST_CASE_ID),
                 APP_2_CITIZEN_USER_ID,
-                new CaseUser(APP_2_CITIZEN_USER_ID, Set.of(CREATOR.getRole(), APPLICANT_2.getRole()))
+                new CaseUser(APP_2_CITIZEN_USER_ID, Set.of(APPLICANT_2.getRole()))
             );
 
         assertThatCode(() -> ccdAccessService.linkApplicant2ToApplication(APP_2_AUTH_TOKEN, TEST_CASE_ID))
@@ -216,11 +220,11 @@ public class CcdAccessServiceTest {
         verify(authTokenGenerator).generate();
         verify(caseUserApi)
             .updateCaseRolesForUser(
-                APP_2_AUTH_TOKEN,
+                CASEWORKER_AUTH_TOKEN,
                 TEST_SERVICE_AUTH_TOKEN,
                 String.valueOf(TEST_CASE_ID),
                 APP_2_CITIZEN_USER_ID,
-                new CaseUser(APP_2_CITIZEN_USER_ID, Set.of(CREATOR.getRole(), APPLICANT_2.getRole()))
+                new CaseUser(APP_2_CITIZEN_USER_ID, Set.of(APPLICANT_2.getRole()))
             );
 
         verifyNoMoreInteractions(idamService, authTokenGenerator, caseUserApi);
