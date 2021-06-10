@@ -10,7 +10,6 @@ import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.print.exception.DocumentDownloadException;
 import uk.gov.hmcts.divorce.print.model.Print;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 import uk.gov.hmcts.reform.sendletter.api.SendLetterApi;
 import uk.gov.hmcts.reform.sendletter.api.model.v3.Document;
 import uk.gov.hmcts.reform.sendletter.api.model.v3.LetterV3;
@@ -77,7 +76,7 @@ public class BulkPrintService {
 
     private byte[] getDocumentBytes(final String docUrl, final String authToken)  {
         final String userAuth = request.getHeader(AUTHORIZATION);
-        final UserDetails userDetails = idamService.retrieveUser(userAuth).getUserDetails();
+        final var userDetails = idamService.retrieveUser(userAuth).getUserDetails();
         ResponseEntity<Resource> resourceResponseEntity = documentManagementClient.downloadBinary(
             userAuth,
             authToken,
