@@ -30,6 +30,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Supplier;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -213,6 +214,95 @@ class BulkPrintServiceTest {
 
     @Test
     void shouldThrowBulkPrintExceptionWhenDocumentCallFails() throws IOException {
+        ListValue<DivorceDocument> divorceDocumentListValue = getDivorceDocumentListValue(
+            () -> ResponseEntity.ok(resource)
+        );
+
+
+        final String documentUuid = FilenameUtils.getName(
+            divorceDocumentListValue.getValue().getDocumentLink().getUrl());
+
+        List<Letter> letters = List.of(
+            new Letter(
+                divorceDocumentListValue.getValue(),
+                1
+            )
+        );
+
+        Print print = new Print(
+            letters,
+            "1234",
+            "5678",
+            "letterType"
+        );
+
+        given(resource.getInputStream())
+            .willThrow(new IOException("Corrupt data"));
+
+        assertThatThrownBy(() -> bulkPrintService.print(print))
+            .isInstanceOf(DocumentDownloadException.class)
+            .hasMessage("Doc name " + documentUuid);
+    }
+
+    @Test
+    void shouldThrowBulkPrintExceptionWhenResponseEntityIsNull() {
+        ListValue<DivorceDocument> divorceDocumentListValue = getDivorceDocumentListValue(() -> null);
+
+
+        final String documentUuid = FilenameUtils.getName(
+            divorceDocumentListValue.getValue().getDocumentLink().getUrl());
+
+        List<Letter> letters = List.of(
+            new Letter(
+                divorceDocumentListValue.getValue(),
+                1
+            )
+        );
+
+        Print print = new Print(
+            letters,
+            "1234",
+            "5678",
+            "letterType"
+        );
+
+        assertThatThrownBy(() -> bulkPrintService.print(print))
+            .isInstanceOf(DocumentDownloadException.class)
+            .hasMessage("Doc name " + documentUuid);
+    }
+
+    @Test
+    void shouldThrowBulkPrintExceptionWhenResourceInputStreamIsNull() {
+        ListValue<DivorceDocument> divorceDocumentListValue = getDivorceDocumentListValue(
+            () -> ResponseEntity.ok(null)
+        );
+
+
+        final String documentUuid = FilenameUtils.getName(
+            divorceDocumentListValue.getValue().getDocumentLink().getUrl());
+
+        List<Letter> letters = List.of(
+            new Letter(
+                divorceDocumentListValue.getValue(),
+                1
+            )
+        );
+
+        Print print = new Print(
+            letters,
+            "1234",
+            "5678",
+            "letterType"
+        );
+
+        assertThatThrownBy(() -> bulkPrintService.print(print))
+            .isInstanceOf(DocumentDownloadException.class)
+            .hasMessage("Doc name " + documentUuid);
+    }
+
+    private ListValue<DivorceDocument> getDivorceDocumentListValue(
+        Supplier<ResponseEntity<Resource>> responseEntitySupplier) {
+
         List<String> solicitorRoles = List.of("caseworker-divorce", "caseworker-divorce-solicitor");
 
         String solicitorRolesCsv = String.join(",", solicitorRoles);
@@ -242,27 +332,8 @@ class BulkPrintServiceTest {
                 userId,
                 documentUuid
             ))
-            .willReturn(ResponseEntity.ok(resource));
+            .willReturn(responseEntitySupplier.get());
 
-        List<Letter> letters = List.of(
-            new Letter(
-                divorceDocumentListValue.getValue(),
-                1
-            )
-        );
-
-        Print print = new Print(
-            letters,
-            "1234",
-            "5678",
-            "letterType"
-        );
-
-        given(resource.getInputStream())
-            .willThrow(new IOException("Corrupt data"));
-
-        assertThatThrownBy(() -> bulkPrintService.print(print))
-            .isInstanceOf(DocumentDownloadException.class)
-            .hasMessage("Doc name " + documentUuid);
+        return divorceDocumentListValue;
     }
 }

@@ -86,7 +86,11 @@ public class BulkPrintService {
             fileName
         );
         try {
-            return resourceResponseEntity.getBody().getInputStream().readAllBytes();
+            if (resourceResponseEntity != null && resourceResponseEntity.getBody() != null) {
+                return resourceResponseEntity.getBody().getInputStream().readAllBytes();
+            } else{
+                throw new DocumentDownloadException("Resource is invalid");
+            }
         } catch (Exception e) {
             throw new DocumentDownloadException("Doc name " + fileName, e);
         }
