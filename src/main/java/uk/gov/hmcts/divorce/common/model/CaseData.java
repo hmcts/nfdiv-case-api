@@ -5,18 +5,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
-import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
-import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -31,7 +28,6 @@ import java.util.Set;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
-import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
@@ -74,10 +70,12 @@ public class CaseData {
 
     @JsonUnwrapped(prefix = "applicant1")
     @Builder.Default
+    @CCD(access = {DefaultAccess.class})
     private Applicant applicant1 = new Applicant();
 
     @JsonUnwrapped(prefix = "applicant2")
     @Builder.Default
+    @CCD(access = {DefaultAccess.class})
     private Applicant applicant2 = new Applicant();
 
     @CCD(
@@ -124,52 +122,6 @@ public class CaseData {
         access = {DefaultAccess.class}
     )
     private WhoDivorcing divorceWho;
-
-    @CCD(
-        label = "The applicant's solicitor’s name",
-        access = {DefaultAccess.class}
-    )
-    private String applicant1SolicitorName;
-
-    // TODO applicant1SolicitorReference + Make ApplicantSolicitor
-    @CCD(
-        label = "Your reference number",
-        access = {DefaultAccess.class}
-    )
-    private String solicitorReference;
-
-    @CCD(
-        label = "The applicant's solicitor's phone number",
-        regex = "^[0-9 +().-]{9,}$",
-        access = {DefaultAccess.class}
-    )
-    private String applicant1SolicitorPhone;
-
-    @CCD(
-        label = "The applicant's solicitor's email",
-        typeOverride = Email,
-        access = {DefaultAccess.class}
-    )
-    private String applicant1SolicitorEmail;
-
-    @CCD(
-        label = "Is the applicant represented by a solicitor?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo applicant1SolicitorRepresented;
-
-    @CCD(
-        label = "I confirm I am willing to accept service of all correspondence and orders by email at the email address "
-            + "stated above.",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo solicitorAgreeToReceiveEmails;
-
-    @CCD(
-        label = "Firm address/DX address",
-        access = {DefaultAccess.class}
-    )
-    private OrganisationPolicy<UserRole> applicant1OrganisationPolicy;
 
     @CCD(
         label = "Is this an urgent jurisdiction case?",
@@ -264,6 +216,7 @@ public class CaseData {
     )
     private String statementOfReconciliationComments;
 
+    // TODO move to OrderSummary?
     @CCD(
         label = "Solicitor application fee (in pounds)",
         access = {DefaultAccess.class}
@@ -310,7 +263,7 @@ public class CaseData {
     )
     private Set<LegalConnections> legalConnections;
 
-
+    // TODO: rename this as applicant2InviteEmailAddress?
     @CCD(
         label = "The respondent's email address",
         access = {DefaultAccess.class}
@@ -329,6 +282,7 @@ public class CaseData {
     )
     private YesOrNo applicant1KnowsApplicant2Address;
 
+    // TODO: move into LegalProceedings?
     @CCD(
         label = "Are there any existing or previous court proceedings relating to the applicant's marriage, "
             + "property or children?",
@@ -384,12 +338,6 @@ public class CaseData {
     private String selectedDivorceCentreSiteId;
 
     @CCD(
-        label = "The respondent's solicitor's reference",
-        access = {DefaultAccess.class}
-    )
-    private String applicant2SolicitorReference;
-
-    @CCD(
         label = "Documents generated",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
@@ -397,65 +345,12 @@ public class CaseData {
     )
     private List<ListValue<DivorceDocument>> documentsGenerated;
 
+    // TODO move to Applicant?
     @CCD(
-        label = "Is the respondent represented by a solicitor?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo applicant2SolicitorRepresented;
-
-    @CCD(
-        label = "The respondent's solicitor's name",
-        access = {DefaultAccess.class}
-    )
-    private String applicant2SolicitorName;
-
-    @CCD(
-        label = "The respondent's solicitor's phone number",
-        regex = "^[0-9 +().-]{9,}$",
-        access = {DefaultAccess.class}
-    )
-    private String applicant2SolicitorPhone;
-
-    @CCD(
-        label = "The respondent's solicitor's email",
-        typeOverride = Email,
-        access = {DefaultAccess.class}
-    )
-    private String applicant2SolicitorEmail;
-
-    @CCD(
-        label = "The respondent's solicitor's firm/ DX address",
-        typeOverride = TextArea,
-        access = {DefaultAccess.class}
-    )
-    private String derivedApplicant2SolicitorAddr;
-
-    @CCD(
-        label = "Digital respondent case",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo app2SolDigital;
-
-    @CCD(
-        label = "The respondent is using digital channel?",
+        label = "Applicant 2 is using digital channel?",
         access = {DefaultAccess.class}
     )
     private YesOrNo app2ContactMethodIsDigital;
-
-    @CCD(
-        label = "The respondent's solicitor's firm address or DX number",
-        hint = "The respondent organisation details",
-        access = {DefaultAccess.class}
-    )
-    private OrganisationPolicy<UserRole> applicant2OrganisationPolicy;
-
-    @CCD(
-        label = "The respondent's service address",
-        hint = "If The respondent is to be served at their home address, enter the home address here and as the service "
-            + "address below",
-        access = {DefaultAccess.class}
-    )
-    private AddressGlobalUK applicant2CorrespondenceAddress;
 
     @CCD(
         label = "Who is the financial order for?",
@@ -536,29 +431,6 @@ public class CaseData {
     @JsonIgnore
     public boolean isAmendedCase() {
         return null != previousCaseId;
-    }
-
-    @JsonIgnore
-    public boolean hasDigitalDetailsForApp2Sol() {
-        return YES.equals(app2SolDigital);
-    }
-
-    @JsonIgnore
-    public boolean hasApplicant2OrgId() {
-        if (null != applicant2OrganisationPolicy) {
-            String applicant2OrgId = applicant2OrganisationPolicy.getOrganisation().getOrganisationId();
-            return !Strings.isNullOrEmpty(applicant2OrgId);
-        }
-        return false;
-    }
-
-    @JsonIgnore
-    public boolean hasApplicant1OrgId() {
-        if (null != applicant1OrganisationPolicy) {
-            String applicant1OrgId = applicant1OrganisationPolicy.getOrganisation().getOrganisationId();
-            return !Strings.isNullOrEmpty(applicant1OrgId);
-        }
-        return false;
     }
 
     @JsonIgnore

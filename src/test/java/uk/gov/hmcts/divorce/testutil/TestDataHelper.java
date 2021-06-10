@@ -20,6 +20,7 @@ import uk.gov.hmcts.divorce.common.model.Gender;
 import uk.gov.hmcts.divorce.common.model.Jurisdiction;
 import uk.gov.hmcts.divorce.common.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.common.model.MarriageDetails;
+import uk.gov.hmcts.divorce.common.model.Solicitor;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
@@ -143,13 +144,15 @@ public class TestDataHelper {
             .paymentTransactionId("ge7po9h5bhbtbd466424src9tk")
             .build());
 
+        var applicant1 = getApplicant();
+        applicant1.setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).build());
+
         return CaseData
             .builder()
-            .applicant1(getApplicant())
+            .applicant1(applicant1)
             .divorceOrDissolution(DIVORCE)
             .divorceCostsClaim(YES)
             .solSignStatementOfTruth(YES)
-            .applicant1SolicitorEmail(TEST_SOLICITOR_EMAIL)
             .applicationFeeOrderSummary(orderSummary)
             .payments(singletonList(payment))
             .build();

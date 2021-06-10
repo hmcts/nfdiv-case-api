@@ -74,7 +74,8 @@ public class SolicitorCreateApplicationService {
         final Long caseId,
         final String userAuth
     ) {
-        if (!caseData.hasApplicant1OrgId()) {
+
+        if (caseData.getApplicant1().getSolicitor() == null || !caseData.getApplicant1().getSolicitor().hasOrgId()) {
             log.error("CaseId: {}, the applicant org policy is not populated", caseId);
             return AboutToStartOrSubmitResponse
                 .<CaseData, State>builder()
@@ -90,7 +91,9 @@ public class SolicitorCreateApplicationService {
 
         String solicitorSelectedOrgId =
             caseData
-                .getApplicant1OrganisationPolicy()
+                .getApplicant1()
+                .getSolicitor()
+                .getOrganisationPolicy()
                 .getOrganisation()
                 .getOrganisationId();
 
