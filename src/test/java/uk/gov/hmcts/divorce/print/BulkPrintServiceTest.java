@@ -14,7 +14,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.document.DocumentManagementClient;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.divorce.print.exception.BulkPrintException;
+import uk.gov.hmcts.divorce.print.exception.DocumentDownloadException;
 import uk.gov.hmcts.divorce.print.model.Letter;
 import uk.gov.hmcts.divorce.print.model.Print;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -262,7 +262,7 @@ class BulkPrintServiceTest {
             .willThrow(new IOException("Corrupt data"));
 
         assertThatThrownBy(() -> bulkPrintService.print(print))
-            .isInstanceOf(BulkPrintException.class)
+            .isInstanceOf(DocumentDownloadException.class)
             .hasMessage("Doc url " + divorceDocumentListValue.getValue().getDocumentLink().getUrl());
     }
 }

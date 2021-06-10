@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import uk.gov.hmcts.divorce.common.config.interceptors.UnAuthorisedServiceException;
 import uk.gov.hmcts.divorce.notification.exception.NotificationException;
-import uk.gov.hmcts.divorce.print.exception.BulkPrintException;
+import uk.gov.hmcts.divorce.print.exception.DocumentDownloadException;
 import uk.gov.hmcts.reform.authorisation.exceptions.InvalidTokenException;
 import uk.gov.service.notify.NotificationClientException;
 
@@ -54,7 +54,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         );
     }
 
-    @ExceptionHandler(BulkPrintException.class)
+    @ExceptionHandler(DocumentDownloadException.class)
     public ResponseEntity<Object> handleBadRequestException() {
         return new ResponseEntity<>(
             HttpStatus.BAD_REQUEST
