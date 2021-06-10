@@ -87,7 +87,7 @@ public class BulkPrintService {
             fileName
         );
         try {
-            Resource resource = Optional.ofNullable(resourceResponseEntity)
+            var resource = Optional.ofNullable(resourceResponseEntity)
                 .map(ResponseEntity::getBody)
                 .orElseThrow(() -> new DocumentDownloadException("Resource is invalid"));
 
