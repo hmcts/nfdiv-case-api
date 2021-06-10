@@ -33,7 +33,7 @@
     "applicant2SolicitorName": null,
     "applicant2SolicitorPhone": null,
     "applicant2SolicitorReference": null,
-    "applicant2Gender": null,
+    "applicant2Gender": "female",
     "applicant2FirstName": null,
     "applicant2MiddleName": null,
     "applicant2LastName": null,
