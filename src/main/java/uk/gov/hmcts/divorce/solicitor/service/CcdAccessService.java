@@ -53,13 +53,14 @@ public class CcdAccessService {
     }
 
     public void linkApplicant2ToApplication(String userToken, Long caseId) {
+        User caseworkerUser = idamService.retrieveCaseWorkerDetails();
         User applicant2User = idamService.retrieveUser(userToken);
         String userId = applicant2User.getUserDetails().getId();
 
         Set<String> caseRoles = Set.of(CREATOR.getRole(), APPLICANT_2.getRole());
 
         caseUserApi.updateCaseRolesForUser(
-            userToken,
+            caseworkerUser.getAuthToken(),
             authTokenGenerator.generate(),
             String.valueOf(caseId),
             userId,
