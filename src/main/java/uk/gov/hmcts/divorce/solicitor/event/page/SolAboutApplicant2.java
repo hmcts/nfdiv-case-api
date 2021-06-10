@@ -55,7 +55,7 @@ public class SolAboutApplicant2 implements CcdPageConfiguration {
                 .done()
             .complex(CaseData::getApplicant2)
                 .optional(Applicant::getLanguagePreferenceWelsh, null, null,
-                "Include a Welsh copy of all generated divorce documents for Applicant 2?",
+                "Include a Welsh copy of all generated divorce documents for the respondent?",
                 "An English copy will still be included");
     }
 }
