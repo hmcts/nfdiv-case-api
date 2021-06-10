@@ -17,7 +17,7 @@ public class SolAboutApplicant2 implements CcdPageConfiguration {
 
         pageBuilder
             .page("SolAboutApplicant2")
-            .pageLabel("About applicant 2")
+            .pageLabel("About the respondent")
             .label(
                 "LabelNFDBanner-AboutApplicant2",
                 SOLICITOR_NFD_PREVIEW_BANNER,
@@ -30,17 +30,17 @@ public class SolAboutApplicant2 implements CcdPageConfiguration {
                 .mandatory(Applicant::getFirstName,
                     null,
                     null,
-                    "Applicant 2's first name")
+                    "The respondent's first name")
                 .optional(Applicant::getMiddleName,
                     null,
                     null,
-                    "Applicant 2's middle name")
+                    "The respondent's middle name")
                 .mandatory(Applicant::getLastName,
                     null,
                     null,
-                    "Applicant 2's last name")
+                    "The respondent's last name")
                 .mandatory(Applicant::getNameDifferentToMarriageCertificate, null, null,
-                    "Is applicant 2's name different to that on their marriage certificate?")
+                    "Is the respondent's name different to that on their marriage certificate?")
                 .mandatory(
                     Applicant::getNameChangedHow,
                     "applicant2NameDifferentToMarriageCertificate=\"Yes\"", null,
@@ -51,11 +51,11 @@ public class SolAboutApplicant2 implements CcdPageConfiguration {
                     null,
                     "If not through marriage or deed poll, please provide details of how they legally changed they name")
                 .mandatory(Applicant::getGender, null, null,
-                        "What is applicant 2's gender?")
+                        "What is the respondent's gender?")
                 .done()
             .complex(CaseData::getApplicant2)
                 .optional(Applicant::getLanguagePreferenceWelsh, null, null,
-                "If known, please specify if applicant 2 will want their document also in welsh",
-                "An english copy will still be included");
+                "Include a Welsh copy of all generated divorce documents for the respondent?",
+                "An English copy will still be included");
     }
 }

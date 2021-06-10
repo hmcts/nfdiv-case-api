@@ -88,7 +88,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         final CaseData caseData = details.getData();
         caseData.setApplicationFeeOrderSummary(orderSummary);
 
-        log.info("Adding Applicant 1 solicitor case roles");
+        log.info("Adding the applicant's solicitor case roles");
         ccdAccessService.addApplicant1SolicitorRole(
             httpServletRequest.getHeader(AUTHORIZATION),
             details.getId()
@@ -134,10 +134,11 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
     }
 
     private void updateApplicant2DigitalDetails(CaseData caseData) {
-        if (caseData.hasDigitalDetailsForApp2Sol() && caseData.hasApplicant2OrgId()) {
-            log.info("Applicant 2 solicitor is digital and applicant 2 org is populated");
+        if (caseData.getApplicant2().getSolicitor() != null && caseData.getApplicant2().getSolicitor().hasDigitalDetails()) {
+            log.info("The respondent's solicitor is digital and the respondent org is populated");
+
             caseData.setApp2ContactMethodIsDigital(YES);
-            caseData.setApplicant2SolicitorRepresented(YES);
+            caseData.getApplicant2().setSolicitorRepresented(YES);
         }
     }
 
