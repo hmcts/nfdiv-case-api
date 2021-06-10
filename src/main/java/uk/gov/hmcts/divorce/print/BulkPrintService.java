@@ -75,6 +75,7 @@ public class BulkPrintService {
     }
 
     private byte[] getDocumentBytes(final String docUrl, final String authToken)  {
+        String fileName = FilenameUtils.getName(docUrl);
         final String userAuth = request.getHeader(AUTHORIZATION);
         final var userDetails = idamService.retrieveUser(userAuth).getUserDetails();
         ResponseEntity<Resource> resourceResponseEntity = documentManagementClient.downloadBinary(
@@ -82,12 +83,12 @@ public class BulkPrintService {
             authToken,
             String.join(",", userDetails.getRoles()),
             userDetails.getId(),
-            FilenameUtils.getName(docUrl)
+            fileName
         );
         try {
             return resourceResponseEntity.getBody().getInputStream().readAllBytes();
         } catch (Exception e) {
-            throw new DocumentDownloadException("Doc url " + docUrl, e);
+            throw new DocumentDownloadException("Doc name " + fileName, e);
         }
     }
 }

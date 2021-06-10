@@ -263,6 +263,6 @@ class BulkPrintServiceTest {
 
         assertThatThrownBy(() -> bulkPrintService.print(print))
             .isInstanceOf(DocumentDownloadException.class)
-            .hasMessage("Doc url " + divorceDocumentListValue.getValue().getDocumentLink().getUrl());
+            .hasMessage("Doc name " + documentUuid);
     }
 }
