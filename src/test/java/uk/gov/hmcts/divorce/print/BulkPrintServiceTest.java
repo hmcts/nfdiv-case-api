@@ -272,7 +272,7 @@ class BulkPrintServiceTest {
     }
 
     @Test
-    void shouldThrowBulkPrintExceptionWhenResourceInputStreamIsNull() {
+    void shouldThrowBulkPrintExceptionWhenResourceIsNull() {
         ListValue<DivorceDocument> divorceDocumentListValue = getDivorceDocumentListValue(
             () -> ResponseEntity.ok(null)
         );

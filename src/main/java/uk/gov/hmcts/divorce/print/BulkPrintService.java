@@ -16,6 +16,7 @@ import uk.gov.hmcts.reform.sendletter.api.model.v3.LetterV3;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 
@@ -86,10 +87,12 @@ public class BulkPrintService {
             fileName
         );
         try {
-            if (resourceResponseEntity != null && resourceResponseEntity.getBody() != null) {
-                return resourceResponseEntity.getBody().getInputStream().readAllBytes();
-            }
-            throw new DocumentDownloadException("Resource is invalid");
+            Resource resource = Optional.ofNullable(resourceResponseEntity)
+                .map(ResponseEntity::getBody)
+                .orElseThrow(() -> new DocumentDownloadException("Resource is invalid"));
+
+            return resource.getInputStream().readAllBytes();
+
         } catch (Exception e) {
             throw new DocumentDownloadException("Doc name " + fileName, e);
         }
