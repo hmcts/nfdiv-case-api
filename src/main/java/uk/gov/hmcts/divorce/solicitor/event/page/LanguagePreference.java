@@ -31,7 +31,7 @@ public class LanguagePreference implements CcdPageConfiguration {
                     null,
                     null,
                     "Include a Welsh copy of all generated divorce documents for Applicant 1?",
-                    "An english copy will always be included"
+                    "An English copy will always be included"
                 )
                 .done();
     }
