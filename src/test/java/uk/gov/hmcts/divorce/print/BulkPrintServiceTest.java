@@ -213,7 +213,7 @@ class BulkPrintServiceTest {
     }
 
     @Test
-    void shouldThrowBulkPrintExceptionWhenDocumentCallFails() throws IOException {
+    void shouldThrowDocumentDownloadExceptionWhenDocumentCallFails() throws IOException {
         ListValue<DivorceDocument> divorceDocumentListValue = getDivorceDocumentListValue(
             () -> ResponseEntity.ok(resource)
         );
@@ -245,7 +245,7 @@ class BulkPrintServiceTest {
     }
 
     @Test
-    void shouldThrowBulkPrintExceptionWhenResponseEntityIsNull() {
+    void shouldThrowDocumentDownloadExceptionWhenResponseEntityIsNull() {
         ListValue<DivorceDocument> divorceDocumentListValue = getDivorceDocumentListValue(() -> null);
 
 
@@ -272,7 +272,7 @@ class BulkPrintServiceTest {
     }
 
     @Test
-    void shouldThrowBulkPrintExceptionWhenResourceIsNull() {
+    void shouldThrowDocumentDownloadExceptionWhenResourceIsNull() {
         ListValue<DivorceDocument> divorceDocumentListValue = getDivorceDocumentListValue(
             () -> ResponseEntity.ok(null)
         );
