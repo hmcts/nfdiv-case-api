@@ -30,22 +30,6 @@ public class JurisdictionApplyForDivorce implements CcdPageConfiguration {
                 "The court has legal power to deal with this application because the following applies:\n\n"
                     + "Divorce – *Opposite Sex Couple* – Article 3(1) of Council Regulation (EC) No 2201/2003"
                     + "of 27 November 2003")
-            .mandatory(CaseData::getLegalConnections)
-            .label(
-                "ResidualJurisdiction-Jurisdiction",
-                "### Residual Jurisdiction\n\n"
-                    + "The court may have residual jurisdiction if;\n\n"
-                    + "none of the other connections applies in relation to England and Wales;\n\n"
-                    + "either the applicant or the respondent is domiciled in England and Wales; and\n\n"
-                    + "neither the applicant nor the respondent is able to apply for a divorce in another member state "
-                    + "of the EU on the basis of any of the other connections.\n\n"
-                    + "In addition, in the case of a same-sex marriage, "
-                    + "the court may have residual jurisdiction if the following apply:\n"
-                    + "- The applicant and the respondent married each other in England and Wales; and\n"
-                    + "- Neither the applicant nor the respondent is able to apply for a divorce in any other country; and\n"
-                    + "- It would be in the interests of justice for the court to consider the application "
-                    + "(this may apply if, for example, the applicant's or the respondent's home country doesn't "
-                    + "allow divorce between same-sex couples)."
-            );
+            .mandatory(CaseData::getLegalConnections);
     }
 }
