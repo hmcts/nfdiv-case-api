@@ -8,7 +8,6 @@ import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.common.model.Gender;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TO_END_CIVIL_PARTNERSHIP;
