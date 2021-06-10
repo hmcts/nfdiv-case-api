@@ -54,7 +54,7 @@ public final class CaseDataWireMock {
             .withHeader(HttpHeaders.AUTHORIZATION, new EqualToPattern(TEST_AUTHORIZATION_TOKEN))
             .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(SERVICE_AUTHORIZATION))
             .withRequestBody(new EqualToJsonPattern(
-                "{\"user_id\" : \"3\", \"case_roles\":[\"[APPTWO]\",\"[CREATOR]\"]}",
+                "{\"user_id\" : \"3\", \"case_roles\":[\"[APPLICANTTWO]\",\"[CREATOR]\"]}",
                 true,
                 true))
             .willReturn(aResponse().withStatus(200))

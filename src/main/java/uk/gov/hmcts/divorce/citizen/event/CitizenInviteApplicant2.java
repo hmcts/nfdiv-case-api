@@ -24,7 +24,7 @@ import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_U
 @Component
 public class CitizenInviteApplicant2 implements CCDConfig<CaseData, State, UserRole> {
 
-    private static final String ALLOWED_CHARS = "ABCDEFGJKLMNPRSTVWXYZ23456789";
+    private static final String ALLOWED_CHARS = "ABCDEFGHJKLMNPRSTVWXYZ23456789";
     public static final String CITIZEN_INVITE_APPLICANT_2 = "citizen-invite-applicant2";
 
     @Override

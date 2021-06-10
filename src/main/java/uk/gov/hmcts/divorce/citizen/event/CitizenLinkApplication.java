@@ -51,7 +51,7 @@ public class CitizenLinkApplication implements CCDConfig<CaseData, State, UserRo
 
         log.info("Linking Applicant 2 to Case");
         ccdAccessService.linkApplicant2ToApplication(
-            httpServletRequest.getHeader(AUTHORIZATION), // is this actually Applicant 2 Auth header??
+            httpServletRequest.getHeader(AUTHORIZATION),
             details.getId()
         );
 
