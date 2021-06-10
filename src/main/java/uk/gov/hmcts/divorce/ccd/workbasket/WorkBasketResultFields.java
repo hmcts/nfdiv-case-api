@@ -16,8 +16,8 @@ public class WorkBasketResultFields implements CCDConfig<CaseData, State, UserRo
         configBuilder
             .workBasketResultFields()
             .caseReferenceField()
-            .field("applicant1HomeAddress", "Applicant 1 Post Code", "PostCode")
-            .field("applicant1LastName", "Applicant 1 Last Name")
-            .field("applicant2LastName", "Applicant 2 Last Name");
+            .field("applicant1HomeAddress", "Applicant's Post Code", "PostCode")
+            .field("applicant1LastName", "Applicant's Last Name")
+            .field("applicant2LastName", "Respondent's Last Name");
     }
 }

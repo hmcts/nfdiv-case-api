@@ -18,7 +18,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field(CaseData::getDateSubmitted)
             .field(CaseData::getApplicationType)
             .field(CaseData::getDivorceOrDissolution)
-            .field("LabelApplicant1-Heading", null, "### Applicant 1")
+            .field("LabelApplicant1-Heading", null, "### The applicant")
             .field("applicant1FirstName")
             .field("applicant1MiddleName")
             .field("applicant1LastName")
@@ -28,20 +28,20 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1NameChangedHowOtherDetails", "applicant1NameChangedHow=\"other\"")
             .field("LabelApplicant1DetailsAreConfidential-Heading",
                 "applicant1ContactDetailsConfidential=\"keep\"",
-                "#### Applicant 1's contact details are confidential")
+                "#### The applicant's contact details are confidential")
             .field("applicant1ContactDetailsConfidential")
             .field("applicant1HomeAddress", "applicant1ContactDetailsConfidential=\"share\"")
             .field("applicant1PhoneNumber", "applicant1ContactDetailsConfidential=\"share\"")
             .field(CaseData::getDivorceWho)
-            .field(CaseData::getApplicant1SolicitorRepresented)
+            .field("applicant1SolicitorRepresented")
             .field("LabelApplicant1sSolicitor-Heading",
                 "applicant1SolicitorRepresented=\"Yes\"",
-                "#### Applicant 1's Solicitor")
-            .field(CaseData::getApplicant1SolicitorName, "applicant1SolicitorRepresented=\"Yes\"")
-            .field(CaseData::getApplicant1SolicitorPhone, "applicant1SolicitorRepresented=\"Yes\"")
-            .field(CaseData::getApplicant1SolicitorEmail, "applicant1SolicitorRepresented=\"Yes\"")
-            .field(CaseData::getApplicant1OrganisationPolicy, "applicant1SolicitorRepresented=\"Yes\"")
-            .field(CaseData::getSolicitorReference, "applicant1SolicitorRepresented=\"Yes\"")
+                "#### The applicant's solicitor")
+            .field("applicant1SolicitorName", "applicant1SolicitorRepresented=\"Yes\"")
+            .field("applicant1SolicitorPhone", "applicant1SolicitorRepresented=\"Yes\"")
+            .field("applicant1SolicitorEmail", "applicant1SolicitorRepresented=\"Yes\"")
+            .field("applicant1SolicitorOrganisationPolicy", "applicant1SolicitorRepresented=\"Yes\"")
+            .field("applicant1SolicitorReference", "applicant1SolicitorRepresented=\"Yes\"")
             .field("LabelApplicant2-Heading", null, "### Applicant 2")
             .field("applicant2FirstName")
             .field("applicant2MiddleName")
@@ -50,16 +50,16 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2NameDifferentToMarriageCertificate")
             .field("applicant2NameChangedHow", "applicant2NameDifferentToMarriageCertificate=\"Yes\"")
             .field("applicant2NameChangedHowOtherDetails", "applicant2NameChangedHow=\"other\"")
-            .field(CaseData::getApplicant2SolicitorRepresented)
+            .field("applicant2SolicitorRepresented")
             .field("LabelApplicant2sSolicitor-Heading",
                 "applicant2SolicitorRepresented=\"Yes\"",
-                "#### Applicant 2's Solicitor")
-            .field(CaseData::getApplicant2SolicitorName, "applicant2SolicitorRepresented=\"Yes\"")
-            .field(CaseData::getApplicant2SolicitorPhone, "applicant2SolicitorRepresented=\"Yes\"")
-            .field(CaseData::getApplicant2SolicitorEmail, "applicant2SolicitorRepresented=\"Yes\"")
-            .field(CaseData::getApplicant2OrganisationPolicy, "applicant2SolicitorRepresented=\"Yes\"")
-            .field(CaseData::getApplicant2SolicitorReference, "applicant2SolicitorRepresented=\"Yes\"")
-            .field(CaseData::getApplicant2CorrespondenceAddress)
+                "#### The respondent's solicitor")
+            .field("applicant2SolicitorName", "applicant2SolicitorRepresented=\"Yes\"")
+            .field("applicant2SolicitorPhone", "applicant2SolicitorRepresented=\"Yes\"")
+            .field("applicant2SolicitorEmail", "applicant2SolicitorRepresented=\"Yes\"")
+            .field("applicant2SolicitorOrganisationPolicy", "applicant2SolicitorRepresented=\"Yes\"")
+            .field("applicant2SolicitorReference", "applicant2SolicitorRepresented=\"Yes\"")
+            .field("applicant2CorrespondenceAddress")
             .field(CaseData::getLegalConnections)
             .field("LabelMarriage-Heading", null, "### Marriage and certificate")
             .field("marriageDate")
@@ -86,8 +86,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field(CaseData::getHelpWithFeesReferenceNumber);
 
         configBuilder.tab("languageDetails", "Language")
-            .field("applicant1LanguagePreferenceWelsh", null, "Applicant 1's language preference")
-            .field("applicant2LanguagePreferenceWelsh", null, "Applicant 2's language preference");
+            .field("applicant1LanguagePreferenceWelsh", null, "The applicant's language preference")
+            .field("applicant2LanguagePreferenceWelsh", null, "The respondent's language preference");
 
         configBuilder.tab("documents", "Documents")
             .field(CaseData::getDocumentsGenerated)

@@ -35,37 +35,37 @@ import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.addToErrorLi
 public class Jurisdiction {
 
     @CCD(
-        label = "Is applicant 1 resident?",
+        label = "Is the applicant resident?",
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant1Residence;
 
     @CCD(
-        label = "Is applicant 2 resident?",
+        label = "Is the respondent resident?",
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant2Residence;
 
     @CCD(
-        label = "Is applicant 1 domiciled?",
+        label = "Is the applicant domiciled?",
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant1Domicile;
 
     @CCD(
-        label = "Is applicant 2 domiciled?",
+        label = "Is the respondent domiciled?",
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant2Domicile;
 
     @CCD(
-        label = "Has Applicant 1 been resident for the last twelve months?",
+        label = "Has the applicant been resident for the last twelve months?",
         access = {DefaultAccess.class}
     )
     private YesOrNo app1HabituallyResLastTwelveMonths;
 
     @CCD(
-        label = "Has Applicant 1 been resident for the last six months?",
+        label = "Has the applicant been resident for the last six months?",
         access = {DefaultAccess.class}
     )
     private YesOrNo app1HabituallyResLastSixMonths;
@@ -77,7 +77,7 @@ public class Jurisdiction {
     private YesOrNo residualEligible;
 
     @CCD(
-        label = "Were both applicant 1 and applicant 2 last habitually resident, and one still resides?",
+        label = "Were both the applicant and the respondent last habitually resident, and one still resides?",
         access = {DefaultAccess.class}
     )
     private YesOrNo bothLastHabituallyResident;
