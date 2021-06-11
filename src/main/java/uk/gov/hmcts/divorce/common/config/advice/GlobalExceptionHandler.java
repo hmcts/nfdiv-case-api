@@ -55,9 +55,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(DocumentDownloadException.class)
-    public ResponseEntity<Object> handleBadRequestException() {
+    public ResponseEntity<Object> handleDocumentDownloadException() {
         return new ResponseEntity<>(
-            HttpStatus.BAD_REQUEST
+            HttpStatus.INTERNAL_SERVER_ERROR
         );
     }
 }
