@@ -2,11 +2,11 @@ package uk.gov.hmcts.divorce.print.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 @AllArgsConstructor
 @Getter
 public class Letter {
-    private final String name;
-    private final byte[] data;
+    private final DivorceDocument divorceDocument;
     private final int count;
 }
