@@ -50,6 +50,7 @@ public class CitizenLinkApplicationTest {
     void shouldRemoveInvitePinAfterLinkingApplication() {
         final CaseData caseData = caseData();
         caseData.setInvitePin("D8BC9AQR");
+        caseData.setRespondentUserId("RespondentId");
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(1L);
         details.setData(caseData);
@@ -60,6 +61,6 @@ public class CitizenLinkApplicationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenLinkApplication.aboutToSubmit(details, details);
 
         assertThat(response.getData().getInvitePin()).isNull();
-        verify(ccdAccessService).linkApplicant2ToApplication(eq("auth header"), eq(1L));
+        verify(ccdAccessService).linkRespondentToApplication(eq("auth header"), eq(1L), eq("RespondentId"));
     }
 }

@@ -27,12 +27,10 @@ import static uk.gov.hmcts.divorce.common.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.common.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_1_SOL_AUTH_TOKEN;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_2_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_2_CITIZEN_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_USER_ID;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASEWORKER_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
@@ -189,13 +187,9 @@ public class CcdAccessServiceTest {
 
     @Test
     public void shouldNotThrowAnyExceptionWhenLinkApplicant2ToApplicationIsInvoked() {
-        User applicant2User = getIdamUser(APP_2_AUTH_TOKEN, APP_2_CITIZEN_USER_ID, TEST_APPLICANT_2_EMAIL);
         User caseworkerUser = getIdamUser(CASEWORKER_AUTH_TOKEN, CASEWORKER_USER_ID, TEST_CASEWORKER_USER_EMAIL);
 
-        when(idamService.retrieveUser(APP_2_AUTH_TOKEN))
-            .thenReturn(applicant2User);
-
-        when(idamService.retrieveCaseWorkerDetails())
+        when(idamService.retrieveUser(CASEWORKER_AUTH_TOKEN))
             .thenReturn(caseworkerUser);
 
         when(authTokenGenerator.generate())
@@ -213,10 +207,10 @@ public class CcdAccessServiceTest {
                 new CaseUser(APP_2_CITIZEN_USER_ID, Set.of(APPLICANT_2.getRole()))
             );
 
-        assertThatCode(() -> ccdAccessService.linkApplicant2ToApplication(APP_2_AUTH_TOKEN, TEST_CASE_ID))
+        assertThatCode(() -> ccdAccessService.linkRespondentToApplication(CASEWORKER_AUTH_TOKEN, TEST_CASE_ID, APP_2_CITIZEN_USER_ID))
             .doesNotThrowAnyException();
 
-        verify(idamService).retrieveUser(APP_2_AUTH_TOKEN);
+        verify(idamService).retrieveUser(CASEWORKER_AUTH_TOKEN);
         verify(authTokenGenerator).generate();
         verify(caseUserApi)
             .updateCaseRolesForUser(

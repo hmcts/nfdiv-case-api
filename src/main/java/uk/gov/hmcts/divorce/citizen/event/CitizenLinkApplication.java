@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import javax.servlet.http.HttpServletRequest;
 
+import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CITIZEN;
@@ -48,18 +49,28 @@ public class CitizenLinkApplication implements CCDConfig<CaseData, State, UserRo
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
         CaseData data = details.getData();
+        CaseData beforeData = beforeDetails.getData();
 
-        log.info("Linking Applicant 2 to Case");
-        ccdAccessService.linkApplicant2ToApplication(
-            httpServletRequest.getHeader(AUTHORIZATION),
-            details.getId()
-        );
+        if (data.getInvitePin().equals(beforeData.getInvitePin())) {
+            log.info("Linking Applicant 2 to Case");
+            ccdAccessService.linkRespondentToApplication(
+                httpServletRequest.getHeader(AUTHORIZATION),
+                details.getId(),
+                beforeData.getRespondentUserId()
+            );
 
-        data.setInvitePin(null);
+            data.setInvitePin(null);
 
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(data)
-            .state(AwaitingApplicant2Response)
-            .build();
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(data)
+                .state(AwaitingApplicant2Response)
+                .build();
+        } else {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(data)
+                .state(AwaitingApplicant2Response)
+                .errors(singletonList("You have entered the wrong access code. Check your email and enter it again before continuing."))
+                .build();
+        }
     }
 }

@@ -413,6 +413,12 @@ public class CaseData {
     )
     private String invitePin;
 
+    @CCD(
+        label = "The respondent's user id",
+        access = {DefaultAccess.class}
+    )
+    private String respondentUserId;
+
     @JsonIgnore
     public LocalDate getDateOfSubmissionResponse() {
         return dateSubmitted == null ? null : dateSubmitted.plusDays(SUBMISSION_RESPONSE_DAYS).toLocalDate();
