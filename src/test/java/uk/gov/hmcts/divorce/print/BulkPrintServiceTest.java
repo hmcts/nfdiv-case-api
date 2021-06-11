@@ -268,7 +268,7 @@ class BulkPrintServiceTest {
 
         assertThatThrownBy(() -> bulkPrintService.print(print))
             .isInstanceOf(DocumentDownloadException.class)
-            .hasMessage("Doc name " + documentUuid);
+            .hasMessage("Resource is invalid " + documentUuid);
     }
 
     @Test
@@ -297,7 +297,7 @@ class BulkPrintServiceTest {
 
         assertThatThrownBy(() -> bulkPrintService.print(print))
             .isInstanceOf(DocumentDownloadException.class)
-            .hasMessage("Doc name " + documentUuid);
+            .hasMessage("Resource is invalid " + documentUuid);
     }
 
     private ListValue<DivorceDocument> getDivorceDocumentListValue(
