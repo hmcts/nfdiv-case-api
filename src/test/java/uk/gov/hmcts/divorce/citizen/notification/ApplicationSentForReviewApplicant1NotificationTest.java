@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.common.model.Gender;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -25,10 +26,11 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant2;
 
 
 @ExtendWith(MockitoExtension.class)
-public class ApplicationSentForReviewNotificationTest {
+public class ApplicationSentForReviewApplicant1NotificationTest {
 
     @Mock
     private NotificationService notificationService;
@@ -37,12 +39,13 @@ public class ApplicationSentForReviewNotificationTest {
     private CommonContent commonContent;
 
     @InjectMocks
-    private ApplicationSentForReviewNotification notification;
+    private ApplicationSentForReviewApplicant1Notification notification;
 
     @Test
     void shouldSendEmailToApplicant1WhileInAwaitingApplicant2ResponseState() {
         CaseData data = caseData();
         data.setDueDate(LOCAL_DATE);
+        data.setApplicant2(getApplicant2(Gender.MALE));
         final HashMap<String, String> templateVars = new HashMap<>();
 
         when(commonContent.templateVarsFor(data)).thenReturn(templateVars);

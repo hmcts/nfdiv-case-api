@@ -16,7 +16,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION
 
 @Component
 @Slf4j
-public class ApplicationSentForReviewNotification {
+public class ApplicationSentForReviewApplicant1Notification {
 
     @Autowired
     private NotificationService notificationService;

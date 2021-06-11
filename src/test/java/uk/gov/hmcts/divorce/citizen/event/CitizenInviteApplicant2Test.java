@@ -8,7 +8,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewNotification;
+import uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewApplicant1Notification;
+import uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewApplicant2Notification;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
@@ -24,7 +25,10 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 public class CitizenInviteApplicant2Test {
 
     @Mock
-    private ApplicationSentForReviewNotification applicationSentForReviewNotification;
+    private ApplicationSentForReviewApplicant1Notification applicationSentForReviewApplicant1Notification;
+
+    @Mock
+    private ApplicationSentForReviewApplicant2Notification applicationSentForReviewApplicant2Notification;
 
     @InjectMocks
     private CitizenInviteApplicant2 citizenInviteApplicant2;
@@ -52,7 +56,7 @@ public class CitizenInviteApplicant2Test {
     }
 
     @Test
-    public void givenValidCaseDataWhenCallbackIsInvokedThenGeneratePinAndSendEmail() {
+    public void givenValidCaseDataWhenCallbackIsInvokedThenGeneratePinAndSendEmails() {
         final CaseData caseData = caseData();
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -60,7 +64,8 @@ public class CitizenInviteApplicant2Test {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenInviteApplicant2.aboutToSubmit(details, details);
 
-        verify(applicationSentForReviewNotification).send(caseData, details.getId());
+        verify(applicationSentForReviewApplicant1Notification).send(caseData, details.getId());
+        verify(applicationSentForReviewApplicant2Notification).send(caseData, details.getId());
 
         assertThat(response.getData().getInvitePin()).isNotBlank();
         assertThat(response.getData().getInvitePin().length()).isEqualTo(8);

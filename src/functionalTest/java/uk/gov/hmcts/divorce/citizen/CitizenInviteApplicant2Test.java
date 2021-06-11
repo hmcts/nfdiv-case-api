@@ -25,7 +25,7 @@ public class CitizenInviteApplicant2Test extends FunctionalTestSuite {
     private static final String RESPONSE = "classpath:responses/response-applicant1-invite-applicant2.json";
 
     @Test
-    public void shouldSendEmailWhenAllTemplateParamsAreValid() throws IOException {
+    public void shouldSendEmailsWhenAllTemplateParamsAreValid() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
 
         Response response = triggerCallback(request, CITIZEN_INVITE_APPLICANT_2, ABOUT_TO_SUBMIT_URL);

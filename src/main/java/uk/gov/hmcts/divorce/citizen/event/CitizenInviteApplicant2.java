@@ -8,7 +8,8 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewNotification;
+import uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewApplicant1Notification;
+import uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewApplicant2Notification;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
@@ -30,7 +31,10 @@ public class CitizenInviteApplicant2 implements CCDConfig<CaseData, State, UserR
     public static final String CITIZEN_INVITE_APPLICANT_2 = "citizen-invite-applicant2";
 
     @Autowired
-    private ApplicationSentForReviewNotification applicationSentForReviewNotification;
+    private ApplicationSentForReviewApplicant1Notification applicationSentForReviewApplicant1Notification;
+
+    @Autowired
+    private ApplicationSentForReviewApplicant2Notification applicationSentForReviewApplicant2Notification;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -56,9 +60,8 @@ public class CitizenInviteApplicant2 implements CCDConfig<CaseData, State, UserR
         data.setInvitePin(pin);
         data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
 
-        // TODO - send email to applicant 2 (to be done in NFDIV-689)
-
-        applicationSentForReviewNotification.send(data, details.getId());
+        applicationSentForReviewApplicant1Notification.send(data, details.getId());
+        applicationSentForReviewApplicant2Notification.send(data, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
