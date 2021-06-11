@@ -51,7 +51,7 @@ public class CitizenLinkApplication implements CCDConfig<CaseData, State, UserRo
         CaseData data = details.getData();
         CaseData beforeData = beforeDetails.getData();
 
-        if (data.getInvitePin().equals(beforeData.getInvitePin())) {
+        if (data.getAccessCode().equals(beforeData.getAccessCode())) {
             log.info("Linking Applicant 2 to Case");
             ccdAccessService.linkRespondentToApplication(
                 httpServletRequest.getHeader(AUTHORIZATION),
@@ -59,7 +59,7 @@ public class CitizenLinkApplication implements CCDConfig<CaseData, State, UserRo
                 beforeData.getRespondentUserId()
             );
 
-            data.setInvitePin(null);
+            data.setAccessCode(null);
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(data)

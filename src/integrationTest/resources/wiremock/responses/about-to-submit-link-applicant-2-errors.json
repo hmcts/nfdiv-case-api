@@ -44,7 +44,7 @@
     "applicant2SolicitorRepresented": null,
     "divorceOrDissolution": "divorce",
     "dueDate": "${json-unit.ignore}",
-    "invitePin": "${json-unit.any-string}",
+    "accessCode": "${json-unit.any-string}",
     "jurisdictionApp1HabituallyResLastSixMonths": null,
     "jurisdictionApp1HabituallyResLastTwelveMonths": null,
     "jurisdictionApplicant1Domicile": null,

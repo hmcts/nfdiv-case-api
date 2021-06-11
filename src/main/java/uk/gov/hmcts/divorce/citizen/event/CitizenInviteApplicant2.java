@@ -53,7 +53,7 @@ public class CitizenInviteApplicant2 implements CCDConfig<CaseData, State, UserR
 
         log.info("Generating pin to allow the respondent to access the joint application");
         final String pin = generatePin();
-        data.setInvitePin(pin);
+        data.setAccessCode(pin);
         data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
 
         // TODO - send email to applicant 2 (to be done in NFDIV-689)

@@ -91,9 +91,9 @@ public class CitizenLinkApplicationTest {
     }
 
     @Test
-    public void givenValidInvitePinWhenCallbackIsInvokedThenInvitePinIsRemovedAndSolicitorRolesAreSet() throws Exception {
+    public void givenValidAccessCodeWhenCallbackIsInvokedThenInvitePinIsRemovedAndSolicitorRolesAreSet() throws Exception {
         CaseData data = caseData();
-        data.setInvitePin("D8BC9AQR");
+        data.setAccessCode("D8BC9AQR");
         data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, APP_2_CITIZEN_USER_ID, CITIZEN_ROLE);
@@ -112,7 +112,7 @@ public class CitizenLinkApplicationTest {
                 .data(
                     Map.of(
                     "respondentUserId", "3",
-                    "invitePin", "D8BC9AQR"
+                    "accessCode", "D8BC9AQR"
                     )
                 )
                 .build()
@@ -137,9 +137,9 @@ public class CitizenLinkApplicationTest {
     }
 
     @Test
-    public void givenInvalidInvitePinWhenCallbackIsInvokedThenCaseNotLinkedAndErrorsReturned() throws Exception {
+    public void givenInvalidAccessCodeWhenCallbackIsInvokedThenCaseNotLinkedAndErrorsReturned() throws Exception {
         CaseData data = caseData();
-        data.setInvitePin("D8BC9AQR");
+        data.setAccessCode("D8BC9AQR");
         data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, APP_2_CITIZEN_USER_ID, CITIZEN_ROLE);
@@ -158,7 +158,7 @@ public class CitizenLinkApplicationTest {
                 .data(
                     Map.of(
                         "respondentUserId", "3",
-                        "invitePin", "E9CD8BRS"
+                        "accessCode", "E9CD8BRS"
                     )
                 )
                 .build()
