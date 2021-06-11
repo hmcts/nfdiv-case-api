@@ -202,22 +202,11 @@ class BulkPrintServiceTest {
 
     }
 
-    private User solicitorUser(List<String> solicitorRoles, String userId) {
-        UserDetails userDetails = UserDetails
-            .builder()
-            .roles(solicitorRoles)
-            .id(userId)
-            .build();
-
-        return new User(APP_1_SOL_AUTH_TOKEN, userDetails);
-    }
-
     @Test
     void shouldThrowDocumentDownloadExceptionWhenDocumentCallFails() throws IOException {
         ListValue<DivorceDocument> divorceDocumentListValue = getDivorceDocumentListValue(
             () -> ResponseEntity.ok(resource)
         );
-
 
         final String documentUuid = FilenameUtils.getName(
             divorceDocumentListValue.getValue().getDocumentLink().getUrl());
@@ -248,7 +237,6 @@ class BulkPrintServiceTest {
     void shouldThrowDocumentDownloadExceptionWhenResponseEntityIsNull() {
         ListValue<DivorceDocument> divorceDocumentListValue = getDivorceDocumentListValue(() -> null);
 
-
         final String documentUuid = FilenameUtils.getName(
             divorceDocumentListValue.getValue().getDocumentLink().getUrl());
 
@@ -276,7 +264,6 @@ class BulkPrintServiceTest {
         ListValue<DivorceDocument> divorceDocumentListValue = getDivorceDocumentListValue(
             () -> ResponseEntity.ok(null)
         );
-
 
         final String documentUuid = FilenameUtils.getName(
             divorceDocumentListValue.getValue().getDocumentLink().getUrl());
@@ -335,5 +322,15 @@ class BulkPrintServiceTest {
             .willReturn(responseEntitySupplier.get());
 
         return divorceDocumentListValue;
+    }
+
+    private User solicitorUser(List<String> solicitorRoles, String userId) {
+        UserDetails userDetails = UserDetails
+            .builder()
+            .roles(solicitorRoles)
+            .id(userId)
+            .build();
+
+        return new User(APP_1_SOL_AUTH_TOKEN, userDetails);
     }
 }
