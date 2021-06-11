@@ -87,6 +87,13 @@ public class TestDataHelper {
             .build();
     }
 
+    public static Applicant getApplicant2(Gender gender) {
+        return Applicant.builder()
+            .gender(gender)
+            .email(TEST_USER_EMAIL)
+            .build();
+    }
+
     public static CaseData caseData() {
         return CaseData.builder()
             .applicant1(getApplicant())

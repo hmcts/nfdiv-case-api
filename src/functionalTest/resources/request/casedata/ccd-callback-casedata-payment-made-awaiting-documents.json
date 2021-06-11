@@ -19,7 +19,6 @@
   "jurisdictionConnections": ["A"],
   "cannotUploadSupportingDocument": ["marriageCertificate", "nameChangeEvidence"],
   "marriageMarriedInUk": "YES",
-  "divorceWho": "husband",
   "applicationFeeOrderSummary": {
     "PaymentTotal": "55000",
     "PaymentReference": null,
