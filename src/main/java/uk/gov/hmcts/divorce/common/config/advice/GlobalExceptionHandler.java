@@ -55,7 +55,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(InvalidResourceException.class)
-    public ResponseEntity<Object> handleInvalidStreamException() {
+    public ResponseEntity<Object> handleInvalidResourceException() {
         return new ResponseEntity<>(
             HttpStatus.INTERNAL_SERVER_ERROR
         );
