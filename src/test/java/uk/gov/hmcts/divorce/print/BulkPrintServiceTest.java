@@ -14,7 +14,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.document.DocumentManagementClient;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.divorce.print.exception.InvalidStreamException;
+import uk.gov.hmcts.divorce.print.exception.InvalidResourceException;
 import uk.gov.hmcts.divorce.print.model.Letter;
 import uk.gov.hmcts.divorce.print.model.Print;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -240,7 +240,7 @@ class BulkPrintServiceTest {
             .willThrow(new IOException("Corrupt data"));
 
         assertThatThrownBy(() -> bulkPrintService.print(print))
-            .isInstanceOf(InvalidStreamException.class)
+            .isInstanceOf(InvalidResourceException.class)
             .hasMessage("Doc name " + documentUuid);
     }
 
@@ -267,7 +267,7 @@ class BulkPrintServiceTest {
         );
 
         assertThatThrownBy(() -> bulkPrintService.print(print))
-            .isInstanceOf(InvalidStreamException.class)
+            .isInstanceOf(InvalidResourceException.class)
             .hasMessage("Resource is invalid " + documentUuid);
     }
 
@@ -296,7 +296,7 @@ class BulkPrintServiceTest {
         );
 
         assertThatThrownBy(() -> bulkPrintService.print(print))
-            .isInstanceOf(InvalidStreamException.class)
+            .isInstanceOf(InvalidResourceException.class)
             .hasMessage("Resource is invalid " + documentUuid);
     }
 

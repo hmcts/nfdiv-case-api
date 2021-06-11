@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.document.DocumentManagementClient;
 import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.divorce.print.exception.InvalidStreamException;
+import uk.gov.hmcts.divorce.print.exception.InvalidResourceException;
 import uk.gov.hmcts.divorce.print.model.Print;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.sendletter.api.SendLetterApi;
@@ -94,9 +94,9 @@ public class BulkPrintService {
                 try {
                     return resource.getInputStream().readAllBytes();
                 } catch (IOException e) {
-                    throw new InvalidStreamException("Doc name " + fileName, e);
+                    throw new InvalidResourceException("Doc name " + fileName, e);
                 }
             })
-            .orElseThrow(() -> new InvalidStreamException("Resource is invalid " + fileName));
+            .orElseThrow(() -> new InvalidResourceException("Resource is invalid " + fileName));
     }
 }
