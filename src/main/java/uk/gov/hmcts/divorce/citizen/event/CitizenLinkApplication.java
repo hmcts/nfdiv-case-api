@@ -19,7 +19,10 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_LA;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_SOLICITOR;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_UPDATE;
 
@@ -43,7 +46,8 @@ public class CitizenLinkApplication implements CCDConfig<CaseData, State, UserRo
             .name("Link Applicant 2 to case")
             .description("Link Applicant 2 to case to enable completion of joint application")
             .grant(CREATE_READ_UPDATE, CITIZEN, CASEWORKER_DIVORCE_COURTADMIN,
-                    CASEWORKER_DIVORCE_COURTADMIN_BETA, CASEWORKER_DIVORCE_SUPERUSER)
+                    CASEWORKER_DIVORCE_COURTADMIN_BETA, CASEWORKER_DIVORCE_SUPERUSER,
+                    CASEWORKER_DIVORCE_SOLICITOR, CASEWORKER_DIVORCE_COURTADMIN_LA, CASEWORKER_DIVORCE_SYSTEMUPDATE)
             .displayOrder(1)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
