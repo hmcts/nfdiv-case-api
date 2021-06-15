@@ -31,7 +31,6 @@ import java.util.Map;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -95,6 +94,7 @@ public class CitizenLinkApplicationTest {
         CaseData data = caseData();
         data.setAccessCode("D8BC9AQR");
         data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
+        data.setRespondentUserId("3");
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, APP_2_CITIZEN_USER_ID, CITIZEN_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -136,61 +136,9 @@ public class CitizenLinkApplicationTest {
         verifyNoMoreInteractions(serviceTokenGenerator);
     }
 
-    @Test
-    public void givenInvalidAccessCodeWhenCallbackIsInvokedThenCaseNotLinkedAndErrorsReturned() throws Exception {
-        CaseData data = caseData();
-        data.setAccessCode("D8BC9AQR");
-        data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
-
-        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, APP_2_CITIZEN_USER_ID, CITIZEN_ROLE);
-        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
-        stubForIdamDetails(CASEWORKER_AUTH_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
-        stubForIdamToken(CASEWORKER_AUTH_TOKEN);
-
-        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
-
-        stubForCitizenCcdCaseRoles();
-
-        CallbackRequest callbackRequest = callbackRequest(data, CITIZEN_LINK_APPLICANT_2);
-        callbackRequest.setCaseDetailsBefore(
-            CaseDetails
-                .builder()
-                .data(
-                    Map.of(
-                        "respondentUserId", "3",
-                        "accessCode", "E9CD8BRS"
-                    )
-                )
-                .build()
-        );
-
-        String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest))
-            .accept(APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andReturn()
-            .getResponse()
-            .getContentAsString();
-
-        assertThatJson(actualResponse)
-            .isEqualTo(json(expectedCcdAboutToStartCallbackResponseWithErrors()));
-
-        verifyNoInteractions(serviceTokenGenerator);
-    }
-
     private String expectedCcdAboutToStartCallbackSuccessfulResponse() throws IOException {
         File validCaseDataJsonFile = getFile(
             "classpath:wiremock/responses/about-to-submit-link-applicant-2.json");
-
-        return new String(Files.readAllBytes(validCaseDataJsonFile.toPath()));
-    }
-
-    private String expectedCcdAboutToStartCallbackResponseWithErrors() throws IOException {
-        File validCaseDataJsonFile = getFile(
-            "classpath:wiremock/responses/about-to-submit-link-applicant-2-errors.json");
 
         return new String(Files.readAllBytes(validCaseDataJsonFile.toPath()));
     }
