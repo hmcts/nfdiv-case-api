@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.common.validation;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
@@ -13,6 +14,7 @@ import java.util.List;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 import static java.time.temporal.ChronoUnit.YEARS;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -28,6 +30,7 @@ import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.checkIfYesOr
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.hasAwaitingDocuments;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.isPaymentIncomplete;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.validateBasicCase;
+import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.validateCaseFieldsForIssueApplication;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
 public class CaseValidationTest {
@@ -158,8 +161,46 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldReturnFaseWhenCaseDoesNotHaveAwaitingDocuments() {
+    public void shouldReturnFalseWhenCaseDoesNotHaveAwaitingDocuments() {
         CaseData caseData = new CaseData();
         assertFalse(hasAwaitingDocuments(caseData));
+    }
+
+    @Test
+    public void shouldReturnErrorWhenApp2MarriageCertNameAndPlaceOfMarriageAreMissing() {
+        CaseData caseData = new CaseData();
+        List<String> errors = new ArrayList<>();
+
+        validateCaseFieldsForIssueApplication(caseData, errors);
+
+        Assertions.assertThat(errors).containsExactlyInAnyOrder(
+            "MarriageApplicant2Name cannot be empty or null",
+            "PlaceOfMarriage cannot be empty or null"
+        );
+    }
+
+    @Test
+    public void shouldReturnErrorWhenApp2MarriageCertNameIsMissing() {
+        CaseData caseData = new CaseData();
+        caseData.getMarriageDetails().setPlaceOfMarriage("London");
+        List<String> errors = new ArrayList<>();
+
+        validateCaseFieldsForIssueApplication(caseData, errors);
+
+        Assertions.assertThat(errors).containsExactlyInAnyOrder(
+            "MarriageApplicant2Name cannot be empty or null"
+        );
+    }
+
+    @Test
+    public void shouldNotReturnErrorWhenBothWhenApp2MarriageCertNameAndPlaceOfMarriageArePresent() {
+        CaseData caseData = new CaseData();
+        caseData.getMarriageDetails().setPlaceOfMarriage("London");
+        caseData.getMarriageDetails().setApplicant2Name("TestFname TestMname  TestLname");
+        List<String> errors = emptyList();
+
+        validateCaseFieldsForIssueApplication(caseData, errors);
+
+        Assertions.assertThat(errors).isEmpty();
     }
 }
