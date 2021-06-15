@@ -127,4 +127,9 @@ public final class ValidationUtil {
             || !isEmpty(caseData.getCannotUploadSupportingDocument());
     }
 
+    public static void validateCaseFieldsForIssueApplication(CaseData caseData, List<String> errorList) {
+        //MarriageApplicant1Name and MarriageDate are validated in validateBasicCase
+        addToErrorList(checkIfStringNullOrEmpty(caseData.getMarriageDetails().getApplicant2Name(), "MarriageApplicant2Name"), errorList);
+        addToErrorList(checkIfStringNullOrEmpty(caseData.getMarriageDetails().getPlaceOfMarriage(), "PlaceOfMarriage"), errorList);
+    }
 }
