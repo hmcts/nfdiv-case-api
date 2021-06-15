@@ -126,6 +126,7 @@ ccd:
 xui-webapp:
   enabled: true
   nodejs:
+    keyVaults: []
     imagePullPolicy: Always
     releaseNameOverride: ${SERVICE_NAME}-xui-webapp
     image: hmctspublic.azurecr.io/xui/webapp:latest
