@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
+import java.util.Locale;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW;
@@ -78,13 +79,13 @@ public class ApplicationSentForReviewApplicant2Notification {
     }
 
     private void setDivorceVariables(Map<String, String> templateVars, CaseData caseData) {
-        templateVars.put(APPLICATION.toLowerCase(), "a " + DIVORCE_APPLICATION);
+        templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), "a " + DIVORCE_APPLICATION);
         templateVars.put(ACCOUNT, DIVORCE_ACCOUNT);
         templateVars.put(FOR_YOUR_APPLICATION, FOR_YOUR_DIVORCE);
     }
 
     private void setDissolutionVariables(Map<String, String> templateVars, CaseData caseData) {
-        templateVars.put(APPLICATION.toLowerCase(), "an " + APPLICATION_TO_END_CIVIL_PARTNERSHIP);
+        templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), "an " + APPLICATION_TO_END_CIVIL_PARTNERSHIP);
         templateVars.put(ACCOUNT, CIVIL_PARTNERSHIP_ACCOUNT);
         templateVars.put(FOR_YOUR_APPLICATION, TO_END_CIVIL_PARTNERSHIP);
     }
