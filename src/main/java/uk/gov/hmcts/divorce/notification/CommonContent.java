@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
+import uk.gov.hmcts.divorce.common.model.Gender;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -47,5 +49,14 @@ public class CommonContent {
         }
 
         return templateVars;
+    }
+
+    public String getService(DivorceOrDissolution divorceOrDissolution) {
+        return divorceOrDissolution.isDivorce() ? "divorce" : "civil partnership";
+    }
+
+    public String getPartner(CaseData caseData) {
+        return caseData.getDivorceOrDissolution().isDivorce()
+            ? caseData.getApplicant2().getGender() == Gender.MALE ? "husband" : "wife" : "civil partner";
     }
 }

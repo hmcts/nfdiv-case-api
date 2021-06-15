@@ -22,7 +22,7 @@ class MarriageIrretrievablyBrokenTest {
     @Test
     public void shouldPreventProgressIfMarriageNotBroken() {
         final CaseData caseData = caseData();
-        caseData.setScreenHasMarriageBroken(NO);
+        caseData.setApplicant1ScreenHasMarriageBroken(NO);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -34,14 +34,54 @@ class MarriageIrretrievablyBrokenTest {
         assertEquals(response.getErrors().size(), 1);
         assertEquals(
             response.getErrors().get(0),
-            "To continue, the applicant must believe and declare that their marriage has irrevocably broken"
+            "To continue, applicant 1 must believe and declare that their marriage has irrevocably broken"
+        );
+    }
+
+    @Test
+    public void shouldPreventProgressIfMarriageNotBrokenForBothApplicants() {
+        final CaseData caseData = caseData();
+        caseData.setApplicant1ScreenHasMarriageBroken(NO);
+        caseData.setApplicant2ScreenHasMarriageBroken(NO);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(1L);
+        details.setCreatedDate(LOCAL_DATE_TIME);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
+
+        assertEquals(response.getErrors().size(), 2);
+        assertEquals(
+            response.getErrors().get(0),
+            "To continue, applicant 1 must believe and declare that their marriage has irrevocably broken"
+        );
+        assertEquals(
+            response.getErrors().get(1),
+            "To continue, applicant 2 must believe and declare that their marriage has irrevocably broken"
         );
     }
 
     @Test
     public void shouldAllowProgressIfMarriageIsBroken() {
         final CaseData caseData = caseData();
-        caseData.setScreenHasMarriageBroken(YES);
+        caseData.setApplicant1ScreenHasMarriageBroken(YES);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(1L);
+        details.setCreatedDate(LOCAL_DATE_TIME);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
+
+        assertEquals(response.getErrors().size(), 0);
+    }
+
+    @Test
+    public void shouldAllowProgressIfMarriageIsBrokenForBothApplicants() {
+        final CaseData caseData = caseData();
+        caseData.setApplicant1ScreenHasMarriageBroken(YES);
+        caseData.setApplicant2ScreenHasMarriageBroken(YES);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);

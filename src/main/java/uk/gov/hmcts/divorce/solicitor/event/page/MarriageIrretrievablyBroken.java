@@ -36,12 +36,12 @@ public class MarriageIrretrievablyBroken implements CcdPageConfiguration {
                 "marriageIrretrievablyBrokenPara-1",
                 "The marriage must have irretrievably broken down for the applicant to get a divorce. "
                     + "This means it cannot be saved.")
-            .mandatory(CaseData::getScreenHasMarriageBroken)
+            .mandatory(CaseData::getApplicant1ScreenHasMarriageBroken)
             .label(
                 "MarriageNotIrretrievablyBroken",
                 "The marriage must have irretrievably broken down for the applicant to get a divorce. "
                     + "This is the law in England and Wales.",
-                "screenHasMarriageBroken=\"No\""
+                "applicant1ScreenHasMarriageBroken=\"No\""
             );
     }
 
@@ -51,10 +51,15 @@ public class MarriageIrretrievablyBroken implements CcdPageConfiguration {
     ) {
         log.info("Mid-event callback triggered for MarriageIrretrievablyBroken");
 
+        CaseData data = details.getData();
         List<String> errors = new ArrayList<>();
 
-        if (!details.getData().getScreenHasMarriageBroken().toBoolean()) {
-            errors.add("To continue, the applicant must believe and declare that their marriage has irrevocably broken");
+        if (!data.getApplicant1ScreenHasMarriageBroken().toBoolean()) {
+            errors.add("To continue, applicant 1 must believe and declare that their marriage has irrevocably broken");
+        }
+
+        if (data.getApplicant2ScreenHasMarriageBroken() != null && !data.getApplicant2ScreenHasMarriageBroken().toBoolean()) {
+            errors.add("To continue, applicant 2 must believe and declare that their marriage has irrevocably broken");
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

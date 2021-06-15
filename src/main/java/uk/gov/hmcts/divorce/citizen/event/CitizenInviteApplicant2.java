@@ -2,11 +2,13 @@ package uk.gov.hmcts.divorce.citizen.event;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewNotification;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
@@ -26,6 +28,9 @@ public class CitizenInviteApplicant2 implements CCDConfig<CaseData, State, UserR
 
     private static final String ALLOWED_CHARS = "ABCDEFGJKLMNPRSTVWXYZ23456789";
     public static final String CITIZEN_INVITE_APPLICANT_2 = "citizen-invite-applicant2";
+
+    @Autowired
+    private ApplicationSentForReviewNotification applicationSentForReviewNotification;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -52,6 +57,8 @@ public class CitizenInviteApplicant2 implements CCDConfig<CaseData, State, UserR
         data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
 
         // TODO - send email to applicant 2 (to be done in NFDIV-689)
+
+        applicationSentForReviewNotification.send(data, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
