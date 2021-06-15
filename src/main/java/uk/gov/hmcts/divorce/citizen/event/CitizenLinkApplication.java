@@ -45,9 +45,7 @@ public class CitizenLinkApplication implements CCDConfig<CaseData, State, UserRo
             .forState(AwaitingApplicant2Response)
             .name("Link Applicant 2 to case")
             .description("Link Applicant 2 to case to enable completion of joint application")
-            .grant(CREATE_READ_UPDATE, CITIZEN, CASEWORKER_DIVORCE_COURTADMIN,
-                    CASEWORKER_DIVORCE_COURTADMIN_BETA, CASEWORKER_DIVORCE_SUPERUSER,
-                    CASEWORKER_DIVORCE_SOLICITOR, CASEWORKER_DIVORCE_COURTADMIN_LA, CASEWORKER_DIVORCE_SYSTEMUPDATE)
+            .grant(CREATE_READ_UPDATE, CITIZEN, CASEWORKER_DIVORCE_SYSTEMUPDATE)
             .displayOrder(1)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
