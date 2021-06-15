@@ -41,7 +41,7 @@ public enum State {
     },
 
     @CCD(
-        name = "Application paid and submitted - awaiting documents",
+        name = "Awaiting applicant",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
     AwaitingDocuments("AwaitingDocuments") {
@@ -67,7 +67,7 @@ public enum State {
     AwaitingHWFDecision("AwaitingHWFDecision"),
 
     @CCD(
-        name = "Application paid and submitted",
+        name = "Submitted",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
     Submitted("Submitted") {

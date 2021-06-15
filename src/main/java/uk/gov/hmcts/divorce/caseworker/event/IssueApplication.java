@@ -22,18 +22,21 @@ import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLI
 
 @Component
 public class IssueApplication implements CCDConfig<CaseData, State, UserRole> {
-    public static final String ISSUE_APPLICATION = "issue-application";
+    public static final String ISSUE_APPLICATION = "issueFromSubmitted";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(ISSUE_APPLICATION)
             .forStateTransition(Submitted,Issued)
-            .name("Issue Application")
-            .description("Issue Application")
+            .name("Application issued")
+            .description("Application issued")
+            .displayOrder(4)
             .showSummary()
             .explicitGrants()
-            .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_COURTADMIN)
+            .grant(CREATE_READ_UPDATE,
+                CASEWORKER_DIVORCE_COURTADMIN_BETA,
+                CASEWORKER_DIVORCE_COURTADMIN)
             .grant(READ,
                 CASEWORKER_DIVORCE_SOLICITOR,
                 CASEWORKER_DIVORCE_SUPERUSER,
