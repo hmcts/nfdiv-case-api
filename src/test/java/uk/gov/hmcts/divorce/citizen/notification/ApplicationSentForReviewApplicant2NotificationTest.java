@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.Gender;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -27,12 +28,16 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant2;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConfigTemplateVars;
 
 @ExtendWith(MockitoExtension.class)
 public class ApplicationSentForReviewApplicant2NotificationTest {
 
     @Mock
     private NotificationService notificationService;
+
+    @Mock
+    private EmailTemplatesConfig emailTemplatesConfig;
 
     @Mock
     private CommonContent commonContent;
@@ -49,6 +54,7 @@ public class ApplicationSentForReviewApplicant2NotificationTest {
 
         when(commonContent.templateVarsFor(data)).thenReturn(templateVars);
         when(commonContent.applicant2GetPartner(data)).thenReturn("husband");
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
         notification.send(data, 1234567890123456L);
 

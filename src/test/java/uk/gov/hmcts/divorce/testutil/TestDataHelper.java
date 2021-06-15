@@ -51,8 +51,12 @@ import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.common.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.common.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DISSOLUTION_TEST_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DIVORCE_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
@@ -290,5 +294,12 @@ public class TestDataHelper {
 
     public static String getFeeResponseAsJson() throws JsonProcessingException {
         return OBJECT_MAPPER.writeValueAsString(getFeeResponse());
+    }
+
+    public static Map<String, String> getConfigTemplateVars() {
+        return Map.of(
+            SIGN_IN_DIVORCE_URL, SIGN_IN_DIVORCE_TEST_URL,
+            SIGN_IN_DISSOLUTION_URL, SIGN_IN_DISSOLUTION_TEST_URL
+        );
     }
 }
