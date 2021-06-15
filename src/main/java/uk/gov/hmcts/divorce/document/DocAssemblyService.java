@@ -19,6 +19,9 @@ import static java.lang.String.format;
 @Service
 @Slf4j
 public class DocAssemblyService {
+
+    private static final String DOCUMENT_FILENAME_FMT = "%s%s";
+
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
@@ -31,16 +34,13 @@ public class DocAssemblyService {
     @Autowired
     private DraftApplicationTemplateContent templateContent;
 
-    public static final String DOCUMENT_FILENAME_FMT = "%s%s";
-
-    public static final String DOCUMENT_NAME = "draft-mini-application-";
-
     public DocumentInfo renderDocument(
-        CaseData caseData,
-        Long caseId,
-        LocalDate createDate,
-        String authorisation,
-        String templateName
+        final CaseData caseData,
+        final Long caseId,
+        final LocalDate createDate,
+        final String authorisation,
+        final String templateName,
+        final String documentName
     ) {
 
         Map<String, Object> templateData = templateContent.apply(caseData, caseId, createDate);
@@ -68,7 +68,7 @@ public class DocAssemblyService {
 
         return new DocumentInfo(
             docAssemblyResponse.getRenditionOutputLocation(),
-            format(DOCUMENT_FILENAME_FMT, DOCUMENT_NAME, caseId) + ".pdf",
+            format(DOCUMENT_FILENAME_FMT, documentName, caseId) + ".pdf",
             docAssemblyResponse.getBinaryFilePath()
         );
     }

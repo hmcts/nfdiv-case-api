@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor.service.updater;
+package uk.gov.hmcts.divorce.caseworker.service.updater;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +13,13 @@ import uk.gov.hmcts.divorce.document.DocAssemblyService;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
-import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_DRAFT_APPLICATION;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_APPLICATION;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_APPLICATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 
 @Component
 @Slf4j
-public class MiniApplicationDraft implements CaseDataUpdater {
+public class MiniApplication implements CaseDataUpdater {
 
     @Autowired
     private DocAssemblyService docAssemblyService;
@@ -41,7 +41,7 @@ public class MiniApplicationDraft implements CaseDataUpdater {
         final var templateName = docmosisTemplatesConfig
             .getTemplates()
             .get(updatedCaseData.getApplicant1().getLanguagePreference())
-            .get(DIVORCE_MINI_DRAFT_APPLICATION);
+            .get(DIVORCE_MINI_APPLICATION);
 
         final var documentInfo = docAssemblyService.renderDocument(
             updatedCaseData,
@@ -49,7 +49,7 @@ public class MiniApplicationDraft implements CaseDataUpdater {
             caseDataContext.getCreatedDate(),
             caseDataContext.getUserAuthToken(),
             templateName,
-            DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME
+            DIVORCE_MINI_APPLICATION_DOCUMENT_NAME
         );
 
         final var ccdDocument = new Document(

@@ -37,7 +37,8 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.WELSH;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_APPLICATION;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_DRAFT_APPLICATION;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ENGLISH_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
@@ -86,7 +87,8 @@ public class MiniApplicationDraftTest {
             TEST_CASE_ID,
             LOCAL_DATE,
             TEST_AUTHORIZATION_TOKEN,
-            ENGLISH_TEMPLATE_ID
+            ENGLISH_TEMPLATE_ID,
+            DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME
         )).thenReturn(documentInfo());
 
         mockDocmosisTemplateConfig();
@@ -127,7 +129,8 @@ public class MiniApplicationDraftTest {
                 TEST_CASE_ID,
                 LOCAL_DATE,
                 TEST_AUTHORIZATION_TOKEN,
-                WELSH_TEMPLATE_ID))
+                WELSH_TEMPLATE_ID,
+                DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME))
             .thenReturn(documentInfo());
 
         mockDocmosisTemplateConfig();
@@ -174,7 +177,8 @@ public class MiniApplicationDraftTest {
             TEST_CASE_ID,
             LOCAL_DATE,
             TEST_AUTHORIZATION_TOKEN,
-            ENGLISH_TEMPLATE_ID
+            ENGLISH_TEMPLATE_ID,
+            DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME
         )).thenReturn(documentInfo());
 
         mockDocmosisTemplateConfig();
@@ -230,7 +234,8 @@ public class MiniApplicationDraftTest {
             TEST_CASE_ID,
             LOCAL_DATE,
             TEST_AUTHORIZATION_TOKEN,
-            ENGLISH_TEMPLATE_ID
+            ENGLISH_TEMPLATE_ID,
+            DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME
         );
 
         assertThatThrownBy(() -> miniApplicationDraft.updateCaseData(caseDataContext(caseData), caseDataUpdaterChain))
@@ -242,10 +247,10 @@ public class MiniApplicationDraftTest {
         when(docmosisTemplatesConfig.getTemplates()).thenReturn(
             Map.of(
                 ENGLISH, Map.of(
-                    DIVORCE_MINI_APPLICATION, ENGLISH_TEMPLATE_ID
+                    DIVORCE_MINI_DRAFT_APPLICATION, ENGLISH_TEMPLATE_ID
                 ),
                 WELSH, Map.of(
-                    DIVORCE_MINI_APPLICATION, WELSH_TEMPLATE_ID
+                    DIVORCE_MINI_DRAFT_APPLICATION, WELSH_TEMPLATE_ID
                 )
             )
         );

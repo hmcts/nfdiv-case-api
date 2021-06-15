@@ -31,6 +31,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ENGLISH_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -97,7 +98,8 @@ public class DocAssemblyServiceTest {
             TEST_CASE_ID,
             LOCAL_DATE,
             TEST_AUTHORIZATION_TOKEN,
-            ENGLISH_TEMPLATE_ID
+            ENGLISH_TEMPLATE_ID,
+            DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME
         );
 
         assertThat(documentInfo.getUrl()).isEqualTo(DOC_STORE_BASE_URL_PATH + documentUuid);
@@ -159,7 +161,8 @@ public class DocAssemblyServiceTest {
                 TEST_CASE_ID,
                 LOCAL_DATE,
                 TEST_AUTHORIZATION_TOKEN,
-                ENGLISH_TEMPLATE_ID
+                ENGLISH_TEMPLATE_ID,
+                DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME
             ))
             .isExactlyInstanceOf(FeignException.Unauthorized.class)
             .hasMessageContaining("s2s service not whitelisted");
