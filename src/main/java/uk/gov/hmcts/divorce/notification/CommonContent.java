@@ -55,8 +55,13 @@ public class CommonContent {
         return divorceOrDissolution.isDivorce() ? "divorce" : "civil partnership";
     }
 
-    public String getPartner(CaseData caseData) {
+    public String applicant1GetPartner(CaseData caseData) {
         return caseData.getDivorceOrDissolution().isDivorce()
             ? caseData.getApplicant2().getGender() == Gender.MALE ? "husband" : "wife" : "civil partner";
+    }
+
+    public String applicant2GetPartner(CaseData caseData) {
+        return caseData.getDivorceOrDissolution().isDivorce()
+            ? caseData.getApplicant1().getGender() == Gender.MALE ? "husband" : "wife" : "civil partner";
     }
 }

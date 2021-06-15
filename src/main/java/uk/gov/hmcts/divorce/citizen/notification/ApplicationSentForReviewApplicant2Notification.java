@@ -15,18 +15,22 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.dateTimeFormatter;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.ACCOUNT;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.ACCOUNT_LINK;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT2_SIGN_IN_URL_NOTIFY_KEY;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TO_END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.CIVIL_PARTNERSHIP_ACCOUNT;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_ACCOUNT;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_APPLICATION;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_YOUR_APPLICATION;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_YOUR_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PARTNER;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.REMINDER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_URL_NOTIFY_KEY;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.TO_END_CIVIL_PARTNERSHIP;
 
 @Component
 @Slf4j
@@ -45,24 +49,23 @@ public class ApplicationSentForReviewApplicant2Notification {
         Map<String, String> templateVars = commonContent.templateVarsFor(caseData);
 
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(dateTimeFormatter));
-        templateVars.put(PARTNER, commonContent.getPartner(caseData));
+        templateVars.put(PARTNER, commonContent.applicant2GetPartner(caseData));
         templateVars.put(APPLICATION_REFERENCE, formatId(id));
         templateVars.put(ACCESS_CODE, caseData.getInvitePin());
-        templateVars.put("Reminder: application / Application ", "Application");
+        templateVars.put(REMINDER, "Application");
 
-//        templateVars.put(ACCOUNT_LINK, "((link_to_login))");   // not been made yet
         Map<String, String> configTemplateVars = emailTemplatesConfig.getTemplateVars();
         String signInUrlKey = caseData.getDivorceOrDissolution().isDivorce() ? SIGN_IN_DIVORCE_URL : SIGN_IN_DISSOLUTION_URL;
-        templateVars.put(SIGN_IN_URL_NOTIFY_KEY, configTemplateVars.get(signInUrlKey));
+        templateVars.put(APPLICANT2_SIGN_IN_URL_NOTIFY_KEY, configTemplateVars.get(signInUrlKey));
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
-            templateVars.put(APPLICATION, "a" + DIVORCE_APPLICATION);
+            templateVars.put(APPLICATION, "a " + DIVORCE_APPLICATION);
             templateVars.put(ACCOUNT, DIVORCE_ACCOUNT);
-            templateVars.put(" for your divorce/ to end your civil partnership", " for your divorce");
+            templateVars.put(FOR_YOUR_APPLICATION, FOR_YOUR_DIVORCE);
         } else {
-            templateVars.put(APPLICATION, "an" + APPLICATION_TO_END_CIVIL_PARTNERSHIP);
+            templateVars.put(APPLICATION, "an " + APPLICATION_TO_END_CIVIL_PARTNERSHIP);
             templateVars.put(ACCOUNT, CIVIL_PARTNERSHIP_ACCOUNT);
-            templateVars.put(" for your divorce/ to end your civil partnership", "to end your civil partnership");
+            templateVars.put(FOR_YOUR_APPLICATION, TO_END_CIVIL_PARTNERSHIP);
         }
 
         log.info("Sending application sent for review notification for case : {}", id);

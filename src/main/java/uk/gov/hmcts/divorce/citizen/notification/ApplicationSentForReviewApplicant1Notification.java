@@ -28,7 +28,7 @@ public class ApplicationSentForReviewApplicant1Notification {
         Map<String, String> templateVars = commonContent.templateVarsFor(caseData);
 
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(dateTimeFormatter));
-        templateVars.put(PARTNER, commonContent.getPartner(caseData));
+        templateVars.put(PARTNER, commonContent.applicant1GetPartner(caseData));
 
         log.info("Sending application sent for review notification for case : {}", id);
 
