@@ -10,6 +10,7 @@ import java.util.List;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.hasAwaitingDocuments;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.isPaymentIncomplete;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.validateBasicCase;
+import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.validateCaseFieldsForIssueApplication;
 
 @RequiredArgsConstructor
 @Getter
@@ -93,7 +94,15 @@ public enum State {
         name = "Application issued",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
-    Issued("Issued"),
+    Issued("Issued") {
+        @Override
+        public List<String> validate(CaseData caseData) {
+            List<String> errors = new ArrayList<>();
+            validateBasicCase(caseData, errors);
+            validateCaseFieldsForIssueApplication(caseData, errors);
+            return errors;
+        }
+    },
 
     ConditionalOrderComplete("ConditionalOrderComplete"),
     FinalOrderComplete("FinalOrderComplete");

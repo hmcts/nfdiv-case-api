@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor.event;
+package uk.gov.hmcts.divorce.caseworker.event;
 
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
