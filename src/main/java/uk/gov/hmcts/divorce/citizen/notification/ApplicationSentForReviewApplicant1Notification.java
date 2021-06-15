@@ -30,7 +30,7 @@ public class ApplicationSentForReviewApplicant1Notification {
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(dateTimeFormatter));
         templateVars.put(PARTNER, commonContent.applicant1GetPartner(caseData));
 
-        log.info("Sending application sent for review notification for case : {}", id);
+        log.info("Sending application sent for review notification to applicant 1 for case : {}", id);
 
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),

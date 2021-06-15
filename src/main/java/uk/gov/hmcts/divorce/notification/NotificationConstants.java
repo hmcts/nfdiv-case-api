@@ -6,7 +6,7 @@ public final class NotificationConstants {
     public static final String RELATIONSHIP = "relationship";
     public static final String PARTNER = "partner";
 
-    public static final String APPLICATION = "application";
+    public static final String APPLICATION = "Application";
     public static final String DIVORCE_APPLICATION = "divorce application";
     public static final String APPLICATION_TO_END_CIVIL_PARTNERSHIP = "application to end your civil partnership";
     public static final String FOR_YOUR_APPLICATION = " for your divorce/ to end your civil partnership";
