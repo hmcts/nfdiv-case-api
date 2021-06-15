@@ -1,6 +1,9 @@
 tags:
     ccd-idam-pr: false
 
+xui-webapp:
+    enabled: false
+
 java:
   applicationPort: 4013
   image: 'hmctspublic.azurecr.io/nfdiv/case-api:latest'
