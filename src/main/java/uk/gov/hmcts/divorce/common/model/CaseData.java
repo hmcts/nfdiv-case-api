@@ -63,16 +63,10 @@ public class CaseData {
     private DivorceOrDissolution divorceOrDissolution;
 
     @CCD(
-        label = "Has applicant 1's marriage broken down irretrievably?",
+        label = "Has the applicant's marriage broken down irretrievably?",
         access = {DefaultAccess.class}
     )
-    private YesOrNo applicant1ScreenHasMarriageBroken;
-
-    @CCD(
-        label = "Has applicant 2's marriage broken down irretrievably?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo applicant2ScreenHasMarriageBroken;
+    private YesOrNo screenHasMarriageBroken;
 
     @JsonUnwrapped(prefix = "applicant1")
     @Builder.Default
