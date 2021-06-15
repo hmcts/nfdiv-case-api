@@ -50,11 +50,10 @@ public class IssueApplication implements CCDConfig<CaseData, State, UserRole> {
             .showSummary()
             .explicitGrants()
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_COURTADMIN)
+            .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_COURTADMIN_BETA, CASEWORKER_DIVORCE_COURTADMIN)
             .grant(READ,
                 CASEWORKER_DIVORCE_SOLICITOR,
                 CASEWORKER_DIVORCE_SUPERUSER,
-                CASEWORKER_DIVORCE_COURTADMIN_BETA,
                 CASEWORKER_DIVORCE_COURTADMIN_LA))
             .page("issueApplication")
             .pageLabel("Issue Divorce Application")

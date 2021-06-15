@@ -5,13 +5,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.divorce.common.config.DocmosisTemplatesConfig;
 import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdater;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
 import uk.gov.hmcts.divorce.document.DocAssemblyService;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
+import uk.gov.hmcts.divorce.document.content.DocmosisTemplateProvider;
+import uk.gov.hmcts.divorce.document.content.DraftApplicationTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+
+import java.util.Map;
 
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_APPLICATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_APPLICATION_DOCUMENT_NAME;
@@ -25,28 +28,34 @@ public class MiniApplication implements CaseDataUpdater {
     private DocAssemblyService docAssemblyService;
 
     @Autowired
-    private DocmosisTemplatesConfig docmosisTemplatesConfig;
+    private DocmosisTemplateProvider docmosisTemplateProvider;
 
     @Autowired
     private DocumentIdProvider documentIdProvider;
+
+    @Autowired
+    private DraftApplicationTemplateContent draftApplicationTemplateContent;
 
     @Override
     public CaseDataContext updateCaseData(final CaseDataContext caseDataContext,
                                           final CaseDataUpdaterChain caseDataUpdaterChain) {
 
-        log.info("Executing handler for generating mini draft for case id {} ", caseDataContext.getCaseId());
+        log.info("Executing handler for generating mini application for case id {} ", caseDataContext.getCaseId());
 
         final var updatedCaseData = caseDataContext.copyOfCaseData();
 
-        final var templateName = docmosisTemplatesConfig
-            .getTemplates()
-            .get(updatedCaseData.getApplicant1().getLanguagePreference())
-            .get(DIVORCE_MINI_APPLICATION);
+        final var templateName = docmosisTemplateProvider.templateNameFor(
+            DIVORCE_MINI_APPLICATION,
+            updatedCaseData.getApplicant1().getLanguagePreference());
 
-        final var documentInfo = docAssemblyService.renderDocument(
+        final Map<String, Object> templateData = draftApplicationTemplateContent.apply(
             updatedCaseData,
             caseDataContext.getCaseId(),
-            caseDataContext.getCreatedDate(),
+            caseDataContext.getCreatedDate());
+
+        final var documentInfo = docAssemblyService.renderDocument(
+            templateData,
+            caseDataContext.getCaseId(),
             caseDataContext.getUserAuthToken(),
             templateName,
             DIVORCE_MINI_APPLICATION_DOCUMENT_NAME

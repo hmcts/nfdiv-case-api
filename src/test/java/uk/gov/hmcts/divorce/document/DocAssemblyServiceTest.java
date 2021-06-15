@@ -11,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
-import uk.gov.hmcts.divorce.document.content.DraftApplicationTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DocAssemblyRequest;
 import uk.gov.hmcts.divorce.document.model.DocAssemblyResponse;
 import uk.gov.hmcts.divorce.document.model.DocumentInfo;
@@ -40,7 +39,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -59,19 +57,16 @@ public class DocAssemblyServiceTest {
     @Mock
     private ObjectMapper objectMapper;
 
-    @Mock
-    private DraftApplicationTemplateContent applicationTemplateMapper;
-
     @InjectMocks
     private DocAssemblyService docAssemblyService;
 
     @Test
     public void shouldGenerateAndStoreDraftApplicationAndReturnDocumentUrl() {
         CaseData caseData = caseData();
+        Map<String, Object> templateData = new HashMap<>();
         Map<String, Object> caseDataMap = expectedCaseData();
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(applicationTemplateMapper.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(caseDataMap);
 
         DocAssemblyRequest docAssemblyRequest =
             DocAssemblyRequest
@@ -94,9 +89,8 @@ public class DocAssemblyServiceTest {
         )).thenReturn(docAssemblyResponse);
 
         DocumentInfo documentInfo = docAssemblyService.renderDocument(
-            caseData(),
+            templateData,
             TEST_CASE_ID,
-            LOCAL_DATE,
             TEST_AUTHORIZATION_TOKEN,
             ENGLISH_TEMPLATE_ID,
             DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME
@@ -112,16 +106,14 @@ public class DocAssemblyServiceTest {
             TEST_SERVICE_AUTH_TOKEN,
             docAssemblyRequest
         );
-        verify(applicationTemplateMapper).apply(caseData, TEST_CASE_ID, LOCAL_DATE);
-        verifyNoMoreInteractions(authTokenGenerator, docAssemblyClient, applicationTemplateMapper);
+        verifyNoMoreInteractions(authTokenGenerator, docAssemblyClient);
     }
 
     @Test
     public void shouldReturn401UnauthorizedExceptionWhenServiceIsNotWhitelistedInDocAssemblyService() {
         CaseData caseData = caseData();
+        Map<String, Object> templateData = new HashMap<>();
         Map<String, Object> caseDataMap = expectedCaseData();
-
-        when(applicationTemplateMapper.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(caseDataMap);
 
         byte[] emptyBody = {};
         Request request = Request.create(POST, EMPTY, Map.of(), emptyBody, UTF_8, null);
@@ -157,9 +149,8 @@ public class DocAssemblyServiceTest {
 
         assertThatThrownBy(() -> docAssemblyService
             .renderDocument(
-                caseData(),
+                templateData,
                 TEST_CASE_ID,
-                LOCAL_DATE,
                 TEST_AUTHORIZATION_TOKEN,
                 ENGLISH_TEMPLATE_ID,
                 DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME
