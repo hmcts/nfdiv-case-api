@@ -15,7 +15,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.dateTimeFormatter;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.ACCOUNT;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT2_SIGN_IN_URL_NOTIFY_KEY;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.CREATE_ACCOUNT_LINK;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TO_END_CIVIL_PARTNERSHIP;
@@ -74,7 +74,7 @@ public class ApplicationSentForReviewApplicant2Notification {
 
         Map<String, String> configTemplateVars = emailTemplatesConfig.getTemplateVars();
         String signInUrlKey = caseData.getDivorceOrDissolution().isDivorce() ? SIGN_IN_DIVORCE_URL : SIGN_IN_DISSOLUTION_URL;
-        templateVars.put(APPLICANT2_SIGN_IN_URL_NOTIFY_KEY, configTemplateVars.get(signInUrlKey));
+        templateVars.put(CREATE_ACCOUNT_LINK, configTemplateVars.get(signInUrlKey));
     }
 
     private void setDivorceVariables(Map<String, String> templateVars, CaseData caseData) {

@@ -14,7 +14,7 @@ public final class NotificationConstants {
     public static final String TO_END_CIVIL_PARTNERSHIP = "to end your civil partnership";
     public static final String REMINDER = "Reminder: application / Application ";
 
-    public static final String APPLICANT2_SIGN_IN_URL_NOTIFY_KEY = "create account link";
+    public static final String CREATE_ACCOUNT_LINK = "create account link";
     public static final String SIGN_IN_URL_NOTIFY_KEY = "signin url";
     public static final String RELATIONSHIP_COURT_HEADER = "relationship court header";
 
@@ -40,7 +40,6 @@ public final class NotificationConstants {
     public static final String ACCOUNT = "account";
     public static final String DIVORCE_ACCOUNT = "divorce account";
     public static final String CIVIL_PARTNERSHIP_ACCOUNT = "account to end your civil partnership";
-    public static final String ACCOUNT_LINK = "create account link";
 
     public static final String ACCESS_CODE = "access code";
 

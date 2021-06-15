@@ -82,6 +82,9 @@ public class CitizenInviteApplicant2Test {
             .getResponse()
             .getContentAsString();
 
+        assertThatJson(actualResponse)
+            .isEqualTo(json(expectedCcdAboutToStartCallbackSuccessfulResponse()));
+
         verify(notificationService)
             .sendEmail(eq(TEST_USER_EMAIL), eq(JOINT_APPLICANT1_ANSWERS_SENT_FOR_REVIEW), anyMap(), eq(ENGLISH));
 
@@ -89,9 +92,6 @@ public class CitizenInviteApplicant2Test {
             .sendEmail(eq(TEST_USER_EMAIL), eq(JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW), anyMap(), eq(ENGLISH));
 
         verifyNoMoreInteractions(notificationService);
-
-        assertThatJson(actualResponse)
-            .isEqualTo(json(expectedCcdAboutToStartCallbackSuccessfulResponse()));
     }
 
     private String expectedCcdAboutToStartCallbackSuccessfulResponse() throws IOException {
