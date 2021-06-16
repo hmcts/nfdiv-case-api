@@ -11,6 +11,7 @@ import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COUR
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_LA;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_SOLICITOR;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CITIZEN;
 
 public class DefaultAccess implements HasAccessControl {
@@ -18,6 +19,7 @@ public class DefaultAccess implements HasAccessControl {
     public SetMultimap<HasRole, Permission> getGrants() {
         SetMultimap<HasRole, Permission> grants = HashMultimap.create();
         grants.putAll(CITIZEN, Permissions.CREATE_READ_UPDATE);
+        grants.putAll(CASEWORKER_DIVORCE_SYSTEMUPDATE, Permissions.CREATE_READ_UPDATE);
         grants.putAll(CASEWORKER_DIVORCE_COURTADMIN_BETA, Permissions.READ);
         grants.putAll(CASEWORKER_DIVORCE_COURTADMIN, Permissions.READ);
         grants.putAll(CASEWORKER_DIVORCE_SOLICITOR, Permissions.READ);
