@@ -22,12 +22,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static uk.gov.hmcts.divorce.caseworker.event.IssueApplication.ISSUE_APPLICATION;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.ISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-class IssueApplicationTest {
+class CaseworkerIssueApplicationTest {
 
     @Mock
     private IssueApplicationService issueApplicationService;
@@ -36,14 +36,14 @@ class IssueApplicationTest {
     private HttpServletRequest httpServletRequest;
 
     @InjectMocks
-    private IssueApplication issueApplication;
+    private CaseworkerIssueApplication caseworkerIssueApplication;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final Set<State> stateSet = Set.of(State.class.getEnumConstants());
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = new ConfigBuilderImpl<>(CaseData.class, stateSet);
 
-        issueApplication.configure(configBuilder);
+        caseworkerIssueApplication.configure(configBuilder);
 
         assertThat(configBuilder.getEvents().get(0).getId(), is(ISSUE_APPLICATION));
     }
@@ -69,7 +69,7 @@ class IssueApplicationTest {
                 auth))
             .thenReturn(expectedResult);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = issueApplication.aboutToSubmit(details, null);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(details, null);
 
         assertThat(response, is(expectedResult));
 

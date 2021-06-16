@@ -3,18 +3,15 @@ package uk.gov.hmcts.divorce.caseworker.service.updater;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.ccd.sdk.type.Document;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdater;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
-import uk.gov.hmcts.divorce.document.DocAssemblyService;
-import uk.gov.hmcts.divorce.document.DocumentIdProvider;
-import uk.gov.hmcts.divorce.document.content.DocmosisTemplateProvider;
+import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.DraftApplicationTemplateContent;
-import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.util.Map;
+import java.util.function.Supplier;
 
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_APPLICATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_APPLICATION_DOCUMENT_NAME;
@@ -25,13 +22,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATI
 public class MiniApplication implements CaseDataUpdater {
 
     @Autowired
-    private DocAssemblyService docAssemblyService;
-
-    @Autowired
-    private DocmosisTemplateProvider docmosisTemplateProvider;
-
-    @Autowired
-    private DocumentIdProvider documentIdProvider;
+    private CaseDataDocumentService caseDataDocumentService;
 
     @Autowired
     private DraftApplicationTemplateContent draftApplicationTemplateContent;
@@ -42,43 +33,23 @@ public class MiniApplication implements CaseDataUpdater {
 
         log.info("Executing handler for generating mini application for case id {} ", caseDataContext.getCaseId());
 
-        final var updatedCaseData = caseDataContext.copyOfCaseData();
+        final CaseData caseData = caseDataContext.copyOfCaseData();
+        final Long caseId = caseDataContext.getCaseId();
+        final String userAuthToken = caseDataContext.getUserAuthToken();
 
-        final var templateName = docmosisTemplateProvider.templateNameFor(
+        final Supplier<Map<String, Object>> templateContentSupplier = draftApplicationTemplateContent
+            .apply(caseDataContext.copyOfCaseData(), caseId, caseDataContext.getCreatedDate());
+
+        final CaseData updatedCaseData = caseDataDocumentService.renderDocumentAndUpdateCaseData(
+            caseData,
+            DIVORCE_APPLICATION,
+            templateContentSupplier,
+            caseId,
+            userAuthToken,
             DIVORCE_MINI_APPLICATION,
-            updatedCaseData.getApplicant1().getLanguagePreference());
-
-        final Map<String, Object> templateData = draftApplicationTemplateContent.apply(
-            updatedCaseData,
-            caseDataContext.getCaseId(),
-            caseDataContext.getCreatedDate());
-
-        final var documentInfo = docAssemblyService.renderDocument(
-            templateData,
-            caseDataContext.getCaseId(),
-            caseDataContext.getUserAuthToken(),
-            templateName,
-            DIVORCE_MINI_APPLICATION_DOCUMENT_NAME
+            DIVORCE_MINI_APPLICATION_DOCUMENT_NAME,
+            caseData.getApplicant1().getLanguagePreference()
         );
-
-        final var ccdDocument = new Document(
-            documentInfo.getUrl(),
-            documentInfo.getFilename(),
-            documentInfo.getBinaryUrl()
-        );
-
-        final var divorceDocument = DivorceDocument
-            .builder()
-            .documentLink(ccdDocument)
-            .documentFileName(documentInfo.getFilename())
-            .documentType(DIVORCE_APPLICATION)
-            .build();
-
-        updatedCaseData.addToDocumentsGenerated(
-            ListValue.<DivorceDocument>builder()
-                .id(documentIdProvider.documentId())
-                .value(divorceDocument)
-                .build());
 
         return caseDataUpdaterChain.processNext(caseDataContext.handlerContextWith(updatedCaseData));
     }

@@ -30,9 +30,9 @@ import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLI
 
 @Component
 @Slf4j
-public class IssueApplication implements CCDConfig<CaseData, State, UserRole> {
+public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String ISSUE_APPLICATION = "issue-application";
+    public static final String ISSUE_APPLICATION = "caseworker-issue-application";
 
     @Autowired
     private IssueApplicationService issueApplicationService;

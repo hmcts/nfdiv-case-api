@@ -9,8 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
+import uk.gov.hmcts.divorce.document.content.DocmosisTemplateProvider;
 import uk.gov.hmcts.divorce.document.model.DocAssemblyRequest;
 import uk.gov.hmcts.divorce.document.model.DocAssemblyResponse;
 import uk.gov.hmcts.divorce.document.model.DocumentInfo;
@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import static feign.Request.HttpMethod.POST;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -30,6 +31,8 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_DRAFT_APPLICATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ENGLISH_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
@@ -39,7 +42,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
 public class DocAssemblyServiceTest {
@@ -57,15 +59,19 @@ public class DocAssemblyServiceTest {
     @Mock
     private ObjectMapper objectMapper;
 
+    @Mock
+    private DocmosisTemplateProvider docmosisTemplateProvider;
+
     @InjectMocks
     private DocAssemblyService docAssemblyService;
 
     @Test
     public void shouldGenerateAndStoreDraftApplicationAndReturnDocumentUrl() {
-        CaseData caseData = caseData();
-        Map<String, Object> templateData = new HashMap<>();
+
+        Supplier<Map<String, Object>> templateContentSupplier = HashMap::new;
         Map<String, Object> caseDataMap = expectedCaseData();
 
+        when(docmosisTemplateProvider.templateNameFor(DIVORCE_MINI_DRAFT_APPLICATION, ENGLISH)).thenReturn(ENGLISH_TEMPLATE_ID);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         DocAssemblyRequest docAssemblyRequest =
@@ -89,11 +95,12 @@ public class DocAssemblyServiceTest {
         )).thenReturn(docAssemblyResponse);
 
         DocumentInfo documentInfo = docAssemblyService.renderDocument(
-            templateData,
+            templateContentSupplier,
             TEST_CASE_ID,
             TEST_AUTHORIZATION_TOKEN,
-            ENGLISH_TEMPLATE_ID,
-            DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME
+            DIVORCE_MINI_DRAFT_APPLICATION,
+            DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME,
+            ENGLISH
         );
 
         assertThat(documentInfo.getUrl()).isEqualTo(DOC_STORE_BASE_URL_PATH + documentUuid);
@@ -111,12 +118,14 @@ public class DocAssemblyServiceTest {
 
     @Test
     public void shouldReturn401UnauthorizedExceptionWhenServiceIsNotWhitelistedInDocAssemblyService() {
-        CaseData caseData = caseData();
-        Map<String, Object> templateData = new HashMap<>();
+
+        Supplier<Map<String, Object>> templateContentSupplier = HashMap::new;
         Map<String, Object> caseDataMap = expectedCaseData();
 
         byte[] emptyBody = {};
         Request request = Request.create(POST, EMPTY, Map.of(), emptyBody, UTF_8, null);
+
+        when(docmosisTemplateProvider.templateNameFor(DIVORCE_MINI_DRAFT_APPLICATION, ENGLISH)).thenReturn(ENGLISH_TEMPLATE_ID);
 
         FeignException feignException = FeignException.errorStatus(
             "s2sServiceNotWhitelisted",
@@ -127,7 +136,6 @@ public class DocAssemblyServiceTest {
                 .reason("s2s service not whitelisted")
                 .build()
         );
-
 
         DocAssemblyRequest docAssemblyRequest =
             DocAssemblyRequest
@@ -149,11 +157,12 @@ public class DocAssemblyServiceTest {
 
         assertThatThrownBy(() -> docAssemblyService
             .renderDocument(
-                templateData,
+                templateContentSupplier,
                 TEST_CASE_ID,
                 TEST_AUTHORIZATION_TOKEN,
-                ENGLISH_TEMPLATE_ID,
-                DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME
+                DIVORCE_MINI_DRAFT_APPLICATION,
+                DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME,
+                ENGLISH
             ))
             .isExactlyInstanceOf(FeignException.Unauthorized.class)
             .hasMessageContaining("s2s service not whitelisted");

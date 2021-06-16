@@ -4,12 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.divorce.common.model.LanguagePreference;
+import uk.gov.hmcts.divorce.document.content.DocmosisTemplateProvider;
 import uk.gov.hmcts.divorce.document.model.DocAssemblyRequest;
 import uk.gov.hmcts.divorce.document.model.DocAssemblyResponse;
 import uk.gov.hmcts.divorce.document.model.DocumentInfo;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.util.Map;
+import java.util.function.Supplier;
 
 import static java.lang.String.format;
 
@@ -28,25 +31,29 @@ public class DocAssemblyService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public DocumentInfo renderDocument(
-        final Map<String, Object> templateData,
-        final Long caseId,
-        final String authorisation,
-        final String templateName,
-        final String documentName
-    ) {
+    @Autowired
+    private DocmosisTemplateProvider docmosisTemplateProvider;
 
-        DocAssemblyRequest docAssemblyRequest =
+    public DocumentInfo renderDocument(final Supplier<Map<String, Object>> templateContentSupplier,
+                                       final Long caseId,
+                                       final String authorisation,
+                                       final String templateId,
+                                       final String documentName,
+                                       final LanguagePreference languagePreference) {
+
+        final String templateName = docmosisTemplateProvider.templateNameFor(templateId, languagePreference);
+
+        final DocAssemblyRequest docAssemblyRequest =
             DocAssemblyRequest
                 .builder()
                 .templateId(templateName)
                 .outputType("PDF")
-                .formPayload(objectMapper.valueToTree(templateData))
+                .formPayload(objectMapper.valueToTree(templateContentSupplier.get()))
                 .build();
 
         log.info("Sending document request for template : {} case id: {}", templateName, caseId);
 
-        DocAssemblyResponse docAssemblyResponse = docAssemblyClient.generateAndStoreDraftApplication(
+        final DocAssemblyResponse docAssemblyResponse = docAssemblyClient.generateAndStoreDraftApplication(
             authorisation,
             authTokenGenerator.generate(),
             docAssemblyRequest

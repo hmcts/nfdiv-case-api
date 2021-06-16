@@ -27,7 +27,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 
 @ExtendWith(MockitoExtension.class)
-class IssueApplicationServiceTest {
+class CaseworkerIssueApplicationServiceTest {
 
     @Mock
     private MiniApplication miniApplication;
