@@ -62,7 +62,7 @@ public enum State {
     },
 
     @CCD(
-        name = "Application submitted and awaiting HWF decision",
+        name = "Awaiting HWF decision",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
     AwaitingHWFDecision("AwaitingHWFDecision"),
