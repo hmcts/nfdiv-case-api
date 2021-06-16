@@ -104,6 +104,24 @@ public enum State {
         }
     },
 
+    @CCD(
+        name = "Application Rejected",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
+    )
+    Rejected("Rejected"),
+
+    @CCD(
+        name = "Application Withdrawn",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
+    )
+    Withdrawn("Withdrawn"),
+
+    @CCD(
+        name = "Pending rejection",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
+    )
+    PendingRejection("PendingRejection"),
+
     ConditionalOrderComplete("ConditionalOrderComplete"),
     FinalOrderComplete("FinalOrderComplete");
 

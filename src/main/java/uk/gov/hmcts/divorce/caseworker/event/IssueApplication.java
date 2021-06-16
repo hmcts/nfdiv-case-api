@@ -22,7 +22,7 @@ import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLI
 
 @Component
 public class IssueApplication implements CCDConfig<CaseData, State, UserRole> {
-    public static final String ISSUE_APPLICATION = "issueFromSubmitted";
+    public static final String ISSUE_APPLICATION = "caseworker-issue-application";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

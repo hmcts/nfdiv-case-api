@@ -19,12 +19,12 @@ import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 
 @Component
 public class RefundFromSubmitted implements CCDConfig<CaseData, State, UserRole> {
-    public static final String REFUND = "refundFromSubmitted";
+    public static final String CASEWORKER_REFUND = "caseworker-refund";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(REFUND)
+            .event(CASEWORKER_REFUND)
             .forStateTransition(Submitted,Submitted)
             .name("Refund")
             .description("Refund")
@@ -37,7 +37,6 @@ public class RefundFromSubmitted implements CCDConfig<CaseData, State, UserRole>
             .grant(READ,
                 CASEWORKER_DIVORCE_SOLICITOR,
                 CASEWORKER_DIVORCE_SUPERUSER,
-                CASEWORKER_DIVORCE_COURTADMIN_BETA,
                 CASEWORKER_DIVORCE_COURTADMIN_LA));
     }
 }
