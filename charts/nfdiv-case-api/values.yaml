@@ -4,6 +4,9 @@ tags:
 xui-webapp:
   enabled: false
 
+idam-pr:
+  enabled: false
+
 java:
   applicationPort: 4013
   image: 'hmctspublic.azurecr.io/nfdiv/case-api:latest'
