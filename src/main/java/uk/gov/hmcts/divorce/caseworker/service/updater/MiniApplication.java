@@ -24,6 +24,7 @@ public class MiniApplication implements CaseDataUpdater {
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
 
+    //TODO: Use correct template content when application template requirements are known.
     @Autowired
     private DraftApplicationTemplateContent draftApplicationTemplateContent;
 
