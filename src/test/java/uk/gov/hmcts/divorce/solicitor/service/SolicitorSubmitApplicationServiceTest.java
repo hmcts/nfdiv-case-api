@@ -89,7 +89,7 @@ public class SolicitorSubmitApplicationServiceTest {
             TEST_AUTHORIZATION_TOKEN
         );
 
-        assertThat(response.getData()).isEqualTo(caseData);
+        assertThat(response.getCaseData()).isEqualTo(caseData);
         assertThat(response.getState()).isEqualTo(AwaitingPayment);
     }
 
@@ -128,7 +128,7 @@ public class SolicitorSubmitApplicationServiceTest {
             TEST_AUTHORIZATION_TOKEN
         );
 
-        assertThat(response.getData()).isEqualTo(caseData);
+        assertThat(response.getCaseData()).isEqualTo(caseData);
         assertThat(response.getState()).isEqualTo(AwaitingHWFDecision);
     }
 
@@ -181,6 +181,6 @@ public class SolicitorSubmitApplicationServiceTest {
         );
 
         assertThat(response.getState()).isEqualTo(Submitted);
-        assertThat(response.getData().getDateSubmitted()).isEqualTo(LocalDateTime.now(clock));
+        assertThat(response.getCaseData().getDateSubmitted()).isEqualTo(LocalDateTime.now(clock));
     }
 }

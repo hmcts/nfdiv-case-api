@@ -21,7 +21,7 @@
     "applicant1NameDifferentToMarriageCertificate": null,
     "applicant1PhoneNumber": null,
     "applicant1NameChangedHowOtherDetails": null,
-    "applicant1LanguagePreferenceWelsh": null,
+    "applicant1LanguagePreferenceWelsh": "No",
     "applicant1ContactDetailsConfidential": null,
     "applicant1CorrespondenceAddress": null,
     "applicant1SolicitorRepresented": null,
