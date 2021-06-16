@@ -38,7 +38,7 @@
     "applicant2MiddleName": null,
     "applicant2LastName": null,
     "applicant2AgreedToReceiveEmails": null,
-    "applicant2Email": null,
+    "applicant2Email": "simulate-delivered@notifications.service.gov.uk",
     "applicant2LanguagePreferenceWelsh": null,
     "applicant2NameChangedHow": null,
     "applicant2NameDifferentToMarriageCertificate": null,
