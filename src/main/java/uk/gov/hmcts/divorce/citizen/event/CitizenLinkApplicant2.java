@@ -17,12 +17,11 @@ import javax.servlet.http.HttpServletRequest;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_SYSTEMUPDATE;
-import static uk.gov.hmcts.divorce.common.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Slf4j
 @Component
-public class CitizenLinkApplication implements CCDConfig<CaseData, State, UserRole> {
+public class CitizenLinkApplicant2 implements CCDConfig<CaseData, State, UserRole> {
 
     @Autowired
     private CcdAccessService ccdAccessService;
@@ -39,7 +38,7 @@ public class CitizenLinkApplication implements CCDConfig<CaseData, State, UserRo
             .forState(AwaitingApplicant2Response)
             .name("Link Applicant 2 to case")
             .description("Link Applicant 2 to case to enable completion of joint application")
-            .grant(CREATE_READ_UPDATE, CITIZEN, CASEWORKER_DIVORCE_SYSTEMUPDATE)
+            .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_SYSTEMUPDATE)
             .displayOrder(1)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);

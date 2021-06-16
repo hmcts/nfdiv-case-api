@@ -37,7 +37,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.util.ResourceUtils.getFile;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenLinkApplication.CITIZEN_LINK_APPLICANT_2;
+import static uk.gov.hmcts.divorce.citizen.event.CitizenLinkApplicant2.CITIZEN_LINK_APPLICANT_2;
 import static uk.gov.hmcts.divorce.testutil.CaseDataWireMock.stubForCitizenCcdCaseRoles;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.CASEWORKER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.CITIZEN_ROLE;
@@ -60,7 +60,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 @ContextConfiguration(initializers = {
     IdamWireMock.PropertiesInitializer.class,
     CaseDataWireMock.PropertiesInitializer.class})
-public class CitizenLinkApplicationTest {
+public class CitizenLinkApplicant2Test {
 
     @Autowired
     private MockMvc mockMvc;
@@ -134,6 +134,59 @@ public class CitizenLinkApplicationTest {
 
         verify(serviceTokenGenerator).generate();
         verifyNoMoreInteractions(serviceTokenGenerator);
+    }
+
+    @Test
+    public void givenNoRespondentUserIdPassedWhenCallbackIsInvokedThen404ErrorIsReturned() throws Exception {
+        CaseData data = caseData();
+        data.setAccessCode("D8BC9AQR");
+        data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
+
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, APP_2_CITIZEN_USER_ID, CITIZEN_ROLE);
+        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        stubForIdamDetails(CASEWORKER_AUTH_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(CASEWORKER_AUTH_TOKEN);
+
+        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
+
+        stubForCitizenCcdCaseRoles();
+
+        CallbackRequest callbackRequest = callbackRequest(data, CITIZEN_LINK_APPLICANT_2);
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(callbackRequest))
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void givenNoCaseIdPassedWhenCallbackIsInvokedThen404ErrorIsReturned() throws Exception {
+        CaseData data = caseData();
+        data.setAccessCode("D8BC9AQR");
+        data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
+
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, APP_2_CITIZEN_USER_ID, CITIZEN_ROLE);
+        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        stubForIdamDetails(CASEWORKER_AUTH_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(CASEWORKER_AUTH_TOKEN);
+
+        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
+
+        stubForCitizenCcdCaseRoles();
+
+        CallbackRequest callbackRequest = callbackRequest(data, CITIZEN_LINK_APPLICANT_2);
+        callbackRequest.getCaseDetails().setId(null);
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(callbackRequest))
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isNotFound());
     }
 
     private String expectedCcdAboutToStartCallbackSuccessfulResponse() throws IOException {

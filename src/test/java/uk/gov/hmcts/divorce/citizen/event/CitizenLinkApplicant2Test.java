@@ -21,11 +21,11 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenLinkApplication.CITIZEN_LINK_APPLICANT_2;
+import static uk.gov.hmcts.divorce.citizen.event.CitizenLinkApplicant2.CITIZEN_LINK_APPLICANT_2;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
-public class CitizenLinkApplicationTest {
+public class CitizenLinkApplicant2Test {
 
     @Mock
     private CcdAccessService ccdAccessService;
@@ -34,14 +34,14 @@ public class CitizenLinkApplicationTest {
     private HttpServletRequest httpServletRequest;
 
     @InjectMocks
-    private CitizenLinkApplication citizenLinkApplication;
+    private CitizenLinkApplicant2 citizenLinkApplicant2;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final Set<State> stateSet = Set.of(State.class.getEnumConstants());
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = new ConfigBuilderImpl<>(CaseData.class, stateSet);
 
-        citizenLinkApplication.configure(configBuilder);
+        citizenLinkApplicant2.configure(configBuilder);
 
         assertThat(configBuilder.getEvents().get(0).getId()).isEqualTo(CITIZEN_LINK_APPLICANT_2);
     }
@@ -58,7 +58,7 @@ public class CitizenLinkApplicationTest {
         when(httpServletRequest.getHeader(AUTHORIZATION))
             .thenReturn("auth header");
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenLinkApplication.aboutToSubmit(details, details);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenLinkApplicant2.aboutToSubmit(details, details);
 
         assertThat(response.getData().getAccessCode()).isNull();
         verify(ccdAccessService).linkRespondentToApplication(eq("auth header"), eq(1L), eq("RespondentId"));
