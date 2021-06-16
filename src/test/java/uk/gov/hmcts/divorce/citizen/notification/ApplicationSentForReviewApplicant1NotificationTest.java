@@ -49,7 +49,7 @@ public class ApplicationSentForReviewApplicant1NotificationTest {
         final HashMap<String, String> templateVars = new HashMap<>();
 
         when(commonContent.templateVarsFor(data)).thenReturn(templateVars);
-        when(commonContent.applicant1GetPartner(data)).thenReturn("husband");
+        when(commonContent.getTheirPartner(data, data.getApplicant2())).thenReturn("husband");
 
         notification.send(data, 1234567890123456L);
 
@@ -63,6 +63,6 @@ public class ApplicationSentForReviewApplicant1NotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).templateVarsFor(data);
-        verify(commonContent).applicant1GetPartner(data);
+        verify(commonContent).getTheirPartner(data, data.getApplicant2());
     }
 }

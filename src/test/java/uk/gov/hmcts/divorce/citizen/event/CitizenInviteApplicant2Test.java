@@ -56,7 +56,7 @@ public class CitizenInviteApplicant2Test {
     }
 
     @Test
-    public void givenValidCaseDataWhenCallbackIsInvokedThenGeneratePinAndSendEmails() {
+    public void givenValidCaseDataWhenCallbackIsInvokedThenGeneratePinAndSendEmailToApplicant1andApplicant2() {
         final CaseData caseData = caseData();
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
