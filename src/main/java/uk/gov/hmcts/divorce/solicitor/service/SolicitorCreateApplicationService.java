@@ -3,9 +3,8 @@ package uk.gov.hmcts.divorce.solicitor.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.common.CaseInfo;
 import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdater;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChainFactory;
@@ -69,7 +68,7 @@ public class SolicitorCreateApplicationService {
     }
 
 
-    public AboutToStartOrSubmitResponse<CaseData, State> validateSolicitorOrganisation(
+    public CaseInfo validateSolicitorOrganisation(
         final CaseData caseData,
         final Long caseId,
         final String userAuth
@@ -77,8 +76,8 @@ public class SolicitorCreateApplicationService {
 
         if (caseData.getApplicant1().getSolicitor() == null || !caseData.getApplicant1().getSolicitor().hasOrgId()) {
             log.error("CaseId: {}, the applicant org policy is not populated", caseId);
-            return AboutToStartOrSubmitResponse
-                .<CaseData, State>builder()
+
+            return CaseInfo.builder()
                 .errors(singletonList("Please select an organisation"))
                 .build();
         }
@@ -99,14 +98,12 @@ public class SolicitorCreateApplicationService {
 
         if (!solicitorSelectedOrgId.equalsIgnoreCase(solicitorUserOrgId)) {
             log.error("CaseId: {}, wrong organisation selected {} != {}", caseId, solicitorSelectedOrgId, solicitorUserOrgId);
-            return AboutToStartOrSubmitResponse
-                .<CaseData, State>builder()
+
+            return CaseInfo.builder()
                 .errors(singletonList("Please select an organisation you belong to"))
                 .build();
         }
 
-        return AboutToStartOrSubmitResponse
-            .<CaseData, State>builder()
-            .build();
+        return CaseInfo.builder().build();
     }
 }

@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.CaseInfo;
 import uk.gov.hmcts.divorce.common.model.Applicant;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.Solicitor;
@@ -78,10 +79,15 @@ public class SolAboutTheSolicitor implements CcdPageConfiguration {
         CaseDetails<CaseData, State> detailsBefore
     ) {
         log.info("Mid-event callback triggered for SolAboutTheSolicitor");
-        return solicitorCreateApplicationService.validateSolicitorOrganisation(
+
+        final CaseInfo caseInfo = solicitorCreateApplicationService.validateSolicitorOrganisation(
             details.getData(),
             details.getId(),
             request.getHeader(AUTHORIZATION)
         );
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .errors(caseInfo.getErrors())
+            .build();
     }
 }
