@@ -90,7 +90,7 @@ public class CitizenLinkApplicationTest {
     }
 
     @Test
-    public void givenValidAccessCodeWhenCallbackIsInvokedThenInvitePinIsRemovedAndSolicitorRolesAreSet() throws Exception {
+    public void givenValidAccessCodeWhenCallbackIsInvokedThenAccessCodeIsRemovedAndSolicitorRolesAreSet() throws Exception {
         CaseData data = caseData();
         data.setAccessCode("D8BC9AQR");
         data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
