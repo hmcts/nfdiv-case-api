@@ -8,6 +8,15 @@ java:
   environment:
     CASE_DATA_STORE_BASEURL: "http://ccd-data-store-api-nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
 
+idam-pr:
+  releaseNameOverride: ${SERVICE_NAME}-ccd-idam-pr
+  redirect_uris:
+    CCD Admin:
+      - https://admin-web-${SERVICE_FQDN}/oauth2redirect
+    XUI:
+      - https://xui-${SERVICE_FQDN}/oauth2/callback
+      - http://xui-${SERVICE_FQDN}/oauth2/callback
+
 ccd:
   ccd:
     definitionImporter:
@@ -31,25 +40,17 @@ ccd:
     postgresPassword: hmcts
     s2sUrl: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
 
-  idam-pr:
-    releaseNameOverride: ${SERVICE_NAME}-ccd-idam-pr
-    redirect_uris:
-      CCD Admin:
-        - https://admin-web-${SERVICE_FQDN}/oauth2redirect
-      XUI:
-        - https://xui-${SERVICE_FQDN}/oauth2/callback
-        - http://xui-${SERVICE_FQDN}/oauth2/callback
-
-  ccd-user-profile-api:
-    java:
+  ccd-api-gateway-web:
+    nodejs:
       imagePullPolicy: Always
-      enviroment:
-        USER_PROFILE_DB_HOST: ${SERVICE_NAME}-postgresql
-      keyVaults: []
       environment:
-        USER_PROFILE_S2S_AUTHORISED_SERVICES: ccd_admin,ccd_data,ccd_definition,divorce
-      ingressHost: ccd-user-profile-api-${SERVICE_FQDN}
-
+        ADDRESS_LOOKUP_TOKEN: ${ADDRESS_LOOKUP_TOKEN}
+        IDAM_SERVICE_KEY: ${API_GATEWAY_S2S_KEY}
+        IDAM_OAUTH2_CLIENT_SECRET: ${API_GATEWAY_IDAM_SECRET}
+        PROXY_DOCUMENT_MANAGEMENT: http://dm-store-aat.service.core-compute-aat.internal
+      ingressHost: gateway-${SERVICE_FQDN}
+      ingressIP: ${INGRESS_IP}
+      keyVaults: []
   ccd-data-store-api:
     java:
       imagePullPolicy: Always
@@ -57,47 +58,24 @@ ccd:
         DATA_STORE_DB_HOST: ${SERVICE_NAME}-postgresql
         DATA_STORE_IDAM_KEY: ${DATA_STORE_S2S_KEY}
         IDAM_USER_URL: https://idam-web-public.aat.platform.hmcts.net
-        DATA_STORE_S2S_AUTHORISED_SERVICES: ccd_data,ccd_gw,ccd_admin,ccd_ps,divorce_ccd_submission,divorce_frontend,nfdiv_case_api
-        ELASTIC_SEARCH_ENABLED: false
-        CCD_DM_DOMAIN: http://dm-store-aat.service.core-compute-aat.internal
-        CCD_DOCUMENT_URL_PATTERN: ^https?://(((?:api-gateway\.preprod\.dm\.reform\.hmcts\.net|dm-store-aat\.service\.core-compute-aat\.internal(?::\d+)?)\/documents\/[A-Za-z0-9-]+(?:\/binary)?)|(em-hrs-api-aat\.service\.core-compute-aat\.internal(?::\d+)?\/hearing-recordings\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\/segments\/[0-9]))
       keyVaults: []
-      ingressHost: ccd-data-store-api-${SERVICE_FQDN}
-
+      #ingressHost: ccd-data-store-api-${SERVICE_FQDN}
   ccd-definition-store-api:
     java:
       imagePullPolicy: Always
-      keyVaults: []
       environment:
         DEFINITION_STORE_DB_HOST: ${SERVICE_NAME}-postgresql
         DEFINITION_STORE_IDAM_KEY: ${DEFINITION_STORE_S2S_KEY}
-        DEFINITION_STORE_S2S_AUTHORISED_SERVICES: ccd_admin,ccd_data,divorce,ccd_gw,divorce_ccd_submission
         IDAM_USER_URL: https://idam-web-public.aat.platform.hmcts.net
-        OIDC_ISSUER: https://forgerock-am.service.core-compute-idam-aat.internal:8443/openam/oauth2/hmcts
-      ingressHost: ccd-definition-store-${SERVICE_FQDN}
-
-  ccd-admin-web:
-    nodejs:
-      image: hmctspublic.azurecr.io/ccd/admin-web:latest
-      ingressHost: admin-web-${SERVICE_FQDN}
       keyVaults: []
-      environment:
+      #ingressHost: ccd-definition-store-${SERVICE_FQDN}
+  ccd-user-profile-api:
+    java:
+      imagePullPolicy: Always
+      enviroment:
         USER_PROFILE_DB_HOST: ${SERVICE_NAME}-postgresql
-        IDAM_ADMIN_WEB_SERVICE_KEY: ${ADMIN_S2S_KEY}
-        IDAM_OAUTH2_AW_CLIENT_SECRET: ${ADMIN_WEB_IDAM_SECRET}
-    idam-pr:
-      enabled: true
-
-  ccd-api-gateway-web:
-    nodejs:
       keyVaults: []
-      environment:
-        IDAM_SERVICE_KEY: ${API_GATEWAY_S2S_KEY}
-        IDAM_OAUTH2_CLIENT_SECRET: ${API_GATEWAY_IDAM_SECRET}
-        PROXY_DOCUMENT_MANAGEMENT: http://dm-store-aat.service.core-compute-aat.internal
-        ADDRESS_LOOKUP_TOKEN: ${ADDRESS_LOOKUP_TOKEN}
-      ingressHost: gateway-${SERVICE_FQDN}
-      ingressIP: ${INGRESS_IP}
+      #ingressHost: ccd-user-profile-api-${SERVICE_FQDN}
 
   importer:
     userprofile:
