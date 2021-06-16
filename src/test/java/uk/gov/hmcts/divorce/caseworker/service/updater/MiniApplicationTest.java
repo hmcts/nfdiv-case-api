@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor.service.updater;
+package uk.gov.hmcts.divorce.caseworker.service.updater;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,15 +20,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_DRAFT_APPLICATION;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_APPLICATION;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_APPLICATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 
 @ExtendWith(MockitoExtension.class)
-public class MiniApplicationDraftTest {
+class MiniApplicationTest {
 
     @Mock
     private CaseDataDocumentService caseDataDocumentService;
@@ -40,10 +40,10 @@ public class MiniApplicationDraftTest {
     private CaseDataUpdaterChain caseDataUpdaterChain;
 
     @InjectMocks
-    private MiniApplicationDraft miniApplicationDraft;
+    private MiniApplication miniApplication;
 
     @Test
-    void shouldCallDocAssemblyServiceAndReturnCaseDataWithMiniDraftApplicationDocument() {
+    void shouldCallDocAssemblyServiceAndReturnCaseDataWithMiniApplicationDocument() {
 
         final var caseData = CaseData.builder()
             .applicant1(Applicant.builder()
@@ -61,14 +61,14 @@ public class MiniApplicationDraftTest {
                 templateContentSupplier,
                 TEST_CASE_ID,
                 TEST_AUTHORIZATION_TOKEN,
-                DIVORCE_MINI_DRAFT_APPLICATION,
-                DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME,
+                DIVORCE_MINI_APPLICATION,
+                DIVORCE_MINI_APPLICATION_DOCUMENT_NAME,
                 ENGLISH))
             .thenReturn(caseData);
 
         when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
 
-        final var result = miniApplicationDraft.updateCaseData(caseDataContext, caseDataUpdaterChain);
+        final var result = miniApplication.updateCaseData(caseDataContext, caseDataUpdaterChain);
 
         assertThat(result.getCaseData()).isEqualTo(caseData);
     }

@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.CaseInfo;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
@@ -130,7 +131,14 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
                 .build();
         }
 
-        return solicitorSubmitApplicationService.aboutToSubmit(caseData, details.getId(), httpServletRequest.getHeader(AUTHORIZATION));
+        final CaseInfo caseInfo = solicitorSubmitApplicationService
+            .aboutToSubmit(caseData, details.getId(), httpServletRequest.getHeader(AUTHORIZATION));
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseInfo.getCaseData())
+            .state(caseInfo.getState())
+            .errors(caseInfo.getErrors())
+            .build();
     }
 
     private void updateApplicant2DigitalDetails(CaseData caseData) {

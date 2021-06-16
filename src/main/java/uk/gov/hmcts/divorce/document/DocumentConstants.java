@@ -3,6 +3,11 @@ package uk.gov.hmcts.divorce.document;
 public final class DocumentConstants {
 
     public static final String DIVORCE_MINI_APPLICATION = "DIVORCE_MINI_APPLICATION";
+    public static final String DIVORCE_MINI_APPLICATION_DOCUMENT_NAME = "mini-application-";
+
+    public static final String DIVORCE_MINI_DRAFT_APPLICATION = "DIVORCE_MINI_DRAFT_APPLICATION";
+    public static final String DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME = "draft-mini-application-";
+
     public static final String USER_ROLES = "user-roles";
     public static final String USER_ID = "user-id";
     public static final String DOCUMENT_DELETE_URI = "document_delete_uri";
