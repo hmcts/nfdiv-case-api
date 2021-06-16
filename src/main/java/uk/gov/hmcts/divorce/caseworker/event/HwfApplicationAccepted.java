@@ -23,12 +23,13 @@ import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 @Component
 public class HwfApplicationAccepted implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String HWF_APPLICATION_ACCEPTED_FROM_AWAITING_HWF_DECISION = "hwfApplicationAcceptedfromAwaitingHWFDecision";
+    public static final String CASEWORKER_HWF_APPLICATION_ACCEPTED_FROM_AWAITING_HWF
+        = "caseworker-hwf-application-accepted-from-awaiting-hwf";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(HWF_APPLICATION_ACCEPTED_FROM_AWAITING_HWF_DECISION)
+            .event(CASEWORKER_HWF_APPLICATION_ACCEPTED_FROM_AWAITING_HWF)
             .forStateTransition(AwaitingHWFDecision, Submitted)
             .name("HWF application accepted")
             .description("HWF application accepted")

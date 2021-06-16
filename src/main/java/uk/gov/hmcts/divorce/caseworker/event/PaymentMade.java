@@ -19,12 +19,12 @@ import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 
 public class PaymentMade implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String PAYMENT_MADE_FROM_AWAITING_HWF = "paymentMadeFromAwaitingHWFDecision";
+    public static final String CASEWORKER_PAYMENT_MADE_FROM_AWAITING_HWF = "caseworker-payment-made-from-awaiting-hwf";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(PAYMENT_MADE_FROM_AWAITING_HWF)
+            .event(CASEWORKER_PAYMENT_MADE_FROM_AWAITING_HWF)
             .forStateTransition(AwaitingHWFDecision, Submitted)
             .name("Payment made")
             .description("Payment made")

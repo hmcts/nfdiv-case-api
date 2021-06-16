@@ -13,9 +13,9 @@ import uk.gov.hmcts.divorce.common.model.UserRole;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.caseworker.event.AwaitingApplicant.AWAITING_DOCS_FROM_AWAITING_HWF;
-import static uk.gov.hmcts.divorce.caseworker.event.HwfApplicationAccepted.HWF_APPLICATION_ACCEPTED_FROM_AWAITING_HWF_DECISION;
-import static uk.gov.hmcts.divorce.caseworker.event.PaymentMade.PAYMENT_MADE_FROM_AWAITING_HWF;
+import static uk.gov.hmcts.divorce.caseworker.event.AwaitingApplicant.CASEWORKER_AWAITING_DOC_FROM_AWAITING_HWF;
+import static uk.gov.hmcts.divorce.caseworker.event.HwfApplicationAccepted.CASEWORKER_HWF_APPLICATION_ACCEPTED_FROM_AWAITING_HWF;
+import static uk.gov.hmcts.divorce.caseworker.event.PaymentMade.CASEWORKER_PAYMENT_MADE_FROM_AWAITING_HWF;
 
 @ExtendWith(MockitoExtension.class)
 class FromAwaitingHwfDecisionEventTest {
@@ -38,7 +38,7 @@ class FromAwaitingHwfDecisionEventTest {
 
         assertThat(configBuilder.getEvents())
             .extracting(Event::getId)
-            .contains(AWAITING_DOCS_FROM_AWAITING_HWF);
+            .contains(CASEWORKER_AWAITING_DOC_FROM_AWAITING_HWF);
     }
 
     @Test
@@ -50,7 +50,7 @@ class FromAwaitingHwfDecisionEventTest {
 
         assertThat(configBuilder.getEvents())
             .extracting(Event::getId)
-            .contains(HWF_APPLICATION_ACCEPTED_FROM_AWAITING_HWF_DECISION);
+            .contains(CASEWORKER_HWF_APPLICATION_ACCEPTED_FROM_AWAITING_HWF);
     }
 
     @Test
@@ -62,6 +62,6 @@ class FromAwaitingHwfDecisionEventTest {
 
         assertThat(configBuilder.getEvents())
             .extracting(Event::getId)
-            .contains(PAYMENT_MADE_FROM_AWAITING_HWF);
+            .contains(CASEWORKER_PAYMENT_MADE_FROM_AWAITING_HWF);
     }
 }

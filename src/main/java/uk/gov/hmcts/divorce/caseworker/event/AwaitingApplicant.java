@@ -23,12 +23,12 @@ import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 @Component
 public class AwaitingApplicant implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String AWAITING_DOCS_FROM_AWAITING_HWF = "awaitingDocumentsFromAwaitingHWFDecision";
+    public static final String CASEWORKER_AWAITING_DOC_FROM_AWAITING_HWF = "caseworker-awaiting-doc-from-awaiting-hwf";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(AWAITING_DOCS_FROM_AWAITING_HWF)
+            .event(CASEWORKER_AWAITING_DOC_FROM_AWAITING_HWF)
             .forStateTransition(AwaitingHWFDecision, AwaitingDocuments)
             .name("Awaiting applicant")
             .description("Awaiting applicant")
