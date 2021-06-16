@@ -393,20 +393,6 @@ public class CaseData {
     private LocalDate dueDate;
 
     @CCD(
-        label = "Is HWF Reference OK for the full amount?",
-        access = {DefaultAccess.class},
-        hint = "Select \"Yes\" if it covers entire amount or \"No\" if doesn't"
-    )
-    private YesOrNo hwfCodeValidForFullAmount;
-
-    @CCD(
-        label = "Is amount different or invalid reference?",
-        access = {DefaultAccess.class},
-        hint = "Select \"Yes\" for different amount or \"No\" for invalid reference"
-    )
-    private YesOrNo hwfAmountOutstanding;
-
-    @CCD(
         label = "All documents uploaded",
         hint = "Select yes to submit the case, if all documents have been uploaded",
         access = {DefaultAccess.class}
