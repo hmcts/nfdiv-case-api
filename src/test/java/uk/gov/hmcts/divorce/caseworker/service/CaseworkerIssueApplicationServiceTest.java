@@ -37,7 +37,7 @@ class CaseworkerIssueApplicationServiceTest {
     private IssueApplicationService issueApplicationService;
 
     @Test
-    void shouldCompleteStepsToCreateApplication() {
+    void shouldCompleteStepsToIssueApplication() {
 
         final CaseData caseData = mock(CaseData.class);
         final CaseDataUpdaterChain caseDataUpdaterChain = mock(CaseDataUpdaterChain.class);

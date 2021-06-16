@@ -59,11 +59,11 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
             .pageLabel("Issue Divorce Application")
             .label("LabelNFDBanner-IssueApplication", SOLICITOR_NFD_PREVIEW_BANNER)
             .complex(CaseData::getMarriageDetails)
-            .optional(MarriageDetails::getDate)
-            .optional(MarriageDetails::getApplicant1Name)
-            .optional(MarriageDetails::getApplicant2Name)
-            .mandatory(MarriageDetails::getPlaceOfMarriage)
-            .done();
+                .optional(MarriageDetails::getDate)
+                .optional(MarriageDetails::getApplicant1Name)
+                .optional(MarriageDetails::getApplicant2Name)
+                .mandatory(MarriageDetails::getPlaceOfMarriage)
+                .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
