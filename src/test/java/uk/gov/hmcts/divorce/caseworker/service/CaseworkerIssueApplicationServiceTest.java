@@ -5,10 +5,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.updater.MiniApplication;
 import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdater;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
@@ -56,14 +54,14 @@ class CaseworkerIssueApplicationServiceTest {
         when(caseDataUpdaterChainFactory.createWith(caseDataUpdaters)).thenReturn(caseDataUpdaterChain);
         when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = issueApplicationService.aboutToSubmit(
+        final CaseData response = issueApplicationService.aboutToSubmit(
             caseData,
             TEST_CASE_ID,
             LOCAL_DATE,
             TEST_AUTHORIZATION_TOKEN
         );
 
-        assertThat(response.getData()).isEqualTo(caseData);
+        assertThat(response).isEqualTo(caseData);
 
         verify(caseDataUpdaterChainFactory).createWith(caseDataUpdaters);
         verify(caseDataUpdaterChain).processNext(caseDataContext);

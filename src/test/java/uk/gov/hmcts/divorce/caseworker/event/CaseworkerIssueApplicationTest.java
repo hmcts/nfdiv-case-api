@@ -53,7 +53,7 @@ class CaseworkerIssueApplicationTest {
 
         final var auth = "authorization";
         final var caseData = caseData();
-        final var expectedResult = AboutToStartOrSubmitResponse.<CaseData, State>builder().build();
+        final var expectedCaseData = CaseData.builder().build();
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -67,11 +67,11 @@ class CaseworkerIssueApplicationTest {
                 details.getId(),
                 details.getCreatedDate().toLocalDate(),
                 auth))
-            .thenReturn(expectedResult);
+            .thenReturn(expectedCaseData);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(details, null);
 
-        assertThat(response, is(expectedResult));
+        assertThat(response.getData(), is(expectedCaseData));
 
         verify(issueApplicationService).aboutToSubmit(
             caseData,
