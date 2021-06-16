@@ -9,6 +9,7 @@ java:
     CASE_DATA_STORE_BASEURL: "http://ccd-data-store-api-nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
 
 idam-pr:
+  enabled: true
   releaseNameOverride: ${SERVICE_NAME}-ccd-idam-pr
   redirect_uris:
     CCD Admin:
@@ -76,6 +77,16 @@ ccd:
         USER_PROFILE_DB_HOST: ${SERVICE_NAME}-postgresql
       keyVaults: []
       #ingressHost: ccd-user-profile-api-${SERVICE_FQDN}
+
+  ccd-admin-web:
+    nodejs:
+      image: hmctspublic.azurecr.io/ccd/admin-web:latest
+      ingressHost: admin-web-${SERVICE_FQDN}
+      keyVaults: []
+      environment:
+        USER_PROFILE_DB_HOST: ${SERVICE_NAME}-postgresql
+        IDAM_ADMIN_WEB_SERVICE_KEY: ${ADMIN_S2S_KEY}
+        IDAM_OAUTH2_AW_CLIENT_SECRET: ${ADMIN_WEB_IDAM_SECRET}
 
   importer:
     userprofile:
