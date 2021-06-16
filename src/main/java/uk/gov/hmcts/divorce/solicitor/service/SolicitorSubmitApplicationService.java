@@ -3,8 +3,8 @@ package uk.gov.hmcts.divorce.solicitor.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.divorce.common.CaseInfo;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
@@ -41,7 +41,7 @@ public class SolicitorSubmitApplicationService {
     @Autowired
     private Clock clock;
 
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
+    public CaseInfo aboutToSubmit(
         final CaseData caseData,
         final Long caseId,
         final String userAuth
@@ -77,8 +77,8 @@ public class SolicitorSubmitApplicationService {
             .processNext(caseDataContext)
             .getCaseData();
 
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(updatedCaseData)
+        return CaseInfo.builder()
+            .caseData(updatedCaseData)
             .state(state)
             .errors(submittedErrors)
             .build();
