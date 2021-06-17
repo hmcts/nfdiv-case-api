@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.caseworker;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +20,14 @@ import uk.gov.hmcts.divorce.document.DocumentIdProvider;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
+
 import static org.mockito.Mockito.when;
-import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
-import static org.skyscreamer.jsonassert.JSONCompareMode.STRICT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.CASEWORKER_ISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssembly;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyUnauthorized;
@@ -35,7 +37,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithStatementOfTruth;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssueApplication;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @ExtendWith(SpringExtension.class)
@@ -44,7 +46,7 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 @ContextConfiguration(initializers = {DocAssemblyWireMock.PropertiesInitializer.class})
 public class IssueApplicationTest {
 
-    private static final String SOLICITOR_ISSUE_APPLICATION_ABOUT_TO_SUBMIT =
+    private static final String CASEWORKER_ISSUE_APPLICATION_ABOUT_TO_SUBMIT =
         "classpath:caseworker-issue-application-about-to-submit-response.json";
 
     @Autowired
@@ -62,6 +64,9 @@ public class IssueApplicationTest {
     @MockBean
     private DocumentIdProvider documentIdProvider;
 
+    @MockBean
+    private Clock clock;
+
     @BeforeAll
     static void setUp() {
         DocAssemblyWireMock.start();
@@ -72,19 +77,23 @@ public class IssueApplicationTest {
         DocAssemblyWireMock.stopAndReset();
     }
 
+    @BeforeEach
+    void setClock() {
+        when(clock.instant()).thenReturn(Instant.parse("2021-06-17T12:00:00.000Z"));
+        when(clock.getZone()).thenReturn(ZoneId.systemDefault());
+    }
+
     @Test
     void givenValidCaseDataWhenAboutToSubmitCallbackIsInvokedCaseDataIsSetCorrectly() throws Exception {
 
-        final CaseData caseData = caseDataWithStatementOfTruth();
-        caseData.setDocumentUploadComplete(YES);
-        caseData.setFinancialOrder(NO);
+        final CaseData caseData = validCaseDataForIssueApplication();
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Divorce application");
 
         stubForDocAssembly();
 
-        final var jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -94,21 +103,16 @@ public class IssueApplicationTest {
                     CASEWORKER_ISSUE_APPLICATION)))
             .accept(APPLICATION_JSON))
             .andExpect(
-                status().isOk()
-            )
-            .andReturn()
-            .getResponse()
-            .getContentAsString();
-
-        assertEquals(jsonStringResponse, expectedResponse(SOLICITOR_ISSUE_APPLICATION_ABOUT_TO_SUBMIT), STRICT);
+                status().isOk())
+            .andExpect(
+                content().json(expectedResponse(CASEWORKER_ISSUE_APPLICATION_ABOUT_TO_SUBMIT))
+            );
     }
 
     @Test
     void givenValidCaseDataWhenAuthorizationFailsForDocAssemblyStatusIsUnauthorized() throws Exception {
 
-        final CaseData caseData = caseDataWithStatementOfTruth();
-        caseData.setDocumentUploadComplete(YES);
-        caseData.setFinancialOrder(NO);
+        final CaseData caseData = validCaseDataForIssueApplication();
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Divorce application");

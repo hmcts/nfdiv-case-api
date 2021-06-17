@@ -1,7 +1,7 @@
 {
   "data": {
     "applicant1AgreedToReceiveEmails": null,
-    "applicant1ContactDetailsConfidential": null,
+    "applicant1ContactDetailsConfidential": "share",
     "applicant1CorrespondenceAddress": null,
     "applicant1Email": "test@test.com",
     "applicant1FirstName": "test_first_name",

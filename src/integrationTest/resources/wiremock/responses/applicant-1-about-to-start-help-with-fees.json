@@ -48,7 +48,7 @@
     "applicant2NameDifferentToMarriageCertificate": null,
     "applicant2NameChangedHowOtherDetails": null,
     "applicant2PhoneNumber": null,
-    "applicant2ContactDetailsConfidential": null,
+    "applicant2ContactDetailsConfidential": "share",
     "jurisdictionApplicant1Residence": "Yes",
     "jurisdictionApplicant2Residence": "Yes",
     "jurisdictionApplicant1Domicile": null,

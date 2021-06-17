@@ -33,6 +33,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.CASEWORKER_ISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.invalidCaseData;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerIssueApplicationTest {
@@ -94,7 +95,7 @@ class CaseworkerIssueApplicationTest {
 
     @Test
     void shouldFailCaseDataValidationWhenMandatoryFieldsAreNotPopulatedForIssueApplication() {
-        final var caseData = caseData();
+        final var caseData = invalidCaseData();
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -116,7 +117,8 @@ class CaseworkerIssueApplicationTest {
                 "MarriageDate cannot be empty or null",
                 "JurisdictionConnections cannot be empty or null",
                 "MarriageApplicant2Name cannot be empty or null",
-                "PlaceOfMarriage cannot be empty or null"
+                "PlaceOfMarriage cannot be empty or null",
+                "Applicant1Gender cannot be empty or null"
             );
 
         verifyNoMoreInteractions(httpServletRequest, issueApplicationService);
