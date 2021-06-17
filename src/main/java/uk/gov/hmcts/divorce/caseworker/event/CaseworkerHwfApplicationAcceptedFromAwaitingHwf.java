@@ -1,5 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
@@ -17,17 +19,20 @@ import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_SUPE
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 
-public class PaymentMade implements CCDConfig<CaseData, State, UserRole> {
+@Slf4j
+@Component
+public class CaseworkerHwfApplicationAcceptedFromAwaitingHwf implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String CASEWORKER_PAYMENT_MADE_FROM_AWAITING_HWF = "caseworker-payment-made-from-awaiting-hwf";
+    public static final String CASEWORKER_HWF_APPLICATION_ACCEPTED_FROM_AWAITING_HWF
+        = "caseworker-hwf-application-accepted-from-awaiting-hwf";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(CASEWORKER_PAYMENT_MADE_FROM_AWAITING_HWF)
+            .event(CASEWORKER_HWF_APPLICATION_ACCEPTED_FROM_AWAITING_HWF)
             .forStateTransition(AwaitingHWFDecision, Submitted)
-            .name("Payment made")
-            .description("Payment made")
+            .name("HWF application accepted")
+            .description("HWF application accepted")
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_COURTADMIN_BETA, CASEWORKER_DIVORCE_COURTADMIN)
             .grant(READ, CASEWORKER_DIVORCE_SOLICITOR, CASEWORKER_DIVORCE_SUPERUSER, CASEWORKER_DIVORCE_COURTADMIN_LA));
