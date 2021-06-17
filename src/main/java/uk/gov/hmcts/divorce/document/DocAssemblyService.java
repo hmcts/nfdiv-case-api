@@ -4,21 +4,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.document.content.DraftApplicationTemplateContent;
+import uk.gov.hmcts.divorce.common.model.LanguagePreference;
+import uk.gov.hmcts.divorce.document.content.DocmosisTemplateProvider;
 import uk.gov.hmcts.divorce.document.model.DocAssemblyRequest;
 import uk.gov.hmcts.divorce.document.model.DocAssemblyResponse;
 import uk.gov.hmcts.divorce.document.model.DocumentInfo;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
-import java.time.LocalDate;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import static java.lang.String.format;
 
 @Service
 @Slf4j
 public class DocAssemblyService {
+
+    private static final String DOCUMENT_FILENAME_FMT = "%s%s";
+
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
@@ -29,33 +32,28 @@ public class DocAssemblyService {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private DraftApplicationTemplateContent templateContent;
+    private DocmosisTemplateProvider docmosisTemplateProvider;
 
-    public static final String DOCUMENT_FILENAME_FMT = "%s%s";
+    public DocumentInfo renderDocument(final Supplier<Map<String, Object>> templateContentSupplier,
+                                       final Long caseId,
+                                       final String authorisation,
+                                       final String templateId,
+                                       final String documentName,
+                                       final LanguagePreference languagePreference) {
 
-    public static final String DOCUMENT_NAME = "draft-mini-application-";
+        final String templateName = docmosisTemplateProvider.templateNameFor(templateId, languagePreference);
 
-    public DocumentInfo renderDocument(
-        CaseData caseData,
-        Long caseId,
-        LocalDate createDate,
-        String authorisation,
-        String templateName
-    ) {
-
-        Map<String, Object> templateData = templateContent.apply(caseData, caseId, createDate);
-
-        DocAssemblyRequest docAssemblyRequest =
+        final DocAssemblyRequest docAssemblyRequest =
             DocAssemblyRequest
                 .builder()
                 .templateId(templateName)
                 .outputType("PDF")
-                .formPayload(objectMapper.valueToTree(templateData))
+                .formPayload(objectMapper.valueToTree(templateContentSupplier.get()))
                 .build();
 
         log.info("Sending document request for template : {} case id: {}", templateName, caseId);
 
-        DocAssemblyResponse docAssemblyResponse = docAssemblyClient.generateAndStoreDraftApplication(
+        final DocAssemblyResponse docAssemblyResponse = docAssemblyClient.generateAndStoreDraftApplication(
             authorisation,
             authTokenGenerator.generate(),
             docAssemblyRequest
@@ -68,7 +66,7 @@ public class DocAssemblyService {
 
         return new DocumentInfo(
             docAssemblyResponse.getRenditionOutputLocation(),
-            format(DOCUMENT_FILENAME_FMT, DOCUMENT_NAME, caseId) + ".pdf",
+            format(DOCUMENT_FILENAME_FMT, documentName, caseId) + ".pdf",
             docAssemblyResponse.getBinaryFilePath()
         );
     }

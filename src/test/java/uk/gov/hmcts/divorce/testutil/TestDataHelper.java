@@ -84,6 +84,7 @@ public class TestDataHelper {
             .lastName(TEST_LAST_NAME)
             .email(TEST_USER_EMAIL)
             .gender(gender)
+            .languagePreferenceWelsh(NO)
             .build();
     }
 

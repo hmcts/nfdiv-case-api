@@ -123,7 +123,7 @@ public class SolicitorSubmitApplicationTest {
         stubForFeesLookup(getFeeResponseAsJson());
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, SOLICITOR_USER_ID, SOLICITOR_ROLE);
         stubForIdamDetails(CASEWORKER_AUTH_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
-        stubForIdamToken();
+        stubForIdamToken(CASEWORKER_AUTH_TOKEN);
 
         when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
 
@@ -201,7 +201,7 @@ public class SolicitorSubmitApplicationTest {
         stubForFeesLookup(getFeeResponseAsJson());
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, SOLICITOR_USER_ID, SOLICITOR_ROLE);
         stubForIdamDetails(CASEWORKER_AUTH_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
-        stubForIdamToken();
+        stubForIdamToken(CASEWORKER_AUTH_TOKEN);
 
         when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
 

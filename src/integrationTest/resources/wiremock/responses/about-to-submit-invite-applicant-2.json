@@ -21,7 +21,7 @@
     "applicant1NameDifferentToMarriageCertificate": null,
     "applicant1PhoneNumber": null,
     "applicant1NameChangedHowOtherDetails": null,
-    "applicant1LanguagePreferenceWelsh": null,
+    "applicant1LanguagePreferenceWelsh": "No",
     "applicant1ContactDetailsConfidential": null,
     "applicant1CorrespondenceAddress": null,
     "applicant1SolicitorRepresented": null,
@@ -64,7 +64,7 @@
     "marriageCertifyMarriageCertificateIsCorrect": null,
     "marriageIssueApplicationWithoutMarriageCertificate": null,
     "marriageMarriageCertificateIsIncorrectDetails": null,
-    "invitePin": "${json-unit.any-string}",
+    "accessCode": "${json-unit.any-string}",
     "dueDate": "${json-unit.ignore}"
   },
   "errors": null,
