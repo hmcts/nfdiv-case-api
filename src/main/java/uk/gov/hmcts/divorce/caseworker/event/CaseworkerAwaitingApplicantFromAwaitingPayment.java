@@ -35,7 +35,7 @@ public class CaseworkerAwaitingApplicantFromAwaitingPayment implements CCDConfig
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_COURTADMIN_BETA, CASEWORKER_DIVORCE_COURTADMIN)
             .grant(READ, CASEWORKER_DIVORCE_SOLICITOR, CASEWORKER_DIVORCE_SUPERUSER, CASEWORKER_DIVORCE_COURTADMIN_LA))
-            .page("caseworkerAwaitingDocuments")
+            .page("updateDueDate")
             .pageLabel("Update Due Date")
             .optional(CaseData::getDueDate);
     }
