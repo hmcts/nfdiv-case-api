@@ -14,12 +14,12 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.caseworker.event.Withdrawn.CASEWORKER_WITHDRAWN;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerWithdrawn.CASEWORKER_WITHDRAWN;
 
 @ExtendWith(MockitoExtension.class)
-class WithdrawnTest {
+class CaseworkerWithdrawnTest {
     @InjectMocks
-    private Withdrawn withdrawn;
+    private CaseworkerWithdrawn withdrawn;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {

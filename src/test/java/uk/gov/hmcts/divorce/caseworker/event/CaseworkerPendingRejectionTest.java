@@ -14,21 +14,21 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.caseworker.event.Rejected.CASEWORKER_REJECTED;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerPendingRejection.CASEWORKER_PENDING_REJECTION;
 
 @ExtendWith(MockitoExtension.class)
-class RejectedTest {
+class CaseworkerPendingRejectionTest {
     @InjectMocks
-    private Rejected rejected;
+    private CaseworkerPendingRejection caseworkerPendingRejection;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final Set<State> stateSet = EnumSet.allOf(State.class);
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = new ConfigBuilderImpl<>(CaseData.class, stateSet);
 
-        rejected.configure(configBuilder);
+        caseworkerPendingRejection.configure(configBuilder);
         assertThat(configBuilder.getEvents())
             .extracting(Event::getId)
-            .contains(CASEWORKER_REJECTED);
+            .contains(CASEWORKER_PENDING_REJECTION);
     }
 }

@@ -9,7 +9,7 @@ import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 
 import static java.util.EnumSet.allOf;
-import static uk.gov.hmcts.divorce.common.model.State.Rejected;
+import static uk.gov.hmcts.divorce.common.model.State.Withdrawn;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_LA;
@@ -19,16 +19,16 @@ import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_U
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 
 @Component
-public class Rejected implements CCDConfig<CaseData, State, UserRole> {
-    public static final String CASEWORKER_REJECTED = "caseworker-rejected";
+public class CaseworkerWithdrawn implements CCDConfig<CaseData, State, UserRole> {
+    public static final String CASEWORKER_WITHDRAWN = "caseworker-withdrawn";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(CASEWORKER_REJECTED)
-            .forStateTransition(allOf(State.class), Rejected)
-            .name("Rejected")
-            .description("Rejected")
+            .event(CASEWORKER_WITHDRAWN)
+            .forStateTransition(allOf(State.class), Withdrawn)
+            .name("Withdrawn")
+            .description("Withdrawn")
             .explicitGrants()
             .grant(CREATE_READ_UPDATE,
                 CASEWORKER_DIVORCE_COURTADMIN_BETA,

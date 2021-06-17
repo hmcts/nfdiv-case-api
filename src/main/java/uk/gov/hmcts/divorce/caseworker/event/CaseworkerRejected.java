@@ -9,7 +9,7 @@ import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 
 import static java.util.EnumSet.allOf;
-import static uk.gov.hmcts.divorce.common.model.State.PendingRejection;
+import static uk.gov.hmcts.divorce.common.model.State.Rejected;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_LA;
@@ -19,16 +19,16 @@ import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_U
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 
 @Component
-public class PendingRejection implements CCDConfig<CaseData, State, UserRole> {
-    public static final String CASEWORKER_PENDING_REJECTION = "caseworker-pending-rejection";
+public class CaseworkerRejected implements CCDConfig<CaseData, State, UserRole> {
+    public static final String CASEWORKER_REJECTED = "caseworker-rejected";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(CASEWORKER_PENDING_REJECTION)
-            .forStateTransition(allOf(State.class), PendingRejection)
-            .name("Pending Rejection")
-            .description("Pending Rejection")
+            .event(CASEWORKER_REJECTED)
+            .forStateTransition(allOf(State.class), Rejected)
+            .name("Rejected")
+            .description("Rejected")
             .explicitGrants()
             .grant(CREATE_READ_UPDATE,
                 CASEWORKER_DIVORCE_COURTADMIN_BETA,
