@@ -15,7 +15,7 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAwaitingApplicantFromAwaitingHwf.CASEWORKER_AWAITING_DOC_FROM_AWAITING_HWF;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerPaymentMadeFromAwaitingHwf.CASEWORKER_PAYMENT_MADE_FROM_AWAITING_HWF;
-import static uk.gov.hmcts.divorce.caseworker.event.HwfApplicationAcceptedFromAwaitingHwf.CASEWORKER_HWF_APPLICATION_ACCEPTED_FROM_AWAITING_HWF;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerHwfApplicationAcceptedFromAwaitingHwf.CASEWORKER_HWF_APPLICATION_ACCEPTED_FROM_AWAITING_HWF;
 
 @ExtendWith(MockitoExtension.class)
 class FromAwaitingHwfDecisionEventTest {
@@ -24,7 +24,7 @@ class FromAwaitingHwfDecisionEventTest {
     private CaseworkerAwaitingApplicantFromAwaitingHwf caseworkerAwaitingApplicantFromAwaitingHwf;
 
     @InjectMocks
-    private HwfApplicationAcceptedFromAwaitingHwf hwfApplicationAcceptedFromAwaitingHwf;
+    private CaseworkerHwfApplicationAcceptedFromAwaitingHwf caseworkerHwfApplicationAcceptedFromAwaitingHwf;
 
     @InjectMocks
     private CaseworkerPaymentMadeFromAwaitingHwf caseworkerPaymentMadeFromAwaitingHwf;
@@ -46,7 +46,7 @@ class FromAwaitingHwfDecisionEventTest {
         final Set<State> stateSet = Set.of(State.class.getEnumConstants());
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = new ConfigBuilderImpl<>(CaseData.class, stateSet);
 
-        hwfApplicationAcceptedFromAwaitingHwf.configure(configBuilder);
+        caseworkerHwfApplicationAcceptedFromAwaitingHwf.configure(configBuilder);
 
         assertThat(configBuilder.getEvents())
             .extracting(Event::getId)

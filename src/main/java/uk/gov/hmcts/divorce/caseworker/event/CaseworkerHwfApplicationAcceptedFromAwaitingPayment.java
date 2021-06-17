@@ -9,7 +9,7 @@ import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 
-import static uk.gov.hmcts.divorce.common.model.State.AwaitingHWFDecision;
+import static uk.gov.hmcts.divorce.common.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
@@ -21,16 +21,16 @@ import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 
 @Slf4j
 @Component
-public class HwfApplicationAcceptedFromAwaitingHwf implements CCDConfig<CaseData, State, UserRole> {
+public class CaseworkerHwfApplicationAcceptedFromAwaitingPayment implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String CASEWORKER_HWF_APPLICATION_ACCEPTED_FROM_AWAITING_HWF
-        = "caseworker-hwf-application-accepted-from-awaiting-hwf";
+    public static final String CASEWORKER_HWF_APPLICATION_ACCEPTED_FROM_AWAITING_PAYMENT
+        = "caseworker-hwf-application-accepted-from-awaiting-payment";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(CASEWORKER_HWF_APPLICATION_ACCEPTED_FROM_AWAITING_HWF)
-            .forStateTransition(AwaitingHWFDecision, Submitted)
+            .event(CASEWORKER_HWF_APPLICATION_ACCEPTED_FROM_AWAITING_PAYMENT)
+            .forStateTransition(AwaitingPayment, Submitted)
             .name("HWF application accepted")
             .description("HWF application accepted")
             .explicitGrants()

@@ -13,23 +13,23 @@ import uk.gov.hmcts.divorce.common.model.UserRole;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.caseworker.event.HwfApplicationAcceptedFromAwaitingPayment.CASEWORKER_HWF_APPLICATION_ACCEPTED_FROM_AWAITING_PAYMENT;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerPaymentMadeFromAwaitingPayment.PAYMENT_MADE_FROM_AWAITING_PAYMENT;
 
 @ExtendWith(MockitoExtension.class)
-public class HwfApplicationAcceptedFromAwaitingPaymentTest {
+public class CaseworkerPaymentMadeFromAwaitingPaymentTest {
 
     @InjectMocks
-    private HwfApplicationAcceptedFromAwaitingPayment hwfApplicationAcceptedFromAwaitingPayment;
+    private CaseworkerPaymentMadeFromAwaitingPayment caseworkerPaymentMadeFromAwaitingPayment;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final Set<State> stateSet = Set.of(State.class.getEnumConstants());
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = new ConfigBuilderImpl<>(CaseData.class, stateSet);
 
-        hwfApplicationAcceptedFromAwaitingPayment.configure(configBuilder);
+        caseworkerPaymentMadeFromAwaitingPayment.configure(configBuilder);
 
         assertThat(configBuilder.getEvents())
             .extracting(Event::getId)
-            .contains(CASEWORKER_HWF_APPLICATION_ACCEPTED_FROM_AWAITING_PAYMENT);
+            .contains(PAYMENT_MADE_FROM_AWAITING_PAYMENT);
     }
 }
