@@ -12,6 +12,10 @@ import uk.gov.hmcts.divorce.common.updater.CaseDataUpdater;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChainFactory;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
@@ -23,6 +27,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerIssueApplicationServiceTest {
@@ -33,13 +38,16 @@ class CaseworkerIssueApplicationServiceTest {
     @Mock
     private CaseDataUpdaterChainFactory caseDataUpdaterChainFactory;
 
+    @Mock
+    private Clock clock;
+
     @InjectMocks
     private IssueApplicationService issueApplicationService;
 
     @Test
     void shouldCompleteStepsToIssueApplication() {
 
-        final CaseData caseData = mock(CaseData.class);
+        final CaseData caseData = caseData();
         final CaseDataUpdaterChain caseDataUpdaterChain = mock(CaseDataUpdaterChain.class);
 
         final List<CaseDataUpdater> caseDataUpdaters = singletonList(miniApplication);
@@ -51,6 +59,12 @@ class CaseworkerIssueApplicationServiceTest {
             .userAuthToken(TEST_AUTHORIZATION_TOKEN)
             .build();
 
+        final var instant = Instant.now();
+        final var zoneId = ZoneId.systemDefault();
+
+        when(clock.instant()).thenReturn(instant);
+        when(clock.getZone()).thenReturn(zoneId);
+
         when(caseDataUpdaterChainFactory.createWith(caseDataUpdaters)).thenReturn(caseDataUpdaterChain);
         when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
 
@@ -61,7 +75,12 @@ class CaseworkerIssueApplicationServiceTest {
             TEST_AUTHORIZATION_TOKEN
         );
 
-        assertThat(response).isEqualTo(caseData);
+        final var expectedDateTime = LocalDate.ofInstant(instant, zoneId);
+
+        var expectedCaseData = caseData();
+        expectedCaseData.setIssueDate(expectedDateTime);
+
+        assertThat(response).isEqualTo(expectedCaseData);
 
         verify(caseDataUpdaterChainFactory).createWith(caseDataUpdaters);
         verify(caseDataUpdaterChain).processNext(caseDataContext);
