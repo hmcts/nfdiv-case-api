@@ -1,0 +1,123 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "marriageApplicant1Name": null,
+    "marriageApplicant2Name": null,
+    "applicant1FirstName": "John",
+    "applicant1LastName": "Smith",
+    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+    "applicant1MiddleName": null,
+    "applicant1AgreedToReceiveEmails": null,
+    "applicant1NameChangedHow": null,
+    "applicant1NameDifferentToMarriageCertificate": null,
+    "applicant1PhoneNumber": null,
+    "applicant1NameChangedHowOtherDetails": null,
+    "applicant1LanguagePreferenceWelsh": null,
+    "applicant1ContactDetailsConfidential": null,
+    "applicant1Gender": null,
+    "applicant1CorrespondenceAddress": null,
+    "applicant1SolicitorRepresented": null,
+    "applicant1SolicitorAddress": null,
+    "applicant1SolicitorAgreeToReceiveEmails": null,
+    "applicant1SolicitorEmail": null,
+    "applicant1SolicitorIsDigital": null,
+    "applicant1SolicitorName": null,
+    "applicant1SolicitorPhone": null,
+    "applicant1SolicitorReference": null,
+    "applicant2CorrespondenceAddress": null,
+    "applicant2SolicitorRepresented": null,
+    "applicant2SolicitorAddress": null,
+    "applicant2SolicitorAgreeToReceiveEmails": null,
+    "applicant2SolicitorEmail": null,
+    "applicant2SolicitorIsDigital": null,
+    "applicant2SolicitorName": null,
+    "applicant2SolicitorPhone": null,
+    "applicant2SolicitorReference": null,
+    "applicant2Gender": null,
+    "applicant2FirstName": null,
+    "applicant2MiddleName": null,
+    "applicant2LastName": null,
+    "applicant2AgreedToReceiveEmails": null,
+    "applicant2Email": null,
+    "applicant2LanguagePreferenceWelsh": null,
+    "applicant2NameChangedHow": null,
+    "applicant2NameDifferentToMarriageCertificate": null,
+    "applicant2NameChangedHowOtherDetails": null,
+    "applicant2PhoneNumber": null,
+    "applicant2ContactDetailsConfidential": null,
+    "divorceCostsClaim": "Yes",
+    "solSignStatementOfTruth": "Yes",
+    "documentsGenerated": [],
+    "jurisdictionApplicant1Residence": null,
+    "jurisdictionApplicant2Residence": null,
+    "jurisdictionApplicant1Domicile": null,
+    "jurisdictionApplicant2Domicile": null,
+    "jurisdictionApp1HabituallyResLastTwelveMonths": null,
+    "jurisdictionApp1HabituallyResLastSixMonths": null,
+    "jurisdictionResidualEligible": null,
+    "jurisdictionBothLastHabituallyResident": null,
+    "jurisdictionConnections": null,
+    "marriageMarriedInUk": null,
+    "marriageCertificateInEnglish": null,
+    "marriageCertifiedTranslation": null,
+    "marriageCountryOfMarriage": null,
+    "marriagePlaceOfMarriage": null,
+    "marriageDate": null,
+    "marriageIsSameSexCouple": null,
+    "marriageCertifyMarriageCertificateIsCorrect": null,
+    "marriageMarriageCertificateIsIncorrectDetails": null,
+    "marriageIssueApplicationWithoutMarriageCertificate": null,
+    "dateSubmitted": "${json-unit.ignore}",
+    "applicant1WantsToHavePapersServedAnotherWay": "No",
+    "applicationFeeOrderSummary": {
+      "PaymentTotal": "55000",
+      "PaymentReference": null,
+      "Fees": [
+        {
+          "id": null,
+          "value": {
+            "FeeDescription": "Filing an application for a divorce, nullity or civil partnership dissolution",
+            "FeeVersion": "5",
+            "FeeCode": "FEE0002",
+            "FeeAmount": "55000"
+          }
+        }
+      ]
+    },
+    "payments": [
+      {
+        "id": null,
+        "value": {
+          "paymentDate": null,
+          "paymentFeeId": "FEE0001",
+          "paymentAmount": 55000,
+          "paymentSiteId": "AA04",
+          "paymentStatus": "success",
+          "paymentChannel": "online",
+          "paymentReference": null,
+          "paymentTransactionId": "ge7po9h5bhbtbd466424src9tk"
+        }
+      }
+    ],
+    "documentsGenerated": [
+      {
+        "id": "${json-unit.ignore}",
+        "value": {
+          "documentDateAdded": null,
+          "documentComment": null,
+          "documentFileName": "mini-application-1234567890123456.pdf",
+          "documentType": "divorceApplication",
+          "documentEmailContent": null,
+          "documentLink": {
+            "document_url": "${json-unit.ignore}",
+            "document_filename": "mini-application-1234567890123456.pdf",
+            "document_binary_url": "${json-unit.ignore}"
+          }
+        }
+      }
+    ]
+  },
+  "errors": [],
+  "warnings": null,
+  "state": "Submitted"
+}
