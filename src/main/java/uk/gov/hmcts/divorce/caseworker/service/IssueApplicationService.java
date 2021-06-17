@@ -38,9 +38,13 @@ public class IssueApplicationService {
             .userAuthToken(idamAuthToken)
             .build();
 
-        return caseDataUpdaterChainFactory
+        CaseData updatedCaseData = caseDataUpdaterChainFactory
             .createWith(caseDataUpdaters)
             .processNext(caseDataContext)
             .getCaseData();
+
+        updatedCaseData.setIssueDate(LocalDate.now());
+
+        return updatedCaseData;
     }
 }

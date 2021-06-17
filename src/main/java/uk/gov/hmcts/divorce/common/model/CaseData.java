@@ -411,6 +411,14 @@ public class CaseData {
     )
     private String respondentUserId;
 
+
+    @CCD(
+        label = "Date when the application was issued",
+        access = {DefaultAccess.class}
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate issueDate;
+
     @JsonIgnore
     public LocalDate getDateOfSubmissionResponse() {
         return dateSubmitted == null ? null : dateSubmitted.plusDays(SUBMISSION_RESPONSE_DAYS).toLocalDate();
