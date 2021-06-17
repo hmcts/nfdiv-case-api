@@ -5,14 +5,15 @@ import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.http.HttpHeaders;
 
 import java.io.IOException;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.unauthorized;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static java.nio.file.Files.readAllBytes;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.util.ResourceUtils.getFile;
@@ -43,11 +44,21 @@ public final class DocAssemblyWireMock {
     public static void stubForDocAssembly() throws IOException {
         DOC_ASSEMBLY_SERVER.stubFor(
             post("/api/template-renditions")
-                .withHeader(HttpHeaders.AUTHORIZATION, new EqualToPattern(TEST_AUTHORIZATION_TOKEN))
+                .withHeader(AUTHORIZATION, new EqualToPattern(TEST_AUTHORIZATION_TOKEN))
                 .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(TEST_SERVICE_AUTH_TOKEN))
                 .willReturn(aResponse()
                     .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                     .withBody(expectedDocAssemblyResponse("classpath:wiremock/responses/dg-assembly-response.json")))
+        );
+    }
+
+    public static void stubForDocAssemblyUnauthorized() throws IOException {
+        DOC_ASSEMBLY_SERVER.stubFor(
+            post("/api/template-renditions")
+                .withHeader(AUTHORIZATION, new EqualToPattern(TEST_AUTHORIZATION_TOKEN))
+                .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(TEST_SERVICE_AUTH_TOKEN))
+                .willReturn(unauthorized()
+                    .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE))
         );
     }
 
