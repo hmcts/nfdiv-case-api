@@ -45,12 +45,15 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
         new PageBuilder(configBuilder
             .event(ISSUE_APPLICATION)
             .forStateTransition(Submitted, Issued)
-            .name("Issue Application")
-            .description("Issue Application")
+            .name("Application issued")
+            .description("Application issued")
+            .displayOrder(4)
             .showSummary()
             .explicitGrants()
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_COURTADMIN_BETA, CASEWORKER_DIVORCE_COURTADMIN)
+            .grant(CREATE_READ_UPDATE,
+                CASEWORKER_DIVORCE_COURTADMIN_BETA,
+                CASEWORKER_DIVORCE_COURTADMIN)
             .grant(READ,
                 CASEWORKER_DIVORCE_SOLICITOR,
                 CASEWORKER_DIVORCE_SUPERUSER,
