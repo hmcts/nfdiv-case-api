@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
@@ -19,9 +18,8 @@ import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_SUPE
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 
-@Slf4j
 @Component
-public class HwfApplicationAccepted implements CCDConfig<CaseData, State, UserRole> {
+public class CaseworkerHwfApplicationAcceptedFromAwaitingHwf implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_HWF_APPLICATION_ACCEPTED_FROM_AWAITING_HWF
         = "caseworker-hwf-application-accepted-from-awaiting-hwf";

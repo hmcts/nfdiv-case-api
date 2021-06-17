@@ -8,7 +8,7 @@ import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 
-import static uk.gov.hmcts.divorce.common.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.common.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
@@ -19,23 +19,19 @@ import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_U
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 
 @Component
-public class CaseworkerAwaitingDocuments implements CCDConfig<CaseData, State, UserRole> {
+public class CaseworkerPaymentMadeFromAwaitingHwf implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String CASEWORKER_AWAITING_DOCUMENTS = "caseworker-awaiting-documents";
+    public static final String CASEWORKER_PAYMENT_MADE_FROM_AWAITING_HWF = "caseworker-payment-made-from-awaiting-hwf";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(CASEWORKER_AWAITING_DOCUMENTS)
-            .forStateTransition(Submitted, AwaitingDocuments)
-            .name("Awaiting documents")
-            .description("Awaiting documents from the applicant")
-            .displayOrder(3)
+            .event(CASEWORKER_PAYMENT_MADE_FROM_AWAITING_HWF)
+            .forStateTransition(AwaitingHWFDecision, Submitted)
+            .name("Payment made")
+            .description("Payment made")
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_COURTADMIN_BETA, CASEWORKER_DIVORCE_COURTADMIN)
-            .grant(READ, CASEWORKER_DIVORCE_SOLICITOR, CASEWORKER_DIVORCE_SUPERUSER, CASEWORKER_DIVORCE_COURTADMIN_LA))
-            .page("caseworkerAwaitingDocuments")
-            .pageLabel("Update Due Date")
-            .optional(CaseData::getDueDate);
+            .grant(READ, CASEWORKER_DIVORCE_SOLICITOR, CASEWORKER_DIVORCE_SUPERUSER, CASEWORKER_DIVORCE_COURTADMIN_LA));
     }
 }

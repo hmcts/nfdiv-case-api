@@ -13,28 +13,28 @@ import uk.gov.hmcts.divorce.common.model.UserRole;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.caseworker.event.AwaitingApplicant.CASEWORKER_AWAITING_DOC_FROM_AWAITING_HWF;
-import static uk.gov.hmcts.divorce.caseworker.event.HwfApplicationAccepted.CASEWORKER_HWF_APPLICATION_ACCEPTED_FROM_AWAITING_HWF;
-import static uk.gov.hmcts.divorce.caseworker.event.PaymentMade.CASEWORKER_PAYMENT_MADE_FROM_AWAITING_HWF;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAwaitingApplicantFromAwaitingHwf.CASEWORKER_AWAITING_DOC_FROM_AWAITING_HWF;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerHwfApplicationAcceptedFromAwaitingHwf.CASEWORKER_HWF_APPLICATION_ACCEPTED_FROM_AWAITING_HWF;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerPaymentMadeFromAwaitingHwf.CASEWORKER_PAYMENT_MADE_FROM_AWAITING_HWF;
 
 @ExtendWith(MockitoExtension.class)
 class FromAwaitingHwfDecisionEventTest {
 
     @InjectMocks
-    private AwaitingApplicant awaitingApplicant;
+    private CaseworkerAwaitingApplicantFromAwaitingHwf caseworkerAwaitingApplicantFromAwaitingHwf;
 
     @InjectMocks
-    private HwfApplicationAccepted hwfApplicationAccepted;
+    private CaseworkerHwfApplicationAcceptedFromAwaitingHwf caseworkerHwfApplicationAcceptedFromAwaitingHwf;
 
     @InjectMocks
-    private PaymentMade paymentMade;
+    private CaseworkerPaymentMadeFromAwaitingHwf caseworkerPaymentMadeFromAwaitingHwf;
 
     @Test
     void shouldAddConfigurationToConfigBuilderForAwaitingApplicant() {
         final Set<State> stateSet = Set.of(State.class.getEnumConstants());
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = new ConfigBuilderImpl<>(CaseData.class, stateSet);
 
-        awaitingApplicant.configure(configBuilder);
+        caseworkerAwaitingApplicantFromAwaitingHwf.configure(configBuilder);
 
         assertThat(configBuilder.getEvents())
             .extracting(Event::getId)
@@ -46,7 +46,7 @@ class FromAwaitingHwfDecisionEventTest {
         final Set<State> stateSet = Set.of(State.class.getEnumConstants());
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = new ConfigBuilderImpl<>(CaseData.class, stateSet);
 
-        hwfApplicationAccepted.configure(configBuilder);
+        caseworkerHwfApplicationAcceptedFromAwaitingHwf.configure(configBuilder);
 
         assertThat(configBuilder.getEvents())
             .extracting(Event::getId)
@@ -58,7 +58,7 @@ class FromAwaitingHwfDecisionEventTest {
         final Set<State> stateSet = Set.of(State.class.getEnumConstants());
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = new ConfigBuilderImpl<>(CaseData.class, stateSet);
 
-        paymentMade.configure(configBuilder);
+        caseworkerPaymentMadeFromAwaitingHwf.configure(configBuilder);
 
         assertThat(configBuilder.getEvents())
             .extracting(Event::getId)

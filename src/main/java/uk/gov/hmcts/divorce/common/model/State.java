@@ -29,7 +29,7 @@ public enum State {
     AwaitingApplicant2Response("AwaitingApplicant2Response"),
 
     @CCD(
-        name = "Awaiting payment",
+        name = "Application awaiting payment",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
     AwaitingPayment("AwaitingPayment") {
@@ -42,7 +42,7 @@ public enum State {
     },
 
     @CCD(
-        name = "Application paid and submitted - awaiting documents",
+        name = "Awaiting applicant",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
     AwaitingDocuments("AwaitingDocuments") {
@@ -68,7 +68,7 @@ public enum State {
     AwaitingHWFDecision("AwaitingHWFDecision"),
 
     @CCD(
-        name = "Application paid and submitted",
+        name = "Submitted",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
     Submitted("Submitted") {
@@ -103,6 +103,24 @@ public enum State {
             return errors;
         }
     },
+
+    @CCD(
+        name = "Application Rejected",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
+    )
+    Rejected("Rejected"),
+
+    @CCD(
+        name = "Application Withdrawn",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
+    )
+    Withdrawn("Withdrawn"),
+
+    @CCD(
+        name = "Pending rejection",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
+    )
+    PendingRejection("PendingRejection"),
 
     ConditionalOrderComplete("ConditionalOrderComplete"),
     FinalOrderComplete("FinalOrderComplete");
