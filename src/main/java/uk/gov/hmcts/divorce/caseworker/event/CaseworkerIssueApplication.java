@@ -14,9 +14,11 @@ import uk.gov.hmcts.divorce.common.model.MarriageDetails;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.common.model.State.Issued;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
@@ -73,6 +75,15 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
         log.info("Caseworker issue application about to submit callback invoked");
+
+        final List<String> caseValidationErrors = Issued.validate(details.getData());
+
+        if (!isEmpty(caseValidationErrors)) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(details.getData())
+                .errors(caseValidationErrors)
+                .build();
+        }
 
         final CaseData caseData = issueApplicationService.aboutToSubmit(
             details.getData(),

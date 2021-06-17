@@ -15,6 +15,7 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.common.model.access.CaseworkerAccess;
 import uk.gov.hmcts.divorce.common.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
@@ -410,6 +411,14 @@ public class CaseData {
         access = {DefaultAccess.class}
     )
     private String respondentUserId;
+
+
+    @CCD(
+        label = "Date when the application was issued",
+        access = {CaseworkerAccess.class}
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate issueDate;
 
     @JsonIgnore
     public LocalDate getDateOfSubmissionResponse() {

@@ -18,12 +18,13 @@ public class CaseworkerAccess implements HasAccessControl {
     @Override
     public SetMultimap<HasRole, Permission> getGrants() {
         SetMultimap<HasRole, Permission> grants = HashMultimap.create();
-        grants.putAll(CITIZEN, Permissions.CREATE_READ_UPDATE);
+        grants.putAll(CITIZEN, Permissions.READ);
+        grants.putAll(CASEWORKER_DIVORCE_SOLICITOR, Permissions.READ);
+        grants.putAll(CASEWORKER_DIVORCE_SUPERUSER, Permissions.READ);
+
         grants.putAll(CASEWORKER_DIVORCE_COURTADMIN_BETA, Permissions.CREATE_READ_UPDATE);
         grants.putAll(CASEWORKER_DIVORCE_COURTADMIN, Permissions.CREATE_READ_UPDATE);
-        grants.putAll(CASEWORKER_DIVORCE_SOLICITOR, Permissions.CREATE_READ_UPDATE);
-        grants.putAll(CASEWORKER_DIVORCE_SUPERUSER, Permissions.READ);
-        grants.putAll(CASEWORKER_DIVORCE_COURTADMIN_LA, Permissions.READ);
+        grants.putAll(CASEWORKER_DIVORCE_COURTADMIN_LA, Permissions.CREATE_READ_UPDATE);
 
         return grants;
     }
