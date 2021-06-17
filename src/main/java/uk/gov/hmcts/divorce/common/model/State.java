@@ -29,7 +29,7 @@ public enum State {
     AwaitingApplicant2Response("AwaitingApplicant2Response"),
 
     @CCD(
-        name = "Awaiting payment",
+        name = "Application awaiting payment",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
     AwaitingPayment("AwaitingPayment") {
