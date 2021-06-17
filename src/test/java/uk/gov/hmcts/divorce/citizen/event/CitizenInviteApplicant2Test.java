@@ -52,7 +52,7 @@ public class CitizenInviteApplicant2Test {
     }
 
     @Test
-    public void givenValidCaseDataWhenCallbackIsInvokedThenGeneratePinAndSendEmail() {
+    public void givenValidCaseDataWhenCallbackIsInvokedThenGenerateAccessCodeAndSendEmail() {
         final CaseData caseData = caseData();
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -62,8 +62,8 @@ public class CitizenInviteApplicant2Test {
 
         verify(applicationSentForReviewNotification).send(caseData, details.getId());
 
-        assertThat(response.getData().getInvitePin()).isNotBlank();
-        assertThat(response.getData().getInvitePin().length()).isEqualTo(8);
-        assertThat(response.getData().getInvitePin()).doesNotContain("I","O","U","0","1");
+        assertThat(response.getData().getAccessCode()).isNotBlank();
+        assertThat(response.getData().getAccessCode().length()).isEqualTo(8);
+        assertThat(response.getData().getAccessCode()).doesNotContain("I","O","U","0","1");
     }
 }

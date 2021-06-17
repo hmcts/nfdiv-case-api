@@ -400,10 +400,16 @@ public class CaseData {
     private YesOrNo documentUploadComplete;
 
     @CCD(
-        label = "The respondent invite access pin",
+        label = "The respondent invite access code",
         access = {DefaultAccess.class}
     )
-    private String invitePin;
+    private String accessCode;
+
+    @CCD(
+        label = "The respondent's user id",
+        access = {DefaultAccess.class}
+    )
+    private String respondentUserId;
 
     @JsonIgnore
     public LocalDate getDateOfSubmissionResponse() {
