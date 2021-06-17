@@ -19,14 +19,14 @@ import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerWithdrawn.CASEWORK
 @ExtendWith(MockitoExtension.class)
 class CaseworkerWithdrawnTest {
     @InjectMocks
-    private CaseworkerWithdrawn withdrawn;
+    private CaseworkerWithdrawn caseworkerWithdrawn;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final Set<State> stateSet = EnumSet.allOf(State.class);
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = new ConfigBuilderImpl<>(CaseData.class, stateSet);
 
-        withdrawn.configure(configBuilder);
+        caseworkerWithdrawn.configure(configBuilder);
         assertThat(configBuilder.getEvents())
             .extracting(Event::getId)
             .contains(CASEWORKER_WITHDRAWN);

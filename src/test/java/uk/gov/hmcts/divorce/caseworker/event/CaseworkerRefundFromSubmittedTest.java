@@ -14,19 +14,19 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.caseworker.event.RefundFromSubmitted.CASEWORKER_REFUND;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRefundFromSubmitted.CASEWORKER_REFUND;
 
 @ExtendWith(MockitoExtension.class)
-class RefundFromSubmittedTest {
+class CaseworkerRefundFromSubmittedTest {
     @InjectMocks
-    private RefundFromSubmitted refundFromSubmitted;
+    private CaseworkerRefundFromSubmitted caseworkerRefundFromSubmitted;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final Set<State> stateSet = EnumSet.allOf(State.class);
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = new ConfigBuilderImpl<>(CaseData.class, stateSet);
 
-        refundFromSubmitted.configure(configBuilder);
+        caseworkerRefundFromSubmitted.configure(configBuilder);
         assertThat(configBuilder.getEvents())
             .extracting(Event::getId)
             .contains(CASEWORKER_REFUND);
