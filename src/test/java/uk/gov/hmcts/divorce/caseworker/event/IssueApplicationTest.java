@@ -14,7 +14,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.ISSUE_APPLICATION;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.CASEWORKER_ISSUE_APPLICATION;
 
 @ExtendWith(MockitoExtension.class)
 class IssueApplicationTest {
@@ -24,12 +24,12 @@ class IssueApplicationTest {
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
-        final Set<State> stateSet =  EnumSet.allOf(State.class);
+        final Set<State> stateSet = EnumSet.allOf(State.class);
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = new ConfigBuilderImpl<>(CaseData.class, stateSet);
 
         caseworkerIssueApplication.configure(configBuilder);
         assertThat(configBuilder.getEvents())
             .extracting(Event::getId)
-            .contains(ISSUE_APPLICATION);
+            .contains(CASEWORKER_ISSUE_APPLICATION);
     }
 }

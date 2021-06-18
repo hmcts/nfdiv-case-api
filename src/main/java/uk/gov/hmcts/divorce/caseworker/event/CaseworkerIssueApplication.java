@@ -34,7 +34,7 @@ import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLI
 @Slf4j
 public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String ISSUE_APPLICATION = "caseworker-issue-application";
+    public static final String CASEWORKER_ISSUE_APPLICATION = "caseworker-issue-application";
 
     @Autowired
     private IssueApplicationService issueApplicationService;
@@ -45,7 +45,7 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(ISSUE_APPLICATION)
+            .event(CASEWORKER_ISSUE_APPLICATION)
             .forStateTransition(Submitted, Issued)
             .name("Application issued")
             .description("Application issued")
