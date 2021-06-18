@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.caseworker.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.caseworker.service.updater.MiniApplication;
+import uk.gov.hmcts.divorce.caseworker.service.updater.RespondentAosInvitation;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdater;
@@ -24,6 +25,9 @@ public class IssueApplicationService {
     private CaseDataUpdaterChainFactory caseDataUpdaterChainFactory;
 
     @Autowired
+    private RespondentAosInvitation respondentAosInvitation;
+
+    @Autowired
     private Clock clock;
 
     public CaseData aboutToSubmit(final CaseData caseData,
@@ -32,7 +36,8 @@ public class IssueApplicationService {
                                   final String idamAuthToken) {
 
         final List<CaseDataUpdater> caseDataUpdaters = asList(
-            miniApplication
+            miniApplication,
+            respondentAosInvitation
         );
 
         final CaseDataContext caseDataContext = CaseDataContext.builder()

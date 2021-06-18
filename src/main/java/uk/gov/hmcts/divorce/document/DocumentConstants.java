@@ -8,6 +8,10 @@ public final class DocumentConstants {
     public static final String DIVORCE_MINI_DRAFT_APPLICATION = "DIVORCE_MINI_DRAFT_APPLICATION";
     public static final String DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME = "draft-mini-application-";
 
+    public static final String RESP_AOS_INVITATION = "RESP_AOS_INVITATION";
+    public static final String RESP_AOS_INVITATION_DOCUMENT_NAME = "aosinvitation-";
+    public static final String DOCUMENT_TYPE_RESPONDENT_INVITATION = "aos";
+
     public static final String USER_ROLES = "user-roles";
     public static final String USER_ID = "user-id";
     public static final String DOCUMENT_DELETE_URI = "document_delete_uri";
