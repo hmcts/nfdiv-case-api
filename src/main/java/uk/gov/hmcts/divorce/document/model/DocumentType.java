@@ -48,6 +48,9 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("aosOfflineInvitationLetterToApplicant2")
     AOS_OFFLINE_INVITATION_LETTER_TO_APPLICANT_2("AOS Offline Invitation Letter The Respondent"),
 
+    @JsonProperty("aos")
+    DOCUMENT_TYPE_RESPONDENT_INVITATION("Respondent Invitation"),
+
     @JsonProperty("applicant2Answers")
     APPLICANT_2_ANSWERS("The respondent's answers"),
 
