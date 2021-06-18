@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.common.model;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.divorce.common.model.access.CaseAccessAdministrator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,19 +19,22 @@ public enum State {
 
     @CCD(
         name = "Draft",
-        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
     )
     Draft("Draft"),
 
     @CCD(
         name = "Awaiting Applicant 2 Response",
-        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
     )
     AwaitingApplicant2Response("AwaitingApplicant2Response"),
 
     @CCD(
         name = "Application awaiting payment",
-        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
     )
     AwaitingPayment("AwaitingPayment") {
         @Override
@@ -43,7 +47,8 @@ public enum State {
 
     @CCD(
         name = "Awaiting applicant",
-        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
     )
     AwaitingDocuments("AwaitingDocuments") {
         @Override
@@ -63,13 +68,15 @@ public enum State {
 
     @CCD(
         name = "Awaiting HWF decision",
-        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
     )
     AwaitingHWFDecision("AwaitingHWFDecision"),
 
     @CCD(
         name = "Submitted",
-        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
     )
     Submitted("Submitted") {
         @Override
@@ -92,7 +99,8 @@ public enum State {
 
     @CCD(
         name = "Application issued",
-        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
     )
     Issued("Issued") {
         @Override
@@ -106,23 +114,37 @@ public enum State {
 
     @CCD(
         name = "Application Rejected",
-        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
     )
     Rejected("Rejected"),
 
     @CCD(
         name = "Application Withdrawn",
-        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
     )
     Withdrawn("Withdrawn"),
 
     @CCD(
         name = "Pending rejection",
-        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
     )
     PendingRejection("PendingRejection"),
 
+    @CCD(
+        name = "Conditional order complete",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
     ConditionalOrderComplete("ConditionalOrderComplete"),
+
+    @CCD(
+        name = "Final order complete",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
     FinalOrderComplete("FinalOrderComplete");
 
     private final String name;
