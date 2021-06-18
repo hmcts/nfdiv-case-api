@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.IssueApplicationService;
 import uk.gov.hmcts.divorce.common.model.Applicant;
@@ -22,17 +23,17 @@ import java.time.LocalDate;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.ISSUE_APPLICATION;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.CASEWORKER_ISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.invalidCaseData;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerIssueApplicationTest {
@@ -53,7 +54,9 @@ class CaseworkerIssueApplicationTest {
 
         caseworkerIssueApplication.configure(configBuilder);
 
-        assertThat(configBuilder.getEvents().get(0).getId(), is(ISSUE_APPLICATION));
+        assertThat(configBuilder.getEvents())
+            .extracting(Event::getId)
+            .contains(CASEWORKER_ISSUE_APPLICATION);
     }
 
     @Test
@@ -79,7 +82,7 @@ class CaseworkerIssueApplicationTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(details, null);
 
-        assertThat(response.getData(), is(expectedCaseData));
+        assertThat(response.getData()).isEqualTo(expectedCaseData);
 
         verify(issueApplicationService).aboutToSubmit(
             caseData,
@@ -92,7 +95,7 @@ class CaseworkerIssueApplicationTest {
 
     @Test
     void shouldFailCaseDataValidationWhenMandatoryFieldsAreNotPopulatedForIssueApplication() {
-        final var caseData = caseData();
+        final var caseData = invalidCaseData();
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -114,7 +117,8 @@ class CaseworkerIssueApplicationTest {
                 "MarriageDate cannot be empty or null",
                 "JurisdictionConnections cannot be empty or null",
                 "MarriageApplicant2Name cannot be empty or null",
-                "PlaceOfMarriage cannot be empty or null"
+                "PlaceOfMarriage cannot be empty or null",
+                "Applicant1Gender cannot be empty or null"
             );
 
         verifyNoMoreInteractions(httpServletRequest, issueApplicationService);
