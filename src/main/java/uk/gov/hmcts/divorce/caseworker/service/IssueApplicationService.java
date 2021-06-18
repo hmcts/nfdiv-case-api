@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdater;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChainFactory;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -21,6 +22,9 @@ public class IssueApplicationService {
 
     @Autowired
     private CaseDataUpdaterChainFactory caseDataUpdaterChainFactory;
+
+    @Autowired
+    private Clock clock;
 
     public CaseData aboutToSubmit(final CaseData caseData,
                                   final Long caseId,
@@ -38,9 +42,13 @@ public class IssueApplicationService {
             .userAuthToken(idamAuthToken)
             .build();
 
-        return caseDataUpdaterChainFactory
+        CaseData updatedCaseData = caseDataUpdaterChainFactory
             .createWith(caseDataUpdaters)
             .processNext(caseDataContext)
             .getCaseData();
+
+        updatedCaseData.setIssueDate(LocalDate.now(clock));
+
+        return updatedCaseData;
     }
 }
