@@ -8,7 +8,11 @@ import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 
+import java.util.EnumSet;
+
+import static uk.gov.hmcts.divorce.common.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingHWFDecision;
+import static uk.gov.hmcts.divorce.common.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_RDU;
@@ -19,16 +23,16 @@ import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_U
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 
 @Component
-public class CaseworkerHwfApplicationAcceptedFromAwaitingHwf implements CCDConfig<CaseData, State, UserRole> {
+public class CaseworkerHwfApplicationAccepted implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String CASEWORKER_HWF_APPLICATION_ACCEPTED_FROM_AWAITING_HWF
-        = "caseworker-hwf-application-accepted-from-awaiting-hwf";
+    public static final String CASEWORKER_HWF_APPLICATION_ACCEPTED = "caseworker-hwf-application-accepted";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(CASEWORKER_HWF_APPLICATION_ACCEPTED_FROM_AWAITING_HWF)
-            .forStateTransition(AwaitingHWFDecision, Submitted)
+            .event(CASEWORKER_HWF_APPLICATION_ACCEPTED)
+            .forStateTransition(EnumSet.of(AwaitingHWFDecision, AwaitingPayment, AwaitingDocuments),
+                Submitted)
             .name("HWF application accepted")
             .description("HWF application accepted")
             .explicitGrants()

@@ -27,8 +27,8 @@ public class CaseworkerRejected implements CCDConfig<CaseData, State, UserRole> 
         new PageBuilder(configBuilder
             .event(CASEWORKER_REJECTED)
             .forStateTransition(allOf(State.class), Rejected)
-            .name("Rejected")
-            .description("Rejected")
+            .name("Reject")
+            .description("Reject")
             .explicitGrants()
             .grant(CREATE_READ_UPDATE,
                 CASEWORKER_COURTADMIN_CTSC,

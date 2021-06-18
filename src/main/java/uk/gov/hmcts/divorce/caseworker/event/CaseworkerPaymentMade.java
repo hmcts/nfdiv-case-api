@@ -8,30 +8,35 @@ import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 
+import java.util.EnumSet;
+
+import static uk.gov.hmcts.divorce.common.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingHWFDecision;
+import static uk.gov.hmcts.divorce.common.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_RDU;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_SUPERUSER;
-import static uk.gov.hmcts.divorce.common.model.UserRole.SOLICITOR;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 
 @Component
-public class CaseworkerPaymentMadeFromAwaitingHwf implements CCDConfig<CaseData, State, UserRole> {
+public class CaseworkerPaymentMade implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String CASEWORKER_PAYMENT_MADE_FROM_AWAITING_HWF = "caseworker-payment-made-from-awaiting-hwf";
+    public static final String CASEWORKER_PAYMENT_MADE = "caseworker-payment-made";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(CASEWORKER_PAYMENT_MADE_FROM_AWAITING_HWF)
-            .forStateTransition(AwaitingHWFDecision, Submitted)
+            .event(CASEWORKER_PAYMENT_MADE)
+            .forStateTransition(EnumSet.of(AwaitingPayment, AwaitingHWFDecision, AwaitingDocuments),
+                Submitted)
             .name("Payment made")
             .description("Payment made")
             .explicitGrants()
-            .grant(CREATE_READ_UPDATE, CASEWORKER_COURTADMIN_CTSC, CASEWORKER_COURTADMIN_RDU)
-            .grant(READ, SOLICITOR, CASEWORKER_SUPERUSER, CASEWORKER_LEGAL_ADVISOR));
+            .grant(CREATE_READ_UPDATE, CASEWORKER_COURTADMIN_CTSC, CASEWORKER_COURTADMIN_RDU, CITIZEN)
+            .grant(READ, CASEWORKER_SUPERUSER, CASEWORKER_LEGAL_ADVISOR));
     }
 }

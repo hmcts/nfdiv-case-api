@@ -14,11 +14,13 @@ import uk.gov.hmcts.divorce.common.model.MarriageDetails;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 
+import java.util.EnumSet;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.util.CollectionUtils.isEmpty;
+import static uk.gov.hmcts.divorce.common.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.common.model.State.Issued;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
@@ -46,7 +48,8 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_ISSUE_APPLICATION)
-            .forStateTransition(Submitted, Issued)
+            .forStateTransition(EnumSet.of(Submitted, AwaitingDocuments),
+                Issued)
             .name("Application issued")
             .description("Application issued")
             .displayOrder(4)
