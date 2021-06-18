@@ -10,26 +10,27 @@ import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 
+import java.util.EnumSet;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerHwfApplicationAcceptedFromAwaitingPayment.CASEWORKER_HWF_APPLICATION_ACCEPTED_FROM_AWAITING_PAYMENT;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerApplicantResponded.CASEWORKER_APPLICANT_RESPONDED;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerHwfApplicationAcceptedFromAwaitingPaymentTest {
+class CaseworkerApplicantRespondedTest {
 
     @InjectMocks
-    private CaseworkerHwfApplicationAcceptedFromAwaitingPayment caseworkerHwfApplicationAcceptedFromAwaitingPayment;
+    private CaseworkerApplicantResponded caseworkerApplicantResponded;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
-        final Set<State> stateSet = Set.of(State.class.getEnumConstants());
+        final Set<State> stateSet = EnumSet.allOf(State.class);
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = new ConfigBuilderImpl<>(CaseData.class, stateSet);
 
-        caseworkerHwfApplicationAcceptedFromAwaitingPayment.configure(configBuilder);
+        caseworkerApplicantResponded.configure(configBuilder);
 
         assertThat(configBuilder.getEvents())
             .extracting(Event::getId)
-            .contains(CASEWORKER_HWF_APPLICATION_ACCEPTED_FROM_AWAITING_PAYMENT);
+            .contains(CASEWORKER_APPLICANT_RESPONDED);
     }
 }

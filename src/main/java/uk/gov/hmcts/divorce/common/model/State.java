@@ -122,6 +122,12 @@ public enum State {
     )
     PendingRejection("PendingRejection"),
 
+    @CCD(
+        name = "Awaiting reissue",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
+    )
+    AwaitingReissue("AwaitingReissue"),
+
     ConditionalOrderComplete("ConditionalOrderComplete"),
     FinalOrderComplete("FinalOrderComplete");
 
