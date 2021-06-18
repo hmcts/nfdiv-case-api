@@ -40,6 +40,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static feign.Request.HttpMethod.GET;
+import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static java.time.temporal.ChronoUnit.YEARS;
@@ -47,9 +48,11 @@ import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.common.model.ConfidentialAddress.SHARE;
 import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.common.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.common.model.Gender.MALE;
+import static uk.gov.hmcts.divorce.common.model.JurisdictionConnections.APP_1_RESIDENT_JOINT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
@@ -85,6 +88,7 @@ public class TestDataHelper {
             .email(TEST_USER_EMAIL)
             .gender(gender)
             .languagePreferenceWelsh(NO)
+            .contactDetailsConfidential(SHARE)
             .build();
     }
 
@@ -95,9 +99,25 @@ public class TestDataHelper {
             .build();
     }
 
+    public static Applicant getInvalidApplicant() {
+        return Applicant.builder()
+            .firstName(TEST_FIRST_NAME)
+            .middleName(TEST_MIDDLE_NAME)
+            .lastName(TEST_LAST_NAME)
+            .email(TEST_USER_EMAIL)
+            .build();
+    }
+
     public static CaseData caseData() {
         return CaseData.builder()
             .applicant1(getApplicant())
+            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
+            .build();
+    }
+
+    public static CaseData invalidCaseData() {
+        return CaseData.builder()
+            .applicant1(getInvalidApplicant())
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .build();
     }
@@ -164,6 +184,30 @@ public class TestDataHelper {
             .applicationFeeOrderSummary(orderSummary)
             .payments(singletonList(payment))
             .build();
+    }
+
+    public static CaseData validCaseDataForIssueApplication() {
+        final MarriageDetails marriageDetails = new MarriageDetails();
+        marriageDetails.setApplicant1Name(format("%s %s", TEST_FIRST_NAME, TEST_LAST_NAME));
+        marriageDetails.setApplicant2Name(format("%s %s", TEST_FIRST_NAME, TEST_LAST_NAME));
+        marriageDetails.setDate(LocalDate.of(1990, 6, 10));
+        marriageDetails.setPlaceOfMarriage("Somewhere");
+
+        final Jurisdiction jurisdiction = new Jurisdiction();
+        jurisdiction.setConnections(Set.of(APP_1_RESIDENT_JOINT));
+        jurisdiction.setApplicant1Residence(YES);
+        jurisdiction.setApplicant2Residence(YES);
+
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        caseData.setDocumentUploadComplete(YES);
+        caseData.setFinancialOrder(NO);
+        caseData.setMarriageDetails(marriageDetails);
+        caseData.setApplicant2(getApplicant());
+        caseData.setPrayerHasBeenGiven(YES);
+        caseData.setStatementOfTruth(YES);
+        caseData.setJurisdiction(jurisdiction);
+
+        return caseData;
     }
 
     public static CallbackRequest callbackRequest() {
