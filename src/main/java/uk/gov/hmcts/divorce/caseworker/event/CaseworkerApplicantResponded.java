@@ -8,7 +8,7 @@ import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 
-import static java.util.EnumSet.allOf;
+import static uk.gov.hmcts.divorce.common.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_RDU;
@@ -26,7 +26,7 @@ public class CaseworkerApplicantResponded implements CCDConfig<CaseData, State, 
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_APPLICANT_RESPONDED)
-            .forStateTransition(allOf(State.class), Submitted)
+            .forStateTransition(AwaitingDocuments, Submitted)
             .name("Applicant responded")
             .description("Applicant responded")
             .explicitGrants()
