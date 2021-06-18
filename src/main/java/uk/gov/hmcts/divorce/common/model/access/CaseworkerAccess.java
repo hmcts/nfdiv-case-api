@@ -6,12 +6,12 @@ import uk.gov.hmcts.ccd.sdk.api.HasAccessControl;
 import uk.gov.hmcts.ccd.sdk.api.HasRole;
 import uk.gov.hmcts.ccd.sdk.api.Permission;
 
-import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
-import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
-import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_LA;
-import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_SOLICITOR;
-import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_RDU;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_SUPERUSER;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.divorce.common.model.UserRole.SOLICITOR;
 
 public class CaseworkerAccess implements HasAccessControl {
 
@@ -19,12 +19,12 @@ public class CaseworkerAccess implements HasAccessControl {
     public SetMultimap<HasRole, Permission> getGrants() {
         SetMultimap<HasRole, Permission> grants = HashMultimap.create();
         grants.putAll(CITIZEN, Permissions.READ);
-        grants.putAll(CASEWORKER_DIVORCE_SOLICITOR, Permissions.READ);
-        grants.putAll(CASEWORKER_DIVORCE_SUPERUSER, Permissions.READ);
+        grants.putAll(SOLICITOR, Permissions.READ);
+        grants.putAll(CASEWORKER_SUPERUSER, Permissions.READ);
 
-        grants.putAll(CASEWORKER_DIVORCE_COURTADMIN_BETA, Permissions.CREATE_READ_UPDATE);
-        grants.putAll(CASEWORKER_DIVORCE_COURTADMIN, Permissions.CREATE_READ_UPDATE);
-        grants.putAll(CASEWORKER_DIVORCE_COURTADMIN_LA, Permissions.CREATE_READ_UPDATE);
+        grants.putAll(CASEWORKER_COURTADMIN_CTSC, Permissions.CREATE_READ_UPDATE);
+        grants.putAll(CASEWORKER_COURTADMIN_RDU, Permissions.CREATE_READ_UPDATE);
+        grants.putAll(CASEWORKER_LEGAL_ADVISOR, Permissions.CREATE_READ_UPDATE);
 
         return grants;
     }
