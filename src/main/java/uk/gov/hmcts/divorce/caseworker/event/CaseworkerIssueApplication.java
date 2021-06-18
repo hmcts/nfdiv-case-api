@@ -19,8 +19,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static uk.gov.hmcts.divorce.common.model.State.AwaitingDocuments;
 import static org.springframework.util.CollectionUtils.isEmpty;
+import static uk.gov.hmcts.divorce.common.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.common.model.State.Issued;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
