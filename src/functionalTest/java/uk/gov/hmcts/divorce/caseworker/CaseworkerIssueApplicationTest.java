@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker;
 
 import io.restassured.response.Response;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
@@ -28,6 +29,7 @@ public class CaseworkerIssueApplicationTest extends FunctionalTestSuite {
     private static final String LANGUAGE_PREFERENCE_WELSH = "languagePreferenceWelsh";
 
     @Test
+    @Disabled
     public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessful() throws Exception {
         final Map<String, Object> caseData = caseData(REQUEST);
         caseData.put(DIVORCE_COSTS_CLAIM, YES);

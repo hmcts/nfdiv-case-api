@@ -37,6 +37,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.invalidCaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssueApplication;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
@@ -48,6 +49,8 @@ public class IssueApplicationTest {
 
     private static final String CASEWORKER_ISSUE_APPLICATION_ABOUT_TO_SUBMIT =
         "classpath:caseworker-issue-application-about-to-submit-response.json";
+    private static final String CASEWORKER_ISSUE_APPLICATION_ABOUT_TO_SUBMIT_ERROR =
+        "classpath:caseworker-issue-application-about-to-submit-error-response.json";
 
     @Autowired
     private MockMvc mockMvc;
@@ -84,7 +87,7 @@ public class IssueApplicationTest {
     }
 
     @Test
-    void givenValidCaseDataWhenAboutToSubmitCallbackIsInvokedCaseDataIsSetCorrectly() throws Exception {
+    void givenValidCaseDataWhenAboutToSubmitCallbackIsInvokedThenCaseDataIsSetCorrectly() throws Exception {
 
         final CaseData caseData = validCaseDataForIssueApplication();
 
@@ -110,7 +113,33 @@ public class IssueApplicationTest {
     }
 
     @Test
-    void givenValidCaseDataWhenAuthorizationFailsForDocAssemblyStatusIsUnauthorized() throws Exception {
+    void givenInvalidCaseDataWhenAboutToSubmitCallbackIsInvokedThenResponseContainsErrors() throws Exception {
+
+        final CaseData caseData = invalidCaseData();
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(documentIdProvider.documentId()).thenReturn("Divorce application");
+
+        stubForDocAssembly();
+
+        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(
+                callbackRequest(
+                    caseData,
+                    CASEWORKER_ISSUE_APPLICATION)))
+            .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk())
+            .andExpect(
+                content().json(expectedResponse(CASEWORKER_ISSUE_APPLICATION_ABOUT_TO_SUBMIT_ERROR))
+            );
+    }
+
+    @Test
+    void givenValidCaseDataWhenAuthorizationFailsForDocAssemblyThenStatusIsUnauthorized() throws Exception {
 
         final CaseData caseData = validCaseDataForIssueApplication();
 
