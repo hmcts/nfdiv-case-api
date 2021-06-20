@@ -73,6 +73,7 @@
     "jurisdictionResidualEligible": null,
     "jurisdictionBothLastHabituallyResident": null,
     "jurisdictionConnections": null,
+    "jurisdictionLegalConnections": null,
     "divorceCostsClaim": "Yes",
     "financialOrder": "No",
     "divorceClaimFrom": [

@@ -15,7 +15,7 @@ import uk.gov.hmcts.divorce.common.model.Applicant;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.common.model.Gender;
-import uk.gov.hmcts.divorce.common.model.JurisdictionConnections;
+import uk.gov.hmcts.divorce.common.model.LegalConnections;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 
@@ -147,9 +147,7 @@ class CaseworkerIssueApplicationTest {
         caseData.setPrayerHasBeenGiven(YES);
         caseData.setStatementOfTruth(YES);
 
-        caseData.getJurisdiction().setApplicant1Residence(YES);
-        caseData.getJurisdiction().setApplicant2Residence(YES);
-        caseData.getJurisdiction().setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
+        caseData.getJurisdiction().setLegalConnections(Set.of(LegalConnections.APPLICANT_RESPONDENT_RESIDENT));
 
         caseData.getMarriageDetails().setApplicant1Name("app1Name");
         caseData.getMarriageDetails().setDate(LocalDate.of(2009, 1, 1));

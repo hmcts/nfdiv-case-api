@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static java.util.Collections.emptyList;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.common.model.JurisdictionConnections.APP_1_APP_2_DOMICILED;
 import static uk.gov.hmcts.divorce.common.model.JurisdictionConnections.APP_1_APP_2_LAST_RESIDENT;
 import static uk.gov.hmcts.divorce.common.model.JurisdictionConnections.APP_1_APP_2_RESIDENT;
@@ -89,22 +91,33 @@ public class Jurisdiction {
     )
     private Set<JurisdictionConnections> connections;
 
+    @CCD(
+        label = "Legal connections",
+        hint = "Tick all the reasons that apply:",
+        access = {DefaultAccess.class}
+    )
+    private Set<LegalConnections> legalConnections;
+
     public List<String> validate() {
         List<String> errorList = new ArrayList<>();
 
-        if (connections == null) {
-            errorList.add("JurisdictionConnections" + EMPTY);
+        if (isEmpty(legalConnections)) {
+            if (isEmpty(connections)) {
+                errorList.add("JurisdictionConnections" + EMPTY);
+            } else {
+                addToErrorList(validateJurisdictionConnectionA(), errorList);
+                addToErrorList(validateJurisdictionConnectionB(), errorList);
+                addToErrorList(validateJurisdictionConnectionC(), errorList);
+                addToErrorList(validateJurisdictionConnectionD(), errorList);
+                addToErrorList(validateJurisdictionConnectionE(), errorList);
+                addToErrorList(validateJurisdictionConnectionF(), errorList);
+                addToErrorList(validateJurisdictionConnectionG(), errorList);
+                addToErrorList(validateJurisdictionConnectionH(), errorList);
+                addToErrorList(validateJurisdictionConnectionI(), errorList);
+                addToErrorList(validateJurisdictionConnectionJ(), errorList);
+            }
         } else {
-            addToErrorList(validateJurisdictionConnectionA(), errorList);
-            addToErrorList(validateJurisdictionConnectionB(), errorList);
-            addToErrorList(validateJurisdictionConnectionC(), errorList);
-            addToErrorList(validateJurisdictionConnectionD(), errorList);
-            addToErrorList(validateJurisdictionConnectionE(), errorList);
-            addToErrorList(validateJurisdictionConnectionF(), errorList);
-            addToErrorList(validateJurisdictionConnectionG(), errorList);
-            addToErrorList(validateJurisdictionConnectionH(), errorList);
-            addToErrorList(validateJurisdictionConnectionI(), errorList);
-            addToErrorList(validateJurisdictionConnectionJ(), errorList);
+            return emptyList();
         }
 
         return errorList;

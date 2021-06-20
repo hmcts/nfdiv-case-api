@@ -60,6 +60,7 @@
     "jurisdictionConnections": [
       "A"
     ],
+    "jurisdictionLegalConnections": null,
     "applicant1ContactDetailsConfidential": "keep",
     "applicant2FirstName": "test_first_name",
     "applicant2LastName": "test_last_name",
