@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.caseworker.service.updater.MiniApplication;
+import uk.gov.hmcts.divorce.caseworker.service.updater.RespondentAosInvitation;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdater;
@@ -18,7 +19,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -36,6 +36,9 @@ class CaseworkerIssueApplicationServiceTest {
     private MiniApplication miniApplication;
 
     @Mock
+    private RespondentAosInvitation respondentAosInvitation;
+
+    @Mock
     private CaseDataUpdaterChainFactory caseDataUpdaterChainFactory;
 
     @Mock
@@ -50,7 +53,7 @@ class CaseworkerIssueApplicationServiceTest {
         final CaseData caseData = caseData();
         final CaseDataUpdaterChain caseDataUpdaterChain = mock(CaseDataUpdaterChain.class);
 
-        final List<CaseDataUpdater> caseDataUpdaters = singletonList(miniApplication);
+        final List<CaseDataUpdater> caseDataUpdaters = List.of(miniApplication, respondentAosInvitation);
 
         final CaseDataContext caseDataContext = CaseDataContext.builder()
             .caseData(caseData)
