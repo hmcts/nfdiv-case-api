@@ -70,12 +70,12 @@ public class ApplicationSentForReviewApplicant2Notification {
     private void setDefaultVariables(Map<String, String> templateVars, CaseData caseData) {
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(dateTimeFormatter));
         templateVars.put(PARTNER, commonContent.getTheirPartner(caseData, caseData.getApplicant1()));
-        templateVars.put(ACCESS_CODE, caseData.getInvitePin());
+        templateVars.put(ACCESS_CODE, caseData.getAccessCode());
         templateVars.put(REMINDER, APPLICATION);
 
         Map<String, String> configTemplateVars = emailTemplatesConfig.getTemplateVars();
-        String signInUrlKey = (caseData.getDivorceOrDissolution().isDivorce()
-            ? APPLICANT_2_SIGN_IN_DIVORCE_URL : APPLICANT_2_SIGN_IN_DISSOLUTION_URL);
+        String signInUrlKey =
+            caseData.getDivorceOrDissolution().isDivorce() ? APPLICANT_2_SIGN_IN_DIVORCE_URL : APPLICANT_2_SIGN_IN_DISSOLUTION_URL;
         templateVars.put(CREATE_ACCOUNT_LINK, configTemplateVars.get(signInUrlKey));
     }
 
