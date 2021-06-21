@@ -3,17 +3,18 @@ package uk.gov.hmcts.divorce.solicitor.service.updater;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.ccd.sdk.type.Document;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.divorce.common.config.DocmosisTemplatesConfig;
+import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdater;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
-import uk.gov.hmcts.divorce.document.DocAssemblyService;
-import uk.gov.hmcts.divorce.document.DocumentIdProvider;
-import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.DraftApplicationTemplateContent;
 
-import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_APPLICATION;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_DRAFT_APPLICATION;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 
 @Component
@@ -21,52 +22,33 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATI
 public class MiniApplicationDraft implements CaseDataUpdater {
 
     @Autowired
-    private DocAssemblyService docAssemblyService;
+    private CaseDataDocumentService caseDataDocumentService;
 
     @Autowired
-    private DocmosisTemplatesConfig docmosisTemplatesConfig;
-
-    @Autowired
-    private DocumentIdProvider documentIdProvider;
+    private DraftApplicationTemplateContent templateContent;
 
     @Override
-    public CaseDataContext updateCaseData(CaseDataContext caseDataContext, CaseDataUpdaterChain caseDataUpdaterChain) {
+    public CaseDataContext updateCaseData(final CaseDataContext caseDataContext,
+                                          final CaseDataUpdaterChain caseDataUpdaterChain) {
 
         log.info("Executing handler for generating mini draft for case id {} ", caseDataContext.getCaseId());
 
-        final var updatedCaseData = caseDataContext.copyOfCaseData();
+        final CaseData caseData = caseDataContext.copyOfCaseData();
+        final Long caseId = caseDataContext.getCaseId();
 
-        final var templateName = docmosisTemplatesConfig
-            .getTemplates()
-            .get(updatedCaseData.getApplicant1().getLanguagePreference())
-            .get(DIVORCE_MINI_APPLICATION);
+        final Supplier<Map<String, Object>> templateContentSupplier = templateContent
+            .apply(caseData, caseId, caseDataContext.getCreatedDate());
 
-        final var documentInfo = docAssemblyService.renderDocument(
-            updatedCaseData,
-            caseDataContext.getCaseId(),
-            caseDataContext.getCreatedDate(),
+        final CaseData updatedCaseData = caseDataDocumentService.renderDocumentAndUpdateCaseData(
+            caseData,
+            DIVORCE_APPLICATION,
+            templateContentSupplier,
+            caseId,
             caseDataContext.getUserAuthToken(),
-            templateName
+            DIVORCE_MINI_DRAFT_APPLICATION,
+            DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME,
+            caseData.getApplicant1().getLanguagePreference()
         );
-
-        final var ccdDocument = new Document(
-            documentInfo.getUrl(),
-            documentInfo.getFilename(),
-            documentInfo.getBinaryUrl()
-        );
-
-        final var divorceDocument = DivorceDocument
-            .builder()
-            .documentLink(ccdDocument)
-            .documentFileName(documentInfo.getFilename())
-            .documentType(DIVORCE_APPLICATION)
-            .build();
-
-        updatedCaseData.addToDocumentsGenerated(
-            ListValue.<DivorceDocument>builder()
-                .id(documentIdProvider.documentId())
-                .value(divorceDocument)
-                .build());
 
         return caseDataUpdaterChain.processNext(caseDataContext.handlerContextWith(updatedCaseData));
     }

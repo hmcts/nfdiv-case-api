@@ -20,7 +20,6 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.BEARER;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 
@@ -28,6 +27,7 @@ public final class IdamWireMock {
 
     public static final String SOLICITOR_ROLE = "caseworker-divorce-solicitor";
     public static final String CASEWORKER_ROLE = "caseworker-divorce";
+    public static final String CITIZEN_ROLE = "citizen";
 
     private static final WireMockServer IDAM_SERVER = new WireMockServer(wireMockConfig().dynamicPort());
 
@@ -58,13 +58,13 @@ public final class IdamWireMock {
                 .withBody(getUserDetailsForRole(solicitorUserId, solicitorRole))));
     }
 
-    public static void stubForIdamToken() throws UnsupportedEncodingException {
+    public static void stubForIdamToken(String token) throws UnsupportedEncodingException {
         IDAM_SERVER.stubFor(post("/o/token")
             .withRequestBody(new EqualToPattern(tokenBody()))
             .willReturn(aResponse()
                 .withStatus(OK.value())
                 .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .withBody("{ \"access_token\" : \"" + CASEWORKER_AUTH_TOKEN + "\" }")));
+                .withBody("{ \"access_token\" : \"" + token + "\" }")));
     }
 
     public static void stubForIdamFailure() {

@@ -68,7 +68,7 @@ public class CitizenInviteApplicant2Test {
     }
 
     @Test
-    public void givenValidCaseDataWhenCallbackIsInvokedThenGeneratePinAndSendEmailToApplicant1AndApplicant2() throws Exception {
+    public void givenValidCaseDataWhenCallbackIsInvokedThenGenerateAccessCodeAndSendEmailToApplicant1AndApplicant2() throws Exception {
         CaseData data = caseData();
         data.setApplicant2(getApplicant2(Gender.MALE));
 

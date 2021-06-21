@@ -60,6 +60,7 @@
     "jurisdictionResidualEligible":null,
     "jurisdictionBothLastHabituallyResident":null,
     "jurisdictionConnections": ["A"],
+    "jurisdictionLegalConnections": null,
     "marriageMarriedInUk":null,
     "marriageCertificateInEnglish":null,
     "marriageCertifiedTranslation":null,

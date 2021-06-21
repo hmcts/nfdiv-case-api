@@ -8,10 +8,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.common.CaseInfo;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.Solicitor;
-import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdater;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
@@ -125,16 +124,14 @@ class SolicitorCreateApplicationApplicationServiceTest {
         when(organisationClient.getUserOrganisation(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN))
             .thenReturn(organisationsResponse);
 
-        AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
-            solicitorCreateApplicationService.validateSolicitorOrganisation(
-                caseData,
-                TEST_CASE_ID,
-                TEST_AUTHORIZATION_TOKEN
-            );
+        final CaseInfo caseInfo = solicitorCreateApplicationService.validateSolicitorOrganisation(
+            caseData,
+            TEST_CASE_ID,
+            TEST_AUTHORIZATION_TOKEN
+        );
 
-        assertThat(aboutToStartOrSubmitResponse.getData()).isNull();
-        assertThat(aboutToStartOrSubmitResponse.getErrors()).isNull();
-        assertThat(aboutToStartOrSubmitResponse.getWarnings()).isNull();
+        assertThat(caseInfo.getCaseData()).isNull();
+        assertThat(caseInfo.getErrors()).isNull();
 
         verify(authTokenGenerator).generate();
         verify(organisationClient).getUserOrganisation(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN);
@@ -159,16 +156,14 @@ class SolicitorCreateApplicationApplicationServiceTest {
         when(organisationClient.getUserOrganisation(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN))
             .thenReturn(organisationsResponse);
 
-        AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
-            solicitorCreateApplicationService.validateSolicitorOrganisation(
-                caseData,
-                TEST_CASE_ID,
-                TEST_AUTHORIZATION_TOKEN
-            );
+        final CaseInfo caseInfo = solicitorCreateApplicationService.validateSolicitorOrganisation(
+            caseData,
+            TEST_CASE_ID,
+            TEST_AUTHORIZATION_TOKEN
+        );
 
-        assertThat(aboutToStartOrSubmitResponse.getData()).isNull();
-        assertThat(aboutToStartOrSubmitResponse.getErrors()).containsExactly("Please select an organisation you belong to");
-        assertThat(aboutToStartOrSubmitResponse.getWarnings()).isNull();
+        assertThat(caseInfo.getCaseData()).isNull();
+        assertThat(caseInfo.getErrors()).containsExactly("Please select an organisation you belong to");
 
         verify(authTokenGenerator).generate();
         verify(organisationClient).getUserOrganisation(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN);
@@ -180,16 +175,14 @@ class SolicitorCreateApplicationApplicationServiceTest {
     public void shouldValidateApplicant1SolicitorOrgAndReturnErrorWhenSolicitorOrgIsNotPopulated() {
         CaseData caseData = caseData();
 
-        AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
-            solicitorCreateApplicationService.validateSolicitorOrganisation(
-                caseData,
-                TEST_CASE_ID,
-                TEST_AUTHORIZATION_TOKEN
-            );
+        final CaseInfo caseInfo = solicitorCreateApplicationService.validateSolicitorOrganisation(
+            caseData,
+            TEST_CASE_ID,
+            TEST_AUTHORIZATION_TOKEN
+        );
 
-        assertThat(aboutToStartOrSubmitResponse.getData()).isNull();
-        assertThat(aboutToStartOrSubmitResponse.getErrors()).containsExactly("Please select an organisation");
-        assertThat(aboutToStartOrSubmitResponse.getWarnings()).isNull();
+        assertThat(caseInfo.getCaseData()).isNull();
+        assertThat(caseInfo.getErrors()).containsExactly("Please select an organisation");
 
         verifyNoMoreInteractions(authTokenGenerator, organisationClient);
     }

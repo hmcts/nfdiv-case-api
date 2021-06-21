@@ -27,7 +27,7 @@ import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_U
 @Component
 public class CitizenInviteApplicant2 implements CCDConfig<CaseData, State, UserRole> {
 
-    private static final String ALLOWED_CHARS = "ABCDEFGJKLMNPRSTVWXYZ23456789";
+    private static final String ALLOWED_CHARS = "ABCDEFGHJKLMNPRSTVWXYZ23456789";
     public static final String CITIZEN_INVITE_APPLICANT_2 = "citizen-invite-applicant2";
 
     @Autowired
@@ -55,9 +55,9 @@ public class CitizenInviteApplicant2 implements CCDConfig<CaseData, State, UserR
 
         CaseData data = details.getData();
 
-        log.info("Generating pin to allow the respondent to access the joint application");
-        final String pin = generatePin();
-        data.setInvitePin(pin);
+        log.info("Generating access code to allow the respondent to access the joint application");
+        final String accessCode = generateAccessCode();
+        data.setAccessCode(accessCode);
         data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
 
         applicationSentForReviewApplicant1Notification.send(data, details.getId());
@@ -69,7 +69,7 @@ public class CitizenInviteApplicant2 implements CCDConfig<CaseData, State, UserR
             .build();
     }
 
-    private String generatePin() {
+    private String generateAccessCode() {
         return RandomStringUtils.random(8, 0, ALLOWED_CHARS.length(), false, false, ALLOWED_CHARS.toCharArray(), new SecureRandom());
     }
 }

@@ -15,6 +15,7 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.common.model.access.CaseworkerAccess;
 import uk.gov.hmcts.divorce.common.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
@@ -262,13 +263,6 @@ public class CaseData {
     )
     private YesOrNo lastNameChangedWhenMarried;
 
-    @CCD(
-        label = "Legal connections",
-        hint = "Tick all the reasons that apply:",
-        access = {DefaultAccess.class}
-    )
-    private Set<LegalConnections> legalConnections;
-
     // TODO: rename this as applicant2InviteEmailAddress?
     @CCD(
         label = "The respondent's email address",
@@ -393,20 +387,6 @@ public class CaseData {
     private LocalDate dueDate;
 
     @CCD(
-        label = "Is HWF Reference OK for the full amount?",
-        access = {DefaultAccess.class},
-        hint = "Select \"Yes\" if it covers entire amount or \"No\" if doesn't"
-    )
-    private YesOrNo hwfCodeValidForFullAmount;
-
-    @CCD(
-        label = "Is amount different or invalid reference?",
-        access = {DefaultAccess.class},
-        hint = "Select \"Yes\" for different amount or \"No\" for invalid reference"
-    )
-    private YesOrNo hwfAmountOutstanding;
-
-    @CCD(
         label = "All documents uploaded",
         hint = "Select yes to submit the case, if all documents have been uploaded",
         access = {DefaultAccess.class}
@@ -414,10 +394,24 @@ public class CaseData {
     private YesOrNo documentUploadComplete;
 
     @CCD(
-        label = "The respondent invite access pin",
+        label = "The respondent invite access code",
         access = {DefaultAccess.class}
     )
-    private String invitePin;
+    private String accessCode;
+
+    @CCD(
+        label = "The respondent's user id",
+        access = {DefaultAccess.class}
+    )
+    private String respondentUserId;
+
+
+    @CCD(
+        label = "Date when the application was issued",
+        access = {CaseworkerAccess.class}
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate issueDate;
 
     @JsonIgnore
     public LocalDate getDateOfSubmissionResponse() {
