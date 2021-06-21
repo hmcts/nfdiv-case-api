@@ -72,22 +72,23 @@ public class ApplicationSentForReviewApplicant2Notification {
         templateVars.put(PARTNER, commonContent.getTheirPartner(caseData, caseData.getApplicant1()));
         templateVars.put(ACCESS_CODE, caseData.getAccessCode());
         templateVars.put(REMINDER, APPLICATION);
-
-        Map<String, String> configTemplateVars = emailTemplatesConfig.getTemplateVars();
-        String signInUrlKey =
-            caseData.getDivorceOrDissolution().isDivorce() ? APPLICANT_2_SIGN_IN_DIVORCE_URL : APPLICANT_2_SIGN_IN_DISSOLUTION_URL;
-        templateVars.put(CREATE_ACCOUNT_LINK, configTemplateVars.get(signInUrlKey));
     }
 
     private void setDivorceVariables(Map<String, String> templateVars, CaseData caseData) {
         templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), "a " + DIVORCE_APPLICATION);
         templateVars.put(ACCOUNT, DIVORCE_ACCOUNT);
         templateVars.put(FOR_YOUR_APPLICATION, FOR_YOUR_DIVORCE);
+
+        Map<String, String> configTemplateVars = emailTemplatesConfig.getTemplateVars();
+        templateVars.put(CREATE_ACCOUNT_LINK, configTemplateVars.get(APPLICANT_2_SIGN_IN_DIVORCE_URL));
     }
 
     private void setDissolutionVariables(Map<String, String> templateVars, CaseData caseData) {
         templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), "an " + APPLICATION_TO_END_CIVIL_PARTNERSHIP);
         templateVars.put(ACCOUNT, CIVIL_PARTNERSHIP_ACCOUNT);
         templateVars.put(FOR_YOUR_APPLICATION, TO_END_CIVIL_PARTNERSHIP);
+
+        Map<String, String> configTemplateVars = emailTemplatesConfig.getTemplateVars();
+        templateVars.put(CREATE_ACCOUNT_LINK, configTemplateVars.get(APPLICANT_2_SIGN_IN_DISSOLUTION_URL));
     }
 }
