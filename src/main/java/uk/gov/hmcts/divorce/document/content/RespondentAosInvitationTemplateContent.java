@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Optional.ofNullable;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
@@ -83,6 +84,7 @@ public class RespondentAosInvitationTemplateContent {
             }
             templateData.put(APPLICANT_2_POSTAL_ADDRESS, applicant2PostalAddress);
 
+            templateData.put(ACCESS_CODE, caseData.getAccessCode());
             return templateData;
         };
     }

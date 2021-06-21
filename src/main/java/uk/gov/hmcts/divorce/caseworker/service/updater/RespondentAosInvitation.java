@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.document.content.RespondentAosInvitationTemplateCont
 import java.util.Map;
 import java.util.function.Supplier;
 
+import static uk.gov.hmcts.divorce.common.util.AccessCodeGenerator.generateAccessCode;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_AOS_INVITATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_AOS_INVITATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DOCUMENT_TYPE_RESPONDENT_INVITATION;
@@ -39,6 +40,8 @@ public class RespondentAosInvitation implements CaseDataUpdater {
 
         final Supplier<Map<String, Object>> templateContentSupplier = templateContent
             .apply(caseDataContext.copyOfCaseData(), caseId, caseDataContext.getCreatedDate());
+
+        caseData.setAccessCode(generateAccessCode());
 
         final CaseData updatedCaseData = caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,

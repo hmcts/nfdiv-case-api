@@ -196,6 +196,7 @@ def versions = [
   junit             : '5.7.2',
   junitPlatform     : '1.7.2',
   lombok            : '1.18.12',
+  mockitoInline    : '3.11.1',
   reformsJavaLogging: '5.1.7',
   springBoot        : springBoot.class.package.implementationVersion,
   springfoxSwagger  : '3.0.0',
@@ -283,6 +284,8 @@ dependencies {
   testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '3.0.3'
 
   testImplementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+
+  testImplementation group: 'org.mockito', name: 'mockito-inline', version: versions.mockitoInline
 
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
