@@ -61,6 +61,7 @@
     "jurisdictionResidualEligible": null,
     "jurisdictionBothLastHabituallyResident": null,
     "jurisdictionConnections": null,
+    "jurisdictionLegalConnections": null,
     "marriageCertifyMarriageCertificateIsCorrect": null,
     "marriageIssueApplicationWithoutMarriageCertificate": null,
     "marriageMarriageCertificateIsIncorrectDetails": null,
