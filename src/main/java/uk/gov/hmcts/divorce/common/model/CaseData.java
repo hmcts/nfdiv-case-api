@@ -263,13 +263,6 @@ public class CaseData {
     )
     private YesOrNo lastNameChangedWhenMarried;
 
-    @CCD(
-        label = "Legal connections",
-        hint = "Tick all the reasons that apply:",
-        access = {DefaultAccess.class}
-    )
-    private Set<LegalConnections> legalConnections;
-
     // TODO: rename this as applicant2InviteEmailAddress?
     @CCD(
         label = "The respondent's email address",

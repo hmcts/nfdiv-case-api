@@ -53,6 +53,7 @@
     "jurisdictionBothLastHabituallyResident": null,
     "jurisdictionConnections": null,
     "jurisdictionResidualEligible": null,
+    "jurisdictionLegalConnections": null,
     "marriageApplicant1Name": null,
     "marriageApplicant2Name": null,
     "marriageCertificateInEnglish": null,

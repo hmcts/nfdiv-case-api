@@ -134,6 +134,12 @@ public enum State {
     PendingRejection("PendingRejection"),
 
     @CCD(
+        name = "Awaiting reissue",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
+    )
+    AwaitingReissue("AwaitingReissue"),
+
+    @CCD(
         name = "Conditional order complete",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}

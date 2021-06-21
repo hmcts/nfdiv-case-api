@@ -51,6 +51,7 @@
     "jurisdictionApplicant2Residence":null,
     "jurisdictionBothLastHabituallyResident":null,
     "jurisdictionConnections":null,
+    "jurisdictionLegalConnections": null,
     "jurisdictionResidualEligible":null,
     "marriageCertificateInEnglish":null,
     "marriageCertifiedTranslation":null,
