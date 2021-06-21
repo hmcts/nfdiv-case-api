@@ -60,7 +60,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2SolicitorOrganisationPolicy", "applicant2SolicitorRepresented=\"Yes\"")
             .field("applicant2SolicitorReference", "applicant2SolicitorRepresented=\"Yes\"")
             .field("applicant2CorrespondenceAddress")
-            .field(CaseData::getLegalConnections)
+            .field("jurisdictionLegalConnections")
             .field("LabelMarriage-Heading", null, "### Marriage and certificate")
             .field("marriageDate")
             .field("marriageIsSameSexCouple")

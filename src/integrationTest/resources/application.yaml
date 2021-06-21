@@ -57,9 +57,13 @@ doc_assembly:
 docmosis:
   templates:
     english:
+      #TODO: Set correct DIVORCE_MINI_APPLICATION template when available
       DIVORCE_MINI_APPLICATION: Divorce_CP_Mini_Draft_Application_Template.docx
+      DIVORCE_MINI_DRAFT_APPLICATION: Divorce_CP_Mini_Draft_Application_Template.docx
     welsh:
+      #TODO: Set correct DIVORCE_MINI_APPLICATION template when available
       DIVORCE_MINI_APPLICATION: FL-DIV-GNO-WEL-00256.docx
+      DIVORCE_MINI_DRAFT_APPLICATION: FL-DIV-GNO-WEL-00256.docx
 
 document_management:
   url: ${DOCUMENT_MANAGEMENT_URL:http://dm-store-aat.service.core-compute-aat.internal}

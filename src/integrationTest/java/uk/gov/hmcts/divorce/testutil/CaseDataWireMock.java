@@ -15,6 +15,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 import static uk.gov.hmcts.divorce.testutil.TestConstants.BEARER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 
 public final class CaseDataWireMock {
 
@@ -42,6 +43,18 @@ public final class CaseDataWireMock {
             .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(SERVICE_AUTHORIZATION))
             .withRequestBody(new EqualToJsonPattern(
                 "{\"user_id\" : \"1\", \"case_roles\":[\"[CREATOR]\",\"[APPONESOLICITOR]\"]}",
+                true,
+                true))
+            .willReturn(aResponse().withStatus(200))
+        );
+    }
+
+    public static void stubForCitizenCcdCaseRoles() {
+        CASE_DATA_SERVER.stubFor(put(urlMatching("/cases/[0-9]+/users/[0-9]+"))
+            .withHeader(HttpHeaders.AUTHORIZATION, new EqualToPattern(BEARER + TEST_AUTHORIZATION_TOKEN))
+            .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(SERVICE_AUTHORIZATION))
+            .withRequestBody(new EqualToJsonPattern(
+                "{\"user_id\" : \"3\", \"case_roles\":[\"[APPLICANTTWO]\"]}",
                 true,
                 true))
             .willReturn(aResponse().withStatus(200))

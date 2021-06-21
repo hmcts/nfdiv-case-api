@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
+import uk.gov.hmcts.divorce.common.CaseInfo;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.Solicitor;
 import uk.gov.hmcts.divorce.common.model.State;
@@ -155,14 +156,13 @@ public class SolicitorSubmitApplicationTest {
         caseDetails.setId(caseId);
         caseDetails.setState(Draft);
 
-        AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
-            AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .state(AwaitingPayment)
-                .build();
+        final CaseInfo caseInfo = CaseInfo.builder()
+            .caseData(caseData)
+            .state(AwaitingPayment)
+            .build();
 
         when(solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN))
-            .thenReturn(aboutToStartOrSubmitResponse);
+            .thenReturn(caseInfo);
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(APP_1_SOL_AUTH_TOKEN);
 
@@ -205,14 +205,13 @@ public class SolicitorSubmitApplicationTest {
         caseDetails.setState(Draft);
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
 
-        AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
-            AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .state(Submitted)
-                .build();
+        final CaseInfo caseInfo = CaseInfo.builder()
+            .caseData(caseData)
+            .state(Submitted)
+            .build();
 
         when(solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN))
-            .thenReturn(aboutToStartOrSubmitResponse);
+            .thenReturn(caseInfo);
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(APP_1_SOL_AUTH_TOKEN);
 
@@ -236,14 +235,13 @@ public class SolicitorSubmitApplicationTest {
         caseDetails.setState(Draft);
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
 
-        AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
-            AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .state(Submitted)
-                .build();
+        final CaseInfo caseInfo = CaseInfo.builder()
+            .caseData(caseData)
+            .state(Submitted)
+            .build();
 
         when(solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN))
-            .thenReturn(aboutToStartOrSubmitResponse);
+            .thenReturn(caseInfo);
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(APP_1_SOL_AUTH_TOKEN);
 
@@ -279,14 +277,13 @@ public class SolicitorSubmitApplicationTest {
         caseDetails.setId(caseId);
         caseDetails.setState(Draft);
 
-        AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
-            AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .state(AwaitingPayment)
-                .build();
+        final CaseInfo caseInfo = CaseInfo.builder()
+            .caseData(caseData)
+            .state(AwaitingPayment)
+            .build();
 
         when(solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN))
-            .thenReturn(aboutToStartOrSubmitResponse);
+            .thenReturn(caseInfo);
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(APP_1_SOL_AUTH_TOKEN);
 
@@ -323,14 +320,13 @@ public class SolicitorSubmitApplicationTest {
         caseDetails.setId(caseId);
         caseDetails.setState(Draft);
 
-        AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
-            AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .state(AwaitingPayment)
-                .build();
+        final CaseInfo caseInfo = CaseInfo.builder()
+            .caseData(caseData)
+            .state(AwaitingPayment)
+            .build();
 
         when(solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN))
-            .thenReturn(aboutToStartOrSubmitResponse);
+            .thenReturn(caseInfo);
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(APP_1_SOL_AUTH_TOKEN);
 
@@ -357,14 +353,13 @@ public class SolicitorSubmitApplicationTest {
         caseDetails.setId(caseId);
         caseDetails.setState(Draft);
 
-        AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
-            AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .state(AwaitingPayment)
-                .build();
+        final CaseInfo caseInfo = CaseInfo.builder()
+            .caseData(caseData)
+            .state(AwaitingPayment)
+            .build();
 
         when(solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN))
-            .thenReturn(aboutToStartOrSubmitResponse);
+            .thenReturn(caseInfo);
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(APP_1_SOL_AUTH_TOKEN);
 

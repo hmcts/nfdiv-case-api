@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.common.model.Jurisdiction;
 
 import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.JOINT_APPLICATION_CONDITION;
 import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLE_APPLICATION_CONDITION;
@@ -30,6 +31,8 @@ public class JurisdictionApplyForDivorce implements CcdPageConfiguration {
                 "The court has legal power to deal with this application because the following applies:\n\n"
                     + "Divorce – *Opposite Sex Couple* – Article 3(1) of Council Regulation (EC) No 2201/2003"
                     + "of 27 November 2003")
-            .mandatory(CaseData::getLegalConnections);
+            .complex(CaseData::getJurisdiction)
+                .mandatory(Jurisdiction::getLegalConnections)
+                .done();
     }
 }
