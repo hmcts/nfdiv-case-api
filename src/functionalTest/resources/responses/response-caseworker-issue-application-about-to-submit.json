@@ -42,6 +42,7 @@
     "applicant2SolicitorPhone": null,
     "applicant2SolicitorReference": null,
     "applicant2SolicitorRepresented": null,
+    "accessCode": "${json-unit.any-string}",
     "applicationFeeOrderSummary": {
       "Fees": null,
       "PaymentReference": null,
@@ -54,16 +55,31 @@
       {
         "id": "${json-unit.any-string}",
         "value": {
-          "documentComment": null,
           "documentDateAdded": null,
-          "documentEmailContent": null,
+          "documentComment": null,
           "documentFileName": "mini-application-1234567890123456.pdf",
+          "documentType": "divorceApplication",
+          "documentEmailContent": null,
           "documentLink": {
-            "document_binary_url": "${json-unit.any-string}",
+            "document_url": "${json-unit.any-string}",
             "document_filename": "mini-application-1234567890123456.pdf",
-            "document_url": "${json-unit.any-string}"
-          },
-          "documentType": "divorceApplication"
+            "document_binary_url": "${json-unit.any-string}"
+          }
+        }
+      },
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentDateAdded": null,
+          "documentComment": null,
+          "documentFileName": "aosinvitation-1234567890123456.pdf",
+          "documentType": "aos",
+          "documentEmailContent": null,
+          "documentLink": {
+            "document_url": "${json-unit.any-string}",
+            "document_filename": "aosinvitation-1234567890123456.pdf",
+            "document_binary_url": "${json-unit.any-string}"
+          }
         }
       }
     ],
