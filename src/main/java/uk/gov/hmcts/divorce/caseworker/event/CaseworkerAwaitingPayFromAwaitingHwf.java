@@ -8,7 +8,7 @@ import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 
-import static uk.gov.hmcts.divorce.common.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.common.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_RDU;
@@ -19,22 +19,20 @@ import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_U
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 
 @Component
-public class CaseworkerAwaitingApplicantFromAwaitingPayment implements CCDConfig<CaseData, State, UserRole> {
+public class CaseworkerAwaitingPayFromAwaitingHwf implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String CASEWORKER_AWAITING_DOC_FROM_AWAITING_PAYMENT = "caseworker-awaiting-doc-from-awaiting-payment";
+    public static final String CASEWORKER_AWAITING_PAYMENT_FROM_AWAITING_HWF = "caseworker-awaiting-payment-from-awaiting-hwf";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(CASEWORKER_AWAITING_DOC_FROM_AWAITING_PAYMENT)
-            .forStateTransition(AwaitingPayment, AwaitingDocuments)
-            .name("Awaiting applicant")
-            .description("Awaiting applicant")
+            .event(CASEWORKER_AWAITING_PAYMENT_FROM_AWAITING_HWF)
+            .forStateTransition(AwaitingHWFDecision, AwaitingPayment)
+            .name("Awaiting payment")
+            .description("Awaiting payment from the applicant")
+            .displayOrder(3)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASEWORKER_COURTADMIN_CTSC, CASEWORKER_COURTADMIN_RDU)
-            .grant(READ, SOLICITOR, CASEWORKER_SUPERUSER, CASEWORKER_LEGAL_ADVISOR))
-            .page("updateDueDate")
-            .pageLabel("Update Due Date")
-            .optional(CaseData::getDueDate);
+            .grant(READ, SOLICITOR, CASEWORKER_SUPERUSER, CASEWORKER_LEGAL_ADVISOR));
     }
 }

@@ -13,23 +13,22 @@ import uk.gov.hmcts.divorce.common.model.UserRole;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAwaitingApplicantFromAwaitingPayment.CASEWORKER_AWAITING_DOC_FROM_AWAITING_PAYMENT;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerAwaitingApplicantFromAwaitingPaymentTest {
+class CaseworkerAwaitingPayFromAwaitingHwfTest {
 
     @InjectMocks
-    private CaseworkerAwaitingApplicantFromAwaitingPayment caseworkerAwaitingApplicantFromAwaitingPayment;
+    private CaseworkerAwaitingPayFromAwaitingHwf caseworkerAwaitingPayFromAwaitingHwf;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final Set<State> stateSet = Set.of(State.class.getEnumConstants());
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = new ConfigBuilderImpl<>(CaseData.class, stateSet);
 
-        caseworkerAwaitingApplicantFromAwaitingPayment.configure(configBuilder);
+        caseworkerAwaitingPayFromAwaitingHwf.configure(configBuilder);
 
         assertThat(configBuilder.getEvents())
             .extracting(Event::getId)
-            .contains(CASEWORKER_AWAITING_DOC_FROM_AWAITING_PAYMENT);
+            .contains(CaseworkerAwaitingPayFromAwaitingHwf.CASEWORKER_AWAITING_PAYMENT_FROM_AWAITING_HWF);
     }
 }
