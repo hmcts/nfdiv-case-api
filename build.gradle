@@ -18,7 +18,7 @@ plugins {
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'org.springframework.boot' version '2.5.1'
   id 'com.github.ben-manes.versions' version '0.39.0'
-  id 'hmcts.ccd.sdk' version '0.20.20'
+  id 'hmcts.ccd.sdk' version '0.21.1'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -228,6 +228,9 @@ dependencyManagement {
 }
 
 dependencies {
+// uncomment for local version
+//  implementation group: 'com.github.hmcts', name: 'ccd-config-generator', version: 'DEV-SNAPSHOT'
+
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
