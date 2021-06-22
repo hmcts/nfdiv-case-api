@@ -47,6 +47,7 @@ public final class TestConstants {
     public static final String SOLICITOR_MID_EVENT_RESPONSE = "classpath:solicitor-mid-event-response.json";
     public static final String SOLICITOR_MID_EVENT_ERROR = "classpath:solicitor-mid-event-error-response.json";
     public static final String LINE_1_LINE_2_CITY_POSTCODE = "line1\nline2\ncity\npostcode";
+    public static final String ACCESS_CODE = "6E69DKFX";
 
     public static final String SIGN_IN_DIVORCE_TEST_URL = "divorceTestUrl";
     public static final String APPLICANT_2_SIGN_IN_DIVORCE_TEST_URL = "applicant2DivorceTestUrl";
