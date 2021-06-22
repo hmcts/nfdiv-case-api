@@ -16,10 +16,8 @@ import java.util.HashMap;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
@@ -106,16 +104,4 @@ public class ApplicationSentForReviewApplicant2NotificationTest {
         verify(commonContent).getTheirPartner(data, data.getApplicant1());
     }
 
-    @Test
-    void shouldNotSendEmailForInvalidCaseData() {
-        CaseData data = caseData();
-        final HashMap<String, String> templateVars = new HashMap<>();
-
-        when(commonContent.templateVarsFor(data)).thenReturn(templateVars);
-
-        assertThrows(NullPointerException.class, () ->
-            notification.send(data, 1234567890123456L));
-
-        verifyNoInteractions(notificationService);
-    }
 }

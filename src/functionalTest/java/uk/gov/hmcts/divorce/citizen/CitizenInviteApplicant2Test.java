@@ -21,7 +21,7 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 @SpringBootTest
 public class CitizenInviteApplicant2Test extends FunctionalTestSuite {
 
-    private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata.json";
+    private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata-applicant1-invite-applicant2.json";
     private static final String RESPONSE = "classpath:responses/response-applicant1-invite-applicant2.json";
 
     @Test

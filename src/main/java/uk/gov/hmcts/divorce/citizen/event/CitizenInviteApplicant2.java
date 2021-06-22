@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.common.model.UserRole;
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.common.model.State.Draft;
@@ -52,8 +53,25 @@ public class CitizenInviteApplicant2 implements CCDConfig<CaseData, State, UserR
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
+        log.info("Citizen invite applicant 2 about to submit callback invoked");
 
         CaseData data = details.getData();
+
+        log.info("Validating case data");
+        final List<String> validationErrors = AwaitingApplicant2Response.validate(data);
+
+        if (!validationErrors.isEmpty()) {
+            log.info("Validation errors: ");
+            for (String error : validationErrors) {
+                log.info(error);
+            }
+
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(data)
+                .errors(validationErrors)
+                .state(Draft)
+                .build();
+        }
 
         log.info("Generating access code to allow the respondent to access the joint application");
         final String accessCode = generateAccessCode();

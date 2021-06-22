@@ -139,7 +139,7 @@ public class TestDataHelper {
             .build();
     }
 
-    public static CaseData validApplicant1CaseDataMap() {
+    public static CaseData validJointApplicant1CaseDataMap() {
         var marriageDetails = new MarriageDetails();
         marriageDetails.setDate(LocalDate.now().minus(1, YEARS).minus(1, DAYS));
         marriageDetails.setApplicant1Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME);
@@ -155,15 +155,21 @@ public class TestDataHelper {
         return CaseData
             .builder()
             .applicant1(applicant1)
-            .applicant2(getApplicant(MALE))
+            .applicant2(getApplicant2(MALE))
+            .divorceOrDissolution(DIVORCE)
             .financialOrder(NO)
             .helpWithFeesNeedHelp(NO)
-            .prayerHasBeenGiven(YES)
-            .statementOfTruth(YES)
             .marriageDetails(marriageDetails)
             .jurisdiction(jurisdiction)
             .build();
+    }
 
+    public static CaseData validApplicant1CaseDataMap() {
+        CaseData caseData = validJointApplicant1CaseDataMap();
+        caseData.setApplicant2(getApplicant(MALE));
+        caseData.setStatementOfTruth(YES);
+        caseData.setPrayerHasBeenGiven(YES);
+        return caseData;
     }
 
     public static CaseData caseDataWithStatementOfTruth() {
