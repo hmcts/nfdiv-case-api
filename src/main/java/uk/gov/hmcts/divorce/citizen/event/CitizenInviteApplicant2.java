@@ -61,10 +61,8 @@ public class CitizenInviteApplicant2 implements CCDConfig<CaseData, State, UserR
         final List<String> validationErrors = AwaitingApplicant2Response.validate(data);
 
         if (!validationErrors.isEmpty()) {
-            log.info("Validation errors: ");
-            for (String error : validationErrors) {
-                log.info(error);
-            }
+            log.info("Validation errors: {} ", validationErrors);
+           
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(data)
