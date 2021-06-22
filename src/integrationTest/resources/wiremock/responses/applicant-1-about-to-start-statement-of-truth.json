@@ -1,5 +1,6 @@
 {
   "data": {
+    "divorceOrDissolution": "divorce",
     "applicant1Gender": "female",
     "applicant2Gender": "male",
     "marriageMarriedInUk": null,
