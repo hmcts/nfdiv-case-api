@@ -6,14 +6,22 @@ public final class NotificationConstants {
     public static final String RELATIONSHIP = "relationship";
     public static final String PARTNER = "partner";
 
+    public static final String APPLICATION = "Application";
     public static final String DIVORCE_APPLICATION = "divorce application";
     public static final String APPLICATION_TO_END_CIVIL_PARTNERSHIP = "application to end your civil partnership";
+    public static final String FOR_YOUR_APPLICATION = " for your divorce/ to end your civil partnership";
+    public static final String FOR_YOUR_DIVORCE = " for your divorce";
+    public static final String TO_END_CIVIL_PARTNERSHIP = "to end your civil partnership";
+    public static final String REMINDER = "Reminder: application / Application ";
 
+    public static final String CREATE_ACCOUNT_LINK = "create account link";
     public static final String SIGN_IN_URL_NOTIFY_KEY = "signin url";
     public static final String RELATIONSHIP_COURT_HEADER = "relationship court header";
 
     public static final String SIGN_IN_DIVORCE_URL = "signInDivorceUrl";
+    public static final String APPLICANT_2_SIGN_IN_DIVORCE_URL = "applicant2SignInDivorceUrl";
     public static final String SIGN_IN_DISSOLUTION_URL = "signInDissolutionUrl";
+    public static final String APPLICANT_2_SIGN_IN_DISSOLUTION_URL = "applicant2SignInDissolutionUrl";
     public static final String DIVORCE_COURT_EMAIL = "divorceCourtEmail";
     public static final String DISSOLUTION_COURT_EMAIL = "dissolutionCourtEmail";
 
@@ -30,6 +38,12 @@ public final class NotificationConstants {
 
     public static final String SUBMISSION_RESPONSE_DATE = "date of response";
     public static final String APPLICATION_REFERENCE = "reference number";
+
+    public static final String ACCOUNT = "account";
+    public static final String DIVORCE_ACCOUNT = "divorce account";
+    public static final String CIVIL_PARTNERSHIP_ACCOUNT = "account to end your civil partnership";
+
+    public static final String ACCESS_CODE = "access code";
 
     private NotificationConstants() {
     }

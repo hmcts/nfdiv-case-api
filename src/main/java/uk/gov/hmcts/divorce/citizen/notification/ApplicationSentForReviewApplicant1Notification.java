@@ -16,7 +16,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION
 
 @Component
 @Slf4j
-public class ApplicationSentForReviewNotification {
+public class ApplicationSentForReviewApplicant1Notification {
 
     @Autowired
     private NotificationService notificationService;
@@ -28,9 +28,9 @@ public class ApplicationSentForReviewNotification {
         Map<String, String> templateVars = commonContent.templateVarsFor(caseData);
 
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(dateTimeFormatter));
-        templateVars.put(PARTNER, commonContent.getPartner(caseData));
+        templateVars.put(PARTNER, commonContent.getTheirPartner(caseData, caseData.getApplicant2()));
 
-        log.info("Sending application sent for review notification for case : {}", id);
+        log.info("Sending application sent for review notification to applicant 1 for case : {}", id);
 
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),

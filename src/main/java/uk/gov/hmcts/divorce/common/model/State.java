@@ -10,6 +10,7 @@ import java.util.List;
 
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.hasAwaitingDocuments;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.isPaymentIncomplete;
+import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.validateApplicant1BasicCase;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.validateBasicCase;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.validateCaseFieldsForIssueApplication;
 
@@ -29,7 +30,14 @@ public enum State {
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
     )
-    AwaitingApplicant2Response("AwaitingApplicant2Response"),
+    AwaitingApplicant2Response("AwaitingApplicant2Response") {
+        @Override
+        public List<String> validate(CaseData caseData) {
+            List<String> errors = new ArrayList<>();
+            validateApplicant1BasicCase(caseData, errors);
+            return errors;
+        }
+    },
 
     @CCD(
         name = "Application awaiting payment",
