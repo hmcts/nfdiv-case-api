@@ -42,13 +42,13 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 
 @ExtendWith(MockitoExtension.class)
-public class RespondentAosInvitationTemplateContentTest {
+public class RespondentSolicitorAosInvitationTemplateContentTest {
 
     @Mock
     private AuthTokenGenerator authTokenGenerator;
 
     @InjectMocks
-    private DraftApplicationTemplateContent templateContent;
+    private RespondentSolicitorAosInvitationTemplateContent templateContent;
 
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForDivorce() {

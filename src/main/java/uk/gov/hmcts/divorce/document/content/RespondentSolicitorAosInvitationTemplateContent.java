@@ -30,7 +30,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 
 @Component
 @Slf4j
-public class RespondentAosInvitationTemplateContent {
+public class RespondentSolicitorAosInvitationTemplateContent {
 
     private static final DateTimeFormatter TEMPLATE_DATE_FORMAT = DateTimeFormatter.ofPattern("d MMMM yyyy");
 

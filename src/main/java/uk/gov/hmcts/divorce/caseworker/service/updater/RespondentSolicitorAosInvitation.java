@@ -8,25 +8,25 @@ import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdater;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.RespondentAosInvitationTemplateContent;
+import uk.gov.hmcts.divorce.document.content.RespondentSolicitorAosInvitationTemplateContent;
 
 import java.util.Map;
 import java.util.function.Supplier;
 
 import static uk.gov.hmcts.divorce.common.util.AccessCodeGenerator.generateAccessCode;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_AOS_INVITATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_AOS_INVITATION_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_SOLICITOR_AOS_INVITATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DOCUMENT_TYPE_RESPONDENT_INVITATION;
 
 @Component
 @Slf4j
-public class RespondentAosInvitation implements CaseDataUpdater {
+public class RespondentSolicitorAosInvitation implements CaseDataUpdater {
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
 
     //TODO: Use correct template content when application template requirements are known.
     @Autowired
-    private RespondentAosInvitationTemplateContent templateContent;
+    private RespondentSolicitorAosInvitationTemplateContent templateContent;
 
     @Override
     public CaseDataContext updateCaseData(final CaseDataContext caseDataContext,
@@ -49,7 +49,7 @@ public class RespondentAosInvitation implements CaseDataUpdater {
             templateContentSupplier,
             caseId,
             userAuthToken,
-            RESP_AOS_INVITATION,
+            RESP_SOLICITOR_AOS_INVITATION,
             RESP_AOS_INVITATION_DOCUMENT_NAME,
             caseData.getApplicant1().getLanguagePreference()
         );

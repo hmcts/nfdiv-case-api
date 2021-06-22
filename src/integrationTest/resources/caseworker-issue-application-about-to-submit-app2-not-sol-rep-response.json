@@ -35,7 +35,7 @@
     "applicant2ContactDetailsConfidential": "share",
     "applicant2Gender": "female",
     "applicant2CorrespondenceAddress": null,
-    "applicant2SolicitorRepresented": null,
+    "applicant2SolicitorRepresented": "No",
     "applicant2SolicitorName": null,
     "applicant2SolicitorReference": null,
     "applicant2SolicitorPhone": null,
@@ -90,21 +90,6 @@
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
             "document_filename": "mini-application-1616591401473378.pdf",
             "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
-          }
-        }
-      },
-      {
-        "id": "Respondent Invitation",
-        "value": {
-          "documentDateAdded": null,
-          "documentComment": null,
-          "documentFileName": "aosinvitation-1616591401473378.pdf",
-          "documentType": "aos",
-          "documentEmailContent": null,
-          "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100",
-            "document_filename": "aosinvitation-1616591401473378.pdf",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100/binary"
           }
         }
       }

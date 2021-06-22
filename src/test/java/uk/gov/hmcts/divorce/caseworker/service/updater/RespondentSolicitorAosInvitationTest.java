@@ -12,7 +12,7 @@ import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
 import uk.gov.hmcts.divorce.common.util.AccessCodeGenerator;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.RespondentAosInvitationTemplateContent;
+import uk.gov.hmcts.divorce.document.content.RespondentSolicitorAosInvitationTemplateContent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,8 +23,8 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_AOS_INVITATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_AOS_INVITATION_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_SOLICITOR_AOS_INVITATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DOCUMENT_TYPE_RESPONDENT_INVITATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
@@ -32,19 +32,19 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 
 @ExtendWith(MockitoExtension.class)
-public class RespondentAosInvitationTest {
+public class RespondentSolicitorAosInvitationTest {
 
     @Mock
     private CaseDataDocumentService caseDataDocumentService;
 
     @Mock
-    private RespondentAosInvitationTemplateContent templateContent;
+    private RespondentSolicitorAosInvitationTemplateContent templateContent;
 
     @Mock
     private CaseDataUpdaterChain caseDataUpdaterChain;
 
     @InjectMocks
-    private RespondentAosInvitation respondentAosInvitation;
+    private RespondentSolicitorAosInvitation respondentSolicitorAosInvitation;
 
     @Test
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithAosInvitationDocument() {
@@ -72,14 +72,14 @@ public class RespondentAosInvitationTest {
                 templateContentSupplier,
                 TEST_CASE_ID,
                 TEST_AUTHORIZATION_TOKEN,
-                RESP_AOS_INVITATION,
+                    RESP_SOLICITOR_AOS_INVITATION,
                 RESP_AOS_INVITATION_DOCUMENT_NAME,
                 ENGLISH))
             .thenReturn(caseData);
 
         when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
 
-        final var result = respondentAosInvitation.updateCaseData(caseDataContext, caseDataUpdaterChain);
+        final var result = respondentSolicitorAosInvitation.updateCaseData(caseDataContext, caseDataUpdaterChain);
 
         assertThat(result.getCaseData()).isEqualTo(caseData);
 

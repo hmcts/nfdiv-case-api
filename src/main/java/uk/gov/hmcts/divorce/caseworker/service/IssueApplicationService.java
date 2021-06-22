@@ -3,7 +3,7 @@ package uk.gov.hmcts.divorce.caseworker.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.caseworker.service.updater.MiniApplication;
-import uk.gov.hmcts.divorce.caseworker.service.updater.RespondentAosInvitation;
+import uk.gov.hmcts.divorce.caseworker.service.updater.RespondentSolicitorAosInvitation;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdater;
@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 
 @Service
 public class IssueApplicationService {
@@ -25,7 +26,7 @@ public class IssueApplicationService {
     private CaseDataUpdaterChainFactory caseDataUpdaterChainFactory;
 
     @Autowired
-    private RespondentAosInvitation respondentAosInvitation;
+    private RespondentSolicitorAosInvitation respondentSolicitorAosInvitation;
 
     @Autowired
     private Clock clock;
@@ -35,10 +36,16 @@ public class IssueApplicationService {
                                   final LocalDate createdDate,
                                   final String idamAuthToken) {
 
-        final List<CaseDataUpdater> caseDataUpdaters = asList(
-            miniApplication,
-            respondentAosInvitation
-        );
+        List<CaseDataUpdater> caseDataUpdaters;
+
+        if (caseData.getApplicant2().getSolicitorRepresented().toBoolean()) {
+            caseDataUpdaters = asList(
+                miniApplication,
+                respondentSolicitorAosInvitation
+            );
+        } else {
+            caseDataUpdaters = singletonList(miniApplication);
+        }
 
         final CaseDataContext caseDataContext = CaseDataContext.builder()
             .caseData(caseData)
