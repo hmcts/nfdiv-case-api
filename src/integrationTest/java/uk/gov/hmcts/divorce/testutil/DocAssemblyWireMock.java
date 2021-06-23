@@ -7,8 +7,10 @@ import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.IOException;
+import java.util.Base64;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.unauthorized;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
@@ -42,13 +44,35 @@ public final class DocAssemblyWireMock {
     }
 
     public static void stubForDocAssembly() throws IOException {
+        String expectedResponse = expectedDocAssemblyResponse("classpath:wiremock/responses/dg-assembly-response.json")
+            .replace("<docUuid>", "8d2bd0f2-80e9-4b0f-b38d-2c138b243e27")
+            .replace("<templateId>", "RGl2b3JjZV9DUF9NaW5pX0RyYWZ0X1BldGl0aW9uX1RlbXBsYXRlLmRvY3g=");
+
         DOC_ASSEMBLY_SERVER.stubFor(
             post("/api/template-renditions")
                 .withHeader(AUTHORIZATION, new EqualToPattern(TEST_AUTHORIZATION_TOKEN))
                 .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(TEST_SERVICE_AUTH_TOKEN))
                 .willReturn(aResponse()
                     .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                    .withBody(expectedDocAssemblyResponse("classpath:wiremock/responses/dg-assembly-response.json")))
+                    .withBody(expectedResponse))
+        );
+    }
+
+    public static void stubForDocAssemblyWith(String uuid, String templateId) throws IOException {
+        String encodedTemplateId = Base64.getEncoder().encodeToString(templateId.getBytes());
+
+        String expectedResponse = expectedDocAssemblyResponse("classpath:wiremock/responses/dg-assembly-response.json")
+            .replace("<docUuid>", uuid)
+            .replace("<templateId>", templateId);
+
+        DOC_ASSEMBLY_SERVER.stubFor(
+            post("/api/template-renditions")
+                .withHeader(AUTHORIZATION, new EqualToPattern(TEST_AUTHORIZATION_TOKEN))
+                .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(TEST_SERVICE_AUTH_TOKEN))
+                .withRequestBody(containing(encodedTemplateId))
+                .willReturn(aResponse()
+                    .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                    .withBody(expectedResponse))
         );
     }
 

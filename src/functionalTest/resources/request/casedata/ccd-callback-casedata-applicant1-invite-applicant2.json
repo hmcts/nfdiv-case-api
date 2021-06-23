@@ -1,0 +1,15 @@
+{
+  "divorceOrDissolution": "divorce",
+  "applicant1FirstName": "John",
+  "applicant1LastName": "Smith",
+  "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+  "applicant2EmailAddress": "simulate-delivered@notifications.service.gov.uk",
+  "applicant1Gender": "male",
+  "applicant2Gender": "female",
+  "marriageApplicant1Name":"John Smith",
+  "marriageDate": "2020-04-28",
+  "financialOrder": "No",
+  "jurisdictionApplicant1Residence": "Yes",
+  "jurisdictionApplicant2Residence": "Yes",
+  "jurisdictionConnections": ["A"]
+}

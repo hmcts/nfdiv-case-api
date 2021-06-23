@@ -42,8 +42,6 @@ import java.util.UUID;
 import static feign.Request.HttpMethod.GET;
 import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.time.temporal.ChronoUnit.DAYS;
-import static java.time.temporal.ChronoUnit.YEARS;
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -54,8 +52,16 @@ import static uk.gov.hmcts.divorce.common.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.common.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.common.model.JurisdictionConnections.APP_1_RESIDENT_JOINT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_2_SIGN_IN_DISSOLUTION_URL;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_2_SIGN_IN_DIVORCE_URL;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DIVORCE_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DIVORCE_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DISSOLUTION_TEST_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DIVORCE_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
@@ -94,8 +100,16 @@ public class TestDataHelper {
 
     public static Applicant getApplicant2(Gender gender) {
         return Applicant.builder()
+            .firstName(TEST_FIRST_NAME)
+            .middleName(TEST_MIDDLE_NAME)
+            .lastName(TEST_LAST_NAME)
             .gender(gender)
-            .email(TEST_USER_EMAIL)
+            .build();
+    }
+
+    public static Applicant getJointApplicant2(Gender gender) {
+        return Applicant.builder()
+            .gender(gender)
             .build();
     }
 
@@ -131,9 +145,9 @@ public class TestDataHelper {
             .build();
     }
 
-    public static CaseData validApplicant1CaseDataMap() {
+    public static CaseData validJointApplicant1CaseDataMap() {
         var marriageDetails = new MarriageDetails();
-        marriageDetails.setDate(LocalDate.now().minus(1, YEARS).minus(1, DAYS));
+        marriageDetails.setDate(LocalDate.of(1990, 6, 10));
         marriageDetails.setApplicant1Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME);
 
         var jurisdiction = new Jurisdiction();
@@ -147,15 +161,22 @@ public class TestDataHelper {
         return CaseData
             .builder()
             .applicant1(applicant1)
-            .applicant2(getApplicant(MALE))
+            .applicant2(getJointApplicant2(MALE))
+            .applicant2EmailAddress(TEST_USER_EMAIL)
+            .divorceOrDissolution(DIVORCE)
             .financialOrder(NO)
             .helpWithFeesNeedHelp(NO)
-            .prayerHasBeenGiven(YES)
-            .statementOfTruth(YES)
             .marriageDetails(marriageDetails)
             .jurisdiction(jurisdiction)
             .build();
+    }
 
+    public static CaseData validApplicant1CaseDataMap() {
+        CaseData caseData = validJointApplicant1CaseDataMap();
+        caseData.setApplicant2(getApplicant2(MALE));
+        caseData.setStatementOfTruth(YES);
+        caseData.setPrayerHasBeenGiven(YES);
+        return caseData;
     }
 
     public static CaseData caseDataWithStatementOfTruth() {
@@ -335,5 +356,14 @@ public class TestDataHelper {
 
     public static String getFeeResponseAsJson() throws JsonProcessingException {
         return OBJECT_MAPPER.writeValueAsString(getFeeResponse());
+    }
+
+    public static Map<String, String> getConfigTemplateVars() {
+        return Map.of(
+            SIGN_IN_DIVORCE_URL, SIGN_IN_DIVORCE_TEST_URL,
+            SIGN_IN_DISSOLUTION_URL, SIGN_IN_DISSOLUTION_TEST_URL,
+            APPLICANT_2_SIGN_IN_DIVORCE_URL, APPLICANT_2_SIGN_IN_DIVORCE_TEST_URL,
+            APPLICANT_2_SIGN_IN_DISSOLUTION_URL, APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL
+        );
     }
 }

@@ -42,6 +42,17 @@ public final class ValidationUtil {
         addListToErrorList(caseData.getJurisdiction().validate(), errorList);
     }
 
+    public static void validateApplicant1BasicCase(CaseData caseData, List<String> errorList) {
+        addToErrorList(checkIfStringNullOrEmpty(caseData.getApplicant1().getFirstName(), "Applicant1FirstName"), errorList);
+        addToErrorList(checkIfStringNullOrEmpty(caseData.getApplicant1().getLastName(), "Applicant1LastName"), errorList);
+        addToErrorList(checkIfYesOrNoNullOrEmpty(caseData.getFinancialOrder(), "FinancialOrder"), errorList);
+        addToErrorList(checkIfGenderNullOrEmpty(caseData.getApplicant1().getGender(), "Applicant1Gender"), errorList);
+        addToErrorList(checkIfGenderNullOrEmpty(caseData.getApplicant1().getGender(), "Applicant2Gender"), errorList);
+        addToErrorList(checkIfStringNullOrEmpty(caseData.getMarriageDetails().getApplicant1Name(), "MarriageApplicant1Name"), errorList);
+        addToErrorList(checkIfDateIsAllowed(caseData.getMarriageDetails().getDate(), "MarriageDate"), errorList);
+        addListToErrorList(caseData.getJurisdiction().validate(), errorList);
+    }
+
     public static void addToErrorList(String error, List<String> errorList) {
         if (error != null) {
             errorList.add(error);
