@@ -147,11 +147,28 @@ public enum State {
     ConditionalOrderComplete("ConditionalOrderComplete"),
 
     @CCD(
+        name = "AOS Awaiting",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    AOSAwaiting("AOSAwaiting"),
+
+    @CCD(
+        name = "AOS Drafted",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    AOSDrafted("AOSDrafted"),
+
+    @CCD(
         name = "Final order complete",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
     )
     FinalOrderComplete("FinalOrderComplete");
+
+
+
 
     private final String name;
 

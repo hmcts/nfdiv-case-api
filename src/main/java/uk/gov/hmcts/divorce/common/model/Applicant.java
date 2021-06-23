@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.common.model.access.DefaultAccess;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
@@ -106,11 +107,66 @@ public class Applicant {
     @JsonUnwrapped(prefix = "Solicitor")
     private Solicitor solicitor;
 
+
+    @CCD(
+        label = "Has the respondent read the application for divorce?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo confirmReadPetition;
+
+    @CCD(
+        label = "Respondent agreed to claimed jurisdiction?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo jurisdictionAgree;
+
+    @CCD(
+        label = "Reason respondent disagreed to claimed jurisdiction",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
+    )
+    private String jurisdictionDisagreeReason;
+
+    @CCD(
+        label = "Do legal proceedings exist (respondent)?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo legalProceedingsExist;
+
+    @CCD(
+        label = "Legal proceedings details (respondent)",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
+    )
+    private String legalProceedingsDescription;
+
+    @CCD(
+        label = "Does respondent agree to costs?",
+        typeOverride = FixedList,
+        typeParameterOverride = "RespAgreeToCostsEnum"
+    )
+    private RespAgreeToCostsEnum agreeToCosts;
+
+    @CCD(
+        label = "Respondent's costs amount",
+        typeParameterOverride = "RespAgreeToCostsEnum"
+    )
+    private String costsAmount;
+
+    @CCD(
+        label = "Respondent's costs reason",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
+    )
+    private String costsReason;
+
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
         return languagePreferenceWelsh == null || languagePreferenceWelsh.equals(YesOrNo.NO)
             ? ENGLISH
             : WELSH;
     }
+
+
 
 }

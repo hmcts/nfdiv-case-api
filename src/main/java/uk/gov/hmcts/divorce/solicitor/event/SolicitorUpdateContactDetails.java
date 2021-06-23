@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolUpdateContactDetails;
 
+import static uk.gov.hmcts.divorce.common.model.State.AOSAwaiting;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_RDU;
@@ -38,7 +39,7 @@ public class SolicitorUpdateContactDetails implements CCDConfig<CaseData, State,
 
         return new PageBuilder(configBuilder
             .event(SOLICITOR_UPDATE_CONTACT_DETAILS)
-            .forState(Submitted)
+            .forStates(Submitted, AOSAwaiting)
             .name("Update Contact Details")
             .description("Update contact details")
             .displayOrder(1)
