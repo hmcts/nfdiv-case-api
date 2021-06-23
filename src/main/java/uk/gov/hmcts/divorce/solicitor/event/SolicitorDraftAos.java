@@ -21,8 +21,8 @@ import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolReviewPetitionersA
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static uk.gov.hmcts.divorce.common.model.State.AOSAwaiting;
 import static uk.gov.hmcts.divorce.common.model.State.AOSDrafted;
+import static uk.gov.hmcts.divorce.common.model.State.IssuedAos;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_RDU;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
@@ -53,7 +53,7 @@ public class SolicitorDraftAos  implements CCDConfig<CaseData, State, UserRole> 
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(SOLICITOR_DRAFT_AOS)
-            .forStateTransition(AOSAwaiting, AOSDrafted)
+            .forStateTransition(IssuedAos, AOSDrafted)
             .name("Draft AoS")
             .description("Draft AoS")
             .aboutToStartCallback(this::aboutToStart)
@@ -74,7 +74,7 @@ public class SolicitorDraftAos  implements CCDConfig<CaseData, State, UserRole> 
                 DIVORCE_APPLICATION.equals(divorceDocument.getDocumentType()))
             .map(DivorceDocument::getDocumentLink)
             .findFirst()
-            .ifPresent(document -> caseData.setMinipetitionlink(document));
+            .ifPresent(caseData::setMinipetitionlink);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
