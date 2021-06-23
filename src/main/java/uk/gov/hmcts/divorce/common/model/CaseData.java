@@ -271,6 +271,18 @@ public class CaseData {
     private String applicant2EmailAddress;
 
     @CCD(
+        label = "The respondent's phone number",
+        access = {DefaultAccess.class}
+    )
+    private String applicant2PhoneNumber;
+
+    @CCD(
+        label = "The respondent agrees that the divorce service can send notifications by email.",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo applicant2AgreeToReceiveEmails;
+
+    @CCD(
         label = "Is the respondent's email address known?",
         access = {DefaultAccess.class}
     )
