@@ -121,6 +121,12 @@ public enum State {
     },
 
     @CCD(
+        name = "Issued AOS",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
+    )
+    IssuedAos("IssuedAos"),
+
+    @CCD(
         name = "Application Rejected",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
