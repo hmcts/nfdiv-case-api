@@ -42,8 +42,6 @@ import java.util.UUID;
 import static feign.Request.HttpMethod.GET;
 import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.time.temporal.ChronoUnit.DAYS;
-import static java.time.temporal.ChronoUnit.YEARS;
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -102,8 +100,16 @@ public class TestDataHelper {
 
     public static Applicant getApplicant2(Gender gender) {
         return Applicant.builder()
+            .firstName(TEST_FIRST_NAME)
+            .middleName(TEST_MIDDLE_NAME)
+            .lastName(TEST_LAST_NAME)
             .gender(gender)
-            .email(TEST_USER_EMAIL)
+            .build();
+    }
+
+    public static Applicant getJointApplicant2(Gender gender) {
+        return Applicant.builder()
+            .gender(gender)
             .build();
     }
 
@@ -141,7 +147,7 @@ public class TestDataHelper {
 
     public static CaseData validJointApplicant1CaseDataMap() {
         var marriageDetails = new MarriageDetails();
-        marriageDetails.setDate(LocalDate.now().minus(1, YEARS).minus(1, DAYS));
+        marriageDetails.setDate(LocalDate.of(1990, 6, 10));
         marriageDetails.setApplicant1Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME);
 
         var jurisdiction = new Jurisdiction();
@@ -155,7 +161,8 @@ public class TestDataHelper {
         return CaseData
             .builder()
             .applicant1(applicant1)
-            .applicant2(getApplicant2(MALE))
+            .applicant2(getJointApplicant2(MALE))
+            .applicant2EmailAddress(TEST_USER_EMAIL)
             .divorceOrDissolution(DIVORCE)
             .financialOrder(NO)
             .helpWithFeesNeedHelp(NO)
@@ -166,7 +173,7 @@ public class TestDataHelper {
 
     public static CaseData validApplicant1CaseDataMap() {
         CaseData caseData = validJointApplicant1CaseDataMap();
-        caseData.setApplicant2(getApplicant(MALE));
+        caseData.setApplicant2(getApplicant2(MALE));
         caseData.setStatementOfTruth(YES);
         caseData.setPrayerHasBeenGiven(YES);
         return caseData;
