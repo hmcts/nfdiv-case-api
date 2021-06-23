@@ -60,7 +60,6 @@ public class CitizenInviteApplicant2 implements CCDConfig<CaseData, State, UserR
 
         if (!validationErrors.isEmpty()) {
             log.info("Validation errors: {} ", validationErrors);
-           
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(data)

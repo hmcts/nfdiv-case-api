@@ -14,7 +14,6 @@ import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 
-import java.util.HashMap;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -63,7 +62,6 @@ public class CitizenInviteApplicant2Test {
     @Test
     void givenEventStartedWithInvalidCaseThenGiveValidationErrors() {
         CaseData caseData = caseData();
-        final HashMap<String, String> templateVars = new HashMap<>();
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);

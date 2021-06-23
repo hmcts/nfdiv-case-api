@@ -52,15 +52,15 @@ public class ApplicationSentForReviewApplicant2Notification {
 
         setDefaultVariables(templateVars, caseData);
         if (caseData.getDivorceOrDissolution().isDivorce()) {
-            setDivorceVariables(templateVars, caseData);
+            setDivorceVariables(templateVars);
         } else {
-            setDissolutionVariables(templateVars, caseData);
+            setDissolutionVariables(templateVars);
         }
 
         log.info("Sending application sent for review notification to applicant 2 for case : {}", id);
 
         notificationService.sendEmail(
-            caseData.getApplicant2().getEmail(),
+            caseData.getApplicant2EmailAddress(),
             JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW,
             templateVars,
             caseData.getApplicant1().getLanguagePreference()
@@ -74,7 +74,7 @@ public class ApplicationSentForReviewApplicant2Notification {
         templateVars.put(REMINDER, APPLICATION);
     }
 
-    private void setDivorceVariables(Map<String, String> templateVars, CaseData caseData) {
+    private void setDivorceVariables(Map<String, String> templateVars) {
         templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), "a " + DIVORCE_APPLICATION);
         templateVars.put(ACCOUNT, DIVORCE_ACCOUNT);
         templateVars.put(FOR_YOUR_APPLICATION, FOR_YOUR_DIVORCE);
@@ -83,7 +83,7 @@ public class ApplicationSentForReviewApplicant2Notification {
         templateVars.put(CREATE_ACCOUNT_LINK, configTemplateVars.get(APPLICANT_2_SIGN_IN_DIVORCE_URL));
     }
 
-    private void setDissolutionVariables(Map<String, String> templateVars, CaseData caseData) {
+    private void setDissolutionVariables(Map<String, String> templateVars) {
         templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), "an " + APPLICATION_TO_END_CIVIL_PARTNERSHIP);
         templateVars.put(ACCOUNT, CIVIL_PARTNERSHIP_ACCOUNT);
         templateVars.put(FOR_YOUR_APPLICATION, TO_END_CIVIL_PARTNERSHIP);
