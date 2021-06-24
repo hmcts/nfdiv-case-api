@@ -16,7 +16,9 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
 import uk.gov.hmcts.divorce.common.model.access.CaseworkerAccess;
+import uk.gov.hmcts.divorce.common.model.access.CaseworkerAndSuperUserAccess;
 import uk.gov.hmcts.divorce.common.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
@@ -424,6 +426,22 @@ public class CaseData {
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate issueDate;
+
+    @CCD(
+        label = "Notes",
+        typeOverride = Collection,
+        typeParameterOverride = "CaseNote",
+        access = {CaseworkerAndSuperUserAccess.class}
+    )
+    private List<ListValue<CaseNote>> notes;
+
+    @CCD(
+        label = "Add a case note",
+        hint = "Enter note",
+        typeOverride = TextArea,
+        access = {CaseworkerAndSuperUserAccess.class}
+    )
+    private String note;
 
     @JsonIgnore
     public LocalDate getDateOfSubmissionResponse() {

@@ -102,5 +102,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("marriageCertifyMarriageCertificateIsCorrect")
             .field("marriageMarriageCertificateIsIncorrectDetails", "marriageCertifyMarriageCertificateIsCorrect=\"No\"")
             .field("marriageIssueApplicationWithoutMarriageCertificate", "marriageCertifyMarriageCertificateIsCorrect=\"No\"");
+
+        configBuilder.tab("notes", "Notes")
+            .field(CaseData::getNotes);
     }
 }
