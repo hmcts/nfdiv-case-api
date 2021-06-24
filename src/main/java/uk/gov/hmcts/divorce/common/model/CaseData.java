@@ -257,12 +257,6 @@ public class CaseData {
     )
     private OrderSummary applicationFeeOrderSummary;
 
-    @CCD(
-        label = "Did you change your last name when you got married?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo lastNameChangedWhenMarried;
-
     // TODO: rename this as applicant2InviteEmailAddress?
     @CCD(
         label = "The respondent's email address",
