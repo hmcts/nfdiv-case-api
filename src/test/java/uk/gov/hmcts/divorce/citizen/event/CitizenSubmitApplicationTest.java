@@ -142,7 +142,7 @@ class CitizenSubmitApplicationTest {
         caseData.setApplicant1(getApplicant());
         caseData.getApplicant1().setContactDetailsConfidential(ConfidentialAddress.KEEP);
         caseData.setApplicant2(getApplicant(MALE));
-        caseData.setFinancialOrder(YesOrNo.NO);
+        caseData.setApplicant1FinancialOrder(YesOrNo.NO);
         caseData.setHelpWithFeesNeedHelp(YesOrNo.NO);
         caseData.setPrayerHasBeenGiven(YesOrNo.YES);
         caseData.getMarriageDetails().setApplicant1Name("Full name");

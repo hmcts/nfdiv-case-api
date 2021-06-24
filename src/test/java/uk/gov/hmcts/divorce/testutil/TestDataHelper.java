@@ -164,7 +164,7 @@ public class TestDataHelper {
             .applicant2(getJointApplicant2(MALE))
             .applicant2EmailAddress(TEST_USER_EMAIL)
             .divorceOrDissolution(DIVORCE)
-            .financialOrder(NO)
+            .applicant1FinancialOrder(NO)
             .helpWithFeesNeedHelp(NO)
             .marriageDetails(marriageDetails)
             .jurisdiction(jurisdiction)
@@ -221,7 +221,7 @@ public class TestDataHelper {
 
         final CaseData caseData = caseDataWithStatementOfTruth();
         caseData.setDocumentUploadComplete(YES);
-        caseData.setFinancialOrder(NO);
+        caseData.setApplicant1FinancialOrder(NO);
         caseData.setMarriageDetails(marriageDetails);
         caseData.setApplicant2(getApplicant());
         caseData.setPrayerHasBeenGiven(YES);

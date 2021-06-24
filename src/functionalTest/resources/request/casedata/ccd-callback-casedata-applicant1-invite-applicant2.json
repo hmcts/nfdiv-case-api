@@ -8,7 +8,7 @@
   "applicant2Gender": "female",
   "marriageApplicant1Name":"John Smith",
   "marriageDate": "2020-04-28",
-  "financialOrder": "No",
+  "applicant1FinancialOrder": "No",
   "jurisdictionApplicant1Residence": "Yes",
   "jurisdictionApplicant2Residence": "Yes",
   "jurisdictionConnections": ["A"]

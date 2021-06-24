@@ -48,7 +48,7 @@
     "applicant2LastName": "test_last_name",
     "marriageApplicant1Name": "test_first_name test_last_name",
     "marriageApplicant2Name": null,
-    "financialOrder": "No",
+    "applicant1FinancialOrder": "No",
     "prayerHasBeenGiven": "Yes",
     "solSignStatementOfTruth": "Yes",
     "jurisdictionApplicant1Residence": "Yes",

@@ -134,7 +134,7 @@ public class SolicitorUpdateContactDetailsTest {
             .applicant1(getApplicant())
             .divorceOrDissolution(DIVORCE)
             .divorceCostsClaim(YES)
-            .financialOrder(NO)
+            .applicant1FinancialOrder(NO)
             .build();
     }
 

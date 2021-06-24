@@ -54,7 +54,7 @@ public class RespondentSolicitorAosInvitationTemplateContentTest {
     public void shouldSuccessfullyApplyContentFromCaseDataForDivorce() {
         CaseData caseData = caseData();
         caseData.setDivorceCostsClaim(YES);
-        caseData.setFinancialOrder(NO);
+        caseData.setApplicant1FinancialOrder(NO);
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
         );
@@ -83,7 +83,7 @@ public class RespondentSolicitorAosInvitationTemplateContentTest {
         CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.setDivorceCostsClaim(NO);
-        caseData.setFinancialOrder(NO);
+        caseData.setApplicant1FinancialOrder(NO);
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
         );
@@ -115,7 +115,7 @@ public class RespondentSolicitorAosInvitationTemplateContentTest {
 
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.setDivorceCostsClaim(NO);
-        caseData.setFinancialOrder(NO);
+        caseData.setApplicant1FinancialOrder(NO);
         caseData.setMarriageDetails(marriageDetails);
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
@@ -146,7 +146,7 @@ public class RespondentSolicitorAosInvitationTemplateContentTest {
         caseData.getApplicant2().setHomeAddress(address);
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.setDivorceCostsClaim(NO);
-        caseData.setFinancialOrder(NO);
+        caseData.setApplicant1FinancialOrder(NO);
 
         Supplier<Map<String, Object>> templateContentSupplier = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
 

@@ -48,7 +48,7 @@
     "applicant2PhoneNumber": null,
     "applicant2ContactDetailsConfidential": null,
     "divorceCostsClaim": "Yes",
-    "financialOrder": "No",
+    "applicant1FinancialOrder": "No",
     "divorceClaimFrom": [
       "applicant2"
     ],

@@ -157,7 +157,7 @@ public class CaseData {
             + "application and pay the fee.",
         access = {DefaultAccess.class}
     )
-    private YesOrNo applicant1financialOrder;
+    private YesOrNo applicant1FinancialOrder;
 
     @CCD(
         label = "Does applicant 2 wish to apply for a financial order?",
@@ -165,7 +165,7 @@ public class CaseData {
             + "application and pay the fee.",
         access = {DefaultAccess.class}
     )
-    private YesOrNo applicant2financialOrder;
+    private YesOrNo applicant2FinancialOrder;
 
     @CCD(
         label = "The applicant wants/will to apply to have the papers served to the respondent another way.",
@@ -372,13 +372,13 @@ public class CaseData {
         label = "Applicant 1: Who is the financial order for?",
         access = {DefaultAccess.class}
     )
-    private Set<FinancialOrderFor> applicant1financialOrderFor;
+    private Set<FinancialOrderFor> applicant1FinancialOrderFor;
 
     @CCD(
         label = "Applicant 2: Who is the financial order for?",
         access = {DefaultAccess.class}
     )
-    private Set<FinancialOrderFor> applicant2financialOrderFor;
+    private Set<FinancialOrderFor> applicant2FinancialOrderFor;
 
     @CCD(
         label = "Payments",
