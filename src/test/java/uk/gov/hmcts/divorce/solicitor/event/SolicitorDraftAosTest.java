@@ -14,21 +14,21 @@ import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorDraftAos.SOLICITOR_DRAFT_AOS;
+import static uk.gov.hmcts.divorce.solicitor.event.SolicitorSubmitDraftAos.SOLICITOR_SUBMIT_DRAFT_AOS;
 
 @ExtendWith(MockitoExtension.class)
 class SolicitorDraftAosTest {
     @InjectMocks
-    private SolicitorDraftAos solicitorDraftAos;
+    private SolicitorSubmitDraftAos solicitorSubmitDraftAos;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final Set<State> stateSet = EnumSet.allOf(State.class);
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = new ConfigBuilderImpl<>(CaseData.class, stateSet);
 
-        solicitorDraftAos.configure(configBuilder);
+        solicitorSubmitDraftAos.configure(configBuilder);
 
-        assertThat(configBuilder.getEvents().get(0).getId(), is(SOLICITOR_DRAFT_AOS));
+        assertThat(configBuilder.getEvents().get(0).getId(), is(SOLICITOR_SUBMIT_DRAFT_AOS));
     }
 
 }

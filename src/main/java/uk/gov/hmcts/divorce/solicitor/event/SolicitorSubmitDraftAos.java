@@ -18,7 +18,9 @@ import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolAosjurisdiction;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolConfirmContactDetails;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolReviewApplicant1Application;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static uk.gov.hmcts.divorce.common.model.State.AOSDrafted;
@@ -33,8 +35,8 @@ import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 
 @Component
-public class SolicitorDraftAos  implements CCDConfig<CaseData, State, UserRole> {
-    public static final String SOLICITOR_DRAFT_AOS = "solicitor-draft-aos";
+public class SolicitorSubmitDraftAos implements CCDConfig<CaseData, State, UserRole> {
+    public static final String SOLICITOR_SUBMIT_DRAFT_AOS = "solicitor-submit-draft-aos";
 
     private final List<CcdPageConfiguration> pages = asList(
         new Applicant2SolConfirmContactDetails(),
@@ -52,7 +54,7 @@ public class SolicitorDraftAos  implements CCDConfig<CaseData, State, UserRole> 
 
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
-            .event(SOLICITOR_DRAFT_AOS)
+            .event(SOLICITOR_SUBMIT_DRAFT_AOS)
             .forStateTransition(AwaitingAos, AOSDrafted)
             .name("Draft AoS")
             .description("Draft AoS")
@@ -68,7 +70,9 @@ public class SolicitorDraftAos  implements CCDConfig<CaseData, State, UserRole> 
 
     private AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(CaseDetails<CaseData, State> details) {
         CaseData caseData = details.getData();
-        caseData.getDocumentsGenerated().stream()
+
+        Stream.ofNullable(caseData.getDocumentsGenerated())
+            .flatMap(Collection::stream)
             .map(ListValue::getValue)
             .filter(divorceDocument ->
                 DIVORCE_APPLICATION.equals(divorceDocument.getDocumentType()))
