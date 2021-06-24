@@ -41,7 +41,7 @@ public class CaseworkerIssueAosTask {
             });
             log.info("Issue AOS Scheduled Task complete.");
         } catch (final CcdSearchCaseException e) {
-            log.info("Issue AOS Schedule Task stopped after search error", e);
+            log.error("Issue AOS Schedule Task stopped after search error", e);
         }
     }
 }
