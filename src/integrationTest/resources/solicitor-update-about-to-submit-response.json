@@ -30,6 +30,7 @@
       "PostCode": "postcode"
     },
     "applicant1NameChangedHow": null,
+    "applicant1LastNameChangedWhenMarried": null,
     "applicant1NameDifferentToMarriageCertificate": null,
     "applicant1PhoneNumber": null,
     "applicant1NameChangedHowOtherDetails": null,
@@ -60,6 +61,7 @@
     "applicant2Email": null,
     "applicant2LanguagePreferenceWelsh": null,
     "applicant2NameChangedHow": null,
+    "applicant2LastNameChangedWhenMarried": null,
     "applicant2NameDifferentToMarriageCertificate": null,
     "applicant2NameChangedHowOtherDetails": null,
     "applicant2PhoneNumber": null,

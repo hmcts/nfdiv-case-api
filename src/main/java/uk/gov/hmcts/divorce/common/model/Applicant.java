@@ -53,6 +53,11 @@ public class Applicant {
     private YesOrNo languagePreferenceWelsh;
 
     @CCD(
+        label = "Did you change your last name when you got married?"
+    )
+    private YesOrNo lastNameChangedWhenMarried;
+
+    @CCD(
         label = "Has the applicant changed their name since they got married?",
         hint = "Is the applicant’s current name different to their married name or the name shown on their "
             + "marriage certificate?"
