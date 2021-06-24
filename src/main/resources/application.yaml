@@ -110,3 +110,6 @@ prd:
 
 send-letter:
   url: ${SEND_LETTER_SERVICE_BASEURL:http://rpe-send-letter-service-aat.service.core-compute-aat.internal}
+
+schedule:
+  issue_aos: '0 0 0 * * ?' # Midnight each day
