@@ -10,7 +10,7 @@ import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 
 import static uk.gov.hmcts.divorce.common.model.State.Issued;
-import static uk.gov.hmcts.divorce.common.model.State.IssuedAos;
+import static uk.gov.hmcts.divorce.common.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_RDU;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
@@ -29,9 +29,9 @@ public class CaseworkerIssueAos implements CCDConfig<CaseData, State, UserRole> 
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_ISSUE_AOS)
-            .forStateTransition(Issued, IssuedAos)
+            .forStateTransition(Issued, AwaitingAos)
             .name("Issue AOS pack")
-            .description("Issue AOS pack")
+            .description("Issue AOS pack to respondent")
             .displayOrder(1)
             .showSummary()
             .explicitGrants()
