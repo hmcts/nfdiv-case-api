@@ -15,20 +15,20 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-class CaseworkerAwaitingPayTest {
+class CaseworkerAwaitingPaymentTest {
 
     @InjectMocks
-    private CaseworkerAwaitingPay caseworkerAwaitingPay;
+    private CaseworkerAwaitingPayment caseworkerAwaitingPayment;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final Set<State> stateSet = Set.of(State.class.getEnumConstants());
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = new ConfigBuilderImpl<>(CaseData.class, stateSet);
 
-        caseworkerAwaitingPay.configure(configBuilder);
+        caseworkerAwaitingPayment.configure(configBuilder);
 
         assertThat(configBuilder.getEvents())
             .extracting(Event::getId)
-            .contains(CaseworkerAwaitingPay.CASEWORKER_AWAITING_PAYMENT_FROM_AWAITING_HWF);
+            .contains(CaseworkerAwaitingPayment.CASEWORKER_AWAITING_PAYMENT);
     }
 }

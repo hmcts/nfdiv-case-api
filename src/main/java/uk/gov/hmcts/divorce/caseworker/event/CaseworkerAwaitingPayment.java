@@ -19,14 +19,14 @@ import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_U
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 
 @Component
-public class CaseworkerAwaitingPay implements CCDConfig<CaseData, State, UserRole> {
+public class CaseworkerAwaitingPayment implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String CASEWORKER_AWAITING_PAYMENT_FROM_AWAITING_HWF = "caseworker-awaiting-payment";
+    public static final String CASEWORKER_AWAITING_PAYMENT = "caseworker-awaiting-payment";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(CASEWORKER_AWAITING_PAYMENT_FROM_AWAITING_HWF)
+            .event(CASEWORKER_AWAITING_PAYMENT)
             .forStateTransition(AwaitingHWFDecision, AwaitingPayment)
             .name("Awaiting payment")
             .description("Awaiting payment from the applicant")
