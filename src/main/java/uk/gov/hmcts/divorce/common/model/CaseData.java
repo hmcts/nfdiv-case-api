@@ -152,12 +152,20 @@ public class CaseData {
     private YesOrNo divorceCostsClaim;
 
     @CCD(
-        label = "Does the applicant wish to apply for a financial order?",
+        label = "Does applicant 1 wish to apply for a financial order?",
         hint = "The court will not start processing your request for a financial order until you submit the separate "
             + "application and pay the fee.",
         access = {DefaultAccess.class}
     )
-    private YesOrNo financialOrder;
+    private YesOrNo applicant1financialOrder;
+
+    @CCD(
+        label = "Does applicant 2 wish to apply for a financial order?",
+        hint = "The court will not start processing your request for a financial order until you submit the separate "
+            + "application and pay the fee.",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo applicant2financialOrder;
 
     @CCD(
         label = "The applicant wants/will to apply to have the papers served to the respondent another way.",
@@ -361,10 +369,16 @@ public class CaseData {
     private YesOrNo app2ContactMethodIsDigital;
 
     @CCD(
-        label = "Who is the financial order for?",
+        label = "Applicant 1: Who is the financial order for?",
         access = {DefaultAccess.class}
     )
-    private Set<FinancialOrderFor> financialOrderFor;
+    private Set<FinancialOrderFor> applicant1financialOrderFor;
+
+    @CCD(
+        label = "Applicant 2: Who is the financial order for?",
+        access = {DefaultAccess.class}
+    )
+    private Set<FinancialOrderFor> applicant2financialOrderFor;
 
     @CCD(
         label = "Payments",
