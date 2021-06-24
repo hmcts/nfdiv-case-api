@@ -12,7 +12,7 @@ public class Applicant2SolReviewApplicant1Application implements CcdPageConfigur
         pageBuilder
             .page("Applicant2SolReviewApplicant1Application")
             .pageLabel("Review the applicant 1's application")
-            .readonly(CaseData::getMiniapplicationlink)
+            .readonly(CaseData::getMiniApplicationLink)
             .label("LabelRespSol-AOSRespond",
                 "### Respond to a divorce application\n\n"
                     + "# Reference number\n"

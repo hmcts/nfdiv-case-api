@@ -30,6 +30,7 @@ import java.util.Set;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -38,7 +39,7 @@ import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DOCUMENT_TYPE_RESPONDENT_INVITATION;
 import static uk.gov.hmcts.divorce.solicitor.SolicitorCreateApplicationTest.getApplicant;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorSubmitDraftAos.SOLICITOR_SUBMIT_DRAFT_AOS;
+import static uk.gov.hmcts.divorce.solicitor.event.SolicitorSubmitDraftAos.SOLICITOR_DRAFT_AOS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
@@ -90,15 +91,16 @@ public class SolicitorSubmitDraftAosTest {
             .content(
                 objectMapper.writeValueAsString(
                     callbackRequest(caseDataWithDocument(DIVORCE_APPLICATION),
-                    SOLICITOR_SUBMIT_DRAFT_AOS)))
+                        SOLICITOR_DRAFT_AOS)))
             .accept(APPLICATION_JSON))
+            .andDo(print())
             .andExpect(
                 status().isOk()
             )
-            .andExpect(jsonPath("$.data.miniapplicationlink").isNotEmpty())
-            .andExpect(jsonPath("$.data.miniapplicationlink.document_url").value(docUrl))
-            .andExpect(jsonPath("$.data.miniapplicationlink.document_filename").value(docName))
-            .andExpect(jsonPath("$.data.miniapplicationlink.document_binary_url").value(docBinaryUrl));
+            .andExpect(jsonPath("$.data.miniApplicationLink").isNotEmpty())
+            .andExpect(jsonPath("$.data.miniApplicationLink.document_url").value(docUrl))
+            .andExpect(jsonPath("$.data.miniApplicationLink.document_filename").value(docName))
+            .andExpect(jsonPath("$.data.miniApplicationLink.document_binary_url").value(docBinaryUrl));
     }
 
     @Test
@@ -112,12 +114,12 @@ public class SolicitorSubmitDraftAosTest {
             .content(
                 objectMapper.writeValueAsString(
                     callbackRequest(caseDataWithDocument(DOCUMENT_TYPE_RESPONDENT_INVITATION),
-                    SOLICITOR_SUBMIT_DRAFT_AOS)))
+                        SOLICITOR_DRAFT_AOS)))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
             )
-            .andExpect(jsonPath("$.data.miniapplicationlink").doesNotExist());
+            .andExpect(jsonPath("$.data.miniApplicationLink").doesNotExist());
     }
 
     @Test
@@ -131,12 +133,12 @@ public class SolicitorSubmitDraftAosTest {
             .content(
                 objectMapper.writeValueAsString(
                     callbackRequest(caseDataWithoutDivorceApplication(),
-                    SOLICITOR_SUBMIT_DRAFT_AOS)))
+                        SOLICITOR_DRAFT_AOS)))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
             )
-            .andExpect(jsonPath("$.data.miniapplicationlink").doesNotExist());
+            .andExpect(jsonPath("$.data.miniApplicationLink").doesNotExist());
     }
 
     private CaseData caseDataWithDocument(DocumentType documentType) {

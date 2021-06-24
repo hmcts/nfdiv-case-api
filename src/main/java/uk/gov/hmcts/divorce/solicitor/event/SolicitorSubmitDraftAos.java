@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
-import static uk.gov.hmcts.divorce.common.model.State.AOSDrafted;
+import static uk.gov.hmcts.divorce.common.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_RDU;
@@ -36,7 +36,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATI
 
 @Component
 public class SolicitorSubmitDraftAos implements CCDConfig<CaseData, State, UserRole> {
-    public static final String SOLICITOR_SUBMIT_DRAFT_AOS = "solicitor-submit-draft-aos";
+    public static final String SOLICITOR_DRAFT_AOS = "solicitor-draft-aos";
 
     private final List<CcdPageConfiguration> pages = asList(
         new Applicant2SolConfirmContactDetails(),
@@ -54,8 +54,8 @@ public class SolicitorSubmitDraftAos implements CCDConfig<CaseData, State, UserR
 
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
-            .event(SOLICITOR_SUBMIT_DRAFT_AOS)
-            .forStateTransition(AwaitingAos, AOSDrafted)
+            .event(SOLICITOR_DRAFT_AOS)
+            .forStateTransition(AwaitingAos, AosDrafted)
             .name("Draft AoS")
             .description("Draft AoS")
             .aboutToStartCallback(this::aboutToStart)
@@ -78,7 +78,7 @@ public class SolicitorSubmitDraftAos implements CCDConfig<CaseData, State, UserR
                 DIVORCE_APPLICATION.equals(divorceDocument.getDocumentType()))
             .map(DivorceDocument::getDocumentLink)
             .findFirst()
-            .ifPresent(caseData::setMiniapplicationlink);
+            .ifPresent(caseData::setMiniApplicationLink);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

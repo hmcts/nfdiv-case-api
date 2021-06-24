@@ -165,7 +165,7 @@ public enum State {
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
     )
-    AOSDrafted("AOSDrafted"),
+    AosDrafted("AosDrafted"),
 
     @CCD(
         name = "Final order complete",

@@ -16,7 +16,7 @@ public enum RespAgreeToCostsEnum implements HasLabel {
     NO("The respondent does not agrees to pay any of the costs and gives their reasons"),
 
     @JsonProperty("DifferentAmount")
-    DIFFERENT_AMOUNT("The respondent agrees to pay some of the costs and gives their reasons\"");
+    DIFFERENT_AMOUNT("The respondent agrees to pay some of the costs and gives their reasons");
 
     private final String label;
 }

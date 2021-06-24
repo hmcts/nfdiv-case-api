@@ -418,7 +418,7 @@ public class CaseData {
         label = "Link to online petition",
         access = {DefaultAccess.class}
     )
-    private Document miniapplicationlink;
+    private Document miniApplicationLink;
 
     @CCD(
         label = "Date when the application was issued",

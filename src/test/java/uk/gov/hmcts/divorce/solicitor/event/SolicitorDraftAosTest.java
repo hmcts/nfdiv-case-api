@@ -14,7 +14,7 @@ import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorSubmitDraftAos.SOLICITOR_SUBMIT_DRAFT_AOS;
+import static uk.gov.hmcts.divorce.solicitor.event.SolicitorSubmitDraftAos.SOLICITOR_DRAFT_AOS;
 
 @ExtendWith(MockitoExtension.class)
 class SolicitorDraftAosTest {
@@ -28,7 +28,7 @@ class SolicitorDraftAosTest {
 
         solicitorSubmitDraftAos.configure(configBuilder);
 
-        assertThat(configBuilder.getEvents().get(0).getId(), is(SOLICITOR_SUBMIT_DRAFT_AOS));
+        assertThat(configBuilder.getEvents().get(0).getId(), is(SOLICITOR_DRAFT_AOS));
     }
 
 }
