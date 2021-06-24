@@ -18,7 +18,7 @@ import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_U
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 
 @Component
-public class CaseworkerRefundFromSubmitted implements CCDConfig<CaseData, State, UserRole> {
+public class CaseworkerRefund implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_REFUND = "caseworker-refund";
 
     @Override
