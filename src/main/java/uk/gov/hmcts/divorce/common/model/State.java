@@ -121,10 +121,10 @@ public enum State {
     },
 
     @CCD(
-        name = "Issued AOS",
+        name = "AOS Awaiting",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
-    IssuedAos("IssuedAos"),
+    AwaitingAos("AwaitingAos"),
 
     @CCD(
         name = "Application Rejected",

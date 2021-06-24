@@ -18,14 +18,14 @@ import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_U
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 
 @Component
-public class CaseworkerPaymentRefGeneratedFromAwaitingPayment implements CCDConfig<CaseData, State, UserRole> {
+public class CaseworkerPaymentRefGenerated implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String CASEWORKER_PAYMENT_REF_GENERATED_AWAITING_PAYMENT = "caseworker-payment-ref-generated-awaiting-payment";
+    public static final String CASEWORKER_PAYMENT_REF_GENERATED = "caseworker-payment-ref-generated";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(CASEWORKER_PAYMENT_REF_GENERATED_AWAITING_PAYMENT)
+            .event(CASEWORKER_PAYMENT_REF_GENERATED)
             .forStateTransition(AwaitingPayment, AwaitingPayment)
             .name("Payment reference generated")
             .description("Payment reference generated")
