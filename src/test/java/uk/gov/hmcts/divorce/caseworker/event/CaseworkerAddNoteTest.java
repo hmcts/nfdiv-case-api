@@ -18,13 +18,13 @@ import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Set;
+import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
@@ -98,7 +98,7 @@ class CaseworkerAddNoteTest {
             .allMatch(localDate -> localDate.isEqual(expectedDate));
 
         assertThat(response.getData().getNote()).isNull();
-        
+
         verify(httpServletRequest).getHeader(AUTHORIZATION);
         verify(idamService).retrieveUser(TEST_AUTHORIZATION_TOKEN);
         verifyNoMoreInteractions(httpServletRequest, idamService);
