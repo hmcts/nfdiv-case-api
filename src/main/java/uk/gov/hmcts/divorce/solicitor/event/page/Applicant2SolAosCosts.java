@@ -13,9 +13,9 @@ public class Applicant2SolAosCosts implements CcdPageConfiguration {
             .page("Applicant2SolAosCosts")
             .pageLabel("Paying for the divorce")
             .label("LabelRespSol-AOSCost",
-                "The petitioner asked the court that the respondent pays some or all of the costs of the divorce.\n\n"
+                "The applicant 1 asked the court that the respondent pays some or all of the costs of the divorce.\n\n"
                     + "It is up to the court to decide how the costs will be split, but it will take into account "
-                    + "any requests the respondent and the petitioner make.")
+                    + "any requests the respondent and the applicant 1  make.")
             .complex(CaseData::getApplicant2)
             .mandatory(Applicant::getAgreeToCosts)
             .mandatory(Applicant::getCostsAmount,

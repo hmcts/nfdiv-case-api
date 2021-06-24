@@ -166,7 +166,4 @@ public class Applicant {
             ? ENGLISH
             : WELSH;
     }
-
-
-
 }

@@ -16,7 +16,7 @@ import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolAosCosts;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolAosOtherProceedings;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolAosjurisdiction;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolConfirmContactDetails;
-import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolReviewPetitionersApplication;
+import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolReviewApplicant1Application;
 
 import java.util.List;
 
@@ -38,7 +38,7 @@ public class SolicitorDraftAos  implements CCDConfig<CaseData, State, UserRole> 
 
     private final List<CcdPageConfiguration> pages = asList(
         new Applicant2SolConfirmContactDetails(),
-        new Applicant2SolReviewPetitionersApplication(),
+        new Applicant2SolReviewApplicant1Application(),
         new Applicant2SolAosjurisdiction(),
         new Applicant2SolAosOtherProceedings(),
         new Applicant2SolAosCosts()
@@ -74,7 +74,7 @@ public class SolicitorDraftAos  implements CCDConfig<CaseData, State, UserRole> 
                 DIVORCE_APPLICATION.equals(divorceDocument.getDocumentType()))
             .map(DivorceDocument::getDocumentLink)
             .findFirst()
-            .ifPresent(caseData::setMinipetitionlink);
+            .ifPresent(caseData::setMiniapplicationlink);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

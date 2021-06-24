@@ -5,14 +5,14 @@ import uk.gov.hmcts.divorce.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.model.Applicant;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 
-public class Applicant2SolReviewPetitionersApplication implements CcdPageConfiguration {
+public class Applicant2SolReviewApplicant1Application implements CcdPageConfiguration {
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
         pageBuilder
-            .page("Applicant2SolReviewPetitionersApplication")
-            .pageLabel("Review the petitioner's application")
-            .readonly(CaseData::getMinipetitionlink)
+            .page("Applicant2SolReviewApplicant1Application")
+            .pageLabel("Review the applicant 1's application")
+            .readonly(CaseData::getMiniapplicationlink)
             .label("LabelRespSol-AOSRespond",
                 "### Respond to a divorce application\n\n"
                     + "# Reference number\n"
@@ -20,7 +20,7 @@ public class Applicant2SolReviewPetitionersApplication implements CcdPageConfigu
                     + "# Respondent\n"
                     + "${applicant2FirstName} ${applicant2LastName}\n\n"
                     + "You must respond to this application within 7 days of the respondent receiving the letter from the courts."
-                    + " If you don't, the petitioner can ask the court to move the divorce forwards without the respondent. "
+                    + " If you don't, the applicant 1 can ask the court to move the divorce forwards without the respondent. "
                     + "The respondent may have to pay extra fees if this happens\n\n"
                     + "If the respondent has been married to more than one person during this marriage (polygamy) contact "
                     + "your regional divorce centre before you apply.")
