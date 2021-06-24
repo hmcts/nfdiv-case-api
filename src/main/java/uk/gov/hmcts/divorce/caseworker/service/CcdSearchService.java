@@ -73,7 +73,7 @@ public class CcdSearchService {
 
             final String message = String.format("Failed to complete search for Cases with state of %s", state);
             log.info(message, e);
-            throw new CcdManagementException(message, e);
+            throw new CcdSearchCaseException(message, e);
         }
 
         return allCaseDetails;

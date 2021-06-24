@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.caseworker.service.CcdManagementException;
+import uk.gov.hmcts.divorce.caseworker.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.caseworker.service.CcdSearchService;
 import uk.gov.hmcts.divorce.caseworker.service.CcdUpdateService;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
@@ -17,7 +18,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueAos.CASEWORKER_ISSUE_AOS;
 import static uk.gov.hmcts.divorce.common.model.State.Issued;
@@ -53,7 +53,7 @@ class CaseworkerIssueAosTaskTest {
     void shouldNotSubmitEventIfSearchFails() {
 
         when(ccdSearchService.searchForAllCasesWithStateOf(Issued))
-            .thenThrow(new CcdManagementException("Message", mock(FeignException.class)));
+            .thenThrow(new CcdSearchCaseException("Message", mock(FeignException.class)));
 
         caseworkerIssueAosTask.issueAosTask();
 
@@ -61,7 +61,7 @@ class CaseworkerIssueAosTaskTest {
     }
 
     @Test
-    void shouldStopSubmittingEventsIfExceptionIsThrown() {
+    void shouldContinueToNextCaseIfExceptionIsThrownBySubmitEvent() {
 
         final CaseDetails caseDetails1 = mock(CaseDetails.class);
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
@@ -74,6 +74,7 @@ class CaseworkerIssueAosTaskTest {
 
         caseworkerIssueAosTask.issueAosTask();
 
-        verifyNoMoreInteractions(ccdUpdateService);
+        verify(ccdUpdateService).submitEvent(caseDetails1, CASEWORKER_ISSUE_AOS);
+        verify(ccdUpdateService).submitEvent(caseDetails2, CASEWORKER_ISSUE_AOS);
     }
 }

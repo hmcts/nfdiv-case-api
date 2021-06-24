@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.caseworker.service.CcdManagementException;
+import uk.gov.hmcts.divorce.caseworker.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.caseworker.service.CcdSearchService;
 import uk.gov.hmcts.divorce.caseworker.service.CcdUpdateService;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
@@ -31,10 +32,16 @@ public class CaseworkerIssueAosTask {
 
         try {
             final List<CaseDetails> issuedCases = ccdSearchService.searchForAllCasesWithStateOf(Issued);
-            issuedCases.forEach(caseDetails -> ccdUpdateService.submitEvent(caseDetails, CASEWORKER_ISSUE_AOS));
+            issuedCases.forEach(caseDetails -> {
+                try {
+                    ccdUpdateService.submitEvent(caseDetails, CASEWORKER_ISSUE_AOS);
+                } catch (final CcdManagementException e) {
+                    log.info("Submit event failed for Case ID: {}, continuing to next Case", caseDetails.getId());
+                }
+            });
             log.info("Issue AOS Scheduled Task complete.");
-        } catch (final CcdManagementException e) {
-            log.info("Issue AOS Schedule Task stopped with CCD error", e);
+        } catch (final CcdSearchCaseException e) {
+            log.info("Issue AOS Schedule Task stopped after search error", e);
         }
     }
 }

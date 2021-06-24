@@ -43,6 +43,8 @@ public class CcdUpdateService {
         final String userId = caseWorkerDetails.getUserDetails().getId();
         final String authorization = caseWorkerDetails.getAuthToken();
 
+        log.info("Submit event for Case ID: {}, Event ID: {}", caseId, eventId);
+
         try {
             final StartEventResponse startEventResponse = coreCaseDataApi.startEventForCaseWorker(
                 authorization,

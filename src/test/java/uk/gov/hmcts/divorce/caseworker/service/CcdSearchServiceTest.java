@@ -110,8 +110,8 @@ class CcdSearchServiceTest {
                 CASE_TYPE,
                 getSourceBuilder(0, PAGE_SIZE).toString());
 
-        final CcdManagementException exception = assertThrows(
-            CcdManagementException.class,
+        final CcdSearchCaseException exception = assertThrows(
+            CcdSearchCaseException.class,
             () -> ccdSearchService.searchForAllCasesWithStateOf(Submitted));
 
         assertThat(exception.getMessage()).contains("Failed to complete search for Cases with state of Submitted");
