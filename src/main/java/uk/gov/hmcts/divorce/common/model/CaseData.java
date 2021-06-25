@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
+import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
@@ -413,6 +414,11 @@ public class CaseData {
     )
     private String respondentUserId;
 
+    @CCD(
+        label = "Link to online petition",
+        access = {DefaultAccess.class}
+    )
+    private Document miniApplicationLink;
 
     @CCD(
         label = "Date when the application was issued",

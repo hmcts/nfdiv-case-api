@@ -111,11 +111,56 @@ public class Applicant {
     @JsonUnwrapped(prefix = "Solicitor")
     private Solicitor solicitor;
 
+    @CCD(
+        label = "Has the respondent read the application for divorce?"
+    )
+    private YesOrNo confirmReadPetition;
+
+    @CCD(
+        label = "Respondent agreed to claimed jurisdiction?"
+    )
+    private YesOrNo jurisdictionAgree;
+
+    @CCD(
+        label = "Reason respondent disagreed to claimed jurisdiction",
+        typeOverride = TextArea
+    )
+    private String jurisdictionDisagreeReason;
+
+    @CCD(
+        label = "Do legal proceedings exist (respondent)?"
+    )
+    private YesOrNo legalProceedingsExist;
+
+    @CCD(
+        label = "Legal proceedings details (respondent)",
+        typeOverride = TextArea
+    )
+    private String legalProceedingsDescription;
+
+    @CCD(
+        label = "Does respondent agree to costs?",
+        typeOverride = FixedList,
+        typeParameterOverride = "RespAgreeToCostsEnum"
+    )
+    private RespAgreeToCostsEnum agreeToCosts;
+
+    @CCD(
+        label = "Respondent's costs amount",
+        typeParameterOverride = "RespAgreeToCostsEnum"
+    )
+    private String costsAmount;
+
+    @CCD(
+        label = "Respondent's costs reason",
+        typeOverride = TextArea
+    )
+    private String costsReason;
+
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
         return languagePreferenceWelsh == null || languagePreferenceWelsh.equals(YesOrNo.NO)
             ? ENGLISH
             : WELSH;
     }
-
 }
