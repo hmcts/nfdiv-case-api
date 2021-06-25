@@ -36,7 +36,7 @@ public class SolicitorSubmitDraftAosTest extends FunctionalTestSuite {
         // assertion will fail if the above elements are missing actual value
         assertThatJson(response.asString())
             .isEqualTo(json(expectedResponse(
-                "classpath:responses/response-solicitor-update-about-to-submit.json"
+                "classpath:responses/response-solicitor-draft-aos-about-to-start.json"
             )));
     }
 }
