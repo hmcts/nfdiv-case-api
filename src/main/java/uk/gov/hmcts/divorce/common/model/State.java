@@ -26,7 +26,14 @@ public enum State {
     Draft("Draft"),
 
     @CCD(
-        name = "Awaiting Applicant 2 Response",
+        name = "Awaiting applicant 1 response",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    AwaitingApplicant1Response("AwaitingApplicant1Response"),
+
+    @CCD(
+        name = "Awaiting applicant 2 response",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
     )
@@ -121,20 +128,98 @@ public enum State {
     },
 
     @CCD(
-        name = "AOS Awaiting",
-        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
+        name = "AOS awaiting",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
     )
     AwaitingAos("AwaitingAos"),
 
     @CCD(
-        name = "Application Rejected",
+        name = "AOS overdue",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    AosOverdue("AosOverdue"),
+
+    @CCD(
+        name = "AOS drafted",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    AosDrafted("AosDrafted"),
+
+    @CCD(
+        name = "Defended divorce",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    DefendedDivorce("DefendedDivorce"),
+
+    @CCD(
+        name = "20 week holding period",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    Holding("Holding"),
+
+    @CCD(
+        name = "Awaiting conditional order",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    AwaitingConditionalOrder("AwaitingConditionalOrder"),
+
+    @CCD(
+        name = "Conditional order drafted",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    ConditionalOrderDrafted("ConditionalOrderDrafted"),
+
+    @CCD(
+        name = "Awaiting legal advisor referral",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    AwaitingLegalAdvisorReferral("AwaitingLegalAdvisorReferral"),
+
+    @CCD(
+        name = "Awaiting clarification",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    AwaitingClarification("AwaitingClarification"),
+
+    @CCD(
+        name = "Conditional order refused",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    ConditionalOrderRefused("ConditionalOrderRefused"),
+
+    @CCD(
+        name = "Listed; awaiting pronouncement",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    AwaitingPronouncement("AwaitingPronouncement"),
+
+    @CCD(
+        name = "Conditional order pronounced",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    ConditionalOrderPronounced("ConditionalOrderPronounced"),
+
+    @CCD(
+        name = "Application rejected",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
     )
     Rejected("Rejected"),
 
     @CCD(
-        name = "Application Withdrawn",
+        name = "Application withdrawn",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
     )
@@ -149,16 +234,10 @@ public enum State {
 
     @CCD(
         name = "Awaiting reissue",
-        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
-    )
-    AwaitingReissue("AwaitingReissue"),
-
-    @CCD(
-        name = "Conditional order complete",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
     )
-    ConditionalOrderComplete("ConditionalOrderComplete"),
+    AwaitingReissue("AwaitingReissue"),
 
     @CCD(
         name = "AOS Drafted",
