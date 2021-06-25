@@ -111,7 +111,6 @@ public class Applicant {
     @JsonUnwrapped(prefix = "Solicitor")
     private Solicitor solicitor;
 
-
     @CCD(
         label = "Has the respondent read the application for divorce?"
     )
