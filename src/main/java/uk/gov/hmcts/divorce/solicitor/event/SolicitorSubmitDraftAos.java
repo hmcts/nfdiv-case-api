@@ -59,6 +59,8 @@ public class SolicitorSubmitDraftAos implements CCDConfig<CaseData, State, UserR
             .name("Draft AoS")
             .description("Draft AoS")
             .aboutToStartCallback(this::aboutToStart)
+            .showSummary()
+            .endButtonLabel("Save AOS Response")
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, SOLICITOR)
             .grant(READ,
