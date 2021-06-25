@@ -1,22 +1,12 @@
 {
   "data": {
-    "applicant1Gender": "female",
-    "applicant2Gender": "male",
-    "marriageMarriedInUk": null,
-    "marriageCertificateInEnglish": null,
-    "marriageCertifiedTranslation": null,
-    "marriageCountryOfMarriage": null,
-    "marriagePlaceOfMarriage": null,
-    "marriageDate": "${json-unit.ignore}",
-    "marriageIsSameSexCouple": null,
-    "marriageCertifyMarriageCertificateIsCorrect": null,
-    "marriageMarriageCertificateIsIncorrectDetails": null,
-    "marriageIssueApplicationWithoutMarriageCertificate": null,
-    "helpWithFeesNeedHelp": "Yes",
-    "applicant1FirstName": "test_first_name",
-    "applicant1MiddleName": "test_middle_name",
-    "applicant1LastName": "test_last_name",
-    "applicant1Email": null,
+    "divorceOrDissolution": "divorce",
+    "marriageApplicant1Name": null,
+    "marriageApplicant2Name": null,
+    "applicant1FirstName": "John",
+    "applicant1LastName": "Smith",
+    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+    "applicant1MiddleName": null,
     "applicant1AgreedToReceiveEmails": null,
     "applicant1NameChangedHow": null,
     "applicant1NameDifferentToMarriageCertificate": null,
@@ -24,6 +14,8 @@
     "applicant1PhoneNumber": null,
     "applicant1NameChangedHowOtherDetails": null,
     "applicant1LanguagePreferenceWelsh": null,
+    "applicant1ContactDetailsConfidential": null,
+    "applicant1Gender": null,
     "applicant1CorrespondenceAddress": null,
     "applicant1SolicitorRepresented": null,
     "applicant1SolicitorAddress": null,
@@ -58,7 +50,10 @@
     "applicant2SolicitorName": null,
     "applicant2SolicitorPhone": null,
     "applicant2SolicitorReference": null,
+    "applicant2Gender": null,
+    "applicant2FirstName": null,
     "applicant2MiddleName": null,
+    "applicant2LastName": null,
     "applicant2AgreedToReceiveEmails": null,
     "applicant2Email": null,
     "applicant2LanguagePreferenceWelsh": null,
@@ -68,29 +63,57 @@
     "applicant2NameChangedHowOtherDetails": null,
     "applicant2PhoneNumber": null,
     "applicant2ContactDetailsConfidential": null,
-    "jurisdictionApplicant1Residence": "Yes",
-    "jurisdictionApplicant2Residence": "Yes",
+    "divorceCostsClaim": "Yes",
+    "financialOrder": "No",
+    "divorceClaimFrom": [
+      "applicant2"
+    ],
+    "divorceUnit": "serviceCentre",
+    "selectedDivorceCentreSiteId": "AA07",
+    "jurisdictionApplicant1Residence": null,
+    "jurisdictionApplicant2Residence": null,
     "jurisdictionApplicant1Domicile": null,
     "jurisdictionApplicant2Domicile": null,
     "jurisdictionApp1HabituallyResLastTwelveMonths": null,
     "jurisdictionApp1HabituallyResLastSixMonths": null,
     "jurisdictionResidualEligible": null,
     "jurisdictionBothLastHabituallyResident": null,
-    "jurisdictionConnections": [
-      "A"
-    ],
+    "jurisdictionConnections": null,
     "jurisdictionLegalConnections": null,
-    "applicant1ContactDetailsConfidential": "keep",
-    "applicant2FirstName": "test_first_name",
-    "applicant2LastName": "test_last_name",
-    "marriageApplicant1Name": "test_first_name test_last_name",
-    "marriageApplicant2Name": null,
-    "applicant1FinancialOrder": "No",
-    "prayerHasBeenGiven": "Yes",
-    "statementOfTruth": "Yes",
-    "solSignStatementOfTruth": "Yes"
+    "marriageMarriedInUk": null,
+    "marriageCertificateInEnglish": null,
+    "marriageCertifiedTranslation": null,
+    "marriageCountryOfMarriage": null,
+    "marriagePlaceOfMarriage": null,
+    "marriageDate": null,
+    "marriageIsSameSexCouple": null,
+    "marriageCertifyMarriageCertificateIsCorrect": null,
+    "marriageMarriageCertificateIsIncorrectDetails": null,
+    "marriageIssueApplicationWithoutMarriageCertificate": null,
+    "documentsGenerated": [
+      {
+        "id": "${json-unit.ignore}",
+        "value": {
+          "documentDateAdded": null,
+          "documentComment": null,
+          "documentFileName": "draft-mini-application-1234567890123456.pdf",
+          "documentType": "divorceApplication",
+          "documentEmailContent": null,
+          "documentLink": {
+            "document_url": "${json-unit.ignore}",
+            "document_filename": "draft-mini-application-1234567890123456.pdf",
+            "document_binary_url": "${json-unit.ignore}"
+          }
+        }
+      }
+    ],
+    "miniApplicationLink": {
+      "document_url": "${json-unit.ignore}",
+      "document_filename": "draft-mini-application-1234567890123456.pdf",
+      "document_binary_url": "${json-unit.ignore}"
+    }
   },
   "errors": null,
   "warnings": null,
-  "state": "AwaitingHWFDecision"
+  "state": null
 }
