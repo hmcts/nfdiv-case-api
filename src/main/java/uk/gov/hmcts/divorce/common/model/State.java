@@ -33,7 +33,7 @@ public enum State {
     AwaitingApplicant1Response("AwaitingApplicant1Response"),
 
     @CCD(
-        name = "Awaiting aApplicant 2 response",
+        name = "Awaiting applicant 2 response",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
     )
