@@ -146,8 +146,7 @@ public class Applicant {
     private RespAgreeToCostsEnum agreeToCosts;
 
     @CCD(
-        label = "Respondent's costs amount",
-        typeParameterOverride = "RespAgreeToCostsEnum"
+        label = "Respondent's costs amount"
     )
     private String costsAmount;
 
