@@ -105,7 +105,7 @@ class CaseworkerAddNoteTest {
     }
 
     @Test
-    public void shouldSuccessfullyAddCaseNoteToCaseDataWhenThereIsExistingCaseNote() {
+    public void shouldSuccessfullyAddCaseNoteToStartOfCaseNotesListWhenThereIsExistingCaseNote() {
         final CaseData caseData = caseData();
         caseData.setNote("This is a test note 2");
 
@@ -141,9 +141,10 @@ class CaseworkerAddNoteTest {
 
         assertThat(response.getData().getNotes())
             .extracting("id", "value.author", "value.note")
-            .containsExactlyInAnyOrder(
-                tuple("1", "TestFirstName TestSurname", "This is a test note 1"),
-                tuple("2", "testFname testSname", "This is a test note 2")
+            .containsExactly(
+                tuple("1", "testFname testSname", "This is a test note 2"),
+                tuple("2", "TestFirstName TestSurname", "This is a test note 1")
+
             );
 
         assertThat(response.getData().getNotes())
