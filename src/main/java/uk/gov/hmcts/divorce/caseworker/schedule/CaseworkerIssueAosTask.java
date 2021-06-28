@@ -33,13 +33,15 @@ public class CaseworkerIssueAosTask {
 
         try {
             final List<CaseDetails> issuedCases = ccdSearchService.searchForAllCasesWithStateOf(Issued);
-            issuedCases.forEach(caseDetails -> {
+
+            for (final CaseDetails caseDetails : issuedCases) {
                 try {
                     ccdUpdateService.submitEvent(caseDetails, CASEWORKER_ISSUE_AOS);
                 } catch (final CcdManagementException e) {
                     log.info("Submit event failed for Case ID: {}, continuing to next Case", caseDetails.getId());
                 }
-            });
+            }
+
             log.info("Issue AOS Scheduled Task complete.");
         } catch (final CcdSearchCaseException e) {
             log.error("Issue AOS Schedule Task stopped after search error", e);

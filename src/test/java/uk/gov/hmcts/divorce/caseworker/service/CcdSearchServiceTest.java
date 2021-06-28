@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.service;
 
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.util.ReflectionTestUtils.setField;
 import static uk.gov.hmcts.divorce.ccd.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
@@ -46,6 +48,11 @@ class CcdSearchServiceTest {
 
     @InjectMocks
     private CcdSearchService ccdSearchService;
+
+    @BeforeEach
+    void setPageSize() {
+        setField(ccdSearchService, "pageSize", 100);
+    }
 
     @Test
     void shouldReturnCasesWithGivenStateFromZeroToPageSizeOfFifty() {

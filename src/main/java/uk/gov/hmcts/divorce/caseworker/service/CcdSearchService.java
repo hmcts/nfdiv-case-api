@@ -4,6 +4,7 @@ import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -25,7 +26,8 @@ import static uk.gov.hmcts.divorce.ccd.NoFaultDivorce.CASE_TYPE;
 @Slf4j
 public class CcdSearchService {
 
-    public static final int PAGE_SIZE = 100;
+    @Value("${core_case_data.search.page_size}")
+    private int pageSize;
 
     @Autowired
     private CoreCaseDataApi coreCaseDataApi;
@@ -58,15 +60,15 @@ public class CcdSearchService {
 
         final List<CaseDetails> allCaseDetails = new ArrayList<>();
         int from = 0;
-        int totalResults = PAGE_SIZE;
+        int totalResults = pageSize;
 
         try {
-            while (totalResults == PAGE_SIZE) {
-                final SearchResult searchResult = searchForCaseWithStateOf(state, from, PAGE_SIZE);
+            while (totalResults == pageSize) {
+                final SearchResult searchResult = searchForCaseWithStateOf(state, from, pageSize);
 
                 allCaseDetails.addAll(searchResult.getCases());
 
-                from += PAGE_SIZE;
+                from += pageSize;
                 totalResults = searchResult.getTotal();
             }
         } catch (final FeignException e) {
