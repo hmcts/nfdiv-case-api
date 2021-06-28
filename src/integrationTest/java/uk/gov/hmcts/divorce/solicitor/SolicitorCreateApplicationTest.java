@@ -27,6 +27,8 @@ import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
+import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
@@ -115,7 +117,9 @@ class SolicitorCreateApplicationTest {
             .getResponse()
             .getContentAsString();
 
-        assertEquals(jsonStringResponse, expectedResponse(SOLICITOR_CREATE_ABOUT_TO_SUBMIT), STRICT);
+        assertThatJson(jsonStringResponse)
+            .when(IGNORING_EXTRA_FIELDS)
+            .isEqualTo(expectedResponse(SOLICITOR_CREATE_ABOUT_TO_SUBMIT));
     }
 
     @Test
@@ -137,7 +141,9 @@ class SolicitorCreateApplicationTest {
             .getResponse()
             .getContentAsString();
 
-        assertEquals(jsonStringResponse, expectedResponse(SOLICITOR_MID_EVENT_RESPONSE), STRICT);
+        assertThatJson(jsonStringResponse)
+            .when(IGNORING_EXTRA_FIELDS)
+            .isEqualTo(expectedResponse(SOLICITOR_MID_EVENT_RESPONSE));
     }
 
     @Test
@@ -159,7 +165,9 @@ class SolicitorCreateApplicationTest {
             .getResponse()
             .getContentAsString();
 
-        assertEquals(jsonStringResponse, expectedResponse(SOLICITOR_MID_EVENT_ERROR), STRICT);
+        assertThatJson(jsonStringResponse)
+            .when(IGNORING_EXTRA_FIELDS)
+            .isEqualTo(expectedResponse(SOLICITOR_MID_EVENT_ERROR));
     }
 
     @Test
