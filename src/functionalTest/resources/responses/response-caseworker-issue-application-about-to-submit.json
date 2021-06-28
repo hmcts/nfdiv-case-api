@@ -101,7 +101,7 @@
         }
       }
     ],
-    "financialOrder": "No",
+    "applicant1FinancialOrder": "No",
     "issueDate": "${json-unit.any-string}",
     "jurisdictionApp1HabituallyResLastSixMonths": null,
     "jurisdictionApp1HabituallyResLastTwelveMonths": null,

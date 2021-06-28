@@ -84,7 +84,7 @@
     "marriagePlaceOfMarriage":null,
     "marriageApplicant2Name":null,
     "marriageApplicant1Name":"John Smith",
-    "financialOrder": "No",
+    "applicant1FinancialOrder": "No",
     "dueDate": "${json-unit.any-string}",
     "accessCode": "${json-unit.any-string}"
   },

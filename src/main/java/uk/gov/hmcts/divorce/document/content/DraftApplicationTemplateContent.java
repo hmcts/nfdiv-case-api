@@ -104,11 +104,11 @@ public class DraftApplicationTemplateContent {
             templateData.put(COURT_CASE_DETAILS, caseData.getLegalProceedingsDetails());
 
             templateData.put(HAS_COST_ORDERS, caseData.getDivorceCostsClaim().toBoolean());
-            templateData.put(HAS_FINANCIAL_ORDERS, caseData.getFinancialOrder().toBoolean());
+            templateData.put(HAS_FINANCIAL_ORDERS, caseData.getApplicant1FinancialOrder().toBoolean());
 
             boolean hasFinancialOrdersForChild =
-                null != caseData.getFinancialOrderFor()
-                    && caseData.getFinancialOrderFor().contains(FinancialOrderFor.CHILDREN);
+                null != caseData.getApplicant1FinancialOrderFor()
+                    && caseData.getApplicant1FinancialOrderFor().contains(FinancialOrderFor.CHILDREN);
 
             templateData.put(HAS_FINANCIAL_ORDERS_FOR_CHILD, hasFinancialOrdersForChild);
             templateData.put(FINANCIAL_ORDER_CHILD, CHILDREN_OF_THE_APPLICANT_1_AND_APPLICANT_2);

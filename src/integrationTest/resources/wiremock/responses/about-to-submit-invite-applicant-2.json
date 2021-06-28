@@ -84,7 +84,7 @@
     "marriageCertifyMarriageCertificateIsCorrect": null,
     "marriageIssueApplicationWithoutMarriageCertificate": null,
     "marriageMarriageCertificateIsIncorrectDetails": null,
-    "financialOrder": "No",
+    "applicant1FinancialOrder": "No",
     "helpWithFeesNeedHelp": "No",
     "accessCode": "${json-unit.any-string}",
     "dueDate": "${json-unit.ignore}"

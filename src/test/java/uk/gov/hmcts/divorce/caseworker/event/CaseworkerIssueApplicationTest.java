@@ -108,7 +108,7 @@ class CaseworkerIssueApplicationTest {
             .containsExactlyInAnyOrder(
                 "Applicant2FirstName cannot be empty or null",
                 "Applicant2LastName cannot be empty or null",
-                "FinancialOrder cannot be empty or null",
+                "Applicant1FinancialOrder cannot be empty or null",
                 "Applicant2Gender cannot be empty or null",
                 "MarriageApplicant1Name cannot be empty or null",
                 "Applicant1ContactDetailsConfidential cannot be empty or null",
@@ -143,7 +143,7 @@ class CaseworkerIssueApplicationTest {
             .build()
         );
 
-        caseData.setFinancialOrder(NO);
+        caseData.setApplicant1FinancialOrder(NO);
         caseData.setPrayerHasBeenGiven(YES);
         caseData.setStatementOfTruth(YES);
 

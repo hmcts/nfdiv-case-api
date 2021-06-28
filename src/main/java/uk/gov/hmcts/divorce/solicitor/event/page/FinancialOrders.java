@@ -25,9 +25,9 @@ public class FinancialOrders implements CcdPageConfiguration {
                 "LabelNFDJointBanner-FinancialOrders",
                 SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
                 JOINT_APPLICATION_CONDITION)
-            .mandatory(CaseData::getFinancialOrder)
+            .mandatory(CaseData::getApplicant1FinancialOrder)
             .mandatory(
-                CaseData::getFinancialOrderFor,
-                "financialOrder=\"Yes\"");
+                CaseData::getApplicant1FinancialOrderFor,
+                "applicant1FinancialOrder=\"Yes\"");
     }
 }
