@@ -100,7 +100,7 @@ public class CitizenSubmitApplicationTest {
         stubForFeesLookup(TestDataHelper.getFeeResponseAsJson());
 
         CaseData caseData = validApplicant1CaseDataMap();
-        caseData.setHelpWithFeesNeedHelp(YesOrNo.YES);
+        caseData.getHelpWithFees().setNeedHelp(YesOrNo.YES);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)

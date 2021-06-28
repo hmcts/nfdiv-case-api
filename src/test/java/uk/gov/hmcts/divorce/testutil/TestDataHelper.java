@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.common.model.Gender;
+import uk.gov.hmcts.divorce.common.model.HelpWithFees;
 import uk.gov.hmcts.divorce.common.model.Jurisdiction;
 import uk.gov.hmcts.divorce.common.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.common.model.MarriageDetails;
@@ -165,7 +166,11 @@ public class TestDataHelper {
             .applicant2EmailAddress(TEST_USER_EMAIL)
             .divorceOrDissolution(DIVORCE)
             .applicant1FinancialOrder(NO)
-            .helpWithFeesNeedHelp(NO)
+            .helpWithFees(
+                HelpWithFees.builder()
+                    .needHelp(NO)
+                    .build()
+            )
             .marriageDetails(marriageDetails)
             .jurisdiction(jurisdiction)
             .build();
