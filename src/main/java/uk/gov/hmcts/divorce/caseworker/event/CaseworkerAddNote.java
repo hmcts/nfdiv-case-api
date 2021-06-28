@@ -16,11 +16,12 @@ import uk.gov.hmcts.divorce.common.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -101,13 +102,16 @@ public class CaseworkerAddNote implements CCDConfig<CaseData, State, UserRole> {
 
             caseData.setNotes(listValues);
         } else {
+            AtomicInteger listValueIndex = new AtomicInteger(0);
             var listValue = ListValue
                 .<CaseNote>builder()
-                .id(String.valueOf(caseData.getNotes().size() + 1))
                 .value(caseNote)
                 .build();
 
-            caseData.getNotes().add(listValue);
+            caseData.getNotes().add(0, listValue); // always add new note as first element so that it is displayed on top
+
+            caseData.getNotes().forEach(caseNoteListValue -> caseNoteListValue.setId(String.valueOf(listValueIndex.incrementAndGet())));
+
         }
 
         caseData.setNote(null); //Clear note text area as notes value is stored in notes collection
