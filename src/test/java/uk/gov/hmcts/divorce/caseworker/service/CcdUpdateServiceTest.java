@@ -99,7 +99,7 @@ class CcdUpdateServiceTest {
     }
 
     @Test
-    void shouldThrowCcdSearchFailedExceptionIfSubmitEventFails() {
+    void shouldThrowCcdManagementExceptionIfSubmitEventFails() {
 
         final User caseworkerDetails = getCaseworkerDetails();
         final Map<String, Object> caseData = new HashMap<>();
@@ -129,6 +129,43 @@ class CcdUpdateServiceTest {
 
         final CcdManagementException exception = assertThrows(
             CcdManagementException.class,
+            () -> ccdUpdateService.submitEvent(caseDetails, CASEWORKER_ISSUE_AOS));
+
+        assertThat(exception.getMessage())
+            .contains(format("Submit Event Failed for Case ID: %s, Event ID: %s", TEST_CASE_ID, CASEWORKER_ISSUE_AOS));
+    }
+
+    @Test
+    void shouldThrowCcdConflictExceptionIfSubmitEventFailsWithStatusConflict() {
+
+        final User caseworkerDetails = getCaseworkerDetails();
+        final Map<String, Object> caseData = new HashMap<>();
+        final CaseDetails caseDetails = getCaseDetails(caseData);
+        final StartEventResponse startEventResponse = getStartEventResponse();
+
+        when(idamService.retrieveCaseWorkerDetails()).thenReturn(caseworkerDetails);
+        when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
+
+        when(coreCaseDataApi
+            .startEventForCaseWorker(
+                CASEWORKER_AUTH_TOKEN,
+                SERVICE_AUTHORIZATION,
+                CASEWORKER_USER_ID,
+                JURISDICTION,
+                CASE_TYPE,
+                TEST_CASE_ID.toString(),
+                CASEWORKER_ISSUE_AOS))
+            .thenReturn(startEventResponse);
+
+        doThrow(feignException(409, "A reason")).when(ccdCaseDataContentProvider)
+            .createCaseDataContent(
+                startEventResponse,
+                DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY,
+                DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION,
+                caseData);
+
+        final CcdConflictException exception = assertThrows(
+            CcdConflictException.class,
             () -> ccdUpdateService.submitEvent(caseDetails, CASEWORKER_ISSUE_AOS));
 
         assertThat(exception.getMessage())

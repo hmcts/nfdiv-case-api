@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.caseworker.service.CcdConflictException;
 import uk.gov.hmcts.divorce.caseworker.service.CcdManagementException;
 import uk.gov.hmcts.divorce.caseworker.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.caseworker.service.CcdSearchService;
@@ -42,6 +43,8 @@ public class CaseworkerIssueAosTask {
             log.info("Issue AOS Scheduled Task complete.");
         } catch (final CcdSearchCaseException e) {
             log.error("Issue AOS Schedule Task stopped after search error", e);
+        } catch (final CcdConflictException e) {
+            log.info("Issue AOS Scheduled Task stopping due to conflict with another running Issue AOS Task");
         }
     }
 }

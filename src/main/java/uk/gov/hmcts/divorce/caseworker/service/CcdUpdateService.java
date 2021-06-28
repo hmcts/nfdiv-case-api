@@ -13,6 +13,7 @@ import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import static java.lang.String.format;
+import static org.springframework.http.HttpStatus.CONFLICT;
 import static uk.gov.hmcts.divorce.ccd.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.ccd.NoFaultDivorce.JURISDICTION;
 
@@ -71,8 +72,14 @@ public class CcdUpdateService {
                 true,
                 caseDataContent);
         } catch (final FeignException e) {
+
             final String message = format("Submit Event Failed for Case ID: %s, Event ID: %s", caseId, eventId);
             log.info(message, e);
+
+            if (e.status() == CONFLICT.value()) {
+                throw new CcdConflictException(message, e);
+            }
+
             throw new CcdManagementException(message, e);
         }
     }
