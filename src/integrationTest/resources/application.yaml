@@ -46,6 +46,8 @@ s2s:
 core_case_data:
   api:
     url: http://localhost:4012
+  search:
+    page_size: 100
 
 spring:
   main:
@@ -76,3 +78,6 @@ prd:
 
 send-letter:
   url: ${SEND_LETTER_SERVICE_BASEURL:http://rpe-send-letter-service-aat.service.core-compute-aat.internal}
+
+schedule:
+  issue_aos: '0 0 0 * * ?' # Midnight each day

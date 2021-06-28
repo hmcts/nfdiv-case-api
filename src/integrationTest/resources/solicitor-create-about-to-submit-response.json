@@ -113,7 +113,7 @@
     "jurisdictionConnections": null,
     "jurisdictionLegalConnections": null,
     "divorceCostsClaim": "Yes",
-    "financialOrder": "No",
+    "applicant1FinancialOrder": "No",
     "divorceClaimFrom": [
       "applicant2"
     ],

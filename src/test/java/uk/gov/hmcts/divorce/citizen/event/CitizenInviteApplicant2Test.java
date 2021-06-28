@@ -72,7 +72,7 @@ public class CitizenInviteApplicant2Test {
         verifyNoInteractions(applicationSentForReviewApplicant2Notification);
 
         assertThat(response.getErrors().size()).isEqualTo(4);
-        assertThat(response.getErrors().get(0)).isEqualTo("FinancialOrder cannot be empty or null");
+        assertThat(response.getErrors().get(0)).isEqualTo("Applicant1FinancialOrder cannot be empty or null");
     }
 
     @Test

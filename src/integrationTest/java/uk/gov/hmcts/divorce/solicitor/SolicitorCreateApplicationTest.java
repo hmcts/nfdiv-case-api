@@ -223,7 +223,7 @@ class SolicitorCreateApplicationTest {
             .applicant1(getApplicant())
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .divorceCostsClaim(YES)
-            .financialOrder(NO)
+            .applicant1FinancialOrder(NO)
             .build();
     }
 }

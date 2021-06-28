@@ -32,27 +32,27 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
             .label(
                 "LabelSolStatementOfTruthPara-1.1",
                 "• That the marriage be dissolved as it has broken down irretrievably",
-                "divorceCostsClaim=\"No\" AND financialOrder=\"No\"")
+                "divorceCostsClaim=\"No\" AND applicant1FinancialOrder=\"No\"")
             .label(
                 "LabelSolStatementOfTruthPara-1.2",
                 "- That the marriage be dissolved as it has broken down irretrievably\n"
                     + "- That a costs order may be granted.",
-                "divorceCostsClaim=\"Yes\" AND financialOrder=\"No\"")
+                "divorceCostsClaim=\"Yes\" AND applicant1FinancialOrder=\"No\"")
             .label(
                 "LabelSolStatementOfTruthPara-1.3",
                 "- That the marriage be dissolved as it has broken down irretrievably\n"
                     + "- That a financial order may be granted.",
-                "divorceCostsClaim=\"No\" AND financialOrder=\"Yes\"")
+                "divorceCostsClaim=\"No\" AND applicant1FinancialOrder=\"Yes\"")
             .label(
                 "LabelSolStatementOfTruthPara-1.4",
                 "- That the marriage be dissolved as it has broken down irretrievably.\n"
                     + "- That a costs order may be granted.\n"
                     + "- That a financial order may be granted.",
-                "divorceCostsClaim=\"Yes\" AND financialOrder=\"Yes\"")
+                "divorceCostsClaim=\"Yes\" AND applicant1FinancialOrder=\"Yes\"")
             .mandatory(CaseData::getSolUrgentCase)
             .optional(CaseData::getSolUrgentCaseSupportingInformation, "solUrgentCase=\"Yes\"")
             .mandatoryNoSummary(CaseData::getDivorceCostsClaim, ALWAYS_HIDE)
-            .mandatoryNoSummary(CaseData::getFinancialOrder, ALWAYS_HIDE)
+            .mandatoryNoSummary(CaseData::getApplicant1FinancialOrder, ALWAYS_HIDE)
             .label("LabelSolServiceMethod", "## Service method")
             .mandatory(CaseData::getSolServiceMethod)
             .label(

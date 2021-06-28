@@ -9,7 +9,7 @@
   "errors": [
     "Applicant2FirstName cannot be empty or null",
     "Applicant2LastName cannot be empty or null",
-    "FinancialOrder cannot be empty or null",
+    "Applicant1FinancialOrder cannot be empty or null",
     "Applicant1Gender cannot be empty or null",
     "Applicant2Gender cannot be empty or null",
     "MarriageApplicant1Name cannot be empty or null",

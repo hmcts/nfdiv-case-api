@@ -13,7 +13,10 @@ public enum FinancialOrderFor implements HasLabel {
     CHILDREN("Children"),
 
     @JsonProperty("applicant1")
-    APPLICANT_1("The applicant");
+    APPLICANT_1("The applicant"),
+
+    @JsonProperty("applicant2")
+    APPLICANT_2("The respondent");
 
     private final String label;
 }
