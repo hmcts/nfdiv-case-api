@@ -191,6 +191,7 @@ repositories {
 def versions = [
   assertJ           : '3.19.0',
   ccdStoreClient    : '4.7.6',
+  elasticsearch     : '7.12.0',
   idamClient        : '2.0.0',
   jackson           : '2.12.3',
   junit             : '5.7.2',
@@ -267,6 +268,7 @@ dependencies {
   implementation group: 'uk.gov.hmcts.reform', name: 'service-auth-provider-client', version: versions.s2sClient
 
   implementation group: 'com.github.hmcts', name: 'send-letter-client', version: versions.slClient
+  implementation group: 'org.elasticsearch', name: 'elasticsearch', version: versions.elasticsearch
 
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
