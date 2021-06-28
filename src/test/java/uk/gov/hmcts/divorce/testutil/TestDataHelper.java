@@ -157,6 +157,7 @@ public class TestDataHelper {
 
         var applicant1 = getApplicant();
         applicant1.setContactDetailsConfidential(ConfidentialAddress.KEEP);
+        applicant1.setFinancialOrder(NO);
 
         return CaseData
             .builder()
@@ -164,7 +165,6 @@ public class TestDataHelper {
             .applicant2(getJointApplicant2(MALE))
             .applicant2EmailAddress(TEST_USER_EMAIL)
             .divorceOrDissolution(DIVORCE)
-            .applicant1FinancialOrder(NO)
             .helpWithFeesNeedHelp(NO)
             .marriageDetails(marriageDetails)
             .jurisdiction(jurisdiction)
@@ -221,7 +221,7 @@ public class TestDataHelper {
 
         final CaseData caseData = caseDataWithStatementOfTruth();
         caseData.setDocumentUploadComplete(YES);
-        caseData.setApplicant1FinancialOrder(NO);
+        caseData.getApplicant1().setFinancialOrder(NO);
         caseData.setMarriageDetails(marriageDetails);
         caseData.setApplicant2(getApplicant());
         caseData.setPrayerHasBeenGiven(YES);

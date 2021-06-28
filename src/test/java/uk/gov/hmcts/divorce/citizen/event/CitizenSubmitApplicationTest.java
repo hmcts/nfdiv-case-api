@@ -141,8 +141,8 @@ class CitizenSubmitApplicationTest {
     private CaseData setValidCaseData(CaseData caseData) {
         caseData.setApplicant1(getApplicant());
         caseData.getApplicant1().setContactDetailsConfidential(ConfidentialAddress.KEEP);
+        caseData.getApplicant1().setFinancialOrder(YesOrNo.NO);
         caseData.setApplicant2(getApplicant(MALE));
-        caseData.setApplicant1FinancialOrder(YesOrNo.NO);
         caseData.setHelpWithFeesNeedHelp(YesOrNo.NO);
         caseData.setPrayerHasBeenGiven(YesOrNo.YES);
         caseData.getMarriageDetails().setApplicant1Name("Full name");

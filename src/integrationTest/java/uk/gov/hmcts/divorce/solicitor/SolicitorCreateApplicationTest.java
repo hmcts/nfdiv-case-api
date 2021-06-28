@@ -218,12 +218,14 @@ class SolicitorCreateApplicationTest {
     }
 
     private static CaseData caseData() {
+        var applicant1 = getApplicant();
+        applicant1.setFinancialOrder(NO);
+
         return CaseData
             .builder()
-            .applicant1(getApplicant())
+            .applicant1(applicant1)
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .divorceCostsClaim(YES)
-            .applicant1FinancialOrder(NO)
             .build();
     }
 }

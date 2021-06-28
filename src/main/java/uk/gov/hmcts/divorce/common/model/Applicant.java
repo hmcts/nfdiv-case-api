@@ -13,6 +13,8 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 
+import java.util.Set;
+
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
@@ -155,6 +157,18 @@ public class Applicant {
         typeOverride = TextArea
     )
     private String costsReason;
+
+    @CCD(
+        label = "Does the applicant wish to apply for a financial order?",
+        hint = "The court will not start processing your request for a financial order until you submit the separate "
+            + "application and pay the fee."
+    )
+    private YesOrNo financialOrder;
+
+    @CCD(
+        label = "Who is the financial order for?"
+    )
+    private Set<FinancialOrderFor> financialOrderFor;
 
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
