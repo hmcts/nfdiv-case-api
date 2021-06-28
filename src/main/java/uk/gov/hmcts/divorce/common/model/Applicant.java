@@ -13,6 +13,8 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 
+import java.util.Set;
+
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
@@ -65,7 +67,7 @@ public class Applicant {
     private YesOrNo nameDifferentToMarriageCertificate;
 
     @CCD(label = "How did the applicant change their name?")
-    private ChangedNameHow nameChangedHow;
+    private Set<ChangedNameHow> nameChangedHow;
 
     @CCD(
         label = "Details of how they changed their name",
