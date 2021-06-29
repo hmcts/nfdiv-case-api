@@ -59,8 +59,7 @@ doc_assembly:
 docmosis:
   templates:
     english:
-      #TODO: Set correct DIVORCE_MINI_APPLICATION template when available
-      DIVORCE_MINI_APPLICATION: Divorce_CP_Mini_Draft_Application_Template.docx
+      DIVORCE_MINI_APPLICATION: Divorce_CP_Mini_Application_Sole_Joint.docx
       DIVORCE_MINI_DRAFT_APPLICATION: Divorce_CP_Mini_Draft_Application_Template.docx
       RESP_SOLICITOR_AOS_INVITATION: Divorce_CP_Dummy_Template.docx #TODO: Set correct template when available
     welsh:
