@@ -72,7 +72,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("marriageApplicant1Name")
             .field("marriageApplicant2Name")
             .field("LabelClaimCosts-Heading", null, "### Claim costs")
-            .field("dvorceCostsClaim")
+            .field("divorceCostsClaim")
             .field("divorceClaimFrom", "divorceCostsClaim=\"Yes\"")
             .field("LabelOtherLegalProceedings-Heading", null, "### Other legal proceedings")
             .field("legalProceedings")
