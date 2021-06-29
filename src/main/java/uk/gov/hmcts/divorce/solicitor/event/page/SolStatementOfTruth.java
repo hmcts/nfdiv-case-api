@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.model.Applicant;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 
 import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.JOINT_APPLICATION_CONDITION;
@@ -52,7 +53,9 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
             .mandatory(CaseData::getSolUrgentCase)
             .optional(CaseData::getSolUrgentCaseSupportingInformation, "solUrgentCase=\"Yes\"")
             .mandatoryNoSummary(CaseData::getDivorceCostsClaim, ALWAYS_HIDE)
-            .mandatoryNoSummary(CaseData::getApplicant1FinancialOrder, ALWAYS_HIDE)
+            .complex(CaseData::getApplicant1)
+                .mandatoryNoSummary(Applicant::getFinancialOrder, ALWAYS_HIDE)
+                .done()
             .label("LabelSolServiceMethod", "## Service method")
             .mandatory(CaseData::getSolServiceMethod)
             .label(

@@ -17,7 +17,7 @@ import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.payment.model.Payment;
-import uk.gov.hmcts.divorce.solicitor.event.page.HelpWithFees;
+import uk.gov.hmcts.divorce.solicitor.event.page.HelpWithFeesPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayAccount;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayment;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPaymentSummary;
@@ -69,7 +69,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
     private final List<CcdPageConfiguration> pages = asList(
         new SolStatementOfTruth(),
         new SolPayment(),
-        new HelpWithFees(),
+        new HelpWithFeesPage(),
         new SolPayAccount(),
         new SolPaymentSummary(),
         new SolSummary());

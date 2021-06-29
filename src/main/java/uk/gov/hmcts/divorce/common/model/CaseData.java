@@ -87,30 +87,15 @@ public class CaseData {
     @CCD(access = {DefaultAccess.class})
     private Applicant applicant2 = new Applicant();
 
-    @CCD(
-        label = "Help with fees reference",
-        regex = "([Hh][Ww][Ff]-?)?[0-9a-zA-Z]{3}-?[0-9a-zA-Z]{3}$",
-        access = {DefaultAccess.class}
-    )
-    private String helpWithFeesReferenceNumber;
-
-    @CCD(
-        label = "Need help with fees?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo helpWithFeesNeedHelp;
+    @JsonUnwrapped(prefix = "helpWithFees")
+    @CCD(access = {DefaultAccess.class})
+    private HelpWithFees helpWithFees;
 
     @CCD(
         label = "The applicant has marriage cert?",
         access = {DefaultAccess.class}
     )
     private YesOrNo screenHasMarriageCert;
-
-    @CCD(
-        label = "Applied for help with fees?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo helpWithFeesAppliedForFees;
 
     @CCD(
         access = {DefaultAccess.class}
@@ -150,22 +135,6 @@ public class CaseData {
         access = {DefaultAccess.class}
     )
     private YesOrNo divorceCostsClaim;
-
-    @CCD(
-        label = "Does applicant 1 wish to apply for a financial order?",
-        hint = "The court will not start processing your request for a financial order until you submit the separate "
-            + "application and pay the fee.",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo applicant1FinancialOrder;
-
-    @CCD(
-        label = "Does applicant 2 wish to apply for a financial order?",
-        hint = "The court will not start processing your request for a financial order until you submit the separate "
-            + "application and pay the fee.",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo applicant2FinancialOrder;
 
     @CCD(
         label = "The applicant wants/will to apply to have the papers served to the respondent another way.",
@@ -367,18 +336,6 @@ public class CaseData {
         access = {DefaultAccess.class}
     )
     private YesOrNo app2ContactMethodIsDigital;
-
-    @CCD(
-        label = "Applicant 1: Who is the financial order for?",
-        access = {DefaultAccess.class}
-    )
-    private Set<FinancialOrderFor> applicant1FinancialOrderFor;
-
-    @CCD(
-        label = "Applicant 2: Who is the financial order for?",
-        access = {DefaultAccess.class}
-    )
-    private Set<FinancialOrderFor> applicant2FinancialOrderFor;
 
     @CCD(
         label = "Payments",
