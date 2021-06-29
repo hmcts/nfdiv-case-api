@@ -38,12 +38,17 @@ public final class NotificationConstants {
 
     public static final String SUBMISSION_RESPONSE_DATE = "date of response";
     public static final String APPLICATION_REFERENCE = "reference number";
+    public static final String CASE_ID = "case id";
 
     public static final String ACCOUNT = "account";
     public static final String DIVORCE_ACCOUNT = "divorce account";
     public static final String CIVIL_PARTNERSHIP_ACCOUNT = "account to end your civil partnership";
 
     public static final String ACCESS_CODE = "access code";
+
+    public static final String APPLICANT_NAME = "applicant name";
+    public static final String RESPONDENT_NAME = "respondent name";
+    public static final String SOLICITOR_NAME = "solicitor name";
 
     private NotificationConstants() {
     }
