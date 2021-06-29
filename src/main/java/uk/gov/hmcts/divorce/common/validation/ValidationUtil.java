@@ -4,13 +4,13 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.common.model.Gender;
+import uk.gov.hmcts.divorce.common.model.MarriageDetails;
 
 import java.time.LocalDate;
 import java.util.List;
 
 import static java.lang.Integer.parseInt;
 import static java.time.temporal.ChronoUnit.YEARS;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 public final class ValidationUtil {
 
@@ -33,13 +33,15 @@ public final class ValidationUtil {
         addToErrorList(checkIfYesOrNoNullOrEmpty(caseData.getApplicant1().getFinancialOrder(), "Applicant1FinancialOrder"), errorList);
         addToErrorList(checkIfGenderNullOrEmpty(caseData.getApplicant1().getGender(), "Applicant1Gender"), errorList);
         addToErrorList(checkIfGenderNullOrEmpty(caseData.getApplicant2().getGender(), "Applicant2Gender"), errorList);
-        addToErrorList(checkIfStringNullOrEmpty(caseData.getMarriageDetails().getApplicant1Name(), "MarriageApplicant1Name"), errorList);
+        addToErrorList(checkIfStringNullOrEmpty(caseData.getApplication().getMarriageDetails().getApplicant1Name(),
+            "MarriageApplicant1Name"),
+            errorList);
         addToErrorList(checkIfConfidentialAddressNullOrEmpty(caseData.getApplicant1().getContactDetailsConfidential(),
             "Applicant1ContactDetailsConfidential"), errorList);
-        addToErrorList(checkIfYesOrNoIsNullOrEmptyOrNo(caseData.getPrayerHasBeenGiven(), "PrayerHasBeenGiven"), errorList);
-        addToErrorList(checkIfYesOrNoIsNullOrEmptyOrNo(caseData.getStatementOfTruth(), "StatementOfTruth"), errorList);
-        addToErrorList(checkIfDateIsAllowed(caseData.getMarriageDetails().getDate(), "MarriageDate"), errorList);
-        addListToErrorList(caseData.getJurisdiction().validate(), errorList);
+        addToErrorList(checkIfYesOrNoIsNullOrEmptyOrNo(caseData.getApplication().getPrayerHasBeenGiven(), "PrayerHasBeenGiven"), errorList);
+        addToErrorList(checkIfYesOrNoIsNullOrEmptyOrNo(caseData.getApplication().getStatementOfTruth(), "StatementOfTruth"), errorList);
+        addToErrorList(checkIfDateIsAllowed(caseData.getApplication().getMarriageDetails().getDate(), "MarriageDate"), errorList);
+        addListToErrorList(caseData.getApplication().getJurisdiction().validate(), errorList);
     }
 
     public static void validateApplicant1BasicCase(CaseData caseData, List<String> errorList) {
@@ -48,9 +50,10 @@ public final class ValidationUtil {
         addToErrorList(checkIfYesOrNoNullOrEmpty(caseData.getApplicant1().getFinancialOrder(), "Applicant1FinancialOrder"), errorList);
         addToErrorList(checkIfGenderNullOrEmpty(caseData.getApplicant1().getGender(), "Applicant1Gender"), errorList);
         addToErrorList(checkIfGenderNullOrEmpty(caseData.getApplicant1().getGender(), "Applicant2Gender"), errorList);
-        addToErrorList(checkIfStringNullOrEmpty(caseData.getMarriageDetails().getApplicant1Name(), "MarriageApplicant1Name"), errorList);
-        addToErrorList(checkIfDateIsAllowed(caseData.getMarriageDetails().getDate(), "MarriageDate"), errorList);
-        addListToErrorList(caseData.getJurisdiction().validate(), errorList);
+        addToErrorList(checkIfStringNullOrEmpty(
+            caseData.getApplication().getMarriageDetails().getApplicant1Name(), "MarriageApplicant1Name"), errorList);
+        addToErrorList(checkIfDateIsAllowed(caseData.getApplication().getMarriageDetails().getDate(), "MarriageDate"), errorList);
+        addListToErrorList(caseData.getApplication().getJurisdiction().validate(), errorList);
     }
 
     public static void addToErrorList(String error, List<String> errorList) {
@@ -129,18 +132,12 @@ public final class ValidationUtil {
     }
 
     public static boolean isPaymentIncomplete(CaseData caseData) {
-        return caseData.getPaymentTotal() < parseInt(caseData.getApplicationFeeOrderSummary().getPaymentTotal());
+        return caseData.getPaymentTotal() < parseInt(caseData.getApplication().getApplicationFeeOrderSummary().getPaymentTotal());
     }
 
-    public static boolean hasAwaitingDocuments(CaseData caseData) {
-        return caseData.getApplicant1WantsToHavePapersServedAnotherWay() != null
-            && caseData.getApplicant1WantsToHavePapersServedAnotherWay().toBoolean()
-            || !isEmpty(caseData.getCannotUploadSupportingDocument());
-    }
-
-    public static void validateCaseFieldsForIssueApplication(CaseData caseData, List<String> errorList) {
+    public static void validateCaseFieldsForIssueApplication(MarriageDetails marriageDetails, List<String> errorList) {
         //MarriageApplicant1Name and MarriageDate are validated in validateBasicCase
-        addToErrorList(checkIfStringNullOrEmpty(caseData.getMarriageDetails().getApplicant2Name(), "MarriageApplicant2Name"), errorList);
-        addToErrorList(checkIfStringNullOrEmpty(caseData.getMarriageDetails().getPlaceOfMarriage(), "PlaceOfMarriage"), errorList);
+        addToErrorList(checkIfStringNullOrEmpty(marriageDetails.getApplicant2Name(), "MarriageApplicant2Name"), errorList);
+        addToErrorList(checkIfStringNullOrEmpty(marriageDetails.getPlaceOfMarriage(), "PlaceOfMarriage"), errorList);
     }
 }

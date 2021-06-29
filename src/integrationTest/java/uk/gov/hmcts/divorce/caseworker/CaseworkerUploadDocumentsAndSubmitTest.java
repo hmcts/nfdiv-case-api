@@ -52,7 +52,7 @@ public class CaseworkerUploadDocumentsAndSubmitTest {
     void givenValidCaseDataWhenAboutToStartDocumentUploadCompleteFieldIsReset() throws Exception {
 
         final CaseData caseData = caseDataWithStatementOfTruth();
-        caseData.setDocumentUploadComplete(YES);
+        caseData.getApplication().setDocumentUploadComplete(YES);
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_START_URL)
             .contentType(APPLICATION_JSON)
@@ -74,7 +74,7 @@ public class CaseworkerUploadDocumentsAndSubmitTest {
     void givenValidCaseDataWhenAboutToSubmitAndDocumentUploadCompleteFieldIsNoThenStateIsAwaitingDocuments() throws Exception {
 
         final CaseData caseData = caseDataWithStatementOfTruth();
-        caseData.setDocumentUploadComplete(NO);
+        caseData.getApplication().setDocumentUploadComplete(NO);
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -95,7 +95,7 @@ public class CaseworkerUploadDocumentsAndSubmitTest {
     void givenValidCaseDataWhenAboutToSubmitAndDocumentUploadCompleteFieldIsYesThenStateIsSubmitted() throws Exception {
 
         final CaseData caseData = caseDataWithStatementOfTruth();
-        caseData.setDocumentUploadComplete(YES);
+        caseData.getApplication().setDocumentUploadComplete(YES);
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)

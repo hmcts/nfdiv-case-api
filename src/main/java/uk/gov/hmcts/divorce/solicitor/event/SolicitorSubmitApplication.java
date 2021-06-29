@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.CaseInfo;
+import uk.gov.hmcts.divorce.common.model.Application;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
@@ -32,7 +33,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -46,7 +46,6 @@ import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_SUPERUSER;
 import static uk.gov.hmcts.divorce.common.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
-import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
 @Slf4j
 @Component
@@ -87,7 +86,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         log.info("Retrieving order summary");
         final OrderSummary orderSummary = paymentService.getOrderSummary();
         final CaseData caseData = details.getData();
-        caseData.setApplicationFeeOrderSummary(orderSummary);
+        caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
         log.info("Adding the applicant's solicitor case roles");
         ccdAccessService.addApplicant1SolicitorRole(
@@ -106,23 +105,24 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         log.info("Submit application about to submit callback invoked");
 
         final CaseData caseData = details.getData();
+        final Application application = caseData.getApplication();
         final State currentState = details.getState();
 
         log.info("Setting dummy payment to mock payment process");
         if (caseData.getPayments() == null || caseData.getPayments().isEmpty()) {
             List<ListValue<Payment>> payments = new ArrayList<>();
             payments.add(new ListValue<>(null,
-                solicitorSubmitApplicationService.getDummyPayment(caseData.getApplicationFeeOrderSummary())));
+                solicitorSubmitApplicationService.getDummyPayment(application.getApplicationFeeOrderSummary())));
             caseData.setPayments(payments);
         } else {
             caseData.getPayments()
                 .add(new ListValue<>(null,
-                    solicitorSubmitApplicationService.getDummyPayment(caseData.getApplicationFeeOrderSummary())));
+                    solicitorSubmitApplicationService.getDummyPayment(application.getApplicationFeeOrderSummary())));
         }
 
         updateApplicant2DigitalDetails(caseData);
 
-        if (!caseData.hasStatementOfTruth() && !caseData.hasSolSignStatementOfTruth()) {
+        if (!application.hasStatementOfTruth() && !application.hasSolSignStatementOfTruth()) {
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
@@ -145,7 +145,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         if (caseData.getApplicant2().getSolicitor() != null && caseData.getApplicant2().getSolicitor().hasDigitalDetails()) {
             log.info("The respondent's solicitor is digital and the respondent org is populated");
 
-            caseData.setApp2ContactMethodIsDigital(YES);
+            caseData.getApplication().setApp2ContactMethodIsDigital(YES);
             caseData.getApplicant2().setSolicitorRepresented(YES);
         }
     }
@@ -153,13 +153,10 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
                                                CaseDetails<CaseData, State> beforeDetails) {
         final CaseData caseData = details.getData();
-        final List<ListValue<Payment>> payments = caseData.getPayments() == null ? emptyList() : caseData.getPayments();
-        final int feesPaid = payments.stream()
-            .filter(payment -> payment.getValue().getPaymentStatus().equals(SUCCESS))
-            .mapToInt(payment -> payment.getValue().getPaymentAmount())
-            .sum();
+        final int feesPaid = caseData.getPaymentTotal();
 
-        if (String.valueOf(feesPaid).equals(caseData.getApplicationFeeOrderSummary().getPaymentTotal())) {
+        // TODO apply Submitted.validate()
+        if (String.valueOf(feesPaid).equals(caseData.getApplication().getApplicationFeeOrderSummary().getPaymentTotal())) {
             details.setState(Submitted);
         } else {
             details.setState(AwaitingPayment);

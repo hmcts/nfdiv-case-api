@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
+import uk.gov.hmcts.divorce.common.model.Application;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.ClaimsCostFrom;
 import uk.gov.hmcts.divorce.common.model.Court;
@@ -164,12 +165,16 @@ public class SolicitorSubmitDraftAosTest {
         var applicant1 = getApplicant();
         applicant1.setFinancialOrder(NO);
 
+        var application = Application.builder()
+            .divorceCostsClaim(YES)
+            .divorceClaimFrom(Set.of(ClaimsCostFrom.APPLICANT_2))
+            .build();
+
         return CaseData
             .builder()
             .applicant1(applicant1)
+            .application(application)
             .divorceOrDissolution(DIVORCE)
-            .divorceCostsClaim(YES)
-            .divorceClaimFrom(Set.of(ClaimsCostFrom.APPLICANT_2))
             .divorceUnit(Court.SERVICE_CENTRE)
             .selectedDivorceCentreSiteId("AA07")
             .documentsGenerated(List.of(listValue))
@@ -180,12 +185,16 @@ public class SolicitorSubmitDraftAosTest {
         var applicant1 = getApplicant();
         applicant1.setFinancialOrder(NO);
 
+        var application = Application.builder()
+            .divorceCostsClaim(YES)
+            .divorceClaimFrom(Set.of(ClaimsCostFrom.APPLICANT_2))
+            .build();
+
         return CaseData
             .builder()
             .applicant1(getApplicant())
             .divorceOrDissolution(DIVORCE)
-            .divorceCostsClaim(YES)
-            .divorceClaimFrom(Set.of(ClaimsCostFrom.APPLICANT_2))
+            .application(application)
             .divorceUnit(Court.SERVICE_CENTRE)
             .selectedDivorceCentreSiteId("AA07")
             .build();

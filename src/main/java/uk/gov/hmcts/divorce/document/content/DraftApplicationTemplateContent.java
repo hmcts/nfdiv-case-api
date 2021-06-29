@@ -62,7 +62,10 @@ public class DraftApplicationTemplateContent {
                                                final LocalDate createdDate) {
 
         return () -> {
-            Map<String, Object> templateData = new HashMap<>();
+            final var application = caseData.getApplication();
+            final var applicant1 = caseData.getApplicant1();
+            final var applicant2 = caseData.getApplicant2();
+            final Map<String, Object> templateData = new HashMap<>();
 
             log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
 
@@ -86,38 +89,38 @@ public class DraftApplicationTemplateContent {
             templateData.put(CCD_CASE_REFERENCE, ccdCaseReference);
             templateData.put(ISSUE_DATE, createdDate.format(TEMPLATE_DATE_FORMAT));
 
-            templateData.put(APPLICANT_1_FIRST_NAME, caseData.getApplicant1().getFirstName());
-            templateData.put(APPLICANT_1_MIDDLE_NAME, caseData.getApplicant1().getMiddleName());
-            templateData.put(APPLICANT_1_LAST_NAME, caseData.getApplicant1().getLastName());
+            templateData.put(APPLICANT_1_FIRST_NAME, applicant1.getFirstName());
+            templateData.put(APPLICANT_1_MIDDLE_NAME, applicant1.getMiddleName());
+            templateData.put(APPLICANT_1_LAST_NAME, applicant1.getLastName());
 
-            templateData.put(APPLICANT_2_FIRST_NAME, caseData.getApplicant2().getFirstName());
-            templateData.put(APPLICANT_2_MIDDLE_NAME, caseData.getApplicant2().getMiddleName());
-            templateData.put(APPLICANT_2_LAST_NAME, caseData.getApplicant2().getLastName());
+            templateData.put(APPLICANT_2_FIRST_NAME, applicant2.getFirstName());
+            templateData.put(APPLICANT_2_MIDDLE_NAME, applicant2.getMiddleName());
+            templateData.put(APPLICANT_2_LAST_NAME, applicant2.getLastName());
 
-            templateData.put(APPLICANT_1_FULL_NAME, caseData.getMarriageDetails().getApplicant1Name());
-            templateData.put(APPLICANT_2_FULL_NAME, caseData.getMarriageDetails().getApplicant2Name());
+            templateData.put(APPLICANT_1_FULL_NAME, application.getMarriageDetails().getApplicant1Name());
+            templateData.put(APPLICANT_2_FULL_NAME, application.getMarriageDetails().getApplicant2Name());
 
             templateData.put(MARRIAGE_DATE,
-                ofNullable(caseData.getMarriageDetails().getDate())
+                ofNullable(application.getMarriageDetails().getDate())
                     .map(marriageDate -> marriageDate.format(TEMPLATE_DATE_FORMAT))
                     .orElse(null));
-            templateData.put(COURT_CASE_DETAILS, caseData.getLegalProceedingsDetails());
+            templateData.put(COURT_CASE_DETAILS, application.getLegalProceedingsDetails());
 
-            templateData.put(HAS_COST_ORDERS, caseData.getDivorceCostsClaim().toBoolean());
-            templateData.put(HAS_FINANCIAL_ORDERS, caseData.getApplicant1().getFinancialOrder().toBoolean());
+            templateData.put(HAS_COST_ORDERS, application.getDivorceCostsClaim().toBoolean());
+            templateData.put(HAS_FINANCIAL_ORDERS, applicant1.getFinancialOrder().toBoolean());
 
             boolean hasFinancialOrdersForChild =
-                null != caseData.getApplicant1().getFinancialOrderFor()
-                    && caseData.getApplicant1().getFinancialOrderFor().contains(FinancialOrderFor.CHILDREN);
+                null != applicant1.getFinancialOrderFor()
+                    && applicant1.getFinancialOrderFor().contains(FinancialOrderFor.CHILDREN);
 
             templateData.put(HAS_FINANCIAL_ORDERS_FOR_CHILD, hasFinancialOrdersForChild);
             templateData.put(FINANCIAL_ORDER_CHILD, CHILDREN_OF_THE_APPLICANT_1_AND_APPLICANT_2);
 
             String applicant2PostalAddress;
-            AddressGlobalUK applicant2HomeAddress = caseData.getApplicant2().getHomeAddress();
+            AddressGlobalUK applicant2HomeAddress = applicant2.getHomeAddress();
 
             if (applicant2HomeAddress == null) {
-                applicant2PostalAddress = caseData.getApplicant2().getSolicitor().getAddress();
+                applicant2PostalAddress = applicant2.getSolicitor().getAddress();
             } else {
                 applicant2PostalAddress =
                     Stream.of(

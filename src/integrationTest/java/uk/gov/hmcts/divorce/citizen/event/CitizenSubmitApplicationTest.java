@@ -102,7 +102,7 @@ public class CitizenSubmitApplicationTest {
         stubForFeesLookup(TestDataHelper.getFeeResponseAsJson());
 
         CaseData caseData = validApplicant1CaseDataMap();
-        caseData.getHelpWithFees().setNeedHelp(YesOrNo.YES);
+        caseData.getApplication().getHelpWithFees().setNeedHelp(YesOrNo.YES);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -127,7 +127,7 @@ public class CitizenSubmitApplicationTest {
         stubForFeesNotFound();
 
         CaseData caseData = validApplicant1CaseDataMap();
-        caseData.setApplicationFeeOrderSummary(OrderSummary.builder().paymentTotal("55000").build());
+        caseData.getApplication().setApplicationFeeOrderSummary(OrderSummary.builder().paymentTotal("55000").build());
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)

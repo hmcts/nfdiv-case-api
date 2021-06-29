@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.divorce.common.model.Application;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
@@ -35,7 +36,7 @@ class ClaimsCostTest {
     void shouldSetClaimsCostFromApplicant2IfApplicant1ClaimingCostsAndClaimsCostFromIsEmpty() {
 
         final CaseData caseData = CaseData.builder()
-            .divorceCostsClaim(YES)
+            .application(Application.builder().divorceCostsClaim(YES).build())
             .build();
 
         setupMocks(caseData);
@@ -43,37 +44,41 @@ class ClaimsCostTest {
         final CaseDataContext result = claimsCost.updateCaseData(caseDataContext, caseDataUpdaterChain);
 
         assertThat(result, is(caseDataContext));
-        assertThat(caseData.getDivorceClaimFrom(), is(Set.of(APPLICANT_2)));
+        assertThat(caseData.getApplication().getDivorceClaimFrom(), is(Set.of(APPLICANT_2)));
     }
 
     @Test
     void shouldNotSetClaimsCostFromApplicant2IfApplicant1ClaimingCostsAndClaimsCostFromIsNotEmpty() {
 
         final CaseData caseData = CaseData.builder()
-            .divorceCostsClaim(YES)
-            .divorceClaimFrom(Set.of(APPLICANT_2))
+            .application(Application.builder()
+                .divorceCostsClaim(YES)
+                .divorceClaimFrom(Set.of(APPLICANT_2))
+                .build())
             .build();
 
         setupMocks(caseData);
 
         claimsCost.updateCaseData(caseDataContext, caseDataUpdaterChain);
 
-        assertThat(caseData.getDivorceClaimFrom(), is(Set.of(APPLICANT_2)));
+        assertThat(caseData.getApplication().getDivorceClaimFrom(), is(Set.of(APPLICANT_2)));
     }
 
     @Test
     void shouldNotSetClaimsCostFromApplicant2IfApplicant1NotClaimingCosts() {
 
         final CaseData caseData = CaseData.builder()
-            .divorceCostsClaim(NO)
-            .divorceClaimFrom(emptySet())
+            .application(Application.builder()
+                .divorceCostsClaim(NO)
+                .divorceClaimFrom(emptySet())
+                .build())
             .build();
 
         setupMocks(caseData);
 
         claimsCost.updateCaseData(caseDataContext, caseDataUpdaterChain);
 
-        assertThat(caseData.getDivorceClaimFrom(), is(emptySet()));
+        assertThat(caseData.getApplication().getDivorceClaimFrom(), is(emptySet()));
     }
 
     private void setupMocks(final CaseData caseData) {

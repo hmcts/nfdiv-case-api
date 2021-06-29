@@ -79,14 +79,14 @@ public class CitizenAddPayment implements CCDConfig<CaseData, State, UserRole> {
             errors.clear();
         } else if (submittedErrors.isEmpty()) {
             log.info("Case {} submitted", details.getId());
-            data.setDateSubmitted(LocalDateTime.now());
+            data.getApplication().setDateSubmitted(LocalDateTime.now());
 
             notification.send(data, details.getId());
             state = Submitted;
             errors.clear();
         } else if (awaitingDocumentsErrors.isEmpty()) {
             log.info("Case {} awaiting documents", details.getId());
-            data.setDateSubmitted(LocalDateTime.now());
+            data.getApplication().setDateSubmitted(LocalDateTime.now());
 
             notification.send(data, details.getId());
             outstandingActionNotification.send(data, details.getId());

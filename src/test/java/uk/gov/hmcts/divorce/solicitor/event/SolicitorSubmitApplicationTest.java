@@ -89,7 +89,7 @@ public class SolicitorSubmitApplicationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             solicitorSubmitApplication.aboutToStart(caseDetails);
 
-        assertThat(response.getData().getApplicationFeeOrderSummary(), is(orderSummary));
+        assertThat(response.getData().getApplication().getApplicationFeeOrderSummary(), is(orderSummary));
         verify(ccdAccessService).addApplicant1SolicitorRole(
             authorization,
             caseId
@@ -149,9 +149,8 @@ public class SolicitorSubmitApplicationTest {
     void shouldReturnWithoutErrorIfStatementOfTruthOrSolStatementOfTruthAreSetToYes() {
 
         final long caseId = 1L;
-        final CaseData caseData = CaseData.builder()
-            .solSignStatementOfTruth(YES)
-            .build();
+        final CaseData caseData = CaseData.builder().build();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
@@ -179,8 +178,8 @@ public class SolicitorSubmitApplicationTest {
     void shouldReturnErrorIfStatementOfTruthAndSolStatementOfTruthIsSetToNo() {
 
         final CaseData caseData = CaseData.builder().build();
-        caseData.setStatementOfTruth(NO);
-        caseData.setSolSignStatementOfTruth(NO);
+        caseData.getApplication().setStatementOfTruth(NO);
+        caseData.getApplication().setSolSignStatementOfTruth(NO);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setState(Draft);
@@ -199,7 +198,7 @@ public class SolicitorSubmitApplicationTest {
 
         final long caseId = 1L;
         final CaseData caseData = CaseData.builder().build();
-        caseData.setSolSignStatementOfTruth(YES);
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(caseId);
         caseDetails.setData(caseData);
@@ -229,7 +228,7 @@ public class SolicitorSubmitApplicationTest {
 
         final long caseId = 1L;
         final CaseData caseData = CaseData.builder().build();
-        caseData.setSolSignStatementOfTruth(YES);
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(caseId);
         caseDetails.setData(caseData);
@@ -266,10 +265,9 @@ public class SolicitorSubmitApplicationTest {
             )
             .build();
 
-        final CaseData caseData = CaseData.builder()
-            .statementOfTruth(YES)
-            .solSignStatementOfTruth(YES)
-            .build();
+        final CaseData caseData = CaseData.builder().build();
+        caseData.getApplication().setStatementOfTruth(YES);
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
 
         caseData.getApplicant2().setSolicitor(Solicitor.builder().isDigital(YES).organisationPolicy(organisationPolicy).build());
 
@@ -292,12 +290,12 @@ public class SolicitorSubmitApplicationTest {
             .aboutToSubmit(caseDetails, new CaseDetails<>());
 
         final CaseData expectedCaseData = CaseData.builder()
-            .statementOfTruth(YES)
-            .solSignStatementOfTruth(YES)
-            .app2ContactMethodIsDigital(YES)
             .payments(singletonList(new ListValue<Payment>(null, null)))
             .build();
 
+        expectedCaseData.getApplication().setStatementOfTruth(YES);
+        expectedCaseData.getApplication().setSolSignStatementOfTruth(YES);
+        expectedCaseData.getApplication().setApp2ContactMethodIsDigital(YES);
         expectedCaseData.getApplicant2().setSolicitor(Solicitor.builder().isDigital(YES).organisationPolicy(organisationPolicy).build());
         expectedCaseData.getApplicant2().setSolicitorRepresented(YES);
 
@@ -309,11 +307,9 @@ public class SolicitorSubmitApplicationTest {
     @Test
     void shouldNotSetApplicant2DigitalDetailsWhenApp2SolicitorIsNotDigital() {
         final long caseId = 1L;
-        final CaseData caseData = CaseData.builder()
-            .statementOfTruth(YES)
-            .solSignStatementOfTruth(YES)
-            .build();
-
+        final CaseData caseData = CaseData.builder().build();
+        caseData.getApplication().setStatementOfTruth(YES);
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplicant1().setSolicitor(Solicitor.builder().isDigital(NO).build());
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -342,11 +338,9 @@ public class SolicitorSubmitApplicationTest {
     @Test
     void shouldNotSetApplicant2DigitalDetailsWhenApp2SolicitorIsDigitalAndApp2OrgIsNotSet() {
         final long caseId = 1L;
-        final CaseData caseData = CaseData.builder()
-            .statementOfTruth(YES)
-            .solSignStatementOfTruth(YES)
-            .build();
-
+        final CaseData caseData = CaseData.builder().build();
+        caseData.getApplication().setStatementOfTruth(YES);
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplicant1().setSolicitor(Solicitor.builder().isDigital(YES).build());
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -396,9 +390,9 @@ public class SolicitorSubmitApplicationTest {
         List<ListValue<Payment>> payments = new ArrayList<>();
         payments.add(paymentListValue);
         final CaseData caseData = CaseData.builder()
-            .applicationFeeOrderSummary(orderSummary)
             .payments(payments)
             .build();
+        caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
@@ -431,9 +425,9 @@ public class SolicitorSubmitApplicationTest {
         List<ListValue<Payment>> payments = new ArrayList<>();
         payments.add(paymentListValue);
         final CaseData caseData = CaseData.builder()
-            .applicationFeeOrderSummary(orderSummary)
             .payments(payments)
             .build();
+        caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
@@ -449,15 +443,13 @@ public class SolicitorSubmitApplicationTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
 
-        final CaseData caseData = CaseData.builder()
-            .applicationFeeOrderSummary(orderSummary)
-            .helpWithFees(
-                HelpWithFees.builder()
-                    .appliedForFees(YES)
-                    .build()
-            )
-
-            .build();
+        final CaseData caseData = CaseData.builder().build();
+        caseData.getApplication().setHelpWithFees(
+            HelpWithFees.builder()
+                .appliedForFees(YES)
+                .build()
+        );
+        caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 

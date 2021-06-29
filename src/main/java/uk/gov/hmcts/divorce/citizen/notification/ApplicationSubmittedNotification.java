@@ -28,7 +28,7 @@ public class ApplicationSubmittedNotification {
     public void send(CaseData caseData, Long id) {
         Map<String, String> templateVars = commonContent.templateVarsFor(caseData);
 
-        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDateOfSubmissionResponse().format(dateTimeFormatter));
+        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getApplication().getDateOfSubmissionResponse().format(dateTimeFormatter));
         templateVars.put(APPLICATION_REFERENCE, formatId(id));
 
         log.info("Sending application submitted notification for case : {}", id);
