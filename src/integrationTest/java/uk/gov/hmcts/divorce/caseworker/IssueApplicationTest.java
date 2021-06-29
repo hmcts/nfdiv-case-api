@@ -102,7 +102,7 @@ public class IssueApplicationTest {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Divorce application").thenReturn("Respondent Invitation");
 
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "Divorce_CP_Mini_Draft_Application_Template.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "Divorce_CP_Mini_Application_Sole_Joint.docx");
         stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "Divorce_CP_Dummy_Template.docx");
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)

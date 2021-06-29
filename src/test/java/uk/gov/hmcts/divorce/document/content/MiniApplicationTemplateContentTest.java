@@ -207,9 +207,9 @@ public class MiniApplicationTemplateContentTest {
         caseData.getApplicant2().setHomeAddress(address);
         caseData.getApplicant1().setHomeAddress(address);
         caseData.setDivorceOrDissolution(DISSOLUTION);
-        caseData.setApplicant1FinancialOrder(NO);
-        caseData.setApplicant2FinancialOrder(NO);
-        caseData.setLegalProceedings(YES);
+        caseData.getApplicant1().setFinancialOrder(NO);
+        caseData.getApplicant2().setFinancialOrder(NO);
+        caseData.getApplication().setLegalProceedings(YES);
 
         Supplier<Map<String, Object>> templateContentSupplier = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
 
@@ -220,11 +220,9 @@ public class MiniApplicationTemplateContentTest {
 
 
     private void setCaseDetails(CaseData caseData) {
-        caseData.setApplicant1FinancialOrder(NO);
-        caseData.setApplicant2FinancialOrder(NO);
-
-        caseData.setLegalProceedings(YES);
-
+        caseData.getApplicant1().setFinancialOrder(NO);
+        caseData.getApplicant2().setFinancialOrder(NO);
+        caseData.getApplication().setLegalProceedings(YES);
         caseData.getApplicant1().setSolicitor(
             Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
         );

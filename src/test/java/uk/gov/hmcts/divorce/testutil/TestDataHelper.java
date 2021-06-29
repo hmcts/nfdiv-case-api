@@ -249,13 +249,8 @@ public class TestDataHelper {
         application.setStatementOfTruth(YES);
         application.setJurisdiction(jurisdiction);
         caseData.setApplicationType(SOLE_APPLICATION);
-
-
-
-  
-        caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplicant2().setFinancialOrder(NO);
-        caseData.getApplicant2().setLegalProceedingsExist(YES);
+        caseData.getApplication().setLegalProceedings(NO);
 
         return caseData;
     }
