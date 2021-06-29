@@ -48,6 +48,7 @@ import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.common.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.common.model.ConfidentialAddress.SHARE;
 import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.common.model.Gender.FEMALE;
@@ -247,6 +248,14 @@ public class TestDataHelper {
         application.setPrayerHasBeenGiven(YES);
         application.setStatementOfTruth(YES);
         application.setJurisdiction(jurisdiction);
+        caseData.setApplicationType(SOLE_APPLICATION);
+
+
+
+  
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplicant2().setFinancialOrder(NO);
+        caseData.getApplicant2().setLegalProceedingsExist(YES);
 
         return caseData;
     }
