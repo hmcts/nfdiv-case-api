@@ -71,6 +71,8 @@
     "applicant2LastNameChangedWhenMarried": null,
     "applicant2PhoneNumber": null,
     "applicant2ContactDetailsConfidential": null,
+    "helpWithFeesAppliedForFees": null,
+    "helpWithFeesReferenceNumber": null,
     "jurisdictionApplicant1Residence": "Yes",
     "jurisdictionApplicant2Residence": "Yes",
     "jurisdictionApplicant1Domicile": null,

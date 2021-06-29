@@ -30,6 +30,7 @@ import java.util.Map;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
+import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -130,6 +131,7 @@ public class CitizenLinkApplicant2Test {
             .getContentAsString();
 
         assertThatJson(actualResponse)
+            .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedCcdAboutToStartCallbackSuccessfulResponse()));
 
         verify(serviceTokenGenerator).generate();
