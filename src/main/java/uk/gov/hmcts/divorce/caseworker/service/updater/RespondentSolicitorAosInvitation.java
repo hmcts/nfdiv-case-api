@@ -41,7 +41,7 @@ public class RespondentSolicitorAosInvitation implements CaseDataUpdater {
         final Supplier<Map<String, Object>> templateContentSupplier = templateContent
             .apply(caseDataContext.copyOfCaseData(), caseId, caseDataContext.getCreatedDate());
 
-        caseData.setAccessCode(generateAccessCode());
+        caseData.getCaseInvite().setAccessCode(generateAccessCode());
 
         final CaseData updatedCaseData = caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,

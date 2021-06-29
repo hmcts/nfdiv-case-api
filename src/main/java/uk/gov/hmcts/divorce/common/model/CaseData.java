@@ -70,6 +70,9 @@ public class CaseData {
     private Application application = new Application();
 
     @JsonUnwrapped()
+    private CaseInvite caseInvite;
+
+    @JsonUnwrapped()
     @Builder.Default
     private AcknowledgementOfService acknowledgementOfService = new AcknowledgementOfService();
 
@@ -80,12 +83,6 @@ public class CaseData {
     @JsonUnwrapped()
     @Builder.Default
     private FinalOrder finalOrder = new FinalOrder();
-
-    @CCD(
-        label = "The respondent's email address",
-        access = {DefaultAccess.class}
-    )
-    private String applicant2InviteEmailAddress;
 
     @CCD(
         label = "Documents uploaded",
@@ -136,18 +133,6 @@ public class CaseData {
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dueDate;
-
-    @CCD(
-        label = "The respondent invite access code",
-        access = {DefaultAccess.class}
-    )
-    private String accessCode;
-
-    @CCD(
-        label = "The respondent's user id",
-        access = {DefaultAccess.class}
-    )
-    private String applicant2UserId;
 
     @CCD(
         label = "Date when the application was issued",

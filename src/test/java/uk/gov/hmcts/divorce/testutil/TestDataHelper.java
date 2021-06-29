@@ -15,6 +15,7 @@ import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.common.model.Applicant;
 import uk.gov.hmcts.divorce.common.model.Application;
 import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.common.model.CaseInvite;
 import uk.gov.hmcts.divorce.common.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.common.model.Gender;
@@ -128,6 +129,7 @@ public class TestDataHelper {
         return CaseData.builder()
             .applicant1(getApplicant())
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
+            .caseInvite(new CaseInvite())
             .build();
     }
 
@@ -179,7 +181,7 @@ public class TestDataHelper {
             .builder()
             .applicant1(applicant1)
             .applicant2(getJointApplicant2(MALE))
-            .applicant2InviteEmailAddress(TEST_USER_EMAIL)
+            .caseInvite(CaseInvite.builder().applicant2InviteEmailAddress(TEST_USER_EMAIL).build())
             .divorceOrDissolution(DIVORCE)
             .application(application)
             .build();
