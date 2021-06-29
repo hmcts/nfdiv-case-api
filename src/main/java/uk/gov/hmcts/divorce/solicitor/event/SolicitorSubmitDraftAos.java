@@ -80,7 +80,7 @@ public class SolicitorSubmitDraftAos implements CCDConfig<CaseData, State, UserR
                 DIVORCE_APPLICATION.equals(divorceDocument.getDocumentType()))
             .map(DivorceDocument::getDocumentLink)
             .findFirst()
-            .ifPresent(caseData::setMiniApplicationLink);
+            .ifPresent(file -> caseData.getApplication().setMiniApplicationLink(file));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

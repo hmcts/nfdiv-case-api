@@ -18,7 +18,7 @@ plugins {
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'org.springframework.boot' version '2.5.2'
   id 'com.github.ben-manes.versions' version '0.39.0'
-  id 'hmcts.ccd.sdk' version '0.21.3'
+  id 'hmcts.ccd.sdk' version '0.21.4'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'

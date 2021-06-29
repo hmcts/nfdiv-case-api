@@ -13,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.common.model.Applicant;
+import uk.gov.hmcts.divorce.common.model.Application;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
@@ -138,11 +139,15 @@ public class TestDataHelper {
     }
 
     public static CaseData caseDataWithOrderSummary() {
+        var application = Application.builder()
+            .applicationFeeOrderSummary(OrderSummary.builder().paymentTotal("55000").build())
+            .build();
+
         return CaseData
             .builder()
             .applicant1(getApplicant())
             .divorceOrDissolution(DIVORCE)
-            .applicationFeeOrderSummary(OrderSummary.builder().paymentTotal("55000").build())
+            .application(application)
             .build();
     }
 
@@ -160,27 +165,31 @@ public class TestDataHelper {
         applicant1.setContactDetailsConfidential(ConfidentialAddress.KEEP);
         applicant1.setFinancialOrder(NO);
 
+        var application = Application.builder()
+            .marriageDetails(marriageDetails)
+            .jurisdiction(jurisdiction)
+            .helpWithFees(
+                HelpWithFees.builder()
+                    .needHelp(NO)
+                    .build()
+            )
+            .build();
+
         return CaseData
             .builder()
             .applicant1(applicant1)
             .applicant2(getJointApplicant2(MALE))
             .applicant2InviteEmailAddress(TEST_USER_EMAIL)
             .divorceOrDissolution(DIVORCE)
-            .helpWithFees(
-                HelpWithFees.builder()
-                    .needHelp(NO)
-                    .build()
-            )
-            .marriageDetails(marriageDetails)
-            .jurisdiction(jurisdiction)
+            .application(application)
             .build();
     }
 
     public static CaseData validApplicant1CaseDataMap() {
         CaseData caseData = validJointApplicant1CaseDataMap();
         caseData.setApplicant2(getApplicant2(MALE));
-        caseData.setStatementOfTruth(YES);
-        caseData.setPrayerHasBeenGiven(YES);
+        caseData.getApplication().setStatementOfTruth(YES);
+        caseData.getApplication().setPrayerHasBeenGiven(YES);
         return caseData;
     }
 
@@ -201,13 +210,17 @@ public class TestDataHelper {
         var applicant1 = getApplicant();
         applicant1.setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).build());
 
+        var application = Application.builder()
+            .divorceCostsClaim(YES)
+            .solSignStatementOfTruth(YES)
+            .applicationFeeOrderSummary(orderSummary)
+            .build();
+
         return CaseData
             .builder()
             .applicant1(applicant1)
             .divorceOrDissolution(DIVORCE)
-            .divorceCostsClaim(YES)
-            .solSignStatementOfTruth(YES)
-            .applicationFeeOrderSummary(orderSummary)
+            .application(application)
             .payments(singletonList(payment))
             .build();
     }
@@ -225,13 +238,15 @@ public class TestDataHelper {
         jurisdiction.setApplicant2Residence(YES);
 
         final CaseData caseData = caseDataWithStatementOfTruth();
-        caseData.setDocumentUploadComplete(YES);
         caseData.getApplicant1().setFinancialOrder(NO);
-        caseData.setMarriageDetails(marriageDetails);
         caseData.setApplicant2(getApplicant());
-        caseData.setPrayerHasBeenGiven(YES);
-        caseData.setStatementOfTruth(YES);
-        caseData.setJurisdiction(jurisdiction);
+
+        final Application application = caseData.getApplication();
+        application.setDocumentUploadComplete(YES);
+        application.setMarriageDetails(marriageDetails);
+        application.setPrayerHasBeenGiven(YES);
+        application.setStatementOfTruth(YES);
+        application.setJurisdiction(jurisdiction);
 
         return caseData;
     }

@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.divorce.common.model.Application;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
@@ -54,9 +55,8 @@ class CaseworkerUploadDocumentsAndSubmitTest {
 
     @Test
     void shouldBlankDocumentUploadComplete() {
-        final var caseData = CaseData.builder()
-            .documentUploadComplete(NO)
-            .build();
+        final var caseData = CaseData.builder().build();
+        caseData.getApplication().setDocumentUploadComplete(NO);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -64,17 +64,16 @@ class CaseworkerUploadDocumentsAndSubmitTest {
         final var response =
             caseworkerUploadDocumentsAndSubmit.aboutToStart(caseDetails);
 
-        assertThat(response.getData().getDocumentUploadComplete(), is(nullValue()));
+        assertThat(response.getData().getApplication().getDocumentUploadComplete(), is(nullValue()));
     }
 
     @Test
     void shouldRemainInAwaitingDocumentsStateIfDocumentUploadNotComplete() {
 
-        final var caseData = CaseData.builder()
-            .documentUploadComplete(NO)
-            .applicant1WantsToHavePapersServedAnotherWay(YES)
-            .cannotUploadSupportingDocument(Set.of(DocumentType.CORRESPONDENCE))
-            .build();
+        final var caseData = CaseData.builder().build();
+        caseData.getApplication().setDocumentUploadComplete(NO);
+        caseData.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
+        caseData.getApplication().setCannotUploadSupportingDocument(Set.of(DocumentType.CORRESPONDENCE));
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -84,8 +83,8 @@ class CaseworkerUploadDocumentsAndSubmitTest {
             caseworkerUploadDocumentsAndSubmit.aboutToSubmit(caseDetails, null);
 
         assertThat(response.getState(), is(AwaitingDocuments));
-        assertThat(response.getData().getApplicant1WantsToHavePapersServedAnotherWay(), is(nullValue()));
-        assertThat(response.getData().getCannotUploadSupportingDocument(), is(nullValue()));
+        assertThat(response.getData().getApplication().getApplicant1WantsToHavePapersServedAnotherWay(), is(nullValue()));
+        assertThat(response.getData().getApplication().getCannotUploadSupportingDocument(), is(nullValue()));
     }
 
     @Test
@@ -102,13 +101,17 @@ class CaseworkerUploadDocumentsAndSubmitTest {
             .paymentStatus(PaymentStatus.SUCCESS)
             .build());
 
-        final var caseData = CaseData.builder()
-            .payments(singletonList(payment))
+        final var application = Application.builder()
             .applicationFeeOrderSummary(orderSummary)
             .solSignStatementOfTruth(YES)
             .documentUploadComplete(YES)
             .applicant1WantsToHavePapersServedAnotherWay(YES)
             .cannotUploadSupportingDocument(Set.of(DocumentType.CORRESPONDENCE))
+            .build();
+
+        final var caseData = CaseData.builder()
+            .payments(singletonList(payment))
+            .application(application)
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -122,6 +125,6 @@ class CaseworkerUploadDocumentsAndSubmitTest {
             caseworkerUploadDocumentsAndSubmit.aboutToSubmit(caseDetails, null);
 
         assertThat(response.getState(), is(Submitted));
-        assertThat(response.getData().getDateSubmitted(), is(expectedDateTime));
+        assertThat(response.getData().getApplication().getDateSubmitted(), is(expectedDateTime));
     }
 }

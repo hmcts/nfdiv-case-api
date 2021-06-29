@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.model.Application;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.MarriageDetails;
 import uk.gov.hmcts.divorce.common.model.State;
@@ -40,10 +41,14 @@ public class VerifyMarriageCertificate implements CCDConfig<CaseData, State, Use
             .page("marriageCertificateDetailsVerification")
             .pageLabel("Marriage Certificate Details")
             .label("LabelNFDBanner-VerifyMarriageCert", SOLICITOR_NFD_PREVIEW_BANNER)
-            .complex(CaseData::getMarriageDetails)
-                .mandatory(MarriageDetails::getCertifyMarriageCertificateIsCorrect)
-                .mandatory(MarriageDetails::getMarriageCertificateIsIncorrectDetails,"marriageCertifyMarriageCertificateIsCorrect=\"No\"")
-                .mandatory(MarriageDetails::getIssueApplicationWithoutMarriageCertificate)
+            .complex(CaseData::getApplication)
+                .complex(Application::getMarriageDetails)
+                    .mandatory(MarriageDetails::getCertifyMarriageCertificateIsCorrect)
+                    .mandatory(
+                        MarriageDetails::getMarriageCertificateIsIncorrectDetails,
+                        "marriageCertifyMarriageCertificateIsCorrect=\"No\"")
+                    .mandatory(MarriageDetails::getIssueApplicationWithoutMarriageCertificate)
+                    .done()
                 .done();
     }
 }

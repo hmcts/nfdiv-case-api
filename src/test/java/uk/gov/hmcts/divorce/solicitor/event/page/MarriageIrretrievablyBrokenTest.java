@@ -22,7 +22,7 @@ class MarriageIrretrievablyBrokenTest {
     @Test
     public void shouldPreventProgressIfMarriageNotBroken() {
         final CaseData caseData = caseData();
-        caseData.setApplicant1ScreenHasMarriageBroken(NO);
+        caseData.getApplication().setApplicant1ScreenHasMarriageBroken(NO);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -41,8 +41,8 @@ class MarriageIrretrievablyBrokenTest {
     @Test
     public void shouldPreventProgressIfMarriageNotBrokenForBothApplicants() {
         final CaseData caseData = caseData();
-        caseData.setApplicant1ScreenHasMarriageBroken(NO);
-        caseData.setApplicant2ScreenHasMarriageBroken(NO);
+        caseData.getApplication().setApplicant1ScreenHasMarriageBroken(NO);
+        caseData.getApplication().setApplicant2ScreenHasMarriageBroken(NO);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -65,7 +65,7 @@ class MarriageIrretrievablyBrokenTest {
     @Test
     public void shouldAllowProgressIfMarriageIsBroken() {
         final CaseData caseData = caseData();
-        caseData.setApplicant1ScreenHasMarriageBroken(YES);
+        caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -80,8 +80,8 @@ class MarriageIrretrievablyBrokenTest {
     @Test
     public void shouldAllowProgressIfMarriageIsBrokenForBothApplicants() {
         final CaseData caseData = caseData();
-        caseData.setApplicant1ScreenHasMarriageBroken(YES);
-        caseData.setApplicant2ScreenHasMarriageBroken(YES);
+        caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
+        caseData.getApplication().setApplicant2ScreenHasMarriageBroken(YES);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
