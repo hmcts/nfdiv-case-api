@@ -108,7 +108,9 @@ public class SolicitorSubmitDraftAosTest {
 
     @ParameterizedTest
     @ValueSource(strings = {SOLICITOR_DRAFT_AOS, SOLICITOR_UPDATE_AOS})
-    void givenCaseDataWithoutD8AppWhenAboutToSubmitCallbackIsInvokedMiniapplicationlinkIsNotPresent(String eventId) throws Exception {
+    void givenCaseDataWithoutDivorceAppWhenAboutToSubmitCallbackIsInvokedMiniapplicationlinkIsNotPresent(
+        String eventId
+    ) throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         mockMvc.perform(post(ABOUT_TO_START_URL)
