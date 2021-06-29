@@ -113,7 +113,10 @@ public class MiniApplicationTemplateContent {
 
             templateData.put(HAS_FINANCIAL_ORDERS, caseData.getApplicant1().getFinancialOrder().toBoolean());
             templateData.put(HAS_FINANCIAL_ORDER_APPLICANT_1, caseData.getApplicant1().getFinancialOrder().toBoolean());
-            templateData.put(HAS_FINANCIAL_ORDER_APPLICANT_2, caseData.getApplicant2().getFinancialOrder().toBoolean());
+
+            if (null != caseData.getApplicant2().getFinancialOrder()) {
+                templateData.put(HAS_FINANCIAL_ORDER_APPLICANT_2, caseData.getApplicant2().getFinancialOrder().toBoolean());
+            }
 
             templateData.put(CCD_CASE_REFERENCE, ccdCaseReference);
             templateData.put(ISSUE_DATE, createdDate.format(TEMPLATE_DATE_FORMAT));
