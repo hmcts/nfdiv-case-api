@@ -9,6 +9,7 @@ import java.util.Map;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
+import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.CASEWORKER_ISSUE_APPLICATION;
@@ -31,6 +32,7 @@ public class CaseworkerIssueApplicationTest extends FunctionalTestSuite {
         // document_url and document_binary_url are ignored using ${json-unit.ignore}
         // assertion will fail if the above elements are missing actual value
         assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedResponse(
                 "classpath:responses/response-caseworker-issue-application-about-to-submit.json"
             )));

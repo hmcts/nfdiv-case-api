@@ -9,6 +9,7 @@ import java.util.Map;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
+import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAddNote.CASEWORKER_ADD_NOTE;
@@ -32,6 +33,7 @@ public class CaseworkerAddNoteTest extends FunctionalTestSuite {
         // notes.date value is compared using ${json-unit.any-string}
         // assertion will fail if the above value is missing
         assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedResponse(
                 "classpath:responses/response-caseworker-add-notes-about-to-submit.json"
             )));

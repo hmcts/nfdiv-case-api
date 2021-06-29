@@ -14,6 +14,7 @@ import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.common.CaseInfo;
 import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.common.model.HelpWithFees;
 import uk.gov.hmcts.divorce.common.model.Solicitor;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
@@ -450,7 +451,12 @@ public class SolicitorSubmitApplicationTest {
 
         final CaseData caseData = CaseData.builder()
             .applicationFeeOrderSummary(orderSummary)
-            .helpWithFeesAppliedForFees(YES)
+            .helpWithFees(
+                HelpWithFees.builder()
+                    .appliedForFees(YES)
+                    .build()
+            )
+
             .build();
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);

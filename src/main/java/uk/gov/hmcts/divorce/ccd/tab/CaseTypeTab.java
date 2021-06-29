@@ -79,11 +79,11 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field(CaseData::getLegalProceedingsRelated, "legalProceedings=\"Yes\"")
             .field(CaseData::getLegalProceedingsDetails, "legalProceedings=\"Yes\"")
             .field("LabelFinancialOrder-Heading", null, "### Financial order")
-            .field(CaseData::getApplicant1FinancialOrder)
-            .field(CaseData::getApplicant1FinancialOrderFor, "applicant1FinancialOrder=\"Yes\"");
+            .field("applicant1FinancialOrder")
+            .field("applicant1FinancialOrderFor", "applicant1FinancialOrder=\"Yes\"");
 
         configBuilder.tab("paymentDetailsCourtAdmin", "Payment")
-            .field(CaseData::getHelpWithFeesReferenceNumber);
+            .field("helpWithFeesReferenceNumber");
 
         configBuilder.tab("languageDetails", "Language")
             .field("applicant1LanguagePreferenceWelsh", null, "The applicant's language preference")

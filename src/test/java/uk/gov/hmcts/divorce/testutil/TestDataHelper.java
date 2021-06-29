@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.common.model.Gender;
+import uk.gov.hmcts.divorce.common.model.HelpWithFees;
 import uk.gov.hmcts.divorce.common.model.Jurisdiction;
 import uk.gov.hmcts.divorce.common.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.common.model.MarriageDetails;
@@ -157,6 +158,7 @@ public class TestDataHelper {
 
         var applicant1 = getApplicant();
         applicant1.setContactDetailsConfidential(ConfidentialAddress.KEEP);
+        applicant1.setFinancialOrder(NO);
 
         return CaseData
             .builder()
@@ -164,8 +166,11 @@ public class TestDataHelper {
             .applicant2(getJointApplicant2(MALE))
             .applicant2EmailAddress(TEST_USER_EMAIL)
             .divorceOrDissolution(DIVORCE)
-            .applicant1FinancialOrder(NO)
-            .helpWithFeesNeedHelp(NO)
+            .helpWithFees(
+                HelpWithFees.builder()
+                    .needHelp(NO)
+                    .build()
+            )
             .marriageDetails(marriageDetails)
             .jurisdiction(jurisdiction)
             .build();
@@ -221,7 +226,7 @@ public class TestDataHelper {
 
         final CaseData caseData = caseDataWithStatementOfTruth();
         caseData.setDocumentUploadComplete(YES);
-        caseData.setApplicant1FinancialOrder(NO);
+        caseData.getApplicant1().setFinancialOrder(NO);
         caseData.setMarriageDetails(marriageDetails);
         caseData.setApplicant2(getApplicant());
         caseData.setPrayerHasBeenGiven(YES);
