@@ -88,30 +88,15 @@ public class CaseData {
     @CCD(access = {DefaultAccess.class})
     private Applicant applicant2 = new Applicant();
 
-    @CCD(
-        label = "Help with fees reference",
-        regex = "([Hh][Ww][Ff]-?)?[0-9a-zA-Z]{3}-?[0-9a-zA-Z]{3}$",
-        access = {DefaultAccess.class}
-    )
-    private String helpWithFeesReferenceNumber;
-
-    @CCD(
-        label = "Need help with fees?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo helpWithFeesNeedHelp;
+    @JsonUnwrapped(prefix = "helpWithFees")
+    @CCD(access = {DefaultAccess.class})
+    private HelpWithFees helpWithFees;
 
     @CCD(
         label = "The applicant has marriage cert?",
         access = {DefaultAccess.class}
     )
     private YesOrNo screenHasMarriageCert;
-
-    @CCD(
-        label = "Applied for help with fees?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo helpWithFeesAppliedForFees;
 
     @CCD(
         access = {DefaultAccess.class}
