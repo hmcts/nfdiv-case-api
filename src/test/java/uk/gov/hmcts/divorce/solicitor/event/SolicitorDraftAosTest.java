@@ -12,8 +12,7 @@ import uk.gov.hmcts.divorce.common.model.UserRole;
 import java.util.EnumSet;
 import java.util.Set;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorSubmitDraftAos.SOLICITOR_DRAFT_AOS;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,7 +27,7 @@ class SolicitorDraftAosTest {
 
         solicitorSubmitDraftAos.configure(configBuilder);
 
-        assertThat(configBuilder.getEvents().get(0).getId(), is(SOLICITOR_DRAFT_AOS));
+        assertThat(configBuilder.getEvents().get(0).getId()).isEqualTo(SOLICITOR_DRAFT_AOS);
     }
 
 }
