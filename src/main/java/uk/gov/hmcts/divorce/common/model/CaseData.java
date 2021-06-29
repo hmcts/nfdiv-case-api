@@ -237,12 +237,11 @@ public class CaseData {
     )
     private OrderSummary applicationFeeOrderSummary;
 
-    // TODO: rename this as applicant2InviteEmailAddress?
     @CCD(
         label = "The respondent's email address",
         access = {DefaultAccess.class}
     )
-    private String applicant2EmailAddress;
+    private String applicant2InviteEmailAddress;
 
     @CCD(
         label = "The respondent's phone number",
@@ -383,7 +382,7 @@ public class CaseData {
         label = "The respondent's user id",
         access = {DefaultAccess.class}
     )
-    private String respondentUserId;
+    private String applicant2UserId;
 
     @CCD(
         label = "Link to online petition",

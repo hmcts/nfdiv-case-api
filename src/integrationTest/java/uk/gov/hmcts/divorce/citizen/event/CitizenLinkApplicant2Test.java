@@ -95,7 +95,7 @@ public class CitizenLinkApplicant2Test {
         CaseData data = caseData();
         data.setAccessCode("D8BC9AQR");
         data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
-        data.setRespondentUserId("3");
+        data.setApplicant2UserId("3");
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, APP_2_CITIZEN_USER_ID, CITIZEN_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -112,7 +112,7 @@ public class CitizenLinkApplicant2Test {
                 .builder()
                 .data(
                     Map.of(
-                    "respondentUserId", "3",
+                    "applicant2UserId", "3",
                     "accessCode", "D8BC9AQR"
                     )
                 )
@@ -139,7 +139,7 @@ public class CitizenLinkApplicant2Test {
     }
 
     @Test
-    public void givenNoRespondentUserIdPassedWhenCallbackIsInvokedThen404ErrorIsReturned() throws Exception {
+    public void givenNoApplicant2UserIdPassedWhenCallbackIsInvokedThen404ErrorIsReturned() throws Exception {
         CaseData data = caseData();
         data.setAccessCode("D8BC9AQR");
         data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));

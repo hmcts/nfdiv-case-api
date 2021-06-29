@@ -164,7 +164,7 @@ public class TestDataHelper {
             .builder()
             .applicant1(applicant1)
             .applicant2(getJointApplicant2(MALE))
-            .applicant2EmailAddress(TEST_USER_EMAIL)
+            .applicant2InviteEmailAddress(TEST_USER_EMAIL)
             .divorceOrDissolution(DIVORCE)
             .helpWithFees(
                 HelpWithFees.builder()

@@ -60,7 +60,7 @@ public class ApplicationSentForReviewApplicant2Notification {
         log.info("Sending application sent for review notification to applicant 2 for case : {}", id);
 
         notificationService.sendEmail(
-            caseData.getApplicant2EmailAddress(),
+            caseData.getApplicant2InviteEmailAddress(),
             JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW,
             templateVars,
             caseData.getApplicant1().getLanguagePreference()
