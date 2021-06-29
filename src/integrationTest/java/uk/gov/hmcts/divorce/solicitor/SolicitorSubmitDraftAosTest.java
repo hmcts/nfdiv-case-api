@@ -161,12 +161,14 @@ public class SolicitorSubmitDraftAosTest {
             .value(divorceDocument)
             .build();
 
+        var applicant1 = getApplicant();
+        applicant1.setFinancialOrder(NO);
+
         return CaseData
             .builder()
-            .applicant1(getApplicant())
+            .applicant1(applicant1)
             .divorceOrDissolution(DIVORCE)
             .divorceCostsClaim(YES)
-            .applicant1FinancialOrder(NO)
             .divorceClaimFrom(Set.of(ClaimsCostFrom.APPLICANT_2))
             .divorceUnit(Court.SERVICE_CENTRE)
             .selectedDivorceCentreSiteId("AA07")
@@ -175,12 +177,14 @@ public class SolicitorSubmitDraftAosTest {
     }
 
     private CaseData caseDataWithoutDivorceApplication() {
+        var applicant1 = getApplicant();
+        applicant1.setFinancialOrder(NO);
+
         return CaseData
             .builder()
             .applicant1(getApplicant())
             .divorceOrDissolution(DIVORCE)
             .divorceCostsClaim(YES)
-            .applicant1FinancialOrder(NO)
             .divorceClaimFrom(Set.of(ClaimsCostFrom.APPLICANT_2))
             .divorceUnit(Court.SERVICE_CENTRE)
             .selectedDivorceCentreSiteId("AA07")

@@ -143,7 +143,7 @@ class CaseworkerIssueApplicationTest {
             .build()
         );
 
-        caseData.setApplicant1FinancialOrder(NO);
+        caseData.getApplicant1().setFinancialOrder(NO);
         caseData.setPrayerHasBeenGiven(YES);
         caseData.setStatementOfTruth(YES);
 

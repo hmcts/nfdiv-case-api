@@ -28,6 +28,7 @@ import java.nio.file.Files;
 import static java.util.Objects.requireNonNull;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
+import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -92,6 +93,7 @@ public class CitizenSubmitApplicationTest {
         // marriageDate and payments.id are ignored using ${json-unit.ignore}
         // assertion will fail if the above elements are missing actual value
         assertThatJson(actualResponse)
+            .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedCcdAboutToStartCallbackSuccessfulResponse()));
     }
 
@@ -115,6 +117,7 @@ public class CitizenSubmitApplicationTest {
         // marriageDate and payments.id are ignored using ${json-unit.ignore}
         // assertion will fail if the above elements are missing actual value
         assertThatJson(actualResponse)
+            .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedCcdAboutToStartCallbackWithHwfSuccessfulResponse()));
     }
 

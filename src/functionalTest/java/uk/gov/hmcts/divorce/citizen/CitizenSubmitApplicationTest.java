@@ -13,6 +13,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 import static java.time.temporal.ChronoUnit.YEARS;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
+import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitApplication.CITIZEN_SUBMIT;
@@ -40,6 +41,7 @@ public class CitizenSubmitApplicationTest extends FunctionalTestSuite {
         // marriageDate and payments.id are ignored using ${json-unit.ignore}
         // assertion will fail if the above elements are missing actual value
         assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedResponse(RESPONSE)));
     }
 
@@ -56,7 +58,8 @@ public class CitizenSubmitApplicationTest extends FunctionalTestSuite {
         // marriageDate and payments.id are ignored using ${json-unit.ignore}
         // assertion will fail if the above elements are missing actual value
         assertThatJson(response.asString())
-            .isEqualTo(json(expectedResponse(RESPONSE_HWF)));
+            .when(IGNORING_EXTRA_FIELDS)
+            .isEqualTo(expectedResponse(RESPONSE_HWF));
     }
 
 }
