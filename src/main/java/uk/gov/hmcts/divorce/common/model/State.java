@@ -8,7 +8,6 @@ import uk.gov.hmcts.divorce.common.model.access.CaseAccessAdministrator;
 import java.util.ArrayList;
 import java.util.List;
 
-import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.hasAwaitingDocuments;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.isPaymentIncomplete;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.validateApplicant1BasicCase;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.validateBasicCase;
@@ -73,7 +72,7 @@ public enum State {
             if (isPaymentIncomplete(caseData)) {
                 errors.add("Payment incomplete");
             }
-            if (!hasAwaitingDocuments(caseData)) {
+            if (!caseData.getApplication().hasAwaitingDocuments()) {
                 errors.add("No Awaiting documents");
             }
 
@@ -101,10 +100,10 @@ public enum State {
             if (isPaymentIncomplete(caseData)) {
                 errors.add("Payment incomplete");
             }
-            if (hasAwaitingDocuments(caseData)) {
+            if (caseData.getApplication().hasAwaitingDocuments()) {
                 errors.add("Awaiting documents");
             }
-            if (!caseData.hasStatementOfTruth() && !caseData.hasSolSignStatementOfTruth()) {
+            if (!caseData.getApplication().hasStatementOfTruth() && !caseData.getApplication().hasSolSignStatementOfTruth()) {
                 errors.add("Statement of truth must be accepted by the person making the application");
             }
 
@@ -122,7 +121,7 @@ public enum State {
         public List<String> validate(CaseData caseData) {
             List<String> errors = new ArrayList<>();
             validateBasicCase(caseData, errors);
-            validateCaseFieldsForIssueApplication(caseData, errors);
+            validateCaseFieldsForIssueApplication(caseData.getApplication().getMarriageDetails(), errors);
             return errors;
         }
     },

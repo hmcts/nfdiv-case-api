@@ -78,7 +78,7 @@ class CitizenSubmitApplicationTest {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = CaseData.builder().build();
-        setValidCaseData(caseData).setPrayerHasBeenGiven(YesOrNo.NO);
+        setValidCaseData(caseData).getApplication().setPrayerHasBeenGiven(YesOrNo.NO);
 
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
@@ -109,7 +109,7 @@ class CitizenSubmitApplicationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getState()).isEqualTo(State.AwaitingPayment);
-        assertThat(response.getData().getApplicationFeeOrderSummary()).isEqualTo(orderSummary);
+        assertThat(response.getData().getApplication().getApplicationFeeOrderSummary()).isEqualTo(orderSummary);
         assertThat(response.getData().getPayments())
             .usingElementComparatorIgnoringFields("id") // id is random uuid
             .containsExactlyInAnyOrder(pendingPayment());
@@ -122,7 +122,7 @@ class CitizenSubmitApplicationTest {
         final long caseId = 2L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = CaseData.builder().build();
-        setValidCaseData(caseData).getHelpWithFees().setNeedHelp(YesOrNo.YES);
+        setValidCaseData(caseData).getApplication().getHelpWithFees().setNeedHelp(YesOrNo.YES);
 
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
@@ -145,20 +145,20 @@ class CitizenSubmitApplicationTest {
         caseData.getApplicant1().setContactDetailsConfidential(ConfidentialAddress.KEEP);
         caseData.getApplicant1().setFinancialOrder(YesOrNo.NO);
         caseData.setApplicant2(getApplicant(MALE));
-        caseData.setHelpWithFees(
+        caseData.getApplication().setHelpWithFees(
             HelpWithFees.builder()
                 .needHelp(NO)
                 .build()
         );
 
-        caseData.setPrayerHasBeenGiven(YesOrNo.YES);
-        caseData.getMarriageDetails().setApplicant1Name("Full name");
-        caseData.setStatementOfTruth(YesOrNo.YES);
-        caseData.getMarriageDetails().setDate(LocalDate.now().minus(2, ChronoUnit.YEARS));
+        caseData.getApplication().setPrayerHasBeenGiven(YesOrNo.YES);
+        caseData.getApplication().getMarriageDetails().setApplicant1Name("Full name");
+        caseData.getApplication().setStatementOfTruth(YesOrNo.YES);
+        caseData.getApplication().getMarriageDetails().setDate(LocalDate.now().minus(2, ChronoUnit.YEARS));
         Jurisdiction jurisdiction = new Jurisdiction();
         jurisdiction.setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_LAST_RESIDENT));
         jurisdiction.setBothLastHabituallyResident(YesOrNo.YES);
-        caseData.setJurisdiction(jurisdiction);
+        caseData.getApplication().setJurisdiction(jurisdiction);
         return caseData;
     }
 

@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.model.Applicant;
+import uk.gov.hmcts.divorce.common.model.Application;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.MarriageDetails;
 
@@ -54,19 +55,23 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
                     null,
                     "If not through marriage or deed poll, please provide details of how they legally changed they name")
                 .done()
-            .mandatory(CaseData::getDivorceWho,
-                null,
-                null,
-                null,
-                "Their husband or wife")
+            .complex(CaseData::getApplication)
+                .mandatory(Application::getDivorceWho,
+                    null,
+                    null,
+                    null,
+                    "Their husband or wife")
+                .done()
             .complex(CaseData::getApplicant1)
                 .mandatory(Applicant::getGender,
                     null,
                     null,
                     "What is the applicant's gender?")
                 .done()
-            .complex(CaseData::getMarriageDetails)
-                .mandatory(MarriageDetails::getIsSameSexCouple)
+            .complex(CaseData::getApplication)
+                .complex(Application::getMarriageDetails)
+                    .mandatory(MarriageDetails::getIsSameSexCouple)
+                    .done()
                 .done()
             .complex(CaseData::getApplicant1)
                 .mandatory(Applicant::getEmail,

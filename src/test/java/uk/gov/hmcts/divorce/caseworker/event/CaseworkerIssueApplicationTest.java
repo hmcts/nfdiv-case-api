@@ -144,15 +144,13 @@ class CaseworkerIssueApplicationTest {
         );
 
         caseData.getApplicant1().setFinancialOrder(NO);
-        caseData.setPrayerHasBeenGiven(YES);
-        caseData.setStatementOfTruth(YES);
-
-        caseData.getJurisdiction().setLegalConnections(Set.of(LegalConnections.APPLICANT_RESPONDENT_RESIDENT));
-
-        caseData.getMarriageDetails().setApplicant1Name("app1Name");
-        caseData.getMarriageDetails().setDate(LocalDate.of(2009, 1, 1));
-        caseData.getMarriageDetails().setApplicant2Name("app2Name");
-        caseData.getMarriageDetails().setPlaceOfMarriage("London");
+        caseData.getApplication().setPrayerHasBeenGiven(YES);
+        caseData.getApplication().setStatementOfTruth(YES);
+        caseData.getApplication().getJurisdiction().setLegalConnections(Set.of(LegalConnections.APPLICANT_RESPONDENT_RESIDENT));
+        caseData.getApplication().getMarriageDetails().setApplicant1Name("app1Name");
+        caseData.getApplication().getMarriageDetails().setDate(LocalDate.of(2009, 1, 1));
+        caseData.getApplication().getMarriageDetails().setApplicant2Name("app2Name");
+        caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("London");
         return caseData;
     }
 }

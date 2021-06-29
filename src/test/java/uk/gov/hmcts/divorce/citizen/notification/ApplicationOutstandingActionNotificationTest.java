@@ -54,13 +54,13 @@ class ApplicationOutstandingActionNotificationTest {
     void shouldCallSendEmailForSupportingDocuments() {
         CaseData data = caseData();
         data.setApplicant2(getApplicant2(Gender.MALE));
-        data.getMarriageDetails().setMarriedInUk(YesOrNo.NO);
+        data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.NO);
 
         Set<DocumentType> docs = new HashSet<>();
         docs.add(DocumentType.MARRIAGE_CERTIFICATE);
         docs.add(DocumentType.MARRIAGE_CERTIFICATE_TRANSLATION);
         docs.add(DocumentType.NAME_CHANGE_EVIDENCE);
-        data.setCannotUploadSupportingDocument(docs);
+        data.getApplication().setCannotUploadSupportingDocument(docs);
 
         final HashMap<String, String> templateVars = new HashMap<>();
         when(commonContent.templateVarsFor(data)).thenReturn(templateVars);
@@ -86,13 +86,13 @@ class ApplicationOutstandingActionNotificationTest {
     void shouldCallSendEmailForPapersServedAnotherWay() {
         CaseData data = caseData();
         data.setApplicant2(getApplicant2(Gender.MALE));
-        data.getMarriageDetails().setMarriedInUk(YesOrNo.YES);
-        data.setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
+        data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.YES);
+        data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
 
         Set<DocumentType> docs = new HashSet<>();
         docs.add(DocumentType.MARRIAGE_CERTIFICATE);
         docs.add(DocumentType.NAME_CHANGE_EVIDENCE);
-        data.setCannotUploadSupportingDocument(docs);
+        data.getApplication().setCannotUploadSupportingDocument(docs);
 
         final HashMap<String, String> templateVars = new HashMap<>();
         when(commonContent.templateVarsFor(data)).thenReturn(templateVars);
@@ -126,13 +126,13 @@ class ApplicationOutstandingActionNotificationTest {
     void shouldCallSendEmailForCivil() {
         CaseData data = caseData();
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
-        data.getMarriageDetails().setMarriedInUk(YesOrNo.YES);
-        data.setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
+        data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.YES);
+        data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
 
         Set<DocumentType> docs = new HashSet<>();
         docs.add(DocumentType.MARRIAGE_CERTIFICATE);
         docs.add(DocumentType.NAME_CHANGE_EVIDENCE);
-        data.setCannotUploadSupportingDocument(docs);
+        data.getApplication().setCannotUploadSupportingDocument(docs);
 
         final HashMap<String, String> templateVars = new HashMap<>();
         when(commonContent.templateVarsFor(data)).thenReturn(templateVars);

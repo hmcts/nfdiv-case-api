@@ -15,7 +15,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
         configBuilder.tab("applicationDetails", "Application")
             .field("LabelCreatedDate", null, "${[CREATED_DATE]}")
-            .field(CaseData::getDateSubmitted)
+            .field("dateSubmitted")
             .field(CaseData::getApplicationType)
             .field(CaseData::getDivorceOrDissolution)
             .field("LabelApplicant1-Heading", null, "### The applicant")
@@ -32,7 +32,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1ContactDetailsConfidential")
             .field("applicant1HomeAddress", "applicant1ContactDetailsConfidential=\"share\"")
             .field("applicant1PhoneNumber", "applicant1ContactDetailsConfidential=\"share\"")
-            .field(CaseData::getDivorceWho)
+            .field("divorceWho")
             .field("applicant1SolicitorRepresented")
             .field("LabelApplicant1sSolicitor-Heading",
                 "applicant1SolicitorRepresented=\"Yes\"",
@@ -72,12 +72,12 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("marriageApplicant1Name")
             .field("marriageApplicant2Name")
             .field("LabelClaimCosts-Heading", null, "### Claim costs")
-            .field(CaseData::getDivorceCostsClaim)
-            .field(CaseData::getDivorceClaimFrom, "divorceCostsClaim=\"Yes\"")
+            .field("dvorceCostsClaim")
+            .field("divorceClaimFrom", "divorceCostsClaim=\"Yes\"")
             .field("LabelOtherLegalProceedings-Heading", null, "### Other legal proceedings")
-            .field(CaseData::getLegalProceedings)
-            .field(CaseData::getLegalProceedingsRelated, "legalProceedings=\"Yes\"")
-            .field(CaseData::getLegalProceedingsDetails, "legalProceedings=\"Yes\"")
+            .field("legalProceedings")
+            .field("legalProceedingsRelated", "legalProceedings=\"Yes\"")
+            .field("legalProceedingsDetails", "legalProceedings=\"Yes\"")
             .field("LabelFinancialOrder-Heading", null, "### Financial order")
             .field("applicant1FinancialOrder")
             .field("applicant1FinancialOrderFor", "applicant1FinancialOrder=\"Yes\"");

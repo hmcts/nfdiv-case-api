@@ -62,10 +62,10 @@ public class SolicitorSubmitApplicationServiceTest {
         List<ListValue<DivorceDocument>> generatedDocuments = singletonList(documentWithType(DIVORCE_APPLICATION));
         final CaseData caseData = CaseData.builder().build();
         caseData.setDocumentsGenerated(generatedDocuments);
-        caseData.setStatementOfTruth(null);
-        caseData.setSolSignStatementOfTruth(YesOrNo.YES);
+        caseData.getApplication().setStatementOfTruth(null);
+        caseData.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
         final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        caseData.setApplicationFeeOrderSummary(orderSummary);
+        caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
         final var caseDataUpdaterChain = mock(CaseDataUpdaterChain.class);
 
@@ -99,12 +99,12 @@ public class SolicitorSubmitApplicationServiceTest {
         List<ListValue<DivorceDocument>> generatedDocuments = singletonList(documentWithType(DIVORCE_APPLICATION));
         final CaseData caseData = CaseData.builder().build();
         caseData.setDocumentsGenerated(generatedDocuments);
-        caseData.setStatementOfTruth(null);
-        caseData.setSolSignStatementOfTruth(YesOrNo.YES);
-        caseData.setSolPaymentHowToPay(SolToPay.FEES_HELP_WITH);
+        caseData.getApplication().setStatementOfTruth(null);
+        caseData.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
+        caseData.getApplication().setSolPaymentHowToPay(SolToPay.FEES_HELP_WITH);
 
         final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        caseData.setApplicationFeeOrderSummary(orderSummary);
+        caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
         final var caseDataUpdaterChain = mock(CaseDataUpdaterChain.class);
 
@@ -138,10 +138,10 @@ public class SolicitorSubmitApplicationServiceTest {
         List<ListValue<DivorceDocument>> generatedDocuments = singletonList(documentWithType(DIVORCE_APPLICATION));
         final CaseData caseData = CaseData.builder().build();
         caseData.setDocumentsGenerated(generatedDocuments);
-        caseData.setStatementOfTruth(null);
-        caseData.setSolSignStatementOfTruth(YesOrNo.YES);
+        caseData.getApplication().setStatementOfTruth(null);
+        caseData.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
         final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        caseData.setApplicationFeeOrderSummary(orderSummary);
+        caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
         ListValue<Payment> payment = new ListValue<>(null, Payment
             .builder()
@@ -181,6 +181,6 @@ public class SolicitorSubmitApplicationServiceTest {
         );
 
         assertThat(response.getState()).isEqualTo(Submitted);
-        assertThat(response.getCaseData().getDateSubmitted()).isEqualTo(LocalDateTime.now(clock));
+        assertThat(response.getCaseData().getApplication().getDateSubmitted()).isEqualTo(LocalDateTime.now(clock));
     }
 }

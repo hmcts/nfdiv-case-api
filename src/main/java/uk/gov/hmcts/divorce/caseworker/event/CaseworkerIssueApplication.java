@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.IssueApplicationService;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.model.Application;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.MarriageDetails;
 import uk.gov.hmcts.divorce.common.model.State;
@@ -66,11 +67,13 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
             .page("issueApplication")
             .pageLabel("Issue Divorce Application")
             .label("LabelNFDBanner-IssueApplication", SOLICITOR_NFD_PREVIEW_BANNER)
-            .complex(CaseData::getMarriageDetails)
-                .optional(MarriageDetails::getDate)
-                .optional(MarriageDetails::getApplicant1Name)
-                .optional(MarriageDetails::getApplicant2Name)
-                .mandatory(MarriageDetails::getPlaceOfMarriage)
+            .complex(CaseData::getApplication)
+                .complex(Application::getMarriageDetails)
+                    .optional(MarriageDetails::getDate)
+                    .optional(MarriageDetails::getApplicant1Name)
+                    .optional(MarriageDetails::getApplicant2Name)
+                    .mandatory(MarriageDetails::getPlaceOfMarriage)
+                    .done()
                 .done();
     }
 
