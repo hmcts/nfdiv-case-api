@@ -13,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.ConfidentialAddress;
+import uk.gov.hmcts.divorce.common.model.HelpWithFees;
 import uk.gov.hmcts.divorce.common.model.Jurisdiction;
 import uk.gov.hmcts.divorce.common.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.common.model.State;
@@ -29,6 +30,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitApplication.CITIZEN_SUBMIT;
 import static uk.gov.hmcts.divorce.common.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.IN_PROGRESS;
@@ -120,7 +122,7 @@ class CitizenSubmitApplicationTest {
         final long caseId = 2L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = CaseData.builder().build();
-        setValidCaseData(caseData).setHelpWithFeesNeedHelp(YesOrNo.YES);
+        setValidCaseData(caseData).getHelpWithFees().setNeedHelp(YesOrNo.YES);
 
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
@@ -143,7 +145,12 @@ class CitizenSubmitApplicationTest {
         caseData.getApplicant1().setContactDetailsConfidential(ConfidentialAddress.KEEP);
         caseData.getApplicant1().setFinancialOrder(YesOrNo.NO);
         caseData.setApplicant2(getApplicant(MALE));
-        caseData.setHelpWithFeesNeedHelp(YesOrNo.NO);
+        caseData.setHelpWithFees(
+            HelpWithFees.builder()
+                .needHelp(NO)
+                .build()
+        );
+
         caseData.setPrayerHasBeenGiven(YesOrNo.YES);
         caseData.getMarriageDetails().setApplicant1Name("Full name");
         caseData.setStatementOfTruth(YesOrNo.YES);

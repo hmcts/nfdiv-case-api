@@ -60,6 +60,8 @@
     "applicant2SolicitorName": null,
     "applicant2SolicitorPhone": null,
     "applicant2SolicitorReference": null,
+    "helpWithFeesAppliedForFees": null,
+    "helpWithFeesReferenceNumber": null,
     "jurisdictionApplicant1Residence": "Yes",
     "jurisdictionApplicant2Residence": "Yes",
     "jurisdictionApplicant1Domicile": null,

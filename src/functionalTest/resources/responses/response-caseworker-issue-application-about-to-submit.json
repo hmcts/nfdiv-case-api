@@ -60,6 +60,9 @@
     "applicant2SolicitorPhone": null,
     "applicant2SolicitorReference": null,
     "applicant2SolicitorRepresented": "Yes",
+    "helpWithFeesAppliedForFees": null,
+    "helpWithFeesReferenceNumber": null,
+    "helpWithFeesNeedHelp": null,
     "accessCode": "${json-unit.any-string}",
     "applicationFeeOrderSummary": {
       "Fees": null,
