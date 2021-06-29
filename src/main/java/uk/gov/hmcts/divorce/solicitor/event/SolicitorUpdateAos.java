@@ -77,7 +77,7 @@ public class SolicitorUpdateAos implements CCDConfig<CaseData, State, UserRole> 
                 DIVORCE_APPLICATION.equals(divorceDocument.getDocumentType()))
             .map(DivorceDocument::getDocumentLink)
             .findFirst()
-            .ifPresent(caseData::setMiniApplicationLink);
+            .ifPresent(file -> caseData.getApplication().setMiniApplicationLink(file));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

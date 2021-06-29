@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.model.Applicant;
+import uk.gov.hmcts.divorce.common.model.Application;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 
 public class Applicant2SolUpdateAosApplicant1Application implements CcdPageConfiguration {
@@ -12,7 +13,9 @@ public class Applicant2SolUpdateAosApplicant1Application implements CcdPageConfi
         pageBuilder
             .page("Applicant2SolUpdateAosApplicant1Application")
             .pageLabel("Review the applicant 1's application")
-            .readonly(CaseData::getMiniApplicationLink)
+            .complex(CaseData::getApplication)
+                .readonly(Application::getMiniApplicationLink)
+                .done()
             .complex(CaseData::getApplicant2)
             .mandatory(Applicant::getConfirmReadPetition)
             .label("LabelRespSol-AOSConfirmRead",
