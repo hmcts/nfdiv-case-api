@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.model.Application;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.HelpWithFees;
 
@@ -27,8 +28,10 @@ public class HelpWithFeesPage implements CcdPageConfiguration {
                 "LabelNFDJointBanner-HelpWithFees",
                 SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
                 JOINT_APPLICATION_CONDITION)
-            .complex(CaseData::getHelpWithFees)
-                .mandatory(HelpWithFees::getReferenceNumber)
+            .complex(CaseData::getApplication)
+                .complex(Application::getHelpWithFees)
+                    .mandatory(HelpWithFees::getReferenceNumber)
+                    .done()
                 .done();
     }
 }

@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.divorce.common.model.Application;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
@@ -76,12 +77,13 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
                 .build();
         }
 
+        Application application = caseDataCopy.getApplication();
         State state;
-        if (caseDataCopy.getHelpWithFees() != null && caseDataCopy.getHelpWithFees().getNeedHelp().toBoolean()) {
+        if (application.getHelpWithFees() != null && application.getHelpWithFees().getNeedHelp().toBoolean()) {
             state = AwaitingHWFDecision;
         } else {
             OrderSummary orderSummary = paymentService.getOrderSummary();
-            caseDataCopy.setApplicationFeeOrderSummary(orderSummary);
+            application.setApplicationFeeOrderSummary(orderSummary);
 
             if (data.getPayments() == null || data.getPayments().isEmpty()) {
                 ListValue<Payment> paymentListValue = createPendingPayment(orderSummary.getPaymentTotal());

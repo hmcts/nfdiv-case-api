@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.model.Applicant;
+import uk.gov.hmcts.divorce.common.model.Application;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.common.model.Solicitor;
@@ -227,11 +228,15 @@ class SolicitorCreateApplicationTest {
         var applicant1 = getApplicant();
         applicant1.setFinancialOrder(NO);
 
+        var application = Application.builder()
+            .divorceCostsClaim(YES)
+            .build();
+
         return CaseData
             .builder()
             .applicant1(applicant1)
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
-            .divorceCostsClaim(YES)
+            .application(application)
             .build();
     }
 }

@@ -6,6 +6,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.common.model.MarriageDetails;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 
 import java.time.LocalDate;
@@ -27,7 +28,6 @@ import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.checkIfGende
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.checkIfStringNullOrEmpty;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.checkIfYesOrNoIsNullOrEmptyOrNo;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.checkIfYesOrNoNullOrEmpty;
-import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.hasAwaitingDocuments;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.isPaymentIncomplete;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.validateBasicCase;
 import static uk.gov.hmcts.divorce.common.validation.ValidationUtil.validateCaseFieldsForIssueApplication;
@@ -138,7 +138,7 @@ public class CaseValidationTest {
     public void shouldReturnTrueWhenPaymentIsIncompleted() {
         CaseData caseData = new CaseData();
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        caseData.setApplicationFeeOrderSummary(orderSummary);
+        caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
         assertTrue(isPaymentIncomplete(caseData));
     }
@@ -147,7 +147,7 @@ public class CaseValidationTest {
     public void shouldReturnFalseWhenPaymentIsCompleted() {
         CaseData caseData = new CaseData();
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        caseData.setApplicationFeeOrderSummary(orderSummary);
+        caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
         Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(SUCCESS).build();
         caseData.setPayments(singletonList(new ListValue<>("1", payment)));
         assertFalse(isPaymentIncomplete(caseData));
@@ -156,14 +156,14 @@ public class CaseValidationTest {
     @Test
     public void shouldReturnTrueWhenCaseHasAwaitingDocuments() {
         CaseData caseData = new CaseData();
-        caseData.setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
-        assertTrue(hasAwaitingDocuments(caseData));
+        caseData.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
+        assertTrue(caseData.getApplication().hasAwaitingDocuments());
     }
 
     @Test
     public void shouldReturnFalseWhenCaseDoesNotHaveAwaitingDocuments() {
         CaseData caseData = new CaseData();
-        assertFalse(hasAwaitingDocuments(caseData));
+        assertFalse(caseData.getApplication().hasAwaitingDocuments());
     }
 
     @Test
@@ -171,7 +171,7 @@ public class CaseValidationTest {
         CaseData caseData = new CaseData();
         List<String> errors = new ArrayList<>();
 
-        validateCaseFieldsForIssueApplication(caseData, errors);
+        validateCaseFieldsForIssueApplication(caseData.getApplication().getMarriageDetails(), errors);
 
         Assertions.assertThat(errors).containsExactlyInAnyOrder(
             "MarriageApplicant2Name cannot be empty or null",
@@ -181,11 +181,11 @@ public class CaseValidationTest {
 
     @Test
     public void shouldReturnErrorWhenApp2MarriageCertNameIsMissing() {
-        CaseData caseData = new CaseData();
-        caseData.getMarriageDetails().setPlaceOfMarriage("London");
+        MarriageDetails marriageDetails = new MarriageDetails();
+        marriageDetails.setPlaceOfMarriage("London");
         List<String> errors = new ArrayList<>();
 
-        validateCaseFieldsForIssueApplication(caseData, errors);
+        validateCaseFieldsForIssueApplication(marriageDetails, errors);
 
         Assertions.assertThat(errors).containsExactlyInAnyOrder(
             "MarriageApplicant2Name cannot be empty or null"
@@ -194,12 +194,12 @@ public class CaseValidationTest {
 
     @Test
     public void shouldNotReturnErrorWhenBothWhenApp2MarriageCertNameAndPlaceOfMarriageArePresent() {
-        CaseData caseData = new CaseData();
-        caseData.getMarriageDetails().setPlaceOfMarriage("London");
-        caseData.getMarriageDetails().setApplicant2Name("TestFname TestMname  TestLname");
+        MarriageDetails marriageDetails = new MarriageDetails();
+        marriageDetails.setPlaceOfMarriage("London");
+        marriageDetails.setApplicant2Name("TestFname TestMname  TestLname");
         List<String> errors = emptyList();
 
-        validateCaseFieldsForIssueApplication(caseData, errors);
+        validateCaseFieldsForIssueApplication(marriageDetails, errors);
 
         Assertions.assertThat(errors).isEmpty();
     }

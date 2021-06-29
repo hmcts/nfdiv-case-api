@@ -53,11 +53,11 @@ public class CitizenLinkApplicant2 implements CCDConfig<CaseData, State, UserRol
         ccdAccessService.linkRespondentToApplication(
             httpServletRequest.getHeader(AUTHORIZATION),
             details.getId(),
-            data.getRespondentUserId()
+            data.getApplicant2UserId()
         );
 
         data.setAccessCode(null);
-        data.setRespondentUserId(null);
+        data.setApplicant2UserId(null);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)

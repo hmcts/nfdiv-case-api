@@ -53,7 +53,7 @@ public class RespondentSolicitorAosInvitationTemplateContentTest {
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForDivorce() {
         CaseData caseData = caseData();
-        caseData.setDivorceCostsClaim(YES);
+        caseData.getApplication().setDivorceCostsClaim(YES);
         caseData.getApplicant1().setFinancialOrder(NO);
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
@@ -82,7 +82,7 @@ public class RespondentSolicitorAosInvitationTemplateContentTest {
     public void shouldSuccessfullyApplyContentFromCaseDataForDissolution() {
         CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DISSOLUTION);
-        caseData.setDivorceCostsClaim(NO);
+        caseData.getApplication().setDivorceCostsClaim(NO);
         caseData.getApplicant1().setFinancialOrder(NO);
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
@@ -114,9 +114,9 @@ public class RespondentSolicitorAosInvitationTemplateContentTest {
         marriageDetails.setDate(LocalDate.of(2019, 06, 4));
 
         caseData.setDivorceOrDissolution(DISSOLUTION);
-        caseData.setDivorceCostsClaim(NO);
+        caseData.getApplication().setDivorceCostsClaim(NO);
         caseData.getApplicant1().setFinancialOrder(NO);
-        caseData.setMarriageDetails(marriageDetails);
+        caseData.getApplication().setMarriageDetails(marriageDetails);
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
         );
@@ -145,7 +145,7 @@ public class RespondentSolicitorAosInvitationTemplateContentTest {
         caseData.setApplicant2(getApplicant());
         caseData.getApplicant2().setHomeAddress(address);
         caseData.setDivorceOrDissolution(DISSOLUTION);
-        caseData.setDivorceCostsClaim(NO);
+        caseData.getApplication().setDivorceCostsClaim(NO);
         caseData.getApplicant1().setFinancialOrder(NO);
 
         Supplier<Map<String, Object>> templateContentSupplier = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);

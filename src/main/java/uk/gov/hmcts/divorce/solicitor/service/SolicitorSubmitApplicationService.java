@@ -50,13 +50,13 @@ public class SolicitorSubmitApplicationService {
         State state = AwaitingPayment;
         List<String> submittedErrors = emptyList();
 
-        if (FEES_HELP_WITH.equals(caseData.getSolPaymentHowToPay())) {
+        if (FEES_HELP_WITH.equals(caseData.getApplication().getSolPaymentHowToPay())) {
             state = AwaitingHWFDecision;
         } else {
             submittedErrors = Submitted.validate(caseData);
 
             if (submittedErrors.isEmpty()) {
-                caseData.setDateSubmitted(LocalDateTime.now(clock));
+                caseData.getApplication().setDateSubmitted(LocalDateTime.now(clock));
                 state = Submitted;
             }
         }

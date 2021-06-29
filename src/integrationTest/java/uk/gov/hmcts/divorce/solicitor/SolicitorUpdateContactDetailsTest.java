@@ -15,6 +15,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
+import uk.gov.hmcts.divorce.common.model.Application;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.Solicitor;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
@@ -132,11 +133,15 @@ public class SolicitorUpdateContactDetailsTest {
         var applicant1 = getApplicant();
         applicant1.setFinancialOrder(NO);
 
+        var application = Application.builder()
+            .divorceCostsClaim(YES)
+            .build();
+
         return CaseData
             .builder()
             .applicant1(applicant1)
             .divorceOrDissolution(DIVORCE)
-            .divorceCostsClaim(YES)
+            .application(application)
             .build();
     }
 

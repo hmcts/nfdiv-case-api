@@ -90,11 +90,11 @@ public class CitizenAddPaymentTest {
     @Test
     public void givenLastAddedPaymentIsInProgress() throws Exception {
         CaseData data = caseDataWithOrderSummary();
-        data.setDateSubmitted(LocalDateTime.now());
-        data.setSolSignStatementOfTruth(YesOrNo.YES);
+        data.getApplication().setDateSubmitted(LocalDateTime.now());
+        data.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        data.setApplicationFeeOrderSummary(orderSummary);
+        data.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
         Payment payment = Payment.builder()
             .paymentAmount(55000)
@@ -116,11 +116,11 @@ public class CitizenAddPaymentTest {
     @Test
     public void givenLastAddedPaymentWasCanceled() throws Exception {
         CaseData data = caseDataWithOrderSummary();
-        data.setDateSubmitted(LocalDateTime.now());
-        data.setSolSignStatementOfTruth(YesOrNo.YES);
+        data.getApplication().setDateSubmitted(LocalDateTime.now());
+        data.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        data.setApplicationFeeOrderSummary(orderSummary);
+        data.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
         Payment payment = Payment.builder()
             .paymentAmount(55000)
@@ -142,11 +142,11 @@ public class CitizenAddPaymentTest {
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmail() throws Exception {
         CaseData data = caseDataWithOrderSummary();
-        data.setDateSubmitted(LocalDateTime.now());
-        data.setSolSignStatementOfTruth(YesOrNo.YES);
+        data.getApplication().setDateSubmitted(LocalDateTime.now());
+        data.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        data.setApplicationFeeOrderSummary(orderSummary);
+        data.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
         Payment payment = Payment.builder()
             .paymentAmount(55000)
@@ -171,13 +171,13 @@ public class CitizenAddPaymentTest {
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendTwoEmail() throws Exception {
         CaseData data = caseDataWithOrderSummary();
-        data.setDateSubmitted(LocalDateTime.now());
+        data.getApplication().setDateSubmitted(LocalDateTime.now());
         data.setApplicant2(getApplicant2(Gender.MALE));
-        data.setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
+        data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
 
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        data.setApplicationFeeOrderSummary(orderSummary);
+        data.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
         Payment payment = Payment.builder()
             .paymentAmount(55000)
@@ -205,10 +205,10 @@ public class CitizenAddPaymentTest {
     @Test
     public void givenDeclinedPaymentDontSendNotification() throws Exception {
         CaseData data = caseDataWithOrderSummary();
-        data.setDateSubmitted(LocalDateTime.now());
+        data.getApplication().setDateSubmitted(LocalDateTime.now());
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        data.setApplicationFeeOrderSummary(orderSummary);
+        data.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
         Payment payment = Payment.builder()
             .paymentAmount(55000)
@@ -230,12 +230,12 @@ public class CitizenAddPaymentTest {
     @Test
     public void givenSendEmailThrowsExceptionWhenCallbackIsInvokedThenReturnBadRequest() throws Exception {
         CaseData data = caseDataWithOrderSummary();
-        data.setDateSubmitted(LocalDateTime.now());
+        data.getApplication().setDateSubmitted(LocalDateTime.now());
 
-        data.setSolSignStatementOfTruth(YesOrNo.YES);
+        data.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        data.setApplicationFeeOrderSummary(orderSummary);
+        data.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
         Payment payment = Payment.builder()
             .paymentAmount(55000)
