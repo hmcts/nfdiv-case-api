@@ -81,12 +81,11 @@ public class CaseData {
     @Builder.Default
     private FinalOrder finalOrder = new FinalOrder();
 
-    // TODO: rename this as applicant2InviteEmailAddress?
     @CCD(
         label = "The respondent's email address",
         access = {DefaultAccess.class}
     )
-    private String applicant2EmailAddress;
+    private String applicant2InviteEmailAddress;
 
     @CCD(
         label = "Documents uploaded",
@@ -148,7 +147,7 @@ public class CaseData {
         label = "The respondent's user id",
         access = {DefaultAccess.class}
     )
-    private String respondentUserId;
+    private String applicant2UserId;
 
     @CCD(
         label = "Date when the application was issued",

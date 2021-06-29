@@ -50,7 +50,7 @@ public class CitizenLinkApplicant2Test {
     void shouldRemoveAccessCodeAfterLinkingApplication() {
         final CaseData caseData = caseData();
         caseData.setAccessCode("D8BC9AQR");
-        caseData.setRespondentUserId("RespondentId");
+        caseData.setApplicant2UserId("Applicant2Id");
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(1L);
         details.setData(caseData);
@@ -61,6 +61,6 @@ public class CitizenLinkApplicant2Test {
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenLinkApplicant2.aboutToSubmit(details, details);
 
         assertThat(response.getData().getAccessCode()).isNull();
-        verify(ccdAccessService).linkRespondentToApplication(eq("auth header"), eq(1L), eq("RespondentId"));
+        verify(ccdAccessService).linkRespondentToApplication(eq("auth header"), eq(1L), eq("Applicant2Id"));
     }
 }
