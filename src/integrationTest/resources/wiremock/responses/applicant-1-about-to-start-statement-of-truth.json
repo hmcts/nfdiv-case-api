@@ -78,7 +78,7 @@
     "applicant2MiddleName": "test_middle_name",
     "applicant2LastName": "test_last_name",
     "applicant2AgreedToReceiveEmails": null,
-    "applicant2EmailAddress": "test@test.com",
+    "applicant2InviteEmailAddress": "test@test.com",
     "applicant2Email": null,
     "applicant2LanguagePreferenceWelsh": null,
     "applicant2NameChangedHow": null,

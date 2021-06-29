@@ -34,7 +34,7 @@
     "applicant1PhoneNumber":null,
     "applicant2AgreedToReceiveEmails":null,
     "applicant2ContactDetailsConfidential":null,
-    "applicant2EmailAddress": "simulate-delivered@notifications.service.gov.uk",
+    "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
     "applicant2Email": null,
     "applicant2CorrespondenceAddress": null,
     "applicant2FirstName":null,
