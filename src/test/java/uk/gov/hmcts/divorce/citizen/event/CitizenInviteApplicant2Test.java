@@ -99,8 +99,8 @@ public class CitizenInviteApplicant2Test {
         verify(applicationSentForReviewApplicant1Notification).send(caseData, details.getId());
         verify(applicationSentForReviewApplicant2Notification).send(caseData, details.getId());
 
-        assertThat(response.getData().getAccessCode()).isNotBlank();
-        assertThat(response.getData().getAccessCode().length()).isEqualTo(8);
-        assertThat(response.getData().getAccessCode()).doesNotContain("I","O","U","0","1");
+        assertThat(response.getData().getCaseInvite().getAccessCode()).isNotBlank();
+        assertThat(response.getData().getCaseInvite().getAccessCode().length()).isEqualTo(8);
+        assertThat(response.getData().getCaseInvite().getAccessCode()).doesNotContain("I","O","U","0","1");
     }
 }

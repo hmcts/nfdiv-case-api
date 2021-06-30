@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.common.model.CaseInvite;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
@@ -49,8 +50,11 @@ public class CitizenLinkApplicant2Test {
     @Test
     void shouldRemoveAccessCodeAfterLinkingApplication() {
         final CaseData caseData = caseData();
-        caseData.setAccessCode("D8BC9AQR");
-        caseData.setApplicant2UserId("Applicant2Id");
+        caseData.setCaseInvite(
+            CaseInvite.builder()
+                .accessCode("D8BC9AQR")
+                .applicant2UserId("Applicant2Id")
+                .build());
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(1L);
         details.setData(caseData);
@@ -60,7 +64,7 @@ public class CitizenLinkApplicant2Test {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenLinkApplicant2.aboutToSubmit(details, details);
 
-        assertThat(response.getData().getAccessCode()).isNull();
+        assertThat(response.getData().getCaseInvite().getAccessCode()).isNull();
         verify(ccdAccessService).linkRespondentToApplication(eq("auth header"), eq(1L), eq("Applicant2Id"));
     }
 }
