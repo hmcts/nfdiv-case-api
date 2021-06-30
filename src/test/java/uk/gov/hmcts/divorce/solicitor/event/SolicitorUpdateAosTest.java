@@ -13,21 +13,21 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorSubmitDraftAos.SOLICITOR_DRAFT_AOS;
+import static uk.gov.hmcts.divorce.solicitor.event.SolicitorUpdateAos.SOLICITOR_UPDATE_AOS;
 
 @ExtendWith(MockitoExtension.class)
-class SolicitorDraftAosTest {
+class SolicitorUpdateAosTest {
     @InjectMocks
-    private SolicitorSubmitDraftAos solicitorSubmitDraftAos;
+    private SolicitorUpdateAos solicitorUpdateAos;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final Set<State> stateSet = EnumSet.allOf(State.class);
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = new ConfigBuilderImpl<>(CaseData.class, stateSet);
 
-        solicitorSubmitDraftAos.configure(configBuilder);
+        solicitorUpdateAos.configure(configBuilder);
 
-        assertThat(configBuilder.getEvents().get(0).getId()).isEqualTo(SOLICITOR_DRAFT_AOS);
+        assertThat(configBuilder.getEvents().get(0).getId()).isEqualTo(SOLICITOR_UPDATE_AOS);
     }
 
 }
