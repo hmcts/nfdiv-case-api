@@ -49,6 +49,7 @@ public final class NotificationConstants {
     public static final String APPLICANT_NAME = "applicant name";
     public static final String RESPONDENT_NAME = "respondent name";
     public static final String SOLICITOR_NAME = "solicitor name";
+    public static final String SOLICITOR_ORGANISATION = "solicitor organisation";
 
     private NotificationConstants() {
     }

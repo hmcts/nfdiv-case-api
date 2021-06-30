@@ -71,6 +71,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 
@@ -363,7 +364,7 @@ public class TestDataHelper {
         return OrganisationPolicy.<UserRole>builder()
             .organisation(Organisation
                 .builder()
-                .organisationName("Test Organisation")
+                .organisationName(TEST_ORG_NAME)
                 .organisationId(TEST_ORG_ID)
                 .build())
             .build();

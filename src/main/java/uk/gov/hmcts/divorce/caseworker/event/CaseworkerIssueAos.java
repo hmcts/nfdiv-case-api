@@ -58,7 +58,7 @@ public class CaseworkerIssueAos implements CCDConfig<CaseData, State, UserRole> 
         log.info("Caseworker issue AOS submitted callback invoked");
 
         final CaseData caseData = details.getData();
-        noticeOfProceedingsNotification.sendToApplicantOrSolicitor(caseData, details.getId());
+        noticeOfProceedingsNotification.send(caseData, details.getId());
 
         return SubmittedCallbackResponse.builder().build();
     }

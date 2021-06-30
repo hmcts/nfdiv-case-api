@@ -56,6 +56,6 @@ class CaseworkerIssueAosTest {
         final SubmittedCallbackResponse submitted = caseworkerIssueAos.submitted(caseDetails, null);
 
         assertThat(submitted).isNotNull();
-        verify(noticeOfProceedingsNotification).sendToApplicantOrSolicitor(caseData, TEST_CASE_ID);
+        verify(noticeOfProceedingsNotification).send(caseData, TEST_CASE_ID);
     }
 }
