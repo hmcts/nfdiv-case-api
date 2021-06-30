@@ -18,6 +18,8 @@ import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolConfirmContactDeta
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolReviewApplicant1Application;
 import uk.gov.hmcts.divorce.solicitor.event.updater.AddMiniApplicationLink;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -37,6 +39,9 @@ public class SolicitorSubmitDraftAos implements CCDConfig<CaseData, State, UserR
 
     @Autowired
     private AddMiniApplicationLink addMiniApplicationLink;
+
+    @Autowired
+    private Clock clock;
 
     private final List<CcdPageConfiguration> pages = asList(
         new Applicant2SolConfirmContactDetails(),
@@ -59,6 +64,7 @@ public class SolicitorSubmitDraftAos implements CCDConfig<CaseData, State, UserR
             .name("Draft AoS")
             .description("Draft Acknowledgement of Service")
             .aboutToStartCallback(this::aboutToStart)
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .showSummary()
             .endButtonLabel("Save AOS Response")
             .explicitGrants()
@@ -68,6 +74,18 @@ public class SolicitorSubmitDraftAos implements CCDConfig<CaseData, State, UserR
                 CASEWORKER_COURTADMIN_RDU,
                 CASEWORKER_SUPERUSER,
                 CASEWORKER_LEGAL_ADVISOR));
+    }
+
+    private AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
+        final CaseDetails<CaseData, State> details,
+        final CaseDetails<CaseData, State> beforeDetails
+    ) {
+        var caseData = details.getData();
+        caseData.getAcknowledgementOfService().setDateAosSubmitted(LocalDateTime.now(clock));
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .build();
     }
 
     private AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(CaseDetails<CaseData, State> details) {

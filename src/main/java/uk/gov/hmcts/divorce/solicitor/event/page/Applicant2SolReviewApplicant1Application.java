@@ -2,7 +2,7 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.common.model.Applicant;
+import uk.gov.hmcts.divorce.common.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.common.model.Application;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 
@@ -27,8 +27,8 @@ public class Applicant2SolReviewApplicant1Application implements CcdPageConfigur
                     + "The respondent may have to pay extra fees if this happens\n\n"
                     + "If the respondent has been married to more than one person during this marriage (polygamy) contact "
                     + "your regional divorce centre before you apply.")
-            .complex(CaseData::getApplicant2)
-            .mandatory(Applicant::getConfirmReadPetition)
+            .complex(CaseData::getAcknowledgementOfService)
+            .mandatory(AcknowledgementOfService::getConfirmReadPetition)
             .label("LabelRespSol-AOSConfirmRead",
                 "### The respondent has not read the petition\n\n"
                     + "The respondent must have read the petition in order to respond.",
