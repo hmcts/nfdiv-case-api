@@ -116,7 +116,7 @@ public class SolicitorSubmitUpdateDraftAosTest {
     }
 
     @Test
-    void givenCaseDataWithDivorceApplicationWhenAboutToSubmitCallbackIsInvokedSet() throws Exception {
+    void givenCaseDataWithDivorceApplicationWhenAboutToSubmitCallbackIsInvokedDateAosSubmittedIsSet() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(clock.instant()).thenReturn(Instant.parse("2021-06-30T12:30:00.000Z"));
         when(clock.getZone()).thenReturn(ZoneOffset.UTC);
