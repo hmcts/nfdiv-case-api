@@ -208,7 +208,6 @@ public class MiniApplicationTemplateContentTest {
         caseData.getApplicant1().setHomeAddress(address);
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.getApplicant1().setFinancialOrder(NO);
-        caseData.getApplicant2().setFinancialOrder(NO);
         caseData.getApplication().setLegalProceedings(YES);
 
         Supplier<Map<String, Object>> templateContentSupplier = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
