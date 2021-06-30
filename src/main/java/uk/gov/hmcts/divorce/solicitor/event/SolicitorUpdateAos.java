@@ -14,15 +14,13 @@ import uk.gov.hmcts.divorce.common.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolAosCosts;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolAosOtherProceedings;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolAosjurisdiction;
-import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolConfirmContactDetails;
-import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolReviewApplicant1Application;
+import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolUpdateAosApplicant1Application;
 import uk.gov.hmcts.divorce.solicitor.event.updater.AddMiniApplicationLink;
 
 import java.util.List;
 
 import static java.util.Arrays.asList;
 import static uk.gov.hmcts.divorce.common.model.State.AosDrafted;
-import static uk.gov.hmcts.divorce.common.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_RDU;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
@@ -32,15 +30,14 @@ import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_U
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 
 @Component
-public class SolicitorSubmitDraftAos implements CCDConfig<CaseData, State, UserRole> {
-    public static final String SOLICITOR_DRAFT_AOS = "solicitor-draft-aos";
+public class SolicitorUpdateAos implements CCDConfig<CaseData, State, UserRole> {
+    public static final String SOLICITOR_UPDATE_AOS = "solicitor-update-aos";
 
     @Autowired
     private AddMiniApplicationLink addMiniApplicationLink;
 
     private final List<CcdPageConfiguration> pages = asList(
-        new Applicant2SolConfirmContactDetails(),
-        new Applicant2SolReviewApplicant1Application(),
+        new Applicant2SolUpdateAosApplicant1Application(),
         new Applicant2SolAosjurisdiction(),
         new Applicant2SolAosOtherProceedings(),
         new Applicant2SolAosCosts()
@@ -54,13 +51,13 @@ public class SolicitorSubmitDraftAos implements CCDConfig<CaseData, State, UserR
 
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
-            .event(SOLICITOR_DRAFT_AOS)
-            .forStateTransition(AwaitingAos, AosDrafted)
-            .name("Draft AoS")
-            .description("Draft Acknowledgement of Service")
+            .event(SOLICITOR_UPDATE_AOS)
+            .forState(AosDrafted)
+            .name("Update AoS")
+            .description("Update Acknowledgement of Service")
             .aboutToStartCallback(this::aboutToStart)
             .showSummary()
-            .endButtonLabel("Save AOS Response")
+            .endButtonLabel("Save Updated AOS Response")
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, SOLICITOR)
             .grant(READ,

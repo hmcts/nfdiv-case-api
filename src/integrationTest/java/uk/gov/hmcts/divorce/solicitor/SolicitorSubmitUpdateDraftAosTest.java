@@ -4,8 +4,9 @@ package uk.gov.hmcts.divorce.solicitor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,6 +42,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATI
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DOCUMENT_TYPE_RESPONDENT_INVITATION;
 import static uk.gov.hmcts.divorce.solicitor.SolicitorCreateApplicationTest.getApplicant;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorSubmitDraftAos.SOLICITOR_DRAFT_AOS;
+import static uk.gov.hmcts.divorce.solicitor.event.SolicitorUpdateAos.SOLICITOR_UPDATE_AOS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
@@ -54,7 +56,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 @ContextConfiguration(initializers = {
     IdamWireMock.PropertiesInitializer.class
 })
-public class SolicitorSubmitDraftAosTest {
+public class SolicitorSubmitUpdateDraftAosTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -81,8 +83,9 @@ public class SolicitorSubmitDraftAosTest {
         IdamWireMock.stopAndReset();
     }
 
-    @Test
-    void givenCaseDataWithDivorceApplicationWhenAboutToSubmitCallbackIsInvokedMiniapplicationlinkIsSet() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {SOLICITOR_DRAFT_AOS, SOLICITOR_UPDATE_AOS})
+    void givenCaseDataWithDivorceApplicationWhenAboutToSubmitCallbackIsInvokedMiniapplicationlinkIsSet(String eventId) throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         mockMvc.perform(post(ABOUT_TO_START_URL)
@@ -92,7 +95,7 @@ public class SolicitorSubmitDraftAosTest {
             .content(
                 objectMapper.writeValueAsString(
                     callbackRequest(caseDataWithDocument(DIVORCE_APPLICATION),
-                        SOLICITOR_DRAFT_AOS)))
+                        eventId)))
             .accept(APPLICATION_JSON))
             .andDo(print())
             .andExpect(
@@ -104,8 +107,11 @@ public class SolicitorSubmitDraftAosTest {
             .andExpect(jsonPath("$.data.miniApplicationLink.document_binary_url").value(docBinaryUrl));
     }
 
-    @Test
-    void givenCaseDataWithoutDivorceApplicationWhenAboutToSubmitCallbackIsInvokedMiniapplicationlinkIsNotPresent() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {SOLICITOR_DRAFT_AOS, SOLICITOR_UPDATE_AOS})
+    void givenCaseDataWithoutDivorceAppWhenAboutToSubmitCallbackIsInvokedMiniapplicationlinkIsNotPresent(
+        String eventId
+    ) throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         mockMvc.perform(post(ABOUT_TO_START_URL)
@@ -115,7 +121,7 @@ public class SolicitorSubmitDraftAosTest {
             .content(
                 objectMapper.writeValueAsString(
                     callbackRequest(caseDataWithDocument(DOCUMENT_TYPE_RESPONDENT_INVITATION),
-                        SOLICITOR_DRAFT_AOS)))
+                        eventId)))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
@@ -123,8 +129,9 @@ public class SolicitorSubmitDraftAosTest {
             .andExpect(jsonPath("$.data.miniApplicationLink").doesNotExist());
     }
 
-    @Test
-    void givenCaseDataWithoutDocumentsWhenAboutToSubmitCallbackIsInvokedMiniapplicationlinkIsNotPresent() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {SOLICITOR_DRAFT_AOS, SOLICITOR_UPDATE_AOS})
+    void givenCaseDataWithoutDocumentsWhenAboutToSubmitCallbackIsInvokedMiniapplicationlinkIsNotPresent(String eventId) throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         mockMvc.perform(post(ABOUT_TO_START_URL)
@@ -134,7 +141,7 @@ public class SolicitorSubmitDraftAosTest {
             .content(
                 objectMapper.writeValueAsString(
                     callbackRequest(caseDataWithoutDivorceApplication(),
-                        SOLICITOR_DRAFT_AOS)))
+                        eventId)))
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()

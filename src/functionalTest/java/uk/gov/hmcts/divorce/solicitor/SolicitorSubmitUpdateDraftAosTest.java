@@ -1,7 +1,8 @@
 package uk.gov.hmcts.divorce.solicitor;
 
 import io.restassured.response.Response;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 
@@ -13,23 +14,25 @@ import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorSubmitDraftAos.SOLICITOR_DRAFT_AOS;
+import static uk.gov.hmcts.divorce.solicitor.event.SolicitorUpdateAos.SOLICITOR_UPDATE_AOS;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationContactInformation;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
-public class SolicitorSubmitDraftAosTest extends FunctionalTestSuite {
+public class SolicitorSubmitUpdateDraftAosTest extends FunctionalTestSuite {
 
     private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata-solicitor-draft-aos.json";
 
-    @Test
-    public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessful() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {SOLICITOR_DRAFT_AOS, SOLICITOR_UPDATE_AOS})
+    public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessful(String eventId) throws Exception {
 
         final Map<String, Object> caseData = caseData(REQUEST);
         caseData.put("applicant2OrgContactInformation", organisationContactInformation());
 
-        final Response response = triggerCallback(caseData, SOLICITOR_DRAFT_AOS, ABOUT_TO_START_URL);
+        final Response response = triggerCallback(caseData, eventId, ABOUT_TO_START_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
