@@ -32,7 +32,7 @@ public class Applicant2SolReviewApplicant1Application implements CcdPageConfigur
             .label("LabelRespSol-AOSConfirmRead",
                 "### The respondent has not read the petition\n\n"
                     + "The respondent must have read the petition in order to respond.",
-              "applicant2ConfirmReadPetition=\"No\"")
+              "confirmReadPetition=\"No\"")
             .done();
     }
 }

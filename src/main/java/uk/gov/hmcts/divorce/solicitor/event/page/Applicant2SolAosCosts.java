@@ -19,9 +19,9 @@ public class Applicant2SolAosCosts implements CcdPageConfiguration {
             .complex(CaseData::getAcknowledgementOfService)
             .mandatory(AcknowledgementOfService::getAgreeToCosts)
             .mandatory(AcknowledgementOfService::getCostsAmount,
-                "applicant2AgreeToCosts=\"DifferentAmount\"")
+                "agreeToCosts=\"DifferentAmount\"")
             .mandatory(AcknowledgementOfService::getCostsReason,
-                "applicant2AgreeToCosts=\"No\" OR applicant2AgreeToCosts=\"DifferentAmount\"")
+                "agreeToCosts=\"No\" OR agreeToCosts=\"DifferentAmount\"")
             .done();
     }
 }

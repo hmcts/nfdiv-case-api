@@ -14,7 +14,7 @@ public class Applicant2SolAosOtherProceedings implements CcdPageConfiguration {
             .pageLabel("Are there any other legal proceedings outside of England and Wales?")
             .complex(CaseData::getAcknowledgementOfService)
             .mandatory(AcknowledgementOfService::getLegalProceedingsExist)
-            .mandatory(AcknowledgementOfService::getLegalProceedingsDescription, "applicant2LegalProceedingsExist=\"Yes\"")
+            .mandatory(AcknowledgementOfService::getLegalProceedingsDescription, "legalProceedingsExist=\"Yes\"")
             .done();
     }
 }

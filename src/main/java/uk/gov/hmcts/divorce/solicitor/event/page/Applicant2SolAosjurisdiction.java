@@ -14,7 +14,7 @@ public class Applicant2SolAosjurisdiction implements CcdPageConfiguration {
             .pageLabel("Do you agree that the courts of England and Wales have jurisdiction?")
             .complex(CaseData::getAcknowledgementOfService)
             .mandatory(AcknowledgementOfService::getJurisdictionAgree)
-            .mandatory(AcknowledgementOfService::getJurisdictionDisagreeReason, "applicant2JurisdictionAgree=\"No\"")
+            .mandatory(AcknowledgementOfService::getJurisdictionDisagreeReason, "jurisdictionAgree=\"No\"")
             .done();
     }
 }
