@@ -26,7 +26,6 @@ public class AddMiniApplicationLink {
             .map(DivorceDocument::getDocumentLink)
             .findFirst()
             .ifPresent(file -> caseData.getApplication().setMiniApplicationLink(file));
-
         return caseData;
     }
 }
