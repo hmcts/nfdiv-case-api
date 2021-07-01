@@ -52,7 +52,7 @@ public class CcdAccessService {
         log.info("Successfully added the applicant's solicitor roles to case Id {} ", caseId);
     }
 
-    public void linkRespondentToApplication(String caseworkerUserToken, Long caseId, String respondentUserId) {
+    public void linkRespondentToApplication(String caseworkerUserToken, Long caseId, String applicant2UserId) {
         User caseworkerUser = idamService.retrieveUser(caseworkerUserToken);
         Set<String> caseRoles = Set.of(APPLICANT_2.getRole());
 
@@ -60,8 +60,8 @@ public class CcdAccessService {
             caseworkerUser.getAuthToken(),
             authTokenGenerator.generate(),
             String.valueOf(caseId),
-            respondentUserId,
-            new CaseUser(respondentUserId, caseRoles)
+            applicant2UserId,
+            new CaseUser(applicant2UserId, caseRoles)
         );
 
         log.info("Successfully linked applicant 2 to case Id {} ", caseId);

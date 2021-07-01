@@ -13,6 +13,8 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 
+import java.util.Set;
+
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
@@ -51,6 +53,11 @@ public class Applicant {
         hint = "Select \"No\" for English or \"Yes\" for bilingual"
     )
     private YesOrNo languagePreferenceWelsh;
+
+    @CCD(
+        label = "Did you change your last name when you got married?"
+    )
+    private YesOrNo lastNameChangedWhenMarried;
 
     @CCD(
         label = "Has the applicant changed their name since they got married?",
@@ -106,11 +113,67 @@ public class Applicant {
     @JsonUnwrapped(prefix = "Solicitor")
     private Solicitor solicitor;
 
+    @CCD(
+        label = "Has the respondent read the application for divorce?"
+    )
+    private YesOrNo confirmReadPetition;
+
+    @CCD(
+        label = "Respondent agreed to claimed jurisdiction?"
+    )
+    private YesOrNo jurisdictionAgree;
+
+    @CCD(
+        label = "Reason respondent disagreed to claimed jurisdiction",
+        typeOverride = TextArea
+    )
+    private String jurisdictionDisagreeReason;
+
+    @CCD(
+        label = "Do legal proceedings exist (respondent)?"
+    )
+    private YesOrNo legalProceedingsExist;
+
+    @CCD(
+        label = "Legal proceedings details (respondent)",
+        typeOverride = TextArea
+    )
+    private String legalProceedingsDescription;
+
+    @CCD(
+        label = "Does respondent agree to costs?",
+        typeOverride = FixedList,
+        typeParameterOverride = "RespAgreeToCostsEnum"
+    )
+    private RespAgreeToCostsEnum agreeToCosts;
+
+    @CCD(
+        label = "Respondent's costs amount"
+    )
+    private String costsAmount;
+
+    @CCD(
+        label = "Respondent's costs reason",
+        typeOverride = TextArea
+    )
+    private String costsReason;
+
+    @CCD(
+        label = "Does the applicant wish to apply for a financial order?",
+        hint = "The court will not start processing your request for a financial order until you submit the separate "
+            + "application and pay the fee."
+    )
+    private YesOrNo financialOrder;
+
+    @CCD(
+        label = "Who is the financial order for?"
+    )
+    private Set<FinancialOrderFor> financialOrderFor;
+
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
         return languagePreferenceWelsh == null || languagePreferenceWelsh.equals(YesOrNo.NO)
             ? ENGLISH
             : WELSH;
     }
-
 }

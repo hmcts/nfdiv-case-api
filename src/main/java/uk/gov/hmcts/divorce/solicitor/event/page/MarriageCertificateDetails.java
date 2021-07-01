@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.model.Application;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.MarriageDetails;
 
@@ -26,24 +27,15 @@ public class MarriageCertificateDetails implements CcdPageConfiguration {
                 "LabelNFDJointBanner-MarriageCertificateDetails",
                 SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
                 JOINT_APPLICATION_CONDITION)
-            .complex(CaseData::getMarriageDetails)
-                .mandatory(MarriageDetails::getDate)
-                .mandatory(MarriageDetails::getApplicant1Name)
-                .mandatory(MarriageDetails::getApplicant2Name)
+            .complex(CaseData::getApplication)
+                .complex(Application::getMarriageDetails)
+                    .mandatory(MarriageDetails::getDate)
+                    .mandatory(MarriageDetails::getApplicant1Name)
+                    .mandatory(MarriageDetails::getApplicant2Name)
+                    .mandatory(MarriageDetails::getMarriedInUk, null, null, "Did the marriage take place in the UK?")
+                    .mandatory(MarriageDetails::getPlaceOfMarriage, "marriageMarriedInUk=\"No\"")
+                    .mandatory(MarriageDetails::getCountryOfMarriage, "marriageMarriedInUk=\"No\"")
                 .done()
-            .complex(CaseData::getMarriageDetails)
-                .mandatory(
-                    MarriageDetails::getMarriedInUk, null, null,
-                    "Did the marriage take place in the UK?"
-                )
-                .mandatory(
-                    MarriageDetails::getPlaceOfMarriage,
-                    "marriageMarriedInUk=\"No\""
-                )
-                .mandatory(
-                    MarriageDetails::getCountryOfMarriage,
-                    "marriageMarriedInUk=\"No\""
-                )
             .done();
     }
 }

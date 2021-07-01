@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
@@ -64,11 +63,11 @@ public class CitizenAddPaymentTest {
     public void givenLastPaymentInProgressCaseDataWhenCallbackIsInvokedThenSetToAwaitingPayment() {
         final CaseData caseData = caseData();
         caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
-        caseData.setStatementOfTruth(YesOrNo.YES);
-        caseData.setSolSignStatementOfTruth(YesOrNo.YES);
+        caseData.getApplication().setStatementOfTruth(YesOrNo.YES);
+        caseData.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        caseData.setApplicationFeeOrderSummary(orderSummary);
+        caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
         Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(IN_PROGRESS).build();
         caseData.setPayments(singletonList(new ListValue<>("1", payment)));
@@ -76,7 +75,7 @@ public class CitizenAddPaymentTest {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
 
-        AboutToStartOrSubmitResponse response = citizenAddPayment.aboutToSubmit(details, details);
+        final var response = citizenAddPayment.aboutToSubmit(details, details);
 
         verifyNoInteractions(notification);
         assertThat(response.getState(), is(AwaitingPayment));
@@ -86,11 +85,11 @@ public class CitizenAddPaymentTest {
     public void givenUnsuccessfulPaymentCaseDataWhenCallbackIsInvokedThenSetToDraft() {
         final CaseData caseData = caseData();
         caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
-        caseData.setStatementOfTruth(YesOrNo.YES);
-        caseData.setSolSignStatementOfTruth(YesOrNo.YES);
+        caseData.getApplication().setStatementOfTruth(YesOrNo.YES);
+        caseData.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        caseData.setApplicationFeeOrderSummary(orderSummary);
+        caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
         Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(CANCELLED).build();
         caseData.setPayments(singletonList(new ListValue<>("1", payment)));
@@ -98,7 +97,7 @@ public class CitizenAddPaymentTest {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
 
-        AboutToStartOrSubmitResponse response = citizenAddPayment.aboutToSubmit(details, details);
+        final var response = citizenAddPayment.aboutToSubmit(details, details);
 
         verifyNoInteractions(notification);
         assertThat(response.getState(), is(Draft));
@@ -108,11 +107,11 @@ public class CitizenAddPaymentTest {
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmail() {
         final CaseData caseData = caseData();
         caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
-        caseData.setStatementOfTruth(YesOrNo.YES);
-        caseData.setSolSignStatementOfTruth(YesOrNo.YES);
+        caseData.getApplication().setStatementOfTruth(YesOrNo.YES);
+        caseData.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        caseData.setApplicationFeeOrderSummary(orderSummary);
+        caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
         Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(SUCCESS).build();
         caseData.setPayments(singletonList(new ListValue<>("1", payment)));
@@ -131,7 +130,7 @@ public class CitizenAddPaymentTest {
         caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        caseData.setApplicationFeeOrderSummary(orderSummary);
+        caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
         Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(DECLINED).build();
         caseData.setPayments(singletonList(new ListValue<>("1", payment)));
@@ -148,17 +147,17 @@ public class CitizenAddPaymentTest {
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendOutstandingActionEmail() {
         final CaseData caseData = caseData();
         caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
-        caseData.setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
+        caseData.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
 
         Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(SUCCESS).build();
         caseData.setPayments(singletonList(new ListValue<>("1", payment)));
         final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        caseData.setApplicationFeeOrderSummary(orderSummary);
+        caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
 
-        AboutToStartOrSubmitResponse response = citizenAddPayment.aboutToSubmit(details, details);
+        final var response = citizenAddPayment.aboutToSubmit(details, details);
 
         verify(outstandingActionNotification).send(caseData, details.getId());
         verify(notification).send(caseData, details.getId());
@@ -173,10 +172,10 @@ public class CitizenAddPaymentTest {
         Set<DocumentType> docs = new HashSet<>();
         docs.add(DocumentType.MARRIAGE_CERTIFICATE);
         docs.add(DocumentType.NAME_CHANGE_EVIDENCE);
-        caseData.setCannotUploadSupportingDocument(docs);
+        caseData.getApplication().setCannotUploadSupportingDocument(docs);
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        caseData.setApplicationFeeOrderSummary(orderSummary);
+        caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
         Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(SUCCESS).build();
         caseData.setPayments(singletonList(new ListValue<>("1", payment)));
@@ -184,7 +183,7 @@ public class CitizenAddPaymentTest {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
 
-        AboutToStartOrSubmitResponse response = citizenAddPayment.aboutToSubmit(details, details);
+        final var response = citizenAddPayment.aboutToSubmit(details, details);
 
         verify(outstandingActionNotification).send(caseData, details.getId());
         verify(notification).send(caseData, details.getId());

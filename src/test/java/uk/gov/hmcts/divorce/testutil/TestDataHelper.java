@@ -13,10 +13,13 @@ import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.common.model.Applicant;
+import uk.gov.hmcts.divorce.common.model.Application;
 import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.common.model.CaseInvite;
 import uk.gov.hmcts.divorce.common.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.common.model.Gender;
+import uk.gov.hmcts.divorce.common.model.HelpWithFees;
 import uk.gov.hmcts.divorce.common.model.Jurisdiction;
 import uk.gov.hmcts.divorce.common.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.common.model.MarriageDetails;
@@ -40,19 +43,29 @@ import java.util.Set;
 import java.util.UUID;
 
 import static feign.Request.HttpMethod.GET;
+import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.time.temporal.ChronoUnit.DAYS;
-import static java.time.temporal.ChronoUnit.YEARS;
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.common.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.common.model.ConfidentialAddress.SHARE;
 import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.common.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.common.model.Gender.MALE;
+import static uk.gov.hmcts.divorce.common.model.JurisdictionConnections.APP_1_RESIDENT_JOINT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_2_SIGN_IN_DISSOLUTION_URL;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_2_SIGN_IN_DIVORCE_URL;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DIVORCE_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DIVORCE_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DISSOLUTION_TEST_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DIVORCE_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
@@ -85,12 +98,30 @@ public class TestDataHelper {
             .email(TEST_USER_EMAIL)
             .gender(gender)
             .languagePreferenceWelsh(NO)
+            .contactDetailsConfidential(SHARE)
             .build();
     }
 
     public static Applicant getApplicant2(Gender gender) {
         return Applicant.builder()
+            .firstName(TEST_FIRST_NAME)
+            .middleName(TEST_MIDDLE_NAME)
+            .lastName(TEST_LAST_NAME)
             .gender(gender)
+            .build();
+    }
+
+    public static Applicant getJointApplicant2(Gender gender) {
+        return Applicant.builder()
+            .gender(gender)
+            .build();
+    }
+
+    public static Applicant getInvalidApplicant() {
+        return Applicant.builder()
+            .firstName(TEST_FIRST_NAME)
+            .middleName(TEST_MIDDLE_NAME)
+            .lastName(TEST_LAST_NAME)
             .email(TEST_USER_EMAIL)
             .build();
     }
@@ -99,21 +130,33 @@ public class TestDataHelper {
         return CaseData.builder()
             .applicant1(getApplicant())
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
+            .caseInvite(new CaseInvite())
+            .build();
+    }
+
+    public static CaseData invalidCaseData() {
+        return CaseData.builder()
+            .applicant1(getInvalidApplicant())
+            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .build();
     }
 
     public static CaseData caseDataWithOrderSummary() {
+        var application = Application.builder()
+            .applicationFeeOrderSummary(OrderSummary.builder().paymentTotal("55000").build())
+            .build();
+
         return CaseData
             .builder()
             .applicant1(getApplicant())
             .divorceOrDissolution(DIVORCE)
-            .applicationFeeOrderSummary(OrderSummary.builder().paymentTotal("55000").build())
+            .application(application)
             .build();
     }
 
-    public static CaseData validApplicant1CaseDataMap() {
+    public static CaseData validJointApplicant1CaseDataMap() {
         var marriageDetails = new MarriageDetails();
-        marriageDetails.setDate(LocalDate.now().minus(1, YEARS).minus(1, DAYS));
+        marriageDetails.setDate(LocalDate.of(1990, 6, 10));
         marriageDetails.setApplicant1Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME);
 
         var jurisdiction = new Jurisdiction();
@@ -123,19 +166,34 @@ public class TestDataHelper {
 
         var applicant1 = getApplicant();
         applicant1.setContactDetailsConfidential(ConfidentialAddress.KEEP);
+        applicant1.setFinancialOrder(NO);
+
+        var application = Application.builder()
+            .marriageDetails(marriageDetails)
+            .jurisdiction(jurisdiction)
+            .helpWithFees(
+                HelpWithFees.builder()
+                    .needHelp(NO)
+                    .build()
+            )
+            .build();
 
         return CaseData
             .builder()
             .applicant1(applicant1)
-            .applicant2(getApplicant(MALE))
-            .financialOrder(NO)
-            .helpWithFeesNeedHelp(NO)
-            .prayerHasBeenGiven(YES)
-            .statementOfTruth(YES)
-            .marriageDetails(marriageDetails)
-            .jurisdiction(jurisdiction)
+            .applicant2(getJointApplicant2(MALE))
+            .caseInvite(CaseInvite.builder().applicant2InviteEmailAddress(TEST_USER_EMAIL).build())
+            .divorceOrDissolution(DIVORCE)
+            .application(application)
             .build();
+    }
 
+    public static CaseData validApplicant1CaseDataMap() {
+        CaseData caseData = validJointApplicant1CaseDataMap();
+        caseData.setApplicant2(getApplicant2(MALE));
+        caseData.getApplication().setStatementOfTruth(YES);
+        caseData.getApplication().setPrayerHasBeenGiven(YES);
+        return caseData;
     }
 
     public static CaseData caseDataWithStatementOfTruth() {
@@ -155,15 +213,48 @@ public class TestDataHelper {
         var applicant1 = getApplicant();
         applicant1.setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).build());
 
+        var application = Application.builder()
+            .divorceCostsClaim(YES)
+            .solSignStatementOfTruth(YES)
+            .applicationFeeOrderSummary(orderSummary)
+            .build();
+
         return CaseData
             .builder()
             .applicant1(applicant1)
             .divorceOrDissolution(DIVORCE)
-            .divorceCostsClaim(YES)
-            .solSignStatementOfTruth(YES)
-            .applicationFeeOrderSummary(orderSummary)
+            .application(application)
             .payments(singletonList(payment))
             .build();
+    }
+
+    public static CaseData validCaseDataForIssueApplication() {
+        final MarriageDetails marriageDetails = new MarriageDetails();
+        marriageDetails.setApplicant1Name(format("%s %s", TEST_FIRST_NAME, TEST_LAST_NAME));
+        marriageDetails.setApplicant2Name(format("%s %s", TEST_FIRST_NAME, TEST_LAST_NAME));
+        marriageDetails.setDate(LocalDate.of(1990, 6, 10));
+        marriageDetails.setPlaceOfMarriage("Somewhere");
+
+        final Jurisdiction jurisdiction = new Jurisdiction();
+        jurisdiction.setConnections(Set.of(APP_1_RESIDENT_JOINT));
+        jurisdiction.setApplicant1Residence(YES);
+        jurisdiction.setApplicant2Residence(YES);
+
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        caseData.getApplicant1().setFinancialOrder(NO);
+        caseData.setApplicant2(getApplicant());
+
+        final Application application = caseData.getApplication();
+        application.setDocumentUploadComplete(YES);
+        application.setMarriageDetails(marriageDetails);
+        application.setPrayerHasBeenGiven(YES);
+        application.setStatementOfTruth(YES);
+        application.setJurisdiction(jurisdiction);
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplicant2().setFinancialOrder(NO);
+        caseData.getApplication().setLegalProceedings(NO);
+
+        return caseData;
     }
 
     public static CallbackRequest callbackRequest() {
@@ -291,5 +382,14 @@ public class TestDataHelper {
 
     public static String getFeeResponseAsJson() throws JsonProcessingException {
         return OBJECT_MAPPER.writeValueAsString(getFeeResponse());
+    }
+
+    public static Map<String, String> getConfigTemplateVars() {
+        return Map.of(
+            SIGN_IN_DIVORCE_URL, SIGN_IN_DIVORCE_TEST_URL,
+            SIGN_IN_DISSOLUTION_URL, SIGN_IN_DISSOLUTION_TEST_URL,
+            APPLICANT_2_SIGN_IN_DIVORCE_URL, APPLICANT_2_SIGN_IN_DIVORCE_TEST_URL,
+            APPLICANT_2_SIGN_IN_DISSOLUTION_URL, APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL
+        );
     }
 }

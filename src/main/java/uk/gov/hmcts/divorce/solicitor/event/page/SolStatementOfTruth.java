@@ -2,6 +2,8 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.model.Applicant;
+import uk.gov.hmcts.divorce.common.model.Application;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 
 import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.JOINT_APPLICATION_CONDITION;
@@ -32,48 +34,56 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
             .label(
                 "LabelSolStatementOfTruthPara-1.1",
                 "• That the marriage be dissolved as it has broken down irretrievably",
-                "divorceCostsClaim=\"No\" AND financialOrder=\"No\"")
+                "divorceCostsClaim=\"No\" AND applicant1FinancialOrder=\"No\"")
             .label(
                 "LabelSolStatementOfTruthPara-1.2",
                 "- That the marriage be dissolved as it has broken down irretrievably\n"
                     + "- That a costs order may be granted.",
-                "divorceCostsClaim=\"Yes\" AND financialOrder=\"No\"")
+                "divorceCostsClaim=\"Yes\" AND applicant1FinancialOrder=\"No\"")
             .label(
                 "LabelSolStatementOfTruthPara-1.3",
                 "- That the marriage be dissolved as it has broken down irretrievably\n"
                     + "- That a financial order may be granted.",
-                "divorceCostsClaim=\"No\" AND financialOrder=\"Yes\"")
+                "divorceCostsClaim=\"No\" AND applicant1FinancialOrder=\"Yes\"")
             .label(
                 "LabelSolStatementOfTruthPara-1.4",
                 "- That the marriage be dissolved as it has broken down irretrievably.\n"
                     + "- That a costs order may be granted.\n"
                     + "- That a financial order may be granted.",
-                "divorceCostsClaim=\"Yes\" AND financialOrder=\"Yes\"")
-            .mandatory(CaseData::getSolUrgentCase)
-            .optional(CaseData::getSolUrgentCaseSupportingInformation, "solUrgentCase=\"Yes\"")
-            .mandatoryNoSummary(CaseData::getDivorceCostsClaim, ALWAYS_HIDE)
-            .mandatoryNoSummary(CaseData::getFinancialOrder, ALWAYS_HIDE)
+                "divorceCostsClaim=\"Yes\" AND applicant1FinancialOrder=\"Yes\"")
+            .complex(CaseData::getApplication)
+                .mandatory(Application::getSolUrgentCase)
+                .optional(Application::getSolUrgentCaseSupportingInformation, "solUrgentCase=\"Yes\"")
+                .mandatoryNoSummary(Application::getDivorceCostsClaim, ALWAYS_HIDE)
+                .done()
+            .complex(CaseData::getApplicant1)
+                .mandatoryNoSummary(Applicant::getFinancialOrder, ALWAYS_HIDE)
+                .done()
             .label("LabelSolServiceMethod", "## Service method")
-            .mandatory(CaseData::getSolServiceMethod)
-            .label(
+            .complex(CaseData::getApplication)
+                .mandatory(Application::getSolServiceMethod)
+                .label(
                 "LabelSolPersonalService",
                 "After service is complete you must notify the court by completing the 'Confirm Service' form "
                     + "in CCD. Refer to the information pack for further instruction on how to do this",
                 "solServiceMethod=\"personalService\"")
-            .label("LabelSolStatementOTruthPara-3", "## Statement of reconciliation")
-            .mandatory(CaseData::getSolStatementOfReconciliationCertify)
-            .mandatory(CaseData::getSolStatementOfReconciliationDiscussed)
-            .label("LabelSolStatementOfTruthPara-2", "## Statement of truth")
-            .mandatory(CaseData::getStatementOfTruth)
-            .mandatory(CaseData::getSolSignStatementOfTruth)
-            .mandatory(CaseData::getSolStatementOfReconciliationName)
-            .mandatory(CaseData::getSolStatementOfReconciliationFirm)
-            .label(
-                "LabelSolStatementOTruthPara-2",
-                "You could be fined or imprisoned for contempt of court if you deliberately submit false information.\n\n"
-                    + "If you have any comments you would like to make to the court staff regarding the application "
-                    + "you may include them below.")
-            .optionalNoSummary(CaseData::getStatementOfReconciliationComments)
-            .readonlyNoSummary(CaseData::getSolApplicationFeeInPounds);
+                .label("LabelSolStatementOTruthPara-3", "## Statement of reconciliation")
+                .mandatory(Application::getSolStatementOfReconciliationCertify)
+                .mandatory(Application::getSolStatementOfReconciliationDiscussed)
+                .label("LabelSolStatementOfTruthPara-2", "## Statement of truth")
+                .mandatory(Application::getStatementOfTruth)
+                .mandatory(Application::getSolSignStatementOfTruth)
+                .label("LabelPrayer", "## Prayer")
+                .mandatory(Application::getPrayerHasBeenGiven)
+                .mandatory(Application::getSolStatementOfReconciliationName)
+                .mandatory(Application::getSolStatementOfReconciliationFirm)
+                .label(
+                    "LabelSolStatementOTruthPara-2",
+                    "You could be fined or imprisoned for contempt of court if you deliberately submit false information.\n\n"
+                        + "If you have any comments you would like to make to the court staff regarding the application "
+                        + "you may include them below.")
+                .optionalNoSummary(Application::getStatementOfReconciliationComments)
+                .readonlyNoSummary(Application::getSolApplicationFeeInPounds)
+            .done();
     }
 }

@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.model.Application;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
@@ -18,11 +19,11 @@ import java.util.List;
 
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
-import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
-import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
-import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_LA;
-import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_SOLICITOR;
-import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_RDU;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_SUPERUSER;
+import static uk.gov.hmcts.divorce.common.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 
@@ -46,8 +47,8 @@ public class CaseworkerUploadDocumentsAndSubmit implements CCDConfig<CaseData, S
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .explicitGrants()
-            .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_COURTADMIN_BETA, CASEWORKER_DIVORCE_COURTADMIN)
-            .grant(READ, CASEWORKER_DIVORCE_SOLICITOR, CASEWORKER_DIVORCE_SUPERUSER, CASEWORKER_DIVORCE_COURTADMIN_LA))
+            .grant(CREATE_READ_UPDATE, CASEWORKER_COURTADMIN_CTSC, CASEWORKER_COURTADMIN_RDU)
+            .grant(READ, SOLICITOR, CASEWORKER_SUPERUSER, CASEWORKER_LEGAL_ADVISOR))
             .page("caseworkerUploadDocuments")
             .pageLabel("Upload the documents")
             .label(
@@ -59,7 +60,9 @@ public class CaseworkerUploadDocumentsAndSubmit implements CCDConfig<CaseData, S
                     + "The image must be of the entire document and has to be readable by court staff. "
                     + "You can upload image files with jpg, jpeg, bmp, tif, tiff or PDF file extensions, maximum size 100MB per file")
             .optional(CaseData::getDocumentsUploaded)
-            .mandatory(CaseData::getDocumentUploadComplete);
+            .complex(CaseData::getApplication)
+                .mandatory(Application::getDocumentUploadComplete)
+                .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
@@ -68,7 +71,7 @@ public class CaseworkerUploadDocumentsAndSubmit implements CCDConfig<CaseData, S
 
         final CaseData caseData = details.getData();
 
-        caseData.setDocumentUploadComplete(null);
+        caseData.getApplication().setDocumentUploadComplete(null);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
@@ -81,10 +84,11 @@ public class CaseworkerUploadDocumentsAndSubmit implements CCDConfig<CaseData, S
         log.info("Caseworker upload documentsand submit about to submit callback invoked");
 
         final CaseData caseData = details.getData();
+        final Application application = caseData.getApplication();
 
-        allowCaseToBeSubmitted(caseData);
+        allowCaseToBeSubmitted(application);
 
-        if (caseData.getDocumentUploadComplete().toBoolean()) {
+        if (application.getDocumentUploadComplete().toBoolean()) {
             return transitionToSubmitted(details, caseData);
         }
 
@@ -101,7 +105,7 @@ public class CaseworkerUploadDocumentsAndSubmit implements CCDConfig<CaseData, S
 
         final State state;
         if (submittedErrors.isEmpty()) {
-            caseData.setDateSubmitted(LocalDateTime.now(clock));
+            caseData.getApplication().setDateSubmitted(LocalDateTime.now(clock));
             state = Submitted;
         } else {
             state = details.getState();
@@ -114,10 +118,8 @@ public class CaseworkerUploadDocumentsAndSubmit implements CCDConfig<CaseData, S
             .build();
     }
 
-    private CaseData allowCaseToBeSubmitted(final CaseData caseData) {
-        caseData.setApplicant1WantsToHavePapersServedAnotherWay(null);
-        caseData.setCannotUploadSupportingDocument(null);
-
-        return caseData;
+    private void allowCaseToBeSubmitted(final Application application) {
+        application.setApplicant1WantsToHavePapersServedAnotherWay(null);
+        application.setCannotUploadSupportingDocument(null);
     }
 }

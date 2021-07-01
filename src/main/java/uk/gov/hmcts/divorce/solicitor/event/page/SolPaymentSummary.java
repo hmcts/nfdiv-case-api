@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.model.Application;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 
 import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.JOINT_APPLICATION_CONDITION;
@@ -24,7 +25,9 @@ public class SolPaymentSummary implements CcdPageConfiguration {
                 "LabelNFDJointBanner-SolPaymentSummary",
                 SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
                 JOINT_APPLICATION_CONDITION)
-            .mandatory(CaseData::getApplicationFeeOrderSummary)
+            .complex(CaseData::getApplication)
+                .mandatory(Application::getApplicationFeeOrderSummary)
+                .done()
             .label(
                 "LabelSolPaySummaryFeeAccountPara-1",
                 "Payment Method: Fee Account",

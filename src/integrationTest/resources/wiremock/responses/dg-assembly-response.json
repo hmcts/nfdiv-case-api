@@ -1,6 +1,6 @@
 {
   "jwt": "Bearer fake-jwt",
-  "templateId": "RGl2b3JjZV9DUF9NaW5pX0RyYWZ0X1BldGl0aW9uX1RlbXBsYXRlLmRvY3g=",
+  "templateId": "<templateId>",
   "formPayload": {
     "divorceOrDissolution": "divorce",
     "ccdCaseReference": "1616591401473378",
@@ -27,6 +27,6 @@
     "applicant2PostalAddress": "London"
   },
   "outputType": "PDF",
-  "renditionOutputLocation": "http://dm-store-aat.service.core-compute-aat.internal/documents/8d2bd0f2-80e9-4b0f-b38d-2c138b243e27",
+  "renditionOutputLocation": "http://dm-store-aat.service.core-compute-aat.internal/documents/<docUuid>",
   "outputFilename": "ff5a31b4-f48a-4e69-8d7a-2ff691d697b0"
 }

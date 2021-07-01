@@ -4,17 +4,18 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.model.Application;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.MarriageDetails;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
-import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
-import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
-import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_LA;
-import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_SOLICITOR;
-import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_RDU;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_SUPERUSER;
+import static uk.gov.hmcts.divorce.common.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_PREVIEW_BANNER;
@@ -32,18 +33,22 @@ public class VerifyMarriageCertificate implements CCDConfig<CaseData, State, Use
             .description("Verify marriage certificate")
             .showSummary()
             .explicitGrants()
-            .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_SOLICITOR, CASEWORKER_DIVORCE_COURTADMIN)
+            .grant(CREATE_READ_UPDATE, SOLICITOR, CASEWORKER_COURTADMIN_RDU)
             .grant(READ,
-                CASEWORKER_DIVORCE_SUPERUSER,
-                CASEWORKER_DIVORCE_COURTADMIN_BETA,
-                CASEWORKER_DIVORCE_COURTADMIN_LA))
+                CASEWORKER_SUPERUSER,
+                CASEWORKER_COURTADMIN_CTSC,
+                CASEWORKER_LEGAL_ADVISOR))
             .page("marriageCertificateDetailsVerification")
             .pageLabel("Marriage Certificate Details")
             .label("LabelNFDBanner-VerifyMarriageCert", SOLICITOR_NFD_PREVIEW_BANNER)
-            .complex(CaseData::getMarriageDetails)
-                .mandatory(MarriageDetails::getCertifyMarriageCertificateIsCorrect)
-                .mandatory(MarriageDetails::getMarriageCertificateIsIncorrectDetails,"marriageCertifyMarriageCertificateIsCorrect=\"No\"")
-                .mandatory(MarriageDetails::getIssueApplicationWithoutMarriageCertificate)
+            .complex(CaseData::getApplication)
+                .complex(Application::getMarriageDetails)
+                    .mandatory(MarriageDetails::getCertifyMarriageCertificateIsCorrect)
+                    .mandatory(
+                        MarriageDetails::getMarriageCertificateIsIncorrectDetails,
+                        "marriageCertifyMarriageCertificateIsCorrect=\"No\"")
+                    .mandatory(MarriageDetails::getIssueApplicationWithoutMarriageCertificate)
+                    .done()
                 .done();
     }
 }

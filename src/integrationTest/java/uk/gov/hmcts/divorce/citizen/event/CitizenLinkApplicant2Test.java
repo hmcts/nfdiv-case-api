@@ -30,6 +30,7 @@ import java.util.Map;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
+import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -92,9 +93,9 @@ public class CitizenLinkApplicant2Test {
     @Test
     public void givenValidAccessCodeWhenCallbackIsInvokedThenAccessCodeIsRemovedAndSolicitorRolesAreSet() throws Exception {
         CaseData data = caseData();
-        data.setAccessCode("D8BC9AQR");
+        data.getCaseInvite().setAccessCode("D8BC9AQR");
+        data.getCaseInvite().setApplicant2UserId("3");
         data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
-        data.setRespondentUserId("3");
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, APP_2_CITIZEN_USER_ID, CITIZEN_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -111,7 +112,7 @@ public class CitizenLinkApplicant2Test {
                 .builder()
                 .data(
                     Map.of(
-                    "respondentUserId", "3",
+                    "applicant2UserId", "3",
                     "accessCode", "D8BC9AQR"
                     )
                 )
@@ -130,6 +131,7 @@ public class CitizenLinkApplicant2Test {
             .getContentAsString();
 
         assertThatJson(actualResponse)
+            .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedCcdAboutToStartCallbackSuccessfulResponse()));
 
         verify(serviceTokenGenerator).generate();
@@ -137,9 +139,9 @@ public class CitizenLinkApplicant2Test {
     }
 
     @Test
-    public void givenNoRespondentUserIdPassedWhenCallbackIsInvokedThen404ErrorIsReturned() throws Exception {
+    public void givenNoApplicant2UserIdPassedWhenCallbackIsInvokedThen404ErrorIsReturned() throws Exception {
         CaseData data = caseData();
-        data.setAccessCode("D8BC9AQR");
+        data.getCaseInvite().setAccessCode("D8BC9AQR");
         data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, APP_2_CITIZEN_USER_ID, CITIZEN_ROLE);
@@ -165,7 +167,7 @@ public class CitizenLinkApplicant2Test {
     @Test
     public void givenNoCaseIdPassedWhenCallbackIsInvokedThen404ErrorIsReturned() throws Exception {
         CaseData data = caseData();
-        data.setAccessCode("D8BC9AQR");
+        data.getCaseInvite().setAccessCode("D8BC9AQR");
         data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, APP_2_CITIZEN_USER_ID, CITIZEN_ROLE);

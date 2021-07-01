@@ -10,7 +10,7 @@ import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.DraftApplicationTemplateContent;
+import uk.gov.hmcts.divorce.document.content.MiniApplicationTemplateContent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,7 +34,7 @@ class MiniApplicationTest {
     private CaseDataDocumentService caseDataDocumentService;
 
     @Mock
-    private DraftApplicationTemplateContent templateContent;
+    private MiniApplicationTemplateContent templateContent;
 
     @Mock
     private CaseDataUpdaterChain caseDataUpdaterChain;

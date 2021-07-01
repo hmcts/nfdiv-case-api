@@ -49,6 +49,8 @@ fee:
 core_case_data:
   api:
     url: ${CASE_DATA_STORE_BASEURL:http://ccd-data-store-api-aat.service.core-compute-aat.internal}
+  search:
+    page_size: ${CCD_SEARCH_PAGE_SIZE:100}
 
 doc_assembly:
   url: ${DOC_ASSEMBLY_URL:http://dg-docassembly-aat.service.core-compute-aat.internal}
@@ -62,3 +64,6 @@ prd:
 
 send-letter:
   url: ${SEND_LETTER_SERVICE_BASEURL:http://rpe-send-letter-service-aat.service.core-compute-aat.internal}
+
+schedule:
+  issue_aos: '0 0 0 * * ?' # Midnight each day

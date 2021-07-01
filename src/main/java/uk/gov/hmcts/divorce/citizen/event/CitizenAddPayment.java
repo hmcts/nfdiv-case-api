@@ -22,9 +22,9 @@ import static uk.gov.hmcts.divorce.common.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.common.model.State.Draft;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
-import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
-import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
-import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_RDU;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_SUPERUSER;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
@@ -49,8 +49,8 @@ public class CitizenAddPayment implements CCDConfig<CaseData, State, UserRole> {
             .name("Payment made")
             .description("Payment made")
             .retries(120, 120)
-            .grant(CREATE_READ_UPDATE, CITIZEN, CASEWORKER_DIVORCE_COURTADMIN, CASEWORKER_DIVORCE_COURTADMIN_BETA)
-            .grant(READ, CASEWORKER_DIVORCE_SUPERUSER)
+            .grant(CREATE_READ_UPDATE, CITIZEN, CASEWORKER_COURTADMIN_RDU, CASEWORKER_COURTADMIN_CTSC)
+            .grant(READ, CASEWORKER_SUPERUSER)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
 
@@ -79,14 +79,14 @@ public class CitizenAddPayment implements CCDConfig<CaseData, State, UserRole> {
             errors.clear();
         } else if (submittedErrors.isEmpty()) {
             log.info("Case {} submitted", details.getId());
-            data.setDateSubmitted(LocalDateTime.now());
+            data.getApplication().setDateSubmitted(LocalDateTime.now());
 
             notification.send(data, details.getId());
             state = Submitted;
             errors.clear();
         } else if (awaitingDocumentsErrors.isEmpty()) {
             log.info("Case {} awaiting documents", details.getId());
-            data.setDateSubmitted(LocalDateTime.now());
+            data.getApplication().setDateSubmitted(LocalDateTime.now());
 
             notification.send(data, details.getId());
             outstandingActionNotification.send(data, details.getId());

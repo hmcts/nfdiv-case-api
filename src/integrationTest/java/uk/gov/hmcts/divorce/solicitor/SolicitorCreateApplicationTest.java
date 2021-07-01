@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.model.Applicant;
+import uk.gov.hmcts.divorce.common.model.Application;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.common.model.Solicitor;
@@ -27,10 +28,10 @@ import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
+import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
-import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
-import static org.skyscreamer.jsonassert.JSONCompareMode.STRICT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -115,7 +116,9 @@ class SolicitorCreateApplicationTest {
             .getResponse()
             .getContentAsString();
 
-        assertEquals(jsonStringResponse, expectedResponse(SOLICITOR_CREATE_ABOUT_TO_SUBMIT), STRICT);
+        assertThatJson(jsonStringResponse)
+            .when(IGNORING_EXTRA_FIELDS)
+            .isEqualTo(expectedResponse(SOLICITOR_CREATE_ABOUT_TO_SUBMIT));
     }
 
     @Test
@@ -137,7 +140,9 @@ class SolicitorCreateApplicationTest {
             .getResponse()
             .getContentAsString();
 
-        assertEquals(jsonStringResponse, expectedResponse(SOLICITOR_MID_EVENT_RESPONSE), STRICT);
+        assertThatJson(jsonStringResponse)
+            .when(IGNORING_EXTRA_FIELDS)
+            .isEqualTo(expectedResponse(SOLICITOR_MID_EVENT_RESPONSE));
     }
 
     @Test
@@ -159,7 +164,9 @@ class SolicitorCreateApplicationTest {
             .getResponse()
             .getContentAsString();
 
-        assertEquals(jsonStringResponse, expectedResponse(SOLICITOR_MID_EVENT_ERROR), STRICT);
+        assertThatJson(jsonStringResponse)
+            .when(IGNORING_EXTRA_FIELDS)
+            .isEqualTo(expectedResponse(SOLICITOR_MID_EVENT_ERROR));
     }
 
     @Test
@@ -218,12 +225,18 @@ class SolicitorCreateApplicationTest {
     }
 
     private static CaseData caseData() {
+        var applicant1 = getApplicant();
+        applicant1.setFinancialOrder(NO);
+
+        var application = Application.builder()
+            .divorceCostsClaim(YES)
+            .build();
+
         return CaseData
             .builder()
-            .applicant1(getApplicant())
+            .applicant1(applicant1)
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
-            .divorceCostsClaim(YES)
-            .financialOrder(NO)
+            .application(application)
             .build();
     }
 }

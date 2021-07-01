@@ -9,16 +9,12 @@ import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.MarriageDetails;
 import uk.gov.hmcts.divorce.common.model.Solicitor;
-import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
-import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInformation;
-import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -64,7 +60,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
@@ -75,17 +70,14 @@ public class DraftApplicationTemplateContentTest {
     @Mock
     private AuthTokenGenerator authTokenGenerator;
 
-    @Mock
-    private OrganisationClient organisationClient;
-
     @InjectMocks
     private DraftApplicationTemplateContent templateContent;
 
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForDivorce() {
         CaseData caseData = caseData();
-        caseData.setDivorceCostsClaim(YES);
-        caseData.setFinancialOrder(NO);
+        caseData.getApplication().setDivorceCostsClaim(YES);
+        caseData.getApplicant1().setFinancialOrder(NO);
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
         );
@@ -124,8 +116,8 @@ public class DraftApplicationTemplateContentTest {
     public void shouldSuccessfullyApplyContentFromCaseDataForDissolution() {
         CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DISSOLUTION);
-        caseData.setDivorceCostsClaim(NO);
-        caseData.setFinancialOrder(NO);
+        caseData.getApplication().setDivorceCostsClaim(NO);
+        caseData.getApplicant1().setFinancialOrder(NO);
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
         );
@@ -167,9 +159,9 @@ public class DraftApplicationTemplateContentTest {
         marriageDetails.setDate(LocalDate.of(2019, 06, 4));
 
         caseData.setDivorceOrDissolution(DISSOLUTION);
-        caseData.setDivorceCostsClaim(NO);
-        caseData.setFinancialOrder(NO);
-        caseData.setMarriageDetails(marriageDetails);
+        caseData.getApplication().setDivorceCostsClaim(NO);
+        caseData.getApplicant1().setFinancialOrder(NO);
+        caseData.getApplication().setMarriageDetails(marriageDetails);
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
         );
@@ -198,30 +190,13 @@ public class DraftApplicationTemplateContentTest {
         caseData.setApplicant2(getApplicant());
         caseData.getApplicant2().setHomeAddress(address);
         caseData.setDivorceOrDissolution(DISSOLUTION);
-        caseData.setDivorceCostsClaim(NO);
-        caseData.setFinancialOrder(NO);
+        caseData.getApplication().setDivorceCostsClaim(NO);
+        caseData.getApplicant1().setFinancialOrder(NO);
 
         Supplier<Map<String, Object>> templateContentSupplier = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
 
         assertThat(templateContentSupplier.get()).contains(
             entry(APPLICANT_2_POSTAL_ADDRESS, "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom")
         );
-    }
-
-    private OrganisationsResponse organisationResponse() {
-        return OrganisationsResponse
-            .builder()
-            .organisationIdentifier(TEST_ORG_ID)
-            .contactInformation(singletonList(
-                OrganisationContactInformation
-                    .builder()
-                    .postCode("postcode")
-                    .addressLine1("line1")
-                    .addressLine2("line2")
-                    .townCity("city")
-                    .build()
-                )
-            )
-            .build();
     }
 }

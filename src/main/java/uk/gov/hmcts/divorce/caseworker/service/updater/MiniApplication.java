@@ -8,7 +8,7 @@ import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdater;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.DraftApplicationTemplateContent;
+import uk.gov.hmcts.divorce.document.content.MiniApplicationTemplateContent;
 
 import java.util.Map;
 import java.util.function.Supplier;
@@ -24,9 +24,8 @@ public class MiniApplication implements CaseDataUpdater {
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
 
-    //TODO: Use correct template content when application template requirements are known.
     @Autowired
-    private DraftApplicationTemplateContent draftApplicationTemplateContent;
+    private MiniApplicationTemplateContent templateContent;
 
     @Override
     public CaseDataContext updateCaseData(final CaseDataContext caseDataContext,
@@ -38,7 +37,7 @@ public class MiniApplication implements CaseDataUpdater {
         final Long caseId = caseDataContext.getCaseId();
         final String userAuthToken = caseDataContext.getUserAuthToken();
 
-        final Supplier<Map<String, Object>> templateContentSupplier = draftApplicationTemplateContent
+        final Supplier<Map<String, Object>> templateContentSupplier = templateContent
             .apply(caseDataContext.copyOfCaseData(), caseId, caseDataContext.getCreatedDate());
 
         final CaseData updatedCaseData = caseDataDocumentService.renderDocumentAndUpdateCaseData(

@@ -11,11 +11,11 @@ import uk.gov.hmcts.divorce.common.model.UserRole;
 
 import static uk.gov.hmcts.divorce.common.model.State.Draft;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;
-import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN;
-import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_BETA;
-import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_COURTADMIN_LA;
-import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_SOLICITOR;
-import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_RDU;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_SUPERUSER;
+import static uk.gov.hmcts.divorce.common.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ_UPDATE;
@@ -36,12 +36,12 @@ public class SolicitorUpdateLanguage implements CCDConfig<CaseData, State, UserR
             .displayOrder(3)
             .showSummary()
             .explicitGrants()
-            .grant(CREATE_READ_UPDATE, CASEWORKER_DIVORCE_SOLICITOR)
-            .grant(READ_UPDATE, CASEWORKER_DIVORCE_SUPERUSER)
+            .grant(CREATE_READ_UPDATE, SOLICITOR)
+            .grant(READ_UPDATE, CASEWORKER_SUPERUSER)
             .grant(READ,
-                CASEWORKER_DIVORCE_COURTADMIN_BETA,
-                CASEWORKER_DIVORCE_COURTADMIN,
-                CASEWORKER_DIVORCE_COURTADMIN_LA))
+                CASEWORKER_COURTADMIN_CTSC,
+                CASEWORKER_COURTADMIN_RDU,
+                CASEWORKER_LEGAL_ADVISOR))
             .page("langPref")
             .pageLabel("Select Language")
             .label("LabelNFDBanner-MarriageIrretrievablyBroken", SOLICITOR_NFD_PREVIEW_BANNER)

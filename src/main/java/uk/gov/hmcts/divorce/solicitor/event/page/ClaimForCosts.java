@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.model.Application;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 
 import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.JOINT_APPLICATION_CONDITION;
@@ -29,7 +30,9 @@ public class ClaimForCosts implements CcdPageConfiguration {
                 "LabelClaimForCostsPara-1",
                 "A claim for costs can include all the fees the applicant has to pay during the divorce, such as "
                     + "application fees, solicitor fees and any extra court fees.")
-            .mandatory(CaseData::getDivorceCostsClaim)
-            .optional(CaseData::getDivorceClaimFrom, "divorceCostsClaim=\"Yes\"");
+            .complex(CaseData::getApplication)
+                .mandatory(Application::getDivorceCostsClaim)
+                .optional(Application::getDivorceClaimFrom, "divorceCostsClaim=\"Yes\"")
+                .done();
     }
 }

@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.solicitor.service.updater;
 
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.common.model.Application;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdater;
@@ -20,12 +21,13 @@ public class ClaimsCost implements CaseDataUpdater {
                                           final CaseDataUpdaterChain caseDataUpdaterChain) {
 
         final CaseData caseData = caseDataContext.copyOfCaseData();
+        final Application application = caseData.getApplication();
 
-        final boolean isApplicant1ClaimingCosts = YES.equals(caseData.getDivorceCostsClaim());
-        final boolean claimsCostFromIsEmpty = isEmpty(caseData.getDivorceClaimFrom());
+        final boolean isApplicant1ClaimingCosts = YES.equals(application.getDivorceCostsClaim());
+        final boolean claimsCostFromIsEmpty = isEmpty(application.getDivorceClaimFrom());
 
         if (isApplicant1ClaimingCosts && claimsCostFromIsEmpty) {
-            caseData.setDivorceClaimFrom(Set.of(APPLICANT_2));
+            application.setDivorceClaimFrom(Set.of(APPLICANT_2));
         }
 
         return caseDataUpdaterChain.processNext(caseDataContext.handlerContextWith(caseData));

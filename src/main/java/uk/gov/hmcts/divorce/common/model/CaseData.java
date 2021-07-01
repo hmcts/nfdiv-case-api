@@ -11,27 +11,23 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
-import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
+import uk.gov.hmcts.divorce.common.model.access.CaseworkerAccess;
+import uk.gov.hmcts.divorce.common.model.access.CaseworkerAndSuperUserAccess;
 import uk.gov.hmcts.divorce.common.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
-import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.IN_PROGRESS;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
@@ -42,9 +38,6 @@ import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 public class CaseData {
-
-    @CCD(ignore = true)
-    private static final int SUBMISSION_RESPONSE_DAYS = 14;
 
     @CCD(
         label = "Application type",
@@ -62,18 +55,6 @@ public class CaseData {
     )
     private DivorceOrDissolution divorceOrDissolution;
 
-    @CCD(
-        label = "Has applicant 1's marriage broken down irretrievably?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo applicant1ScreenHasMarriageBroken;
-
-    @CCD(
-        label = "Has applicant 2's marriage broken down irretrievably?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo applicant2ScreenHasMarriageBroken;
-
     @JsonUnwrapped(prefix = "applicant1")
     @Builder.Default
     @CCD(access = {DefaultAccess.class})
@@ -84,237 +65,24 @@ public class CaseData {
     @CCD(access = {DefaultAccess.class})
     private Applicant applicant2 = new Applicant();
 
-    @CCD(
-        label = "Help with fees reference",
-        regex = "([Hh][Ww][Ff]-?)?[0-9a-zA-Z]{3}-?[0-9a-zA-Z]{3}$",
-        access = {DefaultAccess.class}
-    )
-    private String helpWithFeesReferenceNumber;
-
-    @CCD(
-        label = "Need help with fees?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo helpWithFeesNeedHelp;
-
-    @CCD(
-        label = "The applicant has marriage cert?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo screenHasMarriageCert;
-
-    @CCD(
-        label = "Applied for help with fees?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo helpWithFeesAppliedForFees;
-
-    @CCD(
-        access = {DefaultAccess.class}
-    )
-    @JsonUnwrapped(prefix = "marriage")
+    @JsonUnwrapped()
     @Builder.Default
-    private MarriageDetails marriageDetails = new MarriageDetails();
+    private Application application = new Application();
 
-    @JsonUnwrapped(prefix = "jurisdiction")
+    @JsonUnwrapped()
+    private CaseInvite caseInvite;
+
+    @JsonUnwrapped()
     @Builder.Default
-    private Jurisdiction jurisdiction = new Jurisdiction();
+    private AcknowledgementOfService acknowledgementOfService = new AcknowledgementOfService();
 
-    @CCD(
-        label = "Who is the applicant divorcing?",
-        hint = "Husband or Wife?",
-        typeOverride = FixedList,
-        typeParameterOverride = "WhoDivorcing",
-        access = {DefaultAccess.class}
-    )
-    private WhoDivorcing divorceWho;
+    @JsonUnwrapped()
+    @Builder.Default
+    private ConditionalOrder conditionalOrder = new ConditionalOrder();
 
-    @CCD(
-        label = "Is this an urgent jurisdiction case?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo solUrgentCase;
-
-    @CCD(
-        label = "Any supporting information or instructions?",
-        typeOverride = TextArea,
-        access = {DefaultAccess.class}
-    )
-    private String solUrgentCaseSupportingInformation;
-
-    @CCD(
-        label = "Does the applicant want to claim costs?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo divorceCostsClaim;
-
-    @CCD(
-        label = "Does the applicant wish to apply for a financial order?",
-        hint = "The court will not start processing your request for a financial order until you submit the separate "
-            + "application and pay the fee.",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo financialOrder;
-
-    @CCD(
-        label = "The applicant wants/will to apply to have the papers served to the respondent another way.",
-        hint = "For example by email, text message or social media. This is a separate application with "
-            + "an additional fee, which will need to be reviewed by a judge.",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo applicant1WantsToHavePapersServedAnotherWay;
-
-    @CCD(
-        label = "How would you like the respondent to be served?",
-        access = {DefaultAccess.class}
-    )
-    private SolServiceMethod solServiceMethod;
-
-    @CCD(
-        label = "I have discussed the possibility of a reconciliation with the applicant.",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo solStatementOfReconciliationCertify;
-
-    @CCD(
-        label = "I have given the applicant the names and addresses of persons qualified to help effect a reconciliation.",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo solStatementOfReconciliationDiscussed;
-
-    @CCD(
-        label = "The applicant has given their \"prayer\".",
-        hint = "\"The prayer\" means they confirm they wish to dissolve the union, pay any fees (if applicable),"
-            + " and have decided how money and property will be split (\"financial order\").",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo prayerHasBeenGiven;
-
-    @CCD(
-        label = "The applicant believes that the facts stated in this application are true.",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo statementOfTruth;
-
-    @CCD(
-        label = "I am duly authorised by the applicant to sign this statement.",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo solSignStatementOfTruth;
-
-    @CCD(
-        label = "Your name",
-        access = {DefaultAccess.class}
-    )
-    private String solStatementOfReconciliationName;
-
-    @CCD(
-        label = "Name of your firm",
-        access = {DefaultAccess.class}
-    )
-    private String solStatementOfReconciliationFirm;
-
-    @CCD(
-        label = "Additional comments",
-        hint = "For the attention of court staff. These comments will not form part of the application",
-        typeOverride = TextArea,
-        access = {DefaultAccess.class}
-    )
-    private String statementOfReconciliationComments;
-
-    // TODO move to OrderSummary?
-    @CCD(
-        label = "Solicitor application fee (in pounds)",
-        access = {DefaultAccess.class}
-    )
-    private String solApplicationFeeInPounds;
-
-    @CCD(
-        label = "How will payment be made?",
-        typeOverride = FixedList,
-        typeParameterOverride = "SolToPay",
-        access = {DefaultAccess.class}
-    )
-    private SolToPay solPaymentHowToPay;
-
-    @CCD(
-        label = "Account number",
-        access = {DefaultAccess.class}
-    )
-    private DynamicList pbaNumbers;
-
-    @CCD(
-        label = "Fee account reference",
-        hint = "This will appear on your statement to help you identify this payment",
-        access = {DefaultAccess.class}
-    )
-    private String feeAccountReference;
-
-    @CCD(
-        label = "Here are your order details",
-        access = {DefaultAccess.class}
-    )
-    private OrderSummary applicationFeeOrderSummary;
-
-    @CCD(
-        label = "Did you change your last name when you got married?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo lastNameChangedWhenMarried;
-
-    @CCD(
-        label = "Legal connections",
-        hint = "Tick all the reasons that apply:",
-        access = {DefaultAccess.class}
-    )
-    private Set<LegalConnections> legalConnections;
-
-    // TODO: rename this as applicant2InviteEmailAddress?
-    @CCD(
-        label = "The respondent's email address",
-        access = {DefaultAccess.class}
-    )
-    private String applicant2EmailAddress;
-
-    @CCD(
-        label = "Is the respondent's email address known?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo applicant1KnowsApplicant2EmailAddress;
-
-    @CCD(
-        label = "Is the respondent's home address known?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo applicant1KnowsApplicant2Address;
-
-    // TODO: move into LegalProceedings?
-    @CCD(
-        label = "Are there any existing or previous court proceedings relating to the applicant's marriage, "
-            + "property or children?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo legalProceedings;
-
-    @CCD(
-        label = "What do the legal proceedings relate to?",
-        access = {DefaultAccess.class}
-    )
-    private Set<LegalProceedingsRelated> legalProceedingsRelated;
-
-    @CCD(
-        label = "Legal proceeding details",
-        hint = "Include the case number(s), if known.",
-        typeOverride = TextArea,
-        access = {DefaultAccess.class}
-    )
-    private String legalProceedingsDetails;
-
-    @CCD(
-        label = "Claim costs from",
-        access = {DefaultAccess.class}
-    )
-    private Set<ClaimsCostFrom> divorceClaimFrom;
+    @JsonUnwrapped()
+    @Builder.Default
+    private FinalOrder finalOrder = new FinalOrder();
 
     @CCD(
         label = "Documents uploaded",
@@ -323,12 +91,6 @@ public class CaseData {
         access = {DefaultAccess.class}
     )
     private List<ListValue<DivorceDocument>> documentsUploaded;
-
-    @CCD(
-        label = "Cannot upload supporting documents",
-        access = {DefaultAccess.class}
-    )
-    private Set<DocumentType> cannotUploadSupportingDocument;
 
     @CCD(
         label = "RDC",
@@ -351,19 +113,6 @@ public class CaseData {
     )
     private List<ListValue<DivorceDocument>> documentsGenerated;
 
-    // TODO move to Applicant?
-    @CCD(
-        label = "Applicant 2 is using digital channel?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo app2ContactMethodIsDigital;
-
-    @CCD(
-        label = "Who is the financial order for?",
-        access = {DefaultAccess.class}
-    )
-    private Set<FinancialOrderFor> financialOrderFor;
-
     @CCD(
         label = "Payments",
         typeOverride = Collection,
@@ -371,13 +120,6 @@ public class CaseData {
         access = {DefaultAccess.class}
     )
     private List<ListValue<Payment>> payments;
-
-    @CCD(
-        label = "Date submitted to HMCTS",
-        access = {DefaultAccess.class}
-    )
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
-    private LocalDateTime dateSubmitted;
 
     @CCD(
         label = "Case ID for previously Amended Case, which was challenged by the respondent",
@@ -393,38 +135,27 @@ public class CaseData {
     private LocalDate dueDate;
 
     @CCD(
-        label = "All documents uploaded",
-        hint = "Select yes to submit the case, if all documents have been uploaded",
-        access = {DefaultAccess.class}
+        label = "Date when the application was issued",
+        access = {CaseworkerAccess.class}
     )
-    private YesOrNo documentUploadComplete;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate issueDate;
 
     @CCD(
-        label = "The respondent invite access code",
-        access = {DefaultAccess.class}
+        label = "Notes",
+        typeOverride = Collection,
+        typeParameterOverride = "CaseNote",
+        access = {CaseworkerAndSuperUserAccess.class}
     )
-    private String accessCode;
+    private List<ListValue<CaseNote>> notes;
 
     @CCD(
-        label = "The respondent's user id",
-        access = {DefaultAccess.class}
+        label = "Add a case note",
+        hint = "Enter note",
+        typeOverride = TextArea,
+        access = {CaseworkerAndSuperUserAccess.class}
     )
-    private String respondentUserId;
-
-    @JsonIgnore
-    public LocalDate getDateOfSubmissionResponse() {
-        return dateSubmitted == null ? null : dateSubmitted.plusDays(SUBMISSION_RESPONSE_DAYS).toLocalDate();
-    }
-
-    @JsonIgnore
-    public boolean hasStatementOfTruth() {
-        return YES.equals(statementOfTruth);
-    }
-
-    @JsonIgnore
-    public boolean hasSolSignStatementOfTruth() {
-        return YES.equals(solSignStatementOfTruth);
-    }
+    private String note;
 
     @JsonIgnore
     public boolean isAmendedCase() {

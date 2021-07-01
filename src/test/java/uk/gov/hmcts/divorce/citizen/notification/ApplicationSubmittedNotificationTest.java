@@ -40,7 +40,7 @@ class ApplicationSubmittedNotificationTest {
     @Test
     void shouldCallSendEmailWithSubmissionResponseDate() {
         CaseData data = caseData();
-        data.setDateSubmitted(LocalDateTime.of(2021, 4, 21, 1, 1));
+        data.getApplication().setDateSubmitted(LocalDateTime.of(2021, 4, 21, 1, 1));
         final HashMap<String, String> templateVars = new HashMap<>();
 
         when(commonContent.templateVarsFor(data)).thenReturn(templateVars);

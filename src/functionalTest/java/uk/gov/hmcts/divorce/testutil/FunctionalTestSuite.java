@@ -90,7 +90,7 @@ public abstract class FunctionalTestSuite {
                 "applicant1SolicitorName", "functional test",
                 "applicant1LanguagePreferenceWelsh", "NO",
                 "divorceOrDissolution", "divorce",
-                "financialOrder", "NO",
+                "applicant1FinancialOrder", "NO",
                 "divorceCostsClaim", "NO"
             ))
             .build();

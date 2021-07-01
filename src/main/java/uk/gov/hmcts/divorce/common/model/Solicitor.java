@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.common.model.access.OrganisationPolicyAccess;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
@@ -53,7 +54,10 @@ public class Solicitor {
     )
     private YesOrNo agreeToReceiveEmails;
 
-    @CCD(label = "Firm address/DX address")
+    @CCD(
+        label = "Firm address/DX address",
+        access = {OrganisationPolicyAccess.class}
+    )
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private OrganisationPolicy<UserRole> organisationPolicy;
 

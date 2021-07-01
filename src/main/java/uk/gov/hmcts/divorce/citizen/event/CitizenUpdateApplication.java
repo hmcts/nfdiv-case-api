@@ -8,7 +8,7 @@ import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 
 import static uk.gov.hmcts.divorce.common.model.State.Draft;
-import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_DIVORCE_SUPERUSER;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_SUPERUSER;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
@@ -29,6 +29,6 @@ public class CitizenUpdateApplication implements CCDConfig<CaseData, State, User
             .displayOrder(2)
             .retries(120, 120)
             .grant(CREATE_READ_UPDATE, CITIZEN)
-            .grant(READ, CASEWORKER_DIVORCE_SUPERUSER);
+            .grant(READ, CASEWORKER_SUPERUSER);
     }
 }

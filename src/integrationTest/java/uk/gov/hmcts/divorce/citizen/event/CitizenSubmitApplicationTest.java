@@ -28,6 +28,7 @@ import java.nio.file.Files;
 import static java.util.Objects.requireNonNull;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
+import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -41,7 +42,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.invalidCaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseDataMap;
 
 
@@ -92,6 +93,7 @@ public class CitizenSubmitApplicationTest {
         // marriageDate and payments.id are ignored using ${json-unit.ignore}
         // assertion will fail if the above elements are missing actual value
         assertThatJson(actualResponse)
+            .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedCcdAboutToStartCallbackSuccessfulResponse()));
     }
 
@@ -100,7 +102,7 @@ public class CitizenSubmitApplicationTest {
         stubForFeesLookup(TestDataHelper.getFeeResponseAsJson());
 
         CaseData caseData = validApplicant1CaseDataMap();
-        caseData.setHelpWithFeesNeedHelp(YesOrNo.YES);
+        caseData.getApplication().getHelpWithFees().setNeedHelp(YesOrNo.YES);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -115,6 +117,7 @@ public class CitizenSubmitApplicationTest {
         // marriageDate and payments.id are ignored using ${json-unit.ignore}
         // assertion will fail if the above elements are missing actual value
         assertThatJson(actualResponse)
+            .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedCcdAboutToStartCallbackWithHwfSuccessfulResponse()));
     }
 
@@ -124,7 +127,7 @@ public class CitizenSubmitApplicationTest {
         stubForFeesNotFound();
 
         CaseData caseData = validApplicant1CaseDataMap();
-        caseData.setApplicationFeeOrderSummary(OrderSummary.builder().paymentTotal("55000").build());
+        caseData.getApplication().setApplicationFeeOrderSummary(OrderSummary.builder().paymentTotal("55000").build());
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -145,8 +148,7 @@ public class CitizenSubmitApplicationTest {
 
     @Test
     public void givenInvalidCaseDataThenReturnResponseWithErrors() throws Exception {
-        var data = caseData();
-        data.getApplicant1().setGender(null);
+        var data = invalidCaseData();
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
