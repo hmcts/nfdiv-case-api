@@ -11,6 +11,10 @@ import uk.gov.hmcts.divorce.common.model.Gender;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.lang.String.join;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_NAME;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TO_END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DISSOLUTION_COURT_EMAIL;
@@ -20,6 +24,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.FIRST_NAME
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.RELATIONSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.RELATIONSHIP_COURT_HEADER;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.RESPONDENT_NAME;
 
 @Component
 public class CommonContent {
@@ -61,5 +66,18 @@ public class CommonContent {
             return applicant.getGender() == Gender.MALE ? "husband" : "wife";
         }
         return "civil partner";
+    }
+
+    public Map<String, String> commonNotificationTemplateVars(final CaseData caseData, final Long caseId) {
+
+        final Map<String, String> templateVars = new HashMap<>();
+        final Applicant applicant = caseData.getApplicant1();
+        final Applicant respondent = caseData.getApplicant2();
+
+        templateVars.put(APPLICANT_NAME, join(" ", applicant.getFirstName(), applicant.getLastName()));
+        templateVars.put(RESPONDENT_NAME, join(" ", respondent.getFirstName(), respondent.getLastName()));
+        templateVars.put(APPLICATION_REFERENCE, formatId(caseId));
+
+        return templateVars;
     }
 }

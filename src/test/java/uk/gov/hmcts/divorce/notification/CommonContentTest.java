@@ -11,11 +11,15 @@ import uk.gov.hmcts.divorce.common.model.CaseData;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static java.lang.String.join;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_NAME;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TO_END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DISSOLUTION_COURT_EMAIL;
@@ -25,7 +29,14 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.FIRST_NAME
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.RELATIONSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.RELATIONSHIP_COURT_HEADER;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.RESPONDENT_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondent;
 
 @ExtendWith(MockitoExtension.class)
 class CommonContentTest {
@@ -57,12 +68,13 @@ class CommonContentTest {
 
         final Map<String, String> templateVars = commonContent.templateVarsFor(caseData);
 
-        assertThat(templateVars.size(), is(5));
-        assertThat(templateVars.get(FIRST_NAME), is(firstName));
-        assertThat(templateVars.get(LAST_NAME), is(lastName));
-        assertThat(templateVars.get(RELATIONSHIP), is(DIVORCE_APPLICATION));
-        assertThat(templateVars.get(RELATIONSHIP_COURT_HEADER), is("Divorce service"));
-        assertThat(templateVars.get(COURT_EMAIL), is(courtEmail));
+        assertThat(templateVars).isNotEmpty().hasSize(5)
+            .contains(
+                entry(FIRST_NAME, firstName),
+                entry(LAST_NAME, lastName),
+                entry(RELATIONSHIP, DIVORCE_APPLICATION),
+                entry(RELATIONSHIP_COURT_HEADER, "Divorce service"),
+                entry(COURT_EMAIL, courtEmail));
     }
 
     @Test
@@ -86,11 +98,27 @@ class CommonContentTest {
 
         final Map<String, String> templateVars = commonContent.templateVarsFor(caseData);
 
-        assertThat(templateVars.size(), is(5));
-        assertThat(templateVars.get(FIRST_NAME), is(firstName));
-        assertThat(templateVars.get(LAST_NAME), is(lastName));
-        assertThat(templateVars.get(RELATIONSHIP), is(APPLICATION_TO_END_CIVIL_PARTNERSHIP));
-        assertThat(templateVars.get(RELATIONSHIP_COURT_HEADER), is("End a civil partnership service"));
-        assertThat(templateVars.get(COURT_EMAIL), is(courtEmail));
+        assertThat(templateVars).isNotEmpty().hasSize(5)
+            .contains(
+                entry(FIRST_NAME, firstName),
+                entry(LAST_NAME, lastName),
+                entry(RELATIONSHIP, APPLICATION_TO_END_CIVIL_PARTNERSHIP),
+                entry(RELATIONSHIP_COURT_HEADER, "End a civil partnership service"),
+                entry(COURT_EMAIL, courtEmail));
+    }
+
+    @Test
+    void shouldSetCommonTemplateVarsForNotifications() {
+
+        final CaseData caseData = caseData();
+        caseData.setApplicant2(respondent());
+
+        final Map<String, String> templateVars = commonContent.commonNotificationTemplateVars(caseData, TEST_CASE_ID);
+
+        assertThat(templateVars).isNotEmpty().hasSize(3)
+            .contains(
+                entry(APPLICANT_NAME, join(" ", TEST_FIRST_NAME, TEST_LAST_NAME)),
+                entry(RESPONDENT_NAME, join(" ", APPLICANT_2_FIRST_NAME, TEST_LAST_NAME)),
+                entry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)));
     }
 }
