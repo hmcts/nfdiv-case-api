@@ -2,7 +2,7 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 
 import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.common.model.Applicant;
+import uk.gov.hmcts.divorce.common.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 
 public class Applicant2SolAosCosts implements CcdPageConfiguration {
@@ -16,12 +16,12 @@ public class Applicant2SolAosCosts implements CcdPageConfiguration {
                 "The applicant 1 asked the court that the respondent pays some or all of the costs of the divorce.\n\n"
                     + "It is up to the court to decide how the costs will be split, but it will take into account "
                     + "any requests the respondent and the applicant 1  make.")
-            .complex(CaseData::getApplicant2)
-            .mandatory(Applicant::getAgreeToCosts)
-            .mandatory(Applicant::getCostsAmount,
-                "applicant2AgreeToCosts=\"DifferentAmount\"")
-            .mandatory(Applicant::getCostsReason,
-                "applicant2AgreeToCosts=\"No\" OR applicant2AgreeToCosts=\"DifferentAmount\"")
+            .complex(CaseData::getAcknowledgementOfService)
+            .mandatory(AcknowledgementOfService::getAgreeToCosts)
+            .mandatory(AcknowledgementOfService::getCostsAmount,
+                "agreeToCosts=\"DifferentAmount\"")
+            .mandatory(AcknowledgementOfService::getCostsReason,
+                "agreeToCosts=\"No\" OR agreeToCosts=\"DifferentAmount\"")
             .done();
     }
 }

@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.solicitor;
 
 import io.restassured.response.Response;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,6 +18,7 @@ import static uk.gov.hmcts.divorce.solicitor.event.SolicitorSubmitDraftAos.SOLIC
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorUpdateAos.SOLICITOR_UPDATE_AOS;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationContactInformation;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
@@ -27,7 +29,7 @@ public class SolicitorSubmitUpdateDraftAosTest extends FunctionalTestSuite {
 
     @ParameterizedTest
     @ValueSource(strings = {SOLICITOR_DRAFT_AOS, SOLICITOR_UPDATE_AOS})
-    public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessful(String eventId) throws Exception {
+    public void shouldUpdateCaseDataWhenAboutToStartCallbackIsSuccessful(String eventId) throws Exception {
 
         final Map<String, Object> caseData = caseData(REQUEST);
         caseData.put("applicant2OrgContactInformation", organisationContactInformation());
@@ -43,5 +45,19 @@ public class SolicitorSubmitUpdateDraftAosTest extends FunctionalTestSuite {
             .isEqualTo(json(expectedResponse(
                 "classpath:responses/response-solicitor-draft-aos-about-to-start.json"
             )));
+    }
+
+    @Test
+    public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessful() throws Exception {
+
+        final Map<String, Object> caseData = caseData(REQUEST);
+        caseData.put("applicant2OrgContactInformation", organisationContactInformation());
+
+        final Response response = triggerCallback(caseData, SOLICITOR_DRAFT_AOS, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString(),
+            json -> json.inPath("data.dateAosSubmitted").isNotNull());
     }
 }
