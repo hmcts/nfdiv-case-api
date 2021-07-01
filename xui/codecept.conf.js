@@ -4,7 +4,7 @@ const { testConfig } = require('./testConfig');
 
 exports.config = {
   tests: testConfig.TestPathToRun,
-  timeout: 10000,
+  timeout: 20000,
   output: testConfig.TestOutputDir,
   helpers: {
     Puppeteer: {
@@ -27,12 +27,12 @@ exports.config = {
         ]
       }
     },
-//    PuppeteerHelper: {
-//      'require': './helper/PuppeteerHelper.js'
-//    },
-//    JSWait: {
-//      require: './helper/JSWait.js'
-//    },
+    PuppeteerHelper: {
+      'require': './helper/PuppeteerHelper.js'
+    },
+    JSWait: {
+      require: './helper/JSWait.js'
+    },
 //    Mochawesome: {
 //      uniqueScreenshotNames: 'true'
 //    }
@@ -41,16 +41,16 @@ exports.config = {
     I: './steps.js'
   },
   plugins: {
-    // retryFailedStep: {
-    //   enabled: true
-    // },
-    // autoDelay: {
-    //   enabled: testConfig.TestAutoDelayEnabled
-    // },
-    // screenshotOnFail: {
-    //   enabled: true,
-    //   fullPageScreenshots: 'true'
-    // }
+     retryFailedStep: {
+       enabled: true
+     },
+     autoDelay: {
+       enabled: testConfig.TestAutoDelayEnabled
+     },
+     screenshotOnFail: {
+       enabled: true,
+       fullPageScreenshots: 'true'
+     }
   },
   bootstrap: false,
   multiple: {
