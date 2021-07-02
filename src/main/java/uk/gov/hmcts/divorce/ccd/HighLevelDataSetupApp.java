@@ -38,11 +38,6 @@ public class HighLevelDataSetupApp extends DataLoaderToDefinitionStore {
     }
 
     @Override
-    protected void doLoadTestData() {
-        addCcdRoles();
-        super.importDefinitions();
-    }
-
     public void addCcdRoles() {
         for (CcdRoleConfig roleConfig : CCD_ROLES_NEEDED_FOR_NFD) {
             try {
