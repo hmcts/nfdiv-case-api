@@ -6,8 +6,6 @@ import uk.gov.hmcts.befta.dse.ccd.CcdEnvironment;
 import uk.gov.hmcts.befta.dse.ccd.CcdRoleConfig;
 import uk.gov.hmcts.befta.dse.ccd.DataLoaderToDefinitionStore;
 
-import java.io.IOException;
-
 public class HighLevelDataSetupApp extends DataLoaderToDefinitionStore {
 
     private static final Logger logger = LoggerFactory.getLogger(HighLevelDataSetupApp.class);
