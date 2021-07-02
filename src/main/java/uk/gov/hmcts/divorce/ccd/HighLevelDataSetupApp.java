@@ -55,6 +55,6 @@ public class HighLevelDataSetupApp extends DataLoaderToDefinitionStore {
 
     @Override
     protected void importDefinitionsAt(String definitionsPath) {
-        super.importDefinitionsAt("uk/gov/hmcts/ccd/build/definitions");
+        super.importDefinitionsAt("uk/gov/hmcts/divorce/ccd/build/definitions");
     }
 }

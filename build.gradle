@@ -394,7 +394,7 @@ generateTypeScript {
 }
 
 ccd {
-  configDir = file('src/main/uk/gov/hmcts/ccd/build/definitions')
+  configDir = file('src/main/java/uk/gov/hmcts/divorce/ccd/build/definitions')
 }
 
 tasks.register('stopCaseApiContainer') {
