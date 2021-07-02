@@ -1,7 +1,11 @@
 
 buildscript {
   repositories {
+    mavenLocal()
     mavenCentral()
+    maven {
+      url 'https://jitpack.io'
+    }
   }
   dependencies {
     classpath group: 'cz.habarta.typescript-generator', name: 'typescript-generator-gradle-plugin', version: '2.32.889'
@@ -99,6 +103,12 @@ task smoke(type: Test) {
   description = "Runs Smoke Tests"
   testClassesDirs = sourceSets.smokeTest.output.classesDirs
   classpath = sourceSets.smokeTest.runtimeClasspath
+}
+
+task highLevelDataSetup(type: JavaExec) {
+  main = "uk.gov.hmcts.divorce.ccd.HighLevelDataSetupApp"
+  classpath += sourceSets.main.runtimeClasspath
+  jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
 }
 
 checkstyle {
@@ -269,6 +279,8 @@ dependencies {
 
   implementation group: 'com.github.hmcts', name: 'send-letter-client', version: versions.slClient
   implementation group: 'org.elasticsearch', name: 'elasticsearch', version: versions.elasticsearch
+
+  implementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.2.0'
 
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
