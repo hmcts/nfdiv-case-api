@@ -58,10 +58,11 @@ withPipeline(type, product, component) {
         builder.gradle('integration')
         builder.gradle('jacocoTestReport')
         builder.gradle('generateCCDConfig')
+        generateDefinitions()
     }
 
 
-    onPreview {
+    onPR {
       env.CASE_API_URL = "http://nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
       env.CCD_DEF_NAME = "preview"
       env.DEFINITION_STORE_URL_BASE = "https://ccd-definition-store-nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
@@ -114,4 +115,13 @@ def uploadCoreCaseDataDefinitions() {
     dir("${WORKSPACE}") {
         steps.archiveArtifacts artifacts: "build/ccd-config/ccd-nfd-${CCD_DEF_NAME}.xlsx"
     }
+}
+
+def generateDefinitions() {
+  dir("${WORKSPACE}/bin") {
+    sh "./process-and-import-ccd-definition.sh"
+  }
+  dir("${WORKSPACE}") {
+    steps.archiveArtifacts artifacts: "build/definitions/ccd-nfd-${CCD_DEF_NAME}.xlsx"
+  }
 }

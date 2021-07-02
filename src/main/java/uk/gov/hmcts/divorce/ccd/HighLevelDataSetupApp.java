@@ -6,6 +6,8 @@ import uk.gov.hmcts.befta.dse.ccd.CcdEnvironment;
 import uk.gov.hmcts.befta.dse.ccd.CcdRoleConfig;
 import uk.gov.hmcts.befta.dse.ccd.DataLoaderToDefinitionStore;
 
+import java.util.List;
+
 public class HighLevelDataSetupApp extends DataLoaderToDefinitionStore {
 
     private static final Logger logger = LoggerFactory.getLogger(HighLevelDataSetupApp.class);
@@ -54,7 +56,7 @@ public class HighLevelDataSetupApp extends DataLoaderToDefinitionStore {
     }
 
     @Override
-    protected void importDefinitionsAt(String definitionsPath) {
-        super.importDefinitionsAt("uk/gov/hmcts/divorce/ccd/build/definitions");
+    protected List<String> getAllDefinitionFilesToLoadAt(String definitionsPath) {
+        return super.getAllDefinitionFilesToLoadAt("src/main/java/uk/gov/hmcts/divorce/ccd/build/definitions/ccd-nfd-preview.xlsx");
     }
 }
