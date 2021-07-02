@@ -60,6 +60,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_2_SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DIVORCE_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DIVORCE_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
@@ -73,6 +74,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 
 public class TestDataHelper {
@@ -124,6 +126,23 @@ public class TestDataHelper {
             .middleName(TEST_MIDDLE_NAME)
             .lastName(TEST_LAST_NAME)
             .email(TEST_USER_EMAIL)
+            .build();
+    }
+
+    public static Applicant applicantRepresentedBySolicitor() {
+        final Applicant applicant = getApplicant(FEMALE);
+        applicant.setSolicitor(Solicitor.builder()
+            .name(TEST_SOLICITOR_NAME)
+            .email(TEST_SOLICITOR_EMAIL)
+            .build());
+        return applicant;
+    }
+
+    public static Applicant respondent() {
+        return Applicant.builder()
+            .firstName(APPLICANT_2_FIRST_NAME)
+            .lastName(TEST_LAST_NAME)
+            .gender(MALE)
             .build();
     }
 
