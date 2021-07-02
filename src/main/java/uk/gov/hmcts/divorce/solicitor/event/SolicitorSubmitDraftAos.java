@@ -18,16 +18,18 @@ import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolConfirmContactDeta
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolReviewApplicant1Application;
 import uk.gov.hmcts.divorce.solicitor.event.updater.AddMiniApplicationLink;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static java.util.Arrays.asList;
 import static uk.gov.hmcts.divorce.common.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingAos;
+import static uk.gov.hmcts.divorce.common.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_RDU;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_SUPERUSER;
-import static uk.gov.hmcts.divorce.common.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 
@@ -37,6 +39,9 @@ public class SolicitorSubmitDraftAos implements CCDConfig<CaseData, State, UserR
 
     @Autowired
     private AddMiniApplicationLink addMiniApplicationLink;
+
+    @Autowired
+    private Clock clock;
 
     private final List<CcdPageConfiguration> pages = asList(
         new Applicant2SolConfirmContactDetails(),
@@ -59,15 +64,28 @@ public class SolicitorSubmitDraftAos implements CCDConfig<CaseData, State, UserR
             .name("Draft AoS")
             .description("Draft Acknowledgement of Service")
             .aboutToStartCallback(this::aboutToStart)
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .showSummary()
             .endButtonLabel("Save AOS Response")
             .explicitGrants()
-            .grant(CREATE_READ_UPDATE, SOLICITOR)
+            .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
             .grant(READ,
                 CASEWORKER_COURTADMIN_CTSC,
                 CASEWORKER_COURTADMIN_RDU,
                 CASEWORKER_SUPERUSER,
                 CASEWORKER_LEGAL_ADVISOR));
+    }
+
+    private AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
+        final CaseDetails<CaseData, State> details,
+        final CaseDetails<CaseData, State> beforeDetails
+    ) {
+        var caseData = details.getData();
+        caseData.getAcknowledgementOfService().setDateAosSubmitted(LocalDateTime.now(clock));
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .build();
     }
 
     private AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(CaseDetails<CaseData, State> details) {
