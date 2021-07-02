@@ -280,7 +280,7 @@ public class Application {
         label = "Explain what is incorrect or needs changing.",
         access = {DefaultAccess.class}
     )
-    private YesOrNo applicant2ExplainsApplicant1IncorrectInformation;
+    private String applicant2ExplainsApplicant1IncorrectInformation;
 
     @JsonIgnore
     public boolean hasStatementOfTruth() {
