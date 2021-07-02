@@ -122,6 +122,6 @@ def generateDefinitions() {
     sh "./process-and-import-ccd-definition.sh"
   }
   dir("${WORKSPACE}") {
-    steps.archiveArtifacts artifacts: "src/main/java/uk/gov/hmcts/divorce/ccd/build/definitions/ccd-nfd-${CCD_DEF_NAME}.xlsx"
+    steps.archiveArtifacts artifacts: "build/ccd-config/ccd-nfd-${CCD_DEF_NAME}.xlsx"
   }
 }

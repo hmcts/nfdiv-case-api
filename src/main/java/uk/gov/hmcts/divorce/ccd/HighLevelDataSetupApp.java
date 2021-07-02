@@ -57,6 +57,6 @@ public class HighLevelDataSetupApp extends DataLoaderToDefinitionStore {
 
     @Override
     protected List<String> getAllDefinitionFilesToLoadAt(String definitionsPath) {
-        return super.getAllDefinitionFilesToLoadAt("src/main/java/uk/gov/hmcts/divorce/ccd/build/definitions/ccd-nfd-preview.xlsx");
+        return List.of("build/ccd-config/ccd-nfd-preview.xlsx");
     }
 }
