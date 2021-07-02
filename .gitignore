@@ -29,5 +29,3 @@ yarn-error.log
 
 ### Generated CCD Json Definition ###
 ccd-definitions/definitions/development
-
-src/main/java/uk/gov/hmcts/divorce/ccd/build/definitions
