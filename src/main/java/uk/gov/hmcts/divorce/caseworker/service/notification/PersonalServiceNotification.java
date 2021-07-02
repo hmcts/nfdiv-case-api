@@ -28,6 +28,8 @@ public class PersonalServiceNotification {
 
         final Solicitor applicantSolicitor = caseData.getApplicant1().getSolicitor();
 
+        log.info("Sending Personal Service email to applicant solicitor.  Case ID: {}", caseId);
+
         notificationService.sendEmail(
             applicantSolicitor.getEmail(),
             APPLICANT_SOLICITOR_PERSONAL_SERVICE,
