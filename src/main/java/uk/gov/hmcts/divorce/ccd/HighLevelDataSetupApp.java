@@ -25,7 +25,7 @@ public class HighLevelDataSetupApp extends DataLoaderToDefinitionStore {
     };
 
     public HighLevelDataSetupApp(CcdEnvironment dataSetupEnvironment) {
-        super(dataSetupEnvironment, "build/definitions");
+        super(dataSetupEnvironment);
     }
 
     public static void main(String[] args) throws Throwable {
@@ -55,6 +55,6 @@ public class HighLevelDataSetupApp extends DataLoaderToDefinitionStore {
 
     @Override
     protected void importDefinitionsAt(String definitionsPath) {
-        super.importDefinitionsAt("build/definitions");
+        super.importDefinitionsAt("uk/gov/hmcts/ccd/build/definitions");
     }
 }

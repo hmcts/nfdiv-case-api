@@ -394,7 +394,7 @@ generateTypeScript {
 }
 
 ccd {
-  configDir = file('build/definitions')
+  configDir = file('src/main/uk/gov/hmcts/ccd/build/definitions')
 }
 
 tasks.register('stopCaseApiContainer') {
