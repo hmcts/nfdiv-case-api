@@ -61,10 +61,10 @@ withPipeline(type, product, component) {
     after('test') {
         builder.gradle('integration')
         builder.gradle('jacocoTestReport')
-        builder.gradle('generateCCDConfig')
     }
 
     after('checkout'){
+      builder.gradle('generateCCDConfig')
       generateDefinitions()
     }
 
