@@ -80,6 +80,10 @@ withPipeline(type, product, component) {
         setCommonEnvVariables()
     }
 
+//    before('functionalTest:preview') {
+//      uploadCoreCaseDataDefinitions()
+//    }
+
     before('buildinfra:perftest') {
         dir("${WORKSPACE}") {
             withSubscription('nonprod') {
@@ -91,7 +95,6 @@ withPipeline(type, product, component) {
                     env.DEFINITION_STORE_URL_BASE="http://ccd-definition-store-api-perftest.service.core-compute-perftest.internal"
 
                     builder.gradle('generateCCDConfig')
-                    uploadCoreCaseDataDefinitions()
                 }
             }
         }
@@ -119,7 +122,7 @@ def uploadCoreCaseDataDefinitions() {
 
 def generateDefinitions() {
   dir("${WORKSPACE}/bin") {
-    sh "./process-and-import-ccd-definition.sh"
+    sh "./ccd-build-definition.sh"
   }
   dir("${WORKSPACE}") {
     steps.archiveArtifacts artifacts: "build/ccd-config/ccd-nfd-${CCD_DEF_NAME}.xlsx"

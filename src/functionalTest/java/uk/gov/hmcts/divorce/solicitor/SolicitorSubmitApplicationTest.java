@@ -33,7 +33,6 @@ public class SolicitorSubmitApplicationTest extends FunctionalTestSuite {
         "classpath:responses/response-solicitor-submit-application-about-to-submit.json";
 
     @Test
-    @Disabled
     public void shouldUpdateCaseDataWithOrderSummaryAndAddSolCaseRolesWhenIssueFeeIsSuccessfullyRetrieved() throws Exception {
         CallbackRequest request = CallbackRequest
             .builder()
