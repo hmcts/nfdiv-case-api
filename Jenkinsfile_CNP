@@ -4,6 +4,7 @@
 
 import uk.gov.hmcts.contino.GradleBuilder
 import uk.gov.hmcts.contino.AppPipelineConfig
+import uk.gov.hmcts.contino.MetricsPublisher
 
 def type = "java"
 def product = "nfdiv"
@@ -51,7 +52,11 @@ withPipeline(type, product, component) {
     disableLegacyDeployment()
     loadVaultSecrets(secrets)
     syncBranchesWithMaster(['demo', 'perftest', 'ithc'])
-    enableHighLevelDataSetup()
+
+    MetricsPublisher metricsPublisher = new MetricsPublisher(this, currentBuild, product, component, params.subscription )
+    approvedEnvironmentRepository(params.environment, metricsPublisher) {
+      enableHighLevelDataSetup()
+    }
 
     after('test') {
         builder.gradle('integration')
