@@ -121,10 +121,6 @@ public abstract class FunctionalTestSuite {
         String solicitorUserId
     ) {
         // not including in try catch to fast fail the method
-        System.out.println("s2sToken " + s2sToken);
-        System.out.println("solicitorToken " + solicitorToken);
-        System.out.println("solicitorUserId " + solicitorUserId);
-
         return coreCaseDataApi.submitForCaseworker(
             solicitorToken,
             s2sToken,

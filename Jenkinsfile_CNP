@@ -25,7 +25,6 @@ def secrets = [
                 secret('microservicekey-ccd-definition', 'DEFINITION_STORE_S2S_KEY'),
                 secret('microservicekey-ccd-gw', 'CCD_API_GATEWAY_S2S_KEY'),
                 secret('microservicekey-ccd-admin', 'ADMIN_S2S_KEY'),
-                secret('microservicekey-ccd-gw', 'CCD_API_GATEWAY_S2S_SECRET'),
                 secret('microservicekey-ccd-data', 'CCD_DATA_STORE_S2S_SECRET'),
                 secret('microservicekey-ccd-definition', 'CCD_DEFINITION_STORE_S2S_SECRET')
         ],
@@ -60,7 +59,6 @@ withPipeline(type, product, component) {
         builder.gradle('generateCCDConfig')
         generateDefinitions()
     }
-
 
     onPR {
       env.CASE_API_URL = "http://nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
