@@ -23,21 +23,20 @@ def secrets = [
         's2s-${env}'      : [
                 secret('microservicekey-ccd-data', 'DATA_STORE_S2S_KEY'),
                 secret('microservicekey-ccd-definition', 'DEFINITION_STORE_S2S_KEY'),
-                secret('microservicekey-ccd-gw', 'API_GATEWAY_S2S_KEY'),
+                secret('microservicekey-ccd-gw', 'CCD_API_GATEWAY_S2S_KEY'),
                 secret('microservicekey-ccd-admin', 'ADMIN_S2S_KEY'),
-                secret('microservicekey-ccd-gw', 'CCD_API_GATEWAY_S2S_SECRET'),
                 secret('microservicekey-ccd-data', 'CCD_DATA_STORE_S2S_SECRET'),
                 secret('microservicekey-ccd-definition', 'CCD_DEFINITION_STORE_S2S_SECRET')
         ],
         'ccd-${env}'      : [
-                secret('ccd-api-gateway-oauth2-client-secret', 'API_GATEWAY_IDAM_SECRET'),
+                secret('ccd-api-gateway-oauth2-client-secret', 'CCD_API_GATEWAY_OAUTH2_CLIENT_SECRET'),
                 secret('ccd-admin-web-oauth2-client-secret', 'ADMIN_WEB_IDAM_SECRET'),
                 secret('postcode-info-address-lookup-token', 'ADDRESS_LOOKUP_TOKEN'),
                 secret('AppInsightsInstrumentationKey', 'APPINSIGHTS_INSTRUMENTATIONKEY'),
         ],
         'nfdiv-${env}'    :[
-                secret('ccd-importer-username', 'CCD_DEFINITION_IMPORTER_USERNAME'),
-                secret('ccd-importer-password', 'CCD_DEFINITION_IMPORTER_PASSWORD'),
+                secret('ccd-importer-username', 'DEFINITION_IMPORTER_USERNAME'),
+                secret('ccd-importer-password', 'DEFINITION_IMPORTER_PASSWORD'),
                 secret('idam-secret', 'OAUTH2_CLIENT_SECRET'),
                 secret('idam-solicitor-username', 'IDAM_SOLICITOR_USERNAME'),
                 secret('idam-solicitor-password', 'IDAM_SOLICITOR_PASSWORD')
@@ -52,46 +51,49 @@ withPipeline(type, product, component) {
     disableLegacyDeployment()
     loadVaultSecrets(secrets)
     syncBranchesWithMaster(['demo', 'perftest', 'ithc'])
+    enableHighLevelDataSetup()
 
     after('test') {
         builder.gradle('integration')
         builder.gradle('jacocoTestReport')
+        builder.gradle('generateCCDConfig')
+        generateDefinitions()
+    }
+
+    onPR {
+      env.CASE_API_URL = "http://nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
+      env.CCD_DEF_NAME = "preview"
+      env.DEFINITION_STORE_URL_BASE = "https://ccd-definition-store-nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
+      env.CASE_DATA_STORE_BASEURL = "http://ccd-data-store-api-nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
+      env.TEST_S2S_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+
+      setCommonEnvVariables()
+    }
+
+    onMaster {
+        env.CASE_API_URL="http://nfdiv-case-api-aat.service.core-compute-aat.internal"
+        env.CCD_DEF_NAME="aat"
+        env.DEFINITION_STORE_URL_BASE="http://ccd-definition-store-api-aat.service.core-compute-aat.internal"
+
+        setCommonEnvVariables()
     }
 
     before('functionalTest:preview') {
-        env.CASE_API_URL="http://nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
-        env.CCD_DEF_NAME="preview"
-        builder.gradle('generateCCDConfig')
-        setCommonEnvVariables()
-
-        env.CCD_DEFINITION_STORE_API_BASE_URL="https://ccd-definition-store-nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
-        env.CASE_DATA_STORE_BASEURL="http://ccd-data-store-api-nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
-        env.TEST_S2S_URL="http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
-        uploadCoreCaseDataDefinitions()
-    }
-
-    before('functionalTest:aat') {
-        env.CASE_API_URL="http://nfdiv-case-api-aat.service.core-compute-aat.internal"
-        env.CCD_DEF_NAME="aat"
-
-        builder.gradle('generateCCDConfig')
-        setCommonEnvVariables()
-        env.CCD_DEFINITION_STORE_API_BASE_URL="http://ccd-definition-store-api-aat.service.core-compute-aat.internal"
-        uploadCoreCaseDataDefinitions()
+      // Only for preview upload the definitions via script as high level data set up relies on an existing environment
+      uploadCoreCaseDataDefinitions()
     }
 
     before('buildinfra:perftest') {
         dir("${WORKSPACE}") {
             withSubscription('nonprod') {
                 withTeamSecrets(pipelineConf, 'perftest') {
-                    env.CASE_API_URL="http://nfdiv-case-api-perftest.service.core-compute-perftest.internal"
-                    env.CCD_DEF_NAME="perftest"
-                    env.IDAM_API_BASE_URL = "https://idam-api.perftest.platform.hmcts.net"
-                    env.SERVICE_AUTH_PROVIDER_API_BASE_URL = "http://rpe-service-auth-provider-perftest.service.core-compute-perftest.internal"
-                    env.CCD_DEFINITION_STORE_API_BASE_URL="http://ccd-definition-store-api-perftest.service.core-compute-perftest.internal"
+                    env.CASE_API_URL = "http://nfdiv-case-api-perftest.service.core-compute-perftest.internal"
+                    env.CCD_DEF_NAME = "perftest"
+                    env.IDAM_API_URL_BASE = "https://idam-api.perftest.platform.hmcts.net"
+                    env.S2S_URL_BASE = "http://rpe-service-auth-provider-perftest.service.core-compute-perftest.internal"
+                    env.DEFINITION_STORE_URL_BASE = "http://ccd-definition-store-api-perftest.service.core-compute-perftest.internal"
 
                     builder.gradle('generateCCDConfig')
-                    uploadCoreCaseDataDefinitions()
                 }
             }
         }
@@ -99,9 +101,12 @@ withPipeline(type, product, component) {
 }
 
 def setCommonEnvVariables(){
-    env.IDAM_API_BASE_URL = "https://idam-api.aat.platform.hmcts.net"
-    env.SERVICE_AUTH_PROVIDER_API_BASE_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+    env.IDAM_API_URL_BASE = "https://idam-api.aat.platform.hmcts.net"
+    env.S2S_URL_BASE = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
     env.FEE_API_URL = "http://fees-register-api-aat.service.core-compute-aat.internal"
+    env.CCD_API_GATEWAY_OAUTH2_CLIENT_ID = "ccd_gateway"
+    env.BEFTA_S2S_CLIENT_ID = "ccd_data"
+    env.CCD_API_GATEWAY_OAUTH2_REDIRECT_URL = "https://www-ccd.aat.platform.hmcts.net/oauth2redirect"
 }
 
 def uploadCoreCaseDataDefinitions() {
@@ -112,4 +117,13 @@ def uploadCoreCaseDataDefinitions() {
     dir("${WORKSPACE}") {
         steps.archiveArtifacts artifacts: "build/ccd-config/ccd-nfd-${CCD_DEF_NAME}.xlsx"
     }
+}
+
+def generateDefinitions() {
+  dir("${WORKSPACE}/bin") {
+    sh "./ccd-build-definition.sh"
+  }
+  dir("${WORKSPACE}") {
+    steps.archiveArtifacts artifacts: "build/ccd-config/ccd-nfd-${CCD_DEF_NAME}.xlsx"
+  }
 }
