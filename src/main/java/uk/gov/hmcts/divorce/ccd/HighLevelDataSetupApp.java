@@ -26,8 +26,11 @@ public class HighLevelDataSetupApp extends DataLoaderToDefinitionStore {
 
     };
 
+    private CcdEnvironment environment;
+
     public HighLevelDataSetupApp(CcdEnvironment dataSetupEnvironment) {
         super(dataSetupEnvironment);
+        environment = dataSetupEnvironment;
     }
 
     public static void main(String[] args) throws Throwable {
@@ -57,6 +60,6 @@ public class HighLevelDataSetupApp extends DataLoaderToDefinitionStore {
 
     @Override
     protected List<String> getAllDefinitionFilesToLoadAt(String definitionsPath) {
-        return List.of("build/ccd-config/ccd-nfd-preview.xlsx");
+        return List.of("build/ccd-config/ccd-nfd-" + environment.name().toLowerCase() + ".xlsx");
     }
 }
