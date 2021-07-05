@@ -11,7 +11,6 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
@@ -33,10 +32,11 @@ public class NoticeOfProceedingsNotification {
     public void send(final CaseData caseData, final Long caseId) {
 
         final Applicant applicant = caseData.getApplicant1();
+        final Applicant respondent = caseData.getApplicant2();
         final Solicitor applicantSolicitor = applicant.getSolicitor();
-        final Solicitor respondentSolicitor = caseData.getApplicant2().getSolicitor();
+        final Solicitor respondentSolicitor = respondent.getSolicitor();
 
-        if (isApplicantRepresented(respondentSolicitor) && respondentSolicitor.hasDigitalDetails()) {
+        if (respondent.isRepresented() && respondentSolicitor.hasDigitalDetails()) {
 
             log.info("Sending Notice Of Proceedings email to respondent solicitor.  Case ID: {}", caseId);
 
@@ -48,7 +48,7 @@ public class NoticeOfProceedingsNotification {
             );
         }
 
-        if (isApplicantRepresented(applicantSolicitor)) {
+        if (applicant.isRepresented()) {
 
             log.info("Sending Notice Of Proceedings email to applicant solicitor.  Case ID: {}", caseId);
 
@@ -67,10 +67,6 @@ public class NoticeOfProceedingsNotification {
                 commonContent.commonNotificationTemplateVars(caseData, caseId),
                 applicant.getLanguagePreference());
         }
-    }
-
-    private boolean isApplicantRepresented(final Solicitor applicantSolicitor) {
-        return null != applicantSolicitor && isNotEmpty(applicantSolicitor.getEmail());
     }
 
     private Map<String, String> respondentSolicitorNoticeOfProceedingsTemplateVars(final CaseData caseData,
