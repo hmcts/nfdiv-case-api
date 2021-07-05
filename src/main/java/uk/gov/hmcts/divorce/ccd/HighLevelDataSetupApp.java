@@ -7,6 +7,7 @@ import uk.gov.hmcts.befta.dse.ccd.CcdRoleConfig;
 import uk.gov.hmcts.befta.dse.ccd.DataLoaderToDefinitionStore;
 
 import java.util.List;
+import java.util.Locale;
 
 public class HighLevelDataSetupApp extends DataLoaderToDefinitionStore {
 
@@ -26,7 +27,7 @@ public class HighLevelDataSetupApp extends DataLoaderToDefinitionStore {
 
     };
 
-    private CcdEnvironment environment;
+    private final CcdEnvironment environment;
 
     public HighLevelDataSetupApp(CcdEnvironment dataSetupEnvironment) {
         super(dataSetupEnvironment);
@@ -60,6 +61,6 @@ public class HighLevelDataSetupApp extends DataLoaderToDefinitionStore {
 
     @Override
     protected List<String> getAllDefinitionFilesToLoadAt(String definitionsPath) {
-        return List.of("build/ccd-config/ccd-nfd-" + environment.name().toLowerCase() + ".xlsx");
+        return List.of("build/ccd-config/ccd-nfd-" + environment.name().toLowerCase(Locale.UK) + ".xlsx");
     }
 }
