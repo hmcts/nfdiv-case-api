@@ -80,9 +80,9 @@ withPipeline(type, product, component) {
         setCommonEnvVariables()
     }
 
-//    before('functionalTest:preview') {
-//      uploadCoreCaseDataDefinitions()
-//    }
+    before('functionalTest:preview') {
+      uploadCoreCaseDataDefinitions()
+    }
 
     before('buildinfra:perftest') {
         dir("${WORKSPACE}") {
