@@ -60,7 +60,7 @@ public class ApplicationSentForReviewApplicant2Notification {
         log.info("Sending application sent for review notification to applicant 2 for case : {}", id);
 
         notificationService.sendEmail(
-            caseData.getApplicant2InviteEmailAddress(),
+            caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
             JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW,
             templateVars,
             caseData.getApplicant1().getLanguagePreference()
@@ -70,7 +70,7 @@ public class ApplicationSentForReviewApplicant2Notification {
     private void setDefaultVariables(Map<String, String> templateVars, CaseData caseData) {
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(dateTimeFormatter));
         templateVars.put(PARTNER, commonContent.getTheirPartner(caseData, caseData.getApplicant1()));
-        templateVars.put(ACCESS_CODE, caseData.getAccessCode());
+        templateVars.put(ACCESS_CODE, caseData.getCaseInvite().getAccessCode());
         templateVars.put(REMINDER, APPLICATION);
     }
 

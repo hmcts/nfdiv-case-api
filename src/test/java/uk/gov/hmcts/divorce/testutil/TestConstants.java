@@ -3,9 +3,13 @@ package uk.gov.hmcts.divorce.testutil;
 public final class TestConstants {
     public static final String TEST_USER_EMAIL = "test@test.com";
     public static final String TEST_SOLICITOR_EMAIL = "solicitor@test.com";
+    public static final String TEST_SOLICITOR_NAME = "The Solicitor";
     public static final String TEST_FIRST_NAME = "test_first_name";
     public static final String TEST_MIDDLE_NAME = "test_middle_name";
     public static final String TEST_LAST_NAME = "test_last_name";
+
+    public static final String APPLICANT_2_FIRST_NAME = "applicant_2_first_name";
+    public static final String APPLICANT_2_MIDDLE_NAME = "applicant_2middle_name";
 
     public static final String ABOUT_TO_START_URL = "/callbacks/about-to-start";
     public static final String ABOUT_TO_SUBMIT_URL = "/callbacks/about-to-submit";
@@ -42,7 +46,7 @@ public final class TestConstants {
     public static final String WELSH_TEMPLATE_ID = "FL-DIV-GNO-WEL-00256.docx";
     public static final String BEARER = "Bearer ";
     public static final String TEST_ORG_ID = "ABC123";
-    public static final String TEST_ORG_NAME = "TEST ORG";
+    public static final String TEST_ORG_NAME = "Test Organisation";
 
     public static final String SOLICITOR_MID_EVENT_RESPONSE = "classpath:solicitor-mid-event-response.json";
     public static final String SOLICITOR_MID_EVENT_ERROR = "classpath:solicitor-mid-event-error-response.json";

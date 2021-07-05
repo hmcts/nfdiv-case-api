@@ -8,6 +8,7 @@ import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.common.model.Applicant;
 import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.common.model.CaseInvite;
 import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
 import uk.gov.hmcts.divorce.common.util.AccessCodeGenerator;
@@ -62,7 +63,7 @@ public class RespondentSolicitorAosInvitationTest {
         MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
         classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
-        caseData.setAccessCode(ACCESS_CODE);
+        caseData.setCaseInvite(CaseInvite.builder().accessCode(ACCESS_CODE).build());
 
         when(templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(templateContentSupplier);
         when(caseDataDocumentService

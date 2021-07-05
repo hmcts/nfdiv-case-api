@@ -69,7 +69,7 @@ public class CitizenInviteApplicant2 implements CCDConfig<CaseData, State, UserR
         }
 
         log.info("Generating access code to allow the respondent to access the joint application");
-        data.setAccessCode(generateAccessCode());
+        data.getCaseInvite().setAccessCode(generateAccessCode());
         data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
 
         applicationSentForReviewApplicant1Notification.send(data, details.getId());

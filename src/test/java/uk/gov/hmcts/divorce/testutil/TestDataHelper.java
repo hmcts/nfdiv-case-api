@@ -15,6 +15,7 @@ import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.common.model.Applicant;
 import uk.gov.hmcts.divorce.common.model.Application;
 import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.common.model.CaseInvite;
 import uk.gov.hmcts.divorce.common.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.common.model.Gender;
@@ -59,6 +60,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_2_SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DIVORCE_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DIVORCE_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
@@ -70,7 +72,9 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 
 public class TestDataHelper {
@@ -125,10 +129,28 @@ public class TestDataHelper {
             .build();
     }
 
+    public static Applicant applicantRepresentedBySolicitor() {
+        final Applicant applicant = getApplicant(FEMALE);
+        applicant.setSolicitor(Solicitor.builder()
+            .name(TEST_SOLICITOR_NAME)
+            .email(TEST_SOLICITOR_EMAIL)
+            .build());
+        return applicant;
+    }
+
+    public static Applicant respondent() {
+        return Applicant.builder()
+            .firstName(APPLICANT_2_FIRST_NAME)
+            .lastName(TEST_LAST_NAME)
+            .gender(MALE)
+            .build();
+    }
+
     public static CaseData caseData() {
         return CaseData.builder()
             .applicant1(getApplicant())
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
+            .caseInvite(new CaseInvite())
             .build();
     }
 
@@ -180,7 +202,7 @@ public class TestDataHelper {
             .builder()
             .applicant1(applicant1)
             .applicant2(getJointApplicant2(MALE))
-            .applicant2InviteEmailAddress(TEST_USER_EMAIL)
+            .caseInvite(CaseInvite.builder().applicant2InviteEmailAddress(TEST_USER_EMAIL).build())
             .divorceOrDissolution(DIVORCE)
             .application(application)
             .build();
@@ -361,7 +383,7 @@ public class TestDataHelper {
         return OrganisationPolicy.<UserRole>builder()
             .organisation(Organisation
                 .builder()
-                .organisationName("Test Organisation")
+                .organisationName(TEST_ORG_NAME)
                 .organisationId(TEST_ORG_ID)
                 .build())
             .build();
