@@ -35,7 +35,7 @@ public class HighLevelDataSetupApp extends DataLoaderToDefinitionStore {
     }
 
     public static void main(String[] args) throws Throwable {
-        if (CcdEnvironment.valueOf(args[0].toUpperCase()).equals(CcdEnvironment.PROD)) {
+        if (CcdEnvironment.valueOf(args[0].toUpperCase(Locale.UK)).equals(CcdEnvironment.PROD)) {
             return;
         }
         main(HighLevelDataSetupApp.class, args);
