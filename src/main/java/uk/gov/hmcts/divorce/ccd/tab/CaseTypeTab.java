@@ -7,6 +7,10 @@ import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 
+import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_RDU;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
+
 @Component
 public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
@@ -93,6 +97,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field(CaseData::getDocumentsGenerated)
             .field(CaseData::getDocumentsUploaded);
 
+        buildConfidentialTab(configBuilder);
+
         configBuilder.tab("marriageDetails", "Marriage Certificate")
             .field("marriageApplicant1Name")
             .field("marriageApplicant2Name")
@@ -105,5 +111,15 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
         configBuilder.tab("notes", "Notes")
             .field(CaseData::getNotes);
+    }
+
+    private void buildConfidentialTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("Confidential", "Confidential Address")
+            .forRoles(CASEWORKER_COURTADMIN_RDU, CASEWORKER_COURTADMIN_CTSC, CASEWORKER_LEGAL_ADVISOR)
+            .showCondition("applicant1ContactDetailsConfidential=\"keep\"")
+            .field("applicant1CorrespondenceAddress")
+            .field("applicant1PhoneNumber")
+            .field("applicant1Email")
+            .field("applicant1HomeAddress");
     }
 }

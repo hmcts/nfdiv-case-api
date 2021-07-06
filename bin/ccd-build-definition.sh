@@ -7,7 +7,7 @@ scriptPath=$(dirname $(realpath $0))
 echo "Script Path ${scriptPath}"
 
 root_dir=$(realpath $(dirname ${0})/..)
-config_dir=${root_dir}/build/definitions
+config_dir=${root_dir}/build/definitions/NO_FAULT_DIVORCE18
 build_dir=${root_dir}/build/ccd-config
 definitionOutputFile=${build_dir}/ccd-nfd-${CCD_DEF_NAME:-dev}.xlsx
 
