@@ -6,13 +6,14 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 
+import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.ScheduledForCreate;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
 public class BulkActionCaseTypeConfig implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
 
-    public static final String CASE_TYPE = "NO_FAULT_DIVORCE_BULK_ACTION";
+    public static final String CASE_TYPE = "NO_FAULT_DIVORCE_BulkAction";
     public static final String JURISDICTION = "DIVORCE";
 
     @Override
@@ -22,6 +23,6 @@ public class BulkActionCaseTypeConfig implements CCDConfig<BulkActionCaseData, B
         configBuilder.caseType(CASE_TYPE, CASE_TYPE, "Handling of the dissolution of marriage");
         configBuilder.jurisdiction(JURISDICTION, "Family Divorce", "Family Divorce: dissolution of marriage");
 
-        configBuilder.grant(BulkActionState.Draft, CREATE_READ_UPDATE, CITIZEN);
+        configBuilder.grant(ScheduledForCreate, CREATE_READ_UPDATE, CITIZEN);
     }
 }

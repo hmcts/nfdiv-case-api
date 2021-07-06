@@ -14,7 +14,11 @@ public class BulkActionPageBuilder {
         this.eventBuilder = eventBuilder;
     }
 
-    public FieldCollectionBuilder<BulkActionCaseData, BulkActionState, EventBuilder<BulkActionCaseData, UserRole, BulkActionState>> page(final String id) {
+    public FieldCollectionBuilder<
+        BulkActionCaseData,
+        BulkActionState,
+        EventBuilder<BulkActionCaseData, UserRole, BulkActionState>
+        > page(final String id) {
         return eventBuilder.fields().page(id);
     }
 

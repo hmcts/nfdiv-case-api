@@ -7,10 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
-import uk.gov.hmcts.divorce.common.model.ApplicationType;
-import uk.gov.hmcts.divorce.common.model.access.DefaultAccess;
-
-import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
+import uk.gov.hmcts.divorce.common.model.access.CaseworkerBetaAndSuperUserAccess;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -21,11 +18,9 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 public class BulkActionCaseData {
 
     @CCD(
-        label = "Application type",
-        access = {DefaultAccess.class},
-        typeOverride = FixedList,
-        typeParameterOverride = "ApplicationType"
+        label = "Case title",
+        access = {CaseworkerBetaAndSuperUserAccess.class}
     )
-    private ApplicationType applicationType;
+    private String caseTitle;
 
 }

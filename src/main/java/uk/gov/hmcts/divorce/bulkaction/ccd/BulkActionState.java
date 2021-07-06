@@ -10,11 +10,10 @@ import uk.gov.hmcts.divorce.common.model.access.CaseAccessAdministrator;
 public enum BulkActionState {
 
     @CCD(
-        name = "Draft",
-        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        name = "BulkCase scheduled for create",
         access = {CaseAccessAdministrator.class}
     )
-    Draft("Draft");
+    ScheduledForCreate("ScheduledForCreate");
 
     private final String name;
 }
