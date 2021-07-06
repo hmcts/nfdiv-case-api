@@ -4,6 +4,7 @@
 
 import uk.gov.hmcts.contino.GradleBuilder
 import uk.gov.hmcts.contino.AppPipelineConfig
+import uk.gov.hmcts.contino.MetricsPublisher
 
 def type = "java"
 def product = "nfdiv"
@@ -51,13 +52,20 @@ withPipeline(type, product, component) {
     disableLegacyDeployment()
     loadVaultSecrets(secrets)
     syncBranchesWithMaster(['demo', 'perftest', 'ithc'])
-    enableHighLevelDataSetup()
+
+    MetricsPublisher metricsPublisher = new MetricsPublisher(this, currentBuild, product, component, params.subscription )
+    approvedEnvironmentRepository(params.environment, metricsPublisher) {
+      enableHighLevelDataSetup()
+    }
 
     after('test') {
         builder.gradle('integration')
         builder.gradle('jacocoTestReport')
-        builder.gradle('generateCCDConfig')
-        generateDefinitions()
+    }
+
+    after('checkout'){
+      builder.gradle('generateCCDConfig')
+      generateDefinitions()
     }
 
     onPR {
@@ -78,25 +86,17 @@ withPipeline(type, product, component) {
         setCommonEnvVariables()
     }
 
+    onPerftest{
+      env.CASE_API_URL = "http://nfdiv-case-api-perftest.service.core-compute-perftest.internal"
+      env.CCD_DEF_NAME = "perftest"
+      env.IDAM_API_URL_BASE = "https://idam-api.perftest.platform.hmcts.net"
+      env.S2S_URL_BASE = "http://rpe-service-auth-provider-perftest.service.core-compute-perftest.internal"
+      env.DEFINITION_STORE_URL_BASE = "http://ccd-definition-store-api-perftest.service.core-compute-perftest.internal"
+    }
+
     before('functionalTest:preview') {
       // Only for preview upload the definitions via script as high level data set up relies on an existing environment
       uploadCoreCaseDataDefinitions()
-    }
-
-    before('buildinfra:perftest') {
-        dir("${WORKSPACE}") {
-            withSubscription('nonprod') {
-                withTeamSecrets(pipelineConf, 'perftest') {
-                    env.CASE_API_URL = "http://nfdiv-case-api-perftest.service.core-compute-perftest.internal"
-                    env.CCD_DEF_NAME = "perftest"
-                    env.IDAM_API_URL_BASE = "https://idam-api.perftest.platform.hmcts.net"
-                    env.S2S_URL_BASE = "http://rpe-service-auth-provider-perftest.service.core-compute-perftest.internal"
-                    env.DEFINITION_STORE_URL_BASE = "http://ccd-definition-store-api-perftest.service.core-compute-perftest.internal"
-
-                    builder.gradle('generateCCDConfig')
-                }
-            }
-        }
     }
 }
 
