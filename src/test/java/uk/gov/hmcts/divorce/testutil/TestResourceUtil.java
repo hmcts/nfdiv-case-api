@@ -16,4 +16,9 @@ public final class TestResourceUtil {
         File jsonFile = ResourceUtils.getFile(resourcePath);
         return new String(Files.readAllBytes(jsonFile.toPath()));
     }
+
+    public static byte[] resourceAsBytes(final String resourcePath) throws IOException {
+        File file = ResourceUtils.getFile(resourcePath);
+        return Files.readAllBytes(file.toPath());
+    }
 }

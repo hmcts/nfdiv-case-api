@@ -76,7 +76,7 @@ public class BulkPrintService {
             .letterId;
     }
 
-    private byte[] getDocumentBytes(final String docUrl, final String authToken)  {
+    private byte[] getDocumentBytes(final String docUrl, final String authToken) {
         String fileName = FilenameUtils.getName(docUrl);
         final String userAuth = request.getHeader(AUTHORIZATION);
         final var userDetails = idamService.retrieveUser(userAuth).getUserDetails();

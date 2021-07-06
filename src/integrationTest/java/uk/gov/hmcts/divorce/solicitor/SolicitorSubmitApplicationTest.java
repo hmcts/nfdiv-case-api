@@ -49,7 +49,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorSubmitApplication.SOLICITOR_SUBMIT;
 import static uk.gov.hmcts.divorce.testutil.CaseDataWireMock.stubForCcdCaseRoles;
 import static uk.gov.hmcts.divorce.testutil.CaseDataWireMock.stubForCcdCaseRolesUpdateFailure;
-import static uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock.stubForDocumentManagement;
+import static uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock.stubDeleteFromDocumentManagement;
 import static uk.gov.hmcts.divorce.testutil.FeesWireMock.stubForFeesLookup;
 import static uk.gov.hmcts.divorce.testutil.FeesWireMock.stubForFeesNotFound;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.CASEWORKER_ROLE;
@@ -287,7 +287,7 @@ public class SolicitorSubmitApplicationTest {
 
         final var caseData = caseDataWithStatementOfTruth();
         final var documentUuid = setupAuthorizationAndApplicationDocument(caseData);
-        stubForDocumentManagement(documentUuid, OK);
+        stubDeleteFromDocumentManagement(documentUuid, OK);
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -319,7 +319,7 @@ public class SolicitorSubmitApplicationTest {
 
         final var caseData = caseDataWithStatementOfTruth();
         final var documentUuid = setupAuthorizationAndApplicationDocument(caseData);
-        stubForDocumentManagement(documentUuid, FORBIDDEN);
+        stubDeleteFromDocumentManagement(documentUuid, FORBIDDEN);
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -344,7 +344,7 @@ public class SolicitorSubmitApplicationTest {
 
         final var caseData = caseDataWithStatementOfTruth();
         final var documentUuid = setupAuthorizationAndApplicationDocument(caseData);
-        stubForDocumentManagement(documentUuid, UNAUTHORIZED);
+        stubDeleteFromDocumentManagement(documentUuid, UNAUTHORIZED);
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)

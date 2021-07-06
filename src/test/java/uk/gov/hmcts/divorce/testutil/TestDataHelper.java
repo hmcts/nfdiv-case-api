@@ -379,8 +379,13 @@ public class TestDataHelper {
         );
     }
 
-    public static ListValue<DivorceDocument> documentWithType(DocumentType documentType) {
-        String documentUrl = "http://localhost:8080/" + UUID.randomUUID();
+    public static ListValue<DivorceDocument> documentWithType(final DocumentType documentType) {
+        return documentWithType(documentType, UUID.randomUUID().toString());
+    }
+
+    public static ListValue<DivorceDocument> documentWithType(final DocumentType documentType,
+                                                              final String documentId) {
+        String documentUrl = "http://localhost:8080/" + documentId;
 
         Document ccdDocument = new Document(
             documentUrl,

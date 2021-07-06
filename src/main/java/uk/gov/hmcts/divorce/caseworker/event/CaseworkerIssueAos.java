@@ -63,6 +63,7 @@ public class CaseworkerIssueAos implements CCDConfig<CaseData, State, UserRole> 
             .description("Issue AOS pack to respondent")
             .displayOrder(1)
             .showSummary()
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE,
