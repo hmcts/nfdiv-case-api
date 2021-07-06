@@ -109,7 +109,17 @@ class DocumentUtilTest {
 
         final List<DivorceDocument> documentsOfType = findDocumentsOfType(caseData, singletonList(NAME_CHANGE_EVIDENCE));
 
-        assertThat(documentsOfType.size()).isEqualTo(0);
+        assertThat(documentsOfType.size()).isZero();
+    }
+
+    @Test
+    void shouldNotFindDocumentOfGivenDocumentTypeIfNoDocumentsPresent() {
+
+        final CaseData caseData = CaseData.builder().build();
+
+        final List<DivorceDocument> documentsOfType = findDocumentsOfType(caseData, singletonList(NAME_CHANGE_EVIDENCE));
+
+        assertThat(documentsOfType.size()).isZero();
     }
 
     @Test
