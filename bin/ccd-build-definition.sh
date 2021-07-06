@@ -3,7 +3,6 @@
 set -eu
 
 scriptPath=$(dirname $(realpath $0))
-caseType=${1}
 echo "Script Path ${scriptPath}"
 
 root_dir=$(realpath $(dirname ${0})/..)
