@@ -121,7 +121,7 @@ def uploadCoreCaseDataDefinitions() {
 
 def generateDefinitions() {
   dir("${WORKSPACE}/bin") {
-    sh "./ccd-build-definition.sh "
+    sh "./ccd-build-definition.sh"
   }
   dir("${WORKSPACE}") {
     steps.archiveArtifacts artifacts: "build/ccd-config/*.xlsx"
