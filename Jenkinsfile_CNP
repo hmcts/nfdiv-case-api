@@ -115,7 +115,7 @@ def uploadCoreCaseDataDefinitions() {
         sh "./process-and-import-ccd-definition.sh"
     }
     dir("${WORKSPACE}") {
-        steps.archiveArtifacts artifacts: "build/ccd-config/ccd-nfd-${CCD_DEF_NAME}.xlsx"
+        steps.archiveArtifacts artifacts: "build/ccd-config/*.xlsx"
     }
 }
 
@@ -124,6 +124,6 @@ def generateDefinitions() {
     sh "./ccd-build-definition.sh"
   }
   dir("${WORKSPACE}") {
-    steps.archiveArtifacts artifacts: "build/ccd-config/ccd-nfd-${CCD_DEF_NAME}.xlsx"
+    steps.archiveArtifacts artifacts: "build/ccd-config/*.xlsx"
   }
 }

@@ -49,6 +49,7 @@ import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.ccd.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.common.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.common.model.ConfidentialAddress.SHARE;
 import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
@@ -310,6 +311,7 @@ public class TestDataHelper {
                     .data(OBJECT_MAPPER.convertValue(caseData, TYPE_REFERENCE))
                     .id(TEST_CASE_ID)
                     .createdDate(LOCAL_DATE_TIME)
+                    .caseTypeId(CASE_TYPE)
                     .build()
             )
             .build();
@@ -325,6 +327,7 @@ public class TestDataHelper {
                     .data(OBJECT_MAPPER.convertValue(caseData, TYPE_REFERENCE))
                     .state(state)
                     .id(TEST_CASE_ID)
+                    .caseTypeId(CASE_TYPE)
                     .build()
             )
             .build();
