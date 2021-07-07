@@ -42,7 +42,6 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedB
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondent;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondentWithDigitalSolicitor;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondentWithSolicitorNotDigital;
 
 @ExtendWith(MockitoExtension.class)
 class NoticeOfProceedingsNotificationTest {
@@ -104,7 +103,7 @@ class NoticeOfProceedingsNotificationTest {
     }
 
     @Test
-    void shouldSendNotificationToRespondentSolicitorIfRespondentIsRepresentedAndSolicitorIsDigital() {
+    void shouldSendNotificationToRespondentSolicitorIfRespondentIsRepresented() {
 
         final CaseData caseData = CaseData.builder()
             .applicant1(getApplicant())
@@ -123,28 +122,6 @@ class NoticeOfProceedingsNotificationTest {
             respondentSolicitorTemplateVars(),
             ENGLISH
         );
-
-        verify(notificationService).sendEmail(
-            TEST_USER_EMAIL,
-            APPLICANT_NOTICE_OF_PROCEEDINGS,
-            commonTemplateVars(),
-            ENGLISH
-        );
-
-        verifyNoMoreInteractions(notificationService);
-    }
-
-    @Test
-    void shouldNotSendNotificationToRespondentSolicitorIfRespondentIsRepresentedButSolicitorIsNotDigital() {
-
-        final CaseData caseData = CaseData.builder()
-            .applicant1(getApplicant())
-            .applicant2(respondentWithSolicitorNotDigital())
-            .build();
-
-        when(commonContent.commonNotificationTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
-
-        noticeOfProceedingsNotification.send(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             TEST_USER_EMAIL,

@@ -42,7 +42,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondent;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondentWithDigitalSolicitor;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondentWithSolicitorNotDigital;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerIssueAosTest {
@@ -134,34 +133,7 @@ class CaseworkerIssueAosTest {
     }
 
     @Test
-    void shouldNotPrintAosIfNotPersonalServiceAndRespondentIsRepresentedButSolicitorIsNotDigital() {
-
-        final var caseData = caseData();
-        caseData.getApplication().setSolServiceMethod(COURT_SERVICE);
-        caseData.setApplicant2(respondentWithSolicitorNotDigital());
-        final var caseDetails = CaseDetails.<CaseData, State>builder()
-            .id(TEST_CASE_ID)
-            .state(AwaitingAos)
-            .data(caseData)
-            .build();
-
-        setClock();
-        final LocalDate expectedDueDate = LocalDate.ofInstant(NOW, ZONE_ID).plusDays(DUE_DATE_OFFSET_DAYS);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueAos.aboutToSubmit(caseDetails, null);
-
-        assertThat(response.getData().getDueDate()).isEqualTo(expectedDueDate);
-        assertThat(response.getData().getAcknowledgementOfService())
-            .extracting(
-                AcknowledgementOfService::getDigitalNoticeOfProceedings,
-                AcknowledgementOfService::getNoticeOfProceedingsEmail,
-                AcknowledgementOfService::getNoticeOfProceedingsSolicitorFirm)
-            .contains(null, null, null);
-        verifyNoInteractions(aosPackPrinter);
-    }
-
-    @Test
-    void shouldPrintAosAndUpdateCaseDataIfNotPersonalServiceAndRespondentIsRepresentedAndSolicitorIsDigital() {
+    void shouldPrintAosAndUpdateCaseDataIfNotPersonalServiceAndRespondentIsRepresented() {
 
         final var caseData = caseData();
         caseData.getApplication().setSolServiceMethod(COURT_SERVICE);

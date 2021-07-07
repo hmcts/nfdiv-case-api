@@ -36,7 +36,7 @@ public class NoticeOfProceedingsNotification {
         final Solicitor applicantSolicitor = applicant.getSolicitor();
         final Solicitor respondentSolicitor = respondent.getSolicitor();
 
-        if (respondent.isRepresented() && respondentSolicitor.hasDigitalDetails()) {
+        if (respondent.isRepresented()) {
 
             log.info("Sending Notice Of Proceedings email to respondent solicitor.  Case ID: {}", caseId);
 

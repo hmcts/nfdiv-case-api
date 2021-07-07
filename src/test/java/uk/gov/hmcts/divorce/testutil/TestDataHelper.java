@@ -158,16 +158,6 @@ public class TestDataHelper {
         return applicant;
     }
 
-    public static Applicant respondentWithSolicitorNotDigital() {
-        final Applicant applicant = respondent();
-        applicant.setSolicitor(Solicitor.builder()
-            .name(TEST_SOLICITOR_NAME)
-            .email(TEST_SOLICITOR_EMAIL)
-            .isDigital(NO)
-            .build());
-        return applicant;
-    }
-
     public static CaseData caseData() {
         return CaseData.builder()
             .applicant1(getApplicant())

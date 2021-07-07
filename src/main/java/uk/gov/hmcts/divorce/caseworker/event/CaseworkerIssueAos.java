@@ -88,17 +88,10 @@ public class CaseworkerIssueAos implements CCDConfig<CaseData, State, UserRole> 
             final Solicitor respondentSolicitor = respondent.getSolicitor();
 
             if (respondent.isRepresented()) {
-
-                if (respondentSolicitor.hasDigitalDetails()) {
-                    log.info("Sending respondent AOS pack to bulk print, "
-                        + "respondent is represented by digital solicitor.  Case ID: {}:", caseId);
-                    aosPackPrinter.print(caseData, caseId);
-                    setNoticeOfProceedingsInformation(caseData, respondentSolicitor);
-                } else {
-                    log.info("Not sending respondent AOS pack to bulk print, "
-                        + "respondent is represented by a non digital solicitor.  Case ID: {}", caseId);
-                }
-
+                log.info("Sending respondent AOS pack to bulk print, "
+                    + "respondent is represented by digital solicitor.  Case ID: {}:", caseId);
+                aosPackPrinter.print(caseData, caseId);
+                setNoticeOfProceedingsInformation(caseData, respondentSolicitor);
             } else {
                 log.info("Sending respondent AOS pack to bulk print, respondent is not represented.  CaseID: {}", caseId);
                 aosPackPrinter.print(caseData, caseId);
