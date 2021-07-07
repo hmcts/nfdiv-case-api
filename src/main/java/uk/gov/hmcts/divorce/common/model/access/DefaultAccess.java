@@ -11,14 +11,14 @@ import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_R
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_SUPERUSER;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_SYSTEMUPDATE;
-import static uk.gov.hmcts.divorce.common.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.divorce.common.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.common.model.UserRole.SOLICITOR;
 
 public class DefaultAccess implements HasAccessControl {
     @Override
     public SetMultimap<HasRole, Permission> getGrants() {
         SetMultimap<HasRole, Permission> grants = HashMultimap.create();
-        grants.putAll(CITIZEN, Permissions.CREATE_READ_UPDATE);
+        grants.putAll(CREATOR, Permissions.CREATE_READ_UPDATE);
         grants.putAll(CASEWORKER_SYSTEMUPDATE, Permissions.CREATE_READ_UPDATE);
         grants.putAll(CASEWORKER_COURTADMIN_CTSC, Permissions.READ);
         grants.putAll(CASEWORKER_COURTADMIN_RDU, Permissions.READ);
