@@ -26,6 +26,9 @@ import uk.gov.hmcts.reform.sendletter.api.LetterStatus;
 import uk.gov.hmcts.reform.sendletter.api.SendLetterResponse;
 
 import java.io.IOException;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -93,6 +96,9 @@ public class IssueAosTest {
     @MockBean
     private NotificationService notificationService;
 
+    @MockBean
+    private Clock clock;
+
     @BeforeAll
     static void setUp() {
         IdamWireMock.start();
@@ -117,6 +123,7 @@ public class IssueAosTest {
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        setClock();
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -211,5 +218,10 @@ public class IssueAosTest {
 
     private byte[] loadPdfAsBytes() throws IOException {
         return resourceAsBytes("classpath:Test.pdf");
+    }
+
+    private void setClock() {
+        when(clock.instant()).thenReturn(Instant.parse("2021-07-06T12:00:00.000Z"));
+        when(clock.getZone()).thenReturn(ZoneId.systemDefault());
     }
 }
