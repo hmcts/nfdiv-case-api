@@ -57,10 +57,10 @@ public class AcknowledgementOfService {
     @CCD(
         label = "Does respondent agree to costs?",
         typeOverride = FixedList,
-        typeParameterOverride = "RespAgreeToCostsEnum",
+        typeParameterOverride = "RespondentAgreeToCosts",
         access = AosAccess.class
     )
-    private RespAgreeToCostsEnum agreeToCosts;
+    private RespondentAgreeToCosts agreeToCosts;
 
     @CCD(
         label = "Respondent's costs amount",
