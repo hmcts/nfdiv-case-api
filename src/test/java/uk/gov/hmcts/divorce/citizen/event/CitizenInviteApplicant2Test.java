@@ -71,8 +71,14 @@ public class CitizenInviteApplicant2Test {
         verifyNoInteractions(applicationSentForReviewApplicant1Notification);
         verifyNoInteractions(applicationSentForReviewApplicant2Notification);
 
-        assertThat(response.getErrors().size()).isEqualTo(4);
-        assertThat(response.getErrors().get(0)).isEqualTo("Applicant1FinancialOrder cannot be empty or null");
+        assertThat(response.getErrors().size()).isEqualTo(5);
+        assertThat(response.getErrors()).containsExactlyInAnyOrder(
+            "Applicant1FinancialOrder cannot be empty or null",
+            "Applicant2Gender cannot be empty or null",
+            "MarriageApplicant1Name cannot be empty or null",
+            "MarriageDate cannot be empty or null",
+            "JurisdictionConnections cannot be empty or null"
+        );
     }
 
     @Test
@@ -101,6 +107,6 @@ public class CitizenInviteApplicant2Test {
 
         assertThat(response.getData().getCaseInvite().getAccessCode()).isNotBlank();
         assertThat(response.getData().getCaseInvite().getAccessCode().length()).isEqualTo(8);
-        assertThat(response.getData().getCaseInvite().getAccessCode()).doesNotContain("I","O","U","0","1");
+        assertThat(response.getData().getCaseInvite().getAccessCode()).doesNotContain("I", "O", "U", "0", "1");
     }
 }
