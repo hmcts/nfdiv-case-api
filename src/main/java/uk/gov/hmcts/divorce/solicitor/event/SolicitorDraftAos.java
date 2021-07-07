@@ -34,7 +34,7 @@ import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_U
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 
 @Component
-public class SolicitorSubmitDraftAos implements CCDConfig<CaseData, State, UserRole> {
+public class SolicitorDraftAos implements CCDConfig<CaseData, State, UserRole> {
     public static final String SOLICITOR_DRAFT_AOS = "solicitor-draft-aos";
 
     @Autowired
