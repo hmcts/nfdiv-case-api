@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.print;
+package uk.gov.hmcts.divorce.document.print;
 
 import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Test;
@@ -13,10 +13,10 @@ import org.springframework.http.ResponseEntity;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.document.DocumentManagementClient;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.print.exception.InvalidResourceException;
+import uk.gov.hmcts.divorce.document.print.model.Letter;
+import uk.gov.hmcts.divorce.document.print.model.Print;
 import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.divorce.print.exception.InvalidResourceException;
-import uk.gov.hmcts.divorce.print.model.Letter;
-import uk.gov.hmcts.divorce.print.model.Print;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;

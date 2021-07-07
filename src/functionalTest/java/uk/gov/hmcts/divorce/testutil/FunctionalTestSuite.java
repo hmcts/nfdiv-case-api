@@ -142,6 +142,7 @@ public abstract class FunctionalTestSuite {
                     .id(1234567890123456L)
                     .data(caseData)
                     .createdDate(LOCAL_DATE_TIME)
+                    .caseTypeId(CASE_TYPE)
                     .build()
             )
             .build();

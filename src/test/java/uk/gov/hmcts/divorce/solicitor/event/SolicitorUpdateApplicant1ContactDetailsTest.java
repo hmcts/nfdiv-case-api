@@ -13,20 +13,20 @@ import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static uk.gov.hmcts.divorce.solicitor.event.ApplicantUpdateContactDetails.APPLICANT_UPDATE_CONTACT_DETAILS;
+import static uk.gov.hmcts.divorce.solicitor.event.SolicitorUpdateApplicant1ContactDetails.APPLICANT_UPDATE_APPLICANT1_CONTACT_DETAILS;
 
 @ExtendWith(MockitoExtension.class)
-public class ApplicantUpdateContactDetailsTest {
+public class SolicitorUpdateApplicant1ContactDetailsTest {
     @InjectMocks
-    private ApplicantUpdateContactDetails applicantUpdateContactDetails;
+    private SolicitorUpdateApplicant1ContactDetails solicitorUpdateApplicant1ContactDetails;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final Set<State> stateSet = Set.of(State.class.getEnumConstants());
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = new ConfigBuilderImpl<>(CaseData.class, stateSet);
 
-        applicantUpdateContactDetails.configure(configBuilder);
+        solicitorUpdateApplicant1ContactDetails.configure(configBuilder);
 
-        assertThat(configBuilder.getEvents().get(0).getId(), is(APPLICANT_UPDATE_CONTACT_DETAILS));
+        assertThat(configBuilder.getEvents().get(0).getId(), is(APPLICANT_UPDATE_APPLICANT1_CONTACT_DETAILS));
     }
 }

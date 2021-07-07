@@ -19,7 +19,7 @@ uk:
         baseUrl: https://api.notifications.service.gov.uk
 
 s2s:
- name: ccd_data
+  name: ccd_data
 
 idam:
   api:
@@ -67,3 +67,6 @@ send-letter:
 
 schedule:
   issue_aos: '0 0 0 * * ?' # Midnight each day
+
+aos_pack:
+  due_date_offset_days: 30

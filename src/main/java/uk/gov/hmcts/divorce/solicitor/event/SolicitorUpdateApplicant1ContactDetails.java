@@ -8,7 +8,7 @@ import uk.gov.hmcts.divorce.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
-import uk.gov.hmcts.divorce.solicitor.event.page.Applicant1UpdateContactDetails;
+import uk.gov.hmcts.divorce.solicitor.event.page.UpdateApplicant1ContactDetails;
 
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_RDU;
@@ -20,11 +20,11 @@ import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ_UPDATE;
 
 @Component
-public class ApplicantUpdateContactDetails implements CCDConfig<CaseData, State, UserRole> {
+public class SolicitorUpdateApplicant1ContactDetails implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String APPLICANT_UPDATE_CONTACT_DETAILS = "applicant-update-contact-details";
+    public static final String APPLICANT_UPDATE_APPLICANT1_CONTACT_DETAILS = "solicitor-update-applicant1-contact-details";
 
-    private final CcdPageConfiguration applicant1UpdateContactDetails = new Applicant1UpdateContactDetails();
+    private final CcdPageConfiguration applicant1UpdateContactDetails = new UpdateApplicant1ContactDetails();
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -35,7 +35,7 @@ public class ApplicantUpdateContactDetails implements CCDConfig<CaseData, State,
     private PageBuilder addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         return new PageBuilder(configBuilder
-            .event(APPLICANT_UPDATE_CONTACT_DETAILS)
+            .event(APPLICANT_UPDATE_APPLICANT1_CONTACT_DETAILS)
             .forAllStates()
             .name("Update applicant contact info")
             .description("Update applicant contact details")
