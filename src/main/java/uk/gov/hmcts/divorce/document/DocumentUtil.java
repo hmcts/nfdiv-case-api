@@ -5,7 +5,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentInfo;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
-import uk.gov.hmcts.divorce.print.model.Letter;
+import uk.gov.hmcts.divorce.document.print.model.Letter;
 
 import java.util.Collection;
 import java.util.List;
