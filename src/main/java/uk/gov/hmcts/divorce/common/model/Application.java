@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.common.model.access.Applicant2Access;
 import uk.gov.hmcts.divorce.common.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
@@ -40,7 +41,7 @@ public class Application {
 
     @CCD(
         label = "Has applicant 2's marriage broken down irretrievably?",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class, Applicant2Access.class}
     )
     private YesOrNo applicant2ScreenHasMarriageBroken;
 
