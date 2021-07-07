@@ -7,7 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 
 @Getter
 @AllArgsConstructor
-public enum RespAgreeToCostsEnum implements HasLabel {
+public enum RespondentAgreeToCosts implements HasLabel {
 
     @JsonProperty("Yes")
     YES("The respondent agrees to pay all the costs"),
