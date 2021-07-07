@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.common.model.access.AosAccess;
 import uk.gov.hmcts.divorce.common.model.access.DefaultAccess;
 
 import java.time.LocalDateTime;

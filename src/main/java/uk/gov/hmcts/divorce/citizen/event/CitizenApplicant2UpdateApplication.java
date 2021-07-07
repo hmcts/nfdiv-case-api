@@ -8,8 +8,8 @@ import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
 
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingApplicant2Response;
+import static uk.gov.hmcts.divorce.common.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_SUPERUSER;
-import static uk.gov.hmcts.divorce.common.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
 
@@ -28,7 +28,7 @@ public class CitizenApplicant2UpdateApplication implements CCDConfig<CaseData, S
             .description("Patch a joint divorce or dissolution as applicant 2")
             .displayOrder(1)
             .retries(120, 120)
-            .grant(CREATE_READ_UPDATE, CITIZEN)
+            .grant(CREATE_READ_UPDATE, APPLICANT_2)
             .grant(READ, CASEWORKER_SUPERUSER);
     }
 }
