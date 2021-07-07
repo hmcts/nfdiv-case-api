@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.print;
+package uk.gov.hmcts.divorce.document.print;
 
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,8 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.document.DocumentManagementClient;
 import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.divorce.print.exception.InvalidResourceException;
-import uk.gov.hmcts.divorce.print.model.Print;
+import uk.gov.hmcts.divorce.document.print.exception.InvalidResourceException;
+import uk.gov.hmcts.divorce.document.print.model.Print;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.sendletter.api.SendLetterApi;
 import uk.gov.hmcts.reform.sendletter.api.model.v3.Document;

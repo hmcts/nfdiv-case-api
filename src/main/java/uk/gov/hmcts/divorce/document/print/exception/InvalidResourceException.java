@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.print.exception;
+package uk.gov.hmcts.divorce.document.print.exception;
 
 public class InvalidResourceException extends RuntimeException {
 
