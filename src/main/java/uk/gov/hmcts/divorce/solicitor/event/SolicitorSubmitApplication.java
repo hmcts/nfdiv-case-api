@@ -105,6 +105,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         log.info("Submit application about to submit callback invoked");
 
         final CaseData caseData = details.getData();
+        log.info("APPLICANT 1 FINANCIAL ORDER BEFORE {} ", details.getData().getApplicant1().getFinancialOrder());
         final Application application = caseData.getApplication();
         final State currentState = details.getState();
 
@@ -133,6 +134,8 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
 
         final CaseInfo caseInfo = solicitorSubmitApplicationService
             .aboutToSubmit(caseData, details.getId(), httpServletRequest.getHeader(AUTHORIZATION));
+
+        log.info("APPLICANT 1 FINANCIAL ORDER after {} ", caseInfo.getCaseData().getApplicant1().getFinancialOrder());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseInfo.getCaseData())
