@@ -86,7 +86,7 @@ class CaseworkerIssueAosTest {
     void shouldDoNothingIfApplicationIsPersonalServiceMethodWhenAboutToSubmit() {
 
         final var caseData = caseData();
-        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+        caseData.getApplication().setSolServiceMethod(PERSONAL_SERVICE);
         final var caseDetails = CaseDetails.<CaseData, State>builder()
             .id(TEST_CASE_ID)
             .state(AwaitingAos)
@@ -109,7 +109,7 @@ class CaseworkerIssueAosTest {
     void shouldPrintAosAndSetDueDateIfNotPersonalServiceAndRespondentIsNotRepresented() {
 
         final var caseData = caseData();
-        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+        caseData.getApplication().setSolServiceMethod(COURT_SERVICE);
         caseData.setApplicant2(respondent());
         final var caseDetails = CaseDetails.<CaseData, State>builder()
             .id(TEST_CASE_ID)
@@ -136,7 +136,7 @@ class CaseworkerIssueAosTest {
     void shouldPrintAosAndUpdateCaseDataIfNotPersonalServiceAndRespondentIsRepresented() {
 
         final var caseData = caseData();
-        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+        caseData.getApplication().setSolServiceMethod(COURT_SERVICE);
         caseData.setApplicant2(respondentWithDigitalSolicitor());
         final var caseDetails = CaseDetails.<CaseData, State>builder()
             .id(TEST_CASE_ID)
@@ -180,7 +180,7 @@ class CaseworkerIssueAosTest {
     void shouldSendPersonalServiceNotificationWhenSubmitted() {
 
         final var caseData = caseData();
-        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+        caseData.getApplication().setSolServiceMethod(PERSONAL_SERVICE);
 
         final var caseDetails = CaseDetails.<CaseData, State>builder()
             .id(TEST_CASE_ID)

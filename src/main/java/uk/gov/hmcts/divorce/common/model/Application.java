@@ -106,7 +106,7 @@ public class Application {
         label = "How would you like the respondent to be served?",
         access = {DefaultAccess.class}
     )
-    private ServiceMethod serviceMethod;
+    private ServiceMethod solServiceMethod;
 
     @CCD(
         label = "I have discussed the possibility of a reconciliation with the applicant.",
@@ -306,6 +306,6 @@ public class Application {
 
     @JsonIgnore
     public boolean isPersonalServiceMethod() {
-        return PERSONAL_SERVICE.equals(serviceMethod);
+        return PERSONAL_SERVICE.equals(solServiceMethod);
     }
 }
