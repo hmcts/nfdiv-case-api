@@ -13,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.notification.NoticeOfProceedingsNotification;
 import uk.gov.hmcts.divorce.caseworker.service.notification.PersonalServiceNotification;
 import uk.gov.hmcts.divorce.caseworker.service.print.AosPackPrinter;
+import uk.gov.hmcts.divorce.common.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.common.model.State;
 import uk.gov.hmcts.divorce.common.model.UserRole;
@@ -95,13 +96,13 @@ class CaseworkerIssueAosTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueAos.aboutToSubmit(caseDetails, null);
 
-        assertThat(response.getData())
+        assertThat(response.getData().getDueDate()).isNull();
+        assertThat(response.getData().getAcknowledgementOfService())
             .extracting(
-                CaseData::getDueDate,
-                CaseData::getDigitalNoticeOfProceedings,
-                CaseData::getNoticeOfProceedingsEmail,
-                CaseData::getNoticeOfProceedingsSolicitorFirm)
-            .contains(null, null, null, null);
+                AcknowledgementOfService::getDigitalNoticeOfProceedings,
+                AcknowledgementOfService::getNoticeOfProceedingsEmail,
+                AcknowledgementOfService::getNoticeOfProceedingsSolicitorFirm)
+            .contains(null, null, null);
         verifyNoInteractions(aosPackPrinter, clock);
     }
 
@@ -122,13 +123,13 @@ class CaseworkerIssueAosTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueAos.aboutToSubmit(caseDetails, null);
 
-        assertThat(response.getData())
+        assertThat(response.getData().getDueDate()).isEqualTo(expectedDueDate);
+        assertThat(response.getData().getAcknowledgementOfService())
             .extracting(
-                CaseData::getDueDate,
-                CaseData::getDigitalNoticeOfProceedings,
-                CaseData::getNoticeOfProceedingsEmail,
-                CaseData::getNoticeOfProceedingsSolicitorFirm)
-            .contains(expectedDueDate, null, null, null);
+                AcknowledgementOfService::getDigitalNoticeOfProceedings,
+                AcknowledgementOfService::getNoticeOfProceedingsEmail,
+                AcknowledgementOfService::getNoticeOfProceedingsSolicitorFirm)
+            .contains(null, null, null);
         verify(aosPackPrinter).print(caseData, TEST_CASE_ID);
     }
 
@@ -149,13 +150,13 @@ class CaseworkerIssueAosTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueAos.aboutToSubmit(caseDetails, null);
 
-        assertThat(response.getData())
+        assertThat(response.getData().getDueDate()).isEqualTo(expectedDueDate);
+        assertThat(response.getData().getAcknowledgementOfService())
             .extracting(
-                CaseData::getDueDate,
-                CaseData::getDigitalNoticeOfProceedings,
-                CaseData::getNoticeOfProceedingsEmail,
-                CaseData::getNoticeOfProceedingsSolicitorFirm)
-            .contains(expectedDueDate, null, null, null);
+                AcknowledgementOfService::getDigitalNoticeOfProceedings,
+                AcknowledgementOfService::getNoticeOfProceedingsEmail,
+                AcknowledgementOfService::getNoticeOfProceedingsSolicitorFirm)
+            .contains(null, null, null);
         verifyNoInteractions(aosPackPrinter);
     }
 
@@ -176,13 +177,13 @@ class CaseworkerIssueAosTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueAos.aboutToSubmit(caseDetails, null);
 
-        assertThat(response.getData())
+        assertThat(response.getData().getDueDate()).isEqualTo(expectedDueDate);
+        assertThat(response.getData().getAcknowledgementOfService())
             .extracting(
-                CaseData::getDueDate,
-                CaseData::getDigitalNoticeOfProceedings,
-                CaseData::getNoticeOfProceedingsEmail,
-                CaseData::getNoticeOfProceedingsSolicitorFirm)
-            .contains(expectedDueDate, YES, TEST_SOLICITOR_EMAIL, TEST_ORG_NAME);
+                AcknowledgementOfService::getDigitalNoticeOfProceedings,
+                AcknowledgementOfService::getNoticeOfProceedingsEmail,
+                AcknowledgementOfService::getNoticeOfProceedingsSolicitorFirm)
+            .contains(YES, TEST_SOLICITOR_EMAIL, TEST_ORG_NAME);
         verify(aosPackPrinter).print(caseData, TEST_CASE_ID);
     }
 

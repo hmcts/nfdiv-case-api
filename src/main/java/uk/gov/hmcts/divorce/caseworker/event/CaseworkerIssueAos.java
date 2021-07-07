@@ -133,8 +133,9 @@ public class CaseworkerIssueAos implements CCDConfig<CaseData, State, UserRole> 
     }
 
     private void setNoticeOfProceedingsInformation(final CaseData caseData, final Solicitor solicitor) {
-        caseData.setDigitalNoticeOfProceedings(YES);
-        caseData.setNoticeOfProceedingsEmail(solicitor.getEmail());
-        caseData.setNoticeOfProceedingsSolicitorFirm(solicitor.getOrganisationPolicy().getOrganisation().getOrganisationName());
+        caseData.getAcknowledgementOfService().setDigitalNoticeOfProceedings(YES);
+        caseData.getAcknowledgementOfService().setNoticeOfProceedingsEmail(solicitor.getEmail());
+        caseData.getAcknowledgementOfService().setNoticeOfProceedingsSolicitorFirm(
+            solicitor.getOrganisationPolicy().getOrganisation().getOrganisationName());
     }
 }

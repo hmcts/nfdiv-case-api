@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
 import uk.gov.hmcts.divorce.common.model.access.CaseworkerAccess;
 import uk.gov.hmcts.divorce.common.model.access.CaseworkerAndSuperUserAccess;
@@ -26,7 +25,6 @@ import java.util.List;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
-import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
@@ -158,24 +156,6 @@ public class CaseData {
         access = {CaseworkerAndSuperUserAccess.class}
     )
     private String note;
-
-    @CCD(
-        label = "Digital Notice of Proceedings?",
-        access = {CaseworkerAndSuperUserAccess.class}
-    )
-    private YesOrNo digitalNoticeOfProceedings;
-
-    @CCD(
-        label = "Notice of Proceedings email address",
-        typeOverride = Email,
-        access = {CaseworkerAndSuperUserAccess.class}
-    )
-    private String noticeOfProceedingsEmail;
-
-    @CCD(
-        label = "Notice of Proceedings solicitor's firm"
-    )
-    private String noticeOfProceedingsSolicitorFirm;
 
     @JsonIgnore
     public boolean isAmendedCase() {
