@@ -170,7 +170,7 @@ public class Application {
     @CCD(
         label = "How will payment be made?",
         typeOverride = FixedList,
-        typeParameterOverride = "SolToPay",
+        typeParameterOverride = "SolicitorPaymentMethod",
         access = {DefaultAccess.class}
     )
     private SolicitorPaymentMethod solPaymentHowToPay;
