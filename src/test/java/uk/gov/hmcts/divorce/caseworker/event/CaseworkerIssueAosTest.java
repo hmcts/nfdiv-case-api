@@ -48,7 +48,7 @@ class CaseworkerIssueAosTest {
 
     private static final Instant NOW = Instant.now();
     private static final ZoneId ZONE_ID = ZoneId.systemDefault();
-    public static final long DUE_DATE_OFFSET_DAYS = 30L;
+    private static final long DUE_DATE_OFFSET_DAYS = 30L;
 
     @Mock
     private PersonalServiceNotification personalServiceNotification;
