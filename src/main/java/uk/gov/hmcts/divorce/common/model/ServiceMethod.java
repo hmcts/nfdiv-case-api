@@ -7,13 +7,13 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 
 @Getter
 @AllArgsConstructor
-public enum SolToPay implements HasLabel {
+public enum ServiceMethod implements HasLabel {
 
-    @JsonProperty("feePayByAccount")
-    FEE_PAY_BY_ACCOUNT("Fee account"),
+    @JsonProperty("personalService")
+    PERSONAL_SERVICE("Personal Service"),
 
-    @JsonProperty("feesHelpWith")
-    FEES_HELP_WITH("Help with fees");
+    @JsonProperty("courtService")
+    COURT_SERVICE("Court Service");
 
     private final String label;
 }

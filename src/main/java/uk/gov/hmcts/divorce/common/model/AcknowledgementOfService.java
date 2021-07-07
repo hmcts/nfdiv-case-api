@@ -60,7 +60,7 @@ public class AcknowledgementOfService {
         typeParameterOverride = "RespAgreeToCostsEnum",
         access = AosAccess.class
     )
-    private RespAgreeToCostsEnum agreeToCosts;
+    private RespondentAgreeToCosts agreeToCosts;
 
     @CCD(
         label = "Respondent's costs amount",

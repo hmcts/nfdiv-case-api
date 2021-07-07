@@ -32,8 +32,8 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueAos.CASEWORKER_ISSUE_AOS;
-import static uk.gov.hmcts.divorce.common.model.SolServiceMethod.COURT_SERVICE;
-import static uk.gov.hmcts.divorce.common.model.SolServiceMethod.PERSONAL_SERVICE;
+import static uk.gov.hmcts.divorce.common.model.ServiceMethod.COURT_SERVICE;
+import static uk.gov.hmcts.divorce.common.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.common.model.State.Issued;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -86,7 +86,7 @@ class CaseworkerIssueAosTest {
     void shouldDoNothingIfApplicationIsPersonalServiceMethodWhenAboutToSubmit() {
 
         final var caseData = caseData();
-        caseData.getApplication().setSolServiceMethod(PERSONAL_SERVICE);
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
         final var caseDetails = CaseDetails.<CaseData, State>builder()
             .id(TEST_CASE_ID)
             .state(AwaitingAos)
@@ -109,7 +109,7 @@ class CaseworkerIssueAosTest {
     void shouldPrintAosAndSetDueDateIfNotPersonalServiceAndRespondentIsNotRepresented() {
 
         final var caseData = caseData();
-        caseData.getApplication().setSolServiceMethod(COURT_SERVICE);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
         caseData.setApplicant2(respondent());
         final var caseDetails = CaseDetails.<CaseData, State>builder()
             .id(TEST_CASE_ID)
@@ -136,7 +136,7 @@ class CaseworkerIssueAosTest {
     void shouldPrintAosAndUpdateCaseDataIfNotPersonalServiceAndRespondentIsRepresented() {
 
         final var caseData = caseData();
-        caseData.getApplication().setSolServiceMethod(COURT_SERVICE);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
         caseData.setApplicant2(respondentWithDigitalSolicitor());
         final var caseDetails = CaseDetails.<CaseData, State>builder()
             .id(TEST_CASE_ID)
@@ -180,7 +180,7 @@ class CaseworkerIssueAosTest {
     void shouldSendPersonalServiceNotificationWhenSubmitted() {
 
         final var caseData = caseData();
-        caseData.getApplication().setSolServiceMethod(PERSONAL_SERVICE);
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
 
         final var caseDetails = CaseDetails.<CaseData, State>builder()
             .id(TEST_CASE_ID)

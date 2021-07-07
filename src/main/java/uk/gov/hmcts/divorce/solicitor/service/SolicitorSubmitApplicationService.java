@@ -19,7 +19,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static uk.gov.hmcts.divorce.common.model.SolToPay.FEES_HELP_WITH;
+import static uk.gov.hmcts.divorce.common.model.SolicitorPaymentMethod.FEES_HELP_WITH;
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.common.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.common.model.State.Submitted;

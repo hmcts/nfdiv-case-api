@@ -61,7 +61,7 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
                 .done()
             .label("LabelSolServiceMethod", "## Service method")
             .complex(CaseData::getApplication)
-                .mandatory(Application::getSolServiceMethod)
+                .mandatory(Application::getServiceMethod)
                 .label(
                 "LabelSolPersonalService",
                 "After service is complete you must notify the court by completing the 'Confirm Service' form "
