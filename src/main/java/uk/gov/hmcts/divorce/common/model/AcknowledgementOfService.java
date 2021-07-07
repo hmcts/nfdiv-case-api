@@ -7,10 +7,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.common.model.access.CaseworkerAndSuperUserAccess;
 import uk.gov.hmcts.divorce.common.model.access.DefaultAccess;
 
 import java.time.LocalDateTime;
 
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 
@@ -73,7 +75,6 @@ public class AcknowledgementOfService {
     )
     private String costsReason;
 
-
     @CCD(
         label = "Date AOS submitted to HMCTS",
         access = {DefaultAccess.class}
@@ -81,4 +82,21 @@ public class AcknowledgementOfService {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime dateAosSubmitted;
 
+    @CCD(
+        label = "Digital Notice of Proceedings?",
+        access = {CaseworkerAndSuperUserAccess.class}
+    )
+    private YesOrNo digitalNoticeOfProceedings;
+
+    @CCD(
+        label = "Notice of Proceedings email address",
+        typeOverride = Email,
+        access = {CaseworkerAndSuperUserAccess.class}
+    )
+    private String noticeOfProceedingsEmail;
+
+    @CCD(
+        label = "Notice of Proceedings solicitor's firm"
+    )
+    private String noticeOfProceedingsSolicitorFirm;
 }

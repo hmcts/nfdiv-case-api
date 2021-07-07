@@ -23,6 +23,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.common.model.SolServiceMethod.PERSONAL_SERVICE;
 
 @Data
 @AllArgsConstructor
@@ -303,4 +304,8 @@ public class Application {
             || !isEmpty(cannotUploadSupportingDocument);
     }
 
+    @JsonIgnore
+    public boolean isPersonalServiceMethod() {
+        return PERSONAL_SERVICE.equals(solServiceMethod);
+    }
 }

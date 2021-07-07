@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.common.model.Applicant;
 import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.common.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -18,7 +17,6 @@ import static java.lang.String.join;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.common.model.LanguagePreference.WELSH;
@@ -42,8 +40,8 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedBySolicitor;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondent;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondentWithDigitalSolicitor;
 
 @ExtendWith(MockitoExtension.class)
 class NoticeOfProceedingsNotificationTest {
@@ -105,7 +103,7 @@ class NoticeOfProceedingsNotificationTest {
     }
 
     @Test
-    void shouldSendNotificationToRespondentSolicitorIfRespondentIsRepresentedAndSolicitorIsDigital() {
+    void shouldSendNotificationToRespondentSolicitorIfRespondentIsRepresented() {
 
         final CaseData caseData = CaseData.builder()
             .applicant1(getApplicant())
@@ -133,49 +131,6 @@ class NoticeOfProceedingsNotificationTest {
         );
 
         verifyNoMoreInteractions(notificationService);
-    }
-
-    @Test
-    void shouldNotSendNotificationToRespondentSolicitorIfRespondentIsRepresentedButSolicitorIsNotDigital() {
-
-        final CaseData caseData = CaseData.builder()
-            .applicant1(getApplicant())
-            .applicant2(respondentWithSolicitorNotDigital())
-            .build();
-
-        when(commonContent.commonNotificationTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
-
-        noticeOfProceedingsNotification.send(caseData, TEST_CASE_ID);
-
-        verify(notificationService).sendEmail(
-            TEST_USER_EMAIL,
-            APPLICANT_NOTICE_OF_PROCEEDINGS,
-            commonTemplateVars(),
-            ENGLISH
-        );
-
-        verifyNoMoreInteractions(notificationService);
-    }
-
-    private Applicant respondentWithDigitalSolicitor() {
-        final Applicant applicant = respondent();
-        applicant.setSolicitor(Solicitor.builder()
-            .name(TEST_SOLICITOR_NAME)
-            .email(TEST_SOLICITOR_EMAIL)
-            .isDigital(YES)
-            .organisationPolicy(organisationPolicy())
-            .build());
-        return applicant;
-    }
-
-    private Applicant respondentWithSolicitorNotDigital() {
-        final Applicant applicant = respondent();
-        applicant.setSolicitor(Solicitor.builder()
-            .name(TEST_SOLICITOR_NAME)
-            .email(TEST_SOLICITOR_EMAIL)
-            .isDigital(NO)
-            .build());
-        return applicant;
     }
 
     private Map<String, String> respondentSolicitorTemplateVars() {

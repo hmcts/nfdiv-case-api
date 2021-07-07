@@ -1,9 +1,19 @@
 package uk.gov.hmcts.divorce.document;
 
 import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentInfo;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.print.model.Letter;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Stream.ofNullable;
 
 public final class DocumentUtil {
 
@@ -24,5 +34,20 @@ public final class DocumentUtil {
             .documentFileName(documentInfo.getFilename())
             .documentType(documentType)
             .build();
+    }
+
+    public static List<Letter> lettersOfDocumentTypes(final List<ListValue<DivorceDocument>> documents,
+                                                      final List<DocumentType> documentTypes) {
+
+        final AtomicInteger letterIndex = new AtomicInteger();
+        final Predicate<DivorceDocument> documentTypeFilter =
+            document -> documentTypes.contains(document.getDocumentType());
+
+        return ofNullable(documents)
+            .flatMap(Collection::stream)
+            .map(ListValue::getValue)
+            .filter(documentTypeFilter)
+            .map(divorceDocument -> new Letter(divorceDocument, letterIndex.incrementAndGet()))
+            .collect(Collectors.toList());
     }
 }

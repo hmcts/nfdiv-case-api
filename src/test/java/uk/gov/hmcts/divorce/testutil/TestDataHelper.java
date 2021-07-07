@@ -147,6 +147,17 @@ public class TestDataHelper {
             .build();
     }
 
+    public static Applicant respondentWithDigitalSolicitor() {
+        final Applicant applicant = respondent();
+        applicant.setSolicitor(Solicitor.builder()
+            .name(TEST_SOLICITOR_NAME)
+            .email(TEST_SOLICITOR_EMAIL)
+            .isDigital(YES)
+            .organisationPolicy(organisationPolicy())
+            .build());
+        return applicant;
+    }
+
     public static CaseData caseData() {
         return CaseData.builder()
             .applicant1(getApplicant())
@@ -358,8 +369,13 @@ public class TestDataHelper {
         );
     }
 
-    public static ListValue<DivorceDocument> documentWithType(DocumentType documentType) {
-        String documentUrl = "http://localhost:8080/" + UUID.randomUUID();
+    public static ListValue<DivorceDocument> documentWithType(final DocumentType documentType) {
+        return documentWithType(documentType, UUID.randomUUID().toString());
+    }
+
+    public static ListValue<DivorceDocument> documentWithType(final DocumentType documentType,
+                                                              final String documentId) {
+        String documentUrl = "http://localhost:8080/" + documentId;
 
         Document ccdDocument = new Document(
             documentUrl,
