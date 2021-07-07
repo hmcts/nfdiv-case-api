@@ -23,7 +23,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.common.model.SolServiceMethod.PERSONAL_SERVICE;
+import static uk.gov.hmcts.divorce.common.model.ServiceMethod.PERSONAL_SERVICE;
 
 @Data
 @AllArgsConstructor
@@ -106,7 +106,7 @@ public class Application {
         label = "How would you like the respondent to be served?",
         access = {DefaultAccess.class}
     )
-    private SolServiceMethod solServiceMethod;
+    private ServiceMethod solServiceMethod;
 
     @CCD(
         label = "I have discussed the possibility of a reconciliation with the applicant.",
@@ -170,10 +170,10 @@ public class Application {
     @CCD(
         label = "How will payment be made?",
         typeOverride = FixedList,
-        typeParameterOverride = "SolToPay",
+        typeParameterOverride = "SolicitorPaymentMethod",
         access = {DefaultAccess.class}
     )
-    private SolToPay solPaymentHowToPay;
+    private SolicitorPaymentMethod solPaymentHowToPay;
 
     @CCD(
         label = "Account number",

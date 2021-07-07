@@ -9,7 +9,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.common.model.SolToPay;
+import uk.gov.hmcts.divorce.common.model.SolicitorPaymentMethod;
 import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
 import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChainFactory;
@@ -101,7 +101,7 @@ public class SolicitorSubmitApplicationServiceTest {
         caseData.setDocumentsGenerated(generatedDocuments);
         caseData.getApplication().setStatementOfTruth(null);
         caseData.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
-        caseData.getApplication().setSolPaymentHowToPay(SolToPay.FEES_HELP_WITH);
+        caseData.getApplication().setSolPaymentHowToPay(SolicitorPaymentMethod.FEES_HELP_WITH);
 
         final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
