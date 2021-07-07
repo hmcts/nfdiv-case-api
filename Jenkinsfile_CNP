@@ -86,12 +86,21 @@ withPipeline(type, product, component) {
         setCommonEnvVariables()
     }
 
+    onDemo{
+      env.CASE_API_URL = "http://nfdiv-case-api-demo.service.core-compute-demo.internal"
+      env.CCD_DEF_NAME = "demo"
+      env.IDAM_API_URL_BASE = "https://idam-api.demo.platform.hmcts.net"
+      env.S2S_URL_BASE = "http://rpe-service-auth-provider-demo.service.core-compute-demo.internal"
+      env.DEFINITION_STORE_URL_BASE = "http://ccd-definition-store-api-demo.service.core-compute-demo.internal"
+    }
+
     onPerftest{
       env.CASE_API_URL = "http://nfdiv-case-api-perftest.service.core-compute-perftest.internal"
       env.CCD_DEF_NAME = "perftest"
       env.IDAM_API_URL_BASE = "https://idam-api.perftest.platform.hmcts.net"
       env.S2S_URL_BASE = "http://rpe-service-auth-provider-perftest.service.core-compute-perftest.internal"
       env.DEFINITION_STORE_URL_BASE = "http://ccd-definition-store-api-perftest.service.core-compute-perftest.internal"
+      env.FEE_API_URL = "http://fees-register-api-demo.service.core-compute-demo.internal"
     }
 
     before('functionalTest:preview') {
@@ -115,7 +124,7 @@ def uploadCoreCaseDataDefinitions() {
         sh "./process-and-import-ccd-definition.sh"
     }
     dir("${WORKSPACE}") {
-        steps.archiveArtifacts artifacts: "build/ccd-config/ccd-nfd-${CCD_DEF_NAME}.xlsx"
+        steps.archiveArtifacts artifacts: "build/ccd-config/*.xlsx"
     }
 }
 
@@ -124,6 +133,6 @@ def generateDefinitions() {
     sh "./ccd-build-definition.sh"
   }
   dir("${WORKSPACE}") {
-    steps.archiveArtifacts artifacts: "build/ccd-config/ccd-nfd-${CCD_DEF_NAME}.xlsx"
+    steps.archiveArtifacts artifacts: "build/ccd-config/*.xlsx"
   }
 }

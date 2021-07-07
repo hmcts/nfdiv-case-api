@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.print.model;
+package uk.gov.hmcts.divorce.document.print.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

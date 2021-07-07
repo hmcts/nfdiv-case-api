@@ -23,6 +23,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.common.model.SolServiceMethod.PERSONAL_SERVICE;
 
 @Data
 @AllArgsConstructor
@@ -270,6 +271,18 @@ public class Application {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime dateSubmitted;
 
+    @CCD(
+        label = "Is the information provided on the case correct?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo applicant2ConfirmApplicant1Information;
+
+    @CCD(
+        label = "Explain what is incorrect or needs changing.",
+        access = {DefaultAccess.class}
+    )
+    private String applicant2ExplainsApplicant1IncorrectInformation;
+
     @JsonIgnore
     public boolean hasStatementOfTruth() {
         return YES.equals(statementOfTruth);
@@ -291,4 +304,8 @@ public class Application {
             || !isEmpty(cannotUploadSupportingDocument);
     }
 
+    @JsonIgnore
+    public boolean isPersonalServiceMethod() {
+        return PERSONAL_SERVICE.equals(solServiceMethod);
+    }
 }

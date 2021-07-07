@@ -49,6 +49,7 @@ import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.ccd.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.common.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.common.model.ConfidentialAddress.SHARE;
 import static uk.gov.hmcts.divorce.common.model.DivorceOrDissolution.DIVORCE;
@@ -144,6 +145,17 @@ public class TestDataHelper {
             .lastName(TEST_LAST_NAME)
             .gender(MALE)
             .build();
+    }
+
+    public static Applicant respondentWithDigitalSolicitor() {
+        final Applicant applicant = respondent();
+        applicant.setSolicitor(Solicitor.builder()
+            .name(TEST_SOLICITOR_NAME)
+            .email(TEST_SOLICITOR_EMAIL)
+            .isDigital(YES)
+            .organisationPolicy(organisationPolicy())
+            .build());
+        return applicant;
     }
 
     public static CaseData caseData() {
@@ -310,6 +322,7 @@ public class TestDataHelper {
                     .data(OBJECT_MAPPER.convertValue(caseData, TYPE_REFERENCE))
                     .id(TEST_CASE_ID)
                     .createdDate(LOCAL_DATE_TIME)
+                    .caseTypeId(CASE_TYPE)
                     .build()
             )
             .build();
@@ -325,6 +338,7 @@ public class TestDataHelper {
                     .data(OBJECT_MAPPER.convertValue(caseData, TYPE_REFERENCE))
                     .state(state)
                     .id(TEST_CASE_ID)
+                    .caseTypeId(CASE_TYPE)
                     .build()
             )
             .build();
@@ -355,8 +369,13 @@ public class TestDataHelper {
         );
     }
 
-    public static ListValue<DivorceDocument> documentWithType(DocumentType documentType) {
-        String documentUrl = "http://localhost:8080/" + UUID.randomUUID();
+    public static ListValue<DivorceDocument> documentWithType(final DocumentType documentType) {
+        return documentWithType(documentType, UUID.randomUUID().toString());
+    }
+
+    public static ListValue<DivorceDocument> documentWithType(final DocumentType documentType,
+                                                              final String documentId) {
+        String documentUrl = "http://localhost:8080/" + documentId;
 
         Document ccdDocument = new Document(
             documentUrl,

@@ -5,7 +5,7 @@ import uk.gov.hmcts.divorce.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.model.Applicant;
 import uk.gov.hmcts.divorce.common.model.CaseData;
 
-public class Applicant1UpdateContactDetails implements CcdPageConfiguration {
+public class UpdateApplicant1ContactDetails implements CcdPageConfiguration {
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {

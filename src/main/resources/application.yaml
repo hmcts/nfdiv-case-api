@@ -119,3 +119,6 @@ send-letter:
 
 schedule:
   issue_aos: '0 0 0 * * ?' # Midnight each day
+
+aos_pack:
+  due_date_offset_days: ${AOS_PACK_DUE_DATE_OFFSET_DAYS:30}
