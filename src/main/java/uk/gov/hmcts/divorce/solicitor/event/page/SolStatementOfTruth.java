@@ -21,7 +21,7 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
         pageBuilder
             .page("SolStatementOfTruth")
             .pageLabel("Statement of truth and reconciliation")
-            .mandatoryNoSummary(CaseData::getApplicationType, ALWAYS_HIDE)
+            .readonlyNoSummary(CaseData::getApplicationType, ALWAYS_HIDE)
             .label(
                 "LabelNFDBanner-SolStatementOfTruth",
                 SOLICITOR_NFD_PREVIEW_BANNER,
@@ -54,10 +54,10 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
             .complex(CaseData::getApplication)
                 .mandatory(Application::getSolUrgentCase)
                 .optional(Application::getSolUrgentCaseSupportingInformation, "solUrgentCase=\"Yes\"")
-                .mandatoryNoSummary(Application::getDivorceCostsClaim, ALWAYS_HIDE)
+                .readonlyNoSummary(Application::getDivorceCostsClaim, ALWAYS_HIDE)
                 .done()
             .complex(CaseData::getApplicant1)
-                .mandatoryNoSummary(Applicant::getFinancialOrder, ALWAYS_HIDE)
+                .readonlyNoSummary(Applicant::getFinancialOrder, ALWAYS_HIDE)
                 .done()
             .label("LabelSolServiceMethod", "## Service method")
             .complex(CaseData::getApplication)

@@ -49,7 +49,7 @@ public final class ValidationUtil {
         addToErrorList(checkIfStringNullOrEmpty(caseData.getApplicant1().getLastName(), "Applicant1LastName"), errorList);
         addToErrorList(checkIfYesOrNoNullOrEmpty(caseData.getApplicant1().getFinancialOrder(), "Applicant1FinancialOrder"), errorList);
         addToErrorList(checkIfGenderNullOrEmpty(caseData.getApplicant1().getGender(), "Applicant1Gender"), errorList);
-        addToErrorList(checkIfGenderNullOrEmpty(caseData.getApplicant1().getGender(), "Applicant2Gender"), errorList);
+        addToErrorList(checkIfGenderNullOrEmpty(caseData.getApplicant2().getGender(), "Applicant2Gender"), errorList);
         addToErrorList(checkIfStringNullOrEmpty(
             caseData.getApplication().getMarriageDetails().getApplicant1Name(), "MarriageApplicant1Name"), errorList);
         addToErrorList(checkIfDateIsAllowed(caseData.getApplication().getMarriageDetails().getDate(), "MarriageDate"), errorList);
