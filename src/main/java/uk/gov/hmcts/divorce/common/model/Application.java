@@ -42,7 +42,7 @@ public class Application {
 
     @CCD(
         label = "Has applicant 2's marriage broken down irretrievably?",
-        access = {DefaultAccess.class, Applicant2Access.class}
+        access = {Applicant2Access.class}
     )
     private YesOrNo applicant2ScreenHasMarriageBroken;
 
