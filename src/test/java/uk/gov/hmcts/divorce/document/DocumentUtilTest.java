@@ -5,7 +5,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.divorce.common.model.CaseData;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentInfo;
 import uk.gov.hmcts.divorce.print.model.Letter;
@@ -13,12 +12,12 @@ import uk.gov.hmcts.divorce.print.model.Letter;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.convertToLetters;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.divorceDocumentFrom;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.documentFrom;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.findDocumentsOfType;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersOfDocumentTypes;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
@@ -64,7 +63,7 @@ class DocumentUtilTest {
     }
 
     @Test
-    void shouldFindDocumentOfGivenDocumentTypeIfPresent() {
+    void shouldReturnListOfLetterOfGivenDocumentTypeIfPresent() {
 
         final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
@@ -78,14 +77,12 @@ class DocumentUtilTest {
                 .build())
             .build();
 
-        final CaseData caseData = CaseData.builder()
-            .documentsGenerated(asList(doc1, doc2))
-            .build();
+        final List<Letter> letters = lettersOfDocumentTypes(
+            asList(doc1, doc2),
+            singletonList(MARRIAGE_CERTIFICATE));
 
-        final List<DivorceDocument> documentsOfType = findDocumentsOfType(caseData, singletonList(MARRIAGE_CERTIFICATE));
-
-        assertThat(documentsOfType.size()).isEqualTo(1);
-        assertThat(documentsOfType.get(0).getDocumentType()).isEqualTo(MARRIAGE_CERTIFICATE);
+        assertThat(letters.size()).isEqualTo(1);
+        assertThat(letters.get(0).getDivorceDocument()).isSameAs(doc2.getValue());
     }
 
     @Test
@@ -103,27 +100,27 @@ class DocumentUtilTest {
                 .build())
             .build();
 
-        final CaseData caseData = CaseData.builder()
-            .documentsGenerated(asList(doc1, doc2))
-            .build();
+        final List<Letter> letters = lettersOfDocumentTypes(
+            asList(doc1, doc2),
+            singletonList(NAME_CHANGE_EVIDENCE));
 
-        final List<DivorceDocument> documentsOfType = findDocumentsOfType(caseData, singletonList(NAME_CHANGE_EVIDENCE));
-
-        assertThat(documentsOfType.size()).isZero();
+        assertThat(letters.size()).isZero();
     }
 
     @Test
-    void shouldNotFindDocumentOfGivenDocumentTypeIfNoDocumentsPresent() {
-
-        final CaseData caseData = CaseData.builder().build();
-
-        final List<DivorceDocument> documentsOfType = findDocumentsOfType(caseData, singletonList(NAME_CHANGE_EVIDENCE));
-
-        assertThat(documentsOfType.size()).isZero();
+    void shouldReturnEmptyListIfNullDocumentList() {
+        final List<Letter> letters = lettersOfDocumentTypes(null, singletonList(NAME_CHANGE_EVIDENCE));
+        assertThat(letters.size()).isZero();
     }
 
     @Test
-    void shouldFindDocumentsOfGivenDocumentTypesIfPresent() {
+    void shouldReturnEmptyListIfEmptyDocumentList() {
+        final List<Letter> letters = lettersOfDocumentTypes(emptyList(), singletonList(NAME_CHANGE_EVIDENCE));
+        assertThat(letters.size()).isZero();
+    }
+
+    @Test
+    void shouldReturnListOfLettersOfGivenDocumentTypesIfPresent() {
 
         final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
@@ -143,42 +140,13 @@ class DocumentUtilTest {
                 .build())
             .build();
 
-        final CaseData caseData = CaseData.builder()
-            .documentsGenerated(asList(doc1, doc2, doc3))
-            .build();
-
-        final List<DivorceDocument> documentsOfType = findDocumentsOfType(
-            caseData,
+        final List<Letter> letters = lettersOfDocumentTypes(
+            asList(doc1, doc2, doc3),
             asList(NAME_CHANGE_EVIDENCE, MARRIAGE_CERTIFICATE));
 
-        assertThat(documentsOfType.size()).isEqualTo(2);
-        assertThat(documentsOfType.get(0).getDocumentType()).isSameAs(MARRIAGE_CERTIFICATE);
-        assertThat(documentsOfType.get(1).getDocumentType()).isSameAs(NAME_CHANGE_EVIDENCE);
-    }
-
-    @Test
-    void shouldConvertDivorceDocumentsToLetters() {
-
-        final DivorceDocument doc1 = DivorceDocument.builder()
-            .documentType(DIVORCE_APPLICATION)
-            .build();
-
-        final DivorceDocument doc2 = DivorceDocument.builder()
-            .documentType(MARRIAGE_CERTIFICATE)
-            .build();
-
-        final DivorceDocument doc3 = DivorceDocument.builder()
-            .documentType(NAME_CHANGE_EVIDENCE)
-            .build();
-
-        final List<DivorceDocument> divorceDocuments = asList(doc1, doc2, doc3);
-
-        final List<Letter> letters = convertToLetters(divorceDocuments);
-
-        assertThat(letters.size()).isEqualTo(3);
-        assertThat(letters.get(0).getDivorceDocument()).isSameAs(doc1);
-        assertThat(letters.get(1).getDivorceDocument()).isSameAs(doc2);
-        assertThat(letters.get(2).getDivorceDocument()).isSameAs(doc3);
+        assertThat(letters.size()).isEqualTo(2);
+        assertThat(letters.get(0).getDivorceDocument()).isSameAs(doc2.getValue());
+        assertThat(letters.get(1).getDivorceDocument()).isSameAs(doc3.getValue());
     }
 
     private DocumentInfo documentInfo() {

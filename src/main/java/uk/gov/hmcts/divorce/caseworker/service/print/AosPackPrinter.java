@@ -13,8 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static java.util.Arrays.asList;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.convertToLetters;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.findDocumentsOfType;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersOfDocumentTypes;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DOCUMENT_TYPE_RESPONDENT_INVITATION;
 
@@ -32,7 +31,9 @@ public class AosPackPrinter {
 
     public void print(final CaseData caseData, final Long caseId) {
 
-        final List<Letter> aosLetters = convertToLetters(findDocumentsOfType(caseData, AOS_DOCUMENT_TYPES));
+        final List<Letter> aosLetters = lettersOfDocumentTypes(
+            caseData.getDocumentsGenerated(),
+            AOS_DOCUMENT_TYPES);
 
         if (aosLetters.size() == AOS_DOCUMENT_TYPES.size()) {
 
