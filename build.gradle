@@ -200,6 +200,7 @@ repositories {
 
 def versions = [
   assertJ           : '3.19.0',
+  awaitility        : '1.7.0',
   ccdStoreClient    : '4.7.6',
   elasticsearch     : '7.12.0',
   idamClient        : '2.0.0',
@@ -303,6 +304,8 @@ dependencies {
   testImplementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
   testImplementation group: 'org.mockito', name: 'mockito-inline', version: versions.mockitoInline
+
+  testImplementation group: 'com.jayway.awaitility', name: 'awaitility', version: versions.awaitility
 
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
