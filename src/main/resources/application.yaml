@@ -119,7 +119,7 @@ send-letter:
 
 schedule:
   issue_aos: '0 0 0 * * ?' # Midnight each day
-  awaiting_conditional_order: '0 0 0 * * ?' # Midnight each day
+  awaiting_conditional_order: ${AWAITING_CONDITIONAL_ORDER_SCHEDULED_CRON}
 
 aos_pack:
   due_date_offset_days: ${AOS_PACK_DUE_DATE_OFFSET_DAYS:30}
