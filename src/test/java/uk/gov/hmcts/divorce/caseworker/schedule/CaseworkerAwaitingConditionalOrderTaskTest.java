@@ -17,6 +17,7 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import java.time.LocalDate;
 import java.util.List;
 
+import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -58,6 +59,20 @@ class CaseworkerAwaitingConditionalOrderTaskTest {
 
         verify(ccdUpdateService).submitEvent(caseDetails1, CASEWORKER_AWAITING_CONDITIONAL_ORDER);
         verify(ccdUpdateService).submitEvent(caseDetails2, CASEWORKER_AWAITING_CONDITIONAL_ORDER);
+    }
+
+    @Test
+    void shouldNotTriggerAwaitingConditionalOrderWhenCaseIsInHoldingForLessThan20Weeks() {
+        final CaseDetails caseDetails1 = mock(CaseDetails.class);
+
+        CaseData caseData1 = CaseData.builder().issueDate(LocalDate.now()).build();
+        when(objectMapper.convertValue(caseDetails1.getData(), CaseData.class)).thenReturn(caseData1);
+
+        when(ccdSearchService.searchForAllCasesWithStateOf(Holding)).thenReturn(singletonList(caseDetails1));
+
+        awaitingConditionalOrderTask.execute();
+
+        verifyNoInteractions(ccdUpdateService);
     }
 
     @Test
