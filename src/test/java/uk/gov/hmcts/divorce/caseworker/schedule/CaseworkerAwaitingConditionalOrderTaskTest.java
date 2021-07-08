@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.divorce.caseworker.service.CcdConflictException;
 import uk.gov.hmcts.divorce.caseworker.service.CcdManagementException;
 import uk.gov.hmcts.divorce.caseworker.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.caseworker.service.CcdSearchService;
@@ -83,6 +84,28 @@ class CaseworkerAwaitingConditionalOrderTaskTest {
         awaitingConditionalOrderTask.execute();
 
         verifyNoInteractions(ccdUpdateService);
+    }
+
+    @Test
+    void shouldStopProcessingIfThereIsConflictDuringSubmission() {
+        final CaseDetails caseDetails1 = mock(CaseDetails.class);
+        final CaseDetails caseDetails2 = mock(CaseDetails.class);
+        final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
+
+        CaseData caseData1 = CaseData.builder().issueDate(LocalDate.of(2021, 1, 1)).build();
+        when(objectMapper.convertValue(caseDetails1.getData(), CaseData.class)).thenReturn(caseData1);
+
+        CaseData caseData2 = CaseData.builder().issueDate(LocalDate.of(2021, 1, 2)).build();
+        when(objectMapper.convertValue(caseDetails2.getData(), CaseData.class)).thenReturn(caseData2);
+
+        when(ccdSearchService.searchForAllCasesWithStateOf(Holding)).thenReturn(caseDetailsList);
+
+        doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
+            .when(ccdUpdateService).submitEvent(caseDetails1, CASEWORKER_AWAITING_CONDITIONAL_ORDER);
+
+        awaitingConditionalOrderTask.execute();
+
+        verify(ccdUpdateService).submitEvent(caseDetails1, CASEWORKER_AWAITING_CONDITIONAL_ORDER);
     }
 
     @Test
