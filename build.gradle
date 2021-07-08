@@ -182,7 +182,6 @@ dependencyUpdates {
   }
 }
 
-
 dependencyManagement {
   dependencies {
     dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.69'
