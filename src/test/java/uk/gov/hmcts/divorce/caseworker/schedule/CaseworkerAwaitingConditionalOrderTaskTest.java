@@ -12,7 +12,7 @@ import uk.gov.hmcts.divorce.caseworker.service.CcdManagementException;
 import uk.gov.hmcts.divorce.caseworker.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.caseworker.service.CcdSearchService;
 import uk.gov.hmcts.divorce.caseworker.service.CcdUpdateService;
-import uk.gov.hmcts.divorce.common.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
 import java.time.LocalDate;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAwaitingConditionalOrder.CASEWORKER_AWAITING_CONDITIONAL_ORDER;
-import static uk.gov.hmcts.divorce.common.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerAwaitingConditionalOrderTaskTest {

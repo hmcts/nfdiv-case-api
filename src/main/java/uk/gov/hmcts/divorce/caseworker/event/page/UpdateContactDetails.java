@@ -4,15 +4,15 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.FieldCollection;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
-import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
-import uk.gov.hmcts.divorce.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.common.model.Applicant;
-import uk.gov.hmcts.divorce.common.model.Application;
-import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.common.model.MarriageDetails;
-import uk.gov.hmcts.divorce.common.model.Solicitor;
-import uk.gov.hmcts.divorce.common.model.State;
-import uk.gov.hmcts.divorce.common.model.UserRole;
+import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
+import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 public class UpdateContactDetails  implements CcdPageConfiguration {
     @Override

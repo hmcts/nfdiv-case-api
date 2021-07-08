@@ -6,11 +6,11 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
-import uk.gov.hmcts.divorce.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.common.model.State;
-import uk.gov.hmcts.divorce.common.model.UserRole;
+import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
+import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolAosCosts;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolAosOtherProceedings;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolAosjurisdiction;
@@ -20,14 +20,14 @@ import uk.gov.hmcts.divorce.solicitor.event.updater.AddMiniApplicationLink;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static uk.gov.hmcts.divorce.common.model.State.AosDrafted;
-import static uk.gov.hmcts.divorce.common.model.UserRole.APPLICANT_2_SOLICITOR;
-import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
-import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_COURTADMIN_RDU;
-import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.common.model.UserRole.CASEWORKER_SUPERUSER;
-import static uk.gov.hmcts.divorce.common.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.common.model.access.Permissions.READ;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
+import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 public class SolicitorUpdateAos implements CCDConfig<CaseData, State, UserRole> {

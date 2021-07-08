@@ -3,10 +3,10 @@ package uk.gov.hmcts.divorce.notification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
-import uk.gov.hmcts.divorce.common.model.Applicant;
-import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.common.model.DivorceOrDissolution;
-import uk.gov.hmcts.divorce.common.model.Gender;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
+import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 
 import java.util.HashMap;
 import java.util.Map;
