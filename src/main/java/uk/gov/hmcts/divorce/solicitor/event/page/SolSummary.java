@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.solicitor.event.page;
 
-import uk.gov.hmcts.divorce.ccd.CcdPageConfiguration;
-import uk.gov.hmcts.divorce.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
+import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 
 import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.JOINT_APPLICATION_CONDITION;
 import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLE_APPLICATION_CONDITION;

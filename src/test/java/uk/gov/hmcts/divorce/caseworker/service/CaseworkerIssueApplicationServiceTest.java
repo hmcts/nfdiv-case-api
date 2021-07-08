@@ -7,12 +7,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.caseworker.service.updater.MiniApplication;
 import uk.gov.hmcts.divorce.caseworker.service.updater.RespondentSolicitorAosInvitation;
-import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.common.model.Solicitor;
-import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
-import uk.gov.hmcts.divorce.common.updater.CaseDataUpdater;
-import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
-import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChainFactory;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataContext;
+import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdater;
+import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChain;
+import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChainFactory;
 
 import java.time.Clock;
 import java.time.Instant;

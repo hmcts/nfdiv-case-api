@@ -3,10 +3,10 @@ package uk.gov.hmcts.divorce.solicitor.service.updater;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
-import uk.gov.hmcts.divorce.common.updater.CaseDataUpdater;
-import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataContext;
+import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdater;
+import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChain;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.DraftApplicationTemplateContent;
 

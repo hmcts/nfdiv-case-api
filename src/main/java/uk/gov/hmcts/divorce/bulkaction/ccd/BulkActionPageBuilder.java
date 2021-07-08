@@ -3,7 +3,7 @@ package uk.gov.hmcts.divorce.bulkaction.ccd;
 import uk.gov.hmcts.ccd.sdk.api.Event.EventBuilder;
 import uk.gov.hmcts.ccd.sdk.api.FieldCollection.FieldCollectionBuilder;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
-import uk.gov.hmcts.divorce.common.model.UserRole;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 public class BulkActionPageBuilder {
 

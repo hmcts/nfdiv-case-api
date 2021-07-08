@@ -5,10 +5,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.divorce.common.model.Application;
-import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
-import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataContext;
+import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChain;
 
 import java.util.Set;
 
@@ -18,7 +18,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.common.model.ClaimsCostFrom.APPLICANT_2;
+import static uk.gov.hmcts.divorce.divorcecase.model.ClaimsCostFrom.APPLICANT_2;
 
 @ExtendWith(MockitoExtension.class)
 class ClaimsCostTest {
