@@ -80,6 +80,6 @@ send-letter:
 
 schedule:
   issue_aos: '0 0 0 * * ?' # Midnight each day
-
+  awaiting_conditional_order: '*/1 * * * * *'
 aos_pack:
   due_date_offset_days: 30
