@@ -21,11 +21,12 @@ plugins {
   id 'org.sonarqube' version '3.3'
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'org.springframework.boot' version '2.5.2'
-  id 'com.github.ben-manes.versions' version '0.39.0'
-  id 'hmcts.ccd.sdk' version '0.22.0'
+  id 'com.github.ben-manes.versions' version '0.38.0'
+  id 'hmcts.ccd.sdk' version '0.22.1'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
+apply plugin: 'com.github.ben-manes.versions'
 
 group = 'uk.gov.hmcts'
 version = '0.0.1'
@@ -106,7 +107,7 @@ task smoke(type: Test) {
 }
 
 task highLevelDataSetup(type: JavaExec) {
-  main = "uk.gov.hmcts.divorce.ccd.HighLevelDataSetupApp"
+  main = "uk.gov.hmcts.divorce.common.ccd.HighLevelDataSetupApp"
   classpath += sourceSets.main.runtimeClasspath
   jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
 }
@@ -152,9 +153,9 @@ dependencyCheck {
 project.tasks['sonarqube'].dependsOn jacocoTestReport
 
 def sonarExclusions = [
-  '**/uk/gov/hmcts/divorce/ccd/**',
-  '**/uk/gov/hmcts/divorce/common/model/**',
+  '**/uk/gov/hmcts/divorce/common/ccd/**',
   '**/uk/gov/hmcts/divorce/common/config/**',
+  '**/uk/gov/hmcts/divorce/divorcecase/model/**',
   '**/uk/gov/hmcts/divorce/document/model/**',
   '**/uk/gov/hmcts/divorce/payment/model/**'
 ]
@@ -181,7 +182,6 @@ dependencyUpdates {
   }
 }
 
-
 dependencyManagement {
   dependencies {
     dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.69'
@@ -200,6 +200,7 @@ repositories {
 
 def versions = [
   assertJ           : '3.19.0',
+  awaitility        : '1.7.0',
   ccdStoreClient    : '4.7.6',
   elasticsearch     : '7.12.0',
   idamClient        : '2.0.0',
@@ -303,6 +304,8 @@ dependencies {
   testImplementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
   testImplementation group: 'org.mockito', name: 'mockito-inline', version: versions.mockitoInline
+
+  testImplementation group: 'com.jayway.awaitility', name: 'awaitility', version: versions.awaitility
 
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 

@@ -14,7 +14,7 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueAos.CASEWORKER_ISSUE_AOS;
-import static uk.gov.hmcts.divorce.common.model.State.Issued;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Issued;
 
 @Component
 @Slf4j
