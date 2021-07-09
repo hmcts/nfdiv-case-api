@@ -18,6 +18,12 @@ public class IdamService {
     @Value("${idam.caseworker.password}")
     private String caseworkerPassword;
 
+    @Value("${idam.systemupdate.username}")
+    private String systemUpdateUserName;
+
+    @Value("${idam.systemupdate.password}")
+    private String systemUpdatePassword;
+
     @Autowired
     private IdamClient idamClient;
 
@@ -29,6 +35,10 @@ public class IdamService {
     }
 
     public User retrieveCaseWorkerDetails() {
+        return retrieveUser(getIdamOauth2Token(caseworkerUserName, caseworkerPassword));
+    }
+
+    public User retrieveSystemUpdateUserDetails() {
         return retrieveUser(getIdamOauth2Token(caseworkerUserName, caseworkerPassword));
     }
 
