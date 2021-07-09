@@ -25,7 +25,6 @@ plugins {
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
-apply plugin: 'com.github.ben-manes.versions'
 
 group = 'uk.gov.hmcts'
 version = '0.0.1'
