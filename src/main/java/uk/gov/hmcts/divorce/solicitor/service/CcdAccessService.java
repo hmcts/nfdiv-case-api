@@ -11,9 +11,9 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.Set;
 
-import static uk.gov.hmcts.divorce.common.model.UserRole.APPLICANT_1_SOLICITOR;
-import static uk.gov.hmcts.divorce.common.model.UserRole.APPLICANT_2;
-import static uk.gov.hmcts.divorce.common.model.UserRole.CREATOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 
 @Service
 @Slf4j

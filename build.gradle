@@ -107,7 +107,7 @@ task smoke(type: Test) {
 }
 
 task highLevelDataSetup(type: JavaExec) {
-  main = "uk.gov.hmcts.divorce.ccd.HighLevelDataSetupApp"
+  main = "uk.gov.hmcts.divorce.common.ccd.HighLevelDataSetupApp"
   classpath += sourceSets.main.runtimeClasspath
   jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
 }
@@ -153,9 +153,9 @@ dependencyCheck {
 project.tasks['sonarqube'].dependsOn jacocoTestReport
 
 def sonarExclusions = [
-  '**/uk/gov/hmcts/divorce/ccd/**',
-  '**/uk/gov/hmcts/divorce/common/model/**',
+  '**/uk/gov/hmcts/divorce/common/ccd/**',
   '**/uk/gov/hmcts/divorce/common/config/**',
+  '**/uk/gov/hmcts/divorce/divorcecase/model/**',
   '**/uk/gov/hmcts/divorce/document/model/**',
   '**/uk/gov/hmcts/divorce/payment/model/**'
 ]

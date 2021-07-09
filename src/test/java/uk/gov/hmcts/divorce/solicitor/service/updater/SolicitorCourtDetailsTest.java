@@ -5,14 +5,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.divorce.common.model.CaseData;
-import uk.gov.hmcts.divorce.common.updater.CaseDataContext;
-import uk.gov.hmcts.divorce.common.updater.CaseDataUpdaterChain;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataContext;
+import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChain;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.common.model.Court.SERVICE_CENTRE;
+import static uk.gov.hmcts.divorce.divorcecase.model.Court.SERVICE_CENTRE;
 
 @ExtendWith(MockitoExtension.class)
 class SolicitorCourtDetailsTest {

@@ -20,7 +20,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueAos.CASEWORKER_ISSUE_AOS;
-import static uk.gov.hmcts.divorce.common.model.State.Issued;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Issued;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerIssueAosTaskTest {
