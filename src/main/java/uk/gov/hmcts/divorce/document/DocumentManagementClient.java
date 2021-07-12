@@ -31,7 +31,7 @@ public interface DocumentManagementClient {
         @RequestParam(PERMANENT) boolean permanent
     );
 
-    @GetMapping(path = "{document_download_uri}/binary")
+    @GetMapping(path = "/documents/{document_download_uri}/binary")
     ResponseEntity<Resource> downloadBinary(
         @RequestHeader(AUTHORIZATION) String authorisation,
         @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuth,

@@ -12,13 +12,17 @@ public final class TestResourceUtil {
 
     }
 
-    public static String expectedResponse(String resourcePath) throws IOException {
-        File jsonFile = ResourceUtils.getFile(resourcePath);
-        return new String(Files.readAllBytes(jsonFile.toPath()));
+    public static String expectedResponse(final String resourcePath) throws IOException {
+        return resourceAsString(resourcePath);
+    }
+
+    public static String resourceAsString(final String resourcePath) throws IOException {
+        final File file = ResourceUtils.getFile(resourcePath);
+        return new String(Files.readAllBytes(file.toPath()));
     }
 
     public static byte[] resourceAsBytes(final String resourcePath) throws IOException {
-        File file = ResourceUtils.getFile(resourcePath);
+        final File file = ResourceUtils.getFile(resourcePath);
         return Files.readAllBytes(file.toPath());
     }
 }

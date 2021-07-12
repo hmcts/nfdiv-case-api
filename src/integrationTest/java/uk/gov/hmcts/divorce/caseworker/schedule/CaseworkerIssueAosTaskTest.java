@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.caseworker.schedule;
 
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,16 +16,16 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("schedule_test")
-public class CaseworkerAwaitingConditionalOrderTaskTest {
+public class CaseworkerIssueAosTaskTest {
 
     @SpyBean
-    private CaseworkerAwaitingConditionalOrderTask awaitingConditionalOrderTask;
+    private CaseworkerIssueAosTask caseworkerIssueAosTask;
 
     @Test
-    public void givenValidCaseDataWhenCallbackIsInvokedThenOrderSummaryAndSolicitorRolesAreSet() {
+    public void shouldExecuteTaskWithinOneMinuteAsScheduled() {
         await(" Awaiting Conditional order task executed atleast once")
             .atMost(60, TimeUnit.SECONDS)
             .pollInterval(2, TimeUnit.SECONDS)
-            .until(() -> verify(awaitingConditionalOrderTask, atLeastOnce()).execute());
+            .until(() -> verify(caseworkerIssueAosTask, atLeastOnce()).issueAosTask());
     }
 }
