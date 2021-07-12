@@ -361,10 +361,6 @@ public class SolicitorSubmitApplicationTest {
             .andExpect(
                 status().isUnauthorized()
             );
-
-        verify(serviceTokenGenerator).generate();
-
-        verifyNoMoreInteractions(serviceTokenGenerator);
     }
 
     @Test
