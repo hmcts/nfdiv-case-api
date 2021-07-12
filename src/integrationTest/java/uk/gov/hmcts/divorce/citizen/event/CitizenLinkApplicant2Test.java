@@ -31,6 +31,8 @@ import java.util.Map;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -131,6 +133,9 @@ public class CitizenLinkApplicant2Test {
         assertThatJson(actualResponse)
             .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedCcdAboutToStartCallbackSuccessfulResponse()));
+
+        verify(serviceTokenGenerator).generate();
+        verifyNoMoreInteractions(serviceTokenGenerator);
     }
 
     @Test

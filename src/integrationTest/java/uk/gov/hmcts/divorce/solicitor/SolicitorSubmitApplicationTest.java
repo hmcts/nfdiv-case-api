@@ -144,6 +144,9 @@ public class SolicitorSubmitApplicationTest {
             .andExpect(
                 content().json(expectedCcdCallbackResponse())
             );
+
+        verify(serviceTokenGenerator).generate();
+        verifyNoMoreInteractions(serviceTokenGenerator);
     }
 
     @Test
