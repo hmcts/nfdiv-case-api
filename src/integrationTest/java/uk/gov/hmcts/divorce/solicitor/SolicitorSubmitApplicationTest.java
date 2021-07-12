@@ -32,6 +32,7 @@ import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -145,7 +146,7 @@ public class SolicitorSubmitApplicationTest {
                 content().json(expectedCcdCallbackResponse())
             );
 
-        verify(serviceTokenGenerator).generate();
+        verify(serviceTokenGenerator,times(2)).generate();
         verifyNoMoreInteractions(serviceTokenGenerator);
     }
 
