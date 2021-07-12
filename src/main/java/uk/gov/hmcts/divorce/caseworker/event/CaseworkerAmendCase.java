@@ -23,6 +23,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderRefus
 import static uk.gov.hmcts.divorce.divorcecase.model.State.DefendedDivorce;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -51,7 +52,8 @@ public class CaseworkerAmendCase implements CCDConfig<CaseData, State, UserRole>
             .description("Update Case")
             .explicitGrants()
             .grant(CREATE_READ_UPDATE,
-                CASEWORKER_COURTADMIN_CTSC)
+                CASEWORKER_COURTADMIN_CTSC,
+                CASEWORKER_COURTADMIN_RDU)
             .grant(READ,
                 CASEWORKER_SUPERUSER,
                 CASEWORKER_LEGAL_ADVISOR));
