@@ -29,8 +29,8 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.feignException;
 
 @ExtendWith(MockitoExtension.class)
@@ -57,15 +57,15 @@ class CcdSearchServiceTest {
     @Test
     void shouldReturnCasesWithGivenStateFromZeroToPageSizeOfFifty() {
 
-        final User caseworkerDetails = new User(CASEWORKER_AUTH_TOKEN, UserDetails.builder().build());
+        final User systemUpdateUser = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
         final SearchResult expected = SearchResult.builder().build();
         final int from = 0;
         final int pageSize = 50;
 
-        when(idamService.retrieveCaseWorkerDetails()).thenReturn(caseworkerDetails);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUpdateUser);
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(coreCaseDataApi.searchCases(
-            CASEWORKER_AUTH_TOKEN,
+            SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
             CASE_TYPE,
             getSourceBuilder(from, pageSize).toString()))
@@ -79,20 +79,20 @@ class CcdSearchServiceTest {
     @Test
     void shouldReturnAllCasesWithGivenState() {
 
-        final User caseworkerDetails = new User(CASEWORKER_AUTH_TOKEN, UserDetails.builder().build());
+        final User systemUpdateUser = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
         final SearchResult expected1 = SearchResult.builder().total(PAGE_SIZE).cases(createCaseDetailsList(PAGE_SIZE)).build();
         final SearchResult expected2 = SearchResult.builder().total(1).cases(createCaseDetailsList(1)).build();
 
-        when(idamService.retrieveCaseWorkerDetails()).thenReturn(caseworkerDetails);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUpdateUser);
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(coreCaseDataApi.searchCases(
-            CASEWORKER_AUTH_TOKEN,
+            SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
             CASE_TYPE,
             getSourceBuilder(0, PAGE_SIZE).toString()))
             .thenReturn(expected1);
         when(coreCaseDataApi.searchCases(
-            CASEWORKER_AUTH_TOKEN,
+            SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
             CASE_TYPE,
             getSourceBuilder(PAGE_SIZE, PAGE_SIZE).toString()))
@@ -106,13 +106,13 @@ class CcdSearchServiceTest {
     @Test
     void shouldThrowCcdSearchFailedExceptionIfSearchFails() {
 
-        final User caseworkerDetails = new User(CASEWORKER_AUTH_TOKEN, UserDetails.builder().build());
+        final User systemUpdateUser = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
 
-        when(idamService.retrieveCaseWorkerDetails()).thenReturn(caseworkerDetails);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUpdateUser);
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         doThrow(feignException(422, "A reason")).when(coreCaseDataApi)
             .searchCases(
-                CASEWORKER_AUTH_TOKEN,
+                SYSTEM_UPDATE_AUTH_TOKEN,
                 SERVICE_AUTHORIZATION,
                 CASE_TYPE,
                 getSourceBuilder(0, PAGE_SIZE).toString());

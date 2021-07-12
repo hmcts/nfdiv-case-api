@@ -63,7 +63,7 @@ class CcdUpdateServiceTest {
         final StartEventResponse startEventResponse = getStartEventResponse();
         final CaseDataContent caseDataContent = mock(CaseDataContent.class);
 
-        when(idamService.retrieveCaseWorkerDetails()).thenReturn(caseworkerDetails);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(caseworkerDetails);
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
 
         when(coreCaseDataApi
@@ -106,7 +106,7 @@ class CcdUpdateServiceTest {
         final CaseDetails caseDetails = getCaseDetails(caseData);
         final StartEventResponse startEventResponse = getStartEventResponse();
 
-        when(idamService.retrieveCaseWorkerDetails()).thenReturn(caseworkerDetails);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(caseworkerDetails);
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
 
         when(coreCaseDataApi
@@ -143,7 +143,7 @@ class CcdUpdateServiceTest {
         final CaseDetails caseDetails = getCaseDetails(caseData);
         final StartEventResponse startEventResponse = getStartEventResponse();
 
-        when(idamService.retrieveCaseWorkerDetails()).thenReturn(caseworkerDetails);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(caseworkerDetails);
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
 
         when(coreCaseDataApi

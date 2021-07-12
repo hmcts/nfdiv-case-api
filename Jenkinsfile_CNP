@@ -40,7 +40,9 @@ def secrets = [
                 secret('ccd-importer-password', 'DEFINITION_IMPORTER_PASSWORD'),
                 secret('idam-secret', 'OAUTH2_CLIENT_SECRET'),
                 secret('idam-solicitor-username', 'IDAM_SOLICITOR_USERNAME'),
-                secret('idam-solicitor-password', 'IDAM_SOLICITOR_PASSWORD')
+                secret('idam-solicitor-password', 'IDAM_SOLICITOR_PASSWORD'),
+                secret('idam-systemupdate-username', 'IDAM_SYSTEM_UPDATE_USERNAME'),
+                secret('idam-systemupdate-password', 'IDAM_SYSTEM_UPDATE_PASSWORD')
         ]
 ]
 
