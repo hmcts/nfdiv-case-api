@@ -24,7 +24,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 public class LegalAdvisorRequestClarification implements CCDConfig<CaseData, State, UserRole> {
-    public static final String LEGAL_ADVISOR_REQUEST_CLARIFICATION = "legal-advisor-request-clarification";
+    public static final String LEGAL_ADVISOR_REQUEST_CLARIFICATION = "la-request-clarification";
 
     private final List<CcdPageConfiguration> pages = emptyList();
 

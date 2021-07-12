@@ -24,7 +24,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 public class LegalAdvisorGrantConditionalOrder implements CCDConfig<CaseData, State, UserRole> {
-    public static final String LEGAL_ADVISOR_GRANT_CONDITIONAL_ORDER = "legal-advisor-grant-conditional-order";
+    public static final String LEGAL_ADVISOR_GRANT_CONDITIONAL_ORDER = "la-grant-conditional-order";
 
     private final List<CcdPageConfiguration> pages = emptyList();
 

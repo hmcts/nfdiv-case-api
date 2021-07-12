@@ -24,7 +24,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 public class LegalAdvisorRefuseConditionalOrder implements CCDConfig<CaseData, State, UserRole> {
-    public static final String LEGAL_ADVISOR_REFUSE_CONDITIONAL_ORDER = "legal-advisor-refuse-conditional-order";
+    public static final String LEGAL_ADVISOR_REFUSE_CONDITIONAL_ORDER = "la-refuse-conditional-order";
 
     private final List<CcdPageConfiguration> pages = emptyList();
 
