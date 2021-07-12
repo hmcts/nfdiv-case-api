@@ -29,7 +29,7 @@ public class CcdAccessService {
 
     public void addApplicant1SolicitorRole(String solicitorIdamToken, Long caseId) {
         User solicitorUser = idamService.retrieveUser(solicitorIdamToken);
-        User caseworkerUser = idamService.retrieveCaseWorkerDetails();
+        User systemUpdateUser = idamService.retrieveSystemUpdateUserDetails();
 
         Set<String> caseRoles = Set.of(CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
 
@@ -42,7 +42,7 @@ public class CcdAccessService {
         );
 
         caseUserApi.updateCaseRolesForUser(
-            caseworkerUser.getAuthToken(),
+            systemUpdateUser.getAuthToken(),
             authTokenGenerator.generate(),
             String.valueOf(caseId),
             solicitorUserId,

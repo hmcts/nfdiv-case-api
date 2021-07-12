@@ -34,6 +34,9 @@ idam:
   caseworker:
     username: dummy@test.com
     password: dummy
+  systemupdate:
+    username: dummysystemupdate@test.com
+    password: dummy
   client:
     id: 'divorce'
     secret: ${OAUTH2_CLIENT_SECRET:dummy}

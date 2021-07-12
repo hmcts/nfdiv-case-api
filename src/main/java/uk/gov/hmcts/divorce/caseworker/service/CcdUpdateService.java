@@ -38,7 +38,7 @@ public class CcdUpdateService {
 
     public void submitEvent(final CaseDetails caseDetails, final String eventId) {
 
-        final User caseWorkerDetails = idamService.retrieveCaseWorkerDetails();
+        final User caseWorkerDetails = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuthorization = authTokenGenerator.generate();
         final String caseId = caseDetails.getId().toString();
         final String userId = caseWorkerDetails.getUserDetails().getId();

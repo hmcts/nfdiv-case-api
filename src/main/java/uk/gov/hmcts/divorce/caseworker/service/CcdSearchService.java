@@ -40,7 +40,7 @@ public class CcdSearchService {
 
     public SearchResult searchForCaseWithStateOf(final State state, final int from, final int size) {
 
-        final User caseWorkerDetails = idamService.retrieveCaseWorkerDetails();
+        final User systemUpdateUser = idamService.retrieveSystemUpdateUserDetails();
 
         final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
             .searchSource()
@@ -50,7 +50,7 @@ public class CcdSearchService {
             .size(size);
 
         return coreCaseDataApi.searchCases(
-            caseWorkerDetails.getAuthToken(),
+            systemUpdateUser.getAuthToken(),
             authTokenGenerator.generate(),
             CASE_TYPE,
             sourceBuilder.toString());

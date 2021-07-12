@@ -28,13 +28,15 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_1_SOL_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_2_CITIZEN_USER_ID;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_USER_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASEWORKER_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOL_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_UPDATE_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.feignException;
 
 @ExtendWith(MockitoExtension.class)
@@ -54,13 +56,13 @@ public class CcdAccessServiceTest {
     @Test
     public void shouldNotThrowAnyExceptionWhenAddApplicant1RoleIsInvoked() {
         User solicitorUser = getIdamUser(APP_1_SOL_AUTH_TOKEN, SOLICITOR_USER_ID, TEST_SOL_USER_EMAIL);
-        User caseworkerUser = getIdamUser(CASEWORKER_AUTH_TOKEN, CASEWORKER_USER_ID, TEST_CASEWORKER_USER_EMAIL);
+        User systemUpdateUser = getIdamUser(SYSTEM_UPDATE_AUTH_TOKEN, SYSTEM_USER_USER_ID, TEST_SYSTEM_UPDATE_USER_EMAIL);
 
         when(idamService.retrieveUser(APP_1_SOL_AUTH_TOKEN))
             .thenReturn(solicitorUser);
 
-        when(idamService.retrieveCaseWorkerDetails())
-            .thenReturn(caseworkerUser);
+        when(idamService.retrieveSystemUpdateUserDetails())
+            .thenReturn(systemUpdateUser);
 
         when(authTokenGenerator.generate())
             .thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -70,7 +72,7 @@ public class CcdAccessServiceTest {
                 caseUserApi
             )
             .updateCaseRolesForUser(
-                CASEWORKER_AUTH_TOKEN,
+                SYSTEM_UPDATE_AUTH_TOKEN,
                 TEST_SERVICE_AUTH_TOKEN,
                 String.valueOf(TEST_CASE_ID),
                 SOLICITOR_USER_ID,
@@ -81,11 +83,11 @@ public class CcdAccessServiceTest {
             .doesNotThrowAnyException();
 
         verify(idamService).retrieveUser(APP_1_SOL_AUTH_TOKEN);
-        verify(idamService).retrieveCaseWorkerDetails();
+        verify(idamService).retrieveSystemUpdateUserDetails();
         verify(authTokenGenerator).generate();
         verify(caseUserApi)
             .updateCaseRolesForUser(
-                CASEWORKER_AUTH_TOKEN,
+                SYSTEM_UPDATE_AUTH_TOKEN,
                 TEST_SERVICE_AUTH_TOKEN,
                 String.valueOf(TEST_CASE_ID),
                 SOLICITOR_USER_ID,
@@ -113,7 +115,7 @@ public class CcdAccessServiceTest {
             .thenReturn(solicitorUser);
 
         doThrow(feignException(401, "Failed to retrieve Idam user"))
-            .when(idamService).retrieveCaseWorkerDetails();
+            .when(idamService).retrieveSystemUpdateUserDetails();
 
         assertThatThrownBy(() -> ccdAccessService.addApplicant1SolicitorRole(APP_1_SOL_AUTH_TOKEN, TEST_CASE_ID))
             .isExactlyInstanceOf(FeignException.Unauthorized.class)
@@ -127,13 +129,13 @@ public class CcdAccessServiceTest {
     @Test
     public void shouldThrowInvalidTokenExceptionWhenServiceAuthTokenGenerationFails() {
         User solicitorUser = getIdamUser(APP_1_SOL_AUTH_TOKEN, SOLICITOR_USER_ID, TEST_SOL_USER_EMAIL);
-        User caseworkerUser = getIdamUser(CASEWORKER_AUTH_TOKEN, CASEWORKER_USER_ID, TEST_CASEWORKER_USER_EMAIL);
+        User systemUpdateUser = getIdamUser(SYSTEM_UPDATE_AUTH_TOKEN, SYSTEM_USER_USER_ID, TEST_SYSTEM_UPDATE_USER_EMAIL);
 
         when(idamService.retrieveUser(APP_1_SOL_AUTH_TOKEN))
             .thenReturn(solicitorUser);
 
-        when(idamService.retrieveCaseWorkerDetails())
-            .thenReturn(caseworkerUser);
+        when(idamService.retrieveSystemUpdateUserDetails())
+            .thenReturn(systemUpdateUser);
 
         doThrow(new InvalidTokenException("s2s secret is invalid"))
             .when(authTokenGenerator).generate();
@@ -143,21 +145,21 @@ public class CcdAccessServiceTest {
             .hasMessageContaining("s2s secret is invalid");
 
         verify(idamService).retrieveUser(APP_1_SOL_AUTH_TOKEN);
-        verify(idamService).retrieveCaseWorkerDetails();
+        verify(idamService).retrieveSystemUpdateUserDetails();
 
         verifyNoMoreInteractions(idamService);
     }
 
     @Test
-    public void shouldThrowFeignUnprocessableEntityExceptionWhenCcdClientThrowsException() {
+    public void shouldThrowFeignUnProcessableEntityExceptionWhenCcdClientThrowsException() {
         User solicitorUser = getIdamUser(APP_1_SOL_AUTH_TOKEN, SOLICITOR_USER_ID, TEST_SOL_USER_EMAIL);
-        User caseworkerUser = getIdamUser(CASEWORKER_AUTH_TOKEN, CASEWORKER_USER_ID, TEST_CASEWORKER_USER_EMAIL);
+        User systemUpdateUser = getIdamUser(SYSTEM_UPDATE_AUTH_TOKEN, SYSTEM_USER_USER_ID, TEST_SYSTEM_UPDATE_USER_EMAIL);
 
         when(idamService.retrieveUser(APP_1_SOL_AUTH_TOKEN))
             .thenReturn(solicitorUser);
 
-        when(idamService.retrieveCaseWorkerDetails())
-            .thenReturn(caseworkerUser);
+        when(idamService.retrieveSystemUpdateUserDetails())
+            .thenReturn(systemUpdateUser);
 
         when(authTokenGenerator.generate())
             .thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -167,7 +169,7 @@ public class CcdAccessServiceTest {
                 caseUserApi
             )
             .updateCaseRolesForUser(
-                CASEWORKER_AUTH_TOKEN,
+                SYSTEM_UPDATE_AUTH_TOKEN,
                 TEST_SERVICE_AUTH_TOKEN,
                 String.valueOf(TEST_CASE_ID),
                 SOLICITOR_USER_ID,
@@ -179,7 +181,7 @@ public class CcdAccessServiceTest {
             .hasMessageContaining("Case roles not valid");
 
         verify(idamService).retrieveUser(APP_1_SOL_AUTH_TOKEN);
-        verify(idamService).retrieveCaseWorkerDetails();
+        verify(idamService).retrieveSystemUpdateUserDetails();
         verify(authTokenGenerator).generate();
 
         verifyNoMoreInteractions(idamService, authTokenGenerator);
@@ -187,10 +189,10 @@ public class CcdAccessServiceTest {
 
     @Test
     public void shouldNotThrowAnyExceptionWhenLinkApplicant2ToApplicationIsInvoked() {
-        User caseworkerUser = getIdamUser(CASEWORKER_AUTH_TOKEN, CASEWORKER_USER_ID, TEST_CASEWORKER_USER_EMAIL);
+        User systemUpdateUser = getIdamUser(SYSTEM_UPDATE_AUTH_TOKEN, CASEWORKER_USER_ID, TEST_CASEWORKER_USER_EMAIL);
 
-        when(idamService.retrieveUser(CASEWORKER_AUTH_TOKEN))
-            .thenReturn(caseworkerUser);
+        when(idamService.retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN))
+            .thenReturn(systemUpdateUser);
 
         when(authTokenGenerator.generate())
             .thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -200,21 +202,21 @@ public class CcdAccessServiceTest {
                 caseUserApi
             )
             .updateCaseRolesForUser(
-                CASEWORKER_AUTH_TOKEN,
+                SYSTEM_UPDATE_AUTH_TOKEN,
                 TEST_SERVICE_AUTH_TOKEN,
                 String.valueOf(TEST_CASE_ID),
                 APP_2_CITIZEN_USER_ID,
                 new CaseUser(APP_2_CITIZEN_USER_ID, Set.of(APPLICANT_2.getRole()))
             );
 
-        assertThatCode(() -> ccdAccessService.linkRespondentToApplication(CASEWORKER_AUTH_TOKEN, TEST_CASE_ID, APP_2_CITIZEN_USER_ID))
+        assertThatCode(() -> ccdAccessService.linkRespondentToApplication(SYSTEM_UPDATE_AUTH_TOKEN, TEST_CASE_ID, APP_2_CITIZEN_USER_ID))
             .doesNotThrowAnyException();
 
-        verify(idamService).retrieveUser(CASEWORKER_AUTH_TOKEN);
+        verify(idamService).retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN);
         verify(authTokenGenerator).generate();
         verify(caseUserApi)
             .updateCaseRolesForUser(
-                CASEWORKER_AUTH_TOKEN,
+                SYSTEM_UPDATE_AUTH_TOKEN,
                 TEST_SERVICE_AUTH_TOKEN,
                 String.valueOf(TEST_CASE_ID),
                 APP_2_CITIZEN_USER_ID,
