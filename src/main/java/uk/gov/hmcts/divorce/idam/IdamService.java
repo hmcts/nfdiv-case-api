@@ -39,7 +39,7 @@ public class IdamService {
     }
 
     public User retrieveSystemUpdateUserDetails() {
-        return retrieveUser(getIdamOauth2Token(caseworkerUserName, caseworkerPassword));
+        return retrieveUser(getIdamOauth2Token(systemUpdateUserName, systemUpdatePassword));
     }
 
     private String getIdamOauth2Token(String username, String password) {

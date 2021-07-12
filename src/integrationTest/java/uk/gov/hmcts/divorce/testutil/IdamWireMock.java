@@ -27,6 +27,7 @@ public final class IdamWireMock {
 
     public static final String SOLICITOR_ROLE = "caseworker-divorce-solicitor";
     public static final String CASEWORKER_ROLE = "caseworker-divorce";
+    public static final String SYSTEM_USER_ROLE = "caseworker-divorce-systemupdate";
     public static final String CITIZEN_ROLE = "citizen";
 
     private static final WireMockServer IDAM_SERVER = new WireMockServer(wireMockConfig().dynamicPort());
@@ -48,14 +49,14 @@ public final class IdamWireMock {
     }
 
     public static void stubForIdamDetails(final String authorizationToken,
-                                          final String solicitorUserId,
-                                          final String solicitorRole) {
+                                          final String userId,
+                                          final String userRole) {
         IDAM_SERVER.stubFor(get("/details")
             .withHeader(HttpHeaders.AUTHORIZATION, new EqualToPattern(BEARER + authorizationToken))
             .willReturn(aResponse()
                 .withStatus(OK.value())
                 .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .withBody(getUserDetailsForRole(solicitorUserId, solicitorRole))));
+                .withBody(getUserDetailsForRole(userId, userRole))));
     }
 
     public static void stubForIdamToken(String token) throws UnsupportedEncodingException {
@@ -98,6 +99,6 @@ public final class IdamWireMock {
             + "&client_secret=BBBBBBBBBBBBBBBB"
             + "&redirect_uri=" + encode("http://localhost:3001/oauth2/callback", UTF_8.name())
             + "&client_id=divorce"
-            + "&username=" + encode("dummycaseworker@test.com", UTF_8.name());
+            + "&username=" + encode("dummy@test.com", UTF_8.name());
     }
 }

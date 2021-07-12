@@ -26,7 +26,10 @@ idam:
   api:
     url: http://localhost:5000
   caseworker:
-    username: dummycaseworker@test.com
+    username: dummy@test.com
+    password: dummy
+  systemupdate:
+    username: dummy@test.com
     password: dummy
   client:
     id: 'divorce'
