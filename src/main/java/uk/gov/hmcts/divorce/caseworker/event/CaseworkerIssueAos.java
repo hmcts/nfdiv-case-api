@@ -68,11 +68,11 @@ public class CaseworkerIssueAos implements CCDConfig<CaseData, State, UserRole> 
             .submittedCallback(this::submitted)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE,
-                CASEWORKER_COURTADMIN_CTSC,
-                CASEWORKER_COURTADMIN_RDU,
                 CASEWORKER_SYSTEMUPDATE)
             .grant(READ,
                 SOLICITOR,
+                CASEWORKER_COURTADMIN_CTSC,
+                CASEWORKER_COURTADMIN_RDU,
                 CASEWORKER_SUPERUSER,
                 CASEWORKER_LEGAL_ADVISOR));
     }

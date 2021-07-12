@@ -12,12 +12,6 @@ import static uk.gov.hmcts.divorce.common.config.ControllerConstants.BEARER_PREF
 
 @Service
 public class IdamService {
-    @Value("${idam.caseworker.username}")
-    private String caseworkerUserName;
-
-    @Value("${idam.caseworker.password}")
-    private String caseworkerPassword;
-
     @Value("${idam.systemupdate.username}")
     private String systemUpdateUserName;
 
@@ -32,10 +26,6 @@ public class IdamService {
         final UserDetails userDetails = idamClient.getUserDetails(bearerToken);
 
         return new User(bearerToken, userDetails);
-    }
-
-    public User retrieveCaseWorkerDetails() {
-        return retrieveUser(getIdamOauth2Token(caseworkerUserName, caseworkerPassword));
     }
 
     public User retrieveSystemUpdateUserDetails() {

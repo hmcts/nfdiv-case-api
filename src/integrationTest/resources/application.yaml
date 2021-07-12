@@ -25,9 +25,6 @@ idam:
     microservice: nfdiv_case_api
   api:
     url: http://localhost:5000
-  caseworker:
-    username: dummy@test.com
-    password: dummy
   systemupdate:
     username: dummy@test.com
     password: dummy
