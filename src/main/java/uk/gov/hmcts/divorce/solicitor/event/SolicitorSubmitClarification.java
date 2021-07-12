@@ -38,7 +38,7 @@ public class SolicitorSubmitClarification implements CCDConfig<CaseData, State, 
         return new PageBuilder(configBuilder
             .event(SOLICITOR_SUBMIT_CLARIFICATION)
             .forStateTransition(AwaitingClarification, AwaitingLegalAdvisorReferral)
-            .name("Submit clarification for Conditional Order")
+            .name("Submit clarification")
             .description("Submit clarification data for Conditional Order")
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
