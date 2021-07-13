@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.joining;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AND_FOR_THE_CHILDREN_OF_THE_APPLICANT_AND_THE_RESPONDENT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
@@ -130,8 +131,8 @@ public class MiniApplicationTemplateContent {
             templateData.put(FINANCIAL_ORDER_CHILD_SOLE, AND_FOR_THE_CHILDREN_OF_THE_APPLICANT_AND_THE_RESPONDENT);
             templateData.put(FINANCIAL_ORDER_CHILD_JOINT, CHILDREN_OF_THE_APPLICANT_1_AND_APPLICANT_2);
 
-            String applicant1PostalAddress = derivePostalAddress(caseData.getApplicant1());
-            String applicant2PostalAddress = derivePostalAddress(caseData.getApplicant2());
+            String applicant1PostalAddress = deriveApplicant1PostalAddress(caseData.getApplicant1());
+            String applicant2PostalAddress = deriveApplicant2PostalAddress(caseData.getApplicant2());
 
             templateData.put(APPLICANT_1_POSTAL_ADDRESS, applicant1PostalAddress);
             templateData.put(APPLICANT_2_POSTAL_ADDRESS, applicant2PostalAddress);
@@ -140,7 +141,7 @@ public class MiniApplicationTemplateContent {
         };
     }
 
-    private String derivePostalAddress(Applicant applicant) {
+    private String deriveApplicant1PostalAddress(Applicant applicant) {
         String applicantPostalAddress;
         AddressGlobalUK applicantHomeAddress = applicant.getHomeAddress();
 
@@ -158,7 +159,31 @@ public class MiniApplicationTemplateContent {
                     applicantHomeAddress.getCountry()
                 )
                     .filter(value -> value != null && !value.isEmpty())
-                    .collect(Collectors.joining("\n"));
+                    .collect(joining("\n"));
+        }
+        return applicantPostalAddress;
+    }
+
+    private String deriveApplicant2PostalAddress(Applicant applicant) {
+        String applicantPostalAddress;
+
+        if (applicant.isRepresented()) {
+            applicantPostalAddress = applicant.getSolicitor().getAddress();
+        } else {
+            AddressGlobalUK applicantHomeAddress = applicant.getCorrespondenceAddress();
+
+            applicantPostalAddress =
+                Stream.of(
+                    applicantHomeAddress.getAddressLine1(),
+                    applicantHomeAddress.getAddressLine2(),
+                    applicantHomeAddress.getAddressLine3(),
+                    applicantHomeAddress.getPostTown(),
+                    applicantHomeAddress.getCounty(),
+                    applicantHomeAddress.getPostCode(),
+                    applicantHomeAddress.getCountry()
+                )
+                    .filter(value -> value != null && !value.isEmpty())
+                    .collect(joining("\n"));
         }
         return applicantPostalAddress;
     }
