@@ -11,6 +11,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTAD
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SYSTEMUPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 
@@ -23,6 +24,7 @@ public class DefaultAccess implements HasAccessControl {
         grants.putAll(CASEWORKER_COURTADMIN_CTSC, Permissions.READ);
         grants.putAll(CASEWORKER_COURTADMIN_RDU, Permissions.READ);
         grants.putAll(SOLICITOR, Permissions.READ);
+        grants.putAll(CITIZEN, Permissions.READ);
         grants.putAll(CASEWORKER_SUPERUSER, Permissions.READ);
         grants.putAll(CASEWORKER_LEGAL_ADVISOR, Permissions.READ);
 
