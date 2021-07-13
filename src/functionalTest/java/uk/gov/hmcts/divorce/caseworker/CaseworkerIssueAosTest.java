@@ -8,15 +8,11 @@ import uk.gov.hmcts.divorce.testutil.DocumentManagementStore;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 import uk.gov.hmcts.reform.document.domain.Document;
 
-import java.util.Map;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueAos.CASEWORKER_ISSUE_AOS;
-import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseDataFromString;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.resourceAsString;
 
 @SpringBootTest
@@ -29,15 +25,6 @@ public class CaseworkerIssueAosTest extends FunctionalTestSuite {
 
     @Autowired
     private DocumentManagementStore documentManagementStore;
-
-    @Test
-    public void shouldCompleteSubmittedCallbackSuccessfully() throws Exception {
-
-        final Map<String, Object> caseData = caseData(REQUEST_SUBMITTED);
-        final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_AOS, SUBMITTED_URL);
-
-        assertThat(response.getStatusCode()).isEqualTo(OK.value());
-    }
 
     @Test
     public void shouldCompleteAboutToSubmitCallbackSuccessfully() throws Exception {

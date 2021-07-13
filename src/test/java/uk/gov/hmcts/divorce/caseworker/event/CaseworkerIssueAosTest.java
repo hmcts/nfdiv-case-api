@@ -17,7 +17,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -35,7 +34,6 @@ import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueAos.CASEWORKE
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Issued;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
@@ -83,7 +81,7 @@ class CaseworkerIssueAosTest {
     }
 
     @Test
-    void shouldDoNothingIfApplicationIsPersonalServiceMethodWhenAboutToSubmit() {
+    void shouldNotPrintAosIfApplicationIsPersonalServiceMethodWhenAboutToSubmit() {
 
         final var caseData = caseData();
         caseData.getApplication().setSolServiceMethod(PERSONAL_SERVICE);
@@ -103,6 +101,23 @@ class CaseworkerIssueAosTest {
                 AcknowledgementOfService::getNoticeOfProceedingsSolicitorFirm)
             .contains(null, null, null);
         verifyNoInteractions(aosPackPrinter, clock);
+    }
+
+    @Test
+    void shouldSendPersonalServiceNotificationIfPersonalServiceApplication() {
+
+        final var caseData = caseData();
+        caseData.getApplication().setSolServiceMethod(PERSONAL_SERVICE);
+        final var caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(TEST_CASE_ID)
+            .state(AwaitingAos)
+            .data(caseData)
+            .build();
+
+        caseworkerIssueAos.aboutToSubmit(caseDetails, null);
+
+        verify(personalServiceNotification).send(caseData, TEST_CASE_ID);
+        verifyNoInteractions(noticeOfProceedingsNotification);
     }
 
     @Test
@@ -160,39 +175,23 @@ class CaseworkerIssueAosTest {
     }
 
     @Test
-    void shouldSendNoticeOfProceedingsWhenSubmitted() {
+    void shouldSendNoticeOfProceedingsIfNotPersonalServiceApplication() {
 
         final var caseData = caseData();
+        caseData.getApplication().setSolServiceMethod(COURT_SERVICE);
+        caseData.setApplicant2(respondent());
         final var caseDetails = CaseDetails.<CaseData, State>builder()
             .id(TEST_CASE_ID)
-            .state(Issued)
+            .state(AwaitingAos)
             .data(caseData)
             .build();
 
-        final SubmittedCallbackResponse submitted = caseworkerIssueAos.submitted(caseDetails, null);
+        setClock();
 
-        assertThat(submitted).isNotNull();
+        caseworkerIssueAos.aboutToSubmit(caseDetails, null);
+
         verify(noticeOfProceedingsNotification).send(caseData, TEST_CASE_ID);
         verifyNoInteractions(personalServiceNotification);
-    }
-
-    @Test
-    void shouldSendPersonalServiceNotificationWhenSubmitted() {
-
-        final var caseData = caseData();
-        caseData.getApplication().setSolServiceMethod(PERSONAL_SERVICE);
-
-        final var caseDetails = CaseDetails.<CaseData, State>builder()
-            .id(TEST_CASE_ID)
-            .state(Issued)
-            .data(caseData)
-            .build();
-
-        final SubmittedCallbackResponse submitted = caseworkerIssueAos.submitted(caseDetails, null);
-
-        assertThat(submitted).isNotNull();
-        verify(personalServiceNotification).send(caseData, TEST_CASE_ID);
-        verifyNoInteractions(noticeOfProceedingsNotification);
     }
 
     private void setClock() {
