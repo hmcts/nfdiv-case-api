@@ -62,6 +62,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
@@ -192,15 +193,6 @@ public class MiniApplicationTemplateContentTest {
 
     @Test
     public void shouldSuccessfullyApplyApplicant2PostalAddressIfApplicant2IsSolicitorRepresented() {
-        AddressGlobalUK address = AddressGlobalUK.builder()
-            .addressLine1("221b")
-            .addressLine2("Baker Street")
-            .postTown("London")
-            .county("Greater London")
-            .postCode("NW1 6XE")
-            .country("United Kingdom")
-            .build();
-
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.setDivorceOrDissolution(DISSOLUTION);
@@ -211,10 +203,19 @@ public class MiniApplicationTemplateContentTest {
         caseData.getApplicant2().setSolicitor(
             Solicitor
                 .builder()
-                .email("testsol@test.com")
+                .email(TEST_SOLICITOR_EMAIL)
                 .address("223b\nBaker Street\nLondon\nGreater London\nNW1 5FG\nUnited Kingdom")
                 .build()
         );
+
+        AddressGlobalUK address = AddressGlobalUK.builder()
+            .addressLine1("221b")
+            .addressLine2("Baker Street")
+            .postTown("London")
+            .county("Greater London")
+            .postCode("NW1 6XE")
+            .country("United Kingdom")
+            .build();
 
         caseData.getApplicant1().setHomeAddress(address);
         caseData.getApplicant1().setFinancialOrder(NO);
@@ -228,6 +229,14 @@ public class MiniApplicationTemplateContentTest {
 
     @Test
     public void shouldSuccessfullyApplyApplicant2PostalAddressIfApplicant2IsNotSolicitorRepresented() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.setDivorceOrDissolution(DISSOLUTION);
+        caseData.getApplication().setLegalProceedings(YES);
+
+        caseData.setApplicant2(getApplicant());
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+
         AddressGlobalUK address = AddressGlobalUK.builder()
             .addressLine1("221b")
             .addressLine2("Baker Street")
@@ -237,14 +246,6 @@ public class MiniApplicationTemplateContentTest {
             .country("United Kingdom")
             .build();
 
-
-        CaseData caseData = caseData();
-        caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.setDivorceOrDissolution(DISSOLUTION);
-        caseData.getApplication().setLegalProceedings(YES);
-
-        caseData.setApplicant2(getApplicant());
-        caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant2().setCorrespondenceAddress(address);
 
         caseData.getApplicant1().setHomeAddress(address);
@@ -262,11 +263,11 @@ public class MiniApplicationTemplateContentTest {
         caseData.getApplicant2().setFinancialOrder(NO);
         caseData.getApplication().setLegalProceedings(YES);
         caseData.getApplicant1().setSolicitor(
-            Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
+            Solicitor.builder().email(TEST_SOLICITOR_EMAIL).address(LINE_1_LINE_2_CITY_POSTCODE).build()
         );
 
         caseData.getApplicant2().setSolicitor(
-            Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
+            Solicitor.builder().email(TEST_SOLICITOR_EMAIL).address(LINE_1_LINE_2_CITY_POSTCODE).build()
         );
     }
 }
