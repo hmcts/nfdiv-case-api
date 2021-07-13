@@ -58,7 +58,7 @@ public class ServiceAuthValidationTest extends FunctionalTestSuite {
             .relaxedHTTPSValidation()
             .baseUri(testUrl)
             .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-            .header(SERVICE_AUTHORIZATION, generateServiceAuthTokenFor("ccd_gw"))
+            .header(SERVICE_AUTHORIZATION, serviceAuthenticationGenerator.generate("ccd_gw"))
             .body(
                 CallbackRequest
                     .builder()

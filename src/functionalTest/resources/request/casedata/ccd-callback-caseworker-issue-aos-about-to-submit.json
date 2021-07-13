@@ -1,14 +1,14 @@
 {
-  "divorceOrDissolution": "divorce",
   "applicationType": "soleApplication",
+  "divorceOrDissolution": "divorce",
   "applicant1FirstName": "test_first_name",
   "applicant1MiddleName": "test_middle_name",
   "applicant1LastName": "test_last_name",
   "applicant1Email": "test@example.com",
   "applicant1AgreedToReceiveEmails": null,
   "applicant1LanguagePreferenceWelsh": "No",
-  "applicant1NameDifferentToMarriageCertificate": null,
   "applicant1LastNameChangedWhenMarried": null,
+  "applicant1NameDifferentToMarriageCertificate": null,
   "applicant1NameChangedHow": null,
   "applicant1NameChangedHowOtherDetails": null,
   "applicant1PhoneNumber": null,
@@ -23,14 +23,16 @@
   "applicant1SolicitorAddress": null,
   "applicant1SolicitorAgreeToReceiveEmails": null,
   "applicant1SolicitorIsDigital": null,
-  "applicant2FirstName": "test_first_name",
-  "applicant2MiddleName": "test_middle_name",
+  "applicant1FinancialOrder": "No",
+  "applicant1FinancialOrderFor": null,
+  "applicant2FirstName": "applicant_2_first_name",
+  "applicant2MiddleName": null,
   "applicant2LastName": "test_last_name",
   "applicant2Email": "test@example.com",
   "applicant2AgreedToReceiveEmails": null,
   "applicant2LanguagePreferenceWelsh": "No",
-  "applicant2NameDifferentToMarriageCertificate": null,
   "applicant2LastNameChangedWhenMarried": null,
+  "applicant2NameDifferentToMarriageCertificate": null,
   "applicant2NameChangedHow": null,
   "applicant2NameChangedHowOtherDetails": null,
   "applicant2PhoneNumber": null,
@@ -38,13 +40,28 @@
   "applicant2Gender": "female",
   "applicant2CorrespondenceAddress": null,
   "applicant2SolicitorRepresented": "Yes",
-  "applicant2SolicitorName": "testsol",
+  "applicant2SolicitorName": "The Solicitor",
   "applicant2SolicitorReference": null,
   "applicant2SolicitorPhone": null,
-  "applicant2SolicitorEmail": null,
+  "applicant2SolicitorEmail": "solicitor@example.com",
   "applicant2SolicitorAddress": null,
   "applicant2SolicitorAgreeToReceiveEmails": null,
+  "applicant2SolicitorOrganisationPolicy": {
+    "Organisation": {
+      "OrganisationName": "Test Organisation",
+      "OrganisationID": "ABC123"
+    },
+    "PreviousOrganisations": null,
+    "OrgPolicyReference": null,
+    "PrepopulateToUsersOrganisation": null,
+    "OrgPolicyCaseAssignedRole": null
+  },
   "applicant2SolicitorIsDigital": "Yes",
+  "applicant2FinancialOrder": null,
+  "applicant2FinancialOrderFor": null,
+  "applicant1ScreenHasMarriageBroken": null,
+  "applicant2ScreenHasMarriageBroken": null,
+  "screenHasMarriageCert": null,
   "marriageApplicant1Name": "test_first_name test_last_name",
   "marriageApplicant2Name": "test_first_name test_last_name",
   "marriageMarriedInUk": null,
@@ -68,18 +85,91 @@
   "jurisdictionConnections": [
     "J"
   ],
+  "jurisdictionLegalConnections": null,
+  "helpWithFeesReferenceNumber": null,
+  "helpWithFeesNeedHelp": null,
+  "helpWithFeesAppliedForFees": null,
+  "divorceWho": null,
+  "solUrgentCase": null,
+  "solUrgentCaseSupportingInformation": null,
   "divorceCostsClaim": "Yes",
-  "legalProceedings": "Yes",
-  "applicant1FinancialOrder": "No",
-  "applicant2FinancialOrder": "No",
+  "applicant1WantsToHavePapersServedAnotherWay": null,
+  "solServiceMethod": null,
+  "solStatementOfReconciliationCertify": null,
+  "solStatementOfReconciliationDiscussed": null,
   "prayerHasBeenGiven": "Yes",
   "statementOfTruth": "Yes",
   "solSignStatementOfTruth": "Yes",
+  "solStatementOfReconciliationName": null,
+  "solStatementOfReconciliationFirm": null,
+  "statementOfReconciliationComments": null,
+  "solApplicationFeeInPounds": null,
+  "solPaymentHowToPay": null,
+  "pbaNumbers": null,
+  "feeAccountReference": null,
   "applicationFeeOrderSummary": {
     "PaymentReference": null,
     "Fees": null,
     "PaymentTotal": "55000"
   },
+  "applicant2AgreeToReceiveEmails": null,
+  "applicant1KnowsApplicant2EmailAddress": null,
+  "applicant1KnowsApplicant2Address": null,
+  "legalProceedings": "No",
+  "legalProceedingsRelated": null,
+  "legalProceedingsDetails": null,
+  "divorceClaimFrom": null,
+  "app2ContactMethodIsDigital": null,
+  "cannotUploadSupportingDocument": null,
+  "documentUploadComplete": "Yes",
+  "miniApplicationLink": null,
+  "dateSubmitted": null,
+  "applicant2InviteEmailAddress": null,
+  "accessCode": null,
+  "applicant2UserId": null,
+  "confirmReadPetition": null,
+  "jurisdictionAgree": null,
+  "jurisdictionDisagreeReason": null,
+  "legalProceedingsExist": null,
+  "legalProceedingsDescription": null,
+  "agreeToCosts": null,
+  "costsAmount": null,
+  "costsReason": null,
+  "dateAosSubmitted": null,
+  "dateConditionalOrderSubmitted": null,
+  "dateFinalOrderSubmitted": null,
+  "documentsGenerated": [
+    {
+      "id": "Divorce application",
+      "value": {
+        "documentDateAdded": null,
+        "documentComment": null,
+        "documentFileName": "divorce-application.pdf",
+        "documentType": "divorceApplication",
+        "documentEmailContent": null,
+        "documentLink": {
+          "document_url": "<$DIVORCE_APPLICATION_DOCUMENT_URL>",
+          "document_filename": "divorce-application.pdf",
+          "document_binary_url": "<$DIVORCE_APPLICATION_BINARY_URL>"
+        }
+      }
+    },
+    {
+      "id": "AOS",
+      "value": {
+        "documentDateAdded": null,
+        "documentComment": null,
+        "documentFileName": "aos.pdf",
+        "documentType": "aos",
+        "documentEmailContent": null,
+        "documentLink": {
+          "document_url": "<$AOS_DOCUMENT_URL>",
+          "document_filename": "aos.pdf",
+          "document_binary_url": "<$AOS_BINARY_URL>"
+        }
+      }
+    }
+  ],
   "payments": [
     {
       "id": null,
@@ -94,6 +184,5 @@
         "paymentTransactionId": "ge7po9h5bhbtbd466424src9tk"
       }
     }
-  ],
-  "documentUploadComplete": "Yes"
+  ]
 }
