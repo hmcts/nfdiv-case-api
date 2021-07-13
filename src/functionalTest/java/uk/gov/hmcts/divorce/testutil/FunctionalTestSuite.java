@@ -11,13 +11,11 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.Event;
 import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
-import uk.gov.hmcts.reform.idam.client.IdamClient;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -34,49 +32,19 @@ public abstract class FunctionalTestSuite {
     @Value("${test-url}")
     protected String testUrl;
 
-    @Value("${idam.s2s-auth.url}")
-    protected String s2sUrl;
-
-    @Value("${s2s.name}")
-    protected String s2sName;
-
-    @Value("${idam.solicitor.username}")
-    protected String solicitorUsername;
-
-    @Value("${idam.solicitor.password}")
-    protected String solicitorPassword;
+    @Autowired
+    protected IdamTokenGenerator idamTokenGenerator;
 
     @Autowired
-    private IdamClient idamClient;
+    protected ServiceAuthenticationGenerator serviceAuthenticationGenerator;
 
     @Autowired
-    private CoreCaseDataApi coreCaseDataApi;
-
-    protected String generateServiceAuthTokenFor(String s2sName) {
-        Response response = RestAssured
-            .given()
-            .relaxedHTTPSValidation()
-            .baseUri(this.s2sUrl)
-            .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-            .body(Map.of("microservice", s2sName))
-            .when()
-            .post("/testing-support/lease")
-            .andReturn();
-
-        assertThat(response.getStatusCode()).isEqualTo(200);
-
-        return "Bearer " + response.getBody().asString();
-    }
-
-    protected String generateIdamTokenForSolicitor() {
-        return idamClient.getAccessToken(solicitorUsername, solicitorPassword);
-    }
-
+    protected CoreCaseDataApi coreCaseDataApi;
 
     protected CaseDetails createCaseInCcd() {
-        String solicitorToken = generateIdamTokenForSolicitor();
-        String s2sTokenForCaseApi = generateServiceAuthTokenFor("nfdiv_case_api");
-        String solicitorUserId = idamClient.getUserDetails(solicitorToken).getId();
+        String solicitorToken = idamTokenGenerator.generateIdamTokenForSolicitor();
+        String s2sTokenForCaseApi = serviceAuthenticationGenerator.generate("nfdiv_case_api");
+        String solicitorUserId = idamTokenGenerator.getUserDetailsFor(solicitorToken).getId();
         StartEventResponse startEventResponse = startEventForCreateCase(solicitorToken, s2sTokenForCaseApi, solicitorUserId);
 
         CaseDataContent caseDataContent = CaseDataContent.builder()
@@ -156,8 +124,8 @@ public abstract class FunctionalTestSuite {
             .relaxedHTTPSValidation()
             .baseUri(testUrl)
             .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-            .header(SERVICE_AUTHORIZATION, generateServiceAuthTokenFor(s2sName))
-            .header(AUTHORIZATION, generateIdamTokenForSolicitor())
+            .header(SERVICE_AUTHORIZATION, serviceAuthenticationGenerator.generate())
+            .header(AUTHORIZATION, idamTokenGenerator.generateIdamTokenForSolicitor())
             .body(request)
             .when()
             .post(url);

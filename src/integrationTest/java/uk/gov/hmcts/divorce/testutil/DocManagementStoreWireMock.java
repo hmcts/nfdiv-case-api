@@ -47,7 +47,7 @@ public final class DocManagementStoreWireMock {
     }
 
     public static void stubDownloadBinaryFromDocumentManagement(final String documentUuid, final byte[] documentBytes) {
-        DM_STORE_SERVER.stubFor(get("/" + documentUuid + "/binary")
+        DM_STORE_SERVER.stubFor(get("/documents/" + documentUuid + "/binary")
             .withHeader(AUTHORIZATION, new EqualToPattern(TEST_AUTHORIZATION_TOKEN))
             .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(TEST_SERVICE_AUTH_TOKEN))
             .withHeader("user-id", new EqualToPattern("2"))
