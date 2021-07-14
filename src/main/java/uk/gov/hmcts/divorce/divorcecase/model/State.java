@@ -19,22 +19,19 @@ public enum State {
 
     @CCD(
         name = "Draft",
-        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
-        access = {CaseAccessAdministrator.class}
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
     Draft("Draft"),
 
     @CCD(
         name = "Awaiting applicant 1 response",
-        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
-        access = {CaseAccessAdministrator.class}
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
     AwaitingApplicant1Response("AwaitingApplicant1Response"),
 
     @CCD(
         name = "Awaiting applicant 2 response",
-        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
-        access = {CaseAccessAdministrator.class}
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
     AwaitingApplicant2Response("AwaitingApplicant2Response") {
         @Override
@@ -47,8 +44,7 @@ public enum State {
 
     @CCD(
         name = "Application awaiting payment",
-        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
-        access = {CaseAccessAdministrator.class}
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
     AwaitingPayment("AwaitingPayment") {
         @Override
@@ -61,8 +57,7 @@ public enum State {
 
     @CCD(
         name = "Awaiting applicant",
-        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
-        access = {CaseAccessAdministrator.class}
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
     AwaitingDocuments("AwaitingDocuments") {
         @Override
@@ -82,15 +77,13 @@ public enum State {
 
     @CCD(
         name = "Awaiting HWF decision",
-        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
-        access = {CaseAccessAdministrator.class}
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
     AwaitingHWFDecision("AwaitingHWFDecision"),
 
     @CCD(
         name = "Submitted",
-        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
-        access = {CaseAccessAdministrator.class}
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
     Submitted("Submitted") {
         @Override
