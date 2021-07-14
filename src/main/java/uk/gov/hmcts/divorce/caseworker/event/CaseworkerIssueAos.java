@@ -17,7 +17,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -65,7 +64,6 @@ public class CaseworkerIssueAos implements CCDConfig<CaseData, State, UserRole> 
             .displayOrder(1)
             .showSummary()
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .submittedCallback(this::submitted)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE,
                 CASEWORKER_SYSTEMUPDATE)
@@ -84,7 +82,9 @@ public class CaseworkerIssueAos implements CCDConfig<CaseData, State, UserRole> 
         final Long caseId = details.getId();
         log.info("Caseworker issue AOS about to submit callback invoked. Case ID: {}", caseId);
 
-        if (!caseData.getApplication().isPersonalServiceMethod()) {
+        if (caseData.getApplication().isPersonalServiceMethod()) {
+            personalServiceNotification.send(caseData, caseId);
+        } else {
 
             final Applicant respondent = caseData.getApplicant2();
             final Solicitor respondentSolicitor = respondent.getSolicitor();
@@ -103,28 +103,13 @@ public class CaseworkerIssueAos implements CCDConfig<CaseData, State, UserRole> 
 
             log.info("Setting due date.  Case ID: {}", caseId);
             caseData.setDueDate(dueDate);
+
+            noticeOfProceedingsNotification.send(caseData, caseId);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
-    }
-
-
-    public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,
-                                               final CaseDetails<CaseData, State> beforeDetails) {
-
-        final Long caseId = details.getId();
-        final CaseData caseData = details.getData();
-        log.info("Caseworker issue AOS submitted callback invoked.  Case ID: {}", caseId);
-
-        if (caseData.getApplication().isPersonalServiceMethod()) {
-            personalServiceNotification.send(caseData, caseId);
-        } else {
-            noticeOfProceedingsNotification.send(caseData, caseId);
-        }
-
-        return SubmittedCallbackResponse.builder().build();
     }
 
     private void setNoticeOfProceedingsInformation(final CaseData caseData, final Solicitor solicitor) {

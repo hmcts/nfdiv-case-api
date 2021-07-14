@@ -58,7 +58,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
@@ -114,7 +113,7 @@ public class IssueAosTest {
     }
 
     @Test
-    void shouldSendAosPackAndSetDueDateOnAboutToSubmit() throws Exception {
+    void shouldSendAosPackAndSetDueDateAndSendNoticeOfProceedingsEmailOnAboutToSubmit() throws Exception {
 
         final CaseData caseData = validCaseDataForIssueApplication();
         final Applicant respondent = respondentWithDigitalSolicitor();
@@ -139,25 +138,6 @@ public class IssueAosTest {
             .andExpect(
                 content().json(expectedResponse(CASEWORKER_ISSUE_AOS_ABOUT_TO_SUBMIT_REP))
             );
-    }
-
-    @Test
-    void shouldSendNoticeOfProceedingsEmailAfterIssueAosIsSubmitted() throws Exception {
-
-        final CaseData caseData = validCaseDataForIssueApplication();
-        caseData.setApplicant2(respondentWithDigitalSolicitor());
-
-        mockMvc.perform(MockMvcRequestBuilders.post(SUBMITTED_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    CASEWORKER_ISSUE_AOS)))
-            .accept(APPLICATION_JSON))
-            .andExpect(
-                status().isOk());
 
         verify(notificationService)
             .sendEmail(

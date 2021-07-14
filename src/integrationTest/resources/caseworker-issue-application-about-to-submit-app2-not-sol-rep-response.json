@@ -36,7 +36,15 @@
     "applicant2PhoneNumber": null,
     "applicant2ContactDetailsConfidential": "share",
     "applicant2Gender": "female",
-    "applicant2CorrespondenceAddress": null,
+    "applicant2CorrespondenceAddress": {
+      "AddressLine1": "223b",
+      "AddressLine2": "Baker Street",
+      "AddressLine3": null,
+      "PostTown": "London",
+      "County": "Greater London",
+      "PostCode": "NW1 6XE",
+      "Country": "United Kingdom"
+    },
     "applicant2SolicitorRepresented": "No",
     "applicant2SolicitorName": null,
     "applicant2SolicitorReference": null,
