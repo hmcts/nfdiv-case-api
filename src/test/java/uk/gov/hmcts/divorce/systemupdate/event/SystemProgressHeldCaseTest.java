@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.caseworker.event;
+package uk.gov.hmcts.divorce.systemupdate.event;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,20 +15,20 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerAwaitingConditionalOrderTest {
+public class SystemProgressHeldCaseTest {
 
     @InjectMocks
-    private CaseworkerAwaitingConditionalOrder caseworkerAwaitingConditionalOrder;
+    private SystemProgressHeldCase systemProgressHeldCase;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final Set<State> stateSet = Set.of(State.class.getEnumConstants());
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = new ConfigBuilderImpl<>(CaseData.class, stateSet);
 
-        caseworkerAwaitingConditionalOrder.configure(configBuilder);
+        systemProgressHeldCase.configure(configBuilder);
 
         assertThat(configBuilder.getEvents())
             .extracting(Event::getId)
-            .contains(CaseworkerAwaitingConditionalOrder.CASEWORKER_AWAITING_CONDITIONAL_ORDER);
+            .contains(SystemProgressHeldCase.SYSTEM_PROGRESS_HELD_CASE);
     }
 }

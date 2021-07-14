@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.caseworker.schedule;
+package uk.gov.hmcts.divorce.systemupdate.schedule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
@@ -24,11 +24,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAwaitingConditionalOrder.CASEWORKER_AWAITING_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemProgressHeldCase.SYSTEM_PROGRESS_HELD_CASE;
 
 @ExtendWith(MockitoExtension.class)
-class CaseworkerAwaitingConditionalOrderTaskTest {
+class SystemProgressHeldCasesTaskTest {
 
     @Mock
     private CcdUpdateService ccdUpdateService;
@@ -40,7 +40,7 @@ class CaseworkerAwaitingConditionalOrderTaskTest {
     private ObjectMapper objectMapper;
 
     @InjectMocks
-    private CaseworkerAwaitingConditionalOrderTask awaitingConditionalOrderTask;
+    private SystemProgressHeldCasesTask awaitingConditionalOrderTask;
 
     @Test
     void shouldTriggerAwaitingConditionalOrderOnEachCaseWhenCaseIsInHoldingForMoreThan20Weeks() {
@@ -58,8 +58,8 @@ class CaseworkerAwaitingConditionalOrderTaskTest {
 
         awaitingConditionalOrderTask.execute();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, CASEWORKER_AWAITING_CONDITIONAL_ORDER);
-        verify(ccdUpdateService).submitEvent(caseDetails2, CASEWORKER_AWAITING_CONDITIONAL_ORDER);
+        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_HELD_CASE);
+        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_PROGRESS_HELD_CASE);
     }
 
     @Test
@@ -101,11 +101,11 @@ class CaseworkerAwaitingConditionalOrderTaskTest {
         when(ccdSearchService.searchForAllCasesWithStateOf(Holding)).thenReturn(caseDetailsList);
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, CASEWORKER_AWAITING_CONDITIONAL_ORDER);
+            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_HELD_CASE);
 
         awaitingConditionalOrderTask.execute();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, CASEWORKER_AWAITING_CONDITIONAL_ORDER);
+        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_HELD_CASE);
     }
 
     @Test
@@ -123,11 +123,11 @@ class CaseworkerAwaitingConditionalOrderTaskTest {
         when(ccdSearchService.searchForAllCasesWithStateOf(Holding)).thenReturn(caseDetailsList);
 
         doThrow(new CcdManagementException("Failed processing of case", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, CASEWORKER_AWAITING_CONDITIONAL_ORDER);
+            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_HELD_CASE);
 
         awaitingConditionalOrderTask.execute();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, CASEWORKER_AWAITING_CONDITIONAL_ORDER);
-        verify(ccdUpdateService).submitEvent(caseDetails2, CASEWORKER_AWAITING_CONDITIONAL_ORDER);
+        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_HELD_CASE);
+        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_PROGRESS_HELD_CASE);
     }
 }

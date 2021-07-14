@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.citizen.event;
+package uk.gov.hmcts.divorce.systemupdate.event;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterAll;
@@ -38,7 +38,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.util.ResourceUtils.getFile;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenLinkApplicant2.CITIZEN_LINK_APPLICANT_2;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkApplicant2.SYSTEM_LINK_APPLICANT_2;
 import static uk.gov.hmcts.divorce.testutil.CaseDataWireMock.stubForCitizenCcdCaseRoles;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.CASEWORKER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.CITIZEN_ROLE;
@@ -61,7 +61,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 @ContextConfiguration(initializers = {
     IdamWireMock.PropertiesInitializer.class,
     CaseDataWireMock.PropertiesInitializer.class})
-public class CitizenLinkApplicant2Test {
+public class SystemLinkApplicant2Test {
 
     @Autowired
     private MockMvc mockMvc;
@@ -106,7 +106,7 @@ public class CitizenLinkApplicant2Test {
 
         stubForCitizenCcdCaseRoles();
 
-        CallbackRequest callbackRequest = callbackRequest(data, CITIZEN_LINK_APPLICANT_2);
+        CallbackRequest callbackRequest = callbackRequest(data, SYSTEM_LINK_APPLICANT_2);
         callbackRequest.setCaseDetailsBefore(
             CaseDetails
                 .builder()
@@ -153,7 +153,7 @@ public class CitizenLinkApplicant2Test {
 
         stubForCitizenCcdCaseRoles();
 
-        CallbackRequest callbackRequest = callbackRequest(data, CITIZEN_LINK_APPLICANT_2);
+        CallbackRequest callbackRequest = callbackRequest(data, SYSTEM_LINK_APPLICANT_2);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -179,7 +179,7 @@ public class CitizenLinkApplicant2Test {
 
         stubForCitizenCcdCaseRoles();
 
-        CallbackRequest callbackRequest = callbackRequest(data, CITIZEN_LINK_APPLICANT_2);
+        CallbackRequest callbackRequest = callbackRequest(data, SYSTEM_LINK_APPLICANT_2);
         callbackRequest.getCaseDetails().setId(null);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)

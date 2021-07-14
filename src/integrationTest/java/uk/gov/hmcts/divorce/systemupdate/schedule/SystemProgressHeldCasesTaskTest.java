@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.caseworker.schedule;
+package uk.gov.hmcts.divorce.systemupdate.schedule;
 
 
 import org.junit.jupiter.api.Test;
@@ -15,9 +15,9 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class CaseworkerAwaitingConditionalOrderTaskTest {
+public class SystemProgressHeldCasesTaskTest {
     @SpyBean
-    private CaseworkerAwaitingConditionalOrderTask awaitingConditionalOrderTask;
+    private SystemProgressHeldCasesTask awaitingConditionalOrderTask;
 
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenOrderSummaryAndSolicitorRolesAreSet() {

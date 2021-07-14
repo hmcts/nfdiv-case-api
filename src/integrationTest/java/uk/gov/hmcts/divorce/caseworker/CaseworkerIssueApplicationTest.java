@@ -49,7 +49,7 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ContextConfiguration(initializers = {DocAssemblyWireMock.PropertiesInitializer.class})
-public class IssueApplicationTest {
+public class CaseworkerIssueApplicationTest {
 
     private static final String CASEWORKER_ISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_SOL_REP =
         "classpath:caseworker-issue-application-about-to-submit-app2-sol-rep-response.json";
