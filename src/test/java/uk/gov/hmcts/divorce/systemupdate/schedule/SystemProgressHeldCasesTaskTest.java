@@ -15,12 +15,14 @@ import uk.gov.hmcts.divorce.caseworker.service.CcdUpdateService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -60,6 +62,21 @@ class SystemProgressHeldCasesTaskTest {
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_HELD_CASE);
         verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_PROGRESS_HELD_CASE);
+    }
+
+    @Test
+    void shouldIgnoreCaseWhenIssueDateIsNull() throws IOException {
+        final CaseDetails caseDetails = mock(CaseDetails.class);
+        CaseData caseData = CaseData.builder().build();
+        when(objectMapper.convertValue(caseDetails.getData(), CaseData.class)).thenReturn(caseData);
+
+        final List<CaseDetails> caseDetailsList = List.of(caseDetails);
+
+        when(ccdSearchService.searchForAllCasesWithStateOf(Holding)).thenReturn(caseDetailsList);
+
+        awaitingConditionalOrderTask.execute();
+
+        verify(ccdUpdateService, never()).submitEvent(caseDetails, SYSTEM_PROGRESS_HELD_CASE);
     }
 
     @Test

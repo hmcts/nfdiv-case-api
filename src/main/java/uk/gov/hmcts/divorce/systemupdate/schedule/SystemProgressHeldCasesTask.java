@@ -51,13 +51,21 @@ public class SystemProgressHeldCasesTask {
                 try {
                     Map<String, Object> caseDataMap = caseDetails.getData();
                     CaseData caseData = objectMapper.convertValue(caseDataMap, CaseData.class);
-                    long weeksBetweenIssueDateAndNow = WEEKS.between(caseData.getIssueDate(), LocalDate.now());
-
-                    if (weeksBetweenIssueDateAndNow > HOLDING_PERIOD_IN_WEEKS) {
-                        log.info("Case id {} has been in holding state for > 20 weeks hence moving state to AwaitingConditionalOrder",
-                            caseDetails.getId()
+                    if (caseData.getIssueDate() == null) {
+                        log.error("Ignoring case id {} with created on {} and modified on {}, as issue date is null",
+                            caseDetails.getId(),
+                            caseDetails.getCreatedDate(),
+                            caseDetails.getLastModified()
                         );
-                        ccdUpdateService.submitEvent(caseDetails, SYSTEM_PROGRESS_HELD_CASE);
+                    } else {
+                        long weeksBetweenIssueDateAndNow = WEEKS.between(caseData.getIssueDate(), LocalDate.now());
+
+                        if (weeksBetweenIssueDateAndNow > HOLDING_PERIOD_IN_WEEKS) {
+                            log.info("Case id {} has been in holding state for > 20 weeks hence moving state to AwaitingConditionalOrder",
+                                caseDetails.getId()
+                            );
+                            ccdUpdateService.submitEvent(caseDetails, SYSTEM_PROGRESS_HELD_CASE);
+                        }
                     }
                 } catch (final CcdManagementException e) {
                     log.info("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
