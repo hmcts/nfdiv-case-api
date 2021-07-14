@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.citizen.event;
+package uk.gov.hmcts.divorce.systemupdate.event;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Slf4j
 @Component
-public class CitizenLinkApplicant2 implements CCDConfig<CaseData, State, UserRole> {
+public class SystemLinkApplicant2 implements CCDConfig<CaseData, State, UserRole> {
 
     @Autowired
     private CcdAccessService ccdAccessService;
@@ -29,12 +29,12 @@ public class CitizenLinkApplicant2 implements CCDConfig<CaseData, State, UserRol
     @Autowired
     private HttpServletRequest httpServletRequest;
 
-    public static final String CITIZEN_LINK_APPLICANT_2 = "citizen-link-applicant2";
+    public static final String SYSTEM_LINK_APPLICANT_2 = "system-link-applicant2";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder
-            .event(CITIZEN_LINK_APPLICANT_2)
+            .event(SYSTEM_LINK_APPLICANT_2)
             .forState(AwaitingApplicant2Response)
             .name("Link Applicant 2 to case")
             .description("Link Applicant 2 to case to enable completion of joint application")
