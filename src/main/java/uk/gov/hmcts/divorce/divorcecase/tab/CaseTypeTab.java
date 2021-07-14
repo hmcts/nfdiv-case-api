@@ -10,6 +10,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 
 @Component
 public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
@@ -86,6 +88,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1FinancialOrder")
             .field("applicant1FinancialOrderFor", "applicant1FinancialOrder=\"Yes\"");
 
+        buildAosTab(configBuilder);
+
         configBuilder.tab("paymentDetailsCourtAdmin", "Payment")
             .field("helpWithFeesReferenceNumber");
 
@@ -121,5 +125,25 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1PhoneNumber")
             .field("applicant1Email")
             .field("applicant1HomeAddress");
+    }
+
+    //TODO: Need to revisit this tab once the field stated in the ticket NFDIV-595 are available
+    private void buildAosTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("aosDetails", "AoS")
+            .forRoles(CASEWORKER_COURTADMIN_RDU, CASEWORKER_COURTADMIN_CTSC, CASEWORKER_LEGAL_ADVISOR,
+                CASEWORKER_SUPERUSER, SOLICITOR)
+            .showCondition("applicationType=\"soleApplication\"")
+            .field("LabelAosTabOnlineResponse-Heading", null,"## This is an online AoS response")
+            .field("confirmReadPetition")
+            .field("jurisdictionAgree")
+            .field("jurisdictionDisagreeReason")
+            .field("legalProceedingsExist")
+            .field("legalProceedingsDescription")
+            .field("applicant2UserId")
+            .field("dueDate")
+            .field("applicant2SolicitorRepresented", null, "Is respondent represented by a solicitor?")
+            .field("digitalNoticeOfProceedings")
+            .field("noticeOfProceedingsEmail")
+            .field("noticeOfProceedingsSolicitorFirm");
     }
 }
