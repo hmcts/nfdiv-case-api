@@ -52,7 +52,7 @@ public class CaseworkerAwaitingConditionalOrderTask {
                     Map<String, Object> caseDataMap = caseDetails.getData();
                     CaseData caseData = objectMapper.convertValue(caseDataMap, CaseData.class);
                     if (caseData.getIssueDate() == null) {
-                        log.info("Ignoring case id {} with created on {} and modified on {}, as issue date is null",
+                        log.error("Ignoring case id {} with created on {} and modified on {}, as issue date is null",
                             caseDetails.getId(),
                             caseDetails.getCreatedDate(),
                             caseDetails.getLastModified()
