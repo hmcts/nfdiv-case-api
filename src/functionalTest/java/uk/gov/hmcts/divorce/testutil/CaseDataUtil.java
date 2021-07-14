@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.testutil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
@@ -16,12 +15,16 @@ public final class CaseDataUtil {
     private CaseDataUtil() {
     }
 
+    public static ObjectMapper getObjectMapper() {
+        return new ObjectMapper().findAndRegisterModules();
+    }
+
     public static Map<String, Object> caseData(final String resourcePath) throws IOException {
+        return getObjectMapper().readValue(getFile(resourcePath), MAP_TYPE);
+    }
 
-        final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
-        final File jsonFile = getFile(resourcePath);
-
-        return objectMapper.readValue(jsonFile, MAP_TYPE);
+    public static Map<String, Object> caseDataFromString(final String caseDataString) throws IOException {
+        return getObjectMapper().readValue(caseDataString, MAP_TYPE);
     }
 
     private static class MapTypeReference extends TypeReference<Map<String, Object>> {

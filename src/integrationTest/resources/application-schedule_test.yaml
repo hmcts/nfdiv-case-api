@@ -1,0 +1,3 @@
+schedule:
+  issue_aos: '*/1 * * * * *'
+  awaiting_conditional_order: '*/1 * * * * *'

@@ -27,13 +27,13 @@ idam:
   s2s-auth:
     url: ${TEST_S2S_URL:http://rpe-service-auth-provider-aat.service.core-compute-aat.internal}
     secret: ${S2S_SECRET:dummy}
-    microservice: divorce
+    microservice: nfdiv_case_api
   solicitor:
     username: ${IDAM_SOLICITOR_USERNAME:dummysolicitor@test.com}
     password: ${IDAM_SOLICITOR_PASSWORD:dummy}
   caseworker:
-    username: dummy@test.com
-    password: dummy
+    username: ${IDAM_CASEWORKER_USERNAME:dummycaseworker@test.com}
+    password: ${IDAM_CASEWORKER_PASSWORD:dummy}
   systemupdate:
     username: dummysystemupdate@test.com
     password: dummy
