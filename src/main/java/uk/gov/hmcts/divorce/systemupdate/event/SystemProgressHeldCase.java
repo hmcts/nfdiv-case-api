@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.caseworker.event;
+package uk.gov.hmcts.divorce.systemupdate.event;
 
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -20,17 +20,17 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
-public class CaseworkerAwaitingConditionalOrder implements CCDConfig<CaseData, State, UserRole> {
+public class SystemProgressHeldCase implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String CASEWORKER_AWAITING_CONDITIONAL_ORDER = "caseworker-awaiting-conditional-order";
+    public static final String SYSTEM_PROGRESS_HELD_CASE = "system-progress-held-case";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(CASEWORKER_AWAITING_CONDITIONAL_ORDER)
+            .event(SYSTEM_PROGRESS_HELD_CASE)
             .forStateTransition(Holding, AwaitingConditionalOrder)
-            .name("Awaiting conditional order")
-            .description("Awaiting conditional order")
+            .name("Progress held case")
+            .description("Progress held case to Awaiting Conditional Order")
             .displayOrder(3)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASEWORKER_SYSTEMUPDATE)
