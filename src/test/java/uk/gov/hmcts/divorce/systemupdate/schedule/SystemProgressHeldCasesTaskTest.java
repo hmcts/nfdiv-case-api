@@ -2,11 +2,13 @@ package uk.gov.hmcts.divorce.systemupdate.schedule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.divorce.caseworker.service.CcdConflictException;
 import uk.gov.hmcts.divorce.caseworker.service.CcdManagementException;
 import uk.gov.hmcts.divorce.caseworker.service.CcdSearchCaseException;
@@ -43,6 +45,11 @@ class SystemProgressHeldCasesTaskTest {
 
     @InjectMocks
     private SystemProgressHeldCasesTask awaitingConditionalOrderTask;
+
+    @BeforeEach
+    public void setUp() {
+        ReflectionTestUtils.setField(awaitingConditionalOrderTask, "holdingPeriodInWeeks", 20);
+    }
 
     @Test
     void shouldTriggerAwaitingConditionalOrderOnEachCaseWhenCaseIsInHoldingForMoreThan20Weeks() {

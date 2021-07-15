@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.caseworker.service.CcdConflictException;
@@ -29,7 +30,8 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemProgressHeldCase.SYS
  */
 public class SystemProgressHeldCasesTask {
 
-    private static final int HOLDING_PERIOD_IN_WEEKS = 20;
+    @Value("${case_progression.holding_period_in_weeks}")
+    private int holdingPeriodInWeeks;
 
     @Autowired
     private CcdUpdateService ccdUpdateService;
@@ -70,9 +72,10 @@ public class SystemProgressHeldCasesTask {
                     } else {
                         long weeksBetweenIssueDateAndNow = WEEKS.between(caseData.getIssueDate(), LocalDate.now());
 
-                        if (weeksBetweenIssueDateAndNow > HOLDING_PERIOD_IN_WEEKS) {
-                            log.info("Case id {} has been in holding state for > 20 weeks hence moving state to AwaitingConditionalOrder",
-                                caseDetails.getId()
+                        if (weeksBetweenIssueDateAndNow >= holdingPeriodInWeeks) {
+                            log.info("Case id {} has been in holding state for > {} weeks hence moving state to AwaitingConditionalOrder",
+                                caseDetails.getId(),
+                                holdingPeriodInWeeks
                             );
                             ccdUpdateService.submitEvent(caseDetails, SYSTEM_PROGRESS_HELD_CASE);
                         }
