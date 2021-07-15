@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,15 @@ public class SystemProgressHeldCasesTask {
                 try {
                     Map<String, Object> caseDataMap = caseDetails.getData();
                     CaseData caseData = objectMapper.convertValue(caseDataMap, CaseData.class);
+                    try {
+                        log.info(objectMapper.writeValueAsString(caseData));
+                    } catch (JsonProcessingException e) {
+                        log.error(e.getMessage(), e);
+                    }
+                    log.info("Case data issue date {} and marriage date {}",
+                        caseData.getIssueDate(),
+                        caseData.getApplication().getMarriageDetails().getDate()
+                    );
                     if (caseData.getIssueDate() == null) {
                         log.error("Ignoring case id {} with created on {} and modified on {}, as issue date is null",
                             caseDetails.getId(),
