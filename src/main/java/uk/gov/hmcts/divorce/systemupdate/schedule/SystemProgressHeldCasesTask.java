@@ -65,7 +65,7 @@ public class SystemProgressHeldCasesTask {
                         caseData.getIssueDate(),
                         caseData.getApplication().getMarriageDetails().getDate()
                     );
-                    if (issueDate == null) {
+                    if (caseData.getIssueDate() == null) {
                         log.error("Ignoring case id {} with created on {} and modified on {}, as issue date is null",
                             caseDetails.getId(),
                             caseDetails.getCreatedDate(),
