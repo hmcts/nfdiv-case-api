@@ -54,7 +54,7 @@ public class SystemProgressHeldCasesTask {
                 try {
                     Map<String, Object> caseDataMap = caseDetails.getData();
                     LocalDate issueDate = (LocalDate) caseDataMap.getOrDefault("issueDate",null);
-                    log.info("issueDate from caseDataMap ", issueDate);
+                    log.info("issueDate from caseDataMap {}", issueDate);
                     CaseData caseData = objectMapper.convertValue(caseDataMap, CaseData.class);
                     try {
                         log.info(objectMapper.writeValueAsString(caseData));
