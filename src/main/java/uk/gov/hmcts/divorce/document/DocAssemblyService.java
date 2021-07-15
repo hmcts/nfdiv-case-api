@@ -65,7 +65,10 @@ public class DocAssemblyService {
             docAssemblyResponse.getRenditionOutputLocation()
         );
 
-        String fileName = Objects.isNull(caseId) ? format(DOCUMENT_FILENAME_FMT, documentName, "") + ".pdf" : format(DOCUMENT_FILENAME_FMT, documentName, caseId) + ".pdf";
+        String fileName = Objects.isNull(caseId)
+            ? format(DOCUMENT_FILENAME_FMT, documentName, "") + ".pdf"
+            : format(DOCUMENT_FILENAME_FMT, documentName, caseId) + ".pdf";
+
         return new DocumentInfo(
             docAssemblyResponse.getRenditionOutputLocation(),
             fileName,

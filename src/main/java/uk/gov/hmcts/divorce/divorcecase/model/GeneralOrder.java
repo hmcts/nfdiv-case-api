@@ -1,25 +1,17 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.Document;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessBetaOnlyAccess;
-import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
-import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
-import static org.springframework.util.CollectionUtils.isEmpty;
-import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.MultiSelectList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
@@ -50,7 +42,7 @@ public class GeneralOrder {
     @CCD(
         label = "Recitals",
         typeOverride = TextArea,
-        access= {CaseworkerAccessBetaOnlyAccess.class}
+        access = {CaseworkerAccessBetaOnlyAccess.class}
     )
     private String generalOrderRecitals;
 
