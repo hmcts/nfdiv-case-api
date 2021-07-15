@@ -53,6 +53,8 @@ public class SystemProgressHeldCasesTask {
             for (final CaseDetails caseDetails : casesInHoldingState) {
                 try {
                     Map<String, Object> caseDataMap = caseDetails.getData();
+                    LocalDate issueDate = (LocalDate) caseDataMap.getOrDefault("issueDate",null);
+                    log.info("issueDate from caseDataMap ", issueDate);
                     CaseData caseData = objectMapper.convertValue(caseDataMap, CaseData.class);
                     try {
                         log.info(objectMapper.writeValueAsString(caseData));
@@ -63,7 +65,7 @@ public class SystemProgressHeldCasesTask {
                         caseData.getIssueDate(),
                         caseData.getApplication().getMarriageDetails().getDate()
                     );
-                    if (caseData.getIssueDate() == null) {
+                    if (issueDate == null) {
                         log.error("Ignoring case id {} with created on {} and modified on {}, as issue date is null",
                             caseDetails.getId(),
                             caseDetails.getCreatedDate(),
