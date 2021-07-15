@@ -62,7 +62,7 @@ public class SystemProgressHeldCasesTask {
                     } else {
                         long weeksBetweenIssueDateAndNow = WEEKS.between(caseData.getIssueDate(), LocalDate.now());
 
-                        if (weeksBetweenIssueDateAndNow > holdingPeriodInWeeks) {
+                        if (weeksBetweenIssueDateAndNow >= holdingPeriodInWeeks) {
                             log.info("Case id {} has been in holding state for > {} weeks hence moving state to AwaitingConditionalOrder",
                                 caseDetails.getId(),
                                 holdingPeriodInWeeks
