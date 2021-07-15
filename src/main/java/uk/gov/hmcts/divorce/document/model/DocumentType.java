@@ -87,6 +87,9 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("email")
     EMAIL("Email"),
 
+    @JsonProperty("generalOrder")
+    GENERAL_ORDER("General Order"),
+
     @JsonProperty("other")
     OTHER("Other");
 
