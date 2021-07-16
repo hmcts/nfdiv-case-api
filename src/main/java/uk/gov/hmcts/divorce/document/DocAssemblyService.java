@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.document.model.DocumentInfo;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import static java.lang.String.format;
@@ -64,9 +65,13 @@ public class DocAssemblyService {
             docAssemblyResponse.getRenditionOutputLocation()
         );
 
+        String fileName = Objects.isNull(caseId)
+            ? format(DOCUMENT_FILENAME_FMT, documentName, "") + ".pdf"
+            : format(DOCUMENT_FILENAME_FMT, documentName, caseId) + ".pdf";
+
         return new DocumentInfo(
             docAssemblyResponse.getRenditionOutputLocation(),
-            format(DOCUMENT_FILENAME_FMT, documentName, caseId) + ".pdf",
+            fileName,
             docAssemblyResponse.getBinaryFilePath()
         );
     }
