@@ -44,7 +44,6 @@ public class CitizenInviteApplicant2 implements CCDConfig<CaseData, State, UserR
             .name("Invite The Respondent")
             .description("Send Application to the respondent for review")
             .grant(CREATE_READ_UPDATE, CREATOR)
-            .displayOrder(1)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }

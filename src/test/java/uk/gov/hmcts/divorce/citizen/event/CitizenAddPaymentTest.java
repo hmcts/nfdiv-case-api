@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -7,6 +8,7 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
@@ -34,6 +36,8 @@ import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.CANCELLED;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.DECLINED;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.IN_PROGRESS;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
+import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
+import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -51,12 +55,13 @@ public class CitizenAddPaymentTest {
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
-        final Set<State> stateSet = Set.of(State.class.getEnumConstants());
-        final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = new ConfigBuilderImpl<>(CaseData.class, stateSet);
+        final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         citizenAddPayment.configure(configBuilder);
 
-        assertThat(configBuilder.getEvents().get(0).getId(), is(CITIZEN_ADD_PAYMENT));
+        Assertions.assertThat(getEventsFrom(configBuilder).values())
+            .extracting(Event::getId)
+            .contains(CITIZEN_ADD_PAYMENT);
     }
 
     @Test

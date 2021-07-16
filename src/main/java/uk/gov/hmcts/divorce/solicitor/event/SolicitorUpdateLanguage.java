@@ -33,7 +33,6 @@ public class SolicitorUpdateLanguage implements CCDConfig<CaseData, State, UserR
             .forStates(Draft, Submitted)
             .name("Update Language")
             .description("Update Language")
-            .displayOrder(3)
             .showSummary()
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, SOLICITOR)

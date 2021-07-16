@@ -171,7 +171,6 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             .forStates(Draft)
             .name("Case submission")
             .description("Agree Statement of Truth, Pay & Submit")
-            .displayOrder(1)
             .showSummary()
             .endButtonLabel("Submit Application")
             .aboutToStartCallback(this::aboutToStart)
