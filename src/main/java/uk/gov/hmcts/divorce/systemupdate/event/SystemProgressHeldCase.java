@@ -31,7 +31,6 @@ public class SystemProgressHeldCase implements CCDConfig<CaseData, State, UserRo
             .forStateTransition(Holding, AwaitingConditionalOrder)
             .name("Progress held case")
             .description("Progress held case to Awaiting Conditional Order")
-            .displayOrder(3)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASEWORKER_SYSTEMUPDATE)
             .grant(READ, SOLICITOR, CASEWORKER_COURTADMIN_CTSC, CASEWORKER_COURTADMIN_RDU, CASEWORKER_SUPERUSER, CASEWORKER_LEGAL_ADVISOR));

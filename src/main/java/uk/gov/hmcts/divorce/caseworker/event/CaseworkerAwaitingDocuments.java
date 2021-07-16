@@ -34,7 +34,6 @@ public class CaseworkerAwaitingDocuments implements CCDConfig<CaseData, State, U
             .forStateTransition(EnumSet.of(AwaitingPayment, AwaitingHWFDecision, Submitted), AwaitingDocuments)
             .name("Awaiting documents")
             .description("Awaiting documents from the applicant")
-            .displayOrder(3)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASEWORKER_COURTADMIN_CTSC, CASEWORKER_COURTADMIN_RDU)
             .grant(READ, SOLICITOR, CASEWORKER_SUPERUSER, CASEWORKER_LEGAL_ADVISOR))
