@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,9 +16,9 @@ import uk.gov.hmcts.divorce.caseworker.service.CcdUpdateService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.doThrow;
@@ -40,9 +39,6 @@ class SystemProgressHeldCasesTaskTest {
     @Mock
     private CcdSearchService ccdSearchService;
 
-    @Mock
-    private ObjectMapper objectMapper;
-
     @InjectMocks
     private SystemProgressHeldCasesTask awaitingConditionalOrderTask;
 
@@ -55,13 +51,11 @@ class SystemProgressHeldCasesTaskTest {
     void shouldTriggerAwaitingConditionalOrderOnEachCaseWhenCaseIsInHoldingForMoreThan20Weeks() {
         final CaseDetails caseDetails1 = mock(CaseDetails.class);
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
+
+        when(caseDetails1.getData()).thenReturn(Map.of("issueDate", "2021-01-01"));
+        when(caseDetails2.getData()).thenReturn(Map.of("issueDate", "2021-01-02"));
+
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
-
-        CaseData caseData1 = CaseData.builder().issueDate(LocalDate.of(2021, 1, 1)).build();
-        when(objectMapper.convertValue(caseDetails1.getData(), CaseData.class)).thenReturn(caseData1);
-
-        CaseData caseData2 = CaseData.builder().issueDate(LocalDate.of(2021, 1, 2)).build();
-        when(objectMapper.convertValue(caseDetails2.getData(), CaseData.class)).thenReturn(caseData2);
 
         when(ccdSearchService.searchForAllCasesWithStateOf(Holding)).thenReturn(caseDetailsList);
 
@@ -72,10 +66,9 @@ class SystemProgressHeldCasesTaskTest {
     }
 
     @Test
-    void shouldIgnoreCaseWhenIssueDateIsNull() throws IOException {
+    void shouldIgnoreCaseWhenIssueDateIsNull()  {
         final CaseDetails caseDetails = mock(CaseDetails.class);
         CaseData caseData = CaseData.builder().build();
-        when(objectMapper.convertValue(caseDetails.getData(), CaseData.class)).thenReturn(caseData);
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails);
 
@@ -90,8 +83,7 @@ class SystemProgressHeldCasesTaskTest {
     void shouldNotTriggerAwaitingConditionalOrderWhenCaseIsInHoldingForLessThan20Weeks() {
         final CaseDetails caseDetails1 = mock(CaseDetails.class);
 
-        CaseData caseData1 = CaseData.builder().issueDate(LocalDate.now()).build();
-        when(objectMapper.convertValue(caseDetails1.getData(), CaseData.class)).thenReturn(caseData1);
+        when(caseDetails1.getData()).thenReturn(Map.of("issueDate", LocalDate.now().toString()));
 
         when(ccdSearchService.searchForAllCasesWithStateOf(Holding)).thenReturn(singletonList(caseDetails1));
 
@@ -116,11 +108,7 @@ class SystemProgressHeldCasesTaskTest {
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        CaseData caseData1 = CaseData.builder().issueDate(LocalDate.of(2021, 1, 1)).build();
-        when(objectMapper.convertValue(caseDetails1.getData(), CaseData.class)).thenReturn(caseData1);
-
-        CaseData caseData2 = CaseData.builder().issueDate(LocalDate.of(2021, 1, 2)).build();
-        when(objectMapper.convertValue(caseDetails2.getData(), CaseData.class)).thenReturn(caseData2);
+        when(caseDetails1.getData()).thenReturn(Map.of("issueDate", "2021-01-01"));
 
         when(ccdSearchService.searchForAllCasesWithStateOf(Holding)).thenReturn(caseDetailsList);
 
@@ -130,19 +118,18 @@ class SystemProgressHeldCasesTaskTest {
         awaitingConditionalOrderTask.execute();
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_HELD_CASE);
+        verify(ccdUpdateService, never()).submitEvent(caseDetails2, SYSTEM_PROGRESS_HELD_CASE);
     }
 
     @Test
     void shouldContinueToNextCaseIfExceptionIsThrownWhileProcessingPreviousCase() {
         final CaseDetails caseDetails1 = mock(CaseDetails.class);
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
+
+        when(caseDetails1.getData()).thenReturn(Map.of("issueDate", "2021-01-01"));
+        when(caseDetails2.getData()).thenReturn(Map.of("issueDate", "2021-01-02"));
+
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
-
-        CaseData caseData1 = CaseData.builder().issueDate(LocalDate.of(2021, 1, 1)).build();
-        when(objectMapper.convertValue(caseDetails1.getData(), CaseData.class)).thenReturn(caseData1);
-
-        CaseData caseData2 = CaseData.builder().issueDate(LocalDate.of(2021, 1, 2)).build();
-        when(objectMapper.convertValue(caseDetails2.getData(), CaseData.class)).thenReturn(caseData2);
 
         when(ccdSearchService.searchForAllCasesWithStateOf(Holding)).thenReturn(caseDetailsList);
 

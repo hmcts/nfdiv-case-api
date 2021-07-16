@@ -1,7 +1,5 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +10,6 @@ import uk.gov.hmcts.divorce.caseworker.service.CcdManagementException;
 import uk.gov.hmcts.divorce.caseworker.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.caseworker.service.CcdSearchService;
 import uk.gov.hmcts.divorce.caseworker.service.CcdUpdateService;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
 import java.time.LocalDate;
@@ -39,8 +36,7 @@ public class SystemProgressHeldCasesTask {
     @Autowired
     private CcdSearchService ccdSearchService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private static final String ISSUE_DATE_KEY = "issueDate";
 
     @Scheduled(cron = "${schedule.awaiting_conditional_order}")
     public void execute() {
@@ -53,24 +49,18 @@ public class SystemProgressHeldCasesTask {
             for (final CaseDetails caseDetails : casesInHoldingState) {
                 try {
                     Map<String, Object> caseDataMap = caseDetails.getData();
-                    CaseData caseData = objectMapper.convertValue(caseDataMap, CaseData.class);
-                    try {
-                        log.info(objectMapper.writeValueAsString(caseData));
-                    } catch (JsonProcessingException e) {
-                        log.error(e.getMessage(), e);
-                    }
-                    log.info("Case data issue date {} and marriage date {}",
-                        caseData.getIssueDate(),
-                        caseData.getApplication().getMarriageDetails().getDate()
-                    );
-                    if (caseData.getIssueDate() == null) {
+                    String dateOfIssue = (String) caseDataMap.getOrDefault(ISSUE_DATE_KEY,null);
+                    log.info("issueDate from caseDataMap {}", dateOfIssue);
+
+                    if (dateOfIssue == null) {
                         log.error("Ignoring case id {} with created on {} and modified on {}, as issue date is null",
                             caseDetails.getId(),
                             caseDetails.getCreatedDate(),
                             caseDetails.getLastModified()
                         );
                     } else {
-                        long weeksBetweenIssueDateAndNow = WEEKS.between(caseData.getIssueDate(), LocalDate.now());
+                        LocalDate issueDate = LocalDate.parse(dateOfIssue);
+                        long weeksBetweenIssueDateAndNow = WEEKS.between(issueDate, LocalDate.now());
 
                         if (weeksBetweenIssueDateAndNow >= holdingPeriodInWeeks) {
                             log.info("Case id {} has been in holding state for > {} weeks hence moving state to AwaitingConditionalOrder",
