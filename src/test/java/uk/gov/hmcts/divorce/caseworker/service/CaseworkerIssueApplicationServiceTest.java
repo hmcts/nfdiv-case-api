@@ -87,7 +87,7 @@ class CaseworkerIssueApplicationServiceTest {
         final var expectedDateTime = LocalDate.ofInstant(instant, zoneId);
 
         var expectedCaseData = caseData();
-        expectedCaseData.setIssueDate(expectedDateTime);
+        expectedCaseData.getApplication().setIssueDate(expectedDateTime);
         expectedCaseData.getApplicant2().setSolicitorRepresented(YES);
         expectedCaseData.getApplicant2().setSolicitor(Solicitor.builder().name("testsol").isDigital(YES).build());
 
@@ -135,7 +135,7 @@ class CaseworkerIssueApplicationServiceTest {
         final var expectedDateTime = LocalDate.ofInstant(instant, zoneId);
 
         var expectedCaseData = caseData();
-        expectedCaseData.setIssueDate(expectedDateTime);
+        expectedCaseData.getApplication().setIssueDate(expectedDateTime);
         expectedCaseData.getApplicant2().setSolicitorRepresented(NO);
 
         assertThat(response).isEqualTo(expectedCaseData);
