@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,9 +25,7 @@ import java.util.Set;
 
 import static java.time.ZoneId.systemDefault;
 import static java.util.Collections.singletonList;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -53,7 +50,7 @@ class CaseworkerUploadDocumentsAndSubmitTest {
 
         caseworkerUploadDocumentsAndSubmit.configure(configBuilder);
 
-        Assertions.assertThat(getEventsFrom(configBuilder).values())
+        assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(CASEWORKER_UPLOAD_DOCUMENTS_AND_SUBMIT);
     }
@@ -69,7 +66,7 @@ class CaseworkerUploadDocumentsAndSubmitTest {
         final var response =
             caseworkerUploadDocumentsAndSubmit.aboutToStart(caseDetails);
 
-        assertThat(response.getData().getApplication().getDocumentUploadComplete(), is(nullValue()));
+        assertThat(response.getData().getApplication().getDocumentUploadComplete()).isNull();
     }
 
     @Test
@@ -87,9 +84,9 @@ class CaseworkerUploadDocumentsAndSubmitTest {
         final var response =
             caseworkerUploadDocumentsAndSubmit.aboutToSubmit(caseDetails, null);
 
-        assertThat(response.getState(), is(AwaitingDocuments));
-        assertThat(response.getData().getApplication().getApplicant1WantsToHavePapersServedAnotherWay(), is(nullValue()));
-        assertThat(response.getData().getApplication().getCannotUploadSupportingDocument(), is(nullValue()));
+        assertThat(response.getState()).isEqualTo(AwaitingDocuments);
+        assertThat(response.getData().getApplication().getApplicant1WantsToHavePapersServedAnotherWay()).isNull();
+        assertThat(response.getData().getApplication().getCannotUploadSupportingDocument()).isNull();
     }
 
     @Test
@@ -129,7 +126,7 @@ class CaseworkerUploadDocumentsAndSubmitTest {
         final var response =
             caseworkerUploadDocumentsAndSubmit.aboutToSubmit(caseDetails, null);
 
-        assertThat(response.getState(), is(Submitted));
-        assertThat(response.getData().getApplication().getDateSubmitted(), is(expectedDateTime));
+        assertThat(response.getState()).isEqualTo(Submitted);
+        assertThat(response.getData().getApplication().getDateSubmitted()).isEqualTo(expectedDateTime);
     }
 }

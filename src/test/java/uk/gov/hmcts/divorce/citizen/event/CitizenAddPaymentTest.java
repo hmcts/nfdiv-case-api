@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,8 +23,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static java.util.Collections.singletonList;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenAddPayment.CITIZEN_ADD_PAYMENT;
@@ -59,7 +57,7 @@ public class CitizenAddPaymentTest {
 
         citizenAddPayment.configure(configBuilder);
 
-        Assertions.assertThat(getEventsFrom(configBuilder).values())
+        assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(CITIZEN_ADD_PAYMENT);
     }
@@ -83,7 +81,7 @@ public class CitizenAddPaymentTest {
         final var response = citizenAddPayment.aboutToSubmit(details, details);
 
         verifyNoInteractions(notification);
-        assertThat(response.getState(), is(AwaitingPayment));
+        assertThat(response.getState()).isEqualTo(AwaitingPayment);
     }
 
     @Test
@@ -105,7 +103,7 @@ public class CitizenAddPaymentTest {
         final var response = citizenAddPayment.aboutToSubmit(details, details);
 
         verifyNoInteractions(notification);
-        assertThat(response.getState(), is(Draft));
+        assertThat(response.getState()).isEqualTo(Draft);
     }
 
     @Test
@@ -166,7 +164,7 @@ public class CitizenAddPaymentTest {
 
         verify(outstandingActionNotification).send(caseData, details.getId());
         verify(notification).send(caseData, details.getId());
-        assertThat(response.getState(), is(AwaitingDocuments));
+        assertThat(response.getState()).isEqualTo(AwaitingDocuments);
     }
 
     @Test
@@ -192,6 +190,6 @@ public class CitizenAddPaymentTest {
 
         verify(outstandingActionNotification).send(caseData, details.getId());
         verify(notification).send(caseData, details.getId());
-        assertThat(response.getState(), is(AwaitingDocuments));
+        assertThat(response.getState()).isEqualTo(AwaitingDocuments);
     }
 }
