@@ -172,7 +172,7 @@ public class CitizenAddPaymentTest {
         Set<DocumentType> docs = new HashSet<>();
         docs.add(DocumentType.MARRIAGE_CERTIFICATE);
         docs.add(DocumentType.NAME_CHANGE_EVIDENCE);
-        caseData.getApplication().setCannotUploadSupportingDocument(docs);
+        caseData.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);

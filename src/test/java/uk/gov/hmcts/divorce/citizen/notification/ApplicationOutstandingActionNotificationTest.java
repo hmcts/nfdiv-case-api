@@ -60,7 +60,7 @@ class ApplicationOutstandingActionNotificationTest {
         docs.add(DocumentType.MARRIAGE_CERTIFICATE);
         docs.add(DocumentType.MARRIAGE_CERTIFICATE_TRANSLATION);
         docs.add(DocumentType.NAME_CHANGE_EVIDENCE);
-        data.getApplication().setCannotUploadSupportingDocument(docs);
+        data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
 
         final HashMap<String, String> templateVars = new HashMap<>();
         when(commonContent.templateVarsFor(data)).thenReturn(templateVars);
@@ -92,7 +92,7 @@ class ApplicationOutstandingActionNotificationTest {
         Set<DocumentType> docs = new HashSet<>();
         docs.add(DocumentType.MARRIAGE_CERTIFICATE);
         docs.add(DocumentType.NAME_CHANGE_EVIDENCE);
-        data.getApplication().setCannotUploadSupportingDocument(docs);
+        data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
 
         final HashMap<String, String> templateVars = new HashMap<>();
         when(commonContent.templateVarsFor(data)).thenReturn(templateVars);
@@ -132,7 +132,7 @@ class ApplicationOutstandingActionNotificationTest {
         Set<DocumentType> docs = new HashSet<>();
         docs.add(DocumentType.MARRIAGE_CERTIFICATE);
         docs.add(DocumentType.NAME_CHANGE_EVIDENCE);
-        data.getApplication().setCannotUploadSupportingDocument(docs);
+        data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
 
         final HashMap<String, String> templateVars = new HashMap<>();
         when(commonContent.templateVarsFor(data)).thenReturn(templateVars);
