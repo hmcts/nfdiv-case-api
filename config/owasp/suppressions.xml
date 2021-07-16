@@ -32,4 +32,7 @@
       <cve>CVE-2016-6798</cve>
       <cve>CVE-2019-12415</cve>
     </suppress>
+    <suppress>
+      <cve>CVE-2021-33037</cve>
+    </suppress>
 </suppressions>
