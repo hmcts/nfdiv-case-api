@@ -45,7 +45,7 @@ public class CreateGeneralOrder implements CcdPageConfiguration {
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
-        pageBuilder.page("createGeneralOrder", this::midEvent)
+        pageBuilder.page("CreateGeneralOrder", this::midEvent)
             .complex(CaseData::getGeneralOrder)
             .mandatory(GeneralOrder::getGeneralOrderDate)
             .mandatory(GeneralOrder::getGeneralOrderDivorceParties)
