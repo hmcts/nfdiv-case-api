@@ -68,7 +68,7 @@ public class Applicant {
     private YesOrNo nameDifferentToMarriageCertificate;
 
     @CCD(label = "How did the applicant change their name?")
-    private ChangedNameHow nameChangedHow;
+    private Set<ChangedNameHow> nameChangedHow;
 
     @CCD(
         label = "Details of how they changed their name",
