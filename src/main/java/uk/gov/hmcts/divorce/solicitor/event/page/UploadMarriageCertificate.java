@@ -33,6 +33,6 @@ public class UploadMarriageCertificate implements CcdPageConfiguration {
                     + "- Change of name deed\n\n"
                     + "The image must be of the entire document and has to be readable by court staff. "
                     + "You can upload image files with jpg, jpeg, bmp, tif, tiff or PDF file extensions, maximum size 100MB per file")
-            .optional(CaseData::getDocumentsUploaded);
+            .optional(CaseData::getApplicant1DocumentsUploaded);
     }
 }

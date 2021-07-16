@@ -99,7 +99,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
         configBuilder.tab("documents", "Documents")
             .field(CaseData::getDocumentsGenerated)
-            .field(CaseData::getDocumentsUploaded);
+            .field(CaseData::getApplicant1DocumentsUploaded);
 
         buildConfidentialTab(configBuilder);
 

@@ -83,7 +83,7 @@
     "marriageCertifyMarriageCertificateIsCorrect": null,
     "marriageMarriageCertificateIsIncorrectDetails": null,
     "marriageIssueApplicationWithoutMarriageCertificate": null,
-    "cannotUploadSupportingDocument": ["marriageCertificate", "nameChangeEvidence"],
+    "applicant1CannotUploadSupportingDocument": ["marriageCertificate", "nameChangeEvidence"],
     "applicationFeeOrderSummary": {
       "PaymentTotal": "55000",
       "PaymentReference": null,
