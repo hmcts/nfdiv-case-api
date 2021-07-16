@@ -73,7 +73,7 @@ public class CaseworkerCreateGeneralOrder implements CCDConfig<CaseData, State, 
             .grant(READ, CASEWORKER_COURTADMIN_RDU, CASEWORKER_SUPERUSER, CASEWORKER_LEGAL_ADVISOR, SOLICITOR, CITIZEN));
     }
 
-    private AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails
     ) {

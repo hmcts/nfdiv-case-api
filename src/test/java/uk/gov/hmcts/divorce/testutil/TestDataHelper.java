@@ -17,8 +17,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.ConfidentialAddress;
+import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderDivorceParties;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderJudge;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.Jurisdiction;
 import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
@@ -430,5 +434,39 @@ public class TestDataHelper {
             APPLICANT_2_SIGN_IN_DIVORCE_URL, APPLICANT_2_SIGN_IN_DIVORCE_TEST_URL,
             APPLICANT_2_SIGN_IN_DISSOLUTION_URL, APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL
         );
+    }
+
+    public static GeneralOrder getGeneralOrder(Document ccdDocument) {
+        return GeneralOrder
+            .builder()
+            .generalOrderDate(LocalDate.of(2021, 1, 1))
+            .generalOrderDetails("some details")
+            .generalOrderDivorceParties(Set.of(GeneralOrderDivorceParties.RESPONDENT))
+            .generalOrderJudgeType(GeneralOrderJudge.RECORDER)
+            .generalOrderRecitals("test recitals")
+            .generalOrderDraft(ccdDocument)
+            .generalOrderJudgeName("some name")
+            .build();
+    }
+
+    public static ListValue<DivorceGeneralOrder> getDivorceGeneralOrderListValue(Document ccdDocument, String listValueId) {
+        DivorceDocument generalOrderDocument = DivorceDocument
+            .builder()
+            .documentFileName(ccdDocument.getFilename())
+            .documentType(DocumentType.GENERAL_ORDER)
+            .documentLink(ccdDocument)
+            .build();
+
+        DivorceGeneralOrder divorceGeneralOrder = DivorceGeneralOrder
+            .builder()
+            .generalOrderDocument(generalOrderDocument)
+            .generalOrderDivorceParties(Set.of(GeneralOrderDivorceParties.RESPONDENT))
+            .build();
+
+        return ListValue
+            .<DivorceGeneralOrder>builder()
+            .id(listValueId)
+            .value(divorceGeneralOrder)
+            .build();
     }
 }
