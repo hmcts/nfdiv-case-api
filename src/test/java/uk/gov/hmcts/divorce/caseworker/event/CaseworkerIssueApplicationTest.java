@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -105,7 +104,7 @@ class CaseworkerIssueApplicationTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(details, null);
 
-        Assertions.assertThat(response.getErrors())
+        assertThat(response.getErrors())
             .containsExactlyInAnyOrder(
                 "Applicant2FirstName cannot be empty or null",
                 "Applicant2LastName cannot be empty or null",

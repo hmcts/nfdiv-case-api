@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,8 +17,7 @@ import uk.gov.hmcts.divorce.solicitor.service.SolicitorUpdateApplicationService;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -51,7 +49,7 @@ class SolicitorUpdateApplicationTest {
 
         solicitorUpdateApplication.configure(configBuilder);
 
-        Assertions.assertThat(getEventsFrom(configBuilder).values())
+        assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(SOLICITOR_UPDATE);
     }
@@ -79,7 +77,7 @@ class SolicitorUpdateApplicationTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorUpdateApplication.aboutToSubmit(details, details);
 
-        assertThat(response.getData(), is(expectedResult));
+        assertThat(response.getData()).isEqualTo(expectedResult);
 
         verify(solicitorUpdateApplicationService).aboutToSubmit(
             caseData,

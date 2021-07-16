@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.divorcecase.validation;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
@@ -17,8 +16,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 import static java.time.temporal.ChronoUnit.YEARS;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.addToErrorList;
@@ -47,7 +45,7 @@ public class CaseValidationTest {
         List<String> errors = new ArrayList<>();
 
         validateBasicCase(caseData, errors);
-        assertThat(errors.size(), is(13));
+        assertThat(errors).hasSize(13);
     }
 
     @Test
@@ -56,7 +54,7 @@ public class CaseValidationTest {
         String errorMessage = "Some error";
 
         addToErrorList(errorMessage, errors);
-        assertThat(errors.get(0), is(errorMessage));
+        assertThat(errors.get(0)).isEqualTo(errorMessage);
     }
 
     @Test
@@ -64,56 +62,56 @@ public class CaseValidationTest {
         List<String> errors = new ArrayList<>();
 
         addToErrorList(null, errors);
-        assertThat(errors.size(), is(0));
+        assertThat(errors).isEmpty();
     }
 
     @Test
     public void shouldReturnErrorWhenStringIsNull() {
         String response = checkIfStringNullOrEmpty(null, "field");
 
-        assertThat(response, is("field" + EMPTY));
+        assertThat(response).isEqualTo("field" + EMPTY);
     }
 
     @Test
     public void shouldReturnErrorWhenYesOrNoIsNull() {
         String response = checkIfYesOrNoNullOrEmpty(null, "field");
 
-        assertThat(response, is("field" + EMPTY));
+        assertThat(response).isEqualTo("field" + EMPTY);
     }
 
     @Test
     public void shouldReturnErrorWhenGenderIsNull() {
         String response = checkIfGenderNullOrEmpty(null, "field");
 
-        assertThat(response, is("field" + EMPTY));
+        assertThat(response).isEqualTo("field" + EMPTY);
     }
 
     @Test
     public void shouldReturnErrorWhenConfidentialAddressIsNull() {
         String response = checkIfConfidentialAddressNullOrEmpty(null, "field");
 
-        assertThat(response, is("field" + EMPTY));
+        assertThat(response).isEqualTo("field" + EMPTY);
     }
 
     @Test
     public void shouldReturnErrorWhenYesOrNoIsNo() {
         String response = checkIfYesOrNoIsNullOrEmptyOrNo(YesOrNo.NO, "field");
 
-        assertThat(response, is("field" + MUST_BE_YES));
+        assertThat(response).isEqualTo("field" + MUST_BE_YES);
     }
 
     @Test
     public void shouldReturnErrorWhenYesOrNoIsInvalid() {
         String response = checkIfYesOrNoIsNullOrEmptyOrNo(null, "field");
 
-        assertThat(response, is("field" + EMPTY));
+        assertThat(response).isEqualTo("field" + EMPTY);
     }
 
     @Test
     public void shouldReturnErrorWhenDateIsInTheFuture() {
         String response = checkIfDateIsAllowed(LocalDate.now().plus(2, YEARS), "field");
 
-        assertThat(response, is("field" + IN_THE_FUTURE));
+        assertThat(response).isEqualTo("field" + IN_THE_FUTURE);
     }
 
     @Test
@@ -124,14 +122,14 @@ public class CaseValidationTest {
 
         String response = checkIfDateIsAllowed(oneHundredYearsAndOneDayAgo, "field");
 
-        assertThat(response, is("field" + MORE_THAN_ONE_HUNDRED_YEARS_AGO));
+        assertThat(response).isEqualTo("field" + MORE_THAN_ONE_HUNDRED_YEARS_AGO);
     }
 
     @Test
     public void shouldReturnErrorWhenDateIsLessThanOneYearAgo() {
         String response = checkIfDateIsAllowed(LocalDate.now().minus(360, DAYS), "field");
 
-        assertThat(response, is("field" + LESS_THAN_ONE_YEAR_AGO));
+        assertThat(response).isEqualTo("field" + LESS_THAN_ONE_YEAR_AGO);
     }
 
     @Test
@@ -173,7 +171,7 @@ public class CaseValidationTest {
 
         validateCaseFieldsForIssueApplication(caseData.getApplication().getMarriageDetails(), errors);
 
-        Assertions.assertThat(errors).containsExactlyInAnyOrder(
+        assertThat(errors).containsExactlyInAnyOrder(
             "MarriageApplicant2Name cannot be empty or null",
             "PlaceOfMarriage cannot be empty or null"
         );
@@ -187,7 +185,7 @@ public class CaseValidationTest {
 
         validateCaseFieldsForIssueApplication(marriageDetails, errors);
 
-        Assertions.assertThat(errors).containsExactlyInAnyOrder(
+        assertThat(errors).containsExactlyInAnyOrder(
             "MarriageApplicant2Name cannot be empty or null"
         );
     }
@@ -201,6 +199,6 @@ public class CaseValidationTest {
 
         validateCaseFieldsForIssueApplication(marriageDetails, errors);
 
-        Assertions.assertThat(errors).isEmpty();
+        assertThat(errors).isEmpty();
     }
 }
