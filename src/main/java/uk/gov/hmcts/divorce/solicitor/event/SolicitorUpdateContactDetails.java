@@ -41,7 +41,6 @@ public class SolicitorUpdateContactDetails implements CCDConfig<CaseData, State,
             .forState(Submitted)
             .name("Update Contact Details")
             .description("Update contact details")
-            .displayOrder(1)
             .showSummary()
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, SOLICITOR)

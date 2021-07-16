@@ -30,7 +30,6 @@ public class CaseworkerChangeApplicationType implements CCDConfig<CaseData, Stat
             .forAllStates()
             .name("Change application type")
             .description("Change application type from joint to sole application")
-            .displayOrder(10)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE,
                 CASEWORKER_COURTADMIN_CTSC,

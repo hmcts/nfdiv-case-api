@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
@@ -22,8 +23,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static java.util.Collections.singletonList;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenAddPayment.CITIZEN_ADD_PAYMENT;
@@ -34,6 +34,8 @@ import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.CANCELLED;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.DECLINED;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.IN_PROGRESS;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
+import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
+import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -51,12 +53,13 @@ public class CitizenAddPaymentTest {
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
-        final Set<State> stateSet = Set.of(State.class.getEnumConstants());
-        final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = new ConfigBuilderImpl<>(CaseData.class, stateSet);
+        final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         citizenAddPayment.configure(configBuilder);
 
-        assertThat(configBuilder.getEvents().get(0).getId(), is(CITIZEN_ADD_PAYMENT));
+        assertThat(getEventsFrom(configBuilder).values())
+            .extracting(Event::getId)
+            .contains(CITIZEN_ADD_PAYMENT);
     }
 
     @Test
@@ -78,7 +81,7 @@ public class CitizenAddPaymentTest {
         final var response = citizenAddPayment.aboutToSubmit(details, details);
 
         verifyNoInteractions(notification);
-        assertThat(response.getState(), is(AwaitingPayment));
+        assertThat(response.getState()).isEqualTo(AwaitingPayment);
     }
 
     @Test
@@ -100,7 +103,7 @@ public class CitizenAddPaymentTest {
         final var response = citizenAddPayment.aboutToSubmit(details, details);
 
         verifyNoInteractions(notification);
-        assertThat(response.getState(), is(Draft));
+        assertThat(response.getState()).isEqualTo(Draft);
     }
 
     @Test
@@ -161,7 +164,7 @@ public class CitizenAddPaymentTest {
 
         verify(outstandingActionNotification).send(caseData, details.getId());
         verify(notification).send(caseData, details.getId());
-        assertThat(response.getState(), is(AwaitingDocuments));
+        assertThat(response.getState()).isEqualTo(AwaitingDocuments);
     }
 
     @Test
@@ -187,6 +190,6 @@ public class CitizenAddPaymentTest {
 
         verify(outstandingActionNotification).send(caseData, details.getId());
         verify(notification).send(caseData, details.getId());
-        assertThat(response.getState(), is(AwaitingDocuments));
+        assertThat(response.getState()).isEqualTo(AwaitingDocuments);
     }
 }

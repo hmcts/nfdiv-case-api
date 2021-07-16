@@ -10,11 +10,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import java.util.EnumSet;
-import java.util.Set;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.CASEWORKER_ISSUE_APPLICATION;
+import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
+import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
 class IssueApplicationTest {
@@ -24,11 +23,11 @@ class IssueApplicationTest {
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
-        final Set<State> stateSet = EnumSet.allOf(State.class);
-        final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = new ConfigBuilderImpl<>(CaseData.class, stateSet);
+        final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         caseworkerIssueApplication.configure(configBuilder);
-        assertThat(configBuilder.getEvents())
+
+        assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(CASEWORKER_ISSUE_APPLICATION);
     }

@@ -39,7 +39,6 @@ public class SystemLinkApplicant2 implements CCDConfig<CaseData, State, UserRole
             .name("Link Applicant 2 to case")
             .description("Link Applicant 2 to case to enable completion of joint application")
             .grant(CREATE_READ_UPDATE, CASEWORKER_SYSTEMUPDATE)
-            .displayOrder(1)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }

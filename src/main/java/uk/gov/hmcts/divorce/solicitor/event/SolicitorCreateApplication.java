@@ -104,7 +104,6 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
             .initialState(Draft)
             .name("Apply for a divorce")
             .description("Apply for a divorce")
-            .displayOrder(1)
             .showSummary()
             .endButtonLabel("Save Application")
             .aboutToSubmitCallback(this::aboutToSubmit)
