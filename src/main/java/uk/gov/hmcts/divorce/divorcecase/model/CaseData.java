@@ -14,7 +14,6 @@ import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
-import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAndSuperUserAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -134,13 +133,6 @@ public class CaseData {
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dueDate;
-
-    @CCD(
-        label = "Date when the application was issued",
-        access = {CaseworkerAccess.class}
-    )
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate issueDate;
 
     @CCD(
         label = "Notes",
