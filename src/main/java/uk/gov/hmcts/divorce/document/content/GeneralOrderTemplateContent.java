@@ -11,6 +11,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.GENERAL_ORDER_DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.GENERAL_ORDER_DETAILS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.GENERAL_ORDER_RECITALS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.JUDGE_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.JUDGE_TYPE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PETITIONER_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_FULL_NAME;
+
 @Component
 @Slf4j
 public class GeneralOrderTemplateContent {
@@ -47,14 +56,14 @@ public class GeneralOrderTemplateContent {
             log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
 
             var generalOrder = caseData.getGeneralOrder();
-            templateData.put("generalOrderDate", generalOrder.getGeneralOrderDate().format(TEMPLATE_DATE_FORMAT));
-            templateData.put("caseReference", ccdCaseReference);
-            templateData.put("petitionerFullName", caseData.getApplication().getMarriageDetails().getApplicant1Name());
-            templateData.put("respondentFullName", caseData.getApplication().getMarriageDetails().getApplicant2Name());
-            templateData.put("generalOrderRecitals", generalOrder.getGeneralOrderRecitals());
-            templateData.put("judgeType", generalOrder.getGeneralOrderJudgeType().getLabel());
-            templateData.put("judgeName", generalOrder.getGeneralOrderJudgeName());
-            templateData.put("generalOrderDetails", generalOrder.getGeneralOrderDetails());
+            templateData.put(GENERAL_ORDER_DATE, generalOrder.getGeneralOrderDate().format(TEMPLATE_DATE_FORMAT));
+            templateData.put(CASE_REFERENCE, ccdCaseReference);
+            templateData.put(PETITIONER_FULL_NAME, caseData.getApplication().getMarriageDetails().getApplicant1Name());
+            templateData.put(RESPONDENT_FULL_NAME, caseData.getApplication().getMarriageDetails().getApplicant2Name());
+            templateData.put(GENERAL_ORDER_RECITALS, generalOrder.getGeneralOrderRecitals());
+            templateData.put(JUDGE_TYPE, generalOrder.getGeneralOrderJudgeType().getLabel());
+            templateData.put(JUDGE_NAME, generalOrder.getGeneralOrderJudgeName());
+            templateData.put(GENERAL_ORDER_DETAILS, generalOrder.getGeneralOrderDetails());
 
             var ctscContactDetails = CtscContactDetails
                 .builder()
