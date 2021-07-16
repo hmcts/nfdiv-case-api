@@ -53,7 +53,7 @@ public class SystemProgressHeldCasesTask {
                     log.info("issueDate from caseDataMap {}", dateOfIssue);
 
                     if (dateOfIssue == null) {
-                        log.error("Ignoring case id {} with created on {} and modified on {}, as issue dateOfIssue is null",
+                        log.error("Ignoring case id {} with created on {} and modified on {}, as issue date is null",
                             caseDetails.getId(),
                             caseDetails.getCreatedDate(),
                             caseDetails.getLastModified()
