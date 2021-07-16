@@ -449,6 +449,10 @@ public class TestDataHelper {
             .build();
     }
 
+    public static GeneralOrder getGeneralOrder() {
+        return getGeneralOrder(null);
+    }
+
     public static ListValue<DivorceGeneralOrder> getDivorceGeneralOrderListValue(Document ccdDocument, String listValueId) {
         DivorceDocument generalOrderDocument = DivorceDocument
             .builder()

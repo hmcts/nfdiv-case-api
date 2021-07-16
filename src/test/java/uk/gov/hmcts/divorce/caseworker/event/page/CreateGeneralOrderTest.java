@@ -68,7 +68,7 @@ public class CreateGeneralOrderTest {
     void shouldUpdateCaseWithGeneralOrderDocumentWhenMidEventCallbackIsTriggered() {
         final CaseData caseData = caseData();
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.NO);
-        caseData.setGeneralOrder(getGeneralOrder(null));
+        caseData.setGeneralOrder(getGeneralOrder());
 
         final Supplier<Map<String, Object>> templateContentSupplier = HashMap::new;
 
