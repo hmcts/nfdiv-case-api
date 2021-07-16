@@ -43,6 +43,20 @@ public enum State {
     },
 
     @CCD(
+        name = "Applicant 2 approved",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    Applicant2Approved("Applicant2Approved") {
+        @Override
+        public List<String> validate(CaseData caseData) {
+            List<String> errors = new ArrayList<>();
+            validateApplicant1BasicCase(caseData, errors);  // should I add a validation for the complete case
+            return errors;
+        }
+    },
+
+    @CCD(
         name = "Application awaiting payment",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
@@ -96,7 +110,7 @@ public enum State {
             if (caseData.getApplication().hasAwaitingDocuments()) {
                 errors.add("Awaiting documents");
             }
-            if (!caseData.getApplication().hasStatementOfTruth() && !caseData.getApplication().hasSolSignStatementOfTruth()) {
+            if (!caseData.getApplication().applicant1HasStatementOfTruth() && !caseData.getApplication().hasSolSignStatementOfTruth()) {
                 errors.add("Statement of truth must be accepted by the person making the application");
             }
 

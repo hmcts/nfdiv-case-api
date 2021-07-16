@@ -71,10 +71,10 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
                 .mandatory(Application::getSolStatementOfReconciliationCertify)
                 .mandatory(Application::getSolStatementOfReconciliationDiscussed)
                 .label("LabelSolStatementOfTruthPara-2", "## Statement of truth")
-                .mandatory(Application::getStatementOfTruth)
+                .mandatory(Application::getApplicant1StatementOfTruth)
                 .mandatory(Application::getSolSignStatementOfTruth)
                 .label("LabelPrayer", "## Prayer")
-                .mandatory(Application::getPrayerHasBeenGiven)
+                .mandatory(Application::getApplicant1PrayerHasBeenGiven)
                 .mandatory(Application::getSolStatementOfReconciliationName)
                 .mandatory(Application::getSolStatementOfReconciliationFirm)
                 .label(

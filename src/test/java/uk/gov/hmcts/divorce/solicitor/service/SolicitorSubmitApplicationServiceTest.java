@@ -62,7 +62,7 @@ public class SolicitorSubmitApplicationServiceTest {
         List<ListValue<DivorceDocument>> generatedDocuments = singletonList(documentWithType(DIVORCE_APPLICATION));
         final CaseData caseData = CaseData.builder().build();
         caseData.setDocumentsGenerated(generatedDocuments);
-        caseData.getApplication().setStatementOfTruth(null);
+        caseData.getApplication().setApplicant1StatementOfTruth(null);
         caseData.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
         final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
@@ -99,7 +99,7 @@ public class SolicitorSubmitApplicationServiceTest {
         List<ListValue<DivorceDocument>> generatedDocuments = singletonList(documentWithType(DIVORCE_APPLICATION));
         final CaseData caseData = CaseData.builder().build();
         caseData.setDocumentsGenerated(generatedDocuments);
-        caseData.getApplication().setStatementOfTruth(null);
+        caseData.getApplication().setApplicant1StatementOfTruth(null);
         caseData.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
         caseData.getApplication().setSolPaymentHowToPay(SolicitorPaymentMethod.FEES_HELP_WITH);
 
@@ -138,7 +138,7 @@ public class SolicitorSubmitApplicationServiceTest {
         List<ListValue<DivorceDocument>> generatedDocuments = singletonList(documentWithType(DIVORCE_APPLICATION));
         final CaseData caseData = CaseData.builder().build();
         caseData.setDocumentsGenerated(generatedDocuments);
-        caseData.getApplication().setStatementOfTruth(null);
+        caseData.getApplication().setApplicant1StatementOfTruth(null);
         caseData.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
         final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);

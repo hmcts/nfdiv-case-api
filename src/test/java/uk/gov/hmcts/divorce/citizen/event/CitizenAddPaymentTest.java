@@ -63,7 +63,7 @@ public class CitizenAddPaymentTest {
     public void givenLastPaymentInProgressCaseDataWhenCallbackIsInvokedThenSetToAwaitingPayment() {
         final CaseData caseData = caseData();
         caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
-        caseData.getApplication().setStatementOfTruth(YesOrNo.YES);
+        caseData.getApplication().setApplicant1StatementOfTruth(YesOrNo.YES);
         caseData.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
@@ -85,7 +85,7 @@ public class CitizenAddPaymentTest {
     public void givenUnsuccessfulPaymentCaseDataWhenCallbackIsInvokedThenSetToDraft() {
         final CaseData caseData = caseData();
         caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
-        caseData.getApplication().setStatementOfTruth(YesOrNo.YES);
+        caseData.getApplication().setApplicant1StatementOfTruth(YesOrNo.YES);
         caseData.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
@@ -107,7 +107,7 @@ public class CitizenAddPaymentTest {
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmail() {
         final CaseData caseData = caseData();
         caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
-        caseData.getApplication().setStatementOfTruth(YesOrNo.YES);
+        caseData.getApplication().setApplicant1StatementOfTruth(YesOrNo.YES);
         caseData.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();

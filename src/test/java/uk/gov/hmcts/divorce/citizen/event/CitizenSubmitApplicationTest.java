@@ -78,7 +78,7 @@ class CitizenSubmitApplicationTest {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = CaseData.builder().build();
-        setValidCaseData(caseData).getApplication().setPrayerHasBeenGiven(YesOrNo.NO);
+        setValidCaseData(caseData).getApplication().setApplicant1PrayerHasBeenGiven(YesOrNo.NO);
 
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
@@ -151,9 +151,9 @@ class CitizenSubmitApplicationTest {
                 .build()
         );
 
-        caseData.getApplication().setPrayerHasBeenGiven(YesOrNo.YES);
+        caseData.getApplication().setApplicant1PrayerHasBeenGiven(YesOrNo.YES);
         caseData.getApplication().getMarriageDetails().setApplicant1Name("Full name");
-        caseData.getApplication().setStatementOfTruth(YesOrNo.YES);
+        caseData.getApplication().setApplicant1StatementOfTruth(YesOrNo.YES);
         caseData.getApplication().getMarriageDetails().setDate(LocalDate.now().minus(2, ChronoUnit.YEARS));
         Jurisdiction jurisdiction = new Jurisdiction();
         jurisdiction.setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_LAST_RESIDENT));

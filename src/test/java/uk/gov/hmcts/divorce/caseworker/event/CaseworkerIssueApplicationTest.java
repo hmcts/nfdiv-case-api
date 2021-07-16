@@ -144,8 +144,8 @@ class CaseworkerIssueApplicationTest {
         );
 
         caseData.getApplicant1().setFinancialOrder(NO);
-        caseData.getApplication().setPrayerHasBeenGiven(YES);
-        caseData.getApplication().setStatementOfTruth(YES);
+        caseData.getApplication().setApplicant1PrayerHasBeenGiven(YES);
+        caseData.getApplication().setApplicant1StatementOfTruth(YES);
         caseData.getApplication().getJurisdiction().setLegalConnections(Set.of(LegalConnections.APPLICANT_RESPONDENT_RESIDENT));
         caseData.getApplication().getMarriageDetails().setApplicant1Name("app1Name");
         caseData.getApplication().getMarriageDetails().setDate(LocalDate.of(2009, 1, 1));

@@ -38,8 +38,8 @@ public final class ValidationUtil {
             errorList);
         addToErrorList(checkIfConfidentialAddressNullOrEmpty(caseData.getApplicant1().getContactDetailsConfidential(),
             "Applicant1ContactDetailsConfidential"), errorList);
-        addToErrorList(checkIfYesOrNoIsNullOrEmptyOrNo(caseData.getApplication().getPrayerHasBeenGiven(), "PrayerHasBeenGiven"), errorList);
-        addToErrorList(checkIfYesOrNoIsNullOrEmptyOrNo(caseData.getApplication().getStatementOfTruth(), "StatementOfTruth"), errorList);
+        addToErrorList(checkIfYesOrNoIsNullOrEmptyOrNo(caseData.getApplication().getApplicant1PrayerHasBeenGiven(), "PrayerHasBeenGiven"), errorList);
+        addToErrorList(checkIfYesOrNoIsNullOrEmptyOrNo(caseData.getApplication().getApplicant1StatementOfTruth(), "StatementOfTruth"), errorList);
         addToErrorList(checkIfDateIsAllowed(caseData.getApplication().getMarriageDetails().getDate(), "MarriageDate"), errorList);
         addListToErrorList(caseData.getApplication().getJurisdiction().validate(), errorList);
     }

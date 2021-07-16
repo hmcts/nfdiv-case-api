@@ -178,7 +178,7 @@ public class SolicitorSubmitApplicationTest {
     void shouldReturnErrorIfStatementOfTruthAndSolStatementOfTruthIsSetToNo() {
 
         final CaseData caseData = CaseData.builder().build();
-        caseData.getApplication().setStatementOfTruth(NO);
+        caseData.getApplication().setApplicant1StatementOfTruth(NO);
         caseData.getApplication().setSolSignStatementOfTruth(NO);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -266,7 +266,7 @@ public class SolicitorSubmitApplicationTest {
             .build();
 
         final CaseData caseData = CaseData.builder().build();
-        caseData.getApplication().setStatementOfTruth(YES);
+        caseData.getApplication().setApplicant1StatementOfTruth(YES);
         caseData.getApplication().setSolSignStatementOfTruth(YES);
 
         caseData.getApplicant2().setSolicitor(Solicitor.builder().isDigital(YES).organisationPolicy(organisationPolicy).build());
@@ -293,7 +293,7 @@ public class SolicitorSubmitApplicationTest {
             .payments(singletonList(new ListValue<Payment>(null, null)))
             .build();
 
-        expectedCaseData.getApplication().setStatementOfTruth(YES);
+        expectedCaseData.getApplication().setApplicant1StatementOfTruth(YES);
         expectedCaseData.getApplication().setSolSignStatementOfTruth(YES);
         expectedCaseData.getApplication().setApp2ContactMethodIsDigital(YES);
         expectedCaseData.getApplicant2().setSolicitor(Solicitor.builder().isDigital(YES).organisationPolicy(organisationPolicy).build());
@@ -308,7 +308,7 @@ public class SolicitorSubmitApplicationTest {
     void shouldNotSetApplicant2DigitalDetailsWhenApp2SolicitorIsNotDigital() {
         final long caseId = 1L;
         final CaseData caseData = CaseData.builder().build();
-        caseData.getApplication().setStatementOfTruth(YES);
+        caseData.getApplication().setApplicant1StatementOfTruth(YES);
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplicant1().setSolicitor(Solicitor.builder().isDigital(NO).build());
 
@@ -339,7 +339,7 @@ public class SolicitorSubmitApplicationTest {
     void shouldNotSetApplicant2DigitalDetailsWhenApp2SolicitorIsDigitalAndApp2OrgIsNotSet() {
         final long caseId = 1L;
         final CaseData caseData = CaseData.builder().build();
-        caseData.getApplication().setStatementOfTruth(YES);
+        caseData.getApplication().setApplicant1StatementOfTruth(YES);
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplicant1().setSolicitor(Solicitor.builder().isDigital(YES).build());
 
