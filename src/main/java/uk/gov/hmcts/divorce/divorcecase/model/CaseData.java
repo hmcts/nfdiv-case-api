@@ -97,7 +97,7 @@ public class CaseData {
         label = "Applicant 2 Documents uploaded",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
-        access = {DefaultAccess.class}
+        access = {Applicant2Access.class}
     )
     private List<ListValue<DivorceDocument>> applicant2DocumentsUploaded;
 
