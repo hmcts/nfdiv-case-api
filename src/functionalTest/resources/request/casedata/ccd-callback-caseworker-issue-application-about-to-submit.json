@@ -72,8 +72,8 @@
   "legalProceedings": "Yes",
   "applicant1FinancialOrder": "No",
   "applicant2FinancialOrder": "No",
-  "prayerHasBeenGiven": "Yes",
-  "statementOfTruth": "Yes",
+  "applicant1PrayerHasBeenGiven": "Yes",
+  "applicant1StatementOfTruth": "Yes",
   "solSignStatementOfTruth": "Yes",
   "applicationFeeOrderSummary": {
     "PaymentReference": null,
