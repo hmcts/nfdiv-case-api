@@ -1,0 +1,15 @@
+{
+  "divorceOrDissolution": "divorce",
+  "applicant1FirstName": "John",
+  "applicant1LastName": "Smith",
+  "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+  "applicant2Gender": "female",
+  "generalOrderDate": "2021-01-01",
+  "generalOrderDivorceParties": [
+    "respondent"
+  ],
+  "generalOrderRecitals": "test recitals",
+  "generalOrderJudgeType": "recorder",
+  "generalOrderJudgeName": "some name",
+  "generalOrderDetails": "some details"
+}
