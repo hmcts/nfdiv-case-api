@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
@@ -27,16 +28,12 @@ import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitApplicationService;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 
 import static java.lang.Integer.parseInt;
 import static java.util.Collections.singletonList;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -47,6 +44,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorSubmitApplication.SOLICITOR_SUBMIT;
+import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
+import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_1_SOL_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
@@ -89,7 +88,7 @@ public class SolicitorSubmitApplicationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             solicitorSubmitApplication.aboutToStart(caseDetails);
 
-        assertThat(response.getData().getApplication().getApplicationFeeOrderSummary(), is(orderSummary));
+        assertThat(response.getData().getApplication().getApplicationFeeOrderSummary()).isEqualTo(orderSummary);
         verify(ccdAccessService).addApplicant1SolicitorRole(
             authorization,
             caseId
@@ -130,18 +129,18 @@ public class SolicitorSubmitApplicationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             solicitorSubmitApplication.aboutToSubmit(caseDetails, new CaseDetails<>());
 
-        assertThat(response.getData().getPayments().size(), is(2));
+        assertThat(response.getData().getPayments()).hasSize(2);
     }
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
-
-        final Set<State> stateSet = Set.of(State.class.getEnumConstants());
-        final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = new ConfigBuilderImpl<>(CaseData.class, stateSet);
+        final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         solicitorSubmitApplication.configure(configBuilder);
 
-        assertThat(configBuilder.getEvents().get(0).getId(), is(SOLICITOR_SUBMIT));
+        assertThat(getEventsFrom(configBuilder).values())
+            .extracting(Event::getId)
+            .contains(SOLICITOR_SUBMIT);
     }
 
     @SuppressWarnings("unchecked")
@@ -169,9 +168,9 @@ public class SolicitorSubmitApplicationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitApplication
             .aboutToSubmit(caseDetails, new CaseDetails<>());
 
-        assertThat(response.getData(), is(caseData));
-        assertThat(response.getState(), is(AwaitingPayment));
-        assertThat(response.getErrors(), is(nullValue()));
+        assertThat(response.getData()).isEqualTo(caseData);
+        assertThat(response.getState()).isEqualTo(AwaitingPayment);
+        assertThat(response.getErrors()).isNull();
     }
 
     @Test
@@ -188,9 +187,9 @@ public class SolicitorSubmitApplicationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitApplication
             .aboutToSubmit(caseDetails, beforeCaseDetails);
 
-        assertThat(response.getData(), is(caseData));
-        assertThat(response.getState(), is(Draft));
-        assertThat(response.getErrors(), contains(STATEMENT_OF_TRUTH_ERROR_MESSAGE));
+        assertThat(response.getData()).isEqualTo(caseData);
+        assertThat(response.getState()).isEqualTo(Draft);
+        assertThat(response.getErrors()).contains(STATEMENT_OF_TRUTH_ERROR_MESSAGE);
     }
 
     @Test
@@ -218,9 +217,9 @@ public class SolicitorSubmitApplicationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitApplication
             .aboutToSubmit(caseDetails, beforeCaseDetails);
 
-        assertThat(response.getData(), is(caseData));
-        assertThat(response.getState(), is(Submitted));
-        assertThat(response.getErrors(), is(nullValue()));
+        assertThat(response.getData()).isEqualTo(caseData);
+        assertThat(response.getState()).isEqualTo(Submitted);
+        assertThat(response.getErrors()).isNull();
     }
 
     @Test
@@ -248,9 +247,9 @@ public class SolicitorSubmitApplicationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitApplication
             .aboutToSubmit(caseDetails, beforeCaseDetails);
 
-        assertThat(response.getData(), is(caseData));
-        assertThat(response.getState(), is(Submitted));
-        assertThat(response.getErrors(), is(nullValue()));
+        assertThat(response.getData()).isEqualTo(caseData);
+        assertThat(response.getState()).isEqualTo(Submitted);
+        assertThat(response.getErrors()).isNull();
     }
 
     @Test
@@ -299,9 +298,9 @@ public class SolicitorSubmitApplicationTest {
         expectedCaseData.getApplicant2().setSolicitor(Solicitor.builder().isDigital(YES).organisationPolicy(organisationPolicy).build());
         expectedCaseData.getApplicant2().setSolicitorRepresented(YES);
 
-        assertThat(response.getData(), is(expectedCaseData));
-        assertThat(response.getState(), is(AwaitingPayment));
-        assertThat(response.getErrors(), is(nullValue()));
+        assertThat(response.getData()).isEqualTo(expectedCaseData);
+        assertThat(response.getState()).isEqualTo(AwaitingPayment);
+        assertThat(response.getErrors()).isNull();
     }
 
     @Test
@@ -330,9 +329,9 @@ public class SolicitorSubmitApplicationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitApplication
             .aboutToSubmit(caseDetails, new CaseDetails<>());
 
-        assertThat(response.getData(), is(caseData));
-        assertThat(response.getState(), is(AwaitingPayment));
-        assertThat(response.getErrors(), is(nullValue()));
+        assertThat(response.getData()).isEqualTo(caseData);
+        assertThat(response.getState()).isEqualTo(AwaitingPayment);
+        assertThat(response.getErrors()).isNull();
     }
 
     @Test
@@ -361,9 +360,9 @@ public class SolicitorSubmitApplicationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitApplication
             .aboutToSubmit(caseDetails, new CaseDetails<>());
 
-        assertThat(response.getData(), is(caseData));
-        assertThat(response.getState(), is(AwaitingPayment));
-        assertThat(response.getErrors(), is(nullValue()));
+        assertThat(response.getData()).isEqualTo(caseData);
+        assertThat(response.getState()).isEqualTo(AwaitingPayment);
+        assertThat(response.getErrors()).isNull();
     }
 
     @Test
@@ -398,7 +397,7 @@ public class SolicitorSubmitApplicationTest {
 
         solicitorSubmitApplication.submitted(caseDetails, beforeCaseDetails);
 
-        assertThat(caseDetails.getState(), is(Submitted));
+        assertThat(caseDetails.getState()).isEqualTo(Submitted);
     }
 
     @Test
@@ -433,7 +432,7 @@ public class SolicitorSubmitApplicationTest {
 
         solicitorSubmitApplication.submitted(caseDetails, beforeCaseDetails);
 
-        assertThat(caseDetails.getState(), is(AwaitingPayment));
+        assertThat(caseDetails.getState()).isEqualTo(AwaitingPayment);
     }
 
     @Test
@@ -455,6 +454,6 @@ public class SolicitorSubmitApplicationTest {
 
         solicitorSubmitApplication.submitted(caseDetails, beforeCaseDetails);
 
-        assertThat(caseDetails.getState(), is(AwaitingPayment));
+        assertThat(caseDetails.getState()).isEqualTo(AwaitingPayment);
     }
 }
