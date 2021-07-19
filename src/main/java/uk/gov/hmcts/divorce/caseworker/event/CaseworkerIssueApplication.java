@@ -53,7 +53,6 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
                 Issued)
             .name("Application issued")
             .description("Application issued")
-            .displayOrder(4)
             .showSummary()
             .explicitGrants()
             .aboutToSubmitCallback(this::aboutToSubmit)

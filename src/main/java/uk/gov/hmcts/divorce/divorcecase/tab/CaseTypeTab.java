@@ -19,12 +19,23 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
+        buildApplicationTab(configBuilder);
+        buildAosTab(configBuilder);
+        buildPaymentTab(configBuilder);
+        buildLanguageTab(configBuilder);
+        buildDocumentsTab(configBuilder);
+        buildConfidentialTab(configBuilder);
+        buildMarriageCertificateTab(configBuilder);
+        buildNotesTab(configBuilder);
+    }
+
+    private void buildApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("applicationDetails", "Application")
-            .field("LabelCreatedDate", null, "${[CREATED_DATE]}")
+            .label("LabelCreatedDate", null, "${[CREATED_DATE]}")
             .field("dateSubmitted")
             .field(CaseData::getApplicationType)
             .field(CaseData::getDivorceOrDissolution)
-            .field("LabelApplicant1-Heading", null, "### The applicant")
+            .label("LabelApplicant1-Heading", null, "### The applicant")
             .field("applicant1FirstName")
             .field("applicant1MiddleName")
             .field("applicant1LastName")
@@ -32,7 +43,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1NameDifferentToMarriageCertificate")
             .field("applicant1NameChangedHow", "applicant1NameDifferentToMarriageCertificate=\"Yes\"")
             .field("applicant1NameChangedHowOtherDetails", "applicant1NameChangedHow=\"other\"")
-            .field("LabelApplicant1DetailsAreConfidential-Heading",
+            .label("LabelApplicant1DetailsAreConfidential-Heading",
                 "applicant1ContactDetailsConfidential=\"keep\"",
                 "#### The applicant's contact details are confidential")
             .field("applicant1ContactDetailsConfidential")
@@ -40,7 +51,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1PhoneNumber", "applicant1ContactDetailsConfidential=\"share\"")
             .field("divorceWho")
             .field("applicant1SolicitorRepresented")
-            .field("LabelApplicant1sSolicitor-Heading",
+            .label("LabelApplicant1sSolicitor-Heading",
                 "applicant1SolicitorRepresented=\"Yes\"",
                 "#### The applicant's solicitor")
             .field("applicant1SolicitorName", "applicant1SolicitorRepresented=\"Yes\"")
@@ -48,7 +59,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1SolicitorEmail", "applicant1SolicitorRepresented=\"Yes\"")
             .field("applicant1SolicitorOrganisationPolicy", "applicant1SolicitorRepresented=\"Yes\"")
             .field("applicant1SolicitorReference", "applicant1SolicitorRepresented=\"Yes\"")
-            .field("LabelApplicant2-Heading", null, "### Applicant 2")
+            .label("LabelApplicant2-Heading", null, "### Applicant 2")
             .field("applicant2FirstName")
             .field("applicant2MiddleName")
             .field("applicant2LastName")
@@ -57,7 +68,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2NameChangedHow", "applicant2NameDifferentToMarriageCertificate=\"Yes\"")
             .field("applicant2NameChangedHowOtherDetails", "applicant2NameChangedHow=\"other\"")
             .field("applicant2SolicitorRepresented")
-            .field("LabelApplicant2sSolicitor-Heading",
+            .label("LabelApplicant2sSolicitor-Heading",
                 "applicant2SolicitorRepresented=\"Yes\"",
                 "#### The respondent's solicitor")
             .field("applicant2SolicitorName", "applicant2SolicitorRepresented=\"Yes\"")
@@ -67,7 +78,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2SolicitorReference", "applicant2SolicitorRepresented=\"Yes\"")
             .field("applicant2CorrespondenceAddress")
             .field("jurisdictionLegalConnections")
-            .field("LabelMarriage-Heading", null, "### Marriage and certificate")
+            .label("LabelMarriage-Heading", null, "### Marriage and certificate")
             .field("marriageDate")
             .field("marriageIsSameSexCouple")
             .field("marriageMarriedInUk")
@@ -77,44 +88,57 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("marriageCertifiedTranslation", "marriageCertificateInEnglish=\"No\"")
             .field("marriageApplicant1Name")
             .field("marriageApplicant2Name")
-            .field("LabelClaimCosts-Heading", null, "### Claim costs")
+            .label("LabelClaimCosts-Heading", null, "### Claim costs")
             .field("divorceCostsClaim")
             .field("divorceClaimFrom", "divorceCostsClaim=\"Yes\"")
-            .field("LabelOtherLegalProceedings-Heading", null, "### Other legal proceedings")
+            .label("LabelOtherLegalProceedings-Heading", null, "### Other legal proceedings")
             .field("legalProceedings")
             .field("legalProceedingsRelated", "legalProceedings=\"Yes\"")
             .field("legalProceedingsDetails", "legalProceedings=\"Yes\"")
-            .field("LabelFinancialOrder-Heading", null, "### Financial order")
+            .label("LabelFinancialOrder-Heading", null, "### Financial order")
             .field("applicant1FinancialOrder")
             .field("applicant1FinancialOrderFor", "applicant1FinancialOrder=\"Yes\"");
+    }
 
-        buildAosTab(configBuilder);
+    //TODO: Need to revisit this tab once the field stated in the ticket NFDIV-595 are available
+    private void buildAosTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("aosDetails", "AoS")
+            .forRoles(CASEWORKER_COURTADMIN_RDU, CASEWORKER_COURTADMIN_CTSC, CASEWORKER_LEGAL_ADVISOR,
+                CASEWORKER_SUPERUSER, SOLICITOR)
+            .showCondition("applicationType=\"soleApplication\"")
+            .label("LabelAosTabOnlineResponse-Heading", null, "## This is an online AoS response")
+            .field("confirmReadPetition")
+            .field("jurisdictionAgree")
+            .field("jurisdictionDisagreeReason")
+            .field("legalProceedingsExist")
+            .field("legalProceedingsDescription")
+            .field("applicant2UserId")
+            .field("dueDate")
+            .label("LabelAosTabOnlineResponse-RespondentRepresent", null, "### Respondent")
+            .label("LabelAosTabOnlineResponse-Respondent", null, "Is represented by a solicitor? ${applicant2SolicitorRepresented}")
+            .field("digitalNoticeOfProceedings")
+            .field("noticeOfProceedingsEmail")
+            .field("noticeOfProceedingsSolicitorFirm");
+    }
 
+    private void buildPaymentTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("paymentDetailsCourtAdmin", "Payment")
             .field("helpWithFeesReferenceNumber");
+    }
 
+    private void buildLanguageTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("languageDetails", "Language")
-            .field("applicant1LanguagePreferenceWelsh", null, "The applicant's language preference")
-            .field("applicant2LanguagePreferenceWelsh", null, "The respondent's language preference");
+            .label("LabelLanguageDetails-Applicant", null, "### The applicant")
+            .field("applicant1LanguagePreferenceWelsh")
+            .label("LabelLanguageDetails-Respondent", null, "### The respondent")
+            .field("applicant2LanguagePreferenceWelsh");
+    }
 
+    private void buildDocumentsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("documents", "Documents")
             .field(CaseData::getDocumentsGenerated)
-            .field(CaseData::getDocumentsUploaded);
-
-        buildConfidentialTab(configBuilder);
-
-        configBuilder.tab("marriageDetails", "Marriage Certificate")
-            .field("marriageApplicant1Name")
-            .field("marriageApplicant2Name")
-            .field("marriageMarriedInUk")
-            .field("marriagePlaceOfMarriage", "marriageMarriedInUk=\"No\"")
-            .field("marriageCountryOfMarriage", "marriageMarriedInUk=\"No\"")
-            .field("marriageCertifyMarriageCertificateIsCorrect")
-            .field("marriageMarriageCertificateIsIncorrectDetails", "marriageCertifyMarriageCertificateIsCorrect=\"No\"")
-            .field("marriageIssueApplicationWithoutMarriageCertificate", "marriageCertifyMarriageCertificateIsCorrect=\"No\"");
-
-        configBuilder.tab("notes", "Notes")
-            .field(CaseData::getNotes);
+            .field(CaseData::getDocumentsUploaded)
+            .field(CaseData::getGeneralOrders);
     }
 
     private void buildConfidentialTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -127,23 +151,20 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1HomeAddress");
     }
 
-    //TODO: Need to revisit this tab once the field stated in the ticket NFDIV-595 are available
-    private void buildAosTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        configBuilder.tab("aosDetails", "AoS")
-            .forRoles(CASEWORKER_COURTADMIN_RDU, CASEWORKER_COURTADMIN_CTSC, CASEWORKER_LEGAL_ADVISOR,
-                CASEWORKER_SUPERUSER, SOLICITOR)
-            .showCondition("applicationType=\"soleApplication\"")
-            .field("LabelAosTabOnlineResponse-Heading", null,"## This is an online AoS response")
-            .field("confirmReadPetition")
-            .field("jurisdictionAgree")
-            .field("jurisdictionDisagreeReason")
-            .field("legalProceedingsExist")
-            .field("legalProceedingsDescription")
-            .field("applicant2UserId")
-            .field("dueDate")
-            .field("applicant2SolicitorRepresented", null, "Is respondent represented by a solicitor?")
-            .field("digitalNoticeOfProceedings")
-            .field("noticeOfProceedingsEmail")
-            .field("noticeOfProceedingsSolicitorFirm");
+    private void buildMarriageCertificateTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("marriageDetails", "Marriage Certificate")
+            .field("marriageApplicant1Name")
+            .field("marriageApplicant2Name")
+            .field("marriageMarriedInUk")
+            .field("marriagePlaceOfMarriage", "marriageMarriedInUk=\"No\"")
+            .field("marriageCountryOfMarriage", "marriageMarriedInUk=\"No\"")
+            .field("marriageCertifyMarriageCertificateIsCorrect")
+            .field("marriageMarriageCertificateIsIncorrectDetails", "marriageCertifyMarriageCertificateIsCorrect=\"No\"")
+            .field("marriageIssueApplicationWithoutMarriageCertificate", "marriageCertifyMarriageCertificateIsCorrect=\"No\"");
+    }
+
+    private void buildNotesTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("notes", "Notes")
+            .field(CaseData::getNotes);
     }
 }
