@@ -8,6 +8,7 @@ public final class DocmosisTemplateConstants {
     public static final String FINANCIAL_ORDER_OR_DISSOLUTION = "financialOrderOrDissolution";
     public static final String DIVORCE_OR_DISSOLUTION_COST = "divorceOrDissolutionCost";
     public static final String CCD_CASE_REFERENCE = "ccdCaseReference";
+    public static final String CASE_REFERENCE = "caseReference";
     public static final String ISSUE_DATE = "issueDate";
     public static final String APPLICANT_1_FIRST_NAME = "applicant1FirstName";
     public static final String APPLICANT_1_MIDDLE_NAME = "applicant1MiddleName";
@@ -52,6 +53,13 @@ public final class DocmosisTemplateConstants {
     public static final String HAS_FINANCIAL_ORDER_APPLICANT_1 = "hasFinancialOrderApplicant1";
     public static final String HAS_FINANCIAL_ORDER_APPLICANT_2 = "hasFinancialOrderApplicant2";
     public static final String IS_SOLE = "isSole";
+    public static final String GENERAL_ORDER_DATE = "generalOrderDate";
+    public static final String GENERAL_ORDER_DETAILS = "generalOrderDetails";
+    public static final String GENERAL_ORDER_RECITALS = "generalOrderRecitals";
+    public static final String JUDGE_NAME = "judgeName";
+    public static final String JUDGE_TYPE = "judgeType";
+    public static final String PETITIONER_FULL_NAME = "petitionerFullName";
+    public static final String RESPONDENT_FULL_NAME = "respondentFullName";
 
     private DocmosisTemplateConstants() {
     }

@@ -10,10 +10,9 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import java.util.EnumSet;
-import java.util.Set;
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createBulkActionConfigBuilder;
+import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
 public class ScheduledForCreateTest {
@@ -23,13 +22,11 @@ public class ScheduledForCreateTest {
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
-        final Set<BulkActionState> stateSet = EnumSet.allOf(BulkActionState.class);
-        final ConfigBuilderImpl<BulkActionCaseData, BulkActionState, UserRole> configBuilder =
-            new ConfigBuilderImpl<>(BulkActionCaseData.class, stateSet);
+        final ConfigBuilderImpl<BulkActionCaseData, BulkActionState, UserRole> configBuilder = createBulkActionConfigBuilder();
 
         scheduledForCreate.configure(configBuilder);
 
-        assertThat(configBuilder.getEvents())
+        assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(ScheduledForCreate.SCHEDULE_CREATE);
     }

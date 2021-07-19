@@ -28,7 +28,6 @@ public class CaseworkerRefund implements CCDConfig<CaseData, State, UserRole> {
             .forStateTransition(Submitted,Submitted)
             .name("Refund")
             .description("Refund")
-            .displayOrder(5)
             .showSummary()
             .explicitGrants()
             .grant(CREATE_READ_UPDATE,

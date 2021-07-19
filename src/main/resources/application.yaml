@@ -98,11 +98,13 @@ docmosis:
       DIVORCE_MINI_APPLICATION: Divorce_CP_Mini_Application_Sole_Joint.docx
       DIVORCE_MINI_DRAFT_APPLICATION: Divorce_CP_Mini_Draft_Application_Template.docx
       RESP_SOLICITOR_AOS_INVITATION: Divorce_CP_Dummy_Template.docx #TODO: Set correct template when available
+      DIVORCE_GENERAL_ORDER: Divorce_General_Order_Eng.docx #TODO: update template once available
     welsh:
       #TODO: Set correct DIVORCE_MINI_APPLICATION template when available
       DIVORCE_MINI_APPLICATION: FL-DIV-GNO-WEL-00256.docx
       DIVORCE_MINI_DRAFT_APPLICATION: FL-DIV-GNO-WEL-00256.docx
       RESP_SOLICITOR_AOS_INVITATION: Divorce_CP_Dummy_Template.docx #TODO: Set correct template when available
+      DIVORCE_GENERAL_ORDER: Divorce_General_Order_Eng.docx #TODO: update template once available
 
 doc_assembly:
   url: ${DOC_ASSEMBLY_URL:http://dg-docassembly-aat.service.core-compute-aat.internal}
@@ -126,3 +128,14 @@ aos_pack:
 
 case_progression:
   holding_period_in_weeks: ${CASE_HOLDING_WEEKS:20}
+
+court:
+  locations:
+    serviceCentre:
+      serviceCentreName: 'Courts and Tribunals Service Centre'
+      centreName: 'HMCTS Digital Divorce'
+      town: 'Harlow'
+      poBox: 'PO Box 12706'
+      postCode: 'CM20 9QT'
+      email: 'divorcecase@justice.gov.uk'
+      phoneNumber: '0300 303 0642'

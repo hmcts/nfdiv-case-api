@@ -30,7 +30,6 @@ public class SolicitorSubmitAos implements CCDConfig<CaseData, State, UserRole> 
             .forStateTransition(AosDrafted, Holding)
             .name("Submit AoS")
             .description("Submit AoS")
-            .displayOrder(3)
             .showSummary()
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
