@@ -122,8 +122,6 @@ public class Application {
     )
     private YesOrNo solStatementOfReconciliationDiscussed;
 
-    // TODO - move prayer and SOT into applicant model?
-
     @CCD(
         label = "The applicant has given their \"prayer\".",
         hint = "\"The prayer\" means they confirm they wish to dissolve the union, pay any fees (if applicable),"
