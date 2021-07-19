@@ -50,6 +50,7 @@ public class CaseworkerAmendCase implements CCDConfig<CaseData, State, UserRole>
                 ConditionalOrderRefused, AwaitingPronouncement, ConditionalOrderPronounced)
             .name("Update Case")
             .description("Update Case")
+            .showSummary()
             .explicitGrants()
             .grant(CREATE_READ_UPDATE,
                 CASEWORKER_COURTADMIN_CTSC,

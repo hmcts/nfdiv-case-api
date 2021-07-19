@@ -19,7 +19,7 @@ public class AmendCase implements CcdPageConfiguration {
                     .optional(MarriageDetails::getDate)
                 .done()
             .done()
-            .readonly(CaseData::getApplicationType,
+            .readonlyNoSummary(CaseData::getApplicationType,
                 "applicant1FirstName=\"NeverShow\"")
             .complex(CaseData::getApplicant1)
                 .optional(Applicant::getFirstName,
