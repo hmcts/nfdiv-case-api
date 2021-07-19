@@ -27,7 +27,6 @@ public class CaseworkerAddNoteTest extends FunctionalTestSuite {
         final Map<String, Object> caseData = caseData(REQUEST);
 
         final Response response = triggerCallback(caseData, CASEWORKER_ADD_NOTE, ABOUT_TO_SUBMIT_URL);
-
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
         // notes.date value is compared using ${json-unit.any-string}
