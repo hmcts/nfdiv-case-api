@@ -1,0 +1,34 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "applicant1FirstName": "John",
+    "applicant1LastName": "Smith",
+    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+    "applicant2Gender":"female",
+    "generalOrders": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "generalOrderDocument": {
+            "documentDateAdded": null,
+            "documentComment": null,
+            "documentFileName": "generalOrder2021-07-19 11:00:50.pdf",
+            "documentType": "generalOrder",
+            "documentEmailContent": null,
+            "documentLink": {
+              "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/999229d5-25d5-4c18-876e-f1ee5d818077",
+              "document_filename": "generalOrder2021-07-19 11:00:50.pdf",
+              "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/999229d5-25d5-4c18-876e-f1ee5d818077/binary"
+            }
+          },
+          "generalOrderDivorceParties": [
+            "respondent"
+          ]
+        }
+      }
+    ]
+  },
+  "errors": null,
+  "warnings": null,
+  "state": null
+}

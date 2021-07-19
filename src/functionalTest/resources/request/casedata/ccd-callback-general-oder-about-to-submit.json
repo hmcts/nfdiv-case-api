@@ -1,0 +1,20 @@
+{
+  "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+  "applicant1FirstName": "John",
+  "applicant1LastName": "Smith",
+  "applicant2Gender": "female",
+  "divorceOrDissolution": "divorce",
+  "generalOrderDate": "2021-01-01",
+  "generalOrderDetails": "some details",
+  "generalOrderDivorceParties": [
+    "respondent"
+  ],
+  "generalOrderDraft": {
+    "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/999229d5-25d5-4c18-876e-f1ee5d818077/binary",
+    "document_filename": "generalOrder2021-07-19 11:00:50.pdf",
+    "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/999229d5-25d5-4c18-876e-f1ee5d818077"
+  },
+  "generalOrderJudgeName": "some name",
+  "generalOrderJudgeType": "recorder",
+  "generalOrderRecitals": "test recitals"
+}
