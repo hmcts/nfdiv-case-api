@@ -114,7 +114,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("legalProceedingsDescription")
             .field("applicant2UserId")
             .field("dueDate")
-            .field("applicant2SolicitorRepresented")
+            .label("LabelAosTabOnlineResponse-RespondentRepresent", null, "### Respondent")
+            .label("LabelAosTabOnlineResponse-Respondent", null, "Is represented by a solicitor? ${applicant2SolicitorRepresented}")
             .field("digitalNoticeOfProceedings")
             .field("noticeOfProceedingsEmail")
             .field("noticeOfProceedingsSolicitorFirm");
