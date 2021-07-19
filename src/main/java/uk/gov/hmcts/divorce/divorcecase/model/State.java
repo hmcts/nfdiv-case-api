@@ -47,19 +47,6 @@ public enum State {
     AosOverdue("AosOverdue"),
 
     @CCD(
-        name = "Application awaiting payment",
-        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
-    )
-    AwaitingPayment("AwaitingPayment") {
-        @Override
-        public List<String> validate(CaseData caseData) {
-            List<String> errors = new ArrayList<>();
-            validateBasicCase(caseData, errors);
-            return errors;
-        }
-    },
-
-    @CCD(
         name = "Applicant 2 approved",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
@@ -69,6 +56,19 @@ public enum State {
         public List<String> validate(CaseData caseData) {
             List<String> errors = new ArrayList<>();
             validateApplicant2BasicCase(caseData, errors);
+            return errors;
+        }
+    },
+
+    @CCD(
+        name = "Application awaiting payment",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
+    )
+    AwaitingPayment("AwaitingPayment") {
+        @Override
+        public List<String> validate(CaseData caseData) {
+            List<String> errors = new ArrayList<>();
+            validateBasicCase(caseData, errors);
             return errors;
         }
     },

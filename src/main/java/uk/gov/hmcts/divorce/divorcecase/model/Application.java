@@ -308,7 +308,7 @@ public class Application {
 
     @JsonIgnore
     public boolean applicant1HasStatementOfTruth() {
-        return YES.equals(applicant1HasStatementOfTruth());
+        return YES.equals(applicant1StatementOfTruth);
     }
 
     @JsonIgnore

@@ -90,7 +90,7 @@ class CitizenSubmitApplicationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getErrors().size()).isEqualTo(1);
-        assertThat(response.getErrors().get(0)).isEqualTo("PrayerHasBeenGiven must be YES");
+        assertThat(response.getErrors().get(0)).isEqualTo("Applicant1PrayerHasBeenGiven must be YES");
     }
 
     @Test

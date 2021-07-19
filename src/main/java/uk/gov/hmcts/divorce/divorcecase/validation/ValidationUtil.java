@@ -41,7 +41,8 @@ public final class ValidationUtil {
         addToErrorList(checkIfYesOrNoIsNullOrEmptyOrNo(
             caseData.getApplication().getApplicant1PrayerHasBeenGiven(), "Applicant1PrayerHasBeenGiven"), errorList);
         addToErrorList(
-            checkIfYesOrNoIsNullOrEmptyOrNo(caseData.getApplication().getApplicant1StatementOfTruth(), "Applicant1StatementOfTruth"), errorList);
+            checkIfYesOrNoIsNullOrEmptyOrNo(caseData.getApplication().getApplicant1StatementOfTruth(), "Applicant1StatementOfTruth"),
+            errorList);
         addToErrorList(checkIfDateIsAllowed(caseData.getApplication().getMarriageDetails().getDate(), "MarriageDate"), errorList);
         addListToErrorList(caseData.getApplication().getJurisdiction().validate(), errorList);
     }
