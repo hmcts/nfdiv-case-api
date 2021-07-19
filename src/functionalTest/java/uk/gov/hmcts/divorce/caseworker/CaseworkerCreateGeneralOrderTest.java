@@ -47,7 +47,6 @@ public class CaseworkerCreateGeneralOrderTest extends FunctionalTestSuite {
 
         assertThat(aboutToSubmitResponse.getStatusCode()).isEqualTo(OK.value());
 
-        System.out.println(aboutToSubmitResponse.asString());
         assertThatJson(aboutToSubmitResponse.asString())
             .when(TREATING_NULL_AS_ABSENT)
             .isEqualTo(json(expectedResponse(
