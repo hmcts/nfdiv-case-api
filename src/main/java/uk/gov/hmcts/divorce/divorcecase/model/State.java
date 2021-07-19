@@ -245,7 +245,7 @@ public enum State {
             if (caseData.getApplication().hasAwaitingDocuments()) {
                 errors.add("Awaiting documents");
             }
-            if (!caseData.getApplication().hasStatementOfTruth() && !caseData.getApplication().hasSolSignStatementOfTruth()) {
+            if (!caseData.getApplication().applicant1HasStatementOfTruth() && !caseData.getApplication().hasSolSignStatementOfTruth()) {
                 errors.add("Statement of truth must be accepted by the person making the application");
             }
 
