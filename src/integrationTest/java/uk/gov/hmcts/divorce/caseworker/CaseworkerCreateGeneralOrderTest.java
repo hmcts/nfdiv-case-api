@@ -80,8 +80,6 @@ public class CaseworkerCreateGeneralOrderTest {
 
     @BeforeEach
     void setClock() {
-        DocAssemblyWireMock.start();
-
         LocalDateTime dateTime = LocalDateTime.of(2021, Month.JUNE, 15, 13, 39);
         Instant instant = dateTime.atZone(ZoneId.of("Europe/London")).toInstant();
         when(clock.instant()).thenReturn(instant);
@@ -116,7 +114,7 @@ public class CaseworkerCreateGeneralOrderTest {
     }
 
     @Test
-    void shouldReturn401UnauthorizedWhenWhenMidEventCallbackIsInvokedAndAuthorizationFailsForDocAssembly() throws Exception {
+    void shouldReturn401UnauthorizedWhenMidEventCallbackIsInvokedAndAuthorizationFailsForDocAssembly() throws Exception {
         final CaseData caseData = caseData();
         caseData.setGeneralOrder(getGeneralOrder());
 
