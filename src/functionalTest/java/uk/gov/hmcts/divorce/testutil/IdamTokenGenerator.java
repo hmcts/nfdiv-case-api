@@ -21,7 +21,7 @@ public class IdamTokenGenerator {
     private IdamClient idamClient;
 
     public String generateIdamTokenForSolicitor() {
-        return idamClient.getAccessToken("TEST_SOLICITOR@mailinator.com", "genericPassword123");
+        return idamClient.getAccessToken(solicitorUsername, solicitorPassword);
     }
 
     public UserDetails getUserDetailsFor(final String token) {
