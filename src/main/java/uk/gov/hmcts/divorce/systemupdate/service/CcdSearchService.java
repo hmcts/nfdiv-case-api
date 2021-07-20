@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.caseworker.service;
+package uk.gov.hmcts.divorce.systemupdate.service;
 
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
