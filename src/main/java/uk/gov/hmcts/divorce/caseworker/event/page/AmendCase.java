@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.JOINT_APPLICATION_CONDITION;
 
 public class AmendCase implements CcdPageConfiguration {
+    private static final String NO_DEFAULT_VALUE = null;
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
@@ -23,55 +24,48 @@ public class AmendCase implements CcdPageConfiguration {
                 "applicant1FirstName=\"NeverShow\"")
             .complex(CaseData::getApplicant1)
                 .optional(Applicant::getFirstName,
-                    JOINT_APPLICATION_CONDITION,
-                    null)
+                    JOINT_APPLICATION_CONDITION)
                 .optional(Applicant::getMiddleName,
-                    JOINT_APPLICATION_CONDITION,
-                    null)
+                    JOINT_APPLICATION_CONDITION)
                 .optional(Applicant::getLastName,
-                    JOINT_APPLICATION_CONDITION,
-                    null)
+                    JOINT_APPLICATION_CONDITION)
                 .optional(Applicant::getHomeAddress,
-                    JOINT_APPLICATION_CONDITION,
-                    null)
+                    JOINT_APPLICATION_CONDITION)
                 .optional(Applicant::getCorrespondenceAddress,
-                    JOINT_APPLICATION_CONDITION,
-                    null)
+                    JOINT_APPLICATION_CONDITION)
                 .optional(Applicant::getPhoneNumber,
-                    JOINT_APPLICATION_CONDITION,
-                    null)
+                    JOINT_APPLICATION_CONDITION)
                 .optional(Applicant::getEmail,
-                    JOINT_APPLICATION_CONDITION,
-                    null)
+                    JOINT_APPLICATION_CONDITION)
             .done()
             .complex(CaseData::getApplicant2)
                 .optional(Applicant::getFirstName,
                     JOINT_APPLICATION_CONDITION,
-                    null,
+                    NO_DEFAULT_VALUE,
                     "Respondent's first name")
                 .optional(Applicant::getMiddleName,
                     JOINT_APPLICATION_CONDITION,
-                null,
+                NO_DEFAULT_VALUE,
                 "Respondent's middle name(s)")
                 .optional(Applicant::getLastName,
                     JOINT_APPLICATION_CONDITION,
-                    null,
+                    NO_DEFAULT_VALUE,
                     "Respondent's last name")
                 .optional(Applicant::getHomeAddress,
                     JOINT_APPLICATION_CONDITION,
-                    null,
+                    NO_DEFAULT_VALUE,
                     "Respondent's home address")
                 .optional(Applicant::getCorrespondenceAddress,
                     JOINT_APPLICATION_CONDITION,
-                    null,
+                    NO_DEFAULT_VALUE,
                     "Respondent's service address")
                 .optional(Applicant::getEmail,
                     JOINT_APPLICATION_CONDITION,
-                    null,
+                    NO_DEFAULT_VALUE,
                     "Respondent's email address")
                 .optional(Applicant::getPhoneNumber,
                     JOINT_APPLICATION_CONDITION,
-                    null,
+                    NO_DEFAULT_VALUE,
                     "Respondent's phone number")
             .done()
             .complex(CaseData::getApplication)
