@@ -9,7 +9,7 @@ import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueAos.CASEWORKER_ISSUE_AOS;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemProgressHeldCase.SYSTEM_PROGRESS_HELD_CASE;
 
 @ExtendWith(MockitoExtension.class)
 class CcdCaseDataContentProviderTest {
@@ -39,12 +39,12 @@ class CcdCaseDataContentProviderTest {
                 c -> c.getEvent().getId(),
                 c -> c.getEvent().getSummary(),
                 c -> c.getEvent().getDescription())
-            .contains(START_EVENT_TOKEN, data, CASEWORKER_ISSUE_AOS, SUMMARY, DESCRIPTION);
+            .contains(START_EVENT_TOKEN, data, SYSTEM_PROGRESS_HELD_CASE, SUMMARY, DESCRIPTION);
     }
 
     private StartEventResponse getStartEventResponse() {
         return StartEventResponse.builder()
-            .eventId(CASEWORKER_ISSUE_AOS)
+            .eventId(SYSTEM_PROGRESS_HELD_CASE)
             .token(START_EVENT_TOKEN)
             .build();
     }

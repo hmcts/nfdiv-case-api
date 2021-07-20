@@ -24,9 +24,9 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueAos.CASEWORKER_ISSUE_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemProgressHeldCase.SYSTEM_PROGRESS_HELD_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
@@ -74,7 +74,7 @@ class CcdUpdateServiceTest {
                 JURISDICTION,
                 CASE_TYPE,
                 TEST_CASE_ID.toString(),
-                CASEWORKER_ISSUE_AOS))
+                SYSTEM_PROGRESS_HELD_CASE))
             .thenReturn(startEventResponse);
 
         when(ccdCaseDataContentProvider
@@ -85,7 +85,7 @@ class CcdUpdateServiceTest {
                 caseData))
             .thenReturn(caseDataContent);
 
-        ccdUpdateService.submitEvent(caseDetails, CASEWORKER_ISSUE_AOS);
+        ccdUpdateService.submitEvent(caseDetails, SYSTEM_PROGRESS_HELD_CASE);
 
         verify(coreCaseDataApi).submitEventForCaseWorker(
             CASEWORKER_AUTH_TOKEN,
@@ -117,7 +117,7 @@ class CcdUpdateServiceTest {
                 JURISDICTION,
                 CASE_TYPE,
                 TEST_CASE_ID.toString(),
-                CASEWORKER_ISSUE_AOS))
+                SYSTEM_PROGRESS_HELD_CASE))
             .thenReturn(startEventResponse);
 
         doThrow(feignException(422, "A reason")).when(ccdCaseDataContentProvider)
@@ -129,10 +129,10 @@ class CcdUpdateServiceTest {
 
         final CcdManagementException exception = assertThrows(
             CcdManagementException.class,
-            () -> ccdUpdateService.submitEvent(caseDetails, CASEWORKER_ISSUE_AOS));
+            () -> ccdUpdateService.submitEvent(caseDetails, SYSTEM_PROGRESS_HELD_CASE));
 
         assertThat(exception.getMessage())
-            .contains(format("Submit Event Failed for Case ID: %s, Event ID: %s", TEST_CASE_ID, CASEWORKER_ISSUE_AOS));
+            .contains(format("Submit Event Failed for Case ID: %s, Event ID: %s", TEST_CASE_ID, SYSTEM_PROGRESS_HELD_CASE));
     }
 
     @Test
@@ -154,7 +154,7 @@ class CcdUpdateServiceTest {
                 JURISDICTION,
                 CASE_TYPE,
                 TEST_CASE_ID.toString(),
-                CASEWORKER_ISSUE_AOS))
+                SYSTEM_PROGRESS_HELD_CASE))
             .thenReturn(startEventResponse);
 
         doThrow(feignException(409, "A reason")).when(ccdCaseDataContentProvider)
@@ -166,10 +166,10 @@ class CcdUpdateServiceTest {
 
         final CcdConflictException exception = assertThrows(
             CcdConflictException.class,
-            () -> ccdUpdateService.submitEvent(caseDetails, CASEWORKER_ISSUE_AOS));
+            () -> ccdUpdateService.submitEvent(caseDetails, SYSTEM_PROGRESS_HELD_CASE));
 
         assertThat(exception.getMessage())
-            .contains(format("Submit Event Failed for Case ID: %s, Event ID: %s", TEST_CASE_ID, CASEWORKER_ISSUE_AOS));
+            .contains(format("Submit Event Failed for Case ID: %s, Event ID: %s", TEST_CASE_ID, SYSTEM_PROGRESS_HELD_CASE));
     }
 
     private CaseDetails getCaseDetails(final Map<String, Object> caseData) {
@@ -181,7 +181,7 @@ class CcdUpdateServiceTest {
 
     private StartEventResponse getStartEventResponse() {
         return StartEventResponse.builder()
-            .eventId(CASEWORKER_ISSUE_AOS)
+            .eventId(SYSTEM_PROGRESS_HELD_CASE)
             .token("startEventToken")
             .build();
     }

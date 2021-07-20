@@ -21,8 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.util.CollectionUtils.isEmpty;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Issued;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
@@ -50,7 +50,7 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
         new PageBuilder(configBuilder
             .event(CASEWORKER_ISSUE_APPLICATION)
             .forStateTransition(EnumSet.of(Submitted, AwaitingDocuments),
-                Issued)
+                AwaitingAos)
             .name("Application issued")
             .description("Application issued")
             .showSummary()
@@ -81,7 +81,7 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
 
         log.info("Caseworker issue application about to submit callback invoked");
 
-        final List<String> caseValidationErrors = Issued.validate(details.getData());
+        final List<String> caseValidationErrors = AwaitingAos.validate(details.getData());
 
         if (!isEmpty(caseValidationErrors)) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
