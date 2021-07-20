@@ -21,7 +21,7 @@ plugins {
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'org.springframework.boot' version '2.5.2'
   id 'com.github.ben-manes.versions' version '0.38.0'
-  id 'hmcts.ccd.sdk' version '0.23.0'
+  id 'hmcts.ccd.sdk' version '0.23.2'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -48,14 +48,6 @@ sourceSets {
       compileClasspath += main.output
       runtimeClasspath += main.output
       srcDir file('src/integrationTest/java')
-    }
-  }
-
-  smokeTest {
-    java {
-      compileClasspath += main.output
-      runtimeClasspath += main.output
-      srcDir file('src/smokeTest/java')
     }
   }
 }
@@ -101,8 +93,9 @@ task integration(type: Test) {
 
 task smoke(type: Test) {
   description = "Runs Smoke Tests"
-  testClassesDirs = sourceSets.smokeTest.output.classesDirs
-  classpath = sourceSets.smokeTest.runtimeClasspath
+  setTestClassesDirs(sourceSets.functionalTest.output.classesDirs)
+  setClasspath(sourceSets.functionalTest.runtimeClasspath)
+  include "uk/gov/hmcts/divorce/smoke/**"
 }
 
 task highLevelDataSetup(type: JavaExec) {
@@ -316,8 +309,6 @@ dependencies {
   functionalTestImplementation sourceSets.test.runtimeClasspath
   functionalTestImplementation group: 'uk.gov.hmcts.reform', name: 'document-management-client', version: versions.docManagementClient
   functionalTestImplementation group: 'uk.gov.hmcts.reform', name: 'service-auth-provider-client', version: versions.s2sClient
-
-  smokeTestImplementation sourceSets.main.runtimeClasspath
 }
 
 mainClassName = 'uk.gov.hmcts.divorce.CaseApiApplication'

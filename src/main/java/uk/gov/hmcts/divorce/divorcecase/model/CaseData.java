@@ -87,7 +87,6 @@ public class CaseData {
 
     @JsonUnwrapped
     @Builder.Default
-    @CCD(access = {CaseworkerAccessBetaOnlyAccess.class})
     private GeneralOrder generalOrder = new GeneralOrder();
 
 
