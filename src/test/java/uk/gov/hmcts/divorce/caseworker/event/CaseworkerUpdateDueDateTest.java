@@ -19,7 +19,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 class CaseworkerUpdateDueDateTest {
 
     @InjectMocks
-    private CaseworkerAddNote caseworkerUpdateDueDate;
+    private CaseworkerUpdateDueDate caseworkerUpdateDueDate;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() throws Exception {
