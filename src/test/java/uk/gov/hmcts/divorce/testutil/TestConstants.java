@@ -10,6 +10,7 @@ public final class TestConstants {
 
     public static final String APPLICANT_2_FIRST_NAME = "applicant_2_first_name";
     public static final String APPLICANT_2_MIDDLE_NAME = "applicant_2middle_name";
+    public static final String APPLICANT_2_LAST_NAME = "applicant_2last_name";
 
     public static final String ABOUT_TO_START_URL = "/callbacks/about-to-start";
     public static final String ABOUT_TO_SUBMIT_URL = "/callbacks/about-to-submit";

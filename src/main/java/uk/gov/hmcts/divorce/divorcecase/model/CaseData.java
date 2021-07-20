@@ -89,6 +89,9 @@ public class CaseData {
     @Builder.Default
     private GeneralOrder generalOrder = new GeneralOrder();
 
+    @JsonUnwrapped
+    @Builder.Default
+    private GeneralEmail generalEmail = new GeneralEmail();
 
     @CCD(
         label = "Applicant 1 Documents uploaded",
