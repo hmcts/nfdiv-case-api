@@ -28,7 +28,7 @@ public class OtherLegalProceedings implements CcdPageConfiguration {
                 JOINT_APPLICATION_CONDITION)
             .complex(CaseData::getApplication)
                 .mandatory(Application::getApplicant1LegalProceedings)
-                .mandatory(Application::getApplicant1LegalProceedingsDetails, "legalProceedings=\"Yes\"")
+                .mandatory(Application::getApplicant1LegalProceedingsDetails, "applicant1LegalProceedings=\"Yes\"")
             .done();
     }
 }
