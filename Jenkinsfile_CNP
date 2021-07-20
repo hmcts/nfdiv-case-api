@@ -61,11 +61,89 @@ withPipeline(type, product, component) {
     }
 
     after('test') {
-        builder.gradle('integration')
-        builder.gradle('jacocoTestReport')
+      builder.gradle('integration')
+      builder.gradle('jacocoTestReport')
+
+      publishHTML target: [
+        allowMissing         : true,
+        alwaysLinkToLastBuild: true,
+        keepAll              : true,
+        reportDir            : "build/reports/checkstyle",
+        reportFiles          : "main.html",
+        reportName           : "Checkstyle Main Report"
+      ]
+
+      publishHTML target: [
+        allowMissing         : true,
+        alwaysLinkToLastBuild: true,
+        keepAll              : true,
+        reportDir            : "build/reports/checkstyle",
+        reportFiles          : "test.html",
+        reportName           : "Checkstyle Test Report"
+      ]
+
+      publishHTML target: [
+        allowMissing         : true,
+        alwaysLinkToLastBuild: true,
+        keepAll              : true,
+        reportDir            : "build/reports/checkstyle",
+        reportFiles          : "functionalTest.html",
+        reportName           : "Checkstyle Functional Test Report"
+      ]
+
+      publishHTML target: [
+        allowMissing         : true,
+        alwaysLinkToLastBuild: true,
+        keepAll              : true,
+        reportDir            : "build/reports/checkstyle",
+        reportFiles          : "integrationTest.html",
+        reportName           : "Checkstyle Integration Test Report"
+      ]
+
+      publishHTML target: [
+        allowMissing         : true,
+        alwaysLinkToLastBuild: true,
+        keepAll              : true,
+        reportDir            : "build/reports/tests/test",
+        reportFiles          : "index.html",
+        reportName           : "Unit Tests Report"
+      ]
     }
 
-    after('checkout'){
+    after('functionalTest') {
+      publishHTML target: [
+        allowMissing         : true,
+        alwaysLinkToLastBuild: true,
+        keepAll              : true,
+        reportDir            : "build/reports/tests/functional",
+        reportFiles          : "index.html",
+        reportName           : "Functional Tests Report"
+      ]
+    }
+
+    after('smoketest:preview') {
+      publishHTML target: [
+        allowMissing         : true,
+        alwaysLinkToLastBuild: true,
+        keepAll              : true,
+        reportDir            : "build/reports/tests/smoke",
+        reportFiles          : "index.html",
+        reportName           : "Smoke Test Report"
+      ]
+    }
+
+    after('smoketest:aat') {
+      publishHTML target: [
+        allowMissing         : true,
+        alwaysLinkToLastBuild: true,
+        keepAll              : true,
+        reportDir            : "build/reports/tests/smoke",
+        reportFiles          : "index.html",
+        reportName           : "Smoke Test Report"
+      ]
+    }
+
+    after('checkout') {
       builder.gradle('generateCCDConfig')
       generateDefinitions()
     }
@@ -88,7 +166,7 @@ withPipeline(type, product, component) {
         setCommonEnvVariables()
     }
 
-    onDemo{
+    onDemo {
       env.CASE_API_URL = "http://nfdiv-case-api-demo.service.core-compute-demo.internal"
       env.CCD_DEF_NAME = "demo"
       env.IDAM_API_URL_BASE = "https://idam-api.demo.platform.hmcts.net"
@@ -96,7 +174,7 @@ withPipeline(type, product, component) {
       env.DEFINITION_STORE_URL_BASE = "http://ccd-definition-store-api-demo.service.core-compute-demo.internal"
     }
 
-    onPerftest{
+    onPerftest {
       env.CASE_API_URL = "http://nfdiv-case-api-perftest.service.core-compute-perftest.internal"
       env.CCD_DEF_NAME = "perftest"
       env.IDAM_API_URL_BASE = "https://idam-api.perftest.platform.hmcts.net"
@@ -111,7 +189,7 @@ withPipeline(type, product, component) {
     }
 }
 
-def setCommonEnvVariables(){
+def setCommonEnvVariables() {
     env.IDAM_API_URL_BASE = "https://idam-api.aat.platform.hmcts.net"
     env.S2S_URL_BASE = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
     env.FEE_API_URL = "http://fees-register-api-aat.service.core-compute-aat.internal"
