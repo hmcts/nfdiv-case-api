@@ -80,7 +80,7 @@ public class CaseworkerGeneralEmailTest {
     private NotificationService notificationService;
 
     @Test
-    void shouldSendEmailNotificationToPetitionerWhenGeneralEmailPartyIsPetitionerAndIsNotSolicitorRepresented() throws Exception {
+    void shouldSendEmailNotificationToApplicantWhenGeneralEmailPartyIsPetitionerAndIsNotSolicitorRepresented() throws Exception {
         final var caseData = caseData();
 
         final var applicant1 = getApplicant();
@@ -127,7 +127,7 @@ public class CaseworkerGeneralEmailTest {
     }
 
     @Test
-    void shouldSendEmailNotificationToPetitionerSolicitorWhenGeneralEmailPartyIsPetitionerAndIsSolicitorRepresented() throws Exception {
+    void shouldSendEmailNotificationToApplicantSolicitorWhenGeneralEmailPartyIsPetitionerAndIsSolicitorRepresented() throws Exception {
         final var caseData = caseData();
 
         final var applicant1 = getApplicant();
@@ -136,6 +136,7 @@ public class CaseworkerGeneralEmailTest {
 
         final var marriageDetails = new MarriageDetails();
         marriageDetails.setApplicant1Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME);
+        marriageDetails.setApplicant2Name(APPLICANT_2_FIRST_NAME + " " + APPLICANT_2_LAST_NAME);
 
         caseData.setApplication(Application.builder().marriageDetails(marriageDetails).build());
 
@@ -165,7 +166,7 @@ public class CaseworkerGeneralEmailTest {
         templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, null);
         templateVars.put(APPLICANT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME);
         templateVars.put(CCD_REFERENCE, String.valueOf(TEST_CASE_ID));
-        templateVars.put(RESPONDENT_NAME, null);
+        templateVars.put(RESPONDENT_NAME, APPLICANT_2_FIRST_NAME + " " + APPLICANT_2_LAST_NAME);
 
         verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,
@@ -231,7 +232,8 @@ public class CaseworkerGeneralEmailTest {
         caseData.setApplicant2(applicant2);
 
         final var marriageDetails = new MarriageDetails();
-        marriageDetails.setApplicant2Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME);
+        marriageDetails.setApplicant1Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME);
+        marriageDetails.setApplicant2Name(APPLICANT_2_FIRST_NAME + " " + APPLICANT_2_LAST_NAME);
 
         caseData.setApplication(Application.builder().marriageDetails(marriageDetails).build());
 
@@ -259,9 +261,9 @@ public class CaseworkerGeneralEmailTest {
         templateVars.put(GENERAL_EMAIL_DETAILS, "some details");
         templateVars.put(SOLICITOR_NAME, TEST_SOLICITOR_NAME);
         templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, null);
-        templateVars.put(APPLICANT_NAME, null);
+        templateVars.put(APPLICANT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME);
         templateVars.put(CCD_REFERENCE, String.valueOf(TEST_CASE_ID));
-        templateVars.put(RESPONDENT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME);
+        templateVars.put(RESPONDENT_NAME, APPLICANT_2_FIRST_NAME + " " + APPLICANT_2_LAST_NAME);
 
         verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,
