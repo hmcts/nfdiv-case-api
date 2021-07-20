@@ -13,7 +13,7 @@ import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLI
 
 public class SolStatementOfTruth implements CcdPageConfiguration {
 
-    private static final String ALWAYS_HIDE = "statementOfTruth=\"ALWAYS_HIDE\"";
+    private static final String ALWAYS_HIDE = "applicant1StatementOfTruth=\"ALWAYS_HIDE\"";
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {
