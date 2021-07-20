@@ -75,7 +75,7 @@ class CaseworkerUploadDocumentsAndSubmitTest {
         final var caseData = CaseData.builder().build();
         caseData.getApplication().setDocumentUploadComplete(NO);
         caseData.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
-        caseData.getApplication().setCannotUploadSupportingDocument(Set.of(DocumentType.CORRESPONDENCE));
+        caseData.getApplication().setApplicant1CannotUploadSupportingDocument(Set.of(DocumentType.CORRESPONDENCE));
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -86,7 +86,7 @@ class CaseworkerUploadDocumentsAndSubmitTest {
 
         assertThat(response.getState()).isEqualTo(AwaitingDocuments);
         assertThat(response.getData().getApplication().getApplicant1WantsToHavePapersServedAnotherWay()).isNull();
-        assertThat(response.getData().getApplication().getCannotUploadSupportingDocument()).isNull();
+        assertThat(response.getData().getApplication().getApplicant1CannotUploadSupportingDocument()).isNull();
     }
 
     @Test
@@ -108,7 +108,7 @@ class CaseworkerUploadDocumentsAndSubmitTest {
             .solSignStatementOfTruth(YES)
             .documentUploadComplete(YES)
             .applicant1WantsToHavePapersServedAnotherWay(YES)
-            .cannotUploadSupportingDocument(Set.of(DocumentType.CORRESPONDENCE))
+            .applicant1CannotUploadSupportingDocument(Set.of(DocumentType.CORRESPONDENCE))
             .build();
 
         final var caseData = CaseData.builder()
