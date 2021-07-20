@@ -58,7 +58,7 @@ public class CaseworkerUploadDocumentsAndSubmit implements CCDConfig<CaseData, S
                     + "- Change of name deed\n\n"
                     + "The image must be of the entire document and has to be readable by court staff. "
                     + "You can upload image files with jpg, jpeg, bmp, tif, tiff or PDF file extensions, maximum size 100MB per file")
-            .optional(CaseData::getDocumentsUploaded)
+            .optional(CaseData::getApplicant1DocumentsUploaded)
             .complex(CaseData::getApplication)
                 .mandatory(Application::getDocumentUploadComplete)
                 .done();
@@ -119,6 +119,6 @@ public class CaseworkerUploadDocumentsAndSubmit implements CCDConfig<CaseData, S
 
     private void allowCaseToBeSubmitted(final Application application) {
         application.setApplicant1WantsToHavePapersServedAnotherWay(null);
-        application.setCannotUploadSupportingDocument(null);
+        application.setApplicant1CannotUploadSupportingDocument(null);
     }
 }

@@ -262,10 +262,17 @@ public class Application {
     private YesOrNo app2ContactMethodIsDigital;
 
     @CCD(
-        label = "Cannot upload supporting documents",
+        label = "Applicant 1 cannot upload supporting documents",
         access = {DefaultAccess.class}
     )
-    private Set<DocumentType> cannotUploadSupportingDocument;
+    private Set<DocumentType> applicant1CannotUploadSupportingDocument;
+
+    @CCD(
+        label = "Applicant 2 cannot upload supporting documents",
+        access = {Applicant2Access.class}
+    )
+    private Set<DocumentType> applicant2CannotUploadSupportingDocument;
+
 
     @CCD(
         label = "All documents uploaded",
@@ -324,7 +331,7 @@ public class Application {
     public boolean hasAwaitingDocuments() {
         return applicant1WantsToHavePapersServedAnotherWay != null
             && applicant1WantsToHavePapersServedAnotherWay.toBoolean()
-            || !isEmpty(cannotUploadSupportingDocument);
+            || !isEmpty(applicant1CannotUploadSupportingDocument);
     }
 
     @JsonIgnore

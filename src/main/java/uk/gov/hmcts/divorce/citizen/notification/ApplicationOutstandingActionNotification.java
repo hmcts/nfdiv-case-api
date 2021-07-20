@@ -45,8 +45,8 @@ public class ApplicationOutstandingActionNotification {
         if (caseData.getApplication().getApplicant1WantsToHavePapersServedAnotherWay() == YesOrNo.YES) {
             setPapersServedAnotherWay(templateVars, caseData);
         }
-        if (caseData.getApplication().getCannotUploadSupportingDocument() != null
-            && !caseData.getApplication().getCannotUploadSupportingDocument().isEmpty()) {
+        if (caseData.getApplication().getApplicant1CannotUploadSupportingDocument() != null
+            && !caseData.getApplication().getApplicant1CannotUploadSupportingDocument().isEmpty()) {
             setMissingSupportingDocumentType(templateVars, caseData);
         }
 
@@ -98,7 +98,7 @@ public class ApplicationOutstandingActionNotification {
             String.format("* A certified translation of your foreign %s certificate", marriageOrCivilPartnership);
         String nameChangeProof = "* Proof that you changed your name. For example deed poll or statutory declaration";
 
-        for (DocumentType docType : caseData.getApplication().getCannotUploadSupportingDocument()) {
+        for (DocumentType docType : caseData.getApplication().getApplicant1CannotUploadSupportingDocument()) {
             switch (docType) {
                 case MARRIAGE_CERTIFICATE:
                     if (caseData.getApplication().getMarriageDetails().getMarriedInUk().toBoolean()) {
