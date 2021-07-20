@@ -45,7 +45,7 @@ public class AmendCase implements CcdPageConfiguration {
                     "Respondent's first name")
                 .optional(Applicant::getMiddleName,
                     JOINT_APPLICATION_CONDITION,
-                NO_DEFAULT_VALUE,
+                    NO_DEFAULT_VALUE,
                 "Respondent's middle name(s)")
                 .optional(Applicant::getLastName,
                     JOINT_APPLICATION_CONDITION,
