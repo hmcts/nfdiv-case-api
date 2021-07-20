@@ -27,8 +27,8 @@ public class OtherLegalProceedings implements CcdPageConfiguration {
                 SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
                 JOINT_APPLICATION_CONDITION)
             .complex(CaseData::getApplication)
-                .mandatory(Application::getLegalProceedings)
-                .mandatory(Application::getLegalProceedingsDetails, "legalProceedings=\"Yes\"")
+                .mandatory(Application::getApplicant1LegalProceedings)
+                .mandatory(Application::getApplicant1LegalProceedingsDetails, "legalProceedings=\"Yes\"")
             .done();
     }
 }

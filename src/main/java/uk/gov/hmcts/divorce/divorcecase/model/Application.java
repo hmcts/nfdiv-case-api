@@ -219,13 +219,13 @@ public class Application {
             + "property or children?",
         access = {DefaultAccess.class}
     )
-    private YesOrNo legalProceedings;
+    private YesOrNo applicant1LegalProceedings;
 
     @CCD(
         label = "What do the legal proceedings relate to?",
         access = {DefaultAccess.class}
     )
-    private Set<LegalProceedingsRelated> legalProceedingsRelated;
+    private Set<LegalProceedingsRelated> applicant1LegalProceedingsRelated;
 
     @CCD(
         label = "Legal proceeding details",
@@ -233,7 +233,28 @@ public class Application {
         typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
-    private String legalProceedingsDetails;
+    private String applicant1LegalProceedingsDetails;
+
+    @CCD(
+        label = "Are there any existing or previous court proceedings relating to the applicant's marriage, "
+            + "property or children? (Applicant 2)",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo applicant2LegalProceedings;
+
+    @CCD(
+        label = "What do the legal proceedings relate to? (Applicant 2)",
+        access = {DefaultAccess.class}
+    )
+    private Set<LegalProceedingsRelated> applicant2LegalProceedingsRelated;
+
+    @CCD(
+        label = "Applicant 2 Legal proceeding details",
+        hint = "Include the case number(s), if known.",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
+    )
+    private String applicant2LegalProceedingsDetails;
 
     @CCD(
         label = "Claim costs from",
