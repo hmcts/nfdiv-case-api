@@ -63,9 +63,6 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
 
         generalEmailNotification.send(caseData, details.getId());
 
-        //reset general email so that on next event creation data is not loaded from previous event
-        caseData.setGeneralEmail(null);
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();

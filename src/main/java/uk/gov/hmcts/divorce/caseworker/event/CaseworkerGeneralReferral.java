@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -11,6 +12,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+
+import java.time.Clock;
+import java.time.LocalDate;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralReferralPayment;
@@ -27,6 +31,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 @Slf4j
 public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_GENERAL_REFERRAL = "caseworker-general-referral";
+
+    @Autowired
+    private Clock clock;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -45,7 +52,7 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
             .complex(CaseData::getGeneralReferral)
             .mandatory(GeneralReferral::getGeneralReferralReason)
             .mandatory(GeneralReferral::getGeneralApplicationFrom, "generalReferralReason=\"generalApplicationReferral\"")
-            .mandatory(GeneralReferral::getGeneralApplicationReferralDate)
+            .optional(GeneralReferral::getGeneralApplicationReferralDate)
             .mandatory(GeneralReferral::getGeneralReferralType)
             .mandatory(GeneralReferral::getAlternativeServiceMedium, "generalReferralType=\"alternativeServiceApplication\"")
             .mandatory(GeneralReferral::getGeneralReferralDetails)
@@ -57,23 +64,22 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails
     ) {
-        log.info("Caseworker create general email about to submit callback invoked");
+        log.info("Caseworker general referral about to submit callback invoked");
 
-        var caseData = details.getData();
+        var caseDataCopy = details.getData().toBuilder().build();
 
         State endState;
 
-        if (caseData.getGeneralReferral().getGeneralReferralFeeRequired().toBoolean()) {
+        if (caseDataCopy.getGeneralReferral().getGeneralReferralFeeRequired().toBoolean()) {
             endState = AwaitingGeneralReferralPayment;
         } else {
             endState = AwaitingGeneralConsideration;
         }
 
-        //reset general referral so that on next event creation data is not loaded from previous event
-        caseData.setGeneralReferral(null);
+        caseDataCopy.getGeneralReferral().setGeneralApplicationAddedDate(LocalDate.now(clock));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
+            .data(caseDataCopy)
             .state(endState)
             .build();
     }

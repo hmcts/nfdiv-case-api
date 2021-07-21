@@ -41,6 +41,12 @@ public class GeneralReferral {
     private LocalDate generalApplicationReferralDate;
 
     @CCD(
+        label = "General application added date"
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate generalApplicationAddedDate;
+
+    @CCD(
         label = "Type of referral",
         typeOverride = FixedList,
         typeParameterOverride = "GeneralReferralType"
