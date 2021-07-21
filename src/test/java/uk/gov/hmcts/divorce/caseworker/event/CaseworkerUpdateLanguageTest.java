@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor.event;
+package uk.gov.hmcts.divorce.caseworker.event;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,24 +11,24 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorUpdateLanguage.SOLICITOR_UPDATE_LANGUAGE;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerUpdateLanguage.CASEWORKER_UPDATE_LANGUAGE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-public class SolicitorUpdateApplicationLanguageTest {
+public class CaseworkerUpdateLanguageTest {
 
     @InjectMocks
-    private SolicitorUpdateLanguage solicitorUpdateLanguage;
+    private CaseworkerUpdateLanguage caseworkerUpdateLanguage;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        solicitorUpdateLanguage.configure(configBuilder);
+        caseworkerUpdateLanguage.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(SOLICITOR_UPDATE_LANGUAGE);
+            .contains(CASEWORKER_UPDATE_LANGUAGE);
     }
 }
