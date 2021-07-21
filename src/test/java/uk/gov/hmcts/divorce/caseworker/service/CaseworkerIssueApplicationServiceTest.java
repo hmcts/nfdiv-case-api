@@ -17,7 +17,6 @@ import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChain;
 import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChainFactory;
 
 import java.time.Clock;
-import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,14 +26,10 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.NOW;
-import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.ZONE_ID;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -149,10 +144,8 @@ class CaseworkerIssueApplicationServiceTest {
             TEST_AUTHORIZATION_TOKEN
         );
 
-        final var expectedDateTime = LocalDate.ofInstant(NOW, ZONE_ID);
-
         var expectedCaseData = caseData();
-        expectedCaseData.getApplication().setIssueDate(expectedDateTime);
+        expectedCaseData.getApplication().setIssueDate(getExpectedLocalDate());
         expectedCaseData.getApplicant2().setSolicitorRepresented(NO);
 
         assertThat(response).isEqualTo(expectedCaseData);
