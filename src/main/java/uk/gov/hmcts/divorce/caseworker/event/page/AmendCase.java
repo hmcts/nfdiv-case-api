@@ -10,7 +10,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.JOINT_APPLICATION_CONDITION;
 
 public class AmendCase implements CcdPageConfiguration {
-    private static final String NO_DEFAULT_VALUE = null;
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
@@ -39,33 +38,26 @@ public class AmendCase implements CcdPageConfiguration {
                     JOINT_APPLICATION_CONDITION)
             .done()
             .complex(CaseData::getApplicant2)
-                .optional(Applicant::getFirstName,
+                .optionalWithoutDefaultValue(Applicant::getFirstName,
                     JOINT_APPLICATION_CONDITION,
-                    NO_DEFAULT_VALUE,
                     "Respondent's first name")
-                .optional(Applicant::getMiddleName,
+                .optionalWithoutDefaultValue(Applicant::getMiddleName,
                     JOINT_APPLICATION_CONDITION,
-                    NO_DEFAULT_VALUE,
-                "Respondent's middle name(s)")
-                .optional(Applicant::getLastName,
+                    "Respondent's middle name(s)")
+                .optionalWithoutDefaultValue(Applicant::getLastName,
                     JOINT_APPLICATION_CONDITION,
-                    NO_DEFAULT_VALUE,
                     "Respondent's last name")
-                .optional(Applicant::getHomeAddress,
+                .optionalWithoutDefaultValue(Applicant::getHomeAddress,
                     JOINT_APPLICATION_CONDITION,
-                    NO_DEFAULT_VALUE,
                     "Respondent's home address")
-                .optional(Applicant::getCorrespondenceAddress,
+                .optionalWithoutDefaultValue(Applicant::getCorrespondenceAddress,
                     JOINT_APPLICATION_CONDITION,
-                    NO_DEFAULT_VALUE,
                     "Respondent's service address")
-                .optional(Applicant::getEmail,
+                .optionalWithoutDefaultValue(Applicant::getEmail,
                     JOINT_APPLICATION_CONDITION,
-                    NO_DEFAULT_VALUE,
                     "Respondent's email address")
-                .optional(Applicant::getPhoneNumber,
+                .optionalWithoutDefaultValue(Applicant::getPhoneNumber,
                     JOINT_APPLICATION_CONDITION,
-                    NO_DEFAULT_VALUE,
                     "Respondent's phone number")
             .done()
             .complex(CaseData::getApplication)
