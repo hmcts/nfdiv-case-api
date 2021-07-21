@@ -141,6 +141,20 @@ public enum State {
     AwaitingConditionalOrder("AwaitingConditionalOrder"),
 
     @CCD(
+        name = "Awaiting General Consideration",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    AwaitingGeneralConsideration("AwaitingGeneralConsideration"),
+
+    @CCD(
+        name = "Awaiting General Referral Payment",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    AwaitingGeneralReferralPayment("AwaitingGeneralReferralPayment"),
+
+    @CCD(
         name = "Awaiting HWF decision",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
