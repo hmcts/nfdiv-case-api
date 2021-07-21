@@ -38,7 +38,7 @@ public class IssueApplicationService {
 
         List<CaseDataUpdater> caseDataUpdaters;
 
-        if (caseData.getApplicant2().getSolicitorRepresented().toBoolean()) {
+        if (caseData.getApplicant2().isRepresented()) {
             caseDataUpdaters = asList(
                 miniApplication,
                 respondentSolicitorAosInvitation
