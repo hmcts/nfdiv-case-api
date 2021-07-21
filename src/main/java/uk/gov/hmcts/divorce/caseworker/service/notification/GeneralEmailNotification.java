@@ -42,7 +42,6 @@ public class GeneralEmailNotification {
         if (APPLICANT.equals(caseData.getGeneralEmail().getGeneralEmailParties())) {
             if (caseData.getApplicant1().isRepresented()) {
                 log.info("Sending General Email Notification to petitioner solicitor for case id: {}", caseId);
-
                 emailTo = caseData.getApplicant1().getSolicitor().getEmail();
                 templateId = GENERAL_EMAIL_PETITIONER_SOLICITOR;
                 templateVars.put("solicitor name", caseData.getApplicant1().getSolicitor().getName());
@@ -68,14 +67,17 @@ public class GeneralEmailNotification {
             templateId = GENERAL_EMAIL_OTHER_PARTY;
         }
 
-        notificationService.sendEmail(
-            emailTo,
-            templateId,
-            templateVars,
-            ENGLISH
-        );
-
-        log.info("Successfully sent general email notification for case id: {}", caseId);
+        if (null == emailTo) {
+            log.info("Email address is not available for template id {} and case {} ", templateId, caseId);
+        } else {
+            notificationService.sendEmail(
+                emailTo,
+                templateId,
+                templateVars,
+                ENGLISH
+            );
+            log.info("Successfully sent general email notification for case id: {}", caseId);
+        }
     }
 
     private Map<String, String> templateVars(final CaseData caseData, final Long caseId) {

@@ -36,7 +36,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
         new PageBuilder(configBuilder
             .event(CASEWORKER_CREATE_GENERAL_EMAIL)
             .forAllStates()
-            .name("createGeneralEmail")
+            .name("Create general email")
             .description("Create general email")
             .explicitGrants()
             .showSummary()
@@ -62,6 +62,9 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
         var caseData = details.getData();
 
         generalEmailNotification.send(caseData, details.getId());
+
+        //reset general email so that on next event creation data is not loaded from previous event
+        caseData.setGeneralEmail(null);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
