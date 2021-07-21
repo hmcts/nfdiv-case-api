@@ -29,6 +29,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -55,7 +56,14 @@ class CaseworkerIssueApplicationServiceTest {
 
         final CaseData caseData = caseData();
         caseData.getApplicant2().setSolicitorRepresented(YES);
-        caseData.getApplicant2().setSolicitor(Solicitor.builder().name("testsol").isDigital(YES).build());
+
+        final Solicitor solicitor = Solicitor.builder()
+            .name("testsol")
+            .email(TEST_SOLICITOR_EMAIL)
+            .isDigital(YES)
+            .build();
+
+        caseData.getApplicant2().setSolicitor(solicitor);
 
         final CaseDataUpdaterChain caseDataUpdaterChain = mock(CaseDataUpdaterChain.class);
 
@@ -89,7 +97,7 @@ class CaseworkerIssueApplicationServiceTest {
         var expectedCaseData = caseData();
         expectedCaseData.getApplication().setIssueDate(expectedDateTime);
         expectedCaseData.getApplicant2().setSolicitorRepresented(YES);
-        expectedCaseData.getApplicant2().setSolicitor(Solicitor.builder().name("testsol").isDigital(YES).build());
+        expectedCaseData.getApplicant2().setSolicitor(solicitor);
 
         assertThat(response).isEqualTo(expectedCaseData);
 
