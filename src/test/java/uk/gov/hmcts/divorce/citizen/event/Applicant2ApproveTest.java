@@ -73,7 +73,7 @@ class Applicant2ApproveTest {
 
         assertThat(response.getErrors().size()).isEqualTo(7);
         assertThat(response.getErrors()).containsExactlyInAnyOrder(
-            "Applicant2FinancialOrder cannot be empty or null",
+            "Applicant1FinancialOrder cannot be empty or null",
             "JurisdictionConnections cannot be empty or null",
             "Applicant2Gender cannot be empty or null",
             "MarriageApplicant2Name cannot be empty or null",

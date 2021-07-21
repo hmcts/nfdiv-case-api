@@ -62,7 +62,7 @@ public final class ValidationUtil {
     public static void validateApplicant2BasicCase(CaseData caseData, List<String> errorList) {
         addToErrorList(checkIfStringNullOrEmpty(caseData.getApplicant2().getFirstName(), "Applicant2FirstName"), errorList);
         addToErrorList(checkIfStringNullOrEmpty(caseData.getApplicant2().getLastName(), "Applicant2LastName"), errorList);
-        addToErrorList(checkIfYesOrNoNullOrEmpty(caseData.getApplicant2().getFinancialOrder(), "Applicant2FinancialOrder"), errorList);
+        addToErrorList(checkIfYesOrNoNullOrEmpty(caseData.getApplicant1().getFinancialOrder(), "Applicant1FinancialOrder"), errorList);
         addToErrorList(checkIfGenderNullOrEmpty(caseData.getApplicant2().getGender(), "Applicant2Gender"), errorList);
         addToErrorList(checkIfStringNullOrEmpty(
             caseData.getApplication().getMarriageDetails().getApplicant2Name(), "MarriageApplicant2Name"), errorList);
