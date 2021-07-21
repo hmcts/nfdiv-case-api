@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChain;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.MiniApplicationTemplateContent;
@@ -26,6 +25,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATI
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
+import static uk.gov.hmcts.divorce.testutil.UpdaterTestUtil.caseDataContext;
 
 @ExtendWith(MockitoExtension.class)
 class MiniApplicationTest {
@@ -71,15 +71,5 @@ class MiniApplicationTest {
         final var result = miniApplication.updateCaseData(caseDataContext, caseDataUpdaterChain);
 
         assertThat(result.getCaseData()).isEqualTo(caseData);
-    }
-
-    private CaseDataContext caseDataContext(CaseData caseData) {
-        return CaseDataContext
-            .builder()
-            .caseData(caseData)
-            .caseId(TEST_CASE_ID)
-            .createdDate(LOCAL_DATE)
-            .userAuthToken(TEST_AUTHORIZATION_TOKEN)
-            .build();
     }
 }
