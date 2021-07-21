@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
 
 import java.util.Set;
 
@@ -51,7 +52,8 @@ public class Applicant {
 
     @CCD(
         label = "Is the language preference Welsh?",
-        hint = "Select \"No\" for English or \"Yes\" for bilingual"
+        hint = "Select \"No\" for English or \"Yes\" for bilingual",
+        access = {CaseworkerAccess.class}
     )
     private YesOrNo languagePreferenceWelsh;
 

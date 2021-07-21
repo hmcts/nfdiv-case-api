@@ -30,7 +30,7 @@ public class CaseworkerUpdateLanguage implements CCDConfig<CaseData, State, User
             .forAllStates()
             .name("Update Language")
             .description("Update Language")
-            .showSummary()
+            .showSummary(false)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE_DELETE, CASEWORKER_SUPERUSER)
             .grant(READ, SOLICITOR)
