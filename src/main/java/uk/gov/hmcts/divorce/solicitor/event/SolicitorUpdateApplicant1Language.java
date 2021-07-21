@@ -9,34 +9,31 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ_UPDATE;
 import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_PREVIEW_BANNER;
 
 @Component
-public class SolicitorUpdateLanguage implements CCDConfig<CaseData, State, UserRole> {
+public class SolicitorUpdateApplicant1Language implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String SOLICITOR_UPDATE_LANGUAGE = "solicitor-update-language";
+    public static final String SOLICITOR_UPDATE_APPLICANT_1_LANGUAGE = "solicitor-update-applicant1-language";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(SOLICITOR_UPDATE_LANGUAGE)
-            .forStates(Draft, Submitted)
+            .event(SOLICITOR_UPDATE_APPLICANT_1_LANGUAGE)
+            .forAllStates()
             .name("Update Language")
             .description("Update Language")
-            .displayOrder(3)
             .showSummary()
             .explicitGrants()
-            .grant(CREATE_READ_UPDATE, SOLICITOR)
+            .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
             .grant(READ_UPDATE, CASEWORKER_SUPERUSER)
             .grant(READ,
                 CASEWORKER_COURTADMIN_CTSC,
@@ -44,7 +41,7 @@ public class SolicitorUpdateLanguage implements CCDConfig<CaseData, State, UserR
                 CASEWORKER_LEGAL_ADVISOR))
             .page("langPref")
             .pageLabel("Select Language")
-            .label("LabelNFDBanner-MarriageIrretrievablyBroken", SOLICITOR_NFD_PREVIEW_BANNER)
+            .label("LabelNFDBanner-UpdateApplicant1Language", SOLICITOR_NFD_PREVIEW_BANNER)
             .complex(CaseData::getApplicant1)
                 .mandatory(Applicant::getLanguagePreferenceWelsh)
                 .done();

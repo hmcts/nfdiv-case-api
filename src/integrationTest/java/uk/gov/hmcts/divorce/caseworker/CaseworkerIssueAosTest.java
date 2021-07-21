@@ -75,7 +75,7 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.resourceAsBytes;
     IdamWireMock.PropertiesInitializer.class,
     DocManagementStoreWireMock.PropertiesInitializer.class,
     SendLetterWireMock.PropertiesInitializer.class})
-public class IssueAosTest {
+public class CaseworkerIssueAosTest {
 
     private static final String CASEWORKER_ISSUE_AOS_ABOUT_TO_SUBMIT_REP =
         "classpath:caseworker-issue-aos-about-to-submit-response.json";

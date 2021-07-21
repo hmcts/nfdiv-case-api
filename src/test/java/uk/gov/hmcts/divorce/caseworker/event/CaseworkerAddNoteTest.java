@@ -23,7 +23,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,6 +32,8 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAddNote.CASEWORKER_ADD_NOTE;
+import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
+import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
@@ -54,13 +55,12 @@ class CaseworkerAddNoteTest {
     private CaseworkerAddNote caseworkerAddNote;
 
     @Test
-    void shouldAddConfigurationToConfigBuilder() {
-        final Set<State> stateSet = Set.of(State.class.getEnumConstants());
-        final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = new ConfigBuilderImpl<>(CaseData.class, stateSet);
+    void shouldAddConfigurationToConfigBuilder() throws Exception {
+        final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         caseworkerAddNote.configure(configBuilder);
 
-        assertThat(configBuilder.getEvents())
+        assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(CASEWORKER_ADD_NOTE);
     }

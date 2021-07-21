@@ -74,3 +74,17 @@ schedule:
 
 aos_pack:
   due_date_offset_days: 30
+
+case_progression:
+  holding_period_in_weeks: ${CASE_HOLDING_WEEKS:20}
+
+court:
+  locations:
+    serviceCentre:
+      serviceCentreName: 'Courts and Tribunals Service Centre'
+      centreName: 'HMCTS Digital Divorce'
+      town: 'Harlow'
+      poBox: 'PO Box 12706'
+      postCode: 'CM20 9QT'
+      email: 'divorcecase@justice.gov.uk'
+      phoneNumber: '0300 303 0642'

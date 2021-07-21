@@ -14,7 +14,7 @@ import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
-import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessBetaOnlyAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAndSuperUserAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -85,13 +85,30 @@ public class CaseData {
     @Builder.Default
     private FinalOrder finalOrder = new FinalOrder();
 
+    @JsonUnwrapped
+    @Builder.Default
+    private GeneralOrder generalOrder = new GeneralOrder();
+
+    @JsonUnwrapped
+    @Builder.Default
+    private GeneralEmail generalEmail = new GeneralEmail();
+
     @CCD(
-        label = "Documents uploaded",
+        label = "Applicant 1 Documents uploaded",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
         access = {DefaultAccess.class}
     )
-    private List<ListValue<DivorceDocument>> documentsUploaded;
+    private List<ListValue<DivorceDocument>> applicant1DocumentsUploaded;
+
+    @CCD(
+        label = "Applicant 2 Documents uploaded",
+        typeOverride = Collection,
+        typeParameterOverride = "DivorceDocument",
+        access = {Applicant2Access.class}
+    )
+    private List<ListValue<DivorceDocument>> applicant2DocumentsUploaded;
+
 
     @CCD(
         label = "RDC",
@@ -114,6 +131,13 @@ public class CaseData {
     )
     private List<ListValue<DivorceDocument>> documentsGenerated;
 
+
+    @CCD(
+        label = "General Orders",
+        access = {CaseworkerAccessBetaOnlyAccess.class}
+    )
+    private List<ListValue<DivorceGeneralOrder>> generalOrders;
+
     @CCD(
         label = "Payments",
         typeOverride = Collection,
@@ -134,13 +158,6 @@ public class CaseData {
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dueDate;
-
-    @CCD(
-        label = "Date when the application was issued",
-        access = {CaseworkerAccess.class}
-    )
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate issueDate;
 
     @CCD(
         label = "Notes",

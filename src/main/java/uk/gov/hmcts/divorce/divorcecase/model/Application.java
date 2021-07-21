@@ -13,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
@@ -247,10 +248,17 @@ public class Application {
     private YesOrNo app2ContactMethodIsDigital;
 
     @CCD(
-        label = "Cannot upload supporting documents",
+        label = "Applicant 1 cannot upload supporting documents",
         access = {DefaultAccess.class}
     )
-    private Set<DocumentType> cannotUploadSupportingDocument;
+    private Set<DocumentType> applicant1CannotUploadSupportingDocument;
+
+    @CCD(
+        label = "Applicant 2 cannot upload supporting documents",
+        access = {DefaultAccess.class, Applicant2Access.class}
+    )
+    private Set<DocumentType> applicant2CannotUploadSupportingDocument;
+
 
     @CCD(
         label = "All documents uploaded",
@@ -284,6 +292,13 @@ public class Application {
     )
     private String applicant2ExplainsApplicant1IncorrectInformation;
 
+    @CCD(
+        label = "Date when the application was issued",
+        access = {CaseworkerAccess.class}
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate issueDate;
+
     @JsonIgnore
     public boolean hasStatementOfTruth() {
         return YES.equals(statementOfTruth);
@@ -302,7 +317,7 @@ public class Application {
     public boolean hasAwaitingDocuments() {
         return applicant1WantsToHavePapersServedAnotherWay != null
             && applicant1WantsToHavePapersServedAnotherWay.toBoolean()
-            || !isEmpty(cannotUploadSupportingDocument);
+            || !isEmpty(applicant1CannotUploadSupportingDocument);
     }
 
     @JsonIgnore

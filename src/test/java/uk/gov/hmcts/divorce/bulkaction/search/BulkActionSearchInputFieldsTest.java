@@ -7,10 +7,10 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import java.util.Set;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
+import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createBulkActionConfigBuilder;
+import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getSearchInputFields;
 
 public class BulkActionSearchInputFieldsTest {
     private BulkActionSearchInputFields searchInputFields;
@@ -21,17 +21,12 @@ public class BulkActionSearchInputFieldsTest {
     }
 
     @Test
-    void shouldSetSearchInputFields() {
-        final Set<BulkActionState> stateSet = Set.of(BulkActionState.class.getEnumConstants());
-        final ConfigBuilderImpl<BulkActionCaseData, BulkActionState, UserRole> configBuilder =
-            new ConfigBuilderImpl<>(BulkActionCaseData.class, stateSet);
+    void shouldSetSearchInputFields() throws Exception {
+        final ConfigBuilderImpl<BulkActionCaseData, BulkActionState, UserRole> configBuilder = createBulkActionConfigBuilder();
 
         searchInputFields.configure(configBuilder);
 
-        var searchInputBuilder = configBuilder.searchInputFields.get(0);
-        var searchInput = searchInputBuilder.build();
-
-        assertThat(searchInput.getFields())
+        assertThat(getSearchInputFields(configBuilder).getFields())
             .extracting("id", "label")
             .contains(
                 tuple("[CASE_REFERENCE]", "CCD Case Number")

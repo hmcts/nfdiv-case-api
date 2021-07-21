@@ -7,10 +7,10 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import java.util.Set;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
+import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createBulkActionConfigBuilder;
+import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getWorkBasketInputFields;
 
 class BulkActionWorkBasketInputFieldsTest {
     private BulkActionWorkBasketInputFields workBasketInputFields;
@@ -20,18 +20,14 @@ class BulkActionWorkBasketInputFieldsTest {
         workBasketInputFields = new BulkActionWorkBasketInputFields();
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Test
-    void shouldSetWorkBasketInputFields() {
-        final Set<BulkActionState> stateSet = Set.of(BulkActionState.class.getEnumConstants());
-        final ConfigBuilderImpl<BulkActionCaseData, BulkActionState, UserRole> configBuilder =
-            new ConfigBuilderImpl<>(BulkActionCaseData.class, stateSet);
+    void shouldSetWorkBasketInputFields() throws Exception {
+        final ConfigBuilderImpl<BulkActionCaseData, BulkActionState, UserRole> configBuilder = createBulkActionConfigBuilder();
 
         workBasketInputFields.configure(configBuilder);
 
-        var workBasketBuilder = configBuilder.workBasketInputFields.get(0);
-        var workBasket = workBasketBuilder.build();
-
-        assertThat(workBasket.getFields())
+        assertThat(getWorkBasketInputFields(configBuilder).getFields())
             .extracting("id",
                 "label",
                 "listElementCode",

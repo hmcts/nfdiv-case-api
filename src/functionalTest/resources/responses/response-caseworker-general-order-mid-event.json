@@ -1,0 +1,25 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "applicant1FirstName": "John",
+    "applicant1LastName": "Smith",
+    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+    "applicant2Gender": "female",
+    "generalOrderDate": "2021-01-01",
+    "generalOrderDivorceParties": [
+      "respondent"
+    ],
+    "generalOrderRecitals": "test recitals",
+    "generalOrderJudgeType": "recorder",
+    "generalOrderJudgeName": "some name",
+    "generalOrderDetails": "some details",
+    "generalOrderDraft": {
+      "document_url": "${json-unit.any-string}",
+      "document_filename": "${json-unit.any-string}",
+      "document_binary_url": "${json-unit.any-string}"
+    }
+  },
+  "errors": null,
+  "warnings": null,
+  "state": null
+}

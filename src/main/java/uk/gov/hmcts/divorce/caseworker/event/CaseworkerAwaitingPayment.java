@@ -30,7 +30,6 @@ public class CaseworkerAwaitingPayment implements CCDConfig<CaseData, State, Use
             .forStateTransition(AwaitingHWFDecision, AwaitingPayment)
             .name("Awaiting payment")
             .description("Awaiting payment from the applicant")
-            .displayOrder(3)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASEWORKER_COURTADMIN_CTSC, CASEWORKER_COURTADMIN_RDU)
             .grant(READ, SOLICITOR, CASEWORKER_SUPERUSER, CASEWORKER_LEGAL_ADVISOR));
