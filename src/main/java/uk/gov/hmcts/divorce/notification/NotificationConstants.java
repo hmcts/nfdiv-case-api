@@ -51,6 +51,10 @@ public final class NotificationConstants {
     public static final String SOLICITOR_NAME = "solicitor name";
     public static final String SOLICITOR_ORGANISATION = "solicitor organisation";
 
+    public static final String CCD_REFERENCE = "CCD reference";
+    public static final String GENERAL_OTHER_RECIPIENT_NAME = "general other recipient name";
+    public static final String GENERAL_EMAIL_DETAILS = "general email details";
+
     private NotificationConstants() {
     }
 }
