@@ -30,7 +30,7 @@ public class CaseworkerUpdateLanguage implements CCDConfig<CaseData, State, User
             .forAllStates()
             .name("Update Language")
             .description("Update Language")
-            .showSummary()
+            .showSummary(false)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE_DELETE, CASEWORKER_SUPERUSER)
             .grant(READ, SOLICITOR)
@@ -41,10 +41,10 @@ public class CaseworkerUpdateLanguage implements CCDConfig<CaseData, State, User
             .page("caseworkerLangPref")
             .pageLabel("Select Language")
             .complex(CaseData::getApplicant1)
-                .mandatory(Applicant::getLanguagePreferenceWelsh, null, null, "Applicant's language preference")
+                .mandatory(Applicant::getLanguagePreferenceWelsh, null, null, "Applicant's language preference Welsh?")
                 .done()
             .complex(CaseData::getApplicant2)
-                .mandatory(Applicant::getLanguagePreferenceWelsh, null, null, "Respondent's language preference")
+                .mandatory(Applicant::getLanguagePreferenceWelsh, null, null, "Respondent's language preference Welsh?")
                 .done();
     }
 }
