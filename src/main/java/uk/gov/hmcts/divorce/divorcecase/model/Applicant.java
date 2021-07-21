@@ -108,7 +108,7 @@ public class Applicant {
     )
     private AddressGlobalUK correspondenceAddress;
 
-    @CCD(label = "Is applicant represented by a solicitor?")
+    @CCD(label = "Is represented by a solicitor?")
     private YesOrNo solicitorRepresented;
 
     @JsonUnwrapped(prefix = "Solicitor")
