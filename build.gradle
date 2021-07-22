@@ -20,7 +20,7 @@ plugins {
   id 'org.sonarqube' version '3.3'
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'org.springframework.boot' version '2.5.2'
-  id 'com.github.ben-manes.versions' version '0.39.0'
+  id 'com.github.ben-manes.versions' version '0.38.0'
   id 'hmcts.ccd.sdk' version '0.23.4'
 }
 
@@ -213,18 +213,6 @@ ext.libraries = [
     "org.junit.platform:junit-platform-engine:${versions.junitPlatform}"
   ]
 ]
-
-// force junit5 deps to use groovy v3 which fixes reflective call errors for java 11
-// rest assured 4.2 -> 4.3 jumps to groovy v3. junit v5.6 still on v2.5
-dependencyManagement {
-  dependencies {
-    dependencySet(group: 'org.codehaus.groovy', version: '3.0.8') {
-      entry 'groovy'
-      entry 'groovy-json'
-      entry 'groovy-xml'
-    }
-  }
-}
 
 dependencies {
 // uncomment for local version
