@@ -22,12 +22,12 @@ import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLI
 
 @Component
 public class SolicitorVerifyMarriageCertificate implements CCDConfig<CaseData, State, UserRole> {
-    public static final String SOLICITOR_VERIFY_MARRIAGE_CERTIFICATE = "solicitor-verify-marriage-certificate";
+    public static final String SOLICITOR_VERIFY_CERTIFICATE = "solicitor-verify-certificate";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(SOLICITOR_VERIFY_MARRIAGE_CERTIFICATE)
+            .event(SOLICITOR_VERIFY_CERTIFICATE)
             .forStates(Submitted)
             .name("Verify marriage certificate")
             .description("Verify marriage certificate")

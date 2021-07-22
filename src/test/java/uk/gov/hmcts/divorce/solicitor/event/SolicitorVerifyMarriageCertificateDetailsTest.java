@@ -11,7 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorVerifyMarriageCertificate.SOLICITOR_VERIFY_MARRIAGE_CERTIFICATE;
+import static uk.gov.hmcts.divorce.solicitor.event.SolicitorVerifyMarriageCertificate.SOLICITOR_VERIFY_CERTIFICATE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
@@ -29,6 +29,6 @@ public class SolicitorVerifyMarriageCertificateDetailsTest {
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(SOLICITOR_VERIFY_MARRIAGE_CERTIFICATE);
+            .contains(SOLICITOR_VERIFY_CERTIFICATE);
     }
 }
