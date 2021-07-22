@@ -7,13 +7,17 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.caseworker.service.notification.GeneralEmailNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmail;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.time.Clock;
+import java.time.LocalDate;
+
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralReferralPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
@@ -25,31 +29,34 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 @Slf4j
-public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRole> {
-    public static final String CASEWORKER_CREATE_GENERAL_EMAIL = "caseworker-create-general-email";
+public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, UserRole> {
+    public static final String CASEWORKER_GENERAL_REFERRAL = "caseworker-general-referral";
 
     @Autowired
-    private GeneralEmailNotification generalEmailNotification;
+    private Clock clock;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(CASEWORKER_CREATE_GENERAL_EMAIL)
+            .event(CASEWORKER_GENERAL_REFERRAL)
             .forAllStates()
-            .name("Create general email")
-            .description("Create general email")
+            .name("General referral")
+            .description("General referral")
             .explicitGrants()
-            .showSummary()
+            .showSummary(false)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASEWORKER_COURTADMIN_CTSC)
             .grant(READ, CASEWORKER_COURTADMIN_RDU, CASEWORKER_SUPERUSER, CASEWORKER_LEGAL_ADVISOR, SOLICITOR, CITIZEN))
-            .page("createGeneralEmail")
-            .pageLabel("Create general email")
-            .complex(CaseData::getGeneralEmail)
-                .mandatory(GeneralEmail::getGeneralEmailParties)
-                .mandatory(GeneralEmail::getGeneralEmailOtherRecipientEmail, "generalEmailParties=\"other\"")
-                .mandatory(GeneralEmail::getGeneralEmailOtherRecipientName, "generalEmailParties=\"other\"")
-                .mandatory(GeneralEmail::getGeneralEmailDetails)
+            .page("generalReferral")
+            .pageLabel("General referral")
+            .complex(CaseData::getGeneralReferral)
+                .mandatory(GeneralReferral::getGeneralReferralReason)
+                .mandatory(GeneralReferral::getGeneralApplicationFrom, "generalReferralReason=\"generalApplicationReferral\"")
+                .optional(GeneralReferral::getGeneralApplicationReferralDate)
+                .mandatory(GeneralReferral::getGeneralReferralType)
+                .mandatory(GeneralReferral::getAlternativeServiceMedium, "generalReferralType=\"alternativeServiceApplication\"")
+                .mandatory(GeneralReferral::getGeneralReferralDetails)
+                .mandatory(GeneralReferral::getGeneralReferralFeeRequired)
                 .done();
     }
 
@@ -57,14 +64,19 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails
     ) {
-        log.info("Caseworker create general email about to submit callback invoked");
+        log.info("Caseworker general referral about to submit callback invoked");
 
-        var caseData = details.getData();
+        var caseDataCopy = details.getData().toBuilder().build();
 
-        generalEmailNotification.send(caseData, details.getId());
+        State endState = caseDataCopy.getGeneralReferral().getGeneralReferralFeeRequired().toBoolean()
+            ? AwaitingGeneralReferralPayment
+            : AwaitingGeneralConsideration;
+
+        caseDataCopy.getGeneralReferral().setGeneralApplicationAddedDate(LocalDate.now(clock));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
+            .data(caseDataCopy)
+            .state(endState)
             .build();
     }
 }
