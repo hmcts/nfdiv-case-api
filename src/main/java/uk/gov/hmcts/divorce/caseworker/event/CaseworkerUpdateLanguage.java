@@ -28,8 +28,8 @@ public class CaseworkerUpdateLanguage implements CCDConfig<CaseData, State, User
         new PageBuilder(configBuilder
             .event(CASEWORKER_UPDATE_LANGUAGE)
             .forAllStates()
-            .name("Update Language")
-            .description("Update Language")
+            .name("Update language")
+            .description("Update language")
             .showSummary(false)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE_DELETE, CASEWORKER_SUPERUSER)
