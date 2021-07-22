@@ -29,7 +29,7 @@ public class SolHowDoYouWantToApplyForDivorce implements CcdPageConfiguration {
             .mandatory(CaseData::getApplicationType, null, null,
                 "How does the applicant want to apply for the divorce?",
                 "The respondent must agree with a joint application in its entirety.")
-            .mandatory(CaseData::getDivorceOrDissolution, null, null,
+            .mandatoryWithLabel(CaseData::getDivorceOrDissolution,
                 "Is the application for a divorce or dissolution?");
     }
 }
