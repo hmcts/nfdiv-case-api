@@ -27,30 +27,23 @@ public class SolAboutApplicant2 implements CcdPageConfiguration {
                 SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
                 JOINT_APPLICATION_CONDITION)
             .complex(CaseData::getApplicant2)
-                .mandatory(Applicant::getFirstName,
-                    null,
-                    null,
+                .mandatoryWithLabel(Applicant::getFirstName,
                     "The respondent's first name")
-                .optional(Applicant::getMiddleName,
-                    null,
-                    null,
+                .mandatoryWithLabel(Applicant::getMiddleName,
                     "The respondent's middle name")
-                .mandatory(Applicant::getLastName,
-                    null,
-                    null,
+                .mandatoryWithLabel(Applicant::getLastName,
                     "The respondent's last name")
-                .mandatory(Applicant::getNameDifferentToMarriageCertificate, null, null,
+                .mandatoryWithLabel(Applicant::getNameDifferentToMarriageCertificate,
                     "Is the respondent's name different to that on their marriage certificate?")
-                .mandatory(
+                .mandatoryWithoutDefaultValue(
                     Applicant::getNameChangedHow,
-                    "applicant2NameDifferentToMarriageCertificate=\"Yes\"", null,
+                    "applicant2NameDifferentToMarriageCertificate=\"Yes\"",
                     "How did they change their name?")
-                .mandatory(
+                .mandatoryWithoutDefaultValue(
                     Applicant::getNameChangedHowOtherDetails,
                     "applicant2NameChangedHow=\"other\"",
-                    null,
                     "If not through marriage or deed poll, please provide details of how they legally changed they name")
-                .mandatory(Applicant::getGender, null, null,
+                .mandatoryWithLabel(Applicant::getGender,
                         "What is the respondent's gender?")
                 .done()
             .complex(CaseData::getApplicant2)

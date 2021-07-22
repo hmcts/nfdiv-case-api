@@ -41,10 +41,10 @@ public class CaseworkerUpdateLanguage implements CCDConfig<CaseData, State, User
             .page("caseworkerLangPref")
             .pageLabel("Select Language")
             .complex(CaseData::getApplicant1)
-                .mandatory(Applicant::getLanguagePreferenceWelsh, null, null, "Applicant's language preference Welsh?")
+                .mandatoryWithLabel(Applicant::getLanguagePreferenceWelsh, "Applicant's language preference Welsh?")
                 .done()
             .complex(CaseData::getApplicant2)
-                .mandatory(Applicant::getLanguagePreferenceWelsh, null, null, "Respondent's language preference Welsh?")
+                .mandatoryWithLabel(Applicant::getLanguagePreferenceWelsh, "Respondent's language preference Welsh?")
                 .done();
     }
 }

@@ -55,9 +55,7 @@ public class UpdateContactDetails  implements CcdPageConfiguration {
                 .complex(Applicant::getSolicitor)
                     .optional(Solicitor::getReference)
                 .done()
-                .optional(Applicant::getSolicitorRepresented,
-                    null,
-                    null,
+                .optionalWithLabel(Applicant::getSolicitorRepresented,
                     "Is respondent represented by a solicitor?")
                 .complex(Applicant::getSolicitor)
                     .optional(Solicitor::getName)
@@ -104,23 +102,15 @@ public class UpdateContactDetails  implements CcdPageConfiguration {
 
         fieldCollectionBuilder
             .complex(CaseData::getApplicant2)
-                .optional(Applicant::getFirstName,
-                    null,
-                    null,
+                .optionalWithLabel(Applicant::getFirstName,
                     "Respondent's first name")
-                .optional(Applicant::getLastName,
-                    null,
-                    null,
+                .optionalWithLabel(Applicant::getLastName,
                     "Respondent's last name")
                 .label("LabelResp-GenderChangeWarning",
                     "WARNING: Changing the respondent gender here means you need to Re-Issue the case to update all case documents")
-                .optional(Applicant::getGender,
-                    null,
-                    null,
+                .optionalWithLabel(Applicant::getGender,
                     "Respondent's gender")
-                .mandatory(Applicant::getContactDetailsConfidential,
-                    null,
-                    null,
+                .mandatoryWithLabel(Applicant::getContactDetailsConfidential,
                     "Keep Respondent's contact details private?")
                 .label("LabelResp-AddressIsSharable",
                     "### The respondent's contact details may be shared with the applicant",
@@ -129,21 +119,13 @@ public class UpdateContactDetails  implements CcdPageConfiguration {
                     "### Confidential Address - Take extra care to ensure the respondent's contact "
                         + "details below are not shared with the applicant",
                     "applicant2ContactDetailsConfidential=\"keep\"")
-                .optional(Applicant::getHomeAddress,
-                    null,
-                    null,
+                .optionalWithLabel(Applicant::getHomeAddress,
                     "Respondent's home address")
-                .optional(Applicant::getCorrespondenceAddress,
-                    null,
-                    null,
+                .optionalWithLabel(Applicant::getCorrespondenceAddress,
                     "Respondent's service address")
-                .optional(Applicant::getEmail,
-                    null,
-                    null,
+                .optionalWithLabel(Applicant::getEmail,
                     "Respondent's email address")
-                .optional(Applicant::getPhoneNumber,
-                    null,
-                    null,
+                .optionalWithLabel(Applicant::getPhoneNumber,
                     "Respondent's phone number")
             .done();
     }
