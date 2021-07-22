@@ -9,6 +9,8 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification;
+import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -39,6 +41,12 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
 
     @Autowired
     private PaymentService paymentService;
+
+    @Autowired
+    private ApplicationOutstandingActionNotification outstandingActionNotification;
+
+    @Autowired
+    private ApplicationSubmittedNotification notification;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -79,7 +87,12 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
 
         Application application = caseDataCopy.getApplication();
         State state;
+
         if (application.getHelpWithFees() != null && application.getHelpWithFees().getNeedHelp().toBoolean()) {
+            if (data.getApplication().hasAwaitingDocuments()) {
+                outstandingActionNotification.send(data, details.getId());
+            }
+            notification.send(data, details.getId());
             state = AwaitingHWFDecision;
         } else {
             OrderSummary orderSummary = paymentService.getOrderSummary();
