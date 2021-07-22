@@ -66,11 +66,10 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
                                                                        CaseDetails<CaseData, State> beforeDetails) {
         log.info("Submit application about to submit callback invoked");
 
-        CaseData data = details.getData();
-        CaseData caseDataCopy = data.toBuilder().build();
+        CaseData data = details.getData().toBuilder().build();
 
         log.info("Validating case data");
-        final List<String> validationErrors = AwaitingPayment.validate(caseDataCopy);
+        final List<String> validationErrors = AwaitingPayment.validate(data);
 
         if (!validationErrors.isEmpty()) {
             log.info("Validation errors: ");
@@ -79,17 +78,17 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
             }
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseDataCopy)
+                .data(data)
                 .errors(validationErrors)
                 .state(Draft)
                 .build();
         }
 
-        Application application = caseDataCopy.getApplication();
+        Application application = data.getApplication();
         State state;
 
         if (application.getHelpWithFees() != null && application.getHelpWithFees().getNeedHelp().toBoolean()) {
-            submissionService.submit(data, details.getId());
+            data = submissionService.submit(data, details.getId());
 
             state = AwaitingHWFDecision;
         } else {
@@ -98,14 +97,14 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
 
             if (data.getPayments() == null || data.getPayments().isEmpty()) {
                 ListValue<Payment> paymentListValue = createPendingPayment(orderSummary.getPaymentTotal());
-                caseDataCopy.setPayments(singletonList(paymentListValue));
+                data.setPayments(singletonList(paymentListValue));
             }
 
             state = AwaitingPayment;
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseDataCopy)
+            .data(data)
             .state(state)
             .build();
     }
