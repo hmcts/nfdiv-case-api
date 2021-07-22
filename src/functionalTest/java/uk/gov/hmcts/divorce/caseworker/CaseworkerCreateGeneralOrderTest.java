@@ -23,7 +23,7 @@ public class CaseworkerCreateGeneralOrderTest extends FunctionalTestSuite {
 
     @Test
     public void shouldGenerateOrderDocumentAndUpdateCaseDataWhenMidEventIsTriggered() throws Exception {
-        final Map<String, Object> caseData = caseData("classpath:request/casedata/ccd-callback-general-oder.json");
+        final Map<String, Object> caseData = caseData("classpath:request/casedata/ccd-callback-general-order.json");
 
         final Response midEventResponse = triggerCallback(caseData, CASEWORKER_CREATE_GENERAL_ORDER, CREATE_GENERAL_ORDER_MID_EVENT_URL);
         assertThat(midEventResponse.getStatusCode()).isEqualTo(OK.value());
@@ -37,7 +37,7 @@ public class CaseworkerCreateGeneralOrderTest extends FunctionalTestSuite {
 
     @Test
     public void shouldSetGeneralOrdersAndUpdateCaseDataWhenAboutToSubmitCallbacksIsTriggered() throws Exception {
-        final Map<String, Object> caseData = caseData("classpath:request/casedata/ccd-callback-general-oder-about-to-submit.json");
+        final Map<String, Object> caseData = caseData("classpath:request/casedata/ccd-callback-general-order-about-to-submit.json");
 
         final Response aboutToSubmitResponse = triggerCallback(
             caseData,
