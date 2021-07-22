@@ -11,7 +11,7 @@ java:
     nfdiv:
       secrets:
         - name: AppInsightsInstrumentationKey-Preview
-          alias: APP_INSIGHTS_KEY
+          alias: AZURE_APPLICATIONINSIGHTS_INSTRUMENTATIONKEY
         - name: uk-gov-notify-api-key
           alias: UK_GOV_NOTIFY_API_KEY
         - name: s2s-case-api-secret
