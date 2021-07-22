@@ -59,8 +59,8 @@ public class CaseworkerIssueAos implements CCDConfig<CaseData, State, UserRole> 
         new PageBuilder(configBuilder
             .event(CASEWORKER_ISSUE_AOS)
             .forStateTransition(Issued, AwaitingAos)
-            .name("Issue AOS pack")
-            .description("Issue AOS pack to respondent")
+            .name("Issue AoS pack")
+            .description("Issue AoS pack to respondent")
             .showSummary()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .explicitGrants()
