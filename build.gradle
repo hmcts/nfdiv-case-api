@@ -20,8 +20,8 @@ plugins {
   id 'org.sonarqube' version '3.3'
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'org.springframework.boot' version '2.5.2'
-  id 'com.github.ben-manes.versions' version '0.38.0'
-  id 'hmcts.ccd.sdk' version '0.23.2'
+  id 'com.github.ben-manes.versions' version '0.39.0'
+  id 'hmcts.ccd.sdk' version '0.23.4'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -191,25 +191,18 @@ repositories {
 }
 
 def versions = [
-  assertJ           : '3.19.0',
   awaitility        : '1.7.0',
-  ccdStoreClient    : '4.7.6',
-  docManagementClient : '7.0.0',
-  elasticsearch     : '7.12.0',
-  idamClient        : '2.0.0',
-  jackson           : '2.12.3',
+  jackson           : '2.12.4',
   junit             : '5.7.2',
   junitPlatform     : '1.7.2',
-  lombok            : '1.18.12',
-  mockitoInline    : '3.11.1',
+  lombok            : '1.18.20',
   reformsJavaLogging: '5.1.7',
   springBoot        : springBoot.class.package.implementationVersion,
   springfoxSwagger  : '3.0.0',
-  s2sClient         : '4.0.0',
-  slClient          : '3.0.4'
+  s2sClient         : '4.0.0'
 ]
 
-ext["rest-assured.version"] = '4.3.0'
+ext["rest-assured.version"] = '4.4.0'
 
 ext.libraries = [
   junit5: [
@@ -254,8 +247,8 @@ dependencies {
   implementation group: 'uk.gov.hmcts.reform', name: 'logging-appinsights', version: versions.reformsJavaLogging
   implementation group: 'uk.gov.hmcts.reform', name: 'logging-spring', version: versions.reformsJavaLogging
 
-  implementation group: 'uk.gov.hmcts.reform', name: 'idam-client', version: versions.idamClient
-  implementation (group: 'uk.gov.hmcts.reform', name: 'core-case-data-store-client', version: versions.ccdStoreClient)
+  implementation group: 'uk.gov.hmcts.reform', name: 'idam-client', version: '2.0.0'
+  implementation group: 'uk.gov.hmcts.reform', name: 'core-case-data-store-client', version: '4.7.6'
 
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: versions.jackson
@@ -264,15 +257,14 @@ dependencies {
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.14.1'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.14.1'
 
-  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.43'
-  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '10.0.8'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.45'
 
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
   implementation group: 'uk.gov.hmcts.reform', name: 'service-auth-provider-client', version: versions.s2sClient
 
-  implementation group: 'com.github.hmcts', name: 'send-letter-client', version: versions.slClient
-  implementation group: 'org.elasticsearch', name: 'elasticsearch', version: versions.elasticsearch
+  implementation group: 'com.github.hmcts', name: 'send-letter-client', version: '3.0.8'
+  implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.13.4'
 
   implementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.3.0'
 
@@ -291,12 +283,12 @@ dependencies {
 
   testImplementation group: 'io.rest-assured', name: 'rest-assured'
 
-  testImplementation group: 'org.assertj', name: 'assertj-core', version: versions.assertJ
+  testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.20.2'
   testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '3.0.3'
 
   testImplementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
-  testImplementation group: 'org.mockito', name: 'mockito-inline', version: versions.mockitoInline
+  testImplementation group: 'org.mockito', name: 'mockito-inline', version: '3.11.2'
 
   testImplementation group: 'com.jayway.awaitility', name: 'awaitility', version: versions.awaitility
 
@@ -307,7 +299,7 @@ dependencies {
 
   functionalTestImplementation sourceSets.main.runtimeClasspath
   functionalTestImplementation sourceSets.test.runtimeClasspath
-  functionalTestImplementation group: 'uk.gov.hmcts.reform', name: 'document-management-client', version: versions.docManagementClient
+  functionalTestImplementation group: 'uk.gov.hmcts.reform', name: 'document-management-client', version: '7.0.0'
   functionalTestImplementation group: 'uk.gov.hmcts.reform', name: 'service-auth-provider-client', version: versions.s2sClient
 }
 
