@@ -29,8 +29,8 @@ public class SolicitorUpdateApplicant2Language implements CCDConfig<CaseData, St
         new PageBuilder(configBuilder
             .event(SOLICITOR_UPDATE_APPLICANT_2_LANGUAGE)
             .forAllStates()
-            .name("Update Language")
-            .description("Update Language")
+            .name("Update language")
+            .description("Update language")
             .showSummary()
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
