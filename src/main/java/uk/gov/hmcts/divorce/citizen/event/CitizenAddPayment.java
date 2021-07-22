@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Collections.emptyList;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
@@ -93,7 +92,7 @@ public class CitizenAddPayment implements CCDConfig<CaseData, State, UserRole> {
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
             .state(state)
-            .errors(emptyList())
+            .errors(errors)
             .build();
     }
 }
