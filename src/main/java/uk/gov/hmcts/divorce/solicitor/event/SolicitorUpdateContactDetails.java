@@ -39,7 +39,7 @@ public class SolicitorUpdateContactDetails implements CCDConfig<CaseData, State,
         return new PageBuilder(configBuilder
             .event(SOLICITOR_UPDATE_CONTACT_DETAILS)
             .forState(Submitted)
-            .name("Update Contact Details")
+            .name("Update contact details")
             .description("Update contact details")
             .showSummary()
             .explicitGrants()

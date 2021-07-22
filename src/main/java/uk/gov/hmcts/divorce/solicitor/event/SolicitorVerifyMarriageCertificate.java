@@ -21,13 +21,13 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_PREVIEW_BANNER;
 
 @Component
-public class VerifyMarriageCertificate implements CCDConfig<CaseData, State, UserRole> {
-    public static final String VERIFY_MARRIAGE_CERTIFICATE_DETAILS = "verify-marriage-certificate";
+public class SolicitorVerifyMarriageCertificate implements CCDConfig<CaseData, State, UserRole> {
+    public static final String SOLICITOR_VERIFY_CERTIFICATE = "solicitor-verify-certificate";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(VERIFY_MARRIAGE_CERTIFICATE_DETAILS)
+            .event(SOLICITOR_VERIFY_CERTIFICATE)
             .forStates(Submitted)
             .name("Verify marriage certificate")
             .description("Verify marriage certificate")
