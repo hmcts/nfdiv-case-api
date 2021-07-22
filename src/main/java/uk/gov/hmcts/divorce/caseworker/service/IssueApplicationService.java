@@ -9,13 +9,11 @@ import uk.gov.hmcts.divorce.caseworker.service.updater.SendAosNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.updater.SendAosPack;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataContext;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdater;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChainFactory;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.function.Function;
 
 @Service
 @Slf4j
@@ -23,9 +21,6 @@ public class IssueApplicationService {
 
     @Autowired
     private GenerateMiniApplication generateMiniApplication;
-
-    @Autowired
-    private CaseDataUpdaterChainFactory caseDataUpdaterChainFactory;
 
     @Autowired
     private GenerateRespondentSolicitorAosInvitation generateRespondentSolicitorAosInvitation;
@@ -51,9 +46,8 @@ public class IssueApplicationService {
             .userAuthToken(idamAuthToken)
             .build();
 
-        CaseData updatedCaseData = caseDataUpdaterChainFactory
-            .createWith(issueApplicationUpdaters(caseData))
-            .processNext(caseDataContext)
+        final CaseData updatedCaseData = issueApplicationActions(caseData)
+            .apply(caseDataContext)
             .getCaseData();
 
         updatedCaseData.getApplication().setIssueDate(LocalDate.now(clock));
@@ -61,18 +55,19 @@ public class IssueApplicationService {
         return updatedCaseData;
     }
 
-    private List<CaseDataUpdater> issueApplicationUpdaters(final CaseData caseData) {
+    private Function<CaseDataContext, CaseDataContext> issueApplicationActions(final CaseData caseData) {
 
-        final ArrayList<CaseDataUpdater> caseDataUpdaters = new ArrayList<>();
+        final ArrayList<Function<CaseDataContext, CaseDataContext>> caseDataActions = new ArrayList<>();
 
         if (caseData.getApplicant2().isRepresented()) {
-            caseDataUpdaters.add(generateRespondentSolicitorAosInvitation);
+            caseDataActions.add(generateRespondentSolicitorAosInvitation);
         }
 
-        caseDataUpdaters.add(generateMiniApplication);
-        caseDataUpdaters.add(sendAosPack);
-        caseDataUpdaters.add(sendAosNotifications);
+        caseDataActions.add(generateMiniApplication);
+        caseDataActions.add(sendAosPack);
+        caseDataActions.add(sendAosNotifications);
 
-        return caseDataUpdaters;
+        return caseDataActions.stream()
+            .reduce(Function.identity(), Function::andThen);
     }
 }

@@ -9,15 +9,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataContext;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdater;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChain;
 
 import java.time.Clock;
 import java.time.LocalDate;
 
 @Component
 @Slf4j
-public class SendAosPack implements CaseDataUpdater {
+public class SendAosPack implements CaseDataAction {
 
     @Value("${aos_pack.due_date_offset_days}")
     private long dueDateOffsetDays;
@@ -29,8 +27,7 @@ public class SendAosPack implements CaseDataUpdater {
     private Clock clock;
 
     @Override
-    public CaseDataContext updateCaseData(final CaseDataContext caseDataContext,
-                                          final CaseDataUpdaterChain caseDataUpdaterChain) {
+    public CaseDataContext apply(final CaseDataContext caseDataContext) {
 
         final CaseData originalCaseData = caseDataContext.getCaseData();
         final CaseData updatedCaseData = caseDataContext.copyOfCaseData();
@@ -57,6 +54,6 @@ public class SendAosPack implements CaseDataUpdater {
             updatedCaseData.setDueDate(LocalDate.now(clock).plusDays(dueDateOffsetDays));
         }
 
-        return caseDataUpdaterChain.processNext(caseDataContext.handlerContextWith(updatedCaseData));
+        return caseDataContext.handlerContextWith(updatedCaseData);
     }
 }
