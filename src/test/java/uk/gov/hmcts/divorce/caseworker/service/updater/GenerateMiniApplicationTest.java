@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChain;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.MiniApplicationTemplateContent;
 
@@ -36,9 +35,6 @@ class GenerateMiniApplicationTest {
     @Mock
     private MiniApplicationTemplateContent templateContent;
 
-    @Mock
-    private CaseDataUpdaterChain caseDataUpdaterChain;
-
     @InjectMocks
     private GenerateMiniApplication generateMiniApplication;
 
@@ -66,10 +62,8 @@ class GenerateMiniApplicationTest {
                 ENGLISH))
             .thenReturn(caseData);
 
-        when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
+        generateMiniApplication.accept(caseDataContext);
 
-        final var result = generateMiniApplication.updateCaseData(caseDataContext, caseDataUpdaterChain);
-
-        assertThat(result.getCaseData()).isEqualTo(caseData);
+        assertThat(caseDataContext.getCaseData()).isEqualTo(caseData);
     }
 }

@@ -8,8 +8,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.caseworker.service.print.AosPackPrinter;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataContext;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChain;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -17,7 +15,6 @@ import java.time.LocalDate;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
@@ -43,9 +40,6 @@ class SendAosPackTest {
     @Mock
     private Clock clock;
 
-    @Mock
-    private CaseDataUpdaterChain caseDataUpdaterChain;
-
     @InjectMocks
     private SendAosPack sendAosPack;
 
@@ -61,12 +55,10 @@ class SendAosPackTest {
         caseData.getApplication().setSolServiceMethod(PERSONAL_SERVICE);
         final var caseDataContext = caseDataContext(caseData);
 
-        when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
+        sendAosPack.accept(caseDataContext);
 
-        final CaseDataContext result = sendAosPack.updateCaseData(caseDataContext, caseDataUpdaterChain);
-
-        assertThat(result.getCaseData().getDueDate()).isNull();
-        assertThat(result.getCaseData().getAcknowledgementOfService())
+        assertThat(caseDataContext.getCaseData().getDueDate()).isNull();
+        assertThat(caseDataContext.getCaseData().getAcknowledgementOfService())
             .extracting(
                 AcknowledgementOfService::getDigitalNoticeOfProceedings,
                 AcknowledgementOfService::getNoticeOfProceedingsEmail,
@@ -85,12 +77,10 @@ class SendAosPackTest {
         caseData.setApplicant2(respondent());
         final var caseDataContext = caseDataContext(caseData);
 
-        when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
+        sendAosPack.accept(caseDataContext);
 
-        final CaseDataContext result = sendAosPack.updateCaseData(caseDataContext, caseDataUpdaterChain);
-
-        assertThat(result.getCaseData().getDueDate()).isEqualTo(expectedDueDate);
-        assertThat(result.getCaseData().getAcknowledgementOfService())
+        assertThat(caseDataContext.getCaseData().getDueDate()).isEqualTo(expectedDueDate);
+        assertThat(caseDataContext.getCaseData().getAcknowledgementOfService())
             .extracting(
                 AcknowledgementOfService::getDigitalNoticeOfProceedings,
                 AcknowledgementOfService::getNoticeOfProceedingsEmail,
@@ -109,12 +99,10 @@ class SendAosPackTest {
         caseData.setApplicant2(respondentWithDigitalSolicitor());
         final var caseDataContext = caseDataContext(caseData);
 
-        when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
+        sendAosPack.accept(caseDataContext);
 
-        final CaseDataContext result = sendAosPack.updateCaseData(caseDataContext, caseDataUpdaterChain);
-
-        assertThat(result.getCaseData().getDueDate()).isEqualTo(expectedDueDate);
-        assertThat(result.getCaseData().getAcknowledgementOfService())
+        assertThat(caseDataContext.getCaseData().getDueDate()).isEqualTo(expectedDueDate);
+        assertThat(caseDataContext.getCaseData().getAcknowledgementOfService())
             .extracting(
                 AcknowledgementOfService::getDigitalNoticeOfProceedings,
                 AcknowledgementOfService::getNoticeOfProceedingsEmail,

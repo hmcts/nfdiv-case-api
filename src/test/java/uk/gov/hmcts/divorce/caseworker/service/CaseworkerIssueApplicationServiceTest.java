@@ -12,18 +12,10 @@ import uk.gov.hmcts.divorce.caseworker.service.updater.SendAosPack;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataContext;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdater;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChain;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChainFactory;
 
 import java.time.Clock;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
@@ -42,9 +34,6 @@ class CaseworkerIssueApplicationServiceTest {
 
     @Mock
     private GenerateRespondentSolicitorAosInvitation generateRespondentSolicitorAosInvitation;
-
-    @Mock
-    private CaseDataUpdaterChainFactory caseDataUpdaterChainFactory;
 
     @Mock
     private SendAosPack sendAosPack;
@@ -72,14 +61,6 @@ class CaseworkerIssueApplicationServiceTest {
 
         caseData.getApplicant2().setSolicitor(solicitor);
 
-        final CaseDataUpdaterChain caseDataUpdaterChain = mock(CaseDataUpdaterChain.class);
-
-        final List<CaseDataUpdater> caseDataUpdaters = List.of(
-            generateRespondentSolicitorAosInvitation,
-            generateMiniApplication,
-            sendAosPack,
-            sendAosNotifications);
-
         final CaseDataContext caseDataContext = CaseDataContext.builder()
             .caseData(caseData)
             .caseId(TEST_CASE_ID)
@@ -88,9 +69,6 @@ class CaseworkerIssueApplicationServiceTest {
             .build();
 
         setMockClock(clock);
-
-        when(caseDataUpdaterChainFactory.createWith(caseDataUpdaters)).thenReturn(caseDataUpdaterChain);
-        when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
 
         final CaseData response = issueApplicationService.aboutToSubmit(
             caseData,
@@ -105,11 +83,6 @@ class CaseworkerIssueApplicationServiceTest {
         expectedCaseData.getApplicant2().setSolicitor(solicitor);
 
         assertThat(response).isEqualTo(expectedCaseData);
-
-        verify(caseDataUpdaterChainFactory).createWith(caseDataUpdaters);
-        verify(caseDataUpdaterChain).processNext(caseDataContext);
-
-        verifyNoMoreInteractions(caseDataUpdaterChainFactory, caseDataUpdaterChain);
     }
 
     @Test
@@ -117,13 +90,6 @@ class CaseworkerIssueApplicationServiceTest {
 
         final CaseData caseData = caseData();
         caseData.getApplicant2().setSolicitorRepresented(NO);
-
-        final CaseDataUpdaterChain caseDataUpdaterChain = mock(CaseDataUpdaterChain.class);
-
-        final List<CaseDataUpdater> caseDataUpdaters = List.of(
-            generateMiniApplication,
-            sendAosPack,
-            sendAosNotifications);
 
         final CaseDataContext caseDataContext = CaseDataContext.builder()
             .caseData(caseData)
@@ -133,9 +99,6 @@ class CaseworkerIssueApplicationServiceTest {
             .build();
 
         setMockClock(clock);
-
-        when(caseDataUpdaterChainFactory.createWith(caseDataUpdaters)).thenReturn(caseDataUpdaterChain);
-        when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
 
         final CaseData response = issueApplicationService.aboutToSubmit(
             caseData,
@@ -149,10 +112,5 @@ class CaseworkerIssueApplicationServiceTest {
         expectedCaseData.getApplicant2().setSolicitorRepresented(NO);
 
         assertThat(response).isEqualTo(expectedCaseData);
-
-        verify(caseDataUpdaterChainFactory).createWith(caseDataUpdaters);
-        verify(caseDataUpdaterChain).processNext(caseDataContext);
-
-        verifyNoMoreInteractions(caseDataUpdaterChainFactory, caseDataUpdaterChain);
     }
 }

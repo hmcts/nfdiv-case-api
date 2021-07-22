@@ -7,12 +7,12 @@ import uk.gov.hmcts.divorce.caseworker.service.notification.NoticeOfProceedingsN
 import uk.gov.hmcts.divorce.caseworker.service.notification.PersonalServiceNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataContext;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdater;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChain;
+
+import java.util.function.Consumer;
 
 @Component
 @Slf4j
-public class SendAosNotifications implements CaseDataUpdater {
+public class SendAosNotifications implements Consumer<CaseDataContext> {
 
     @Autowired
     private PersonalServiceNotification personalServiceNotification;
@@ -21,8 +21,7 @@ public class SendAosNotifications implements CaseDataUpdater {
     private NoticeOfProceedingsNotification noticeOfProceedingsNotification;
 
     @Override
-    public CaseDataContext updateCaseData(final CaseDataContext caseDataContext,
-                                          final CaseDataUpdaterChain caseDataUpdaterChain) {
+    public void accept(final CaseDataContext caseDataContext) {
 
         final CaseData caseData = caseDataContext.getCaseData();
         final Long caseId = caseDataContext.getCaseId();
@@ -32,7 +31,5 @@ public class SendAosNotifications implements CaseDataUpdater {
         } else {
             noticeOfProceedingsNotification.send(caseData, caseId);
         }
-
-        return caseDataUpdaterChain.processNext(caseDataContext);
     }
 }

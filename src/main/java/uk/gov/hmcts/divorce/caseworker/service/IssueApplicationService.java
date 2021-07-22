@@ -9,13 +9,9 @@ import uk.gov.hmcts.divorce.caseworker.service.updater.SendAosNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.updater.SendAosPack;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataContext;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdater;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChainFactory;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @Slf4j
@@ -23,9 +19,6 @@ public class IssueApplicationService {
 
     @Autowired
     private GenerateMiniApplication generateMiniApplication;
-
-    @Autowired
-    private CaseDataUpdaterChainFactory caseDataUpdaterChainFactory;
 
     @Autowired
     private GenerateRespondentSolicitorAosInvitation generateRespondentSolicitorAosInvitation;
@@ -51,28 +44,16 @@ public class IssueApplicationService {
             .userAuthToken(idamAuthToken)
             .build();
 
-        CaseData updatedCaseData = caseDataUpdaterChainFactory
-            .createWith(issueApplicationUpdaters(caseData))
-            .processNext(caseDataContext)
-            .getCaseData();
-
-        updatedCaseData.getApplication().setIssueDate(LocalDate.now(clock));
-
-        return updatedCaseData;
-    }
-
-    private List<CaseDataUpdater> issueApplicationUpdaters(final CaseData caseData) {
-
-        final ArrayList<CaseDataUpdater> caseDataUpdaters = new ArrayList<>();
-
         if (caseData.getApplicant2().isRepresented()) {
-            caseDataUpdaters.add(generateRespondentSolicitorAosInvitation);
+            generateRespondentSolicitorAosInvitation.accept(caseDataContext);
         }
 
-        caseDataUpdaters.add(generateMiniApplication);
-        caseDataUpdaters.add(sendAosPack);
-        caseDataUpdaters.add(sendAosNotifications);
+        generateMiniApplication.accept(caseDataContext);
+        sendAosPack.accept(caseDataContext);
+        sendAosNotifications.accept(caseDataContext);
 
-        return caseDataUpdaters;
+        caseData.getApplication().setIssueDate(LocalDate.now(clock));
+
+        return caseData;
     }
 }

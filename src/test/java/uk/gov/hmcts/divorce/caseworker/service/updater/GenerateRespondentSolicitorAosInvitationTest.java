@@ -9,7 +9,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChain;
 import uk.gov.hmcts.divorce.divorcecase.util.AccessCodeGenerator;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.RespondentSolicitorAosInvitationTemplateContent;
@@ -40,9 +39,6 @@ public class GenerateRespondentSolicitorAosInvitationTest {
 
     @Mock
     private RespondentSolicitorAosInvitationTemplateContent templateContent;
-
-    @Mock
-    private CaseDataUpdaterChain caseDataUpdaterChain;
 
     @InjectMocks
     private GenerateRespondentSolicitorAosInvitation generateRespondentSolicitorAosInvitation;
@@ -78,11 +74,9 @@ public class GenerateRespondentSolicitorAosInvitationTest {
                 ENGLISH))
             .thenReturn(caseData);
 
-        when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
+        generateRespondentSolicitorAosInvitation.accept(caseDataContext);
 
-        final var result = generateRespondentSolicitorAosInvitation.updateCaseData(caseDataContext, caseDataUpdaterChain);
-
-        assertThat(result.getCaseData()).isEqualTo(caseData);
+        assertThat(caseDataContext.getCaseData()).isEqualTo(caseData);
 
         classMock.close();
     }

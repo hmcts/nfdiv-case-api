@@ -10,13 +10,10 @@ import uk.gov.hmcts.divorce.caseworker.service.notification.NoticeOfProceedingsN
 import uk.gov.hmcts.divorce.caseworker.service.notification.PersonalServiceNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataContext;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
@@ -34,9 +31,6 @@ class SendAosNotificationsTest {
     @Mock
     private NoticeOfProceedingsNotification noticeOfProceedingsNotification;
 
-    @Mock
-    private CaseDataUpdaterChain caseDataUpdaterChain;
-
     @InjectMocks
     private SendAosNotifications sendAosNotifications;
 
@@ -53,11 +47,9 @@ class SendAosNotificationsTest {
 
         final var caseDataContext = caseDataContext(caseData);
 
-        when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
+        sendAosNotifications.accept(caseDataContext);
 
-        final CaseDataContext result = sendAosNotifications.updateCaseData(caseDataContext, caseDataUpdaterChain);
-
-        assertThat(result.getCaseData()).isEqualTo(caseData);
+        assertThat(caseDataContext.getCaseData()).isEqualTo(caseData);
         verify(personalServiceNotification).send(caseData, TEST_CASE_ID);
         verifyNoInteractions(noticeOfProceedingsNotification);
     }
@@ -76,11 +68,9 @@ class SendAosNotificationsTest {
 
         final var caseDataContext = caseDataContext(caseData);
 
-        when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
+        sendAosNotifications.accept(caseDataContext);
 
-        final CaseDataContext result = sendAosNotifications.updateCaseData(caseDataContext, caseDataUpdaterChain);
-
-        assertThat(result.getCaseData()).isEqualTo(caseData);
+        assertThat(caseDataContext.getCaseData()).isEqualTo(caseData);
         verify(noticeOfProceedingsNotification).send(caseData, TEST_CASE_ID);
         verifyNoInteractions(personalServiceNotification);
     }

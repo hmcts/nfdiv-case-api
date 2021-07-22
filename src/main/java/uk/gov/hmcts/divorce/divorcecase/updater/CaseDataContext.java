@@ -22,7 +22,7 @@ public class CaseDataContext {
     private LocalDate createdDate;
 
     public CaseData copyOfCaseData() {
-        return caseData.toBuilder().build();
+        return caseData;
     }
 
     public CaseDataContext handlerContextWith(final CaseData caseData) {
