@@ -47,13 +47,13 @@ public class CreateGeneralOrder implements CcdPageConfiguration {
     public void addTo(PageBuilder pageBuilder) {
         pageBuilder.page("CreateGeneralOrder", this::midEvent)
             .complex(CaseData::getGeneralOrder)
-            .mandatory(GeneralOrder::getGeneralOrderDate)
-            .mandatory(GeneralOrder::getGeneralOrderDivorceParties)
-            .optional(GeneralOrder::getGeneralOrderRecitals)
-            .mandatory(GeneralOrder::getGeneralOrderJudgeType)
-            .mandatory(GeneralOrder::getGeneralOrderJudgeName)
-            .mandatory(GeneralOrder::getGeneralOrderDetails)
-            .done();
+                .mandatory(GeneralOrder::getGeneralOrderDate)
+                .mandatory(GeneralOrder::getGeneralOrderDivorceParties)
+                .optional(GeneralOrder::getGeneralOrderRecitals)
+                .mandatory(GeneralOrder::getGeneralOrderJudgeType)
+                .mandatory(GeneralOrder::getGeneralOrderJudgeName)
+                .mandatory(GeneralOrder::getGeneralOrderDetails)
+                .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(

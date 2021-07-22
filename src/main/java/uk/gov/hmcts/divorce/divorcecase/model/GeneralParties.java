@@ -7,12 +7,15 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 
 @Getter
 @AllArgsConstructor
-public enum GeneralOrderDivorceParties implements HasLabel {
-    @JsonProperty("petitioner")
-    PETITIONER("Petitioner"),
+public enum GeneralParties implements HasLabel {
+    @JsonProperty("applicant")
+    APPLICANT("Applicant / Applicant's Solicitor"),
 
     @JsonProperty("respondent")
-    RESPONDENT("Respondent");
+    RESPONDENT("Respondent / Respondent's Solicitor"),
+
+    @JsonProperty("other")
+    OTHER("Other");
 
     private final String label;
 }
