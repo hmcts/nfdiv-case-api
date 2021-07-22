@@ -9,13 +9,11 @@ import uk.gov.hmcts.divorce.caseworker.service.updater.SendAosNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.updater.SendAosPack;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataContext;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdater;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChainFactory;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.function.Function;
 
 @Service
 @Slf4j
@@ -23,9 +21,6 @@ public class IssueApplicationService {
 
     @Autowired
     private GenerateMiniApplication generateMiniApplication;
-
-    @Autowired
-    private CaseDataUpdaterChainFactory caseDataUpdaterChainFactory;
 
     @Autowired
     private GenerateRespondentSolicitorAosInvitation generateRespondentSolicitorAosInvitation;
@@ -51,9 +46,8 @@ public class IssueApplicationService {
             .userAuthToken(idamAuthToken)
             .build();
 
-        CaseData updatedCaseData = caseDataUpdaterChainFactory
-            .createWith(issueApplicationUpdaters(caseData))
-            .processNext(caseDataContext)
+        final CaseData updatedCaseData = issueApplicationActions(caseData)
+            .apply(caseDataContext)
             .getCaseData();
 
         updatedCaseData.getApplication().setIssueDate(LocalDate.now(clock));
@@ -61,9 +55,9 @@ public class IssueApplicationService {
         return updatedCaseData;
     }
 
-    private List<CaseDataUpdater> issueApplicationUpdaters(final CaseData caseData) {
+    private Function<CaseDataContext, CaseDataContext> issueApplicationActions(final CaseData caseData) {
 
-        final ArrayList<CaseDataUpdater> caseDataUpdaters = new ArrayList<>();
+        final ArrayList<Function<CaseDataContext, CaseDataContext>> caseDataUpdaters = new ArrayList<>();
 
         if (caseData.getApplicant2().isRepresented()) {
             caseDataUpdaters.add(generateRespondentSolicitorAosInvitation);
@@ -73,6 +67,7 @@ public class IssueApplicationService {
         caseDataUpdaters.add(sendAosPack);
         caseDataUpdaters.add(sendAosNotifications);
 
-        return caseDataUpdaters;
+        return caseDataUpdaters.stream()
+            .reduce(Function.identity(), Function::andThen);
     }
 }

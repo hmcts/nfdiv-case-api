@@ -5,8 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataContext;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdater;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChain;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.MiniApplicationTemplateContent;
 
@@ -19,7 +17,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATI
 
 @Component
 @Slf4j
-public class GenerateMiniApplication implements CaseDataUpdater {
+public class GenerateMiniApplication implements CaseDataAction {
 
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
@@ -28,8 +26,7 @@ public class GenerateMiniApplication implements CaseDataUpdater {
     private MiniApplicationTemplateContent templateContent;
 
     @Override
-    public CaseDataContext updateCaseData(final CaseDataContext caseDataContext,
-                                          final CaseDataUpdaterChain caseDataUpdaterChain) {
+    public CaseDataContext apply(final CaseDataContext caseDataContext) {
 
         log.info("Executing handler for generating mini application for case id {} ", caseDataContext.getCaseId());
 
@@ -51,6 +48,6 @@ public class GenerateMiniApplication implements CaseDataUpdater {
             caseData.getApplicant1().getLanguagePreference()
         );
 
-        return caseDataUpdaterChain.processNext(caseDataContext.handlerContextWith(updatedCaseData));
+        return caseDataContext.handlerContextWith(updatedCaseData);
     }
 }

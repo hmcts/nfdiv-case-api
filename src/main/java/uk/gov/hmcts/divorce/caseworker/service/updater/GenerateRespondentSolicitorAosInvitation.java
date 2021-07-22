@@ -5,8 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataContext;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdater;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChain;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.RespondentSolicitorAosInvitationTemplateContent;
 
@@ -20,7 +18,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.DOCUMENT_TYPE_RES
 
 @Component
 @Slf4j
-public class GenerateRespondentSolicitorAosInvitation implements CaseDataUpdater {
+public class GenerateRespondentSolicitorAosInvitation implements CaseDataAction {
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
 
@@ -29,8 +27,7 @@ public class GenerateRespondentSolicitorAosInvitation implements CaseDataUpdater
     private RespondentSolicitorAosInvitationTemplateContent templateContent;
 
     @Override
-    public CaseDataContext updateCaseData(final CaseDataContext caseDataContext,
-                                          final CaseDataUpdaterChain caseDataUpdaterChain) {
+    public CaseDataContext apply(final CaseDataContext caseDataContext) {
 
         log.info("Executing handler for generating respondent aos invitation for case id {} ", caseDataContext.getCaseId());
 
@@ -54,6 +51,6 @@ public class GenerateRespondentSolicitorAosInvitation implements CaseDataUpdater
             caseData.getApplicant1().getLanguagePreference()
         );
 
-        return caseDataUpdaterChain.processNext(caseDataContext.handlerContextWith(updatedCaseData));
+        return caseDataContext.handlerContextWith(updatedCaseData);
     }
 }
