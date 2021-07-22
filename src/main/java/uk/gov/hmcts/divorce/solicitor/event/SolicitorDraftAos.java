@@ -66,7 +66,7 @@ public class SolicitorDraftAos implements CCDConfig<CaseData, State, UserRole> {
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .showSummary()
-            .endButtonLabel("Save AOS Response")
+            .endButtonLabel("Save AoS Response")
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
             .grant(READ,

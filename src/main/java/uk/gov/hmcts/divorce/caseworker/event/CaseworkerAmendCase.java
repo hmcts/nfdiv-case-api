@@ -48,8 +48,8 @@ public class CaseworkerAmendCase implements CCDConfig<CaseData, State, UserRole>
                 DefendedDivorce, Holding, AwaitingConditionalOrder,
                 ConditionalOrderDrafted, AwaitingLegalAdvisorReferral, AwaitingClarification,
                 ConditionalOrderRefused, AwaitingPronouncement, ConditionalOrderPronounced)
-            .name("Update Case")
-            .description("Update Case")
+            .name("Update case")
+            .description("Update case")
             .showSummary()
             .explicitGrants()
             .grant(CREATE_READ_UPDATE,
