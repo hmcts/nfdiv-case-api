@@ -8,12 +8,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
-import uk.gov.hmcts.divorce.caseworker.service.CcdConflictException;
-import uk.gov.hmcts.divorce.caseworker.service.CcdManagementException;
-import uk.gov.hmcts.divorce.caseworker.service.CcdSearchCaseException;
-import uk.gov.hmcts.divorce.caseworker.service.CcdSearchService;
-import uk.gov.hmcts.divorce.caseworker.service.CcdUpdateService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
 import java.time.LocalDate;
@@ -66,7 +66,7 @@ class SystemProgressHeldCasesTaskTest {
     }
 
     @Test
-    void shouldIgnoreCaseWhenIssueDateIsNull()  {
+    void shouldIgnoreCaseWhenIssueDateIsNull() {
         final CaseDetails caseDetails = mock(CaseDetails.class);
         CaseData caseData = CaseData.builder().build();
 

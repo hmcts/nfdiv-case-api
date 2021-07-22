@@ -29,7 +29,15 @@ public enum State {
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
     )
-    AwaitingAos("AwaitingAos"),
+    AwaitingAos("AwaitingAos") {
+        @Override
+        public List<String> validate(CaseData caseData) {
+            List<String> errors = new ArrayList<>();
+            validateBasicCase(caseData, errors);
+            validateCaseFieldsForIssueApplication(caseData.getApplication().getMarriageDetails(), errors);
+            return errors;
+        }
+    },
 
     @CCD(
         name = "AOS drafted",
@@ -54,21 +62,6 @@ public enum State {
         public List<String> validate(CaseData caseData) {
             List<String> errors = new ArrayList<>();
             validateBasicCase(caseData, errors);
-            return errors;
-        }
-    },
-
-    @CCD(
-        name = "Application issued",
-        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
-        access = {CaseAccessAdministrator.class}
-    )
-    Issued("Issued") {
-        @Override
-        public List<String> validate(CaseData caseData) {
-            List<String> errors = new ArrayList<>();
-            validateBasicCase(caseData, errors);
-            validateCaseFieldsForIssueApplication(caseData.getApplication().getMarriageDetails(), errors);
             return errors;
         }
     },
@@ -139,6 +132,20 @@ public enum State {
         access = {CaseAccessAdministrator.class}
     )
     AwaitingConditionalOrder("AwaitingConditionalOrder"),
+
+    @CCD(
+        name = "Awaiting General Consideration",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    AwaitingGeneralConsideration("AwaitingGeneralConsideration"),
+
+    @CCD(
+        name = "Awaiting General Referral Payment",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    AwaitingGeneralReferralPayment("AwaitingGeneralReferralPayment"),
 
     @CCD(
         name = "Awaiting HWF decision",

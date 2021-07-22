@@ -27,7 +27,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildConfidentialTab(configBuilder);
         buildMarriageCertificateTab(configBuilder);
         buildNotesTab(configBuilder);
+        buildGeneralReferralTab(configBuilder);
     }
+
 
     private void buildApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("applicationDetails", "Application")
@@ -115,7 +117,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2UserId")
             .field("dueDate")
             .label("LabelAosTabOnlineResponse-RespondentRepresent", null, "### Respondent")
-            .label("LabelAosTabOnlineResponse-Respondent", null, "Is represented by a solicitor? ${applicant2SolicitorRepresented}")
+            .field("applicant2SolicitorRepresented")
             .field("digitalNoticeOfProceedings")
             .field("noticeOfProceedingsEmail")
             .field("noticeOfProceedingsSolicitorFirm");
@@ -166,5 +168,18 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private void buildNotesTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("notes", "Notes")
             .field(CaseData::getNotes);
+    }
+
+    private void buildGeneralReferralTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("generalReferral", "General Referral")
+            .forRoles(CASEWORKER_COURTADMIN_RDU, CASEWORKER_COURTADMIN_CTSC, CASEWORKER_LEGAL_ADVISOR, CASEWORKER_SUPERUSER)
+            .field("generalReferralReason")
+            .field("generalApplicationFrom", "generalApplicationFrom=\"*\"")
+            .field("generalApplicationReferralDate", "generalApplicationReferralDate=\"*\"")
+            .field("generalApplicationAddedDate")
+            .field("generalReferralType")
+            .field("alternativeServiceMedium")
+            .field("generalReferralDetails")
+            .field("generalReferralFeeRequired");
     }
 }

@@ -276,7 +276,7 @@ public class Application {
 
     @CCD(
         label = "Applicant 2 cannot upload supporting documents",
-        access = {Applicant2Access.class}
+        access = {DefaultAccess.class, Applicant2Access.class}
     )
     private Set<DocumentType> applicant2CannotUploadSupportingDocument;
 

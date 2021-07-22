@@ -5,11 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.divorce.caseworker.service.CcdConflictException;
-import uk.gov.hmcts.divorce.caseworker.service.CcdManagementException;
-import uk.gov.hmcts.divorce.caseworker.service.CcdSearchCaseException;
-import uk.gov.hmcts.divorce.caseworker.service.CcdSearchService;
-import uk.gov.hmcts.divorce.caseworker.service.CcdUpdateService;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
 import java.time.LocalDate;

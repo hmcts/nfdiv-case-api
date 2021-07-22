@@ -12,10 +12,7 @@ public enum GeneralOrderDivorceParties implements HasLabel {
     PETITIONER("Petitioner"),
 
     @JsonProperty("respondent")
-    RESPONDENT("Respondent"),
-
-    @JsonProperty("coRespondent")
-    CO_RESPONDENT("Co-respondent");
+    RESPONDENT("Respondent");
 
     private final String label;
 }
