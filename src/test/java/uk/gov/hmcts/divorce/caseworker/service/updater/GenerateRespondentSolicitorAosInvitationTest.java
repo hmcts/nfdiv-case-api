@@ -9,7 +9,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataContext;
 import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChain;
 import uk.gov.hmcts.divorce.divorcecase.util.AccessCodeGenerator;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
@@ -31,9 +30,10 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
+import static uk.gov.hmcts.divorce.testutil.UpdaterTestUtil.caseDataContext;
 
 @ExtendWith(MockitoExtension.class)
-public class RespondentSolicitorAosInvitationTest {
+public class GenerateRespondentSolicitorAosInvitationTest {
 
     @Mock
     private CaseDataDocumentService caseDataDocumentService;
@@ -45,7 +45,7 @@ public class RespondentSolicitorAosInvitationTest {
     private CaseDataUpdaterChain caseDataUpdaterChain;
 
     @InjectMocks
-    private RespondentSolicitorAosInvitation respondentSolicitorAosInvitation;
+    private GenerateRespondentSolicitorAosInvitation generateRespondentSolicitorAosInvitation;
 
     @Test
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithAosInvitationDocument() {
@@ -73,27 +73,17 @@ public class RespondentSolicitorAosInvitationTest {
                 templateContentSupplier,
                 TEST_CASE_ID,
                 TEST_AUTHORIZATION_TOKEN,
-                    RESP_SOLICITOR_AOS_INVITATION,
+                RESP_SOLICITOR_AOS_INVITATION,
                 RESP_AOS_INVITATION_DOCUMENT_NAME,
                 ENGLISH))
             .thenReturn(caseData);
 
         when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
 
-        final var result = respondentSolicitorAosInvitation.updateCaseData(caseDataContext, caseDataUpdaterChain);
+        final var result = generateRespondentSolicitorAosInvitation.updateCaseData(caseDataContext, caseDataUpdaterChain);
 
         assertThat(result.getCaseData()).isEqualTo(caseData);
 
         classMock.close();
-    }
-
-    private CaseDataContext caseDataContext(CaseData caseData) {
-        return CaseDataContext
-            .builder()
-            .caseData(caseData)
-            .caseId(TEST_CASE_ID)
-            .createdDate(LOCAL_DATE)
-            .userAuthToken(TEST_AUTHORIZATION_TOKEN)
-            .build();
     }
 }

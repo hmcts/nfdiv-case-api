@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 
 @Data
 @AllArgsConstructor
@@ -100,4 +102,11 @@ public class AcknowledgementOfService {
         label = "Notice of Proceedings solicitor's firm"
     )
     private String noticeOfProceedingsSolicitorFirm;
+
+    @JsonIgnore
+    public void setNoticeOfProceedings(final Solicitor solicitor) {
+        digitalNoticeOfProceedings = YES;
+        noticeOfProceedingsEmail = solicitor.getEmail();
+        noticeOfProceedingsSolicitorFirm = solicitor.getOrganisationPolicy().getOrganisation().getOrganisationName();
+    }
 }
