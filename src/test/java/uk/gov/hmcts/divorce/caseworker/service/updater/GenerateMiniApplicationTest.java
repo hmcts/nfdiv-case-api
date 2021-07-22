@@ -28,7 +28,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.UpdaterTestUtil.caseDataContext;
 
 @ExtendWith(MockitoExtension.class)
-class MiniApplicationTest {
+class GenerateMiniApplicationTest {
 
     @Mock
     private CaseDataDocumentService caseDataDocumentService;
@@ -40,7 +40,7 @@ class MiniApplicationTest {
     private CaseDataUpdaterChain caseDataUpdaterChain;
 
     @InjectMocks
-    private MiniApplication miniApplication;
+    private GenerateMiniApplication generateMiniApplication;
 
     @Test
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithMiniApplicationDocument() {
@@ -68,7 +68,7 @@ class MiniApplicationTest {
 
         when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
 
-        final var result = miniApplication.updateCaseData(caseDataContext, caseDataUpdaterChain);
+        final var result = generateMiniApplication.updateCaseData(caseDataContext, caseDataUpdaterChain);
 
         assertThat(result.getCaseData()).isEqualTo(caseData);
     }

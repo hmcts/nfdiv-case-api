@@ -82,12 +82,12 @@
         "value": {
           "documentDateAdded": null,
           "documentComment": null,
-          "documentFileName": "mini-application-1234567890123456.pdf",
-          "documentType": "divorceApplication",
+          "documentFileName": "aosinvitation-1234567890123456.pdf",
+          "documentType": "aos",
           "documentEmailContent": null,
           "documentLink": {
             "document_url": "${json-unit.any-string}",
-            "document_filename": "mini-application-1234567890123456.pdf",
+            "document_filename": "aosinvitation-1234567890123456.pdf",
             "document_binary_url": "${json-unit.any-string}"
           }
         }
@@ -97,12 +97,12 @@
         "value": {
           "documentDateAdded": null,
           "documentComment": null,
-          "documentFileName": "aosinvitation-1234567890123456.pdf",
-          "documentType": "aos",
+          "documentFileName": "mini-application-1234567890123456.pdf",
+          "documentType": "divorceApplication",
           "documentEmailContent": null,
           "documentLink": {
             "document_url": "${json-unit.any-string}",
-            "document_filename": "aosinvitation-1234567890123456.pdf",
+            "document_filename": "mini-application-1234567890123456.pdf",
             "document_binary_url": "${json-unit.any-string}"
           }
         }

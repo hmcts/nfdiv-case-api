@@ -19,7 +19,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATI
 
 @Component
 @Slf4j
-public class MiniApplication implements CaseDataUpdater {
+public class GenerateMiniApplication implements CaseDataUpdater {
 
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;

@@ -20,7 +20,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.DOCUMENT_TYPE_RES
 
 @Component
 @Slf4j
-public class RespondentSolicitorAosInvitation implements CaseDataUpdater {
+public class GenerateRespondentSolicitorAosInvitation implements CaseDataUpdater {
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
 

@@ -33,7 +33,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.UpdaterTestUtil.caseDataContext;
 
 @ExtendWith(MockitoExtension.class)
-public class RespondentSolicitorAosInvitationTest {
+public class GenerateRespondentSolicitorAosInvitationTest {
 
     @Mock
     private CaseDataDocumentService caseDataDocumentService;
@@ -45,7 +45,7 @@ public class RespondentSolicitorAosInvitationTest {
     private CaseDataUpdaterChain caseDataUpdaterChain;
 
     @InjectMocks
-    private RespondentSolicitorAosInvitation respondentSolicitorAosInvitation;
+    private GenerateRespondentSolicitorAosInvitation generateRespondentSolicitorAosInvitation;
 
     @Test
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithAosInvitationDocument() {
@@ -80,7 +80,7 @@ public class RespondentSolicitorAosInvitationTest {
 
         when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
 
-        final var result = respondentSolicitorAosInvitation.updateCaseData(caseDataContext, caseDataUpdaterChain);
+        final var result = generateRespondentSolicitorAosInvitation.updateCaseData(caseDataContext, caseDataUpdaterChain);
 
         assertThat(result.getCaseData()).isEqualTo(caseData);
 

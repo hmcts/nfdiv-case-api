@@ -15,8 +15,6 @@ import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChain;
 import java.time.Clock;
 import java.time.LocalDate;
 
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-
 @Component
 @Slf4j
 public class SendAosPack implements CaseDataUpdater {
@@ -49,7 +47,7 @@ public class SendAosPack implements CaseDataUpdater {
                 aosPackPrinter.print(originalCaseData, caseId);
 
                 log.info("Setting Notice Of Proceedings information. CaseID: {}", caseId);
-                setNoticeOfProceedingsInformation(updatedCaseData, respondentSolicitor);
+                updatedCaseData.getAcknowledgementOfService().setNoticeOfProceedings(respondentSolicitor);
             } else {
                 log.info("Sending respondent AOS pack to bulk print, respondent is not represented.  CaseID: {}", caseId);
                 aosPackPrinter.print(originalCaseData, caseId);
@@ -60,12 +58,5 @@ public class SendAosPack implements CaseDataUpdater {
         }
 
         return caseDataUpdaterChain.processNext(caseDataContext.handlerContextWith(updatedCaseData));
-    }
-
-    private void setNoticeOfProceedingsInformation(final CaseData caseData, final Solicitor solicitor) {
-        caseData.getAcknowledgementOfService().setDigitalNoticeOfProceedings(YES);
-        caseData.getAcknowledgementOfService().setNoticeOfProceedingsEmail(solicitor.getEmail());
-        caseData.getAcknowledgementOfService().setNoticeOfProceedingsSolicitorFirm(
-            solicitor.getOrganisationPolicy().getOrganisation().getOrganisationName());
     }
 }

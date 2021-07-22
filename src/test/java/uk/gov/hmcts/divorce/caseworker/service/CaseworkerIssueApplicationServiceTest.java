@@ -5,8 +5,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.divorce.caseworker.service.updater.MiniApplication;
-import uk.gov.hmcts.divorce.caseworker.service.updater.RespondentSolicitorAosInvitation;
+import uk.gov.hmcts.divorce.caseworker.service.updater.GenerateMiniApplication;
+import uk.gov.hmcts.divorce.caseworker.service.updater.GenerateRespondentSolicitorAosInvitation;
 import uk.gov.hmcts.divorce.caseworker.service.updater.SendAosNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.updater.SendAosPack;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -38,10 +38,10 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 class CaseworkerIssueApplicationServiceTest {
 
     @Mock
-    private MiniApplication miniApplication;
+    private GenerateMiniApplication generateMiniApplication;
 
     @Mock
-    private RespondentSolicitorAosInvitation respondentSolicitorAosInvitation;
+    private GenerateRespondentSolicitorAosInvitation generateRespondentSolicitorAosInvitation;
 
     @Mock
     private CaseDataUpdaterChainFactory caseDataUpdaterChainFactory;
@@ -75,8 +75,8 @@ class CaseworkerIssueApplicationServiceTest {
         final CaseDataUpdaterChain caseDataUpdaterChain = mock(CaseDataUpdaterChain.class);
 
         final List<CaseDataUpdater> caseDataUpdaters = List.of(
-            miniApplication,
-            respondentSolicitorAosInvitation,
+            generateRespondentSolicitorAosInvitation,
+            generateMiniApplication,
             sendAosPack,
             sendAosNotifications);
 
@@ -121,7 +121,7 @@ class CaseworkerIssueApplicationServiceTest {
         final CaseDataUpdaterChain caseDataUpdaterChain = mock(CaseDataUpdaterChain.class);
 
         final List<CaseDataUpdater> caseDataUpdaters = List.of(
-            miniApplication,
+            generateMiniApplication,
             sendAosPack,
             sendAosNotifications);
 

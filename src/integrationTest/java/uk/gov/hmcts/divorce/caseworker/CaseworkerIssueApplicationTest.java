@@ -160,8 +160,8 @@ public class CaseworkerIssueApplicationTest {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Divorce application").thenReturn("Respondent Invitation");
 
-        stubForDocAssemblyWith(MINI_APPLICATION_ID, "Divorce_CP_Mini_Application_Sole_Joint.docx");
         stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "Divorce_CP_Dummy_Template.docx");
+        stubForDocAssemblyWith(MINI_APPLICATION_ID, "Divorce_CP_Mini_Application_Sole_Joint.docx");
         stubAosPackSendLetter();
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);

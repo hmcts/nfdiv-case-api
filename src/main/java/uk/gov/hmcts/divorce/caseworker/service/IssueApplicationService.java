@@ -3,8 +3,8 @@ package uk.gov.hmcts.divorce.caseworker.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.divorce.caseworker.service.updater.MiniApplication;
-import uk.gov.hmcts.divorce.caseworker.service.updater.RespondentSolicitorAosInvitation;
+import uk.gov.hmcts.divorce.caseworker.service.updater.GenerateMiniApplication;
+import uk.gov.hmcts.divorce.caseworker.service.updater.GenerateRespondentSolicitorAosInvitation;
 import uk.gov.hmcts.divorce.caseworker.service.updater.SendAosNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.updater.SendAosPack;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -14,22 +14,21 @@ import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChainFactory;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
-
-import static java.util.Arrays.asList;
 
 @Service
 @Slf4j
 public class IssueApplicationService {
 
     @Autowired
-    private MiniApplication miniApplication;
+    private GenerateMiniApplication generateMiniApplication;
 
     @Autowired
     private CaseDataUpdaterChainFactory caseDataUpdaterChainFactory;
 
     @Autowired
-    private RespondentSolicitorAosInvitation respondentSolicitorAosInvitation;
+    private GenerateRespondentSolicitorAosInvitation generateRespondentSolicitorAosInvitation;
 
     @Autowired
     private SendAosPack sendAosPack;
@@ -45,24 +44,6 @@ public class IssueApplicationService {
                                   final LocalDate createdDate,
                                   final String idamAuthToken) {
 
-        List<CaseDataUpdater> caseDataUpdaters;
-
-        if (caseData.getApplicant2().isRepresented()) {
-            caseDataUpdaters = asList(
-                miniApplication,
-                respondentSolicitorAosInvitation,
-                sendAosPack,
-                sendAosNotifications
-            );
-        } else {
-            //TODO: AosInvitation needs to be added for this branch, AoS will not be sent until available
-            caseDataUpdaters = asList(
-                miniApplication,
-                sendAosPack,
-                sendAosNotifications
-            );
-        }
-
         final CaseDataContext caseDataContext = CaseDataContext.builder()
             .caseData(caseData)
             .caseId(caseId)
@@ -71,12 +52,27 @@ public class IssueApplicationService {
             .build();
 
         CaseData updatedCaseData = caseDataUpdaterChainFactory
-            .createWith(caseDataUpdaters)
+            .createWith(issueApplicationUpdaters(caseData))
             .processNext(caseDataContext)
             .getCaseData();
 
         updatedCaseData.getApplication().setIssueDate(LocalDate.now(clock));
 
         return updatedCaseData;
+    }
+
+    private List<CaseDataUpdater> issueApplicationUpdaters(final CaseData caseData) {
+
+        final ArrayList<CaseDataUpdater> caseDataUpdaters = new ArrayList<>();
+
+        if (caseData.getApplicant2().isRepresented()) {
+            caseDataUpdaters.add(generateRespondentSolicitorAosInvitation);
+        }
+
+        caseDataUpdaters.add(generateMiniApplication);
+        caseDataUpdaters.add(sendAosPack);
+        caseDataUpdaters.add(sendAosNotifications);
+
+        return caseDataUpdaters;
     }
 }
