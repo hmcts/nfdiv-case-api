@@ -30,42 +30,27 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
                 SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
                 JOINT_APPLICATION_CONDITION)
             .complex(CaseData::getApplicant1)
-                .mandatory(Applicant::getFirstName,
-                    null,
-                    null,
+                .mandatoryWithLabel(Applicant::getFirstName,
                     "The applicant's first name")
-                .optional(Applicant::getMiddleName,
-                    null,
-                    null,
+                .optionalWithLabel(Applicant::getMiddleName,
                     "The applicant's middle name")
-                .mandatory(Applicant::getLastName,
-                    null,
-                    null,
+                .mandatoryWithLabel(Applicant::getLastName,
                     "The applicant's last name")
-                .mandatory(Applicant::getNameDifferentToMarriageCertificate,
-                    null,
-                    null,
+                .mandatoryWithLabel(Applicant::getNameDifferentToMarriageCertificate,
                     "Is the applicant's name different to that on their marriage certificate?")
-                .mandatory(Applicant::getNameChangedHow,
+                .mandatoryWithoutDefaultValue(Applicant::getNameChangedHow,
                     "applicant1NameDifferentToMarriageCertificate=\"Yes\"",
-                    null,
                     "How did they change their name?")
-                .mandatory(Applicant::getNameChangedHowOtherDetails,
+                .mandatoryWithoutDefaultValue(Applicant::getNameChangedHowOtherDetails,
                     "applicant1NameChangedHow=\"other\"",
-                    null,
                     "If not through marriage or deed poll, please provide details of how they legally changed they name")
                 .done()
             .complex(CaseData::getApplication)
-                .mandatory(Application::getDivorceWho,
-                    null,
-                    null,
-                    null,
+                .mandatoryWithLabel(Application::getDivorceWho,
                     "Their husband or wife")
                 .done()
             .complex(CaseData::getApplicant1)
-                .mandatory(Applicant::getGender,
-                    null,
-                    null,
+                .mandatoryWithLabel(Applicant::getGender,
                     "What is the applicant's gender?")
                 .done()
             .complex(CaseData::getApplication)
@@ -74,22 +59,14 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
                     .done()
                 .done()
             .complex(CaseData::getApplicant1)
-                .mandatory(Applicant::getEmail,
-                    null,
-                    null,
+                .mandatoryWithLabel(Applicant::getEmail,
                     "The applicant's email address")
-                .optional(Applicant::getPhoneNumber,
-                    null,
-                    null,
+                .optionalWithLabel(Applicant::getPhoneNumber,
                     "The applicant's phone number")
-                .optional(Applicant::getHomeAddress,
-                    null,
-                    null,
+                .optionalWithLabel(Applicant::getHomeAddress,
                     "The applicant's home address")
                 .label("LabelHorizontalLine1-SolAboutApplicant1", DARK_HORIZONTAL_RULE)
-                .mandatory(Applicant::getContactDetailsConfidential,
-                    null,
-                    null,
+                .mandatoryWithLabel(Applicant::getContactDetailsConfidential,
                     "Keep the applicant's contact details private from the respondent?")
                 .done();
     }
