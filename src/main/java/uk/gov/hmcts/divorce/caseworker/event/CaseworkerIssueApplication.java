@@ -17,9 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.util.EnumSet;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
@@ -41,9 +39,6 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
 
     @Autowired
     private IssueApplicationService issueApplicationService;
-
-    @Autowired
-    private HttpServletRequest request;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -90,15 +85,10 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
                 .build();
         }
 
-        final CaseData caseData = issueApplicationService.aboutToSubmit(
-            details.getData(),
-            details.getId(),
-            details.getCreatedDate().toLocalDate(),
-            request.getHeader(AUTHORIZATION)
-        );
+        final CaseDetails<CaseData, State> result = issueApplicationService.issueApplication(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
+            .data(result.getData())
             .build();
     }
 }
