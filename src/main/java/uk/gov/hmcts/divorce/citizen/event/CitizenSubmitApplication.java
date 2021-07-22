@@ -9,8 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
-import uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification;
-import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotification;
+import uk.gov.hmcts.divorce.citizen.service.CitizenSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -27,8 +26,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.IN_PROGRESS;
@@ -43,10 +43,7 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
     private PaymentService paymentService;
 
     @Autowired
-    private ApplicationOutstandingActionNotification outstandingActionNotification;
-
-    @Autowired
-    private ApplicationSubmittedNotification notification;
+    private CitizenSubmissionService submissionService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -56,9 +53,12 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
             .forStates(Draft, AwaitingPayment)
             .name("Applicant Statement of Truth")
             .description("The applicant confirms SOT")
-            .retries(120, 120)
-            .grant(CREATE_READ_UPDATE, CITIZEN, CASEWORKER_COURTADMIN_RDU, CASEWORKER_COURTADMIN_CTSC)
-            .grant(READ, CASEWORKER_SUPERUSER)
+            .grant(CREATE_READ_UPDATE, CREATOR)
+            .grant(READ,
+                CASEWORKER_SUPERUSER,
+                CASEWORKER_COURTADMIN_RDU,
+                CASEWORKER_COURTADMIN_CTSC,
+                CASEWORKER_LEGAL_ADVISOR)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
 
@@ -89,10 +89,8 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
         State state;
 
         if (application.getHelpWithFees() != null && application.getHelpWithFees().getNeedHelp().toBoolean()) {
-            if (data.getApplication().hasAwaitingDocuments()) {
-                outstandingActionNotification.send(data, details.getId());
-            }
-            notification.send(data, details.getId());
+            submissionService.submit(data, details.getId());
+
             state = AwaitingHWFDecision;
         } else {
             OrderSummary orderSummary = paymentService.getOrderSummary();

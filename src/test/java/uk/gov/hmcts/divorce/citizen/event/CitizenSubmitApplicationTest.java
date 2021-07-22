@@ -12,8 +12,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification;
-import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotification;
+import uk.gov.hmcts.divorce.citizen.service.CitizenSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
@@ -23,7 +22,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.payment.model.Payment;
-import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitApplicationService;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -37,7 +35,6 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitApplication.CITIZEN_SUBMIT;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.IN_PROGRESS;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -47,13 +44,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 class CitizenSubmitApplicationTest {
 
     @Mock
-    private ApplicationSubmittedNotification notification;
-
-    @Mock
-    private ApplicationOutstandingActionNotification outstandingActionNotification;
-
-    @Mock
-    private SolicitorSubmitApplicationService solicitorSubmitApplicationService;
+    private CitizenSubmissionService submissionService;
 
     @Mock
     private PaymentService paymentService;
@@ -83,8 +74,7 @@ class CitizenSubmitApplicationTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
 
-        verifyNoInteractions(notification);
-        verifyNoInteractions(outstandingActionNotification);
+        verifyNoInteractions(submissionService);
 
         assertThat(response.getErrors().size()).isEqualTo(13);
         assertThat(response.getErrors().get(0)).isEqualTo("Applicant1FirstName cannot be empty or null");
@@ -102,8 +92,7 @@ class CitizenSubmitApplicationTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
 
-        verifyNoInteractions(notification);
-        verifyNoInteractions(outstandingActionNotification);
+        verifyNoInteractions(submissionService);
 
         assertThat(response.getErrors().size()).isEqualTo(1);
         assertThat(response.getErrors().get(0)).isEqualTo("PrayerHasBeenGiven must be YES");
@@ -134,8 +123,7 @@ class CitizenSubmitApplicationTest {
             .usingElementComparatorIgnoringFields("id") // id is random uuid
             .containsExactlyInAnyOrder(pendingPayment());
 
-        verifyNoInteractions(notification);
-        verifyNoInteractions(outstandingActionNotification);
+        verifyNoInteractions(submissionService);
         verify(paymentService).getOrderSummary();
     }
 
@@ -154,27 +142,7 @@ class CitizenSubmitApplicationTest {
         assertThat(response.getState()).isEqualTo(State.AwaitingHWFDecision);
         assertThat(response.getData().getPayments()).isNull();
 
-        verify(notification).send(caseData, caseId);
-        verifyNoInteractions(outstandingActionNotification);
-    }
-
-    @Test
-    public void givenEventStartedWithCaseWithNoDocsThenChangeStateAwaitingHwfDecision() {
-        final long caseId = 2L;
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        CaseData caseData = CaseData.builder().build();
-        setValidCaseData(caseData).getApplication().getHelpWithFees().setNeedHelp(YesOrNo.YES);
-        caseData.getApplication().setApplicant1CannotUploadSupportingDocument(Set.of(MARRIAGE_CERTIFICATE));
-        caseDetails.setData(caseData);
-        caseDetails.setId(caseId);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
-
-        assertThat(response.getState()).isEqualTo(State.AwaitingHWFDecision);
-        assertThat(response.getData().getPayments()).isNull();
-
-        verify(notification).send(caseData, caseId);
-        verify(outstandingActionNotification).send(caseData, caseId);
+        verify(submissionService).submit(caseData, caseId);
     }
 
     private OrderSummary orderSummary() {

@@ -12,7 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
@@ -31,8 +31,7 @@ public class CitizenSaveAndClose implements CCDConfig<CaseData, State, UserRole>
             .forState(Draft)
             .name("Save and close application")
             .description("Save application and send email notification to the applicant")
-            .retries(120, 120)
-            .grant(CREATE_READ_UPDATE, CITIZEN)
+            .grant(CREATE_READ_UPDATE, CREATOR)
             .submittedCallback(this::submitted);
     }
 

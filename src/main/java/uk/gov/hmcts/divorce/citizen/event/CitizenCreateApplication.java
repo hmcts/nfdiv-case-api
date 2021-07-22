@@ -24,7 +24,6 @@ public class CitizenCreateApplication implements CCDConfig<CaseData, State, User
             .initialState(Draft)
             .name("Create draft case")
             .description("Apply for a divorce or dissolution")
-            .grant(CREATE_READ_UPDATE, CITIZEN)
-            .retries(120, 120);
+            .grant(CREATE_READ_UPDATE, CITIZEN);
     }
 }

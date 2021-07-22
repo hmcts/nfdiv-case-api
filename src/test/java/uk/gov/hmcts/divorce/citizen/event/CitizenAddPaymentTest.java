@@ -11,8 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification;
-import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotification;
+import uk.gov.hmcts.divorce.citizen.service.CitizenSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -42,11 +41,9 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
 public class CitizenAddPaymentTest {
-    @Mock
-    private ApplicationSubmittedNotification notification;
 
     @Mock
-    private ApplicationOutstandingActionNotification outstandingActionNotification;
+    private CitizenSubmissionService submissionService;
 
     @InjectMocks
     private CitizenAddPayment citizenAddPayment;
@@ -80,7 +77,7 @@ public class CitizenAddPaymentTest {
 
         final var response = citizenAddPayment.aboutToSubmit(details, details);
 
-        verifyNoInteractions(notification);
+        verifyNoInteractions(submissionService);
         assertThat(response.getState()).isEqualTo(AwaitingPayment);
     }
 
@@ -102,7 +99,7 @@ public class CitizenAddPaymentTest {
 
         final var response = citizenAddPayment.aboutToSubmit(details, details);
 
-        verifyNoInteractions(notification);
+        verifyNoInteractions(submissionService);
         assertThat(response.getState()).isEqualTo(Draft);
     }
 
@@ -124,7 +121,7 @@ public class CitizenAddPaymentTest {
 
         citizenAddPayment.aboutToSubmit(details, details);
 
-        verify(notification).send(caseData, details.getId());
+        verify(submissionService).submit(caseData, details.getId());
     }
 
     @Test
@@ -143,7 +140,7 @@ public class CitizenAddPaymentTest {
 
         citizenAddPayment.aboutToSubmit(details, details);
 
-        verifyNoInteractions(notification);
+        verifyNoInteractions(submissionService);
     }
 
     @Test
@@ -162,8 +159,7 @@ public class CitizenAddPaymentTest {
 
         final var response = citizenAddPayment.aboutToSubmit(details, details);
 
-        verify(outstandingActionNotification).send(caseData, details.getId());
-        verify(notification).send(caseData, details.getId());
+        verify(submissionService).submit(caseData, details.getId());
         assertThat(response.getState()).isEqualTo(AwaitingDocuments);
     }
 
@@ -188,8 +184,7 @@ public class CitizenAddPaymentTest {
 
         final var response = citizenAddPayment.aboutToSubmit(details, details);
 
-        verify(outstandingActionNotification).send(caseData, details.getId());
-        verify(notification).send(caseData, details.getId());
+        verify(submissionService).submit(caseData, details.getId());
         assertThat(response.getState()).isEqualTo(AwaitingDocuments);
     }
 }

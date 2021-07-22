@@ -26,7 +26,6 @@ public class CitizenUpdateApplication implements CCDConfig<CaseData, State, User
             .forState(Draft)
             .name("Patch case")
             .description("Patch a divorce or dissolution")
-            .retries(120, 120)
             .grant(CREATE_READ_UPDATE, CREATOR)
             .grant(READ, CASEWORKER_SUPERUSER);
     }

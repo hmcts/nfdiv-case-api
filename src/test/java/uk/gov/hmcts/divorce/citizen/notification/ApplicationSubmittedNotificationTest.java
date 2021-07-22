@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
@@ -41,6 +42,7 @@ class ApplicationSubmittedNotificationTest {
     void shouldCallSendEmailWithSubmissionResponseDate() {
         CaseData data = caseData();
         data.getApplication().setDateSubmitted(LocalDateTime.of(2021, 4, 21, 1, 1));
+        data.setDueDate(LocalDate.of(2021, 5, 5));
         final HashMap<String, String> templateVars = new HashMap<>();
 
         when(commonContent.templateVarsFor(data)).thenReturn(templateVars);

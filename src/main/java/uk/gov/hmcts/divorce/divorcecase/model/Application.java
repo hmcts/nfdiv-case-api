@@ -33,7 +33,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERV
 @Builder
 public class Application {
     @CCD(ignore = true)
-    private static final int SUBMISSION_RESPONSE_DAYS = 14;
+    public static final int SUBMISSION_RESPONSE_DAYS = 14;
 
     @CCD(
         label = "Has applicant 1's marriage broken down irretrievably?",
@@ -307,11 +307,6 @@ public class Application {
     @JsonIgnore
     public boolean hasSolSignStatementOfTruth() {
         return YES.equals(solSignStatementOfTruth);
-    }
-
-    @JsonIgnore
-    public LocalDate getDateOfSubmissionResponse() {
-        return dateSubmitted == null ? null : dateSubmitted.plusDays(SUBMISSION_RESPONSE_DAYS).toLocalDate();
     }
 
     public boolean hasAwaitingDocuments() {

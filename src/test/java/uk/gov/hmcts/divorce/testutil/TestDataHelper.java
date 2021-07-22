@@ -167,6 +167,7 @@ public class TestDataHelper {
             .applicant1(getApplicant())
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .caseInvite(new CaseInvite())
+            .application(new Application())
             .build();
     }
 

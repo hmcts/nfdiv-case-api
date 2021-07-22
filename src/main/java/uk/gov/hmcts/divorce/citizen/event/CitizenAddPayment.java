@@ -7,25 +7,25 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification;
-import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotification;
+import uk.gov.hmcts.divorce.citizen.service.CitizenSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Collections.emptyList;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
@@ -36,10 +36,7 @@ public class CitizenAddPayment implements CCDConfig<CaseData, State, UserRole> {
     public static final String CITIZEN_ADD_PAYMENT = "citizen-add-payment";
 
     @Autowired
-    private ApplicationOutstandingActionNotification outstandingActionNotification;
-
-    @Autowired
-    private ApplicationSubmittedNotification notification;
+    private CitizenSubmissionService submissionService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -49,8 +46,12 @@ public class CitizenAddPayment implements CCDConfig<CaseData, State, UserRole> {
             .name("Payment made")
             .description("Payment made")
             .retries(120, 120)
-            .grant(CREATE_READ_UPDATE, CITIZEN, CASEWORKER_COURTADMIN_RDU, CASEWORKER_COURTADMIN_CTSC)
-            .grant(READ, CASEWORKER_SUPERUSER)
+            .grant(CREATE_READ_UPDATE, CREATOR)
+            .grant(READ,
+                CASEWORKER_SUPERUSER,
+                CASEWORKER_COURTADMIN_RDU,
+                CASEWORKER_COURTADMIN_CTSC,
+                CASEWORKER_LEGAL_ADVISOR)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
 
@@ -78,26 +79,21 @@ public class CitizenAddPayment implements CCDConfig<CaseData, State, UserRole> {
             state = Draft;
             errors.clear();
         } else if (submittedErrors.isEmpty()) {
-            log.info("Case {} submitted", details.getId());
-            data.getApplication().setDateSubmitted(LocalDateTime.now());
+            data = submissionService.submit(data, details.getId());
 
-            notification.send(data, details.getId());
             state = Submitted;
             errors.clear();
         } else if (awaitingDocumentsErrors.isEmpty()) {
-            log.info("Case {} awaiting documents", details.getId());
-            data.getApplication().setDateSubmitted(LocalDateTime.now());
+            data = submissionService.submit(data, details.getId());
 
-            notification.send(data, details.getId());
-            outstandingActionNotification.send(data, details.getId());
             state = AwaitingDocuments;
             errors.clear();
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
+            .data(data)
             .state(state)
-            .errors(errors)
+            .errors(emptyList())
             .build();
     }
 }
