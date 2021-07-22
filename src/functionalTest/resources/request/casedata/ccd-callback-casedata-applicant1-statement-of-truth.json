@@ -1,7 +1,9 @@
 {
+  "divorceOrDissolution": "divorce",
   "applicant1Gender": "female",
   "applicant2Gender": "male",
   "marriageDate": "2020-04-28",
+  "applicant1Email": "test@mailinator.com",
   "applicant1FirstName": "test_first_name",
   "applicant1MiddleName": "test_middle_name",
   "applicant1LastName": "test_last_name",
