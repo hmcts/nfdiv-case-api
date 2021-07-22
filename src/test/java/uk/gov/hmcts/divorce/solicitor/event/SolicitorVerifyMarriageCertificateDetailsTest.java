@@ -11,24 +11,24 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.solicitor.event.VerifyMarriageCertificate.VERIFY_MARRIAGE_CERTIFICATE_DETAILS;
+import static uk.gov.hmcts.divorce.solicitor.event.SolicitorVerifyMarriageCertificate.SOLICITOR_VERIFY_MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-public class VerifyMarriageCertificateDetailsTest {
+public class SolicitorVerifyMarriageCertificateDetailsTest {
 
     @InjectMocks
-    private VerifyMarriageCertificate verifyMarriageCertificate;
+    private SolicitorVerifyMarriageCertificate solicitorVerifyMarriageCertificate;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        verifyMarriageCertificate.configure(configBuilder);
+        solicitorVerifyMarriageCertificate.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(VERIFY_MARRIAGE_CERTIFICATE_DETAILS);
+            .contains(SOLICITOR_VERIFY_MARRIAGE_CERTIFICATE);
     }
 }

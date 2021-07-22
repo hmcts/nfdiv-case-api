@@ -27,8 +27,8 @@ public class CaseworkerReissue implements CCDConfig<CaseData, State, UserRole> {
         new PageBuilder(configBuilder
             .event(CASEWORKER_REISSUE)
             .forStateTransition(AwaitingDocuments, AwaitingReissue)
-            .name("Reissue Application")
-            .description("Reissue Application")
+            .name("Reissue application")
+            .description("Reissue application")
             .explicitGrants()
             .grant(CREATE_READ_UPDATE,
                 CASEWORKER_COURTADMIN_CTSC,
