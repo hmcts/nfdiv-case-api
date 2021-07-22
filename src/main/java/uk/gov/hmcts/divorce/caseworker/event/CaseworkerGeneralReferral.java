@@ -43,21 +43,21 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
             .name("General referral")
             .description("General referral")
             .explicitGrants()
-            .showSummary()
+            .showSummary(false)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASEWORKER_COURTADMIN_CTSC)
             .grant(READ, CASEWORKER_COURTADMIN_RDU, CASEWORKER_SUPERUSER, CASEWORKER_LEGAL_ADVISOR, SOLICITOR, CITIZEN))
             .page("generalReferral")
             .pageLabel("General referral")
             .complex(CaseData::getGeneralReferral)
-            .mandatory(GeneralReferral::getGeneralReferralReason)
-            .mandatory(GeneralReferral::getGeneralApplicationFrom, "generalReferralReason=\"generalApplicationReferral\"")
-            .optional(GeneralReferral::getGeneralApplicationReferralDate)
-            .mandatory(GeneralReferral::getGeneralReferralType)
-            .mandatory(GeneralReferral::getAlternativeServiceMedium, "generalReferralType=\"alternativeServiceApplication\"")
-            .mandatory(GeneralReferral::getGeneralReferralDetails)
-            .mandatory(GeneralReferral::getGeneralReferralFeeRequired)
-            .done();
+                .mandatory(GeneralReferral::getGeneralReferralReason)
+                .mandatory(GeneralReferral::getGeneralApplicationFrom, "generalReferralReason=\"generalApplicationReferral\"")
+                .optional(GeneralReferral::getGeneralApplicationReferralDate)
+                .mandatory(GeneralReferral::getGeneralReferralType)
+                .mandatory(GeneralReferral::getAlternativeServiceMedium, "generalReferralType=\"alternativeServiceApplication\"")
+                .mandatory(GeneralReferral::getGeneralReferralDetails)
+                .mandatory(GeneralReferral::getGeneralReferralFeeRequired)
+                .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
@@ -68,13 +68,9 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
 
         var caseDataCopy = details.getData().toBuilder().build();
 
-        State endState;
-
-        if (caseDataCopy.getGeneralReferral().getGeneralReferralFeeRequired().toBoolean()) {
-            endState = AwaitingGeneralReferralPayment;
-        } else {
-            endState = AwaitingGeneralConsideration;
-        }
+        State endState = caseDataCopy.getGeneralReferral().getGeneralReferralFeeRequired().toBoolean()
+            ? AwaitingGeneralReferralPayment
+            : AwaitingGeneralConsideration;
 
         caseDataCopy.getGeneralReferral().setGeneralApplicationAddedDate(LocalDate.now(clock));
 
