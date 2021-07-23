@@ -56,6 +56,7 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
                         .done()
                     .done()
                 .optional(Applicant::getHomeAddress, "applicant2SolicitorRepresented=\"No\"")
+                .optional(Applicant::getEmail, "applicant2SolicitorRepresented=\"No\"")
                 .mandatory(Applicant::getCorrespondenceAddress, "applicant2SolicitorRepresented=\"No\"")
             .done();
     }
