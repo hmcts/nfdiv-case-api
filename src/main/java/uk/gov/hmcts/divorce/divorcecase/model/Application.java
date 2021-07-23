@@ -215,27 +215,6 @@ public class Application {
     private YesOrNo applicant1KnowsApplicant2Address;
 
     @CCD(
-        label = "Are there any existing or previous court proceedings relating to the applicant's marriage, "
-            + "property or children?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo legalProceedings;
-
-    @CCD(
-        label = "What do the legal proceedings relate to?",
-        access = {DefaultAccess.class}
-    )
-    private Set<LegalProceedingsRelated> legalProceedingsRelated;
-
-    @CCD(
-        label = "Legal proceeding details",
-        hint = "Include the case number(s), if known.",
-        typeOverride = TextArea,
-        access = {DefaultAccess.class}
-    )
-    private String legalProceedingsDetails;
-
-    @CCD(
         label = "Claim costs from",
         access = {DefaultAccess.class}
     )

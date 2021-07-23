@@ -5,8 +5,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.divorce.caseworker.service.updater.MiniApplication;
-import uk.gov.hmcts.divorce.caseworker.service.updater.RespondentSolicitorAosInvitation;
+import uk.gov.hmcts.divorce.caseworker.service.updater.GenerateMiniApplication;
+import uk.gov.hmcts.divorce.caseworker.service.updater.GenerateRespondentSolicitorAosInvitation;
+import uk.gov.hmcts.divorce.caseworker.service.updater.SendAosNotifications;
+import uk.gov.hmcts.divorce.caseworker.service.updater.SendAosPack;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataContext;
@@ -15,9 +17,6 @@ import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChain;
 import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChainFactory;
 
 import java.time.Clock;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,6 +26,8 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
@@ -37,13 +38,19 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 class CaseworkerIssueApplicationServiceTest {
 
     @Mock
-    private MiniApplication miniApplication;
+    private GenerateMiniApplication generateMiniApplication;
 
     @Mock
-    private RespondentSolicitorAosInvitation respondentSolicitorAosInvitation;
+    private GenerateRespondentSolicitorAosInvitation generateRespondentSolicitorAosInvitation;
 
     @Mock
     private CaseDataUpdaterChainFactory caseDataUpdaterChainFactory;
+
+    @Mock
+    private SendAosPack sendAosPack;
+
+    @Mock
+    private SendAosNotifications sendAosNotifications;
 
     @Mock
     private Clock clock;
@@ -67,7 +74,11 @@ class CaseworkerIssueApplicationServiceTest {
 
         final CaseDataUpdaterChain caseDataUpdaterChain = mock(CaseDataUpdaterChain.class);
 
-        final List<CaseDataUpdater> caseDataUpdaters = List.of(miniApplication, respondentSolicitorAosInvitation);
+        final List<CaseDataUpdater> caseDataUpdaters = List.of(
+            generateRespondentSolicitorAosInvitation,
+            generateMiniApplication,
+            sendAosPack,
+            sendAosNotifications);
 
         final CaseDataContext caseDataContext = CaseDataContext.builder()
             .caseData(caseData)
@@ -76,11 +87,7 @@ class CaseworkerIssueApplicationServiceTest {
             .userAuthToken(TEST_AUTHORIZATION_TOKEN)
             .build();
 
-        final var instant = Instant.now();
-        final var zoneId = ZoneId.systemDefault();
-
-        when(clock.instant()).thenReturn(instant);
-        when(clock.getZone()).thenReturn(zoneId);
+        setMockClock(clock);
 
         when(caseDataUpdaterChainFactory.createWith(caseDataUpdaters)).thenReturn(caseDataUpdaterChain);
         when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
@@ -92,10 +99,8 @@ class CaseworkerIssueApplicationServiceTest {
             TEST_AUTHORIZATION_TOKEN
         );
 
-        final var expectedDateTime = LocalDate.ofInstant(instant, zoneId);
-
         var expectedCaseData = caseData();
-        expectedCaseData.getApplication().setIssueDate(expectedDateTime);
+        expectedCaseData.getApplication().setIssueDate(getExpectedLocalDate());
         expectedCaseData.getApplicant2().setSolicitorRepresented(YES);
         expectedCaseData.getApplicant2().setSolicitor(solicitor);
 
@@ -115,7 +120,10 @@ class CaseworkerIssueApplicationServiceTest {
 
         final CaseDataUpdaterChain caseDataUpdaterChain = mock(CaseDataUpdaterChain.class);
 
-        final List<CaseDataUpdater> caseDataUpdaters = List.of(miniApplication);
+        final List<CaseDataUpdater> caseDataUpdaters = List.of(
+            generateMiniApplication,
+            sendAosPack,
+            sendAosNotifications);
 
         final CaseDataContext caseDataContext = CaseDataContext.builder()
             .caseData(caseData)
@@ -124,11 +132,7 @@ class CaseworkerIssueApplicationServiceTest {
             .userAuthToken(TEST_AUTHORIZATION_TOKEN)
             .build();
 
-        final var instant = Instant.now();
-        final var zoneId = ZoneId.systemDefault();
-
-        when(clock.instant()).thenReturn(instant);
-        when(clock.getZone()).thenReturn(zoneId);
+        setMockClock(clock);
 
         when(caseDataUpdaterChainFactory.createWith(caseDataUpdaters)).thenReturn(caseDataUpdaterChain);
         when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
@@ -140,10 +144,8 @@ class CaseworkerIssueApplicationServiceTest {
             TEST_AUTHORIZATION_TOKEN
         );
 
-        final var expectedDateTime = LocalDate.ofInstant(instant, zoneId);
-
         var expectedCaseData = caseData();
-        expectedCaseData.getApplication().setIssueDate(expectedDateTime);
+        expectedCaseData.getApplication().setIssueDate(getExpectedLocalDate());
         expectedCaseData.getApplicant2().setSolicitorRepresented(NO);
 
         assertThat(response).isEqualTo(expectedCaseData);

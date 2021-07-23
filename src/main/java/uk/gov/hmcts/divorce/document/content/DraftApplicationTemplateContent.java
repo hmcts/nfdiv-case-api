@@ -104,7 +104,7 @@ public class DraftApplicationTemplateContent {
                 ofNullable(application.getMarriageDetails().getDate())
                     .map(marriageDate -> marriageDate.format(TEMPLATE_DATE_FORMAT))
                     .orElse(null));
-            templateData.put(COURT_CASE_DETAILS, application.getLegalProceedingsDetails());
+            templateData.put(COURT_CASE_DETAILS, applicant1.getLegalProceedingsDetails());
 
             templateData.put(HAS_COST_ORDERS, application.getDivorceCostsClaim().toBoolean());
             templateData.put(HAS_FINANCIAL_ORDERS, applicant1.getFinancialOrder().toBoolean());

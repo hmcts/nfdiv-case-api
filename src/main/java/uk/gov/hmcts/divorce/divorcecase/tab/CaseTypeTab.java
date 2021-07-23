@@ -28,6 +28,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildMarriageCertificateTab(configBuilder);
         buildNotesTab(configBuilder);
         buildGeneralReferralTab(configBuilder);
+        buildConfidentialDocumentsTab(configBuilder);
     }
 
 
@@ -94,9 +95,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("divorceCostsClaim")
             .field("divorceClaimFrom", "divorceCostsClaim=\"Yes\"")
             .label("LabelOtherLegalProceedings-Heading", null, "### Other legal proceedings")
-            .field("legalProceedings")
-            .field("legalProceedingsRelated", "legalProceedings=\"Yes\"")
-            .field("legalProceedingsDetails", "legalProceedings=\"Yes\"")
+            .field("applicant1LegalProceedings")
+            .field("applicant1LegalProceedingsRelated", "applicant1LegalProceedings=\"Yes\"")
+            .field("applicant1LegalProceedingsDetails", "applicant1LegalProceedings=\"Yes\"")
             .label("LabelFinancialOrder-Heading", null, "### Financial order")
             .field("applicant1FinancialOrder")
             .field("applicant1FinancialOrderFor", "applicant1FinancialOrder=\"Yes\"");
@@ -181,5 +182,11 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("alternativeServiceMedium")
             .field("generalReferralDetails")
             .field("generalReferralFeeRequired");
+    }
+
+    private void buildConfidentialDocumentsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("confidentialDocuments", "Confidential Document")
+            .forRoles(CASEWORKER_COURTADMIN_RDU, CASEWORKER_COURTADMIN_CTSC, CASEWORKER_LEGAL_ADVISOR, CASEWORKER_SUPERUSER)
+            .field(CaseData::getConfidentialDocumentsUploaded);
     }
 }
