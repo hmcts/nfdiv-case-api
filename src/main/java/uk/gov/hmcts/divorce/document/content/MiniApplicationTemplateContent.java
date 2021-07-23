@@ -125,8 +125,8 @@ public class MiniApplicationTemplateContent {
                     .map(marriageDate -> marriageDate.format(TEMPLATE_DATE_FORMAT))
                     .orElse(null));
 
-            templateData.put(COURT_CASE_DETAILS, caseData.getApplication().getLegalProceedingsDetails());
-            templateData.put(HAS_OTHER_COURT_CASES, caseData.getApplication().getLegalProceedings().toBoolean());
+            templateData.put(COURT_CASE_DETAILS, caseData.getApplicant1().getLegalProceedingsDetails());
+            templateData.put(HAS_OTHER_COURT_CASES, caseData.getApplicant1().getLegalProceedings().toBoolean());
             templateData.put(FINANCIAL_ORDER_CHILD_SOLE, AND_FOR_THE_CHILDREN_OF_THE_APPLICANT_AND_THE_RESPONDENT);
             templateData.put(FINANCIAL_ORDER_CHILD_JOINT, CHILDREN_OF_THE_APPLICANT_1_AND_APPLICANT_2);
 
