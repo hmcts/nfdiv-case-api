@@ -29,7 +29,7 @@ public class CaseworkerUploadConfidentialDocument implements CCDConfig<CaseData,
             .name("Upload confidential document")
             .description("Upload confidential document")
             .explicitGrants()
-            .showSummary()
+            .showSummary(false)
             .grant(CREATE_READ_UPDATE, CASEWORKER_COURTADMIN_CTSC, CASEWORKER_COURTADMIN_RDU)
             .grant(READ, CASEWORKER_SUPERUSER, CASEWORKER_LEGAL_ADVISOR))
             .page("uploadConfidentialDocuments")
