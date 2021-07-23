@@ -78,7 +78,8 @@ ccd:
         ELASTIC_SEARCH_ENABLED: false
         CCD_DM_DOMAIN: http://dm-store-aat.service.core-compute-aat.internal
         CCD_DOCUMENT_URL_PATTERN: ^https?://(((?:api-gateway\.preprod\.dm\.reform\.hmcts\.net|dm-store-aat\.service\.core-compute-aat\.internal(?::\d+)?)\/documents\/[A-Za-z0-9-]+(?:\/binary)?)|(em-hrs-api-aat\.service\.core-compute-aat\.internal(?::\d+)?\/hearing-recordings\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\/segments\/[0-9]))
-        IDAM_USER_URL: https://idam-web-public.aat.platform.hmcts.net
+        IDAM_API_BASE_URL: https://idam-api.aat.platform.hmcts.net
+        IDAM_OIDC_URL: https://idam-web-public.aat.platform.hmcts.net
       keyVaults: []
       ingressHost: ccd-data-store-api-${SERVICE_FQDN}
   ccd-definition-store-api:
