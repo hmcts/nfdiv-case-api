@@ -2,7 +2,7 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.divorcecase.model.Application;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 
 import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.JOINT_APPLICATION_CONDITION;
@@ -26,9 +26,9 @@ public class OtherLegalProceedings implements CcdPageConfiguration {
                 "LabelNFDJointBanner-OtherLegalProceedings",
                 SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
                 JOINT_APPLICATION_CONDITION)
-            .complex(CaseData::getApplication)
-                .mandatory(Application::getApplicant1LegalProceedings)
-                .mandatory(Application::getApplicant1LegalProceedingsDetails, "applicant1LegalProceedings=\"Yes\"")
+            .complex(CaseData::getApplicant1)
+                .mandatory(Applicant::getLegalProceedings)
+                .mandatory(Applicant::getLegalProceedingsDetails, "applicant1LegalProceedings=\"Yes\"")
             .done();
     }
 }

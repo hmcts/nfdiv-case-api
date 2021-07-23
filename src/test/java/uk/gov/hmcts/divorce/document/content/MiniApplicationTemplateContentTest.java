@@ -196,7 +196,7 @@ public class MiniApplicationTemplateContentTest {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.setDivorceOrDissolution(DISSOLUTION);
-        caseData.getApplication().setApplicant1LegalProceedings(YES);
+        caseData.getApplicant1().setLegalProceedings(YES);
 
         caseData.setApplicant2(getApplicant());
         caseData.getApplicant2().setSolicitorRepresented(YES);
@@ -232,7 +232,7 @@ public class MiniApplicationTemplateContentTest {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.setDivorceOrDissolution(DISSOLUTION);
-        caseData.getApplication().setApplicant1LegalProceedings(YES);
+        caseData.getApplicant1().setLegalProceedings(YES);
 
         caseData.setApplicant2(getApplicant());
         caseData.getApplicant2().setSolicitorRepresented(YES);
@@ -261,7 +261,7 @@ public class MiniApplicationTemplateContentTest {
     private void setCaseDetails(CaseData caseData) {
         caseData.getApplicant1().setFinancialOrder(NO);
         caseData.getApplicant2().setFinancialOrder(NO);
-        caseData.getApplication().setApplicant1LegalProceedings(YES);
+        caseData.getApplicant1().setLegalProceedings(YES);
         caseData.getApplicant1().setSolicitor(
             Solicitor.builder().email(TEST_SOLICITOR_EMAIL).address(LINE_1_LINE_2_CITY_POSTCODE).build()
         );
