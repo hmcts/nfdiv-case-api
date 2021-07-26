@@ -288,7 +288,7 @@ public class TestDataHelper {
         application.setJurisdiction(jurisdiction);
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplicant2().setFinancialOrder(NO);
-        caseData.getApplication().setLegalProceedings(NO);
+        caseData.getApplicant1().setLegalProceedings(NO);
 
         return caseData;
     }
