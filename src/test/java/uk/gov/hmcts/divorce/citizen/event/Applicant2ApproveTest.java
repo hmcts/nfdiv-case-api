@@ -73,9 +73,9 @@ class Applicant2ApproveTest {
 
         assertThat(response.getErrors().size()).isEqualTo(7);
         assertThat(response.getErrors()).containsExactlyInAnyOrder(
-            "Applicant1FinancialOrder cannot be empty or null",
+            "Applicant2StatementOfTruth cannot be empty or null",
+            "Applicant2PrayerHasBeenGiven cannot be empty or null",
             "JurisdictionConnections cannot be empty or null",
-            "Applicant2Gender cannot be empty or null",
             "MarriageApplicant2Name cannot be empty or null",
             "MarriageDate cannot be empty or null",
             "Applicant2FirstName cannot be empty or null",
@@ -104,8 +104,6 @@ class Applicant2ApproveTest {
         caseData.setApplicant1(getApplicant());
         caseData.setApplicant2(getApplicant(MALE));
         caseData.getApplicant1().setContactDetailsConfidential(ConfidentialAddress.SHARE);
-        caseData.getApplicant1().setFinancialOrder(YesOrNo.NO);
-        caseData.getApplicant2().setFinancialOrder(YesOrNo.NO);
         caseData.getApplication().setHelpWithFees(
             HelpWithFees.builder()
                 .needHelp(NO)
