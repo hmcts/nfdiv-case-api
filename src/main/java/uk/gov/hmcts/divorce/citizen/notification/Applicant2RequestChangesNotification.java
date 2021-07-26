@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.citizen.notification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -12,7 +11,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_REQUEST_CHANGES;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.*;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.PARTNER;
 
 @Component
 @Slf4j
@@ -24,25 +24,23 @@ public class Applicant2RequestChangesNotification {
     @Autowired
     private CommonContent commonContent;
 
-    @Autowired
-    private EmailTemplatesConfig emailTemplatesConfig;
-
     public void send(CaseData caseData, Long id) {
         Map<String, String> templateVars = commonContent.templateVarsFor(caseData);
+        templateVars.put(PARTNER, commonContent.getTheirPartner(caseData, caseData.getApplicant1()));
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
-            templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), "a " + DIVORCE_APPLICATION);
+            templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), "for divorce");
         } else {
-            templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), "an " + APPLICATION_TO_END_CIVIL_PARTNERSHIP);
+            templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), "to end your civil partnership");
         }
 
-        log.info("Sending notification to applicant 1 that applicant 2 requests changes for case : {}", id);
+        log.info("Sending notification to applicant 2 to confirm their request for changes: {}", id);
 
         notificationService.sendEmail(
-            caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
+            caseData.getApplicant2().getEmail(),
             JOINT_APPLICANT2_REQUEST_CHANGES,
             templateVars,
-            caseData.getApplicant1().getLanguagePreference()
+            caseData.getApplicant2().getLanguagePreference()
         );
     }
 }

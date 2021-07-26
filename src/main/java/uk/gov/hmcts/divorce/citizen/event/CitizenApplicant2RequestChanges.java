@@ -12,10 +12,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.util.List;
+
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Slf4j
@@ -44,6 +45,19 @@ public class CitizenApplicant2RequestChanges implements CCDConfig<CaseData, Stat
                                                                        CaseDetails<CaseData, State> beforeDetails) {
         log.info("Citizen applicant 2 request changes about to submit callback invoked");
         CaseData data = details.getData();
+
+        log.info("Validating case data");
+        final List<String> validationErrors = AwaitingApplicant1Response.validate(data);
+
+        if (!validationErrors.isEmpty()) {
+            log.info("Validation errors: {} ", validationErrors);
+
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(data)
+                .errors(validationErrors)
+                .state(AwaitingApplicant2Response)
+                .build();
+        }
 
         applicant2RequestChangesNotification.send(data, details.getId());
 
