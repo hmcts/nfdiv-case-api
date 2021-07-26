@@ -31,7 +31,7 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
                 SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
                 JOINT_APPLICATION_CONDITION)
             .complex(CaseData::getApplicant2)
-                .mandatory(Applicant::getSolicitorRepresented, null, null, "Is the respondent represented by a solicitor?")
+                .mandatoryWithLabel(Applicant::getSolicitorRepresented, "Is the respondent represented by a solicitor?")
                 .complex(Applicant::getSolicitor)
                     .mandatory(Solicitor::getName, "applicant2SolicitorRepresented=\"Yes\"")
                     .mandatory(Solicitor::getReference, "applicant2SolicitorRepresented=\"Yes\"")
@@ -56,6 +56,7 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
                         .done()
                     .done()
                 .optional(Applicant::getHomeAddress, "applicant2SolicitorRepresented=\"No\"")
+                .optional(Applicant::getEmail, "applicant2SolicitorRepresented=\"No\"")
                 .mandatory(Applicant::getCorrespondenceAddress, "applicant2SolicitorRepresented=\"No\"")
             .done();
     }

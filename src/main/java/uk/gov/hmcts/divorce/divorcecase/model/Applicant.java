@@ -108,7 +108,7 @@ public class Applicant {
     )
     private AddressGlobalUK correspondenceAddress;
 
-    @CCD(label = "Is applicant represented by a solicitor?")
+    @CCD(label = "Is represented by a solicitor?")
     private YesOrNo solicitorRepresented;
 
     @JsonUnwrapped(prefix = "Solicitor")
@@ -125,6 +125,24 @@ public class Applicant {
         label = "Who is the financial order for?"
     )
     private Set<FinancialOrderFor> financialOrderFor;
+
+    @CCD(
+        label = "Are there any existing or previous court proceedings relating to the applicant's marriage, "
+            + "property or children?"
+    )
+    private YesOrNo legalProceedings;
+
+    @CCD(
+        label = "What do the legal proceedings relate to?"
+    )
+    private Set<LegalProceedingsRelated> legalProceedingsRelated;
+
+    @CCD(
+        label = "Legal proceeding details",
+        hint = "Include the case number(s), if known.",
+        typeOverride = TextArea
+    )
+    private String legalProceedingsDetails;
 
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {

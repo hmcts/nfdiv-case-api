@@ -32,7 +32,7 @@ public class MarriageCertificateDetails implements CcdPageConfiguration {
                     .mandatory(MarriageDetails::getDate)
                     .mandatory(MarriageDetails::getApplicant1Name)
                     .mandatory(MarriageDetails::getApplicant2Name)
-                    .mandatory(MarriageDetails::getMarriedInUk, null, null, "Did the marriage take place in the UK?")
+                    .mandatoryWithLabel(MarriageDetails::getMarriedInUk, "Did the marriage take place in the UK?")
                     .mandatory(MarriageDetails::getPlaceOfMarriage, "marriageMarriedInUk=\"No\"")
                     .mandatory(MarriageDetails::getCountryOfMarriage, "marriageMarriedInUk=\"No\"")
                 .done()

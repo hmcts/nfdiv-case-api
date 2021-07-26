@@ -27,8 +27,8 @@ public class CaseworkerPendingRejection implements CCDConfig<CaseData, State, Us
         new PageBuilder(configBuilder
             .event(CASEWORKER_PENDING_REJECTION)
             .forStateTransition(allOf(State.class), PendingRejection)
-            .name("Pending Rejection")
-            .description("Pending Rejection")
+            .name("Pending rejection")
+            .description("Pending rejection")
             .explicitGrants()
             .grant(CREATE_READ_UPDATE,
                 CASEWORKER_COURTADMIN_CTSC,

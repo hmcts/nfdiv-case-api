@@ -88,13 +88,13 @@
         "value": {
           "documentDateAdded": null,
           "documentComment": null,
-          "documentFileName": "mini-application-1616591401473378.pdf",
-          "documentType": "divorceApplication",
+          "documentFileName": "aosinvitation-1616591401473378.pdf",
+          "documentType": "aos",
           "documentEmailContent": null,
           "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            "document_filename": "mini-application-1616591401473378.pdf",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100",
+            "document_filename": "aosinvitation-1616591401473378.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100/binary"
           }
         }
       },
@@ -103,13 +103,13 @@
         "value": {
           "documentDateAdded": null,
           "documentComment": null,
-          "documentFileName": "aosinvitation-1616591401473378.pdf",
-          "documentType": "aos",
+          "documentFileName": "mini-application-1616591401473378.pdf",
+          "documentType": "divorceApplication",
           "documentEmailContent": null,
           "documentLink": {
-            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100",
-            "document_filename": "aosinvitation-1616591401473378.pdf",
-            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100/binary"
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+            "document_filename": "mini-application-1616591401473378.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
           }
         }
       }
@@ -130,7 +130,11 @@
       }
     ],
     "documentUploadComplete": "Yes",
-    "issueDate": "2021-06-17"
+    "issueDate": "2021-06-17",
+    "dueDate": "2021-07-17",
+    "digitalNoticeOfProceedings": "Yes",
+    "noticeOfProceedingsEmail": "solicitor@test.com",
+    "noticeOfProceedingsSolicitorFirm": "Test Organisation"
   },
   "errors": null,
   "warnings": null,
