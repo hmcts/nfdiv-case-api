@@ -6,12 +6,20 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import java.util.function.Function;
 
-public class CaseTaskRunner {
+import static java.util.function.Function.identity;
+import static java.util.stream.Stream.of;
+
+public final class CaseTaskRunner {
 
     private final Function<CaseDetails<CaseData, State>, CaseDetails<CaseData, State>> caseTask;
 
-    public CaseTaskRunner(final Function<CaseDetails<CaseData, State>, CaseDetails<CaseData, State>> caseTask) {
+    private CaseTaskRunner(final Function<CaseDetails<CaseData, State>, CaseDetails<CaseData, State>> caseTask) {
         this.caseTask = caseTask;
+    }
+
+    @SafeVarargs
+    public static CaseTaskRunner caseTasks(final Function<CaseDetails<CaseData, State>, CaseDetails<CaseData, State>>... tasks) {
+        return new CaseTaskRunner(of(tasks).reduce(identity(), Function::andThen));
     }
 
     public CaseDetails<CaseData, State> run(final CaseDetails<CaseData, State> caseDetails) {

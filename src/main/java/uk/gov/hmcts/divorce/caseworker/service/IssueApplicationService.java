@@ -14,7 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import java.time.Clock;
 import java.time.LocalDate;
 
-import static uk.gov.hmcts.divorce.divorcecase.task.CaseTask.caseTasks;
+import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
 @Service
 @Slf4j

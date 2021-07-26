@@ -6,26 +6,37 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
-import java.util.function.Function;
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
 class CaseTaskRunnerTest {
 
     @Test
-    void shouldRunTaskFunctionWithCaseDetails() {
+    void shouldReturnReducedFunctionWrappedInCaseTaskRunnerAndBeAppliedToCaseDetails() {
 
         final CaseData caseData = CaseData.builder().build();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
-        final Function<CaseDetails<CaseData, State>, CaseDetails<CaseData, State>> setFirstName = cd -> {
-            cd.getData().setApplicant1(Applicant.builder().firstName("first name").build());
-            return cd;
-        };
+        final CaseDetails<CaseData, State> result = caseTasks(
+            cd -> {
+                cd.getData().setApplicant1(Applicant.builder().firstName("first name").build());
+                return cd;
+            },
+            new TestCaseTask()
+        ).run(caseDetails);
 
-        final CaseDetails<CaseData, State> result = new CaseTaskRunner(setFirstName).run(caseDetails);
+        assertThat(result.getData().getApplicant1())
+            .extracting(Applicant::getFirstName, Applicant::getLastName)
+            .contains("first name", "last name");
+    }
+    
+    public static class TestCaseTask implements CaseTask {
 
-        assertThat(result.getData().getApplicant1().getFirstName()).isEqualTo("first name");
+        @Override
+        public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> caseDetails) {
+            caseDetails.getData().getApplicant1().setLastName("last name");
+            return caseDetails;
+        }
     }
 }
