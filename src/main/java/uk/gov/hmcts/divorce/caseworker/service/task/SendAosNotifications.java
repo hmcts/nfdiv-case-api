@@ -1,18 +1,16 @@
-package uk.gov.hmcts.divorce.caseworker.service.updater;
+package uk.gov.hmcts.divorce.caseworker.service.task;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.notification.NoticeOfProceedingsNotification;
 import uk.gov.hmcts.divorce.caseworker.service.notification.PersonalServiceNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataContext;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdater;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChain;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 @Component
-@Slf4j
-public class SendAosNotifications implements CaseDataUpdater {
+public class SendAosNotifications implements CaseTask {
 
     @Autowired
     private PersonalServiceNotification personalServiceNotification;
@@ -21,11 +19,10 @@ public class SendAosNotifications implements CaseDataUpdater {
     private NoticeOfProceedingsNotification noticeOfProceedingsNotification;
 
     @Override
-    public CaseDataContext updateCaseData(final CaseDataContext caseDataContext,
-                                          final CaseDataUpdaterChain caseDataUpdaterChain) {
+    public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
 
-        final CaseData caseData = caseDataContext.getCaseData();
-        final Long caseId = caseDataContext.getCaseId();
+        final CaseData caseData = caseDetails.getData();
+        final Long caseId = caseDetails.getId();
 
         if (caseData.getApplication().isPersonalServiceMethod()) {
             personalServiceNotification.send(caseData, caseId);
@@ -33,6 +30,6 @@ public class SendAosNotifications implements CaseDataUpdater {
             noticeOfProceedingsNotification.send(caseData, caseId);
         }
 
-        return caseDataUpdaterChain.processNext(caseDataContext);
+        return caseDetails;
     }
 }

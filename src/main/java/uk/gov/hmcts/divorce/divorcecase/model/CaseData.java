@@ -141,7 +141,7 @@ public class CaseData {
     @CCD(
         label = "Confidential documents uploaded",
         typeOverride = Collection,
-        typeParameterOverride = "DivorceDocument",
+        typeParameterOverride = "ConfidentialDivorceDocument",
         access = {CaseworkerCourtAdminAccess.class}
     )
     private List<ListValue<ConfidentialDivorceDocument>> confidentialDocumentsUploaded;
