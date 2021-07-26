@@ -56,8 +56,7 @@ public enum State {
 
     @CCD(
         name = "Applicant 2 approved",
-        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
-        access = {CaseAccessAdministrator.class}
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
     Applicant2Approved("Applicant2Approved") {
         @Override

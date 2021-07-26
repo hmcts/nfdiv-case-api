@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -43,7 +42,7 @@ class Applicant2ApproveTest {
 
         applicant2Approve.configure(configBuilder);
 
-        Assertions.assertThat(getEventsFrom(configBuilder).values())
+        assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(APPLICANT_2_APPROVE);
     }

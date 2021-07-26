@@ -33,7 +33,6 @@ public class Applicant2Approve implements CCDConfig<CaseData, State, UserRole> {
             .name("Applicant 2 approve")
             .description("Applicant 2 has approved")
             .grant(CREATE_READ_UPDATE, APPLICANT_2)
-            .displayOrder(1)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
