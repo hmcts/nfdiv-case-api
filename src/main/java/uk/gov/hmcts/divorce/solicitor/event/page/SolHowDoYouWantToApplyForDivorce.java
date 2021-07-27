@@ -54,7 +54,7 @@ public class SolHowDoYouWantToApplyForDivorce implements CcdPageConfiguration {
         log.info("Mid-event callback triggered for howDoYouWantToApplyForDivorce");
 
         final CaseData data = details.getData();
-        data.getLabelContent().setApplicationTYpe(data.getApplicationType());
+        data.getLabelContent().setApplicationType(data.getApplicationType());
         data.getLabelContent().setUnionType(data.getDivorceOrDissolution());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

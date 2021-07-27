@@ -43,7 +43,7 @@ public class LabelContent {
         }
     }
 
-    public void setApplicationTYpe(ApplicationType applicationType) {
+    public void setApplicationType(ApplicationType applicationType) {
         if (applicationType != null && applicationType.isSole()) {
             applicant2 = "respondent";
             theApplicant2 = "the respondent";
