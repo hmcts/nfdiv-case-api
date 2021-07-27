@@ -21,7 +21,7 @@ public class LabelContent {
     @CCD(label = "applicant 2 or the respondent")
     private String theApplicant2;
 
-    @CCD(label = "applicant 2 or the respondent")
+    @CCD(label = "Applicant 2 or The respondent")
     private String theApplicant2UC;
 
     @CCD(label = "Applicant or Respondent")

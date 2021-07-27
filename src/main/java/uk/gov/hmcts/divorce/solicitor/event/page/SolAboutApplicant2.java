@@ -17,7 +17,7 @@ public class SolAboutApplicant2 implements CcdPageConfiguration {
 
         pageBuilder
             .page("SolAboutApplicant2")
-            .pageLabel("About the respondent or second applicant")
+            .pageLabel("About the other party")
             .label(
                 "LabelNFDBanner-AboutApplicant2",
                 SOLICITOR_NFD_PREVIEW_BANNER,
