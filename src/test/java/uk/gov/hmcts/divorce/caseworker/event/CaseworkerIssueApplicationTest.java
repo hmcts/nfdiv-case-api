@@ -20,13 +20,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.time.LocalDate;
 import java.util.Set;
-import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.CASEWORKER_ISSUE_APPLICATION;
@@ -41,9 +38,6 @@ class CaseworkerIssueApplicationTest {
 
     @Mock
     private IssueApplicationService issueApplicationService;
-
-    @Mock
-    private HttpServletRequest httpServletRequest;
 
     @InjectMocks
     private CaseworkerIssueApplication caseworkerIssueApplication;
@@ -62,7 +56,6 @@ class CaseworkerIssueApplicationTest {
     @Test
     void shouldCallIssueApplicationServiceAndReturnCaseData() {
 
-        final var auth = "authorization";
         final var caseData = caseDataWithAllMandatoryFields();
         final var expectedCaseData = CaseData.builder().build();
 
@@ -71,26 +64,17 @@ class CaseworkerIssueApplicationTest {
         details.setId(1L);
         details.setCreatedDate(LOCAL_DATE_TIME);
 
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(auth);
-        when(issueApplicationService
-            .aboutToSubmit(
-                caseData,
-                details.getId(),
-                details.getCreatedDate().toLocalDate(),
-                auth))
-            .thenReturn(expectedCaseData);
+        final CaseDetails<CaseData, State> expectedDetails = new CaseDetails<>();
+        expectedDetails.setData(expectedCaseData);
+        expectedDetails.setId(1L);
+        expectedDetails.setCreatedDate(LOCAL_DATE_TIME);
+
+        when(issueApplicationService.issueApplication(details)).thenReturn(expectedDetails);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(details, null);
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
-
-        verify(issueApplicationService).aboutToSubmit(
-            caseData,
-            details.getId(),
-            details.getCreatedDate().toLocalDate(),
-            auth);
-
-        verifyNoMoreInteractions(httpServletRequest, issueApplicationService);
+        verify(issueApplicationService).issueApplication(details);
     }
 
     @Test
@@ -120,8 +104,6 @@ class CaseworkerIssueApplicationTest {
                 "PlaceOfMarriage cannot be empty or null",
                 "Applicant1Gender cannot be empty or null"
             );
-
-        verifyNoMoreInteractions(httpServletRequest, issueApplicationService);
     }
 
     private CaseData caseDataWithAllMandatoryFields() {
