@@ -1,25 +1,27 @@
-package uk.gov.hmcts.divorce.solicitor.service.updater;
+package uk.gov.hmcts.divorce.solicitor.service.task;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataContext;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdater;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChain;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.DraftApplicationTemplateContent;
 
 import java.util.Map;
 import java.util.function.Supplier;
+import javax.servlet.http.HttpServletRequest;
 
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_DRAFT_APPLICATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 
 @Component
 @Slf4j
-public class MiniApplicationDraft implements CaseDataUpdater {
+public class MiniApplicationDraft implements CaseTask {
 
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
@@ -27,29 +29,31 @@ public class MiniApplicationDraft implements CaseDataUpdater {
     @Autowired
     private DraftApplicationTemplateContent templateContent;
 
+    @Autowired
+    private HttpServletRequest request;
+
     @Override
-    public CaseDataContext updateCaseData(final CaseDataContext caseDataContext,
-                                          final CaseDataUpdaterChain caseDataUpdaterChain) {
+    public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
 
-        log.info("Executing handler for generating mini draft for case id {} ", caseDataContext.getCaseId());
+        final CaseData caseData = caseDetails.getData();
+        final Long caseId = caseDetails.getId();
 
-        final CaseData caseData = caseDataContext.copyOfCaseData();
-        final Long caseId = caseDataContext.getCaseId();
+        log.info("Executing handler for generating mini draft for case id {} ", caseId);
 
         final Supplier<Map<String, Object>> templateContentSupplier = templateContent
-            .apply(caseData, caseId, caseDataContext.getCreatedDate());
+            .apply(caseData, caseId, caseDetails.getCreatedDate().toLocalDate());
 
-        final CaseData updatedCaseData = caseDataDocumentService.renderDocumentAndUpdateCaseData(
+        caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
             DIVORCE_APPLICATION,
             templateContentSupplier,
             caseId,
-            caseDataContext.getUserAuthToken(),
+            request.getHeader(AUTHORIZATION),
             DIVORCE_MINI_DRAFT_APPLICATION,
             DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME,
             caseData.getApplicant1().getLanguagePreference()
         );
 
-        return caseDataUpdaterChain.processNext(caseDataContext.handlerContextWith(updatedCaseData));
+        return caseDetails;
     }
 }

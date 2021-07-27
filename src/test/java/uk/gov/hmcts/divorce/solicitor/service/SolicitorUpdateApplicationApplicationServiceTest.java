@@ -5,24 +5,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataContext;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdater;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChain;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChainFactory;
-import uk.gov.hmcts.divorce.solicitor.service.updater.MiniApplicationDraft;
-import uk.gov.hmcts.divorce.solicitor.service.updater.MiniApplicationRemover;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.solicitor.service.task.MiniApplicationDraft;
+import uk.gov.hmcts.divorce.solicitor.service.task.MiniApplicationRemover;
 
-import java.util.List;
-
-import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 
 @ExtendWith(MockitoExtension.class)
 class SolicitorUpdateApplicationApplicationServiceTest {
@@ -33,9 +27,6 @@ class SolicitorUpdateApplicationApplicationServiceTest {
     @Mock
     private MiniApplicationDraft miniApplicationDraft;
 
-    @Mock
-    private CaseDataUpdaterChainFactory caseDataUpdaterChainFactory;
-
     @InjectMocks
     private SolicitorUpdateApplicationService solicitorUpdateApplicationService;
 
@@ -43,30 +34,16 @@ class SolicitorUpdateApplicationApplicationServiceTest {
     void shouldCompleteStepsToUpdateApplication() {
 
         final CaseData caseData = mock(CaseData.class);
-        final CaseDataUpdaterChain caseDataUpdaterChain = mock(CaseDataUpdaterChain.class);
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
-        final List<CaseDataUpdater> caseDataUpdaters = asList(
-            miniApplicationRemover,
-            miniApplicationDraft
-        );
+        when(miniApplicationRemover.apply(caseDetails)).thenReturn(caseDetails);
+        when(miniApplicationDraft.apply(caseDetails)).thenReturn(caseDetails);
 
-        final CaseDataContext caseDataContext = CaseDataContext.builder()
-            .caseData(caseData)
-            .caseId(TEST_CASE_ID)
-            .createdDate(LOCAL_DATE)
-            .userAuthToken(TEST_AUTHORIZATION_TOKEN)
-            .build();
+        final CaseDetails<CaseData, State> result = solicitorUpdateApplicationService.aboutToSubmit(caseDetails);
 
-        when(caseDataUpdaterChainFactory.createWith(caseDataUpdaters)).thenReturn(caseDataUpdaterChain);
-        when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
-
-        final CaseData actualCaseData = solicitorUpdateApplicationService.aboutToSubmit(
-            caseData,
-            TEST_CASE_ID,
-            LOCAL_DATE,
-            TEST_AUTHORIZATION_TOKEN
-        );
-
-        assertThat(actualCaseData, is(caseData));
+        assertThat(result.getData(), is(caseData));
     }
 }

@@ -1,11 +1,11 @@
-package uk.gov.hmcts.divorce.solicitor.service.updater;
+package uk.gov.hmcts.divorce.solicitor.service.task;
 
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataContext;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdater;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChain;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import java.util.Set;
 
@@ -14,13 +14,12 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ClaimsCostFrom.APPLICANT_2;
 
 @Component
-public class ClaimsCost implements CaseDataUpdater {
+public class ClaimsCost implements CaseTask {
 
     @Override
-    public CaseDataContext updateCaseData(final CaseDataContext caseDataContext,
-                                          final CaseDataUpdaterChain caseDataUpdaterChain) {
+    public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
 
-        final CaseData caseData = caseDataContext.copyOfCaseData();
+        final CaseData caseData = caseDetails.getData();
         final Application application = caseData.getApplication();
 
         final boolean isApplicant1ClaimingCosts = YES.equals(application.getDivorceCostsClaim());
@@ -30,6 +29,6 @@ public class ClaimsCost implements CaseDataUpdater {
             application.setDivorceClaimFrom(Set.of(APPLICANT_2));
         }
 
-        return caseDataUpdaterChain.processNext(caseDataContext.handlerContextWith(caseData));
+        return caseDetails;
     }
 }
