@@ -51,6 +51,7 @@ class CaseDataDocumentServiceTest {
     void shouldAddRenderedDocumentToCaseData() {
 
         final var documentId = "123456";
+        final CaseData caseData = caseData();
         final Supplier<Map<String, Object>> templateContentSupplier = HashMap::new;
 
         when(docAssemblyService
@@ -65,8 +66,8 @@ class CaseDataDocumentServiceTest {
 
         when(documentIdProvider.documentId()).thenReturn(documentId);
 
-        final CaseData result = caseDataDocumentService.renderDocumentAndUpdateCaseData(
-            caseData(),
+        caseDataDocumentService.renderDocumentAndUpdateCaseData(
+            caseData,
             EMAIL,
             templateContentSupplier,
             TEST_CASE_ID,
@@ -75,7 +76,7 @@ class CaseDataDocumentServiceTest {
             DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME,
             ENGLISH);
 
-        final List<ListValue<DivorceDocument>> documentsGenerated = result.getDocumentsGenerated();
+        final List<ListValue<DivorceDocument>> documentsGenerated = caseData.getDocumentsGenerated();
 
         assertThat(documentsGenerated).hasSize(1);
 
