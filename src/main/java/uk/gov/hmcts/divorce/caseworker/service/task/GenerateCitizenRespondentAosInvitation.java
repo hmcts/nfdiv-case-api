@@ -44,7 +44,7 @@ public class GenerateCitizenRespondentAosInvitation implements CaseTask {
 
         if (!caseData.getApplicant2().isRepresented()) {
 
-            log.info("Generating access code to allow the respondent to access the joint application");
+            log.info("Generating access code to allow the respondent to access the application");
             caseData.getCaseInvite().setAccessCode(generateAccessCode());
 
             log.info("Generating citizen respondent AoS invitation for case id {} ", caseId);
