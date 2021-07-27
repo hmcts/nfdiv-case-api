@@ -38,14 +38,7 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
                     .mandatory(Solicitor::getPhone, "applicant2SolicitorRepresented=\"Yes\"")
                     .mandatory(Solicitor::getEmail, "applicant2SolicitorRepresented=\"Yes\"")
                     .mandatory(Solicitor::getAddress, "applicant2SolicitorRepresented=\"Yes\"")
-                    .label(
-                        "LabelApplicant2ServiceDetails-DigitalOrPaper",
-                        "If the respondent's solicitor's firm is registered with MyHMCTS, you can assign the case to them. "
-                            + "This will allow the respondent's solicitor to respond digitally. If you cannot find the respondent's "
-                            + "solicitor, a paper AOS pack will be sent to the respondent's solicitor's address entered above.",
-                        "applicant2SolicitorRepresented=\"Yes\"")
-                    .mandatory(Solicitor::getIsDigital, "applicant2SolicitorRepresented=\"Yes\"")
-                    .complex(Solicitor::getOrganisationPolicy, "applicant2SolicitorIsDigital=\"Yes\"")
+                    .complex(Solicitor::getOrganisationPolicy, "applicant2SolicitorRepresented=\"Yes\"")
                         .complex(OrganisationPolicy::getOrganisation)
                             .mandatory(Organisation::getOrganisationId)
                             .done()

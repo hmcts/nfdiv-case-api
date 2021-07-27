@@ -253,7 +253,7 @@ public class SolicitorSubmitApplicationTest {
     }
 
     @Test
-    void shouldSetApplicant2DigitalDetailsWhenApp2SolicitorIsDigitalAndApp2OrganisationIsSet() {
+    void shouldSetApplicant2DigitalDetailsWhenApp2HasSolicitorAndApp2OrganisationIsSet() {
         final long caseId = 1L;
         final OrganisationPolicy<UserRole> organisationPolicy = OrganisationPolicy.<UserRole>builder()
             .organisation(Organisation
@@ -268,7 +268,7 @@ public class SolicitorSubmitApplicationTest {
         caseData.getApplication().setStatementOfTruth(YES);
         caseData.getApplication().setSolSignStatementOfTruth(YES);
 
-        caseData.getApplicant2().setSolicitor(Solicitor.builder().isDigital(YES).organisationPolicy(organisationPolicy).build());
+        caseData.getApplicant2().setSolicitor(Solicitor.builder().organisationPolicy(organisationPolicy).build());
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -295,7 +295,7 @@ public class SolicitorSubmitApplicationTest {
         expectedCaseData.getApplication().setStatementOfTruth(YES);
         expectedCaseData.getApplication().setSolSignStatementOfTruth(YES);
         expectedCaseData.getApplication().setApp2ContactMethodIsDigital(YES);
-        expectedCaseData.getApplicant2().setSolicitor(Solicitor.builder().isDigital(YES).organisationPolicy(organisationPolicy).build());
+        expectedCaseData.getApplicant2().setSolicitor(Solicitor.builder().organisationPolicy(organisationPolicy).build());
         expectedCaseData.getApplicant2().setSolicitorRepresented(YES);
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
@@ -303,44 +303,14 @@ public class SolicitorSubmitApplicationTest {
         assertThat(response.getErrors()).isNull();
     }
 
+
     @Test
-    void shouldNotSetApplicant2DigitalDetailsWhenApp2SolicitorIsNotDigital() {
+    void shouldNotSetApplicant2DigitalDetailsWhenApp2HasSolicitorAndApp2OrgIsNotSet() {
         final long caseId = 1L;
         final CaseData caseData = CaseData.builder().build();
         caseData.getApplication().setStatementOfTruth(YES);
         caseData.getApplication().setSolSignStatementOfTruth(YES);
-        caseData.getApplicant1().setSolicitor(Solicitor.builder().isDigital(NO).build());
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(caseId);
-        caseDetails.setState(Draft);
-
-        final CaseInfo caseInfo = CaseInfo.builder()
-            .caseData(caseData)
-            .state(AwaitingPayment)
-            .build();
-
-        when(solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN))
-            .thenReturn(caseInfo);
-
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(APP_1_SOL_AUTH_TOKEN);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitApplication
-            .aboutToSubmit(caseDetails, new CaseDetails<>());
-
-        assertThat(response.getData()).isEqualTo(caseData);
-        assertThat(response.getState()).isEqualTo(AwaitingPayment);
-        assertThat(response.getErrors()).isNull();
-    }
-
-    @Test
-    void shouldNotSetApplicant2DigitalDetailsWhenApp2SolicitorIsDigitalAndApp2OrgIsNotSet() {
-        final long caseId = 1L;
-        final CaseData caseData = CaseData.builder().build();
-        caseData.getApplication().setStatementOfTruth(YES);
-        caseData.getApplication().setSolSignStatementOfTruth(YES);
-        caseData.getApplicant1().setSolicitor(Solicitor.builder().isDigital(YES).build());
+        caseData.getApplicant1().setSolicitor(Solicitor.builder().build());
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);

@@ -150,7 +150,6 @@ public class CaseworkerIssueApplicationTest {
             Solicitor
                 .builder()
                 .name("testsol")
-                .isDigital(YES)
                 .email(TEST_SOLICITOR_EMAIL)
                 .address("223b\nBaker Street\nLondon\nGreater London\nNW1 5FG\nUnited Kingdom")
                 .organisationPolicy(organisationPolicy())

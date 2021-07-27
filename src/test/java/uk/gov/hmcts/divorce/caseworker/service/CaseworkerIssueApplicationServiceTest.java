@@ -55,7 +55,6 @@ class CaseworkerIssueApplicationServiceTest {
         final Solicitor solicitor = Solicitor.builder()
             .name("testsol")
             .email(TEST_SOLICITOR_EMAIL)
-            .isDigital(YES)
             .build();
 
         caseData.getApplicant2().setSolicitor(solicitor);
