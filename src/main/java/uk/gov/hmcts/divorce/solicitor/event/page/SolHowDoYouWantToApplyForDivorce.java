@@ -5,11 +5,10 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.divorcecase.CaseInfo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_PREVIEW_BANNER;
 
 @Slf4j
@@ -22,6 +21,14 @@ public class SolHowDoYouWantToApplyForDivorce implements CcdPageConfiguration {
             .page("howDoYouWantToApplyForDivorce", this::midEvent)
             .pageLabel("How do you want to apply for the divorce?")
             .label("LabelNFDBanner-ApplyForDivorce", SOLICITOR_NFD_PREVIEW_BANNER)
+            .complex(CaseData::getLabelContent)
+                .readonly(LabelContent::getApplicant2, NEVER_SHOW)
+                .readonly(LabelContent::getApplicant2UC, NEVER_SHOW)
+                .readonly(LabelContent::getTheApplicant2, NEVER_SHOW)
+                .readonly(LabelContent::getTheApplicant2UC, NEVER_SHOW)
+                .readonly(LabelContent::getUnionType, NEVER_SHOW)
+                .readonly(LabelContent::getUnionTypeUC, NEVER_SHOW)
+                .done()
             .label("solHowDoYouWantToApplyForDivorcePara-1",
                 "The applicant can apply for the divorce on their own (as a 'sole applicant') or with their husband "
                     + "or wife (in a 'joint application').\n\n"
@@ -35,12 +42,12 @@ public class SolHowDoYouWantToApplyForDivorce implements CcdPageConfiguration {
                     + "the decision on whether to do a sole or a joint application.*")
             .mandatory(CaseData::getApplicationType, null, null,
                 "How does the applicant want to apply for the divorce?",
-                "The respondent must agree with a joint application in its entirety.")
+                "Applicant 2 must agree with a joint application in its entirety.")
             .mandatoryWithLabel(CaseData::getDivorceOrDissolution,
                 "Is the application for a divorce or dissolution?");
     }
 
-    private AboutToStartOrSubmitResponse<CaseData, State> midEvent(
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
         CaseDetails<CaseData, State> details,
         CaseDetails<CaseData, State> detailsBefore
     ) {
