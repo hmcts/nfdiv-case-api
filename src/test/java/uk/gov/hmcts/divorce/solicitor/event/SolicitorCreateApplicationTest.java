@@ -14,15 +14,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutTheSolicitor;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorCreateApplicationService;
 
-import javax.servlet.http.HttpServletRequest;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreateApplication.SOLICITOR_CREATE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -31,9 +29,6 @@ class SolicitorCreateApplicationTest {
 
     @Mock
     private SolicitorCreateApplicationService solicitorCreateApplicationService;
-
-    @Mock
-    private HttpServletRequest httpServletRequest;
 
     @Mock
     private SolAboutTheSolicitor solAboutTheSolicitor;
@@ -53,22 +48,18 @@ class SolicitorCreateApplicationTest {
     }
 
     @Test
-    public void shouldPopulateMissingRequirementsFieldsInCaseData() throws Exception {
+    public void shouldPopulateMissingRequirementsFieldsInCaseData() {
         final CaseData caseData = caseData();
+        final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
-        details.setId(1L);
+        details.setId(TEST_CASE_ID);
         details.setCreatedDate(LOCAL_DATE_TIME);
 
-        final String auth = "authorization";
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(auth);
+        when(solicitorCreateApplicationService.aboutToSubmit(details)).thenReturn(details);
 
-        solicitorCreateApplication.aboutToSubmit(details, details);
+        solicitorCreateApplication.aboutToSubmit(details, beforeDetails);
 
-        verify(solicitorCreateApplicationService).aboutToSubmit(
-            caseData,
-            details.getId(),
-            details.getCreatedDate().toLocalDate(),
-            auth);
+        verify(solicitorCreateApplicationService).aboutToSubmit(details);
     }
 }
