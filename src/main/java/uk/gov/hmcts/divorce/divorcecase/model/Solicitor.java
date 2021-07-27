@@ -61,21 +61,11 @@ public class Solicitor {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private OrganisationPolicy<UserRole> organisationPolicy;
 
-    @CCD(
-        label = "Digital applicant 2 case"
-    )
-    private YesOrNo isDigital;
-
     @JsonIgnore
     public boolean hasOrgId() {
         if (null != organisationPolicy && null != organisationPolicy.getOrganisation()) {
             return !isNullOrEmpty(organisationPolicy.getOrganisation().getOrganisationId());
         }
         return false;
-    }
-
-    @JsonIgnore
-    public boolean hasDigitalDetails() {
-        return isDigital != null && isDigital.toBoolean() && hasOrgId();
     }
 }

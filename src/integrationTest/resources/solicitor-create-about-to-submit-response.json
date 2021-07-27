@@ -41,7 +41,6 @@
       "PrepopulateToUsersOrganisation": null,
       "OrgPolicyCaseAssignedRole": null
     },
-    "applicant1SolicitorIsDigital": null,
     "applicant2FirstName": null,
     "applicant2MiddleName": null,
     "applicant2LastName": null,
@@ -73,7 +72,6 @@
       "PrepopulateToUsersOrganisation": null,
       "OrgPolicyCaseAssignedRole": null
     },
-    "applicant2SolicitorIsDigital": null,
     "confirmReadPetition": null,
     "jurisdictionAgree": null,
     "jurisdictionDisagreeReason": null,

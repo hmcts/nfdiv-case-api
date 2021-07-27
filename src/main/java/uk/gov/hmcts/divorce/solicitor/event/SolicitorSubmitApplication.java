@@ -141,8 +141,8 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
     }
 
     private void updateApplicant2DigitalDetails(CaseData caseData) {
-        if (caseData.getApplicant2().getSolicitor() != null && caseData.getApplicant2().getSolicitor().hasDigitalDetails()) {
-            log.info("The respondent's solicitor is digital and the respondent org is populated");
+        if (caseData.getApplicant2().getSolicitor() != null) {
+            log.info("Applicant 2 has a solicitor and is digital");
 
             caseData.getApplication().setApp2ContactMethodIsDigital(YES);
             caseData.getApplicant2().setSolicitorRepresented(YES);
