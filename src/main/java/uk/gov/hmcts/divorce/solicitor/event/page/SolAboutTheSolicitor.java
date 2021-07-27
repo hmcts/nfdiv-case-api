@@ -40,7 +40,7 @@ public class SolAboutTheSolicitor implements CcdPageConfiguration {
 
         pageBuilder
             .page("SolAboutTheSolicitor", this::midEvent)
-            .pageLabel("About the Solicitor")
+            .pageLabel("About the Solicitor ${labelContentUnionTypeUC}")
             .label(
                 "LabelNFDBanner-AboutSolicitor",
                 SOLICITOR_NFD_PREVIEW_BANNER,
@@ -53,7 +53,7 @@ public class SolAboutTheSolicitor implements CcdPageConfiguration {
                 "LabelSolAboutTheSolPara-1",
                 "Please note that the information provided will be used as evidence by the court to decide if "
                     + "the applicant is entitled to legally end their marriage. **A copy of this form is sent to "
-                    + "the respondent**")
+                    + "the ${labelContentApplicant2}**")
             .complex(CaseData::getApplicant1)
                 .complex(Applicant::getSolicitor)
                     .mandatoryWithLabel(Solicitor::getName, "Your name")

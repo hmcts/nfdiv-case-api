@@ -1,18 +1,25 @@
 package uk.gov.hmcts.divorce.solicitor.event.page;
 
+import lombok.extern.slf4j.Slf4j;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.CaseInfo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_PREVIEW_BANNER;
 
+@Slf4j
 public class SolHowDoYouWantToApplyForDivorce implements CcdPageConfiguration {
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {
 
         pageBuilder
-            .page("howDoYouWantToApplyForDivorce")
+            .page("howDoYouWantToApplyForDivorce", this::midEvent)
             .pageLabel("How do you want to apply for the divorce?")
             .label("LabelNFDBanner-ApplyForDivorce", SOLICITOR_NFD_PREVIEW_BANNER)
             .label("solHowDoYouWantToApplyForDivorcePara-1",
@@ -31,5 +38,20 @@ public class SolHowDoYouWantToApplyForDivorce implements CcdPageConfiguration {
                 "The respondent must agree with a joint application in its entirety.")
             .mandatoryWithLabel(CaseData::getDivorceOrDissolution,
                 "Is the application for a divorce or dissolution?");
+    }
+
+    private AboutToStartOrSubmitResponse<CaseData, State> midEvent(
+        CaseDetails<CaseData, State> details,
+        CaseDetails<CaseData, State> detailsBefore
+    ) {
+        log.info("Mid-event callback triggered for howDoYouWantToApplyForDivorce");
+
+        final CaseData data = details.getData();
+        data.getLabelContent().setApplicationTYpe(data.getApplicationType());
+        data.getLabelContent().setUnionType(data.getDivorceOrDissolution());
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(data)
+            .build();
     }
 }

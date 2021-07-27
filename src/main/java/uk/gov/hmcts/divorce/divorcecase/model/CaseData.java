@@ -58,6 +58,11 @@ public class CaseData {
     )
     private DivorceOrDissolution divorceOrDissolution;
 
+    @JsonUnwrapped(prefix = "labelContent")
+    @Builder.Default
+    @CCD(access = {DefaultAccess.class})
+    private LabelContent labelContent = new LabelContent();
+
     @JsonUnwrapped(prefix = "applicant1")
     @Builder.Default
     @CCD(access = {DefaultAccess.class})
