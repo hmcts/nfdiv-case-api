@@ -68,7 +68,7 @@ public class Applicant2RequestChangesNotificationTest {
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmailToApplicant2() throws Exception {
         CaseData data = validJointApplicant1CaseDataMap();
-        data.getApplicant2().setEmail(TEST_USER_EMAIL);
+        data.getCaseInvite().setApplicant2InviteEmailAddress(TEST_USER_EMAIL);
         data.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation("Some issues");
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)

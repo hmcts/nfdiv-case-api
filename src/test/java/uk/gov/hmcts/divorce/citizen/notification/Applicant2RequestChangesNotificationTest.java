@@ -44,6 +44,7 @@ public class Applicant2RequestChangesNotificationTest {
     void shouldSendEmailWithDivorceContent() {
         CaseData data = caseData();
         data.setApplicant2(getApplicant(Gender.FEMALE));
+        data.getCaseInvite().setApplicant2InviteEmailAddress(TEST_USER_EMAIL);
 
         final HashMap<String, String> templateVars = new HashMap<>();
 
@@ -71,6 +72,7 @@ public class Applicant2RequestChangesNotificationTest {
         CaseData data = caseData();
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         data.setApplicant2(getApplicant(Gender.MALE));
+        data.getCaseInvite().setApplicant2InviteEmailAddress(TEST_USER_EMAIL);
 
         final HashMap<String, String> templateVars = new HashMap<>();
 
