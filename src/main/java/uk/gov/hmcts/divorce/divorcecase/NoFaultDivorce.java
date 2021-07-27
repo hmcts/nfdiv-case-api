@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
@@ -29,6 +30,7 @@ public class NoFaultDivorce implements CCDConfig<CaseData, State, UserRole> {
 
         configBuilder.caseType(CASE_TYPE, CASE_TYPE, "Handling of the dissolution of marriage");
         configBuilder.jurisdiction(JURISDICTION, "Family Divorce", "Family Divorce: dissolution of marriage");
+        configBuilder.omitHistoryForRoles(SOLICITOR, APPLICANT_2_SOLICITOR);
 
         configBuilder.grant(Draft, CREATE_READ_UPDATE, CITIZEN);
         configBuilder.grant(Draft, READ, CASEWORKER_COURTADMIN_CTSC);
