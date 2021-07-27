@@ -36,7 +36,7 @@ public class Application {
     private static final int SUBMISSION_RESPONSE_DAYS = 14;
 
     @CCD(
-        label = "Has applicant 1's marriage broken down irretrievably?",
+        label = "Has the applicant's marriage broken down irretrievably?",
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant1ScreenHasMarriageBroken;

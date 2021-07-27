@@ -53,7 +53,7 @@ public class SolAboutTheSolicitor implements CcdPageConfiguration {
                 "LabelSolAboutTheSolPara-1",
                 "Please note that the information provided will be used as evidence by the court to decide if "
                     + "the applicant is entitled to legally end their marriage. **A copy of this form is sent to "
-                    + "the respondent**")
+                    + "${labelContentTheApplicant2}**.")
             .complex(CaseData::getApplicant1)
                 .complex(Applicant::getSolicitor)
                     .mandatoryWithLabel(Solicitor::getName, "Your name")
@@ -65,10 +65,8 @@ public class SolAboutTheSolicitor implements CcdPageConfiguration {
                         .complex(OrganisationPolicy::getOrganisation)
                             .mandatory(Organisation::getOrganisationId)
                             .done()
-                        .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole,
-                            "applicant1NameChanged=\"NeverShow\"",
-                            APPLICANT_1_SOLICITOR)
-                        .optional(OrganisationPolicy::getOrgPolicyReference, "applicant1NameChanged=\"NeverShow\"")
+                        .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole, NEVER_SHOW, APPLICANT_1_SOLICITOR)
+                        .optional(OrganisationPolicy::getOrgPolicyReference, NEVER_SHOW)
                     .done()
                 .done()
             .done();
