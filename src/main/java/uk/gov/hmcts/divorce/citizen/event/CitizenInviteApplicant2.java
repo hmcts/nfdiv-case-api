@@ -19,7 +19,7 @@ import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.util.AccessCodeGenerator.generateAccessCode;
 
@@ -43,7 +43,7 @@ public class CitizenInviteApplicant2 implements CCDConfig<CaseData, State, UserR
             .forStateTransition(Draft, AwaitingApplicant2Response)
             .name("Invite The Respondent")
             .description("Send Application to the respondent for review")
-            .grant(CREATE_READ_UPDATE, CREATOR)
+            .grant(CREATE_READ_UPDATE, CITIZEN)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
