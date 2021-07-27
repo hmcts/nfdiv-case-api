@@ -27,6 +27,7 @@ import uk.gov.hmcts.divorce.solicitor.event.page.SolHowDoYouWantToApplyForDivorc
 import uk.gov.hmcts.divorce.solicitor.event.page.UploadMarriageCertificate;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorCreateApplicationService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -35,6 +36,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTAD
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
@@ -45,6 +47,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ_UPD
 public class SolicitorCreateApplication implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SOLICITOR_CREATE = "solicitor-create-application";
+    private static final String ENVIRONMENT_AAT = "aat";
 
     @Autowired
     private SolAboutTheSolicitor solAboutTheSolicitor;
@@ -89,6 +92,15 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
     private PageBuilder addEventConfig(
         final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
+        var roles = new ArrayList<UserRole>();
+        roles.add(SOLICITOR);
+
+        String environment = System.getenv().getOrDefault("ENVIRONMENT", null);
+
+        if (null != environment && environment.equalsIgnoreCase(ENVIRONMENT_AAT)) {
+            roles.add(CASEWORKER_SYSTEMUPDATE);
+        }
+
         return new PageBuilder(configBuilder
             .event(SOLICITOR_CREATE)
             .initialState(Draft)
@@ -98,7 +110,7 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
             .endButtonLabel("Save Application")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .explicitGrants()
-            .grant(CREATE_READ_UPDATE, SOLICITOR)
+            .grant(CREATE_READ_UPDATE, roles.toArray(UserRole[]::new))
             .grant(READ_UPDATE, CASEWORKER_SUPERUSER)
             .grant(READ, CASEWORKER_COURTADMIN_CTSC, CASEWORKER_COURTADMIN_RDU, CASEWORKER_LEGAL_ADVISOR));
     }
