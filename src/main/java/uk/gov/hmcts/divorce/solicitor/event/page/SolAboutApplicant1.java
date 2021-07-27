@@ -67,7 +67,7 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
                     "The applicant's home address")
                 .label("LabelHorizontalLine1-SolAboutApplicant1", DARK_HORIZONTAL_RULE)
                 .mandatoryWithLabel(Applicant::getContactDetailsConfidential,
-                    "Keep the applicant's contact details private from the respondent?")
+                    "Keep the applicant's contact details private from ${labelContentTheApplicant2}?")
                 .done();
     }
 }

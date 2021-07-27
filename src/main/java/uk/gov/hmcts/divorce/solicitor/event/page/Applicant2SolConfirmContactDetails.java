@@ -16,11 +16,11 @@ public class Applicant2SolConfirmContactDetails implements CcdPageConfiguration 
             .pageLabel("Confirm contact details")
             .complex(CaseData::getApplicant2)
             .complex(Applicant::getSolicitor)
-            .mandatoryNoSummary(Solicitor::getName, null, "Respondent's solicitor's name")
-            .optionalNoSummary(Solicitor::getPhone, null, "Respondent's solicitor's Phone number")
+            .mandatoryNoSummary(Solicitor::getName, null, "${labelContentApplicant2UC}'s solicitor's name")
+            .optionalNoSummary(Solicitor::getPhone, null, "${labelContentApplicant2UC}'s solicitor's Phone number")
             .label("LabelRespSol-EmailHeader", "### Email contact details")
             .label("LabelRespSol-Email", "Email address will be used to send case updates.")
-            .mandatoryNoSummary(Solicitor::getEmail, null, "Respondent's solicitor's Email")
+            .mandatoryNoSummary(Solicitor::getEmail, null, "${labelContentApplicant2UC}'s solicitor's Email")
             .mandatoryNoSummary(Solicitor::getAgreeToReceiveEmails)
             .done();
     }
