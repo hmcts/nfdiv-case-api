@@ -46,7 +46,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorSubmitApplication.SOLICITOR_SUBMIT;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_1_SOL_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
 
@@ -98,8 +98,6 @@ public class SolicitorSubmitApplicationTest {
     @Test
     void shouldAddPaymentIfPaymentsExists() {
 
-        final long caseId = 1L;
-        final String authorization = "authorization";
         final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final Payment payment = Payment
@@ -124,7 +122,7 @@ public class SolicitorSubmitApplicationTest {
             .payments(payments)
             .build();
         caseDetails.setData(caseData);
-        caseDetails.setId(caseId);
+        caseDetails.setId(TEST_CASE_ID);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             solicitorSubmitApplication.aboutToSubmit(caseDetails, new CaseDetails<>());
@@ -143,16 +141,14 @@ public class SolicitorSubmitApplicationTest {
             .contains(SOLICITOR_SUBMIT);
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     void shouldReturnWithoutErrorIfStatementOfTruthOrSolStatementOfTruthAreSetToYes() {
 
-        final long caseId = 1L;
         final CaseData caseData = CaseData.builder().build();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
-        caseDetails.setId(caseId);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setState(Draft);
 
         final CaseInfo caseInfo = CaseInfo.builder()
@@ -160,10 +156,7 @@ public class SolicitorSubmitApplicationTest {
             .state(AwaitingPayment)
             .build();
 
-        when(solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN))
-            .thenReturn(caseInfo);
-
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(APP_1_SOL_AUTH_TOKEN);
+        when(solicitorSubmitApplicationService.aboutToSubmit(caseDetails)).thenReturn(caseInfo);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitApplication
             .aboutToSubmit(caseDetails, new CaseDetails<>());
@@ -195,11 +188,10 @@ public class SolicitorSubmitApplicationTest {
     @Test
     void shouldReturnWithoutErrorIfStatementOfTruthIsNull() {
 
-        final long caseId = 1L;
         final CaseData caseData = CaseData.builder().build();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setId(caseId);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
         caseDetails.setState(Draft);
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
@@ -209,10 +201,7 @@ public class SolicitorSubmitApplicationTest {
             .state(Submitted)
             .build();
 
-        when(solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN))
-            .thenReturn(caseInfo);
-
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(APP_1_SOL_AUTH_TOKEN);
+        when(solicitorSubmitApplicationService.aboutToSubmit(caseDetails)).thenReturn(caseInfo);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitApplication
             .aboutToSubmit(caseDetails, beforeCaseDetails);
@@ -225,11 +214,10 @@ public class SolicitorSubmitApplicationTest {
     @Test
     void shouldReturnWithoutErrorIfSolStatementOfTruthIsNull() {
 
-        final long caseId = 1L;
         final CaseData caseData = CaseData.builder().build();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setId(caseId);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
         caseDetails.setState(Draft);
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
@@ -239,10 +227,7 @@ public class SolicitorSubmitApplicationTest {
             .state(Submitted)
             .build();
 
-        when(solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN))
-            .thenReturn(caseInfo);
-
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(APP_1_SOL_AUTH_TOKEN);
+        when(solicitorSubmitApplicationService.aboutToSubmit(caseDetails)).thenReturn(caseInfo);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitApplication
             .aboutToSubmit(caseDetails, beforeCaseDetails);
@@ -254,7 +239,7 @@ public class SolicitorSubmitApplicationTest {
 
     @Test
     void shouldSetApplicant2DigitalDetailsWhenApp2SolicitorIsDigitalAndApp2OrganisationIsSet() {
-        final long caseId = 1L;
+
         final OrganisationPolicy<UserRole> organisationPolicy = OrganisationPolicy.<UserRole>builder()
             .organisation(Organisation
                 .builder()
@@ -272,7 +257,7 @@ public class SolicitorSubmitApplicationTest {
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
-        caseDetails.setId(caseId);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setState(Draft);
 
         final CaseInfo caseInfo = CaseInfo.builder()
@@ -280,10 +265,7 @@ public class SolicitorSubmitApplicationTest {
             .state(AwaitingPayment)
             .build();
 
-        when(solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN))
-            .thenReturn(caseInfo);
-
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(APP_1_SOL_AUTH_TOKEN);
+        when(solicitorSubmitApplicationService.aboutToSubmit(caseDetails)).thenReturn(caseInfo);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitApplication
             .aboutToSubmit(caseDetails, new CaseDetails<>());
@@ -305,7 +287,7 @@ public class SolicitorSubmitApplicationTest {
 
     @Test
     void shouldNotSetApplicant2DigitalDetailsWhenApp2SolicitorIsNotDigital() {
-        final long caseId = 1L;
+
         final CaseData caseData = CaseData.builder().build();
         caseData.getApplication().setStatementOfTruth(YES);
         caseData.getApplication().setSolSignStatementOfTruth(YES);
@@ -313,7 +295,7 @@ public class SolicitorSubmitApplicationTest {
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
-        caseDetails.setId(caseId);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setState(Draft);
 
         final CaseInfo caseInfo = CaseInfo.builder()
@@ -321,10 +303,7 @@ public class SolicitorSubmitApplicationTest {
             .state(AwaitingPayment)
             .build();
 
-        when(solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN))
-            .thenReturn(caseInfo);
-
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(APP_1_SOL_AUTH_TOKEN);
+        when(solicitorSubmitApplicationService.aboutToSubmit(caseDetails)).thenReturn(caseInfo);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitApplication
             .aboutToSubmit(caseDetails, new CaseDetails<>());
@@ -336,7 +315,7 @@ public class SolicitorSubmitApplicationTest {
 
     @Test
     void shouldNotSetApplicant2DigitalDetailsWhenApp2SolicitorIsDigitalAndApp2OrgIsNotSet() {
-        final long caseId = 1L;
+
         final CaseData caseData = CaseData.builder().build();
         caseData.getApplication().setStatementOfTruth(YES);
         caseData.getApplication().setSolSignStatementOfTruth(YES);
@@ -344,7 +323,7 @@ public class SolicitorSubmitApplicationTest {
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
-        caseDetails.setId(caseId);
+        caseDetails.setId(TEST_CASE_ID);
         caseDetails.setState(Draft);
 
         final CaseInfo caseInfo = CaseInfo.builder()
@@ -352,10 +331,7 @@ public class SolicitorSubmitApplicationTest {
             .state(AwaitingPayment)
             .build();
 
-        when(solicitorSubmitApplicationService.aboutToSubmit(caseData, caseId, APP_1_SOL_AUTH_TOKEN))
-            .thenReturn(caseInfo);
-
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(APP_1_SOL_AUTH_TOKEN);
+        when(solicitorSubmitApplicationService.aboutToSubmit(caseDetails)).thenReturn(caseInfo);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitApplication
             .aboutToSubmit(caseDetails, new CaseDetails<>());
@@ -367,7 +343,7 @@ public class SolicitorSubmitApplicationTest {
 
     @Test
     void shouldSetStateToSubmittedIfPaymentSuccessful() {
-        final long caseId = 1L;
+
         final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("1000").build();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
@@ -393,7 +369,7 @@ public class SolicitorSubmitApplicationTest {
             .build();
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
         caseDetails.setData(caseData);
-        caseDetails.setId(caseId);
+        caseDetails.setId(TEST_CASE_ID);
 
         solicitorSubmitApplication.submitted(caseDetails, beforeCaseDetails);
 
@@ -402,7 +378,7 @@ public class SolicitorSubmitApplicationTest {
 
     @Test
     void shouldSetStateToAwaitingPaymentIfPaymentNotYetSuccessful() {
-        final long caseId = 1L;
+
         final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("1000").build();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
@@ -428,7 +404,7 @@ public class SolicitorSubmitApplicationTest {
             .build();
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
         caseDetails.setData(caseData);
-        caseDetails.setId(caseId);
+        caseDetails.setId(TEST_CASE_ID);
 
         solicitorSubmitApplication.submitted(caseDetails, beforeCaseDetails);
 
@@ -437,7 +413,7 @@ public class SolicitorSubmitApplicationTest {
 
     @Test
     void shouldSetStateToAwaitingPaymentWhenHelpWithFeesIsSelectedAndNoPaymentIsMade() {
-        final long caseId = 1L;
+
         final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("1000").build();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
@@ -450,7 +426,7 @@ public class SolicitorSubmitApplicationTest {
         );
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
         caseDetails.setData(caseData);
-        caseDetails.setId(caseId);
+        caseDetails.setId(TEST_CASE_ID);
 
         solicitorSubmitApplication.submitted(caseDetails, beforeCaseDetails);
 
