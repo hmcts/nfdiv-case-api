@@ -280,6 +280,8 @@ dependencies {
 
   testImplementation group: 'com.jayway.awaitility', name: 'awaitility', version: versions.awaitility
 
+  testImplementation group: 'org.junit-pioneer', name: 'junit-pioneer', version: '1.4.2'
+
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
