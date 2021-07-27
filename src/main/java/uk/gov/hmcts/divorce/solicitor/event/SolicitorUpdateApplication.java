@@ -28,10 +28,8 @@ import uk.gov.hmcts.divorce.solicitor.event.page.UploadMarriageCertificate;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorUpdateApplicationService;
 
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Arrays.asList;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
@@ -53,9 +51,6 @@ public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, Us
 
     @Autowired
     private SolicitorUpdateApplicationService solicitorUpdateApplicationService;
-
-    @Autowired
-    private HttpServletRequest request;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -85,15 +80,10 @@ public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, Us
 
         log.info("Solicitor update application about to submit callback invoked");
 
-        final CaseData data = solicitorUpdateApplicationService.aboutToSubmit(
-            details.getData(),
-            details.getId(),
-            details.getCreatedDate().toLocalDate(),
-            request.getHeader(AUTHORIZATION)
-        );
+        final CaseDetails<CaseData, State> result = solicitorUpdateApplicationService.aboutToSubmit(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(data)
+            .data(result.getData())
             .build();
     }
 

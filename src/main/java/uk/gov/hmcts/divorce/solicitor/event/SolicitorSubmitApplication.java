@@ -131,8 +131,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
                 .build();
         }
 
-        final CaseInfo caseInfo = solicitorSubmitApplicationService
-            .aboutToSubmit(caseData, details.getId(), httpServletRequest.getHeader(AUTHORIZATION));
+        final CaseInfo caseInfo = solicitorSubmitApplicationService.aboutToSubmit(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseInfo.getCaseData())

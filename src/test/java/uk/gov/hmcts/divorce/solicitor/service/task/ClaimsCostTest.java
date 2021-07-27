@@ -1,33 +1,26 @@
-package uk.gov.hmcts.divorce.solicitor.service.updater;
+package uk.gov.hmcts.divorce.solicitor.service.task;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataContext;
-import uk.gov.hmcts.divorce.divorcecase.updater.CaseDataUpdaterChain;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import java.util.Set;
 
 import static java.util.Collections.emptySet;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ClaimsCostFrom.APPLICANT_2;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 
 @ExtendWith(MockitoExtension.class)
 class ClaimsCostTest {
-
-    @Mock
-    private CaseDataContext caseDataContext;
-
-    @Mock
-    private CaseDataUpdaterChain caseDataUpdaterChain;
 
     @InjectMocks
     private ClaimsCost claimsCost;
@@ -39,12 +32,14 @@ class ClaimsCostTest {
             .application(Application.builder().divorceCostsClaim(YES).build())
             .build();
 
-        setupMocks(caseData);
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
-        final CaseDataContext result = claimsCost.updateCaseData(caseDataContext, caseDataUpdaterChain);
+        final CaseDetails<CaseData, State> result = claimsCost.apply(caseDetails);
 
-        assertThat(result, is(caseDataContext));
-        assertThat(caseData.getApplication().getDivorceClaimFrom(), is(Set.of(APPLICANT_2)));
+        assertThat(result.getData().getApplication().getDivorceClaimFrom()).isEqualTo(Set.of(APPLICANT_2));
     }
 
     @Test
@@ -57,11 +52,14 @@ class ClaimsCostTest {
                 .build())
             .build();
 
-        setupMocks(caseData);
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
-        claimsCost.updateCaseData(caseDataContext, caseDataUpdaterChain);
+        final CaseDetails<CaseData, State> result = claimsCost.apply(caseDetails);
 
-        assertThat(caseData.getApplication().getDivorceClaimFrom(), is(Set.of(APPLICANT_2)));
+        assertThat(result.getData().getApplication().getDivorceClaimFrom()).isEqualTo(Set.of(APPLICANT_2));
     }
 
     @Test
@@ -74,16 +72,13 @@ class ClaimsCostTest {
                 .build())
             .build();
 
-        setupMocks(caseData);
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
-        claimsCost.updateCaseData(caseDataContext, caseDataUpdaterChain);
+        final CaseDetails<CaseData, State> result = claimsCost.apply(caseDetails);
 
-        assertThat(caseData.getApplication().getDivorceClaimFrom(), is(emptySet()));
-    }
-
-    private void setupMocks(final CaseData caseData) {
-        when(caseDataContext.copyOfCaseData()).thenReturn(caseData);
-        when(caseDataContext.handlerContextWith(caseData)).thenReturn(caseDataContext);
-        when(caseDataUpdaterChain.processNext(caseDataContext)).thenReturn(caseDataContext);
+        assertThat(result.getData().getApplication().getDivorceClaimFrom()).isEmpty();
     }
 }
