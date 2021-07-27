@@ -7,6 +7,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
@@ -18,7 +19,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-
+        buildStateTab(configBuilder);
         buildApplicationTab(configBuilder);
         buildAosTab(configBuilder);
         buildPaymentTab(configBuilder);
@@ -31,6 +32,11 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildConfidentialDocumentsTab(configBuilder);
     }
 
+    private void buildStateTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("state", "State")
+            .forRoles(APPLICANT_2_SOLICITOR)
+            .label("LabelState", null, "#### Case State:  ${[STATE]}");
+    }
 
     private void buildApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("applicationDetails", "Application")

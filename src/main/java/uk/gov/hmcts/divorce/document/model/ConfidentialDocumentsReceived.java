@@ -31,7 +31,7 @@ public enum ConfidentialDocumentsReceived implements HasLabel {
     CO_ANSWERS("Confidential - Conditional Order Answers"),
 
     @JsonProperty("conditionalOrderApplication")
-    CONDITIONAL_ORDER_APPLICATION("Confidential - Conditional Order Application (D84/D80)"),
+    CONDITIONAL_ORDER_APPLICATION("Confidential - Conditional Order Application (D84)"),
 
     @JsonProperty("conditionalOrderGranted")
     CONDITIONAL_ORDER_GRANTED("Confidential - Conditional Order Granted"),
@@ -53,12 +53,6 @@ public enum ConfidentialDocumentsReceived implements HasLabel {
 
     @JsonProperty("dispenseWithService")
     DISPENSE_WITH_SERVICE("Confidential - Dispense with Service"),
-
-    @JsonProperty("d30")
-    D30("Confidential - D30 - Consideration of applications of CO"),
-
-    @JsonProperty("d79")
-    D79("Confidential - D79 - Notice of refusal of entitlement to a CO"),
 
     @JsonProperty("d84a")
     D84A("Confidential - D84A"),
@@ -86,6 +80,9 @@ public enum ConfidentialDocumentsReceived implements HasLabel {
 
     @JsonProperty("nameChange")
     NAME_CHANGE("Confidential - Name change evidence"),
+
+    @JsonProperty("noticeOfRefusalOfEntitlement")
+    NOTICE_OF_REFUSAL_OF_ENTITLEMENT("Confidential - Notice of refusal of entitlement to a CO"),
 
     @JsonProperty("other")
     OTHER("Confidential - Other"),
