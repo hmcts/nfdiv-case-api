@@ -25,7 +25,7 @@
     "applicant1SolicitorPhone": null,
     "applicant1SolicitorReference": null,
     "applicant2CorrespondenceAddress": null,
-    "applicant2SolicitorRepresented": null,
+    "applicant2SolicitorRepresented": "Yes",
     "applicant2SolicitorAddress": null,
     "applicant2SolicitorAgreeToReceiveEmails": null,
     "applicant2SolicitorEmail": null,
