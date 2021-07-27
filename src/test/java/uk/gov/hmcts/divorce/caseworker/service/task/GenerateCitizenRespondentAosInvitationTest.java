@@ -11,22 +11,22 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.util.AccessCodeGenerator;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.RespondentSolicitorAosInvitationTemplateContent;
+import uk.gov.hmcts.divorce.document.content.CitizenRespondentAosInvitationTemplateContent;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 import javax.servlet.http.HttpServletRequest;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CITIZEN_RESP_AOS_INVITATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_AOS_INVITATION_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_SOLICITOR_AOS_INVITATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DOCUMENT_TYPE_RESPONDENT_INVITATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
@@ -37,25 +37,24 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondentWithDigitalSolicitor;
 
 @ExtendWith(MockitoExtension.class)
-public class GenerateRespondentSolicitorAosInvitationTest {
+class GenerateCitizenRespondentAosInvitationTest {
 
     @Mock
     private CaseDataDocumentService caseDataDocumentService;
 
     @Mock
-    private RespondentSolicitorAosInvitationTemplateContent templateContent;
+    private CitizenRespondentAosInvitationTemplateContent templateContent;
 
     @Mock
     private HttpServletRequest request;
 
     @InjectMocks
-    private GenerateRespondentSolicitorAosInvitation generateRespondentSolicitorAosInvitation;
+    private GenerateCitizenRespondentAosInvitation generateCitizenRespondentAosInvitation;
 
     @Test
-    void shouldCallDocAssemblyServiceAndReturnCaseDataWithAosInvitationDocumentIfRespondentIsRepresented() {
+    void shouldCallDocAssemblyServiceAndReturnCaseDataWithAosInvitationDocumentIfRespondentIsNotRepresented() {
 
         final var caseData = caseData();
-        caseData.setApplicant2(respondentWithDigitalSolicitor());
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -64,13 +63,13 @@ public class GenerateRespondentSolicitorAosInvitationTest {
 
         final Supplier<Map<String, Object>> templateContentSupplier = HashMap::new;
 
-        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
+        final MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
         classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
         when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(templateContentSupplier);
 
-        final var result = generateRespondentSolicitorAosInvitation.apply(caseDetails);
+        final var result = generateCitizenRespondentAosInvitation.apply(caseDetails);
 
         assertThat(result.getData().getCaseInvite().getAccessCode()).isEqualTo(ACCESS_CODE);
 
@@ -81,7 +80,7 @@ public class GenerateRespondentSolicitorAosInvitationTest {
                 templateContentSupplier,
                 TEST_CASE_ID,
                 TEST_AUTHORIZATION_TOKEN,
-                RESP_SOLICITOR_AOS_INVITATION,
+                CITIZEN_RESP_AOS_INVITATION,
                 RESP_AOS_INVITATION_DOCUMENT_NAME,
                 ENGLISH);
 
@@ -89,16 +88,17 @@ public class GenerateRespondentSolicitorAosInvitationTest {
     }
 
     @Test
-    void shouldDoNothingIfRespondentIsNotRepresented() {
+    void shouldDoNothingIfRespondentIsRepresented() {
 
         final var caseData = caseData();
+        caseData.setApplicant2(respondentWithDigitalSolicitor());
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
-        final var result = generateRespondentSolicitorAosInvitation.apply(caseDetails);
+        final var result = generateCitizenRespondentAosInvitation.apply(caseDetails);
 
         assertThat(result.getData()).isEqualTo(caseData);
         verifyNoInteractions(request, templateContent, caseDataDocumentService);
