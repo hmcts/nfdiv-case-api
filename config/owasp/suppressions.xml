@@ -7,6 +7,10 @@
     <suppress>
       <notes>commons-compress-1.18</notes>
       <cve>CVE-2019-12402</cve>
+      <cve>CVE-2021-35515</cve>
+      <cve>CVE-2021-35516</cve>
+      <cve>CVE-2021-35517</cve>
+      <cve>CVE-2021-36090</cve>
     </suppress>
     <suppress>
     <notes>poi-*.4.0.0</notes>
