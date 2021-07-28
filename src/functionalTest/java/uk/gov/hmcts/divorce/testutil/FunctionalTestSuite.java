@@ -5,6 +5,7 @@ import io.restassured.response.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.TestPropertySource;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
@@ -111,6 +112,25 @@ public abstract class FunctionalTestSuite {
                     .data(caseData)
                     .createdDate(LOCAL_DATE_TIME)
                     .caseTypeId(CASE_TYPE)
+                    .build()
+            )
+            .build();
+
+        return triggerCallback(request, url);
+    }
+
+    protected Response triggerCallback(Map<String, Object> caseData, String eventId, String url, State state) throws IOException {
+        CallbackRequest request = CallbackRequest
+            .builder()
+            .eventId(eventId)
+            .caseDetails(
+                CaseDetails
+                    .builder()
+                    .id(1234567890123456L)
+                    .data(caseData)
+                    .createdDate(LOCAL_DATE_TIME)
+                    .caseTypeId(CASE_TYPE)
+                    .state(state.getName())
                     .build()
             )
             .build();
