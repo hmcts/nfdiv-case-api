@@ -170,7 +170,7 @@ public class SolicitorSubmitApplicationTest {
     void shouldReturnErrorIfStatementOfTruthAndSolStatementOfTruthIsSetToNo() {
 
         final CaseData caseData = CaseData.builder().build();
-        caseData.getApplication().setStatementOfTruth(NO);
+        caseData.getApplication().setApplicant1StatementOfTruth(NO);
         caseData.getApplication().setSolSignStatementOfTruth(NO);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -249,7 +249,7 @@ public class SolicitorSubmitApplicationTest {
             .build();
 
         final CaseData caseData = CaseData.builder().build();
-        caseData.getApplication().setStatementOfTruth(YES);
+        caseData.getApplication().setApplicant1StatementOfTruth(YES);
         caseData.getApplication().setSolSignStatementOfTruth(YES);
 
         caseData.getApplicant2().setSolicitor(Solicitor.builder().organisationPolicy(organisationPolicy).build());
@@ -273,7 +273,7 @@ public class SolicitorSubmitApplicationTest {
             .payments(singletonList(new ListValue<Payment>(null, null)))
             .build();
 
-        expectedCaseData.getApplication().setStatementOfTruth(YES);
+        expectedCaseData.getApplication().setApplicant1StatementOfTruth(YES);
         expectedCaseData.getApplication().setSolSignStatementOfTruth(YES);
         expectedCaseData.getApplication().setApp2ContactMethodIsDigital(YES);
         expectedCaseData.getApplicant2().setSolicitor(Solicitor.builder().organisationPolicy(organisationPolicy).build());
@@ -287,7 +287,7 @@ public class SolicitorSubmitApplicationTest {
     @Test
     void shouldNotSetApplicant2DigitalDetailsWhenApp2HasSolicitorAndApp2OrgIsNotSet() {
         final CaseData caseData = CaseData.builder().build();
-        caseData.getApplication().setStatementOfTruth(YES);
+        caseData.getApplication().setApplicant1StatementOfTruth(YES);
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplicant1().setSolicitor(Solicitor.builder().build());
 

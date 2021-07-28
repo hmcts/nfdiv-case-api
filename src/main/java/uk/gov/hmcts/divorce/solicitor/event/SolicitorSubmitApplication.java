@@ -122,7 +122,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
 
         updateApplicant2DigitalDetails(caseData);
 
-        if (!application.hasStatementOfTruth() && !application.hasSolSignStatementOfTruth()) {
+        if (!application.applicant1HasStatementOfTruth() && !application.hasSolSignStatementOfTruth()) {
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)

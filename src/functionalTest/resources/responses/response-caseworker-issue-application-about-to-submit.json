@@ -147,9 +147,9 @@
         }
       }
     ],
-    "prayerHasBeenGiven": "Yes",
+    "applicant1PrayerHasBeenGiven": "Yes",
     "solSignStatementOfTruth": "Yes",
-    "statementOfTruth": "Yes"
+    "applicant1StatementOfTruth": "Yes"
   },
   "errors": null,
   "state": null,
