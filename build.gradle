@@ -280,6 +280,8 @@ dependencies {
 
   testImplementation group: 'com.jayway.awaitility', name: 'awaitility', version: versions.awaitility
 
+  testImplementation group: 'com.github.stefanbirkner', name: 'system-lambda', version: '1.2.0'
+
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
