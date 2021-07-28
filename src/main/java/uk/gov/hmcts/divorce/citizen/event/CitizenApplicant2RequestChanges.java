@@ -59,7 +59,8 @@ public class CitizenApplicant2RequestChanges implements CCDConfig<CaseData, Stat
                 .build();
         }
 
-        applicant2RequestChangesNotification.send(data, details.getId());
+        applicant2RequestChangesNotification.sendToApplicant1(data, details.getId());
+        applicant2RequestChangesNotification.sendToApplicant2(data, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)

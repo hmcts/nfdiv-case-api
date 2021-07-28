@@ -7,6 +7,7 @@ public final class NotificationConstants {
     public static final String PARTNER = "partner";
 
     public static final String APPLICATION = "Application";
+    public static final String APPLICATION_TYPE = "Application type";
     public static final String DIVORCE_APPLICATION = "divorce application";
     public static final String APPLICATION_TO_END_CIVIL_PARTNERSHIP = "application to end your civil partnership";
     public static final String FOR_YOUR_APPLICATION = " for your divorce/ to end your civil partnership";
@@ -50,6 +51,8 @@ public final class NotificationConstants {
     public static final String RESPONDENT_NAME = "respondent name";
     public static final String SOLICITOR_NAME = "solicitor name";
     public static final String SOLICITOR_ORGANISATION = "solicitor organisation";
+
+    public static final String APPLICANT_2_COMMENTS = "applicant 2 comments";
 
     public static final String CCD_REFERENCE = "CCD reference";
     public static final String GENERAL_OTHER_RECIPIENT_NAME = "general other recipient name";

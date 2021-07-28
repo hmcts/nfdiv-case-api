@@ -51,7 +51,7 @@ public class Applicant2RequestChangesNotificationTest {
         when(commonContent.templateVarsFor(data)).thenReturn(templateVars);
         when(commonContent.getTheirPartner(data, data.getApplicant1())).thenReturn("husband");
 
-        notification.send(data, 1234567890123456L);
+        notification.sendToApplicant2(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -79,7 +79,7 @@ public class Applicant2RequestChangesNotificationTest {
         when(commonContent.templateVarsFor(data)).thenReturn(templateVars);
         when(commonContent.getTheirPartner(data, data.getApplicant1())).thenReturn("civil partner");
 
-        notification.send(data, 1234567890123456L);
+        notification.sendToApplicant2(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
