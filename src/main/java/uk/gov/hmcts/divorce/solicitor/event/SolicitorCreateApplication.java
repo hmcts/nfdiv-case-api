@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.common.AddSystemUpdateRole;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -36,7 +37,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTAD
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
@@ -47,13 +47,15 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ_UPD
 public class SolicitorCreateApplication implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SOLICITOR_CREATE = "solicitor-create-application";
-    private static final String ENVIRONMENT_AAT = "aat";
 
     @Autowired
     private SolAboutTheSolicitor solAboutTheSolicitor;
 
     @Autowired
     private SolicitorCreateApplicationService solicitorCreateApplicationService;
+
+    @Autowired
+    private AddSystemUpdateRole addSystemUpdateRole;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -92,14 +94,10 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
     private PageBuilder addEventConfig(
         final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
-        var roles = new ArrayList<UserRole>();
-        roles.add(SOLICITOR);
+        var defaultRoles = new ArrayList<UserRole>();
+        defaultRoles.add(SOLICITOR);
 
-        String environment = System.getenv().getOrDefault("ENVIRONMENT", null);
-
-        if (null != environment && environment.equalsIgnoreCase(ENVIRONMENT_AAT)) {
-            roles.add(CASEWORKER_SYSTEMUPDATE);
-        }
+        var updatedRoles = addSystemUpdateRole.addIfConfiguredForEnvironment(defaultRoles);
 
         return new PageBuilder(configBuilder
             .event(SOLICITOR_CREATE)
@@ -110,7 +108,7 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
             .endButtonLabel("Save Application")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .explicitGrants()
-            .grant(CREATE_READ_UPDATE, roles.toArray(UserRole[]::new))
+            .grant(CREATE_READ_UPDATE, updatedRoles.toArray(UserRole[]::new))
             .grant(READ_UPDATE, CASEWORKER_SUPERUSER)
             .grant(READ, CASEWORKER_COURTADMIN_CTSC, CASEWORKER_COURTADMIN_RDU, CASEWORKER_LEGAL_ADVISOR));
     }
