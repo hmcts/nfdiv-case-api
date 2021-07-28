@@ -57,7 +57,7 @@ public class SystemProgressAosAwaitingCasesTask {
                         LocalDate aosDueDate = LocalDate.parse(dueDate);
 
                         if (aosDueDate.isEqual(LocalDate.now()) || aosDueDate.isAfter(LocalDate.now())) {
-                            log.info("Case id {} has been in awaiting aos state with due date {} moving state to AosOverdue as due date is >= current date",
+                            log.info("Case id {} is in awaiting aos state with due date {} which is >= current date",
                                 caseDetails.getId(),
                                 aosDueDate
                             );
