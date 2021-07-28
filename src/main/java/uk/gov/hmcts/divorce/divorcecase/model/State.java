@@ -10,6 +10,7 @@ import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.isPaymentIncomplete;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant1BasicCase;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant2BasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCaseFieldsForIssueApplication;
 
@@ -52,6 +53,19 @@ public enum State {
         access = {CaseAccessAdministrator.class}
     )
     AosOverdue("AosOverdue"),
+
+    @CCD(
+        name = "Applicant 2 approved",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
+    )
+    Applicant2Approved("Applicant2Approved") {
+        @Override
+        public List<String> validate(CaseData caseData) {
+            List<String> errors = new ArrayList<>();
+            validateApplicant2BasicCase(caseData, errors);
+            return errors;
+        }
+    },
 
     @CCD(
         name = "Application awaiting payment",
@@ -237,7 +251,7 @@ public enum State {
             if (caseData.getApplication().hasAwaitingDocuments()) {
                 errors.add("Awaiting documents");
             }
-            if (!caseData.getApplication().hasStatementOfTruth() && !caseData.getApplication().hasSolSignStatementOfTruth()) {
+            if (!caseData.getApplication().applicant1HasStatementOfTruth() && !caseData.getApplication().hasSolSignStatementOfTruth()) {
                 errors.add("Statement of truth must be accepted by the person making the application");
             }
 

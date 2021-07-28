@@ -80,8 +80,8 @@
     "jurisdictionLegalConnections": null,
     "divorceCostsClaim": "Yes",
     "applicant1FinancialOrder": "No",
-    "prayerHasBeenGiven": "Yes",
-    "statementOfTruth": "Yes",
+    "applicant1PrayerHasBeenGiven": "Yes",
+    "applicant1StatementOfTruth": "Yes",
     "solSignStatementOfTruth": "Yes",
     "applicationFeeOrderSummary": {
       "PaymentReference": null,

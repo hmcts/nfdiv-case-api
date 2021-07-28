@@ -96,8 +96,8 @@ class CaseworkerIssueApplicationTest {
                 "Applicant2Gender cannot be empty or null",
                 "MarriageApplicant1Name cannot be empty or null",
                 "Applicant1ContactDetailsConfidential cannot be empty or null",
-                "PrayerHasBeenGiven cannot be empty or null",
-                "StatementOfTruth cannot be empty or null",
+                "Applicant1PrayerHasBeenGiven cannot be empty or null",
+                "Applicant1StatementOfTruth cannot be empty or null",
                 "MarriageDate cannot be empty or null",
                 "JurisdictionConnections cannot be empty or null",
                 "MarriageApplicant2Name cannot be empty or null",
@@ -126,8 +126,8 @@ class CaseworkerIssueApplicationTest {
         );
 
         caseData.getApplicant1().setFinancialOrder(NO);
-        caseData.getApplication().setPrayerHasBeenGiven(YES);
-        caseData.getApplication().setStatementOfTruth(YES);
+        caseData.getApplication().setApplicant1PrayerHasBeenGiven(YES);
+        caseData.getApplication().setApplicant1StatementOfTruth(YES);
         caseData.getApplication().getJurisdiction().setLegalConnections(Set.of(LegalConnections.APPLICANT_RESPONDENT_RESIDENT));
         caseData.getApplication().getMarriageDetails().setApplicant1Name("app1Name");
         caseData.getApplication().getMarriageDetails().setDate(LocalDate.of(2009, 1, 1));
