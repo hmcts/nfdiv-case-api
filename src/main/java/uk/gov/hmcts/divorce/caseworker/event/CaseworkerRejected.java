@@ -25,15 +25,17 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 @Component
 public class CaseworkerRejected implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_REJECTED = "caseworker-rejected";
+    private static final String REJECT = "Reject";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+
         new PageBuilder(configBuilder
             .event(CASEWORKER_REJECTED)
             .forStateTransition(allOf(State.class), Rejected)
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .name("Reject")
-            .description("Reject")
+            .name(REJECT)
+            .description(REJECT)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE,
                 CASEWORKER_COURTADMIN_CTSC,
@@ -43,7 +45,7 @@ public class CaseworkerRejected implements CCDConfig<CaseData, State, UserRole> 
                 CASEWORKER_SUPERUSER,
                 CASEWORKER_LEGAL_ADVISOR))
             .page("reject")
-            .pageLabel("Reject")
+            .pageLabel(REJECT)
             .complex(CaseData::getApplication)
                 .complex(Application::getRejectReason)
                     .mandatory(RejectReason::getRejectReasonType)
