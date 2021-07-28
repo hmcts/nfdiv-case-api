@@ -13,7 +13,6 @@ import static com.github.stefanbirkner.systemlambda.SystemLambda.withEnvironment
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 
 @ExtendWith(MockitoExtension.class)
 public class AddSystemUpdateRoleTest {
@@ -29,12 +28,5 @@ public class AddSystemUpdateRoleTest {
                 );
 
         assertThat(actualRoles).containsExactlyInAnyOrder(CITIZEN, CASEWORKER_SYSTEMUPDATE);
-    }
-
-    @Test
-    public void shouldNotAddSystemUpdateRoleWhenEnvironmentIsNotAat() {
-        List<UserRole> actualRoles = addSystemUpdateRole.addIfConfiguredForEnvironment(List.of(SOLICITOR));
-
-        assertThat(actualRoles).containsExactlyInAnyOrder(SOLICITOR);
     }
 }
