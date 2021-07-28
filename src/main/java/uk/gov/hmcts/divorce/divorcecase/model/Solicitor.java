@@ -21,6 +21,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder
 public class Solicitor {
 
@@ -58,7 +59,6 @@ public class Solicitor {
         label = "Firm address/DX address",
         access = {OrganisationPolicyAccess.class}
     )
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private OrganisationPolicy<UserRole> organisationPolicy;
 
     @JsonIgnore
