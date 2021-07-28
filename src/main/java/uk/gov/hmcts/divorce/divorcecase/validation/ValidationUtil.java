@@ -72,6 +72,13 @@ public final class ValidationUtil {
         addListToErrorList(caseData.getApplication().getJurisdiction().validate(), errorList);
     }
 
+    public static void validateApplicant2RequestChanges(CaseData caseData, List<String> errorList) {
+        addToErrorList(checkIfYesOrNoNullOrEmpty(caseData.getApplication().getApplicant2ConfirmApplicant1Information(),
+            "Applicant2ConfirmApplicant1Information"), errorList);
+        addToErrorList(checkIfStringNullOrEmpty(caseData.getApplication().getApplicant2ExplainsApplicant1IncorrectInformation(),
+            "Applicant2ExplainsApplicant1IncorrectInformation"), errorList);
+    }
+
     public static void addToErrorList(String error, List<String> errorList) {
         if (error != null) {
             errorList.add(error);
