@@ -156,7 +156,6 @@ public class TestDataHelper {
         applicant.setSolicitor(Solicitor.builder()
             .name(TEST_SOLICITOR_NAME)
             .email(TEST_SOLICITOR_EMAIL)
-            .isDigital(YES)
             .organisationPolicy(organisationPolicy())
             .build());
         return applicant;
@@ -227,8 +226,8 @@ public class TestDataHelper {
     public static CaseData validApplicant1CaseDataMap() {
         CaseData caseData = validJointApplicant1CaseDataMap();
         caseData.setApplicant2(getApplicant2(MALE));
-        caseData.getApplication().setStatementOfTruth(YES);
-        caseData.getApplication().setPrayerHasBeenGiven(YES);
+        caseData.getApplication().setApplicant1StatementOfTruth(YES);
+        caseData.getApplication().setApplicant1PrayerHasBeenGiven(YES);
         return caseData;
     }
 
@@ -283,8 +282,8 @@ public class TestDataHelper {
         final Application application = caseData.getApplication();
         application.setDocumentUploadComplete(YES);
         application.setMarriageDetails(marriageDetails);
-        application.setPrayerHasBeenGiven(YES);
-        application.setStatementOfTruth(YES);
+        application.setApplicant1PrayerHasBeenGiven(YES);
+        application.setApplicant1StatementOfTruth(YES);
         application.setJurisdiction(jurisdiction);
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplicant2().setFinancialOrder(NO);

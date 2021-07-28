@@ -170,7 +170,7 @@ public class SolicitorSubmitApplicationTest {
     void shouldReturnErrorIfStatementOfTruthAndSolStatementOfTruthIsSetToNo() {
 
         final CaseData caseData = CaseData.builder().build();
-        caseData.getApplication().setStatementOfTruth(NO);
+        caseData.getApplication().setApplicant1StatementOfTruth(NO);
         caseData.getApplication().setSolSignStatementOfTruth(NO);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -238,8 +238,7 @@ public class SolicitorSubmitApplicationTest {
     }
 
     @Test
-    void shouldSetApplicant2DigitalDetailsWhenApp2SolicitorIsDigitalAndApp2OrganisationIsSet() {
-
+    void shouldSetApplicant2DigitalDetailsWhenApp2HasSolicitorAndApp2OrganisationIsSet() {
         final OrganisationPolicy<UserRole> organisationPolicy = OrganisationPolicy.<UserRole>builder()
             .organisation(Organisation
                 .builder()
@@ -250,10 +249,10 @@ public class SolicitorSubmitApplicationTest {
             .build();
 
         final CaseData caseData = CaseData.builder().build();
-        caseData.getApplication().setStatementOfTruth(YES);
+        caseData.getApplication().setApplicant1StatementOfTruth(YES);
         caseData.getApplication().setSolSignStatementOfTruth(YES);
 
-        caseData.getApplicant2().setSolicitor(Solicitor.builder().isDigital(YES).organisationPolicy(organisationPolicy).build());
+        caseData.getApplicant2().setSolicitor(Solicitor.builder().organisationPolicy(organisationPolicy).build());
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -274,10 +273,10 @@ public class SolicitorSubmitApplicationTest {
             .payments(singletonList(new ListValue<Payment>(null, null)))
             .build();
 
-        expectedCaseData.getApplication().setStatementOfTruth(YES);
+        expectedCaseData.getApplication().setApplicant1StatementOfTruth(YES);
         expectedCaseData.getApplication().setSolSignStatementOfTruth(YES);
         expectedCaseData.getApplication().setApp2ContactMethodIsDigital(YES);
-        expectedCaseData.getApplicant2().setSolicitor(Solicitor.builder().isDigital(YES).organisationPolicy(organisationPolicy).build());
+        expectedCaseData.getApplicant2().setSolicitor(Solicitor.builder().organisationPolicy(organisationPolicy).build());
         expectedCaseData.getApplicant2().setSolicitorRepresented(YES);
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
@@ -286,40 +285,11 @@ public class SolicitorSubmitApplicationTest {
     }
 
     @Test
-    void shouldNotSetApplicant2DigitalDetailsWhenApp2SolicitorIsNotDigital() {
-
+    void shouldNotSetApplicant2DigitalDetailsWhenApp2HasSolicitorAndApp2OrgIsNotSet() {
         final CaseData caseData = CaseData.builder().build();
-        caseData.getApplication().setStatementOfTruth(YES);
+        caseData.getApplication().setApplicant1StatementOfTruth(YES);
         caseData.getApplication().setSolSignStatementOfTruth(YES);
-        caseData.getApplicant1().setSolicitor(Solicitor.builder().isDigital(NO).build());
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-        caseDetails.setState(Draft);
-
-        final CaseInfo caseInfo = CaseInfo.builder()
-            .caseData(caseData)
-            .state(AwaitingPayment)
-            .build();
-
-        when(solicitorSubmitApplicationService.aboutToSubmit(caseDetails)).thenReturn(caseInfo);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitApplication
-            .aboutToSubmit(caseDetails, new CaseDetails<>());
-
-        assertThat(response.getData()).isEqualTo(caseData);
-        assertThat(response.getState()).isEqualTo(AwaitingPayment);
-        assertThat(response.getErrors()).isNull();
-    }
-
-    @Test
-    void shouldNotSetApplicant2DigitalDetailsWhenApp2SolicitorIsDigitalAndApp2OrgIsNotSet() {
-
-        final CaseData caseData = CaseData.builder().build();
-        caseData.getApplication().setStatementOfTruth(YES);
-        caseData.getApplication().setSolSignStatementOfTruth(YES);
-        caseData.getApplicant1().setSolicitor(Solicitor.builder().isDigital(YES).build());
+        caseData.getApplicant1().setSolicitor(Solicitor.builder().build());
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);

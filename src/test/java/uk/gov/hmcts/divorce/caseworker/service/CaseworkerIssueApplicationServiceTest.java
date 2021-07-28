@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCitizenRespondentAosInvitation;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateMiniApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentSolicitorAosInvitation;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosNotifications;
@@ -35,6 +36,9 @@ class CaseworkerIssueApplicationServiceTest {
     private GenerateRespondentSolicitorAosInvitation generateRespondentSolicitorAosInvitation;
 
     @Mock
+    private GenerateCitizenRespondentAosInvitation generateCitizenRespondentAosInvitation;
+
+    @Mock
     private SendAosPack sendAosPack;
 
     @Mock
@@ -55,7 +59,6 @@ class CaseworkerIssueApplicationServiceTest {
         final Solicitor solicitor = Solicitor.builder()
             .name("testsol")
             .email(TEST_SOLICITOR_EMAIL)
-            .isDigital(YES)
             .build();
 
         caseData.getApplicant2().setSolicitor(solicitor);
@@ -68,6 +71,7 @@ class CaseworkerIssueApplicationServiceTest {
         setMockClock(clock);
 
         when(generateRespondentSolicitorAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateCitizenRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
         when(generateMiniApplication.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosPack.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosNotifications.apply(caseDetails)).thenReturn(caseDetails);

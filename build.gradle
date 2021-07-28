@@ -280,6 +280,8 @@ dependencies {
 
   testImplementation group: 'com.jayway.awaitility', name: 'awaitility', version: versions.awaitility
 
+  testImplementation group: 'com.github.stefanbirkner', name: 'system-lambda', version: '1.2.0'
+
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
@@ -399,7 +401,7 @@ def reloadCcd = tasks.register('reloadCcd') {
         def (key, value) = it.tokenize('=')
         environment key, value
       }
-      commandLine 'docker-compose', '-f', '../docker-compose.yml', 'up', '-d', 'nfdiv-case-api'
+      commandLine 'docker-compose', '-f', '../docker-compose.yml', 'up', '--build', '-d', 'nfdiv-case-api'
     }
   }
 }

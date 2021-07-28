@@ -149,6 +149,7 @@ withPipeline(type, product, component) {
     }
 
     onPR {
+      env.ENVIRONMENT="preview"
       env.CASE_API_URL = "http://nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
       env.CCD_DEF_NAME = "preview"
       env.DEFINITION_STORE_URL_BASE = "https://ccd-definition-store-nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
@@ -159,6 +160,7 @@ withPipeline(type, product, component) {
     }
 
     onMaster {
+        env.ENVIRONMENT="aat"
         env.CASE_API_URL="http://nfdiv-case-api-aat.service.core-compute-aat.internal"
         env.CCD_DEF_NAME="aat"
         env.DEFINITION_STORE_URL_BASE="http://ccd-definition-store-api-aat.service.core-compute-aat.internal"
@@ -167,6 +169,7 @@ withPipeline(type, product, component) {
     }
 
     onDemo {
+      env.ENVIRONMENT="demo"
       env.CASE_API_URL = "http://nfdiv-case-api-demo.service.core-compute-demo.internal"
       env.CCD_DEF_NAME = "demo"
       env.IDAM_API_URL_BASE = "https://idam-api.demo.platform.hmcts.net"
@@ -175,6 +178,7 @@ withPipeline(type, product, component) {
     }
 
     onPerftest {
+      env.ENVIRONMENT="perftest"
       env.CASE_API_URL = "http://nfdiv-case-api-perftest.service.core-compute-perftest.internal"
       env.CCD_DEF_NAME = "perftest"
       env.IDAM_API_URL_BASE = "https://idam-api.perftest.platform.hmcts.net"

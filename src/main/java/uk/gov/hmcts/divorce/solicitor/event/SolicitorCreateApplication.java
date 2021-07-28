@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.common.AddSystemUpdateRole;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -27,6 +28,7 @@ import uk.gov.hmcts.divorce.solicitor.event.page.SolHowDoYouWantToApplyForDivorc
 import uk.gov.hmcts.divorce.solicitor.event.page.UploadMarriageCertificate;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorCreateApplicationService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -51,6 +53,9 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
 
     @Autowired
     private SolicitorCreateApplicationService solicitorCreateApplicationService;
+
+    @Autowired
+    private AddSystemUpdateRole addSystemUpdateRole;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -89,6 +94,11 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
     private PageBuilder addEventConfig(
         final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
+        var defaultRoles = new ArrayList<UserRole>();
+        defaultRoles.add(SOLICITOR);
+
+        var updatedRoles = addSystemUpdateRole.addIfConfiguredForEnvironment(defaultRoles);
+
         return new PageBuilder(configBuilder
             .event(SOLICITOR_CREATE)
             .initialState(Draft)
@@ -98,7 +108,7 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
             .endButtonLabel("Save Application")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .explicitGrants()
-            .grant(CREATE_READ_UPDATE, SOLICITOR)
+            .grant(CREATE_READ_UPDATE, updatedRoles.toArray(UserRole[]::new))
             .grant(READ_UPDATE, CASEWORKER_SUPERUSER)
             .grant(READ, CASEWORKER_COURTADMIN_CTSC, CASEWORKER_COURTADMIN_RDU, CASEWORKER_LEGAL_ADVISOR));
     }

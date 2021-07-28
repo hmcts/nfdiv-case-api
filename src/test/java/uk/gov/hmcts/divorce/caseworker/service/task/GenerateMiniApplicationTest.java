@@ -18,6 +18,7 @@ import java.util.function.Supplier;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -63,7 +64,10 @@ class GenerateMiniApplicationTest {
 
         when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(templateContentSupplier);
-        when(caseDataDocumentService
+
+        final var result = generateMiniApplication.apply(caseDetails);
+
+        verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
                 caseData,
                 DIVORCE_APPLICATION,
@@ -72,10 +76,7 @@ class GenerateMiniApplicationTest {
                 TEST_AUTHORIZATION_TOKEN,
                 DIVORCE_MINI_APPLICATION,
                 DIVORCE_MINI_APPLICATION_DOCUMENT_NAME,
-                ENGLISH))
-            .thenReturn(caseData);
-
-        final var result = generateMiniApplication.apply(caseDetails);
+                ENGLISH);
 
         assertThat(result.getData()).isEqualTo(caseData);
     }
