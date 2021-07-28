@@ -26,14 +26,14 @@ public class CaseDataDocumentService {
     @Autowired
     private DocumentIdProvider documentIdProvider;
 
-    public CaseData renderDocumentAndUpdateCaseData(final CaseData caseData,
-                                                    final DocumentType documentType,
-                                                    final Supplier<Map<String, Object>> templateContentSupplier,
-                                                    final Long caseId,
-                                                    final String authorisation,
-                                                    final String templateId,
-                                                    final String documentName,
-                                                    final LanguagePreference languagePreference) {
+    public void renderDocumentAndUpdateCaseData(final CaseData caseData,
+                                                final DocumentType documentType,
+                                                final Supplier<Map<String, Object>> templateContentSupplier,
+                                                final Long caseId,
+                                                final String authorisation,
+                                                final String templateId,
+                                                final String documentName,
+                                                final LanguagePreference languagePreference) {
 
         log.info("Rendering document request for templateId : {} case id: {}", templateId, caseId);
 
@@ -53,8 +53,6 @@ public class CaseDataDocumentService {
                 .id(documentIdProvider.documentId())
                 .value(divorceDocumentFrom(documentInfo, documentType))
                 .build());
-
-        return caseData;
     }
 
     public Document renderGeneralOrderDocument(final Supplier<Map<String, Object>> templateContentSupplier,
