@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -69,6 +70,7 @@ public class Applicant2RequestChangesNotificationTest {
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmailToApplicant2() throws Exception {
         CaseData data = validJointApplicant1CaseDataMap();
         data.getCaseInvite().setApplicant2InviteEmailAddress(TEST_USER_EMAIL);
+        data.getApplication().setApplicant2ConfirmApplicant1Information(YesOrNo.NO);
         data.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation("Some issues");
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)

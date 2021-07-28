@@ -70,6 +70,11 @@ public final class ValidationUtil {
             caseData.getApplication().getMarriageDetails().getApplicant2Name(), "MarriageApplicant2Name"), errorList);
         addToErrorList(checkIfDateIsAllowed(caseData.getApplication().getMarriageDetails().getDate(), "MarriageDate"), errorList);
         addListToErrorList(caseData.getApplication().getJurisdiction().validate(), errorList);
+    }
+
+    public static void validateApplicant2RequestChanges(CaseData caseData, List<String> errorList) {
+        addToErrorList(checkIfYesOrNoNullOrEmpty(caseData.getApplication().getApplicant2ConfirmApplicant1Information(),
+            "Applicant2ConfirmApplicant1Information"), errorList);
         addToErrorList(checkIfStringNullOrEmpty(caseData.getApplication().getApplicant2ExplainsApplicant1IncorrectInformation(),
             "Applicant2ExplainsApplicant1IncorrectInformation"), errorList);
     }

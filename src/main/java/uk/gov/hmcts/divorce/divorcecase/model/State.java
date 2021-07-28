@@ -11,6 +11,7 @@ import java.util.List;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.isPaymentIncomplete;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant1BasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant2BasicCase;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant2RequestChanges;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCaseFieldsForIssueApplication;
 
@@ -122,7 +123,7 @@ public enum State {
         @Override
         public List<String> validate(CaseData caseData) {
             List<String> errors = new ArrayList<>();
-            validateApplicant2BasicCase(caseData, errors);
+            validateApplicant2RequestChanges(caseData, errors);
             return errors;
         }
     },
