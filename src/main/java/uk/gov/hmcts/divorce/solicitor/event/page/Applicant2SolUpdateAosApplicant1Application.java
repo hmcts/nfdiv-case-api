@@ -19,8 +19,8 @@ public class Applicant2SolUpdateAosApplicant1Application implements CcdPageConfi
             .complex(CaseData::getAcknowledgementOfService)
             .mandatory(AcknowledgementOfService::getConfirmReadPetition)
             .label("LabelRespSol-AOSConfirmRead",
-                "### The respondent has not read the petition\n\n"
-                    + "The respondent must have read the petition in order to respond.",
+                "### ${labelContentTheApplicant2} has not read the petition\n\n"
+                    + "${labelContentTheApplicant2} must have read the petition in order to respond.",
               "confirmReadPetition=\"No\"")
             .done();
     }

@@ -22,7 +22,6 @@
     "applicant1SolicitorEmail": "solicitor@test.com",
     "applicant1SolicitorAddress": null,
     "applicant1SolicitorAgreeToReceiveEmails": null,
-    "applicant1SolicitorIsDigital": null,
     "applicant2FirstName": "test_first_name",
     "applicant2MiddleName": "test_middle_name",
     "applicant2LastName": "test_last_name",
@@ -52,7 +51,6 @@
     "applicant2SolicitorEmail": null,
     "applicant2SolicitorAddress": null,
     "applicant2SolicitorAgreeToReceiveEmails": null,
-    "applicant2SolicitorIsDigital": null,
     "marriageApplicant1Name": "test_first_name test_last_name",
     "marriageApplicant2Name": "test_first_name test_last_name",
     "marriageMarriedInUk": null,
@@ -91,6 +89,21 @@
       "PaymentTotal": "55000"
     },
     "documentsGenerated": [
+      {
+        "id": "Respondent Invitation",
+        "value": {
+          "documentDateAdded": null,
+          "documentComment": null,
+          "documentFileName": "aosinvitation-1616591401473378.pdf",
+          "documentType": "aos",
+          "documentEmailContent": null,
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100",
+            "document_filename": "aosinvitation-1616591401473378.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100/binary"
+          }
+        }
+      },
       {
         "id": "Divorce application",
         "value": {

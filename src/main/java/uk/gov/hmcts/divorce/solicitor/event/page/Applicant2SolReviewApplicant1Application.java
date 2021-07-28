@@ -20,18 +20,19 @@ public class Applicant2SolReviewApplicant1Application implements CcdPageConfigur
                 "### Respond to a divorce application\n\n"
                     + "# Reference number\n"
                     + "${[CASE_REFERENCE]}\n\n"
-                    + "# Respondent\n"
+                    + "# ${labelContentApplicant2UC}\n"
                     + "${applicant2FirstName} ${applicant2LastName}\n\n"
-                    + "You must respond to this application within 7 days of the respondent receiving the letter from the courts."
-                    + " If you don't, the applicant 1 can ask the court to move the divorce forwards without the respondent. "
-                    + "The respondent may have to pay extra fees if this happens\n\n"
-                    + "If the respondent has been married to more than one person during this marriage (polygamy) contact "
+                    + "You must respond to this application within 7 days of ${labelContentTheApplicant2} receiving the letter "
+                    + "from the courts."
+                    + " If you don't, the applicant 1 can ask the court to move the divorce forwards without ${labelContentTheApplicant2}. "
+                    + "${labelContentTheApplicant2} may have to pay extra fees if this happens\n\n"
+                    + "If ${labelContentTheApplicant2} has been married to more than one person during this marriage (polygamy) contact "
                     + "your regional divorce centre before you apply.")
             .complex(CaseData::getAcknowledgementOfService)
             .mandatory(AcknowledgementOfService::getConfirmReadPetition)
             .label("LabelRespSol-AOSConfirmRead",
-                "### The respondent has not read the petition\n\n"
-                    + "The respondent must have read the petition in order to respond.",
+                "### ${labelContentTheApplicant2} has not read the petition\n\n"
+                    + "${labelContentTheApplicant2} must have read the petition in order to respond.",
               "confirmReadPetition=\"No\"")
             .done();
     }

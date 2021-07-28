@@ -93,6 +93,9 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
             state = AwaitingPayment;
         }
 
+        caseDataCopy.getLabelContent().setApplicationType(caseDataCopy.getApplicationType());
+        caseDataCopy.getLabelContent().setUnionType(caseDataCopy.getDivorceOrDissolution());
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseDataCopy)
             .state(state)

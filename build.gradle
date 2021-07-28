@@ -21,7 +21,7 @@ plugins {
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'org.springframework.boot' version '2.5.3'
   id 'com.github.ben-manes.versions' version '0.38.0'
-  id 'hmcts.ccd.sdk' version '0.23.4'
+  id 'hmcts.ccd.sdk' version '0.23.5'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -399,7 +399,7 @@ def reloadCcd = tasks.register('reloadCcd') {
         def (key, value) = it.tokenize('=')
         environment key, value
       }
-      commandLine 'docker-compose', '-f', '../docker-compose.yml', 'up', '-d', 'nfdiv-case-api'
+      commandLine 'docker-compose', '-f', '../docker-compose.yml', 'up', '--build', '-d', 'nfdiv-case-api'
     }
   }
 }

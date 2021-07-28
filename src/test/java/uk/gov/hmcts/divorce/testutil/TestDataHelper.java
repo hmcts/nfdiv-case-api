@@ -156,7 +156,6 @@ public class TestDataHelper {
         applicant.setSolicitor(Solicitor.builder()
             .name(TEST_SOLICITOR_NAME)
             .email(TEST_SOLICITOR_EMAIL)
-            .isDigital(YES)
             .organisationPolicy(organisationPolicy())
             .build());
         return applicant;
