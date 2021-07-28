@@ -23,7 +23,7 @@ import java.nio.file.Files;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
-import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
+import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -84,7 +84,7 @@ public class Applicant2RequestChangesNotificationTest {
             .getContentAsString();
 
         assertThatJson(actualResponse)
-            .when(IGNORING_EXTRA_FIELDS)
+            .when(TREATING_NULL_AS_ABSENT)
             .isEqualTo(json(expectedCcdAboutToStartCallbackSuccessfulResponse()));
 
         verify(notificationService)
@@ -108,7 +108,7 @@ public class Applicant2RequestChangesNotificationTest {
             .getContentAsString();
 
         assertThatJson(actualResponse)
-            .when(IGNORING_EXTRA_FIELDS)
+            .when(TREATING_NULL_AS_ABSENT)
             .isEqualTo(json(expectedCcdAboutToStartCallbackErrorResponse()));
     }
 
