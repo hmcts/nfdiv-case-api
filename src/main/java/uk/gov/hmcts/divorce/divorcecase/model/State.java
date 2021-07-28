@@ -55,6 +55,19 @@ public enum State {
     AosOverdue("AosOverdue"),
 
     @CCD(
+        name = "Applicant 2 approved",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
+    )
+    Applicant2Approved("Applicant2Approved") {
+        @Override
+        public List<String> validate(CaseData caseData) {
+            List<String> errors = new ArrayList<>();
+            validateApplicant2BasicCase(caseData, errors);
+            return errors;
+        }
+    },
+
+    @CCD(
         name = "Application awaiting payment",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
@@ -245,7 +258,7 @@ public enum State {
             if (caseData.getApplication().hasAwaitingDocuments()) {
                 errors.add("Awaiting documents");
             }
-            if (!caseData.getApplication().hasStatementOfTruth() && !caseData.getApplication().hasSolSignStatementOfTruth()) {
+            if (!caseData.getApplication().applicant1HasStatementOfTruth() && !caseData.getApplication().hasSolSignStatementOfTruth()) {
                 errors.add("Statement of truth must be accepted by the person making the application");
             }
 

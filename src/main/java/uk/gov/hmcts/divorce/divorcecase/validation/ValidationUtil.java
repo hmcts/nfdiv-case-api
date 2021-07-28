@@ -38,8 +38,11 @@ public final class ValidationUtil {
             errorList);
         addToErrorList(checkIfConfidentialAddressNullOrEmpty(caseData.getApplicant1().getContactDetailsConfidential(),
             "Applicant1ContactDetailsConfidential"), errorList);
-        addToErrorList(checkIfYesOrNoIsNullOrEmptyOrNo(caseData.getApplication().getPrayerHasBeenGiven(), "PrayerHasBeenGiven"), errorList);
-        addToErrorList(checkIfYesOrNoIsNullOrEmptyOrNo(caseData.getApplication().getStatementOfTruth(), "StatementOfTruth"), errorList);
+        addToErrorList(checkIfYesOrNoIsNullOrEmptyOrNo(
+            caseData.getApplication().getApplicant1PrayerHasBeenGiven(), "Applicant1PrayerHasBeenGiven"), errorList);
+        addToErrorList(
+            checkIfYesOrNoIsNullOrEmptyOrNo(caseData.getApplication().getApplicant1StatementOfTruth(), "Applicant1StatementOfTruth"),
+            errorList);
         addToErrorList(checkIfDateIsAllowed(caseData.getApplication().getMarriageDetails().getDate(), "MarriageDate"), errorList);
         addListToErrorList(caseData.getApplication().getJurisdiction().validate(), errorList);
     }
@@ -57,6 +60,16 @@ public final class ValidationUtil {
     }
 
     public static void validateApplicant2BasicCase(CaseData caseData, List<String> errorList) {
+        addToErrorList(checkIfStringNullOrEmpty(caseData.getApplicant2().getFirstName(), "Applicant2FirstName"), errorList);
+        addToErrorList(checkIfStringNullOrEmpty(caseData.getApplicant2().getLastName(), "Applicant2LastName"), errorList);
+        addToErrorList(checkIfYesOrNoNullOrEmpty(
+            caseData.getApplication().getApplicant2StatementOfTruth(), "Applicant2StatementOfTruth"), errorList);
+        addToErrorList(checkIfYesOrNoNullOrEmpty(
+            caseData.getApplication().getApplicant2PrayerHasBeenGiven(), "Applicant2PrayerHasBeenGiven"), errorList);
+        addToErrorList(checkIfStringNullOrEmpty(
+            caseData.getApplication().getMarriageDetails().getApplicant2Name(), "MarriageApplicant2Name"), errorList);
+        addToErrorList(checkIfDateIsAllowed(caseData.getApplication().getMarriageDetails().getDate(), "MarriageDate"), errorList);
+        addListToErrorList(caseData.getApplication().getJurisdiction().validate(), errorList);
         addToErrorList(checkIfStringNullOrEmpty(caseData.getApplication().getApplicant2ExplainsApplicant1IncorrectInformation(),
             "Applicant2ExplainsApplicant1IncorrectInformation"), errorList);
     }

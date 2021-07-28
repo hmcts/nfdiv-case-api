@@ -13,7 +13,7 @@ public final class CaseFieldsConstants {
     public static final String DIVORCE_OR_DISSOLUTION = "divorceOrDissolution";
     public static final String FINANCIAL_ORDER = "applicant1FinancialOrder";
     public static final String APPLICANT_1_ORGANISATION_POLICY = "applicant1SolicitorOrganisationPolicy";
-    public static final String STATEMENT_OF_TRUTH = "statementOfTruth";
+    public static final String APPLICANT_1_STATEMENT_OF_TRUTH = "applicant1StatementOfTruth";
     public static final String SOL_STATEMENT_OF_TRUTH = "solSignStatementOfTruth";
 
     // required for Checkstyle

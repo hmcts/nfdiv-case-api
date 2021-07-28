@@ -128,13 +128,27 @@ public class Application {
             + " and have decided how money and property will be split (\"financial order\").",
         access = {DefaultAccess.class}
     )
-    private YesOrNo prayerHasBeenGiven;
+    private YesOrNo applicant1PrayerHasBeenGiven;
+
+    @CCD(
+        label = "The applicant has given their \"prayer\".",
+        hint = "\"The prayer\" means they confirm they wish to dissolve the union, pay any fees (if applicable),"
+            + " and have decided how money and property will be split (\"financial order\").",
+        access = {Applicant2Access.class}
+    )
+    private YesOrNo applicant2PrayerHasBeenGiven;
 
     @CCD(
         label = "The applicant believes that the facts stated in this application are true.",
         access = {DefaultAccess.class}
     )
-    private YesOrNo statementOfTruth;
+    private YesOrNo applicant1StatementOfTruth;
+
+    @CCD(
+        label = "The applicant believes that the facts stated in this application are true.",
+        access = {Applicant2Access.class}
+    )
+    private YesOrNo applicant2StatementOfTruth;
 
     @CCD(
         label = "I am duly authorised by the applicant to sign this statement.",
@@ -279,8 +293,8 @@ public class Application {
     private LocalDate issueDate;
 
     @JsonIgnore
-    public boolean hasStatementOfTruth() {
-        return YES.equals(statementOfTruth);
+    public boolean applicant1HasStatementOfTruth() {
+        return YES.equals(applicant1StatementOfTruth);
     }
 
     @JsonIgnore
