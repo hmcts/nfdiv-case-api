@@ -57,9 +57,9 @@ public class SystemProgressCasesToAosOverdueTask {
                         LocalDate aosDueDate = LocalDate.parse(dueDate);
 
                         if (aosDueDate.isEqual(LocalDate.now()) || aosDueDate.isAfter(LocalDate.now())) {
-                            log.info("Case id {} has been in awaiting aos state with due date {} moving state to AosOverdue as due date is >= current date",
-                                caseDetails.getId(),
-                                aosDueDate
+                            log.info("Due date {} for Case id {} is on/before current date hence moving state to AosOverdue",
+                                aosDueDate,
+                                caseDetails.getId()
                             );
                             ccdUpdateService.submitEvent(caseDetails, SYSTEM_PROGRESS_TO_AOS_OVERDUE);
                         }
