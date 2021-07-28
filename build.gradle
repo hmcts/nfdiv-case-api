@@ -280,7 +280,7 @@ dependencies {
 
   testImplementation group: 'com.jayway.awaitility', name: 'awaitility', version: versions.awaitility
 
-  testImplementation group: 'org.junit-pioneer', name: 'junit-pioneer', version: '1.4.2'
+  testImplementation group: 'com.github.stefanbirkner', name: 'system-lambda', version: '1.2.0'
 
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
