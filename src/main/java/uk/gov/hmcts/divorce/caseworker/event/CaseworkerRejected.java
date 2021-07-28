@@ -56,7 +56,7 @@ public class CaseworkerRejected implements CCDConfig<CaseData, State, UserRole> 
             .done();
     }
 
-    private AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails) {
         var previousState = beforeDetails.getState();

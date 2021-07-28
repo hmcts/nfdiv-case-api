@@ -18,7 +18,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 @SpringBootTest
 public class CaseworkerRejectedTest extends FunctionalTestSuite {
 
-    private static final String REQUEST = "classpath:request/casedata/ccd-callback-caseworker-issue-application-about-to-submit.json";
+    private static final String REQUEST = "classpath:request/casedata/ccd-callback-caseworker-reject-application-about-to-submit.json";
 
     @Test
     public void shouldSetPreviousStateWhenAboutToStartCallbackIsSuccessful() throws Exception {
