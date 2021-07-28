@@ -1,11 +1,13 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.citizen.notification.Applicant2ApprovedApplicant1Notification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -14,15 +16,17 @@ import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Slf4j
 @Component
-public class Applicant2Approve implements CCDConfig<CaseData, State, UserRole> {
+public class CitizenApplicant2Approve implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String APPLICANT_2_APPROVE = "applicant2-approve";
+
+    @Autowired
+    private Applicant2ApprovedApplicant1Notification applicant2ApprovedApplicant1Notification;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -52,9 +56,11 @@ public class Applicant2Approve implements CCDConfig<CaseData, State, UserRole> {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(data)
                 .errors(validationErrors)
-                .state(Draft)
+                .state(AwaitingApplicant2Response)
                 .build();
         }
+
+        applicant2ApprovedApplicant1Notification.send(data, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)

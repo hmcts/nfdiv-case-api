@@ -12,7 +12,8 @@ public final class NotificationConstants {
     public static final String FOR_YOUR_APPLICATION = " for your divorce/ to end your civil partnership";
     public static final String FOR_YOUR_DIVORCE = " for your divorce";
     public static final String TO_END_CIVIL_PARTNERSHIP = "to end your civil partnership";
-    public static final String REMINDER = "Reminder: application / Application ";
+    public static final String REMINDER_ACTION_REQUIRED = "Reminder/Action required";
+    public static final String REMINDER_APPLICATION = "Reminder: application / Application ";
 
     public static final String CREATE_ACCOUNT_LINK = "create account link";
     public static final String SIGN_IN_URL_NOTIFY_KEY = "signin url";

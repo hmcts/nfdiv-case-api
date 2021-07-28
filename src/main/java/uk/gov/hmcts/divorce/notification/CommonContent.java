@@ -13,6 +13,7 @@ import java.util.Map;
 
 import static java.lang.String.join;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_2_SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TO_END_CIVIL_PARTNERSHIP;
@@ -25,6 +26,9 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.RELATIONSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.RELATIONSHIP_COURT_HEADER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.RESPONDENT_NAME;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DIVORCE_URL;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_URL_NOTIFY_KEY;
 
 @Component
 public class CommonContent {
@@ -48,10 +52,12 @@ public class CommonContent {
             templateVars.put(RELATIONSHIP, DIVORCE_APPLICATION);
             templateVars.put(RELATIONSHIP_COURT_HEADER, APPLY_FOR_DIVORCE);
             templateVars.put(COURT_EMAIL, configTemplateVars.get(DIVORCE_COURT_EMAIL));
+            templateVars.put(SIGN_IN_URL_NOTIFY_KEY, configTemplateVars.get(SIGN_IN_DIVORCE_URL));
         } else {
             templateVars.put(RELATIONSHIP, APPLICATION_TO_END_CIVIL_PARTNERSHIP);
             templateVars.put(RELATIONSHIP_COURT_HEADER, END_CIVIL_PARTNERSHIP);
             templateVars.put(COURT_EMAIL, configTemplateVars.get(DISSOLUTION_COURT_EMAIL));
+            templateVars.put(SIGN_IN_URL_NOTIFY_KEY, configTemplateVars.get(SIGN_IN_DISSOLUTION_URL));
         }
 
         return templateVars;

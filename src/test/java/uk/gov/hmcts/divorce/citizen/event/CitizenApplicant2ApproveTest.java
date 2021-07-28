@@ -23,7 +23,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.divorce.citizen.event.Applicant2Approve.APPLICANT_2_APPROVE;
+import static uk.gov.hmcts.divorce.citizen.event.CitizenApplicant2Approve.APPLICANT_2_APPROVE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -31,16 +31,16 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 
 @ExtendWith(MockitoExtension.class)
-class Applicant2ApproveTest {
+class CitizenApplicant2ApproveTest {
 
     @InjectMocks
-    private Applicant2Approve applicant2Approve;
+    private CitizenApplicant2Approve citizenApplicant2Approve;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        applicant2Approve.configure(configBuilder);
+        citizenApplicant2Approve.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
@@ -55,7 +55,7 @@ class Applicant2ApproveTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = applicant2Approve.aboutToSubmit(caseDetails, caseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenApplicant2Approve.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getErrors().size()).isEqualTo(7);
         assertThat(response.getErrors().get(0)).isEqualTo("Applicant2FirstName cannot be empty or null");
@@ -68,7 +68,7 @@ class Applicant2ApproveTest {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = applicant2Approve.aboutToSubmit(details, details);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenApplicant2Approve.aboutToSubmit(details, details);
 
         assertThat(response.getErrors().size()).isEqualTo(7);
         assertThat(response.getErrors()).containsExactlyInAnyOrder(
@@ -94,7 +94,7 @@ class Applicant2ApproveTest {
 
         caseDetails.setState(State.AwaitingApplicant2Response);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = applicant2Approve.aboutToSubmit(caseDetails, caseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenApplicant2Approve.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getState()).isEqualTo(State.Applicant2Approved);
     }
