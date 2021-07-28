@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -22,6 +23,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
+@Slf4j
 @Component
 public class CaseworkerRejected implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_REJECTED = "caseworker-rejected";
@@ -58,7 +60,9 @@ public class CaseworkerRejected implements CCDConfig<CaseData, State, UserRole> 
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails) {
         var previousState = beforeDetails.getState();
+        log.info("About to submit previousState: {} and currentState: {}", previousState, details.getState());
         var caseData = details.getData();
+
         caseData.getApplication().setPreviousState(previousState);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

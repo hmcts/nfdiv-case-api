@@ -332,6 +332,7 @@ public class TestDataHelper {
     }
 
     public static CallbackRequest callbackRequest(final CaseData caseData, String eventId, String state) {
+        OBJECT_MAPPER.registerModule(new JavaTimeModule());
         return CallbackRequest
             .builder()
             .eventId(eventId)
@@ -344,6 +345,13 @@ public class TestDataHelper {
                     .caseTypeId(CASE_TYPE)
                     .build()
             )
+            .caseDetailsBefore(CaseDetails
+                .builder()
+                .data(OBJECT_MAPPER.convertValue(caseData, TYPE_REFERENCE))
+                .state(state)
+                .id(TEST_CASE_ID)
+                .caseTypeId(CASE_TYPE)
+                .build())
             .build();
     }
 
