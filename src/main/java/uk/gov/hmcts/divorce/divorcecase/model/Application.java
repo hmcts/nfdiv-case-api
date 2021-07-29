@@ -275,13 +275,13 @@ public class Application {
 
     @CCD(
         label = "Is the information provided on the case correct?",
-        access = {DefaultAccess.class}
+        access = {Applicant2Access.class}
     )
     private YesOrNo applicant2ConfirmApplicant1Information;
 
     @CCD(
         label = "Explain what is incorrect or needs changing.",
-        access = {DefaultAccess.class}
+        access = {Applicant2Access.class}
     )
     private String applicant2ExplainsApplicant1IncorrectInformation;
 

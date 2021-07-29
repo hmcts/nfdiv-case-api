@@ -45,3 +45,4 @@ java:
     PRD_API_BASEURL : "http://rd-professional-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal"
     SEND_LETTER_SERVICE_BASEURL: "http://rpe-send-letter-service-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal"
     AWAITING_CONDITIONAL_ORDER_SCHEDULED_CRON: 0 0 0 * * ? # Midnight each day
+    AOS_OVERDUE_SCHEDULED_CRON: 0 0 0 * * ? # Midnight each day

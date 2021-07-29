@@ -1,0 +1,9 @@
+{
+  "data": "${json-unit.ignore}",
+  "errors": [
+    "Applicant2ConfirmApplicant1Information cannot be empty or null",
+    "Applicant2ExplainsApplicant1IncorrectInformation cannot be empty or null"
+  ],
+  "warnings": null,
+  "state": "AwaitingApplicant2Response"
+}

@@ -115,6 +115,8 @@ class Applicant2ApproveTest {
         caseData.getApplication().getMarriageDetails().setApplicant2Name("Full name");
 
         caseData.getApplication().getMarriageDetails().setDate(LocalDate.now().minus(2, ChronoUnit.YEARS));
+        caseData.getApplication().setApplicant2ConfirmApplicant1Information(YesOrNo.YES);
+
         Jurisdiction jurisdiction = new Jurisdiction();
         jurisdiction.setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_LAST_RESIDENT));
         jurisdiction.setBothLastHabituallyResident(YesOrNo.YES);
