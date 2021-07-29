@@ -12,6 +12,8 @@ import java.util.Map;
 
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_REQUEST_CHANGES;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.FIRST_NAME;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PARTNER;
 
 @Component
@@ -26,6 +28,8 @@ public class Applicant2RequestChangesNotification {
 
     public void send(CaseData caseData, Long id) {
         Map<String, String> templateVars = commonContent.templateVarsFor(caseData);
+        templateVars.put(FIRST_NAME, caseData.getApplicant2().getFirstName());
+        templateVars.put(LAST_NAME, caseData.getApplicant2().getLastName());
         templateVars.put(PARTNER, commonContent.getTheirPartner(caseData, caseData.getApplicant1()));
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
