@@ -292,6 +292,18 @@ public class Application {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate issueDate;
 
+    @CCD(
+        label = "Reject reason",
+        access = {CaseworkerAccess.class}
+    )
+    private RejectReason rejectReason;
+
+    @CCD(
+        label = "Previous state",
+        access = {CaseworkerAccess.class}
+    )
+    private State previousState;
+
     @JsonIgnore
     public boolean applicant1HasStatementOfTruth() {
         return YES.equals(applicant1StatementOfTruth);
