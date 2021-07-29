@@ -18,6 +18,8 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATIO
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TO_END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TYPE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_APPLICATION;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.FIRST_NAME;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PARTNER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DIVORCE_URL;
@@ -73,6 +75,8 @@ public class Applicant2RequestChangesNotification {
 
     public void sendToApplicant2(CaseData caseData, Long id) {
         Map<String, String> templateVars = commonContent.templateVarsFor(caseData);
+        templateVars.put(FIRST_NAME, caseData.getApplicant2().getFirstName());
+        templateVars.put(LAST_NAME, caseData.getApplicant2().getLastName());
         templateVars.put(PARTNER, commonContent.getTheirPartner(caseData, caseData.getApplicant1()));
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
