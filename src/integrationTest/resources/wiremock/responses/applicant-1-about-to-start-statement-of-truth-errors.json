@@ -1,6 +1,5 @@
 {
   "data": {
-    "applicationType": "soleApplication",
     "divorceOrDissolution": "divorce",
     "applicant1FirstName": "test_first_name",
     "applicant1MiddleName": "test_middle_name",

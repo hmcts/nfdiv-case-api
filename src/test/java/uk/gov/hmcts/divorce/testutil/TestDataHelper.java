@@ -14,6 +14,7 @@ import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.ConfidentialAddress;
@@ -233,6 +234,7 @@ public class TestDataHelper {
 
     public static CaseData validApplicant2CaseDataMap() {
         CaseData caseData = validApplicant1CaseDataMap();
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.setApplicant2(getApplicant2(MALE));
         caseData.getApplication().getMarriageDetails().setApplicant2Name("test_first_name test_last_name");
         caseData.getApplication().setApplicant2StatementOfTruth(YES);

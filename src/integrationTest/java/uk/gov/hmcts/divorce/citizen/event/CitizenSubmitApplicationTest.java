@@ -172,15 +172,12 @@ public class CitizenSubmitApplicationTest {
 
     @Test
     public void givenValidJointCaseDataThenReturnResponseWithNoErrors() throws Exception {
-        var data = validApplicant2CaseDataMap();
-        data.setApplicationType(ApplicationType.JOINT_APPLICATION);
-
         stubForFeesLookup(TestDataHelper.getFeeResponseAsJson());
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest(data, CITIZEN_SUBMIT)))
+            .content(objectMapper.writeValueAsString(callbackRequest(validApplicant2CaseDataMap(), CITIZEN_SUBMIT)))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
