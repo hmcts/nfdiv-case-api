@@ -21,7 +21,7 @@ public class CaseworkerRejectedTest extends FunctionalTestSuite {
     private static final String REQUEST = "classpath:request/casedata/ccd-callback-caseworker-reject-application-about-to-submit.json";
 
     @Test
-    public void shouldSetPreviousStateWhenAboutToStartCallbackIsSuccessful() throws Exception {
+    public void shouldSetPreviousStateWhenAboutToSubmitCallbackIsSuccessful() throws Exception {
 
         final Map<String, Object> caseData = caseData(REQUEST);
 
