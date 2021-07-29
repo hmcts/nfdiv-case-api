@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule;
 
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,16 +16,15 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("schedule_test")
-public class SystemProgressHeldCasesTaskTest {
-
+class SystemProgressCasesToAosOverdueTaskTest {
     @SpyBean
-    private SystemProgressHeldCasesTask awaitingConditionalOrderTask;
+    private SystemProgressCasesToAosOverdueTask progressCasesToAosOverdueTask;
 
     @Test
-    public void givenApplicationIsRunningAwaitingConditionalOrderScheduledJobIsExecutedAtLeastOnce() {
-        await(" Awaiting Conditional order task executed atleast once")
+    public void givenApplicationIsRunningAosOverdueScheduledJobIsExecutedAtLeastOnce() {
+        await(" Awaiting aos overdue task executed atleast once")
             .atMost(60, TimeUnit.SECONDS)
             .pollInterval(2, TimeUnit.SECONDS)
-            .until(() -> verify(awaitingConditionalOrderTask, atLeastOnce()).execute());
+            .until(() -> verify(progressCasesToAosOverdueTask, atLeastOnce()).execute());
     }
 }
