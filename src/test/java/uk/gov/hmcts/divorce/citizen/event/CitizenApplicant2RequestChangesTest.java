@@ -56,7 +56,8 @@ public class CitizenApplicant2RequestChangesTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenApplicant2RequestChanges.aboutToSubmit(details, details);
 
-        verify(applicant2RequestChangesNotification).send(caseData, details.getId());
+        verify(applicant2RequestChangesNotification).sendToApplicant1(caseData, details.getId());
+        verify(applicant2RequestChangesNotification).sendToApplicant2(caseData, details.getId());
         assertThat(response.getState()).isEqualTo(AwaitingApplicant1Response);
     }
 
