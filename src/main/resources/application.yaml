@@ -134,9 +134,10 @@ send-letter:
 
 schedule:
   awaiting_conditional_order: ${AWAITING_CONDITIONAL_ORDER_SCHEDULED_CRON:0 0 0 * * ?}
+  aos_overdue: ${AOS_OVERDUE_SCHEDULED_CRON:0 0 0 * * ?}
 
 aos_pack:
-  due_date_offset_days: ${AOS_PACK_DUE_DATE_OFFSET_DAYS:30}
+  due_date_offset_days: ${AOS_PACK_DUE_DATE_OFFSET_DAYS:14}
 
 case_progression:
   holding_period_in_weeks: ${CASE_HOLDING_WEEKS:20}

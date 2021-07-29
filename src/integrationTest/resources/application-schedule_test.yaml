@@ -1,2 +1,3 @@
 schedule:
   awaiting_conditional_order: '*/1 * * * * *'
+  aos_overdue: '*/1 * * * * *'
