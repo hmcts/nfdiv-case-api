@@ -11,8 +11,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
-import java.time.Clock;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -32,9 +30,6 @@ class SendAosPackTest {
 
     @Mock
     private AosPackPrinter aosPackPrinter;
-
-    @Mock
-    private Clock clock;
 
     @InjectMocks
     private SendAosPack sendAosPack;
@@ -58,7 +53,7 @@ class SendAosPackTest {
                 AcknowledgementOfService::getNoticeOfProceedingsEmail,
                 AcknowledgementOfService::getNoticeOfProceedingsSolicitorFirm)
             .contains(null, null, null);
-        verifyNoInteractions(aosPackPrinter, clock);
+        verifyNoInteractions(aosPackPrinter);
     }
 
     @Test
