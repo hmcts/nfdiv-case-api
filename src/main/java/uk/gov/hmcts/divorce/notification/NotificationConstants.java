@@ -56,6 +56,9 @@ public final class NotificationConstants {
     public static final String GENERAL_OTHER_RECIPIENT_NAME = "general other recipient name";
     public static final String GENERAL_EMAIL_DETAILS = "general email details";
 
+    public static final String PAY_FOR = "and pay for";
+    public static final String PAID_FOR = "and paid for";
+
     private NotificationConstants() {
     }
 }

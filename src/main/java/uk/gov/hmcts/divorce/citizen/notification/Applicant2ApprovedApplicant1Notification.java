@@ -11,7 +11,9 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT2_APPROVED;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.PAID_FOR;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PARTNER;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.PAY_FOR;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.REMINDER_ACTION_REQUIRED;
 
 @Component
@@ -31,12 +33,12 @@ public class Applicant2ApprovedApplicant1Notification {
         templateVars.put(REMINDER_ACTION_REQUIRED, "Action required: you");
 
         if (caseData.getApplication().getHelpWithFees().getNeedHelp() != YesOrNo.YES) {
-            templateVars.put("and pay for", "and pay for");
-            templateVars.put("and paid for", "and paid for");
+            templateVars.put(PAY_FOR, PAY_FOR);
+            templateVars.put(PAID_FOR, PAID_FOR);
         }
         else {
-            templateVars.put("and pay for", "");
-            templateVars.put("and paid for", "");
+            templateVars.put(PAY_FOR, "");
+            templateVars.put(PAID_FOR, "");
         }
 
         log.info("Sending application sent for review notification to applicant 1 for case : {}", id);

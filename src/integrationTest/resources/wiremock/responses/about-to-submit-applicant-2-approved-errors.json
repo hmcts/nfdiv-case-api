@@ -1,0 +1,14 @@
+{
+  "data": "${json-unit.ignore}",
+  "errors": [
+    "Applicant2FirstName cannot be empty or null",
+    "Applicant2LastName cannot be empty or null",
+    "Applicant2StatementOfTruth cannot be empty or null",
+    "Applicant2PrayerHasBeenGiven cannot be empty or null",
+    "MarriageApplicant2Name cannot be empty or null",
+    "MarriageDate cannot be empty or null",
+    "JurisdictionConnections cannot be empty or null"
+  ],
+  "warnings": null,
+  "state": "AwaitingApplicant2Response"
+}
