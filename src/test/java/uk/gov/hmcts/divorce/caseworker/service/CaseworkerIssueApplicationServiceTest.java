@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateMiniApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentSolicitorAosInvitation;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPack;
+import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDate;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -45,6 +46,9 @@ class CaseworkerIssueApplicationServiceTest {
     private SendAosNotifications sendAosNotifications;
 
     @Mock
+    private SetDueDate setDueDate;
+
+    @Mock
     private Clock clock;
 
     @InjectMocks
@@ -75,6 +79,7 @@ class CaseworkerIssueApplicationServiceTest {
         when(generateMiniApplication.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosPack.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosNotifications.apply(caseDetails)).thenReturn(caseDetails);
+        when(setDueDate.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = issueApplicationService.issueApplication(caseDetails);
 
