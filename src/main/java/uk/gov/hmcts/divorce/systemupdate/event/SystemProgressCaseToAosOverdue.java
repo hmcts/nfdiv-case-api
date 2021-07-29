@@ -8,6 +8,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import static java.util.EnumSet.of;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
@@ -28,7 +30,7 @@ public class SystemProgressCaseToAosOverdue implements CCDConfig<CaseData, State
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(SYSTEM_PROGRESS_TO_AOS_OVERDUE)
-            .forStateTransition(AwaitingAos, AosOverdue)
+            .forStateTransition(of(AwaitingAos, AosDrafted), AosOverdue)
             .name("AOS Overdue")
             .description("AOS Overdue")
             .explicitGrants()
