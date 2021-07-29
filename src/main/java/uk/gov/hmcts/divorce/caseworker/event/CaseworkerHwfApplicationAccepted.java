@@ -13,6 +13,7 @@ import java.util.EnumSet;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
@@ -31,7 +32,7 @@ public class CaseworkerHwfApplicationAccepted implements CCDConfig<CaseData, Sta
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_HWF_APPLICATION_ACCEPTED)
-            .forStateTransition(EnumSet.of(AwaitingHWFDecision, AwaitingPayment, AwaitingDocuments),
+            .forStateTransition(EnumSet.of(AwaitingHWFDecision, AwaitingPayment, AwaitingDocuments, Rejected),
                 Submitted)
             .name("HWF application accepted")
             .description("HWF application accepted")
