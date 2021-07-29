@@ -1,7 +1,5 @@
 {
   "data": {
-    "applicationType": "soleApplication",
-    "divorceOrDissolution": "divorce",
     "applicant1Gender": "female",
     "applicant2Gender": "male",
     "marriageMarriedInUk": null,
@@ -14,19 +12,17 @@
     "marriageCertifyMarriageCertificateIsCorrect": null,
     "marriageMarriageCertificateIsIncorrectDetails": null,
     "marriageIssueApplicationWithoutMarriageCertificate": null,
-    "helpWithFeesNeedHelp": "No",
     "applicant1FirstName": "test_first_name",
     "applicant1MiddleName": "test_middle_name",
     "applicant1LastName": "test_last_name",
+    "applicant1Email": null,
     "applicant1AgreedToReceiveEmails": null,
-    "applicant1Email": "test@test.com",
-    "applicant1LanguagePreferenceWelsh": "No",
     "applicant1NameChangedHow": null,
-    "applicant1NameDifferentToMarriageCertificate": null,
     "applicant1LastNameChangedWhenMarried": null,
+    "applicant1NameDifferentToMarriageCertificate": null,
     "applicant1PhoneNumber": null,
     "applicant1NameChangedHowOtherDetails": null,
-    "applicant1ContactDetailsConfidential": "keep",
+    "applicant1LanguagePreferenceWelsh": null,
     "applicant1CorrespondenceAddress": null,
     "applicant1SolicitorRepresented": null,
     "applicant1SolicitorAddress": null,
@@ -52,6 +48,16 @@
     "applicant2SolicitorName": null,
     "applicant2SolicitorPhone": null,
     "applicant2SolicitorReference": null,
+    "applicant2MiddleName": null,
+    "applicant2AgreedToReceiveEmails": null,
+    "applicant2Email": null,
+    "applicant2LanguagePreferenceWelsh": null,
+    "applicant2NameChangedHow": null,
+    "applicant2NameDifferentToMarriageCertificate": null,
+    "applicant2LastNameChangedWhenMarried": null,
+    "applicant2NameChangedHowOtherDetails": null,
+    "applicant2PhoneNumber": null,
+    "applicant2ContactDetailsConfidential": null,
     "helpWithFeesAppliedForFees": null,
     "helpWithFeesReferenceNumber": null,
     "jurisdictionApplicant1Residence": "Yes",
@@ -66,38 +72,30 @@
       "A"
     ],
     "jurisdictionLegalConnections": null,
+    "applicant1ContactDetailsConfidential": "keep",
     "applicant2FirstName": "test_first_name",
-    "applicant2MiddleName": "test_middle_name",
     "applicant2LastName": "test_last_name",
-    "applicant2AgreedToReceiveEmails": null,
-    "applicant2InviteEmailAddress": "test@test.com",
-    "applicant2Email": null,
-    "applicant2LanguagePreferenceWelsh": null,
-    "applicant2NameChangedHow": null,
-    "applicant2NameDifferentToMarriageCertificate": null,
-    "applicant2LastNameChangedWhenMarried": null,
-    "applicant2NameChangedHowOtherDetails": null,
-    "applicant2PhoneNumber": null,
-    "applicant2ContactDetailsConfidential": null,
     "marriageApplicant1Name": "test_first_name test_last_name",
-    "marriageApplicant2Name": null,
+    "marriageApplicant2Name": "test_first_name test_last_name",
     "applicant1FinancialOrder": "No",
+    "helpWithFeesNeedHelp": "No",
     "applicant1PrayerHasBeenGiven": "Yes",
     "applicant1StatementOfTruth": "Yes",
+    "solSignStatementOfTruth": "Yes",
     "applicationFeeOrderSummary": {
       "PaymentReference": null,
       "Fees": [
         {
           "id": null,
           "value": {
-            "FeeAmount": "1000",
-            "FeeCode": "FEECODE1",
-            "FeeDescription": "Issue Fee",
-            "FeeVersion": "1"
+            "FeeAmount": "55000",
+            "FeeCode": "FEE0002",
+            "FeeDescription": "Filing an application for a divorce, nullity or civil partnership dissolution",
+            "FeeVersion": "5"
           }
         }
       ],
-      "PaymentTotal": "1000"
+      "PaymentTotal": "55000"
     },
     "payments": [
       {
@@ -105,7 +103,7 @@
         "value": {
           "paymentDate": null,
           "paymentFeeId": null,
-          "paymentAmount": 1000,
+          "paymentAmount": 55000,
           "paymentSiteId": null,
           "paymentStatus": "inProgress",
           "paymentChannel": null,

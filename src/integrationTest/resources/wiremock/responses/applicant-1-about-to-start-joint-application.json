@@ -80,40 +80,10 @@
     "applicant2PhoneNumber": null,
     "applicant2ContactDetailsConfidential": null,
     "marriageApplicant1Name": "test_first_name test_last_name",
-    "marriageApplicant2Name": null,
+    "marriageApplicant2Name": "test_first_name test_last_name",
     "applicant1FinancialOrder": "No",
     "applicant1PrayerHasBeenGiven": "Yes",
-    "applicant1StatementOfTruth": "Yes",
-    "applicationFeeOrderSummary": {
-      "PaymentReference": null,
-      "Fees": [
-        {
-          "id": null,
-          "value": {
-            "FeeAmount": "1000",
-            "FeeCode": "FEECODE1",
-            "FeeDescription": "Issue Fee",
-            "FeeVersion": "1"
-          }
-        }
-      ],
-      "PaymentTotal": "1000"
-    },
-    "payments": [
-      {
-        "id": "${json-unit.ignore}",
-        "value": {
-          "paymentDate": null,
-          "paymentFeeId": null,
-          "paymentAmount": 1000,
-          "paymentSiteId": null,
-          "paymentStatus": "inProgress",
-          "paymentChannel": null,
-          "paymentReference": null,
-          "paymentTransactionId": null
-        }
-      }
-    ]
+    "applicant1StatementOfTruth": "Yes"
   },
   "errors": null,
   "warnings": null,

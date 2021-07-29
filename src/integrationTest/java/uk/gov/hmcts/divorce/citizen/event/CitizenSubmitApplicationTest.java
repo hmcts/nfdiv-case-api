@@ -17,6 +17,7 @@ import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.testutil.FeesWireMock;
 import uk.gov.hmcts.divorce.testutil.TestDataHelper;
@@ -44,6 +45,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.invalidCaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseDataMap;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseDataMap;
 
 
 @ExtendWith(SpringExtension.class)
@@ -168,6 +170,44 @@ public class CitizenSubmitApplicationTest {
             .andExpect(status().isBadRequest());
     }
 
+    @Test
+    public void givenValidJointCaseDataThenReturnResponseWithNoErrors() throws Exception {
+        var data = validApplicant2CaseDataMap();
+        data.setApplicationType(ApplicationType.JOINT_APPLICATION);
+
+        stubForFeesLookup(TestDataHelper.getFeeResponseAsJson());
+
+        String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .content(objectMapper.writeValueAsString(callbackRequest(data, CITIZEN_SUBMIT)))
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        // marriageDate and payments.id are ignored using ${json-unit.ignore}
+        // assertion will fail if the above elements are missing actual value
+        assertThatJson(actualResponse)
+            .when(IGNORING_EXTRA_FIELDS)
+            .isEqualTo(json(expectedCcdAboutToStartCallbackSuccessfulForJointApplicationResponse()));
+    }
+
+    @Test
+    public void givenInvalidJointCaseDataThenReturnResponseWithErrors() throws Exception {
+        var data = validApplicant1CaseDataMap();
+        data.setApplicationType(ApplicationType.JOINT_APPLICATION);
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .content(objectMapper.writeValueAsString(callbackRequest(data, CITIZEN_SUBMIT)))
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().json(expectedCcdAboutToStartCallbackErrorForJointApplicationResponse()));
+    }
+
     private String expectedCcdAboutToStartCallbackErrorResponse() throws IOException {
         File invalidCaseDataJsonFile = getFile(
             "classpath:wiremock/responses/applicant-1-about-to-start-statement-of-truth-errors.json");
@@ -187,5 +227,19 @@ public class CitizenSubmitApplicationTest {
             "classpath:wiremock/responses/applicant-1-about-to-start-help-with-fees.json");
 
         return new String(Files.readAllBytes(validCaseDataJsonFile.toPath()));
+    }
+
+    private String expectedCcdAboutToStartCallbackSuccessfulForJointApplicationResponse() throws IOException {
+        File validCaseDataJsonFile = getFile(
+            "classpath:wiremock/responses/applicant-1-about-to-start-joint-application.json");
+
+        return new String(Files.readAllBytes(validCaseDataJsonFile.toPath()));
+    }
+
+    private String expectedCcdAboutToStartCallbackErrorForJointApplicationResponse() throws IOException {
+        File invalidCaseDataJsonFile = getFile(
+            "classpath:wiremock/responses/applicant-1-about-to-start-joint-application-errors.json");
+
+        return new String(Files.readAllBytes(invalidCaseDataJsonFile.toPath()));
     }
 }

@@ -231,6 +231,15 @@ public class TestDataHelper {
         return caseData;
     }
 
+    public static CaseData validApplicant2CaseDataMap() {
+        CaseData caseData = validApplicant1CaseDataMap();
+        caseData.setApplicant2(getApplicant2(MALE));
+        caseData.getApplication().getMarriageDetails().setApplicant2Name("test_first_name test_last_name");
+        caseData.getApplication().setApplicant2StatementOfTruth(YES);
+        caseData.getApplication().setApplicant2PrayerHasBeenGiven(YES);
+        return caseData;
+    }
+
     public static CaseData caseDataWithStatementOfTruth() {
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
 
