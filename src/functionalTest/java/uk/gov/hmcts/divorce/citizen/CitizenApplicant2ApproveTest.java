@@ -26,7 +26,7 @@ public class CitizenApplicant2ApproveTest extends FunctionalTestSuite {
     private static final String RESPONSE = "classpath:responses/response-applicant2-approved.json";
 
     @Test
-    public void shouldSendEmailToApplicant1WhenAllTemplateParamsAreValid() throws IOException {
+    public void shouldSendEmailToApplicant1AndApplicant2WhenAllTemplateParamsAreValid() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
 
         Response response = triggerCallback(request, APPLICANT_2_APPROVE, ABOUT_TO_SUBMIT_URL);

@@ -39,12 +39,19 @@ public class CommonContent {
     @Autowired
     private EmailTemplatesConfig emailTemplatesConfig;
 
+    public Map<String, String> templateVarsForApplicant(final CaseData caseData, Applicant applicant) {
+        Map<String, String> templateVars = templateVarsFor(caseData);
+
+        templateVars.put(FIRST_NAME, applicant.getFirstName());
+        templateVars.put(LAST_NAME, applicant.getLastName());
+
+        return templateVars;
+    }
+
+
     public Map<String, String> templateVarsFor(final CaseData caseData) {
 
         final HashMap<String, String> templateVars = new HashMap<>();
-
-        templateVars.put(FIRST_NAME, caseData.getApplicant1().getFirstName());
-        templateVars.put(LAST_NAME, caseData.getApplicant1().getLastName());
 
         Map<String, String> configTemplateVars = emailTemplatesConfig.getTemplateVars();
 

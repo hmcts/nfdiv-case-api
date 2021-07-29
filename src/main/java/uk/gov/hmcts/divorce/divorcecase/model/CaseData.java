@@ -180,6 +180,13 @@ public class CaseData {
     private LocalDate dueDate;
 
     @CCD(
+        label = "Applicant 2 Approved Due Date",
+        access = {DefaultAccess.class}
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate Applicant2ApprovedDueDate;
+
+    @CCD(
         label = "Notes",
         typeOverride = Collection,
         typeParameterOverride = "CaseNote",

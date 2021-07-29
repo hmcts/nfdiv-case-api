@@ -37,7 +37,7 @@ public class ApplicationOutstandingActionNotification {
     private CommonContent commonContent;
 
     public void send(CaseData caseData, Long id) {
-        Map<String, String> templateVars = commonContent.templateVarsFor(caseData);
+        Map<String, String> templateVars = commonContent.templateVarsForApplicant(caseData, caseData.getApplicant1());
 
         templateVars.put(APPLICATION_REFERENCE, formatId(id));
 

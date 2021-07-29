@@ -26,7 +26,7 @@ public class ApplicationSubmittedNotification {
     private CommonContent commonContent;
 
     public void send(CaseData caseData, Long id) {
-        Map<String, String> templateVars = commonContent.templateVarsFor(caseData);
+        Map<String, String> templateVars = commonContent.templateVarsForApplicant(caseData, caseData.getApplicant1());
 
         caseData.setDueDate(caseData.getApplication().getDateOfSubmissionResponse());
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(dateTimeFormatter));

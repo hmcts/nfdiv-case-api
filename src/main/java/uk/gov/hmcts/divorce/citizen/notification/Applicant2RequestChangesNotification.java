@@ -25,7 +25,7 @@ public class Applicant2RequestChangesNotification {
     private CommonContent commonContent;
 
     public void send(CaseData caseData, Long id) {
-        Map<String, String> templateVars = commonContent.templateVarsFor(caseData);
+        Map<String, String> templateVars = commonContent.templateVarsForApplicant(caseData, caseData.getApplicant2());
         templateVars.put(PARTNER, commonContent.getTheirPartner(caseData, caseData.getApplicant1()));
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {

@@ -27,7 +27,7 @@ public class SaveAndSignOutNotificationHandler {
     private EmailTemplatesConfig emailTemplatesConfig;
 
     public void notifyApplicant(CaseData caseData) {
-        Map<String, String> templateVars = commonContent.templateVarsFor(caseData);
+        Map<String, String> templateVars = commonContent.templateVarsForApplicant(caseData, caseData.getApplicant1());
         Map<String, String> configTemplateVars = emailTemplatesConfig.getTemplateVars();
         String signInUrlKey = caseData.getDivorceOrDissolution().isDivorce() ? SIGN_IN_DIVORCE_URL : SIGN_IN_DISSOLUTION_URL;
         templateVars.put(SIGN_IN_URL_NOTIFY_KEY, configTemplateVars.get(signInUrlKey));
