@@ -36,20 +36,13 @@ class CaseworkerRejectedTest {
 
     @Test
     void shouldSetPreviousState() {
-        final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
-
-        final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
-        final CaseData previousCaseData = CaseData.builder().build();
-        beforeDetails.setData(previousCaseData);
-        beforeDetails.setState(Submitted);
-        beforeDetails.setId(1L);
-
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setState(Submitted);
         final CaseData caseData = CaseData.builder().build();
         details.setData(caseData);
         details.setId(1L);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerRejected.aboutToSubmit(details, beforeDetails);
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerRejected.aboutToSubmit(details, null);
 
         assertThat(response.getData().getApplication().getPreviousState())
             .isEqualTo(Submitted);

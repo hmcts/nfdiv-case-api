@@ -345,13 +345,6 @@ public class TestDataHelper {
                     .caseTypeId(CASE_TYPE)
                     .build()
             )
-            .caseDetailsBefore(CaseDetails
-                .builder()
-                .data(OBJECT_MAPPER.convertValue(caseData, TYPE_REFERENCE))
-                .state(state)
-                .id(TEST_CASE_ID)
-                .caseTypeId(CASE_TYPE)
-                .build())
             .build();
     }
 

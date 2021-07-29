@@ -62,11 +62,8 @@ public class CaseworkerRejected implements CCDConfig<CaseData, State, UserRole> 
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails) {
         log.info("About to submit currentState: {}", details.getState());
-        var previousState = beforeDetails.getState();
-        log.info("About to submit previousState: {} and currentState: {}", previousState, details.getState());
         var caseData = details.getData();
-
-        caseData.getApplication().setPreviousState(previousState);
+        caseData.getApplication().setPreviousState(details.getState());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
