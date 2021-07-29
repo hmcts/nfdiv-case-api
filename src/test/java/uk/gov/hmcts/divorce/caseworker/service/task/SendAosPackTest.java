@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.caseworker.service.task;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,17 +12,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import java.time.Clock;
-import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static org.springframework.test.util.ReflectionTestUtils.setField;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
-import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
-import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
@@ -35,8 +30,6 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondentWithDigital
 @ExtendWith(MockitoExtension.class)
 class SendAosPackTest {
 
-    private static final long DUE_DATE_OFFSET_DAYS = 30L;
-
     @Mock
     private AosPackPrinter aosPackPrinter;
 
@@ -45,11 +38,6 @@ class SendAosPackTest {
 
     @InjectMocks
     private SendAosPack sendAosPack;
-
-    @BeforeEach
-    void setPageSize() {
-        setField(sendAosPack, "dueDateOffsetDays", DUE_DATE_OFFSET_DAYS);
-    }
 
     @Test
     void shouldNotPrintAosIfApplicationIsPersonalServiceMethodWhenAboutToSubmit() {
@@ -64,7 +52,6 @@ class SendAosPackTest {
 
         final CaseDetails<CaseData, State> result = sendAosPack.apply(caseDetails);
 
-        assertThat(result.getData().getDueDate()).isNull();
         assertThat(result.getData().getAcknowledgementOfService())
             .extracting(
                 AcknowledgementOfService::getDigitalNoticeOfProceedings,
@@ -77,8 +64,6 @@ class SendAosPackTest {
     @Test
     void shouldPrintAosAndSetDueDateIfNotPersonalServiceAndRespondentIsNotRepresented() {
 
-        setMockClock(clock);
-        final LocalDate expectedDueDate = getExpectedLocalDate().plusDays(DUE_DATE_OFFSET_DAYS);
         final var caseData = caseData();
         caseData.getApplication().setSolServiceMethod(COURT_SERVICE);
         caseData.setApplicant2(respondent());
@@ -90,7 +75,6 @@ class SendAosPackTest {
 
         final CaseDetails<CaseData, State> result = sendAosPack.apply(caseDetails);
 
-        assertThat(result.getData().getDueDate()).isEqualTo(expectedDueDate);
         assertThat(result.getData().getAcknowledgementOfService())
             .extracting(
                 AcknowledgementOfService::getDigitalNoticeOfProceedings,
@@ -103,8 +87,6 @@ class SendAosPackTest {
     @Test
     void shouldPrintAosAndUpdateCaseDataIfNotPersonalServiceAndRespondentIsRepresented() {
 
-        setMockClock(clock);
-        final LocalDate expectedDueDate = getExpectedLocalDate().plusDays(DUE_DATE_OFFSET_DAYS);
         final var caseData = caseData();
         caseData.getApplication().setSolServiceMethod(COURT_SERVICE);
         caseData.setApplicant2(respondentWithDigitalSolicitor());
@@ -116,7 +98,6 @@ class SendAosPackTest {
 
         final CaseDetails<CaseData, State> result = sendAosPack.apply(caseDetails);
 
-        assertThat(result.getData().getDueDate()).isEqualTo(expectedDueDate);
         assertThat(result.getData().getAcknowledgementOfService())
             .extracting(
                 AcknowledgementOfService::getDigitalNoticeOfProceedings,
