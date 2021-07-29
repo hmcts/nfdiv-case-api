@@ -23,6 +23,8 @@ public final class NotificationConstants {
     public static final String APPLICANT_2_SIGN_IN_DIVORCE_URL = "applicant2SignInDivorceUrl";
     public static final String SIGN_IN_DISSOLUTION_URL = "signInDissolutionUrl";
     public static final String APPLICANT_2_SIGN_IN_DISSOLUTION_URL = "applicant2SignInDissolutionUrl";
+    public static final String SWITCH_TO_SOLE_APPLICATION_DIVORCE_URL = "switchToSoleApplicationDivorceUrl";
+    public static final String SWITCH_TO_SOLE_APPLICATION_DISSOLUTION_URL = "switchToSoleApplicationDissolutionUrl";
     public static final String DIVORCE_COURT_EMAIL = "divorceCourtEmail";
     public static final String DISSOLUTION_COURT_EMAIL = "dissolutionCourtEmail";
 
