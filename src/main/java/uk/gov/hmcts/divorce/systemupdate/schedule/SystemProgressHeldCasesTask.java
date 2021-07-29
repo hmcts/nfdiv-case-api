@@ -23,7 +23,7 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemProgressHeldCase.SYS
 @Component
 @Slf4j
 /**
- * Any cases that were issued > 20 weeks ago AND are in the Holding state will be moved to AwaitingConditionalOrder by this task.
+ * Any cases that were issued >= 20 weeks ago AND are in the Holding state will be moved to AwaitingConditionalOrder by this task.
  */
 public class SystemProgressHeldCasesTask {
 

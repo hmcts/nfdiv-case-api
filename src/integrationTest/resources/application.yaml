@@ -86,6 +86,7 @@ send-letter:
 
 schedule:
   awaiting_conditional_order: '0 0 0 * * ?' # Midnight each day
+  aos_overdue: '0 0 0 * * ?' # Midnight each day
 
 aos_pack:
   due_date_offset_days: 30
