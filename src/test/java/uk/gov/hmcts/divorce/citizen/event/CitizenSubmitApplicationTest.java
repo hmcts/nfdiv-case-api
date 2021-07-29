@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
@@ -145,6 +146,7 @@ class CitizenSubmitApplicationTest {
     }
 
     private CaseData setValidCaseData(CaseData caseData) {
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         caseData.setApplicant1(getApplicant());
         caseData.getApplicant1().setContactDetailsConfidential(ConfidentialAddress.KEEP);
         caseData.getApplicant1().setFinancialOrder(YesOrNo.NO);

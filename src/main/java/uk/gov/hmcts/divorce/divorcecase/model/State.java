@@ -77,7 +77,7 @@ public enum State {
         public List<String> validate(CaseData caseData) {
             List<String> errors = new ArrayList<>();
             validateBasicCase(caseData, errors);
-            if (!caseData.getApplicationType().isSole()) {
+            if (caseData.getApplicationType() != null && !caseData.getApplicationType().isSole()) {
                 validateApplicant2BasicCase(caseData, errors);
             }
             return errors;
