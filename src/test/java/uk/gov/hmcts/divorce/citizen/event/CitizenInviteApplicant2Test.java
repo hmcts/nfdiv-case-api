@@ -22,7 +22,7 @@ import static uk.gov.hmcts.divorce.citizen.event.CitizenInviteApplicant2.CITIZEN
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseDataMap;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 @ExtendWith(SpringExtension.class)
 public class CitizenInviteApplicant2Test {
@@ -85,7 +85,7 @@ public class CitizenInviteApplicant2Test {
 
     @Test
     void shouldAddApplicant2DueDateToCaseData() {
-        final CaseData caseData = validApplicant1CaseDataMap();
+        final CaseData caseData = validApplicant1CaseData();
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -97,7 +97,7 @@ public class CitizenInviteApplicant2Test {
 
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenGenerateAccessCodeAndSendEmailToApplicant1AndApplicant2() {
-        final CaseData caseData = validApplicant1CaseDataMap();
+        final CaseData caseData = validApplicant1CaseData();
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);

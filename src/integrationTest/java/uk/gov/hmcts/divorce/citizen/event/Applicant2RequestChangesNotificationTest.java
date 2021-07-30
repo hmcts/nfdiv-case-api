@@ -40,7 +40,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseDataMap;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -68,7 +68,7 @@ public class Applicant2RequestChangesNotificationTest {
 
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmailToApplicant2() throws Exception {
-        CaseData data = validJointApplicant1CaseDataMap();
+        CaseData data = validJointApplicant1CaseData();
         data.getCaseInvite().setApplicant2InviteEmailAddress(TEST_USER_EMAIL);
         data.getApplication().setApplicant2ConfirmApplicant1Information(YesOrNo.NO);
         data.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation("Some issues");
@@ -95,7 +95,7 @@ public class Applicant2RequestChangesNotificationTest {
 
     @Test
     public void givenInvalidCaseDataThenReturnResponseWithErrors() throws Exception {
-        CaseData data = validJointApplicant1CaseDataMap();
+        CaseData data = validJointApplicant1CaseData();
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)

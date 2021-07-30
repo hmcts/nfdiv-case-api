@@ -190,7 +190,7 @@ public class TestDataHelper {
             .build();
     }
 
-    public static CaseData validJointApplicant1CaseDataMap() {
+    public static CaseData validJointApplicant1CaseData() {
         var marriageDetails = new MarriageDetails();
         marriageDetails.setDate(LocalDate.of(1990, 6, 10));
         marriageDetails.setApplicant1Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME);
@@ -224,16 +224,16 @@ public class TestDataHelper {
             .build();
     }
 
-    public static CaseData validApplicant1CaseDataMap() {
-        CaseData caseData = validJointApplicant1CaseDataMap();
+    public static CaseData validApplicant1CaseData() {
+        CaseData caseData = validJointApplicant1CaseData();
         caseData.setApplicant2(getApplicant2(MALE));
         caseData.getApplication().setApplicant1StatementOfTruth(YES);
         caseData.getApplication().setApplicant1PrayerHasBeenGiven(YES);
         return caseData;
     }
 
-    public static CaseData validApplicant2CaseDataMap() {
-        CaseData caseData = validApplicant1CaseDataMap();
+    public static CaseData validApplicant2CaseData() {
+        CaseData caseData = validApplicant1CaseData();
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.setApplicant2(getApplicant2(MALE));
         caseData.getApplication().getMarriageDetails().setApplicant2Name("test_first_name test_last_name");

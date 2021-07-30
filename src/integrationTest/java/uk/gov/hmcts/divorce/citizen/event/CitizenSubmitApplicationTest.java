@@ -44,8 +44,8 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.invalidCaseData;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseDataMap;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseDataMap;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 
 
 @ExtendWith(SpringExtension.class)
@@ -85,7 +85,7 @@ public class CitizenSubmitApplicationTest {
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest(validApplicant1CaseDataMap(), CITIZEN_SUBMIT)))
+            .content(objectMapper.writeValueAsString(callbackRequest(validApplicant1CaseData(), CITIZEN_SUBMIT)))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
@@ -103,7 +103,7 @@ public class CitizenSubmitApplicationTest {
     public void givenValidCaseDataWithHwfThenReturnResponseWithNoErrors() throws Exception {
         stubForFeesLookup(TestDataHelper.getFeeResponseAsJson());
 
-        CaseData caseData = validApplicant1CaseDataMap();
+        CaseData caseData = validApplicant1CaseData();
         caseData.getApplication().getHelpWithFees().setNeedHelp(YesOrNo.YES);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
@@ -128,7 +128,7 @@ public class CitizenSubmitApplicationTest {
         throws Exception {
         stubForFeesNotFound();
 
-        CaseData caseData = validApplicant1CaseDataMap();
+        CaseData caseData = validApplicant1CaseData();
         caseData.getApplication().setApplicationFeeOrderSummary(OrderSummary.builder().paymentTotal("55000").build());
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
@@ -177,7 +177,7 @@ public class CitizenSubmitApplicationTest {
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(objectMapper.writeValueAsString(callbackRequest(validApplicant2CaseDataMap(), CITIZEN_SUBMIT)))
+            .content(objectMapper.writeValueAsString(callbackRequest(validApplicant2CaseData(), CITIZEN_SUBMIT)))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
@@ -193,7 +193,7 @@ public class CitizenSubmitApplicationTest {
 
     @Test
     public void givenInvalidJointCaseDataThenReturnResponseWithErrors() throws Exception {
-        var data = validApplicant1CaseDataMap();
+        var data = validApplicant1CaseData();
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
