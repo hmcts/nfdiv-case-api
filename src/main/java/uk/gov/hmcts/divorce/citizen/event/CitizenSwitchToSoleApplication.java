@@ -33,7 +33,7 @@ public class CitizenSwitchToSoleApplication implements CCDConfig<CaseData, State
         configBuilder
             .event(WITHDRAW_JOINT_APPLICATION)
             .forStateTransition(stateSet, Withdrawn)
-            .name("Switch from joint to sole application")
+            .name("Switch to sole application")
             .description("Switch from joint to sole application and withdraw case")
             .grant(CREATE_READ_UPDATE, CREATOR)
             .retries(120, 120)
