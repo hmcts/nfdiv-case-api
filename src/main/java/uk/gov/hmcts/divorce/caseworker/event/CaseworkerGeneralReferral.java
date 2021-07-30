@@ -55,7 +55,8 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
                 .optional(GeneralReferral::getGeneralApplicationReferralDate)
                 .mandatory(GeneralReferral::getGeneralReferralType)
                 .mandatory(GeneralReferral::getAlternativeServiceMedium, "generalReferralType=\"alternativeServiceApplication\"")
-                .mandatory(GeneralReferral::getGeneralReferralDetails)
+                .mandatory(GeneralReferral::getGeneralReferralJudgeDetails)
+                .mandatory(GeneralReferral::getGeneralReferralLegalAdvisorDetails)
                 .mandatory(GeneralReferral::getGeneralReferralFeeRequired)
                 .done();
     }
