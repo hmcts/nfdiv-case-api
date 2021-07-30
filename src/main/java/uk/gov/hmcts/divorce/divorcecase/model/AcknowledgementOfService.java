@@ -79,7 +79,7 @@ public class AcknowledgementOfService {
     private String costsReason;
 
     @CCD(
-        label = "Date AOS submitted to HMCTS",
+        label = "Date AoS submitted to HMCTS",
         access = {DefaultAccess.class}
     )
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
