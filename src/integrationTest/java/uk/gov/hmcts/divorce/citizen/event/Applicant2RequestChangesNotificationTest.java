@@ -86,7 +86,7 @@ public class Applicant2RequestChangesNotificationTest {
 
         assertThatJson(actualResponse)
             .when(TREATING_NULL_AS_ABSENT)
-            .isEqualTo(json(expectedCcdAboutToStartCallbackSuccessfulResponse()));
+            .isEqualTo(json(expectedCcdAboutToSubmitCallbackSuccessfulResponse()));
 
         verify(notificationService)
             .sendEmail(eq(TEST_USER_EMAIL), eq(JOINT_APPLICANT1_NEED_TO_MAKE_CHANGES), anyMap(), eq(ENGLISH));
@@ -113,17 +113,17 @@ public class Applicant2RequestChangesNotificationTest {
 
         assertThatJson(actualResponse)
             .when(TREATING_NULL_AS_ABSENT)
-            .isEqualTo(json(expectedCcdAboutToStartCallbackErrorResponse()));
+            .isEqualTo(json(expectedCcdAboutToSubmitCallbackErrorResponse()));
     }
 
-    private String expectedCcdAboutToStartCallbackSuccessfulResponse() throws IOException {
+    private String expectedCcdAboutToSubmitCallbackSuccessfulResponse() throws IOException {
         File validCaseDataJsonFile = getFile(
             "classpath:wiremock/responses/about-to-submit-applicant-2-request-changes.json");
 
         return new String(Files.readAllBytes(validCaseDataJsonFile.toPath()));
     }
 
-    private String expectedCcdAboutToStartCallbackErrorResponse() throws IOException {
+    private String expectedCcdAboutToSubmitCallbackErrorResponse() throws IOException {
         File invalidCaseDataJsonFile = getFile(
             "classpath:wiremock/responses/about-to-submit-applicant-2-request-changes-errors.json");
 
