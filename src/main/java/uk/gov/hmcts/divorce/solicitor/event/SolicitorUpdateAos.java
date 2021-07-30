@@ -57,7 +57,7 @@ public class SolicitorUpdateAos implements CCDConfig<CaseData, State, UserRole> 
             .description("Update Acknowledgement of Service")
             .aboutToStartCallback(this::aboutToStart)
             .showSummary()
-            .endButtonLabel("Save Updated AOS Response")
+            .endButtonLabel("Save Updated AoS Response")
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
             .grant(READ,

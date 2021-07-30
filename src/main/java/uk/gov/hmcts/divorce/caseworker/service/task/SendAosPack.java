@@ -30,14 +30,14 @@ public class SendAosPack implements CaseTask {
             final Solicitor respondentSolicitor = respondent.getSolicitor();
 
             if (respondent.isRepresented()) {
-                log.info("Sending respondent AOS pack to bulk print, "
+                log.info("Sending respondent AoS pack to bulk print, "
                     + "respondent is represented by digital solicitor.  Case ID: {}:", caseId);
                 aosPackPrinter.print(caseData, caseId);
 
                 log.info("Setting Notice Of Proceedings information. CaseID: {}", caseId);
                 caseData.getAcknowledgementOfService().setNoticeOfProceedings(respondentSolicitor);
             } else {
-                log.info("Sending respondent AOS pack to bulk print, respondent is not represented.  CaseID: {}", caseId);
+                log.info("Sending respondent AoS pack to bulk print, respondent is not represented.  CaseID: {}", caseId);
                 aosPackPrinter.print(caseData, caseId);
             }
         }
