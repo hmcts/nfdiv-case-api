@@ -12,6 +12,7 @@
     "generalOrderRecitals": "test recitals",
     "generalOrderJudgeType": "recorder",
     "generalOrderJudgeName": "some name",
+    "generalOrderLegalAdvisorName": "legal name",
     "generalOrderDetails": "some details",
     "generalOrderDraft": {
       "document_url": "${json-unit.any-string}",

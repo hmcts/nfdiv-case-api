@@ -66,7 +66,7 @@ public class GeneralOrder {
         hint = "Surname of Legal Advisor",
         access = {CaseworkerAccessBetaOnlyAccess.class}
     )
-    private String generalOrderLegalAdvisor;
+    private String generalOrderLegalAdvisorName;
 
     @CCD(
         label = "General order details",

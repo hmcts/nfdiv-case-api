@@ -120,6 +120,7 @@
     "generalOrderRecitals": "test recitals",
     "generalOrderJudgeType": "recorder",
     "generalOrderJudgeName": "some name",
+    "generalOrderLegalAdvisorName": "legal name",
     "generalOrderDetails": "some details",
     "generalOrderDraft": {
       "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
