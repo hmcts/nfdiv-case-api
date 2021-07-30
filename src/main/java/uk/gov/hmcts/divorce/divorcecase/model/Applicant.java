@@ -144,6 +144,9 @@ public class Applicant {
     )
     private String legalProceedingsDetails;
 
+    @JsonUnwrapped(prefix = "helpWithFees")
+    private HelpWithFees helpWithFees;
+
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
         return languagePreferenceWelsh == null || languagePreferenceWelsh.equals(YesOrNo.NO)

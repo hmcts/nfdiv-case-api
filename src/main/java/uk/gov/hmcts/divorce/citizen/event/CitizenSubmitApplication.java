@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -78,8 +79,9 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
         }
 
         Application application = caseDataCopy.getApplication();
+        Applicant applicant1 = caseDataCopy.getApplicant1();
         State state;
-        if (application.getHelpWithFees() != null && application.getHelpWithFees().getNeedHelp().toBoolean()) {
+        if (applicant1.getHelpWithFees() != null && applicant1.getHelpWithFees().getNeedHelp().toBoolean()) {
             state = AwaitingHWFDecision;
         } else {
             OrderSummary orderSummary = paymentService.getOrderSummary();

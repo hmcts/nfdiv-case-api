@@ -64,10 +64,6 @@ public class Application {
     @Builder.Default
     private Jurisdiction jurisdiction = new Jurisdiction();
 
-    @JsonUnwrapped(prefix = "helpWithFees")
-    @CCD(access = {DefaultAccess.class})
-    private HelpWithFees helpWithFees;
-
     @CCD(
         label = "Who is the applicant divorcing?",
         hint = "Husband or Wife?",
