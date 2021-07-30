@@ -21,7 +21,7 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemProgressCaseToAosOve
 @Component
 @Slf4j
 /**
- * Any cases whose due date >= current date will be moved to AosOverdue by this task.
+ * Any cases which are in AwaitingAos or AosDrafted state and whose due date >= current date will be moved to AosOverdue by this task.
  */
 public class SystemProgressCasesToAosOverdueTask {
 

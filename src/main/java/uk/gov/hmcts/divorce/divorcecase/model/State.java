@@ -27,7 +27,7 @@ public enum State {
     Holding("Holding"),
 
     @CCD(
-        name = "AOS awaiting",
+        name = "AoS awaiting",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
     )
@@ -42,14 +42,14 @@ public enum State {
     },
 
     @CCD(
-        name = "AOS drafted",
+        name = "AoS drafted",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
     )
     AosDrafted("AosDrafted"),
 
     @CCD(
-        name = "AOS overdue",
+        name = "AoS overdue",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
     )

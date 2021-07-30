@@ -8,6 +8,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import static java.util.EnumSet.of;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
@@ -28,9 +30,9 @@ public class SystemProgressCaseToAosOverdue implements CCDConfig<CaseData, State
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(SYSTEM_PROGRESS_TO_AOS_OVERDUE)
-            .forStateTransition(AwaitingAos, AosOverdue)
-            .name("AOS Overdue")
-            .description("AOS Overdue")
+            .forStateTransition(of(AwaitingAos, AosDrafted), AosOverdue)
+            .name("AoS Overdue")
+            .description("AoS Overdue")
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASEWORKER_SYSTEMUPDATE)
             .grant(READ, SOLICITOR, CASEWORKER_COURTADMIN_CTSC, CASEWORKER_COURTADMIN_RDU, CASEWORKER_SUPERUSER, CASEWORKER_LEGAL_ADVISOR));
