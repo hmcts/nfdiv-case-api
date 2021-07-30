@@ -44,7 +44,7 @@ public class AosPackPrinter {
             log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
         } else {
             log.warn(
-                "AOS Pack print has missing or incorrect documents. Expected 2 but has {} documents, for Case ID: {}",
+                "AoS Pack print has missing or incorrect documents. Expected 2 but has {} documents, for Case ID: {}",
                 aosLetters.size(),
                 caseId);
         }
