@@ -144,7 +144,7 @@ public class Applicant {
     )
     private String legalProceedingsDetails;
 
-    @JsonUnwrapped(prefix = "helpWithFees")
+    @JsonUnwrapped(prefix = "HelpWithFees")
     private HelpWithFees helpWithFees;
 
     @JsonIgnore
