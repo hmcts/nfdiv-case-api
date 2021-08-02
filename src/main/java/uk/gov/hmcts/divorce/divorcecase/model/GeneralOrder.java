@@ -64,7 +64,6 @@ public class GeneralOrder {
     @CCD(
         label = "General order details",
         typeOverride = TextArea,
-        hint = "Surname of Judge",
         access = {CaseworkerAccessBetaOnlyAccess.class}
     )
     private String generalOrderDetails;
