@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.solicitor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import org.apache.commons.io.FilenameUtils;
-import org.junit.Ignore;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -23,7 +22,6 @@ import uk.gov.hmcts.divorce.testutil.CaseDataWireMock;
 import uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock;
 import uk.gov.hmcts.divorce.testutil.FeesWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
-import uk.gov.hmcts.divorce.testutil.TestConstants;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.io.IOException;
