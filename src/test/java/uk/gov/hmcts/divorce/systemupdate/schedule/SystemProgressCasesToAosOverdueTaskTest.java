@@ -41,12 +41,12 @@ class SystemProgressCasesToAosOverdueTaskTest {
     private SystemProgressCasesToAosOverdueTask progressCasesToAosOverdueTask;
 
     @Test
-    void shouldTriggerAosOverdueTaskOnEachCaseWhenCaseDueDateIsAfterCurrentDate() {
+    void shouldTriggerAosOverdueTaskOnEachCaseWhenCaseDueDateIsBeforeOrSameAsCurrentDate() {
         final CaseDetails caseDetails1 = mock(CaseDetails.class);
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
 
         when(caseDetails1.getData()).thenReturn(Map.of("dueDate", LocalDate.now().toString()));
-        when(caseDetails2.getData()).thenReturn(Map.of("dueDate", LocalDate.now().plusDays(5).toString()));
+        when(caseDetails2.getData()).thenReturn(Map.of("dueDate", LocalDate.now().minusDays(5).toString()));
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
@@ -75,10 +75,10 @@ class SystemProgressCasesToAosOverdueTaskTest {
     }
 
     @Test
-    void shouldNotTriggerAosOverdueTaskOnEachCaseWhenCaseDueDateIsBeforeCurrentDate() {
+    void shouldNotTriggerAosOverdueTaskOnEachCaseWhenCaseDueDateIsAfterCurrentDate() {
         final CaseDetails caseDetails = mock(CaseDetails.class);
 
-        when(caseDetails.getData()).thenReturn(Map.of("dueDate", LocalDate.now().minusDays(5).toString()));
+        when(caseDetails.getData()).thenReturn(Map.of("dueDate", LocalDate.now().plusDays(5).toString()));
 
         when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingAos)).thenReturn(singletonList(caseDetails));
 
@@ -122,7 +122,7 @@ class SystemProgressCasesToAosOverdueTaskTest {
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
 
         when(caseDetails1.getData()).thenReturn(Map.of("dueDate", LocalDate.now().toString()));
-        when(caseDetails2.getData()).thenReturn(Map.of("dueDate", LocalDate.now().plusDays(5).toString()));
+        when(caseDetails2.getData()).thenReturn(Map.of("dueDate", LocalDate.now().minusDays(5).toString()));
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
