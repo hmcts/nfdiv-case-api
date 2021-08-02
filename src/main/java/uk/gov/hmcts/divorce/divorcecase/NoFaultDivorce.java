@@ -1,8 +1,10 @@
 package uk.gov.hmcts.divorce.divorcecase;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.divorce.common.AddSystemUpdateRole;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -13,6 +15,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTAD
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -23,6 +26,9 @@ public class NoFaultDivorce implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASE_TYPE = "NFD";
     public static final String JURISDICTION = "DIVORCE";
+
+    @Autowired
+    private AddSystemUpdateRole addSystemUpdateRole;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -38,5 +44,11 @@ public class NoFaultDivorce implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.grant(Draft, CREATE_READ_UPDATE, SOLICITOR);
         configBuilder.grant(Draft, CREATE_READ_UPDATE, CASEWORKER_SUPERUSER);
         configBuilder.grant(Draft, READ, CASEWORKER_LEGAL_ADVISOR);
+
+        String environment = System.getenv().getOrDefault("ENVIRONMENT", null);
+
+        if (addSystemUpdateRole.isEnvironmentAat()) {
+            configBuilder.grant(Draft, CREATE_READ_UPDATE, CASEWORKER_SYSTEMUPDATE);
+        }
     }
 }

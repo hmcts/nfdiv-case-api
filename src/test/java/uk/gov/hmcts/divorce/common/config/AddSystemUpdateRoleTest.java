@@ -29,4 +29,14 @@ public class AddSystemUpdateRoleTest {
 
         assertThat(actualRoles).containsExactlyInAnyOrder(CITIZEN, CASEWORKER_SYSTEMUPDATE);
     }
+
+    @Test
+    public void shouldReturnTrueWhenEnvironmentIsAat() throws Exception {
+        boolean isEnvironmentAat =
+            withEnvironmentVariable("ENVIRONMENT", "aat")
+                .execute(() -> addSystemUpdateRole.isEnvironmentAat()
+                );
+
+        assertThat(isEnvironmentAat).isTrue();
+    }
 }
