@@ -31,8 +31,8 @@ public class SystemProgressCaseToAosOverdue implements CCDConfig<CaseData, State
         new PageBuilder(configBuilder
             .event(SYSTEM_PROGRESS_TO_AOS_OVERDUE)
             .forStateTransition(of(AwaitingAos, AosDrafted), AosOverdue)
-            .name("AoS Overdue")
-            .description("AoS Overdue")
+            .name("AOS Not Received within SLA")
+            .description("AOS Not Received within SLA")
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASEWORKER_SYSTEMUPDATE)
             .grant(READ, SOLICITOR, CASEWORKER_COURTADMIN_CTSC, CASEWORKER_COURTADMIN_RDU, CASEWORKER_SUPERUSER, CASEWORKER_LEGAL_ADVISOR));
