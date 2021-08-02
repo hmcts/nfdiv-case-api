@@ -206,7 +206,7 @@ public class TestDataHelper {
         var application = Application.builder()
             .marriageDetails(marriageDetails)
             .jurisdiction(jurisdiction)
-            .helpWithFees(
+            .applicant1HelpWithFees(
                 HelpWithFees.builder()
                     .needHelp(NO)
                     .build()

@@ -29,7 +29,7 @@ public class HelpWithFeesPage implements CcdPageConfiguration {
                 SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
                 JOINT_APPLICATION_CONDITION)
             .complex(CaseData::getApplication)
-                .complex(Application::getHelpWithFees)
+                .complex(Application::getApplicant1HelpWithFees)
                     .mandatory(HelpWithFees::getReferenceNumber)
                     .done()
                 .done();

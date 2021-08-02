@@ -389,7 +389,7 @@ public class SolicitorSubmitApplicationTest {
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
 
         final CaseData caseData = CaseData.builder().build();
-        caseData.getApplication().setHelpWithFees(
+        caseData.getApplication().setApplicant1HelpWithFees(
             HelpWithFees.builder()
                 .appliedForFees(YES)
                 .build()

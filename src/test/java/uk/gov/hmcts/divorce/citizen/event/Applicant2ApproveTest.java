@@ -103,7 +103,7 @@ class Applicant2ApproveTest {
         caseData.setApplicant1(getApplicant());
         caseData.setApplicant2(getApplicant(MALE));
         caseData.getApplicant1().setContactDetailsConfidential(ConfidentialAddress.SHARE);
-        caseData.getApplication().setHelpWithFees(
+        caseData.getApplication().setApplicant1HelpWithFees(
             HelpWithFees.builder()
                 .needHelp(NO)
                 .build()
