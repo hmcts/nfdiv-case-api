@@ -45,8 +45,6 @@ public class NoFaultDivorce implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.grant(Draft, CREATE_READ_UPDATE, CASEWORKER_SUPERUSER);
         configBuilder.grant(Draft, READ, CASEWORKER_LEGAL_ADVISOR);
 
-        String environment = System.getenv().getOrDefault("ENVIRONMENT", null);
-
         if (addSystemUpdateRole.isEnvironmentAat()) {
             configBuilder.grant(Draft, CREATE_READ_UPDATE, CASEWORKER_SYSTEMUPDATE);
         }
