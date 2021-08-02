@@ -6,12 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
-import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.testutil.DocumentManagementStore;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 import uk.gov.hmcts.reform.document.domain.Document;
 
-import java.util.Collections;
 import java.util.Map;
 
 import static java.util.Collections.singletonList;
