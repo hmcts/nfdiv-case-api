@@ -33,12 +33,12 @@
       }
     ]
   },
-  "payments": [
+  "applicationPayments": [
     {
       "id": "1",
       "value": {
-        "paymentStatus": "cancelled",
-        "paymentAmount": 55000
+        "status": "cancelled",
+        "amount": 55000
       }
     }
   ]

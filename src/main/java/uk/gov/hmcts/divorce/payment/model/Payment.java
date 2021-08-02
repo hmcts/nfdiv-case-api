@@ -1,14 +1,13 @@
 package uk.gov.hmcts.divorce.payment.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -17,44 +16,44 @@ import java.time.LocalDate;
 public class Payment {
 
     @CCD(
-        label = "Payment Date"
+        label = "Created date"
     )
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate paymentDate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime created;
 
     @CCD(
-        label = "Payment Fee Id"
+        label = "Updated date"
     )
-    private String paymentFeeId;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime updated;
 
     @CCD(
-        label = "Payment Amount"
+        label = "fee code"
     )
-    private Integer paymentAmount;
+    private String feeCode;
 
     @CCD(
-        label = "Payment Site Id"
+        label = "Amount in pounds"
     )
-    @ApiModelProperty("ID of site the payment was made")
-    private String paymentSiteId;
+    private Integer amount;
 
     @CCD(
-        label = "Payment Status"
+        label = "Status"
     )
-    private PaymentStatus paymentStatus;
+    private PaymentStatus status;
 
     @CCD(
-        label = "Payment Channel"
+        label = "Channel"
     )
-    private String paymentChannel;
+    private String channel;
 
     @CCD(
-        label = "Payment Reference"
+        label = "Reference"
     )
-    private String paymentReference;
+    private String reference;
 
     @CCD(
-        label = "Payment Transaction Id"
+        label = "Transaction Id"
     )
-    private String paymentTransactionId;
+    private String transactionId;
 }
