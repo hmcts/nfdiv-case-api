@@ -10,8 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.citizen.notification.Applicant2ApprovedApplicant1Notification;
-import uk.gov.hmcts.divorce.citizen.notification.Applicant2ApprovedApplicant2Notification;
+import uk.gov.hmcts.divorce.citizen.notification.Applicant2ApprovedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
@@ -38,10 +37,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 class CitizenApplicant2ApproveTest {
 
     @Mock
-    private Applicant2ApprovedApplicant1Notification applicant2ApprovedApplicant1Notification;
-
-    @Mock
-    private Applicant2ApprovedApplicant2Notification applicant2ApprovedApplicant2Notification;
+    private Applicant2ApprovedNotification applicant2ApprovedNotification;
 
     @InjectMocks
     private CitizenApplicant2Approve citizenApplicant2Approve;
@@ -106,8 +102,8 @@ class CitizenApplicant2ApproveTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenApplicant2Approve.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(applicant2ApprovedApplicant1Notification).send(caseData, caseDetails.getId());
-        verify(applicant2ApprovedApplicant2Notification).send(caseData, caseDetails.getId());
+        verify(applicant2ApprovedNotification).sendToApplicant1(caseData, caseDetails.getId());
+        verify(applicant2ApprovedNotification).sendToApplicant2(caseData, caseDetails.getId());
         assertThat(response.getState()).isEqualTo(State.Applicant2Approved);
     }
 

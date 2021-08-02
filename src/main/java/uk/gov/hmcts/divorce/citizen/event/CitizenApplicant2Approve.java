@@ -7,8 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.citizen.notification.Applicant2ApprovedApplicant1Notification;
-import uk.gov.hmcts.divorce.citizen.notification.Applicant2ApprovedApplicant2Notification;
+import uk.gov.hmcts.divorce.citizen.notification.Applicant2ApprovedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -29,10 +28,7 @@ public class CitizenApplicant2Approve implements CCDConfig<CaseData, State, User
     public static final String APPLICANT_2_APPROVE = "applicant2-approve";
 
     @Autowired
-    private Applicant2ApprovedApplicant1Notification applicant2ApprovedApplicant1Notification;
-
-    @Autowired
-    private Applicant2ApprovedApplicant2Notification applicant2ApprovedApplicant2Notification;
+    private Applicant2ApprovedNotification applicant2ApprovedNotification;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -69,8 +65,8 @@ public class CitizenApplicant2Approve implements CCDConfig<CaseData, State, User
         data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
         data.setApplicant2ApprovedDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
 
-        applicant2ApprovedApplicant1Notification.send(data, details.getId());
-        applicant2ApprovedApplicant2Notification.send(data, details.getId());
+        applicant2ApprovedNotification.sendToApplicant1(data, details.getId());
+        applicant2ApprovedNotification.sendToApplicant2(data, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)

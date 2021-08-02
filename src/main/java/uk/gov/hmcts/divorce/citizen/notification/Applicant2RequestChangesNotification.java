@@ -39,6 +39,7 @@ public class Applicant2RequestChangesNotification {
 
     @Autowired
     private CommonContent commonContent;
+
     @Autowired
     private EmailTemplatesConfig emailTemplatesConfig;
 

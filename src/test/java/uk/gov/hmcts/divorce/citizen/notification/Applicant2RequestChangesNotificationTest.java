@@ -27,7 +27,6 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICAN
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_2_COMMENTS;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TYPE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.PARTNER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
@@ -55,8 +54,7 @@ public class Applicant2RequestChangesNotificationTest {
 
         final HashMap<String, String> templateVars = new HashMap<>();
 
-        when(commonContent.templateVarsFor(data)).thenReturn(templateVars);
-        when(commonContent.getTheirPartner(data, data.getApplicant2())).thenReturn("wife");
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant1())).thenReturn(templateVars);
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
@@ -64,7 +62,6 @@ public class Applicant2RequestChangesNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT1_NEED_TO_MAKE_CHANGES),
             argThat(allOf(
-                hasEntry(PARTNER, "wife"),
                 hasEntry(APPLICATION.toLowerCase(Locale.ROOT), "for divorce"),
                 hasEntry(APPLICATION_TYPE.toLowerCase(Locale.ROOT), "divorce application"),
                 hasEntry(APPLICANT_2_COMMENTS, "Not correct!")
@@ -72,8 +69,7 @@ public class Applicant2RequestChangesNotificationTest {
             eq(ENGLISH)
         );
 
-        verify(commonContent).templateVarsFor(data);
-        verify(commonContent).getTheirPartner(data, data.getApplicant2());
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant1());
     }
 
     @Test
@@ -85,8 +81,7 @@ public class Applicant2RequestChangesNotificationTest {
 
         final HashMap<String, String> templateVars = new HashMap<>();
 
-        when(commonContent.templateVarsFor(data)).thenReturn(templateVars);
-        when(commonContent.getTheirPartner(data, data.getApplicant2())).thenReturn("civil partner");
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant1())).thenReturn(templateVars);
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
@@ -94,7 +89,6 @@ public class Applicant2RequestChangesNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT1_NEED_TO_MAKE_CHANGES),
             argThat(allOf(
-                hasEntry(PARTNER, "civil partner"),
                 hasEntry(APPLICATION.toLowerCase(Locale.ROOT), "to end your civil partnership"),
                 hasEntry(APPLICATION_TYPE.toLowerCase(Locale.ROOT), "application to end your civil partnership"),
                 hasEntry(APPLICANT_2_COMMENTS, "Not correct!")
@@ -102,8 +96,7 @@ public class Applicant2RequestChangesNotificationTest {
             eq(ENGLISH)
         );
 
-        verify(commonContent).templateVarsFor(data);
-        verify(commonContent).getTheirPartner(data, data.getApplicant2());
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant1());
     }
 
     @Test
@@ -114,8 +107,7 @@ public class Applicant2RequestChangesNotificationTest {
 
         final HashMap<String, String> templateVars = new HashMap<>();
 
-        when(commonContent.templateVarsFor(data)).thenReturn(templateVars);
-        when(commonContent.getTheirPartner(data, data.getApplicant1())).thenReturn("husband");
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant2())).thenReturn(templateVars);
 
         notification.sendToApplicant2(data, 1234567890123456L);
 
@@ -123,14 +115,12 @@ public class Applicant2RequestChangesNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT2_REQUEST_CHANGES),
             argThat(allOf(
-                hasEntry(PARTNER, "husband"),
                 hasEntry(APPLICATION.toLowerCase(Locale.ROOT), "for divorce")
             )),
             eq(ENGLISH)
         );
 
-        verify(commonContent).templateVarsFor(data);
-        verify(commonContent).getTheirPartner(data, data.getApplicant1());
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant2());
     }
 
     @Test
@@ -142,8 +132,7 @@ public class Applicant2RequestChangesNotificationTest {
 
         final HashMap<String, String> templateVars = new HashMap<>();
 
-        when(commonContent.templateVarsFor(data)).thenReturn(templateVars);
-        when(commonContent.getTheirPartner(data, data.getApplicant1())).thenReturn("civil partner");
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant2())).thenReturn(templateVars);
 
         notification.sendToApplicant2(data, 1234567890123456L);
 
@@ -151,13 +140,11 @@ public class Applicant2RequestChangesNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT2_REQUEST_CHANGES),
             argThat(allOf(
-                hasEntry(PARTNER, "civil partner"),
                 hasEntry(APPLICATION.toLowerCase(Locale.ROOT), "to end your civil partnership")
             )),
             eq(ENGLISH)
         );
 
-        verify(commonContent).templateVarsFor(data);
-        verify(commonContent).getTheirPartner(data, data.getApplicant1());
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant2());
     }
 }
