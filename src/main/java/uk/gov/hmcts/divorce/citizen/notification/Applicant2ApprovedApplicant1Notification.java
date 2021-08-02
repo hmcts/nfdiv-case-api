@@ -30,7 +30,6 @@ public class Applicant2ApprovedApplicant1Notification {
     public void send(CaseData caseData, Long id) {
         Map<String, String> templateVars = commonContent.templateVarsForApplicant(caseData, caseData.getApplicant1());
 
-        templateVars.put(PARTNER, commonContent.getTheirPartner(caseData, caseData.getApplicant2()));
         templateVars.put(REMINDER_ACTION_REQUIRED, "Action required: you");
 
         if (caseData.getApplication().getHelpWithFees().getNeedHelp() != YesOrNo.YES) {

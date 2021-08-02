@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.notification;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -23,6 +24,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_AP
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FIRST_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.LAST_NAME;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.PARTNER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.RELATIONSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.RELATIONSHIP_COURT_HEADER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.RESPONDENT_NAME;
@@ -41,9 +43,22 @@ public class CommonContent {
 
     public Map<String, String> templateVarsForApplicant(final CaseData caseData, Applicant applicant) {
         Map<String, String> templateVars = templateVarsFor(caseData);
+        Boolean isSameSex = caseData.getApplication().getMarriageDetails().getIsSameSexCouple() == YesOrNo.YES;
+        String partner;
+
+        if (caseData.getDivorceOrDissolution().isDivorce()) {
+            if ((isSameSex && applicant.getGender() == Gender.MALE) || (!isSameSex && applicant.getGender() == Gender.FEMALE)) {
+                partner = "husband";
+            } else {
+                partner = "wife";
+            }
+        } else {
+            partner = "civil partner";
+        }
 
         templateVars.put(FIRST_NAME, applicant.getFirstName());
         templateVars.put(LAST_NAME, applicant.getLastName());
+        templateVars.put(PARTNER, partner);
 
         return templateVars;
     }
@@ -72,13 +87,6 @@ public class CommonContent {
 
     public String getService(DivorceOrDissolution divorceOrDissolution) {
         return divorceOrDissolution.isDivorce() ? "divorce" : "civil partnership";
-    }
-
-    public String getTheirPartner(CaseData caseData, Applicant applicant) {
-        if (caseData.getDivorceOrDissolution().isDivorce()) {
-            return applicant.getGender() == Gender.MALE ? "husband" : "wife";
-        }
-        return "civil partner";
     }
 
     public Map<String, String> commonNotificationTemplateVars(final CaseData caseData, final Long caseId) {

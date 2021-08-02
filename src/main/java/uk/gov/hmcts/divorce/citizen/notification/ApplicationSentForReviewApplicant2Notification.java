@@ -69,7 +69,6 @@ public class ApplicationSentForReviewApplicant2Notification {
 
     private void setDefaultVariables(Map<String, String> templateVars, CaseData caseData) {
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(dateTimeFormatter));
-        templateVars.put(PARTNER, commonContent.getTheirPartner(caseData, caseData.getApplicant1()));
         templateVars.put(ACCESS_CODE, caseData.getCaseInvite().getAccessCode());
         templateVars.put(REMINDER_APPLICATION, APPLICATION);
     }
