@@ -34,6 +34,8 @@ uk:
           applicant2SignInDivorceUrl: ${NOTIFY_TEMPLATE_APPLICANT2_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2}
           applicant2SignInDissolutionUrl: ${NOTIFY_TEMPLATE_APPLICANT2_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/applicant2}
           signInDissolutionUrl: ${NOTIFY_TEMPLATE_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/}
+          switchToSoleApplicationDivorceUrl: ${NOTIFY_TEMPLATE_SWITCH_TO_SOLE_APPLICATION_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/switch-to-sole-application}
+          switchToSoleApplicationDissolutionUrl: ${NOTIFY_TEMPLATE_SWITCH_TO_SOLE_APPLICATION_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/switch-to-sole-application}
           divorceCourtEmail: contactdivorce@justice.gov.uk
           dissolutionCourtEmail: civilpartnership.case@justice.gov.uk
         templates:
@@ -46,6 +48,7 @@ uk:
             JOINT_APPLICANT2_REQUEST_CHANGES: '99b0b24c-a54d-486a-a69a-4348eb2e66a4'
             JOINT_APPLICANT1_APPLICANT2_APPROVED: '59ab58b7-b102-4b17-b023-226ce399668b'
             JOINT_APPLICANT2_APPLICANT2_APPROVED: '6c9270fc-82c4-4355-b0e4-b88a778ef5db'
+            JOINT_APPLICANT1_NEED_TO_MAKE_CHANGES: '356a4b59-fbaf-4367-9b47-dbd05340b073'
             SOL_APPLICANT_APPLICATION_SUBMITTED: '3ecccc69-81e7-4bcd-8316-0547fd30795f'
             SOL_APPLICANT_AMENDED_APPLICATION_SUBMITTED: 'd87e0405-15bb-405b-b277-27cec5444106'
             SOL_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED: '97814664-95e9-457d-a40d-e062c0b6cfce'
@@ -136,9 +139,10 @@ send-letter:
 
 schedule:
   awaiting_conditional_order: ${AWAITING_CONDITIONAL_ORDER_SCHEDULED_CRON:0 0 0 * * ?}
+  aos_overdue: ${AOS_OVERDUE_SCHEDULED_CRON:0 0 0 * * ?}
 
 aos_pack:
-  due_date_offset_days: ${AOS_PACK_DUE_DATE_OFFSET_DAYS:30}
+  due_date_offset_days: ${AOS_PACK_DUE_DATE_OFFSET_DAYS:14}
 
 case_progression:
   holding_period_in_weeks: ${CASE_HOLDING_WEEKS:20}

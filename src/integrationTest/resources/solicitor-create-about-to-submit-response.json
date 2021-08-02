@@ -25,21 +25,11 @@
     "applicant1Gender": null,
     "applicant1CorrespondenceAddress": null,
     "applicant1SolicitorRepresented": null,
-    "applicant1SolicitorName": null,
-    "applicant1SolicitorReference": null,
-    "applicant1SolicitorPhone": null,
-    "applicant1SolicitorEmail": null,
-    "applicant1SolicitorAddress": null,
-    "applicant1SolicitorAgreeToReceiveEmails": null,
     "applicant1SolicitorOrganisationPolicy": {
       "Organisation": {
         "OrganisationName": "Test Organisation",
         "OrganisationID": "ABC123"
-      },
-      "PreviousOrganisations": null,
-      "OrgPolicyReference": null,
-      "PrepopulateToUsersOrganisation": null,
-      "OrgPolicyCaseAssignedRole": null
+      }
     },
     "applicant2FirstName": null,
     "applicant2MiddleName": null,
@@ -56,21 +46,11 @@
     "applicant2Gender": null,
     "applicant2CorrespondenceAddress": null,
     "applicant2SolicitorRepresented": null,
-    "applicant2SolicitorName": null,
-    "applicant2SolicitorReference": null,
-    "applicant2SolicitorPhone": null,
-    "applicant2SolicitorEmail": null,
-    "applicant2SolicitorAddress": null,
-    "applicant2SolicitorAgreeToReceiveEmails": null,
     "applicant2SolicitorOrganisationPolicy": {
       "Organisation": {
         "OrganisationName": "Test Organisation",
         "OrganisationID": "ABC123"
-      },
-      "PreviousOrganisations": null,
-      "OrgPolicyReference": null,
-      "PrepopulateToUsersOrganisation": null,
-      "OrgPolicyCaseAssignedRole": null
+      }
     },
     "confirmReadPetition": null,
     "jurisdictionAgree": null,
