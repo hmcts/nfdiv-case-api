@@ -103,18 +103,17 @@
         }
       }
     ],
-    "payments": [
+    "applicationPayments": [
       {
         "id": null,
         "value": {
-          "paymentDate": null,
-          "paymentFeeId": "FEE0001",
-          "paymentAmount": 55000,
-          "paymentSiteId": "AA04",
-          "paymentStatus": "success",
-          "paymentChannel": "online",
-          "paymentReference": "paymentRef",
-          "paymentTransactionId": "ge7po9h5bhbtbd466424src9tk"
+          "created": null,
+          "feeCode": "FEE0001",
+          "amount": 55000,
+          "status": "success",
+          "channel": "online",
+          "reference": "paymentRef",
+          "transactionId": "ge7po9h5bhbtbd466424src9tk"
         }
       }
     ],
