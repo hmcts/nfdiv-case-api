@@ -76,5 +76,4 @@ public class GeneralReferral {
         label = "Is fee payment required?"
     )
     private YesOrNo generalReferralFeeRequired;
-
 }
