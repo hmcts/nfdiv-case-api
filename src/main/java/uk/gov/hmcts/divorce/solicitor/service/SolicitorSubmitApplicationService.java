@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Integer.parseInt;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEES_HELP_WITH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
@@ -76,13 +77,12 @@ public class SolicitorSubmitApplicationService {
     public Payment getDummyPayment(final OrderSummary orderSummary) {
         return Payment
             .builder()
-            .paymentAmount(Integer.parseInt(orderSummary.getPaymentTotal()))
-            .paymentChannel("online")
-            .paymentFeeId("FEE0001")
-            .paymentReference(orderSummary.getPaymentReference())
-            .paymentSiteId("AA04")
-            .paymentStatus(SUCCESS)
-            .paymentTransactionId("ge7po9h5bhbtbd466424src9tk")
+            .amount(parseInt(orderSummary.getPaymentTotal()))
+            .channel("online")
+            .feeCode("FEE0001")
+            .reference(orderSummary.getPaymentReference())
+            .status(SUCCESS)
+            .transactionId("ge7po9h5bhbtbd466424src9tk")
             .build();
     }
 }

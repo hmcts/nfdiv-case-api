@@ -236,13 +236,12 @@ public class TestDataHelper {
 
         ListValue<Payment> payment = new ListValue<>(null, Payment
             .builder()
-            .paymentAmount(55000)
-            .paymentChannel("online")
-            .paymentFeeId("FEE0001")
-            .paymentReference("paymentRef")
-            .paymentSiteId("AA04")
-            .paymentStatus(PaymentStatus.SUCCESS)
-            .paymentTransactionId("ge7po9h5bhbtbd466424src9tk")
+            .amount(55000)
+            .channel("online")
+            .feeCode("FEE0001")
+            .reference("paymentRef")
+            .status(PaymentStatus.SUCCESS)
+            .transactionId("ge7po9h5bhbtbd466424src9tk")
             .build());
 
         var applicant1 = getApplicant();
@@ -251,6 +250,7 @@ public class TestDataHelper {
         var application = Application.builder()
             .solSignStatementOfTruth(YES)
             .applicationFeeOrderSummary(orderSummary)
+            .applicationPayments(singletonList(payment))
             .build();
 
         return CaseData
@@ -258,7 +258,6 @@ public class TestDataHelper {
             .applicant1(applicant1)
             .divorceOrDissolution(DIVORCE)
             .application(application)
-            .payments(singletonList(payment))
             .build();
     }
 

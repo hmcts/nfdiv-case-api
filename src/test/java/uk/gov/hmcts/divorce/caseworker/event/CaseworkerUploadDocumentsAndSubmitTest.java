@@ -99,8 +99,8 @@ class CaseworkerUploadDocumentsAndSubmitTest {
 
         final var payment = new ListValue<>(null, Payment
             .builder()
-            .paymentAmount(55000)
-            .paymentStatus(PaymentStatus.SUCCESS)
+            .amount(55000)
+            .status(PaymentStatus.SUCCESS)
             .build());
 
         final var application = Application.builder()
@@ -109,10 +109,10 @@ class CaseworkerUploadDocumentsAndSubmitTest {
             .documentUploadComplete(YES)
             .applicant1WantsToHavePapersServedAnotherWay(YES)
             .applicant1CannotUploadSupportingDocument(Set.of(DocumentType.CORRESPONDENCE))
+            .applicationPayments(singletonList(payment))
             .build();
 
         final var caseData = CaseData.builder()
-            .payments(singletonList(payment))
             .application(application)
             .build();
 

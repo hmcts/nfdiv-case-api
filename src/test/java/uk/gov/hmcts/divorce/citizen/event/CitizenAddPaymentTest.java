@@ -72,8 +72,8 @@ public class CitizenAddPaymentTest {
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
-        Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(IN_PROGRESS).build();
-        caseData.setPayments(singletonList(new ListValue<>("1", payment)));
+        Payment payment = Payment.builder().amount(55000).status(IN_PROGRESS).build();
+        caseData.getApplication().setApplicationPayments(singletonList(new ListValue<>("1", payment)));
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -94,8 +94,8 @@ public class CitizenAddPaymentTest {
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
-        Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(CANCELLED).build();
-        caseData.setPayments(singletonList(new ListValue<>("1", payment)));
+        Payment payment = Payment.builder().amount(55000).status(CANCELLED).build();
+        caseData.getApplication().setApplicationPayments(singletonList(new ListValue<>("1", payment)));
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -116,8 +116,8 @@ public class CitizenAddPaymentTest {
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
-        Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(SUCCESS).build();
-        caseData.setPayments(singletonList(new ListValue<>("1", payment)));
+        Payment payment = Payment.builder().amount(55000).status(SUCCESS).build();
+        caseData.getApplication().setApplicationPayments(singletonList(new ListValue<>("1", payment)));
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -135,8 +135,8 @@ public class CitizenAddPaymentTest {
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
-        Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(DECLINED).build();
-        caseData.setPayments(singletonList(new ListValue<>("1", payment)));
+        Payment payment = Payment.builder().amount(55000).status(DECLINED).build();
+        caseData.getApplication().setApplicationPayments(singletonList(new ListValue<>("1", payment)));
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -152,8 +152,8 @@ public class CitizenAddPaymentTest {
         caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
         caseData.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
 
-        Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(SUCCESS).build();
-        caseData.setPayments(singletonList(new ListValue<>("1", payment)));
+        Payment payment = Payment.builder().amount(55000).status(SUCCESS).build();
+        caseData.getApplication().setApplicationPayments(singletonList(new ListValue<>("1", payment)));
         final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
@@ -180,8 +180,8 @@ public class CitizenAddPaymentTest {
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
-        Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(SUCCESS).build();
-        caseData.setPayments(singletonList(new ListValue<>("1", payment)));
+        Payment payment = Payment.builder().amount(55000).status(SUCCESS).build();
+        caseData.getApplication().setApplicationPayments(singletonList(new ListValue<>("1", payment)));
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);

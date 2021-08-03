@@ -14,6 +14,7 @@ import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.divorcecase.CaseInfo;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
@@ -25,7 +26,7 @@ import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitApplicationService;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -102,14 +103,13 @@ public class SolicitorSubmitApplicationTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final Payment payment = Payment
             .builder()
-            .paymentAmount(parseInt(orderSummary.getPaymentTotal()))
-            .paymentChannel("online")
-            .paymentDate(LocalDate.now())
-            .paymentFeeId("FEE0001")
-            .paymentReference(orderSummary.getPaymentReference())
-            .paymentSiteId("AA04")
-            .paymentStatus(PaymentStatus.SUCCESS)
-            .paymentTransactionId("Transaction1")
+            .amount(parseInt(orderSummary.getPaymentTotal()))
+            .channel("online")
+            .created(LocalDateTime.now())
+            .feeCode("FEE0001")
+            .reference(orderSummary.getPaymentReference())
+            .status(PaymentStatus.SUCCESS)
+            .transactionId("Transaction1")
             .build();
         ListValue<Payment> paymentListValue = ListValue
             .<Payment>builder()
@@ -119,7 +119,7 @@ public class SolicitorSubmitApplicationTest {
         List<ListValue<Payment>> payments = new ArrayList<>();
         payments.add(paymentListValue);
         final CaseData caseData = CaseData.builder()
-            .payments(payments)
+            .application(Application.builder().applicationPayments(payments).build())
             .build();
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
@@ -127,7 +127,7 @@ public class SolicitorSubmitApplicationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             solicitorSubmitApplication.aboutToSubmit(caseDetails, new CaseDetails<>());
 
-        assertThat(response.getData().getPayments()).hasSize(2);
+        assertThat(response.getData().getApplication().getApplicationPayments()).hasSize(2);
     }
 
     @Test
@@ -270,12 +270,12 @@ public class SolicitorSubmitApplicationTest {
             .aboutToSubmit(caseDetails, new CaseDetails<>());
 
         final CaseData expectedCaseData = CaseData.builder()
-            .payments(singletonList(new ListValue<Payment>(null, null)))
             .build();
 
         expectedCaseData.getApplication().setApplicant1StatementOfTruth(YES);
         expectedCaseData.getApplication().setSolSignStatementOfTruth(YES);
         expectedCaseData.getApplication().setApp2ContactMethodIsDigital(YES);
+        expectedCaseData.getApplication().setApplicationPayments(singletonList(new ListValue<>(null, null)));
         expectedCaseData.getApplicant2().setSolicitor(Solicitor.builder().organisationPolicy(organisationPolicy).build());
         expectedCaseData.getApplicant2().setSolicitorRepresented(YES);
 
@@ -319,14 +319,13 @@ public class SolicitorSubmitApplicationTest {
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
         final Payment payment = Payment
             .builder()
-            .paymentAmount(parseInt(orderSummary.getPaymentTotal()))
-            .paymentChannel("online")
-            .paymentDate(LocalDate.now())
-            .paymentFeeId("FEE0001")
-            .paymentReference(orderSummary.getPaymentReference())
-            .paymentSiteId("AA04")
-            .paymentStatus(PaymentStatus.SUCCESS)
-            .paymentTransactionId("Transaction1")
+            .created(LocalDateTime.now())
+            .amount(parseInt(orderSummary.getPaymentTotal()))
+            .channel("online")
+            .feeCode("FEE0001")
+            .reference(orderSummary.getPaymentReference())
+            .status(PaymentStatus.SUCCESS)
+            .transactionId("Transaction1")
             .build();
         ListValue<Payment> paymentListValue = ListValue
             .<Payment>builder()
@@ -334,10 +333,10 @@ public class SolicitorSubmitApplicationTest {
             .build();
         List<ListValue<Payment>> payments = new ArrayList<>();
         payments.add(paymentListValue);
-        final CaseData caseData = CaseData.builder()
-            .payments(payments)
-            .build();
+        final CaseData caseData = CaseData.builder().build();
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
+        caseData.getApplication().setApplicationPayments(payments);
+
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
@@ -354,14 +353,13 @@ public class SolicitorSubmitApplicationTest {
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
         final Payment payment = Payment
             .builder()
-            .paymentAmount(parseInt(orderSummary.getPaymentTotal()))
-            .paymentChannel("online")
-            .paymentDate(LocalDate.now())
-            .paymentFeeId("FEE0001")
-            .paymentReference(orderSummary.getPaymentReference())
-            .paymentSiteId("AA04")
-            .paymentStatus(PaymentStatus.TIMED_OUT)
-            .paymentTransactionId("Transaction1")
+            .created(LocalDateTime.now())
+            .amount(parseInt(orderSummary.getPaymentTotal()))
+            .channel("online")
+            .feeCode("FEE0001")
+            .reference(orderSummary.getPaymentReference())
+            .status(PaymentStatus.TIMED_OUT)
+            .transactionId("Transaction1")
             .build();
         ListValue<Payment> paymentListValue = ListValue
             .<Payment>builder()
@@ -369,10 +367,9 @@ public class SolicitorSubmitApplicationTest {
             .build();
         List<ListValue<Payment>> payments = new ArrayList<>();
         payments.add(paymentListValue);
-        final CaseData caseData = CaseData.builder()
-            .payments(payments)
-            .build();
+        final CaseData caseData = CaseData.builder().build();
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
+        caseData.getApplication().setApplicationPayments(payments);
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 

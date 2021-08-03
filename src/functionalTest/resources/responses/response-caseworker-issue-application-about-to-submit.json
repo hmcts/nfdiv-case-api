@@ -125,18 +125,17 @@
     "marriageMarriageCertificateIsIncorrectDetails": null,
     "marriageMarriedInUk": null,
     "marriagePlaceOfMarriage": "Somewhere",
-    "payments": [
+    "applicationPayments": [
       {
         "id": null,
         "value": {
-          "paymentAmount": 55000,
-          "paymentChannel": "online",
-          "paymentDate": null,
-          "paymentFeeId": "FEE0001",
-          "paymentReference": "paymentRef",
-          "paymentSiteId": "AA04",
-          "paymentStatus": "success",
-          "paymentTransactionId": "ge7po9h5bhbtbd466424src9tk"
+          "amount": 55000,
+          "channel": "online",
+          "created": null,
+          "feeCode": "FEE0001",
+          "reference": "paymentRef",
+          "status": "success",
+          "transactionId": "ge7po9h5bhbtbd466424src9tk"
         }
       }
     ],

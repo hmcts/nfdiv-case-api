@@ -9,7 +9,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import java.time.LocalDate;
 import java.util.List;
 
-import static java.lang.Integer.parseInt;
 import static java.time.temporal.ChronoUnit.YEARS;
 
 public final class ValidationUtil {
@@ -155,7 +154,7 @@ public final class ValidationUtil {
     }
 
     public static boolean isPaymentIncomplete(CaseData caseData) {
-        return caseData.getPaymentTotal() < parseInt(caseData.getApplication().getApplicationFeeOrderSummary().getPaymentTotal());
+        return !caseData.getApplication().hasBeenPaidFor();
     }
 
     public static void validateCaseFieldsForIssueApplication(MarriageDetails marriageDetails, List<String> errorList) {
