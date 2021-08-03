@@ -6,9 +6,6 @@
   "languagePreferenceWelsh": "NO",
   "divorceCostsClaim": "YES",
   "applicant1FinancialOrder": "NO",
-  "divorceClaimFrom": [
-    "applicant2"
-  ],
   "divorceUnit": "serviceCentre",
   "selectedDivorceCentreSiteId": "AA07",
   "documentsGenerated": [

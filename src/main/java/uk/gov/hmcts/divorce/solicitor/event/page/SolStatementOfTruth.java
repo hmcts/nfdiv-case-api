@@ -34,17 +34,17 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
             .label(
                 "LabelSolStatementOfTruthPara-1.1",
                 "• That the marriage be dissolved as it has broken down irretrievably",
-                "divorceCostsClaim=\"No\" AND applicant1FinancialOrder=\"No\"")
+                "applicant1FinancialOrder=\"No\"")
             .label(
                 "LabelSolStatementOfTruthPara-1.2",
                 "- That the marriage be dissolved as it has broken down irretrievably\n"
                     + "- That a costs order may be granted.",
-                "divorceCostsClaim=\"Yes\" AND applicant1FinancialOrder=\"No\"")
+                "applicant1FinancialOrder=\"No\"")
             .label(
                 "LabelSolStatementOfTruthPara-1.3",
                 "- That the marriage be dissolved as it has broken down irretrievably\n"
                     + "- That a financial order may be granted.",
-                "divorceCostsClaim=\"No\" AND applicant1FinancialOrder=\"Yes\"")
+                "applicant1FinancialOrder=\"Yes\"")
             .label(
                 "LabelSolStatementOfTruthPara-1.4",
                 "- That the marriage be dissolved as it has broken down irretrievably.\n"
@@ -54,7 +54,6 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
             .complex(CaseData::getApplication)
                 .mandatory(Application::getSolUrgentCase)
                 .optional(Application::getSolUrgentCaseSupportingInformation, "solUrgentCase=\"Yes\"")
-                .readonlyNoSummary(Application::getDivorceCostsClaim, ALWAYS_HIDE)
                 .done()
             .complex(CaseData::getApplicant1)
                 .readonlyNoSummary(Applicant::getFinancialOrder, ALWAYS_HIDE)

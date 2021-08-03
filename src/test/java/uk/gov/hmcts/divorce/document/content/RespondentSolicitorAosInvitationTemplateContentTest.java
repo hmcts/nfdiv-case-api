@@ -19,7 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
@@ -53,7 +52,6 @@ public class RespondentSolicitorAosInvitationTemplateContentTest {
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForDivorce() {
         CaseData caseData = caseData();
-        caseData.getApplication().setDivorceCostsClaim(YES);
         caseData.getApplicant1().setFinancialOrder(NO);
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
@@ -82,7 +80,6 @@ public class RespondentSolicitorAosInvitationTemplateContentTest {
     public void shouldSuccessfullyApplyContentFromCaseDataForDissolution() {
         CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DISSOLUTION);
-        caseData.getApplication().setDivorceCostsClaim(NO);
         caseData.getApplicant1().setFinancialOrder(NO);
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
@@ -114,7 +111,6 @@ public class RespondentSolicitorAosInvitationTemplateContentTest {
         marriageDetails.setDate(LocalDate.of(2019, 06, 4));
 
         caseData.setDivorceOrDissolution(DISSOLUTION);
-        caseData.getApplication().setDivorceCostsClaim(NO);
         caseData.getApplicant1().setFinancialOrder(NO);
         caseData.getApplication().setMarriageDetails(marriageDetails);
         caseData.getApplicant2().setSolicitor(
@@ -145,7 +141,6 @@ public class RespondentSolicitorAosInvitationTemplateContentTest {
         caseData.setApplicant2(getApplicant());
         caseData.getApplicant2().setHomeAddress(address);
         caseData.setDivorceOrDissolution(DISSOLUTION);
-        caseData.getApplication().setDivorceCostsClaim(NO);
         caseData.getApplicant1().setFinancialOrder(NO);
 
         Supplier<Map<String, Object>> templateContentSupplier = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
