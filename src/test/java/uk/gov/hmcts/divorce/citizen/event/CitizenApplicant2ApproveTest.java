@@ -54,7 +54,7 @@ class CitizenApplicant2ApproveTest {
     }
 
     @Test
-    public void givenEventStartedWithEmptyCaseThenGiveValidationErrors() {
+    void givenEventStartedWithEmptyCaseThenGiveValidationErrors() {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().build();

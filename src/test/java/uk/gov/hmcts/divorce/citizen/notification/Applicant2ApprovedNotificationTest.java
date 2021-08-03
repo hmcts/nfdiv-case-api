@@ -31,7 +31,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2ApprovedCaseDataMap;
 
 @ExtendWith(SpringExtension.class)
-public class Applicant2ApprovedNotificationTest {
+class Applicant2ApprovedNotificationTest {
 
     @Mock
     private NotificationService notificationService;
@@ -69,9 +69,9 @@ public class Applicant2ApprovedNotificationTest {
     }
 
     @Test
-    void shouldSendEmailToApplicant1WithDissolutionContent() {
+    void shouldSendEmailToApplicant1WithDissolutionContentAndHelpWithFees() {
         CaseData data = validApplicant2ApprovedCaseDataMap();
-        data.getApplication().getHelpWithFees().setNeedHelp(YesOrNo.NO);
+        data.getApplication().getHelpWithFees().setNeedHelp(YesOrNo.YES);
         data.setApplicant2ApprovedDueDate(LOCAL_DATE);
         final HashMap<String, String> templateVars = new HashMap<>();
 
@@ -84,8 +84,8 @@ public class Applicant2ApprovedNotificationTest {
             eq(JOINT_APPLICANT1_APPLICANT2_APPROVED),
             argThat(allOf(
                 hasEntry(REMINDER_ACTION_REQUIRED, "Action required: you"),
-                hasEntry(PAY_FOR, PAY_FOR),
-                hasEntry(PAID_FOR, " and paid")
+                hasEntry(PAY_FOR, ""),
+                hasEntry(PAID_FOR, "")
             )),
             eq(ENGLISH)
         );
@@ -122,9 +122,9 @@ public class Applicant2ApprovedNotificationTest {
     }
 
     @Test
-    void shouldSendEmailToApplicant2WithDissolutionContent() {
+    void shouldSendEmailToApplicant2WithDissolutionContentAndHelpWithFees() {
         CaseData data = validApplicant2ApprovedCaseDataMap();
-        data.getApplication().getHelpWithFees().setNeedHelp(YesOrNo.NO);
+        data.getApplication().getHelpWithFees().setNeedHelp(YesOrNo.YES);
         data.setApplicant2ApprovedDueDate(LOCAL_DATE);
 
         final HashMap<String, String> templateVars = new HashMap<>();
@@ -137,11 +137,10 @@ public class Applicant2ApprovedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT2_APPLICANT2_APPROVED),
             argThat(allOf(
-                hasEntry(PAY_FOR_IT, PAY_FOR_IT),
-                hasEntry(PAY_FOR, PAY_FOR),
+                hasEntry(PAY_FOR_IT, ""),
+                hasEntry(PAY_FOR, ""),
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.toString()),
-                hasEntry(PAID_FOR, PAID_FOR),
-                hasEntry(PAY_FOR_IT, PAY_FOR_IT)
+                hasEntry(PAID_FOR, "")
             )),
             eq(ENGLISH)
         );

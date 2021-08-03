@@ -32,7 +32,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 
 @ExtendWith(SpringExtension.class)
-public class Applicant2RequestChangesNotificationTest {
+class Applicant2RequestChangesNotificationTest {
 
     @Mock
     private NotificationService notificationService;

@@ -32,7 +32,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConfigTemplateVars
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseDataMap;
 
 @ExtendWith(MockitoExtension.class)
-public class ApplicationSentForReviewApplicant2NotificationTest {
+class ApplicationSentForReviewApplicant2NotificationTest {
 
     @Mock
     private NotificationService notificationService;

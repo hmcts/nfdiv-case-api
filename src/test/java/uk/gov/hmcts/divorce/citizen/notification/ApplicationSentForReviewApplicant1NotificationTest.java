@@ -29,7 +29,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant2;
 
 
 @ExtendWith(MockitoExtension.class)
-public class ApplicationSentForReviewApplicant1NotificationTest {
+class ApplicationSentForReviewApplicant1NotificationTest {
 
     @Mock
     private NotificationService notificationService;
