@@ -64,11 +64,11 @@ public class Application {
     @Builder.Default
     private Jurisdiction jurisdiction = new Jurisdiction();
 
-    @JsonUnwrapped(prefix = "applicant1HelpWithFees")
+    @JsonUnwrapped(prefix = "applicant1HWF")
     @CCD(access = {DefaultAccess.class})
     private HelpWithFees applicant1HelpWithFees;
 
-    @JsonUnwrapped(prefix = "applicant2HelpWithFees")
+    @JsonUnwrapped(prefix = "applicant2HWF")
     @CCD(access = {Applicant2Access.class})
     private HelpWithFees applicant2HelpWithFees;
 

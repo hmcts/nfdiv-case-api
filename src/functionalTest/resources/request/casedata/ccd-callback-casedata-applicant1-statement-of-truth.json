@@ -10,7 +10,7 @@
   "applicant2LastName": "test_last_name",
   "marriageApplicant1Name": "test_first_name test_last_name",
   "applicant1FinancialOrder": "NO",
-  "applicant1HelpWithFeesNeedHelp": "NO",
+  "applicant1HWFNeedHelp": "NO",
   "applicant1PrayerHasBeenGiven": "YES",
   "applicant1StatementOfTruth": "YES",
   "solSignStatementOfTruth": "YES",
