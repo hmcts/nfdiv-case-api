@@ -16,5 +16,6 @@
   },
   "generalOrderJudgeName": "some name",
   "generalOrderJudgeType": "recorder",
+  "generalOrderLegalAdvisorName": "legal name",
   "generalOrderRecitals": "test recitals"
 }
