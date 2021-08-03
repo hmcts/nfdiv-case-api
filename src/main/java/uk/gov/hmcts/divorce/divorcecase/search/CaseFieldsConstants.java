@@ -9,7 +9,6 @@ public final class CaseFieldsConstants {
     public static final String FIRSTNAME = "FirstName";
     public static final String LASTNAME = "LastName";
     public static final String EMAIL = "Email";
-    public static final String DIVORCE_COSTS_CLAIM = "divorceCostsClaim";
     public static final String DIVORCE_OR_DISSOLUTION = "divorceOrDissolution";
     public static final String FINANCIAL_ORDER = "applicant1FinancialOrder";
     public static final String APPLICANT_1_ORGANISATION_POLICY = "applicant1SolicitorOrganisationPolicy";

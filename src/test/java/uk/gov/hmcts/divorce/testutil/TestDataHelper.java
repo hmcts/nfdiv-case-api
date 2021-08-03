@@ -249,7 +249,6 @@ public class TestDataHelper {
         applicant1.setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).build());
 
         var application = Application.builder()
-            .divorceCostsClaim(YES)
             .solSignStatementOfTruth(YES)
             .applicationFeeOrderSummary(orderSummary)
             .build();
@@ -446,6 +445,7 @@ public class TestDataHelper {
             .generalOrderRecitals("test recitals")
             .generalOrderDraft(ccdDocument)
             .generalOrderJudgeName("some name")
+            .generalOrderLegalAdvisorName("legal name")
             .build();
     }
 

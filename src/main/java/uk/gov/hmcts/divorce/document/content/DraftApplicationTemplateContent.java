@@ -38,7 +38,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FINANCIAL_ORDER_CHILD;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FINANCIAL_ORDER_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_COST_ORDERS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_FINANCIAL_ORDERS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_FINANCIAL_ORDERS_FOR_CHILD;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
@@ -106,7 +105,6 @@ public class DraftApplicationTemplateContent {
                     .orElse(null));
             templateData.put(COURT_CASE_DETAILS, applicant1.getLegalProceedingsDetails());
 
-            templateData.put(HAS_COST_ORDERS, application.getDivorceCostsClaim().toBoolean());
             templateData.put(HAS_FINANCIAL_ORDERS, applicant1.getFinancialOrder().toBoolean());
 
             boolean hasFinancialOrdersForChild =
