@@ -29,7 +29,13 @@ public class SolAboutApplicant2 implements CcdPageConfiguration {
             .complex(CaseData::getApplicant2)
                 .mandatoryWithLabel(Applicant::getFirstName,
                     "${labelContentTheApplicant2UC}'s first name")
-                .mandatoryWithLabel(Applicant::getMiddleName,
+                .mandatory(Applicant::getMiddleName,
+                    "applicationType=\"jointApplication\"",
+                    null,
+                    "${labelContentTheApplicant2UC}'s middle name")
+                .optional(Applicant::getMiddleName,
+                    "applicationType=\"soleApplication\"",
+                    null,
                     "${labelContentTheApplicant2UC}'s middle name")
                 .mandatoryWithLabel(Applicant::getLastName,
                     "${labelContentTheApplicant2UC}'s last name")
