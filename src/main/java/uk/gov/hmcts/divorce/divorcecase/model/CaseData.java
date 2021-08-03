@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessBetaOnlyAcc
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAndSuperUserAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerCourtAdminWithSolicitorAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+import uk.gov.hmcts.divorce.document.model.CaseworkerUploadedDocument;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
@@ -142,10 +143,10 @@ public class CaseData {
     @CCD(
         label = "Documents uploaded",
         typeOverride = Collection,
-        typeParameterOverride = "DivorceDocument",
+        typeParameterOverride = "CaseworkerUploadedDocument",
         access = {DefaultAccess.class}
     )
-    private List<ListValue<DivorceDocument>> documentsUploaded;
+    private List<ListValue<CaseworkerUploadedDocument>> documentsUploaded;
 
     @CCD(
         label = "Confidential documents uploaded",
