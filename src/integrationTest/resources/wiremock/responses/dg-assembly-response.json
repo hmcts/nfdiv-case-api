@@ -20,7 +20,6 @@
     "marriageDate": "20-04-2009",
     "courtCaseDetails": "some court case details",
     "divorceOrEndCivilPartnership": "of the divorce",
-    "hasCostOrders": true,
     "hasFinancialOrders": true,
     "hasFinancialOrdersForChild": true,
     "financialOrderChild": ", and for the children of the applicant and the respondent",

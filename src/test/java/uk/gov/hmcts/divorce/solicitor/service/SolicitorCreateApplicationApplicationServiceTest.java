@@ -15,7 +15,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
-import uk.gov.hmcts.divorce.solicitor.service.task.ClaimsCost;
 import uk.gov.hmcts.divorce.solicitor.service.task.MiniApplicationDraft;
 import uk.gov.hmcts.divorce.solicitor.service.task.SolicitorCourtDetails;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -46,9 +45,6 @@ class SolicitorCreateApplicationApplicationServiceTest {
     private static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(2021, 04, 28, 1, 0);
 
     @Mock
-    private ClaimsCost claimsCost;
-
-    @Mock
     private SolicitorCourtDetails solicitorCourtDetails;
 
     @Mock
@@ -72,7 +68,6 @@ class SolicitorCreateApplicationApplicationServiceTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
-        when(claimsCost.apply(caseDetails)).thenReturn(caseDetails);
         when(solicitorCourtDetails.apply(caseDetails)).thenReturn(caseDetails);
         when(miniApplicationDraft.apply(caseDetails)).thenReturn(caseDetails);
 
@@ -80,7 +75,6 @@ class SolicitorCreateApplicationApplicationServiceTest {
 
         assertThat(result.getData()).isEqualTo(caseData);
 
-        verify(claimsCost).apply(caseDetails);
         verify(solicitorCourtDetails).apply(caseDetails);
         verify(miniApplicationDraft).apply(caseDetails);
     }

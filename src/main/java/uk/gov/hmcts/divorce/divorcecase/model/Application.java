@@ -91,12 +91,6 @@ public class Application {
     private String solUrgentCaseSupportingInformation;
 
     @CCD(
-        label = "Does the applicant want to claim costs?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo divorceCostsClaim;
-
-    @CCD(
         label = "The applicant wants/will to apply to have the papers served to the respondent another way.",
         hint = "For example by email, text message or social media. This is a separate application with "
             + "an additional fee, which will need to be reviewed by a judge.",
@@ -227,12 +221,6 @@ public class Application {
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant1KnowsApplicant2Address;
-
-    @CCD(
-        label = "Claim costs from",
-        access = {DefaultAccess.class}
-    )
-    private Set<ClaimsCostFrom> divorceClaimFrom;
 
     @CCD(
         label = "Applicant 2 is using digital channel?",

@@ -13,7 +13,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2ServiceDetails;
-import uk.gov.hmcts.divorce.solicitor.event.page.ClaimForCosts;
 import uk.gov.hmcts.divorce.solicitor.event.page.FinancialOrders;
 import uk.gov.hmcts.divorce.solicitor.event.page.JurisdictionApplyForDivorce;
 import uk.gov.hmcts.divorce.solicitor.event.page.LanguagePreference;
@@ -66,7 +65,6 @@ public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, Us
             new MarriageCertificateDetails(),
             new OtherLegalProceedings(),
             new FinancialOrders(),
-            new ClaimForCosts(),
             new UploadMarriageCertificate(),
             new LanguagePreference(),
             new JurisdictionApplyForDivorce()
