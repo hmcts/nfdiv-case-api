@@ -50,7 +50,7 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
                 "- That the marriage be dissolved as it has broken down irretrievably.\n"
                     + "- That a costs order may be granted.\n"
                     + "- That a financial order may be granted.",
-                "divorceCostsClaim=\"Yes\" AND applicant1FinancialOrder=\"Yes\"")
+                "applicant1FinancialOrder=\"Yes\"")
             .complex(CaseData::getApplication)
                 .mandatory(Application::getSolUrgentCase)
                 .optional(Application::getSolUrgentCaseSupportingInformation, "solUrgentCase=\"Yes\"")
