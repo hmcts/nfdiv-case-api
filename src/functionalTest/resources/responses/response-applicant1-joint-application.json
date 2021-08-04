@@ -85,21 +85,7 @@
       ],
       "PaymentTotal": "55000"
     },
-    "payments": [
-      {
-        "id": "${json-unit.ignore}",
-        "value": {
-          "paymentDate": null,
-          "paymentFeeId": null,
-          "paymentAmount": 55000,
-          "paymentSiteId": null,
-          "paymentStatus": "inProgress",
-          "paymentChannel": null,
-          "paymentReference": null,
-          "paymentTransactionId": null
-        }
-      }
-    ]
+    "applicationPayments": null
   },
   "errors": null,
   "warnings": null,
