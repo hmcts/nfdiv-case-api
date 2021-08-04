@@ -222,7 +222,6 @@ public class TestDataHelper {
             .caseInvite(CaseInvite.builder().applicant2InviteEmailAddress(TEST_USER_EMAIL).build())
             .divorceOrDissolution(DIVORCE)
             .application(application)
-            .applicationType(JOINT_APPLICATION)
             .build();
     }
 
@@ -236,6 +235,7 @@ public class TestDataHelper {
 
     public static CaseData validApplicant2CaseData() {
         CaseData caseData = validApplicant1CaseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
         caseData.setApplicant2(getApplicant(MALE));
         caseData.getApplication().setApplicant2StatementOfTruth(YES);
         caseData.getApplication().setApplicant2PrayerHasBeenGiven(YES);
