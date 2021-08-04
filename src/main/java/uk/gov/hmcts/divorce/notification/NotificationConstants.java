@@ -13,7 +13,8 @@ public final class NotificationConstants {
     public static final String FOR_YOUR_APPLICATION = " for your divorce/ to end your civil partnership";
     public static final String FOR_YOUR_DIVORCE = " for your divorce";
     public static final String TO_END_CIVIL_PARTNERSHIP = "to end your civil partnership";
-    public static final String REMINDER = "Reminder: application / Application ";
+    public static final String REMINDER_ACTION_REQUIRED = "Reminder/Action required";
+    public static final String REMINDER_APPLICATION = "Reminder: application / Application ";
 
     public static final String CREATE_ACCOUNT_LINK = "create account link";
     public static final String SIGN_IN_URL_NOTIFY_KEY = "signin url";
@@ -57,6 +58,11 @@ public final class NotificationConstants {
     public static final String CCD_REFERENCE = "CCD reference";
     public static final String GENERAL_OTHER_RECIPIENT_NAME = "general other recipient name";
     public static final String GENERAL_EMAIL_DETAILS = "general email details";
+
+    public static final String PAY_FOR = " and pay for";
+    public static final String PAY_FOR_IT = " and pay for it";
+    public static final String PAID_FOR = " and paid for";
+    public static final String PAID = " and paid";
 
     private NotificationConstants() {
     }

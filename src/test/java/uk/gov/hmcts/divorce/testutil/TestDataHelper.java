@@ -193,6 +193,7 @@ public class TestDataHelper {
         var marriageDetails = new MarriageDetails();
         marriageDetails.setDate(LocalDate.of(1990, 6, 10));
         marriageDetails.setApplicant1Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME);
+        marriageDetails.setApplicant2Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME);
 
         var jurisdiction = new Jurisdiction();
         jurisdiction.setApplicant1Residence(YES);
@@ -228,6 +229,14 @@ public class TestDataHelper {
         caseData.setApplicant2(getApplicant2(MALE));
         caseData.getApplication().setApplicant1StatementOfTruth(YES);
         caseData.getApplication().setApplicant1PrayerHasBeenGiven(YES);
+        return caseData;
+    }
+
+    public static CaseData validApplicant2ApprovedCaseDataMap() {
+        CaseData caseData = validJointApplicant1CaseDataMap();
+        caseData.setApplicant2(getApplicant(MALE));
+        caseData.getApplication().setApplicant2PrayerHasBeenGiven(YES);
+        caseData.getApplication().setApplicant2StatementOfTruth(YES);
         return caseData;
     }
 

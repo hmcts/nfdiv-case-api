@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,15 +28,20 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_AP
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FIRST_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.LAST_NAME;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.PARTNER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.RELATIONSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.RELATIONSHIP_COURT_HEADER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.RESPONDENT_NAME;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DIVORCE_URL;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_URL_NOTIFY_KEY;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant2;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondent;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,17 +54,19 @@ class CommonContentTest {
     private CommonContent commonContent;
 
     @Test
-    void shouldSetCommonTemplateVariablesForDivorce() {
+    void shouldSetCommonTemplateVariablesForApplicantForDivorce() {
 
         final String courtEmail = "court@email.com";
         final Map<String, String> configTemplateVars = new HashMap<>();
         configTemplateVars.put(DIVORCE_COURT_EMAIL, courtEmail);
+        configTemplateVars.put(SIGN_IN_DIVORCE_URL, SIGN_IN_DIVORCE_URL);
 
-        final String firstName = "John";
+        final String firstName = "Sarah";
         final String lastName = "Smith";
         final CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DIVORCE)
             .applicant1(getApplicant())
+            .applicant2(getApplicant2(Gender.MALE))
             .build();
 
         caseData.getApplicant1().setFirstName(firstName);
@@ -66,29 +74,34 @@ class CommonContentTest {
 
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(configTemplateVars);
 
-        final Map<String, String> templateVars = commonContent.templateVarsFor(caseData);
+        final Map<String, String> templateVars = commonContent.templateVarsForApplicant(
+            caseData, caseData.getApplicant1(), caseData.getApplicant2());
 
-        assertThat(templateVars).isNotEmpty().hasSize(5)
+        assertThat(templateVars).isNotEmpty().hasSize(7)
             .contains(
                 entry(FIRST_NAME, firstName),
                 entry(LAST_NAME, lastName),
+                entry(PARTNER, "husband"),
                 entry(RELATIONSHIP, DIVORCE_APPLICATION),
                 entry(RELATIONSHIP_COURT_HEADER, "Divorce service"),
-                entry(COURT_EMAIL, courtEmail));
+                entry(COURT_EMAIL, courtEmail),
+                entry(SIGN_IN_URL_NOTIFY_KEY, SIGN_IN_DIVORCE_URL));
     }
 
     @Test
-    void shouldSetCommonTemplateVariablesForDissolution() {
+    void shouldSetCommonTemplateVariablesForApplicantForDissolution() {
 
         final String courtEmail = "court@email.com";
         final Map<String, String> configTemplateVars = new HashMap<>();
         configTemplateVars.put(DISSOLUTION_COURT_EMAIL, courtEmail);
+        configTemplateVars.put(SIGN_IN_DISSOLUTION_URL, SIGN_IN_DISSOLUTION_URL);
 
-        final String firstName = "John";
+        final String firstName = "Sarah";
         final String lastName = "Smith";
         final CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DISSOLUTION)
             .applicant1(getApplicant())
+            .applicant2(getApplicant2(Gender.MALE))
             .build();
 
         caseData.getApplicant1().setFirstName(firstName);
@@ -96,15 +109,18 @@ class CommonContentTest {
 
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(configTemplateVars);
 
-        final Map<String, String> templateVars = commonContent.templateVarsFor(caseData);
+        final Map<String, String> templateVars = commonContent.templateVarsForApplicant(
+            caseData, caseData.getApplicant1(), caseData.getApplicant2());
 
-        assertThat(templateVars).isNotEmpty().hasSize(5)
+        assertThat(templateVars).isNotEmpty().hasSize(7)
             .contains(
                 entry(FIRST_NAME, firstName),
                 entry(LAST_NAME, lastName),
+                entry(PARTNER, "civil partner"),
                 entry(RELATIONSHIP, APPLICATION_TO_END_CIVIL_PARTNERSHIP),
                 entry(RELATIONSHIP_COURT_HEADER, "End a civil partnership service"),
-                entry(COURT_EMAIL, courtEmail));
+                entry(COURT_EMAIL, courtEmail),
+                entry(SIGN_IN_URL_NOTIFY_KEY, SIGN_IN_DISSOLUTION_URL));
     }
 
     @Test

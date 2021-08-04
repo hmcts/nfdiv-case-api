@@ -22,9 +22,13 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_AP
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FIRST_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.LAST_NAME;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.PARTNER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.RELATIONSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.RELATIONSHIP_COURT_HEADER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.RESPONDENT_NAME;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DIVORCE_URL;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_URL_NOTIFY_KEY;
 
 @Component
 public class CommonContent {
@@ -35,12 +39,20 @@ public class CommonContent {
     @Autowired
     private EmailTemplatesConfig emailTemplatesConfig;
 
+    public Map<String, String> templateVarsForApplicant(final CaseData caseData, Applicant applicant, Applicant partner) {
+        Map<String, String> templateVars = templateVarsFor(caseData);
+
+        templateVars.put(FIRST_NAME, applicant.getFirstName());
+        templateVars.put(LAST_NAME, applicant.getLastName());
+        templateVars.put(PARTNER, getTheirPartner(caseData, partner));
+
+        return templateVars;
+    }
+
+
     public Map<String, String> templateVarsFor(final CaseData caseData) {
 
         final HashMap<String, String> templateVars = new HashMap<>();
-
-        templateVars.put(FIRST_NAME, caseData.getApplicant1().getFirstName());
-        templateVars.put(LAST_NAME, caseData.getApplicant1().getLastName());
 
         Map<String, String> configTemplateVars = emailTemplatesConfig.getTemplateVars();
 
@@ -48,10 +60,12 @@ public class CommonContent {
             templateVars.put(RELATIONSHIP, DIVORCE_APPLICATION);
             templateVars.put(RELATIONSHIP_COURT_HEADER, APPLY_FOR_DIVORCE);
             templateVars.put(COURT_EMAIL, configTemplateVars.get(DIVORCE_COURT_EMAIL));
+            templateVars.put(SIGN_IN_URL_NOTIFY_KEY, configTemplateVars.get(SIGN_IN_DIVORCE_URL));
         } else {
             templateVars.put(RELATIONSHIP, APPLICATION_TO_END_CIVIL_PARTNERSHIP);
             templateVars.put(RELATIONSHIP_COURT_HEADER, END_CIVIL_PARTNERSHIP);
             templateVars.put(COURT_EMAIL, configTemplateVars.get(DISSOLUTION_COURT_EMAIL));
+            templateVars.put(SIGN_IN_URL_NOTIFY_KEY, configTemplateVars.get(SIGN_IN_DISSOLUTION_URL));
         }
 
         return templateVars;

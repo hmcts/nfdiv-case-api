@@ -18,7 +18,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUS
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_PREVIEW_BANNER;
 
 @Component
 public class SolicitorVerifyMarriageCertificate implements CCDConfig<CaseData, State, UserRole> {
@@ -40,7 +39,6 @@ public class SolicitorVerifyMarriageCertificate implements CCDConfig<CaseData, S
                 CASEWORKER_LEGAL_ADVISOR))
             .page("marriageCertificateDetailsVerification")
             .pageLabel("Marriage Certificate Details")
-            .label("LabelNFDBanner-VerifyMarriageCert", SOLICITOR_NFD_PREVIEW_BANNER)
             .complex(CaseData::getApplication)
                 .complex(Application::getMarriageDetails)
                     .mandatory(MarriageDetails::getCertifyMarriageCertificateIsCorrect)
