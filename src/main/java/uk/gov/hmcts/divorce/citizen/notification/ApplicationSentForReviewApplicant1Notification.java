@@ -11,7 +11,6 @@ import java.util.Map;
 
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_ANSWERS_SENT_FOR_REVIEW;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.dateTimeFormatter;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.PARTNER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
 
 @Component
@@ -25,10 +24,10 @@ public class ApplicationSentForReviewApplicant1Notification {
     private CommonContent commonContent;
 
     public void send(CaseData caseData, Long id) {
-        Map<String, String> templateVars = commonContent.templateVarsFor(caseData);
+        Map<String, String> templateVars = commonContent.templateVarsForApplicant(
+            caseData, caseData.getApplicant1(), caseData.getApplicant2());
 
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(dateTimeFormatter));
-        templateVars.put(PARTNER, commonContent.getTheirPartner(caseData, caseData.getApplicant2()));
 
         log.info("Sending application sent for review notification to applicant 1 for case : {}", id);
 
