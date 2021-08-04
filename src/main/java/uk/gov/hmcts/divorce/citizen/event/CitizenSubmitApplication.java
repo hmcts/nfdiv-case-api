@@ -7,19 +7,15 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.PaymentService;
-import uk.gov.hmcts.divorce.payment.model.Payment;
 
 import java.util.List;
-import java.util.UUID;
 
-import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
@@ -30,7 +26,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUS
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
-import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.IN_PROGRESS;
 
 @Slf4j
 @Component
@@ -86,11 +81,6 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
             OrderSummary orderSummary = paymentService.getOrderSummary();
             application.setApplicationFeeOrderSummary(orderSummary);
 
-            if (data.getPayments() == null || data.getPayments().isEmpty()) {
-                ListValue<Payment> paymentListValue = createPendingPayment(orderSummary.getPaymentTotal());
-                caseDataCopy.setPayments(singletonList(paymentListValue));
-            }
-
             state = AwaitingPayment;
         }
 
@@ -103,18 +93,5 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
             .build();
     }
 
-    private ListValue<Payment> createPendingPayment(String paymentTotal) {
-        Payment payment = Payment
-            .builder()
-            .paymentAmount(Integer.valueOf(paymentTotal))
-            .paymentStatus(IN_PROGRESS)
-            .build();
-
-        return ListValue
-            .<Payment>builder()
-            .value(payment)
-            .id(UUID.randomUUID().toString())
-            .build();
-    }
 }
 

@@ -34,11 +34,11 @@
       }
     ]
   },
-  "payments": [{
+  "applicationPayments": [{
     "id": "1",
     "value": {
-      "paymentStatus": "success",
-      "paymentAmount": 55000
+      "status": "success",
+      "amount": 55000
     }
   }]
 }

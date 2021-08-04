@@ -95,5 +95,10 @@
       <property name="maxmethods" value="13" />
     </properties>
   </rule>
+  <rule ref="category/java/codestyle.xml/ConfusingTernary">
+    <properties>
+      <property name="ignoreElseIf" value="true" />
+    </properties>
+  </rule>
 
 </ruleset>

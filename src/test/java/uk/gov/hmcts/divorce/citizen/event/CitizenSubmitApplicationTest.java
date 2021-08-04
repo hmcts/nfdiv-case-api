@@ -9,7 +9,6 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
@@ -21,13 +20,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.PaymentService;
-import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitApplicationService;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Set;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -35,7 +32,6 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitApplication.CITIZEN_SUBMIT;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
-import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.IN_PROGRESS;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
@@ -95,7 +91,7 @@ class CitizenSubmitApplicationTest {
     }
 
     @Test
-    public void givenEventStartedWithValidCaseThenChangeStateAndSetOrderSummaryAndPendingPayment() {
+    public void givenEventStartedWithValidCaseThenChangeStateAndSetOrderSummary() {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = CaseData.builder().build();
@@ -115,9 +111,6 @@ class CitizenSubmitApplicationTest {
 
         assertThat(response.getState()).isEqualTo(State.AwaitingPayment);
         assertThat(response.getData().getApplication().getApplicationFeeOrderSummary()).isEqualTo(orderSummary);
-        assertThat(response.getData().getPayments())
-            .usingElementComparatorIgnoringFields("id") // id is random uuid
-            .containsExactlyInAnyOrder(pendingPayment());
 
         verify(paymentService).getOrderSummary();
     }
@@ -135,7 +128,7 @@ class CitizenSubmitApplicationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getState()).isEqualTo(State.AwaitingHWFDecision);
-        assertThat(response.getData().getPayments()).isNull();
+        assertThat(response.getData().getApplication().getApplicationPayments()).isNull();
     }
 
     private OrderSummary orderSummary() {
@@ -166,21 +159,6 @@ class CitizenSubmitApplicationTest {
         jurisdiction.setBothLastHabituallyResident(YesOrNo.YES);
         caseData.getApplication().setJurisdiction(jurisdiction);
         return caseData;
-    }
-
-    private ListValue<Payment> pendingPayment() {
-        Payment payment = Payment
-            .builder()
-            .paymentAmount(55000)
-            .paymentStatus(IN_PROGRESS)
-            .build();
-
-        ListValue<Payment> listValuePayment = ListValue
-            .<Payment>builder()
-            .value(payment)
-            .id(UUID.randomUUID().toString())
-            .build();
-        return listValuePayment;
     }
 
 }

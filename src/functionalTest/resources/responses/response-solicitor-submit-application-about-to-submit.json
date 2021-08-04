@@ -42,7 +42,6 @@
     "applicant2NameChangedHowOtherDetails": null,
     "applicant2PhoneNumber": null,
     "applicant2ContactDetailsConfidential": null,
-    "divorceCostsClaim": "Yes",
     "solSignStatementOfTruth": "Yes",
     "documentsGenerated": [],
     "helpWithFeesAppliedForFees": null,
@@ -85,17 +84,16 @@
         }
       ]
     },
-    "payments": [{
+    "applicationPayments": [{
       "id": null,
       "value": {
-        "paymentDate": null,
-        "paymentFeeId": "FEE0001",
-        "paymentAmount": 55000,
-        "paymentSiteId": "AA04",
-        "paymentStatus": "success",
-        "paymentChannel": "online",
-        "paymentReference": null,
-        "paymentTransactionId": "ge7po9h5bhbtbd466424src9tk"
+        "created": null,
+        "feeCode": "FEE0001",
+        "amount": 55000,
+        "status": "success",
+        "channel": "online",
+        "reference": null,
+        "transactionId": "ge7po9h5bhbtbd466424src9tk"
       }
     }]
   },

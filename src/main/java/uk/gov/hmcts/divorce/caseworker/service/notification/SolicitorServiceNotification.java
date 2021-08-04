@@ -11,12 +11,12 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_PERSONAL_SERVICE;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SOLICITOR_NAME;
 
 @Component
 @Slf4j
-public class PersonalServiceNotification {
+public class SolicitorServiceNotification {
 
     @Autowired
     private NotificationService notificationService;
@@ -32,7 +32,7 @@ public class PersonalServiceNotification {
 
         notificationService.sendEmail(
             applicantSolicitor.getEmail(),
-            APPLICANT_SOLICITOR_PERSONAL_SERVICE,
+            APPLICANT_SOLICITOR_SERVICE,
             templateVars(caseData, caseId),
             ENGLISH
         );
