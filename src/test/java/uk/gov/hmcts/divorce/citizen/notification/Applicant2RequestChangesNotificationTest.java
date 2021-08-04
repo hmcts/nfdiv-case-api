@@ -54,7 +54,7 @@ class Applicant2RequestChangesNotificationTest {
 
         final HashMap<String, String> templateVars = new HashMap<>();
 
-        when(commonContent.templateVarsForApplicant(data, data.getApplicant1())).thenReturn(templateVars);
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
@@ -69,7 +69,7 @@ class Applicant2RequestChangesNotificationTest {
             eq(ENGLISH)
         );
 
-        verify(commonContent).templateVarsForApplicant(data, data.getApplicant1());
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -81,7 +81,7 @@ class Applicant2RequestChangesNotificationTest {
 
         final HashMap<String, String> templateVars = new HashMap<>();
 
-        when(commonContent.templateVarsForApplicant(data, data.getApplicant1())).thenReturn(templateVars);
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
@@ -96,7 +96,7 @@ class Applicant2RequestChangesNotificationTest {
             eq(ENGLISH)
         );
 
-        verify(commonContent).templateVarsForApplicant(data, data.getApplicant1());
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -107,7 +107,7 @@ class Applicant2RequestChangesNotificationTest {
 
         final HashMap<String, String> templateVars = new HashMap<>();
 
-        when(commonContent.templateVarsForApplicant(data, data.getApplicant2())).thenReturn(templateVars);
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
 
         notification.sendToApplicant2(data, 1234567890123456L);
 
@@ -120,7 +120,7 @@ class Applicant2RequestChangesNotificationTest {
             eq(ENGLISH)
         );
 
-        verify(commonContent).templateVarsForApplicant(data, data.getApplicant2());
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -132,7 +132,7 @@ class Applicant2RequestChangesNotificationTest {
 
         final HashMap<String, String> templateVars = new HashMap<>();
 
-        when(commonContent.templateVarsForApplicant(data, data.getApplicant2())).thenReturn(templateVars);
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
 
         notification.sendToApplicant2(data, 1234567890123456L);
 
@@ -145,6 +145,6 @@ class Applicant2RequestChangesNotificationTest {
             eq(ENGLISH)
         );
 
-        verify(commonContent).templateVarsForApplicant(data, data.getApplicant2());
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1());
     }
 }

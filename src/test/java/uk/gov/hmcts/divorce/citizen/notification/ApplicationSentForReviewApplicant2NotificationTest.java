@@ -52,7 +52,7 @@ class ApplicationSentForReviewApplicant2NotificationTest {
         data.setDueDate(LOCAL_DATE);
         final HashMap<String, String> templateVars = new HashMap<>();
 
-        when(commonContent.templateVarsForApplicant(data, data.getApplicant2())).thenReturn(templateVars);
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
         notification.send(data, 1234567890123456L);
@@ -66,7 +66,7 @@ class ApplicationSentForReviewApplicant2NotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).templateVarsForApplicant(data, data.getApplicant2());
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -76,7 +76,7 @@ class ApplicationSentForReviewApplicant2NotificationTest {
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         final HashMap<String, String> templateVars = new HashMap<>();
 
-        when(commonContent.templateVarsForApplicant(data, data.getApplicant2())).thenReturn(templateVars);
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
         notification.send(data, 1234567890123456L);
@@ -90,7 +90,7 @@ class ApplicationSentForReviewApplicant2NotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).templateVarsForApplicant(data, data.getApplicant2());
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1());
     }
 
 }

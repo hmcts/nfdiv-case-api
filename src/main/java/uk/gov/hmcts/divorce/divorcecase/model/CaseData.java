@@ -187,13 +187,6 @@ public class CaseData {
     private LocalDate dueDate;
 
     @CCD(
-        label = "Applicant 2 Approved Due Date",
-        access = {DefaultAccess.class}
-    )
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate applicant2ApprovedDueDate;
-
-    @CCD(
         label = "Notes",
         typeOverride = Collection,
         typeParameterOverride = "CaseNote",
@@ -212,11 +205,6 @@ public class CaseData {
     @JsonIgnore
     public boolean isAmendedCase() {
         return null != previousCaseId;
-    }
-
-    @JsonIgnore
-    public boolean isApplicant1(Applicant applicant) {
-        return applicant.equals(applicant1);
     }
 
     @JsonIgnore

@@ -45,7 +45,8 @@ public class ApplicationSentForReviewApplicant2Notification {
     private EmailTemplatesConfig emailTemplatesConfig;
 
     public void send(CaseData caseData, Long id) {
-        Map<String, String> templateVars = commonContent.templateVarsForApplicant(caseData, caseData.getApplicant2());
+        Map<String, String> templateVars = commonContent.templateVarsForApplicant(
+            caseData, caseData.getApplicant2(), caseData.getApplicant1());
 
         templateVars.put(APPLICATION_REFERENCE, formatId(id));
 

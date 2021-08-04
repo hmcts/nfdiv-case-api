@@ -46,11 +46,11 @@ class Applicant2ApprovedNotificationTest {
     void shouldSendEmailToApplicant1WithDivorceContent() {
         CaseData data = validApplicant2ApprovedCaseDataMap();
         data.getApplication().getHelpWithFees().setNeedHelp(YesOrNo.NO);
-        data.setApplicant2ApprovedDueDate(LOCAL_DATE);
+        data.setDueDate(LOCAL_DATE);
 
         final HashMap<String, String> templateVars = new HashMap<>();
 
-        when(commonContent.templateVarsForApplicant(data, data.getApplicant1())).thenReturn(templateVars);
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
@@ -65,17 +65,17 @@ class Applicant2ApprovedNotificationTest {
             eq(ENGLISH)
         );
 
-        verify(commonContent).templateVarsForApplicant(data, data.getApplicant1());
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
     void shouldSendEmailToApplicant1WithDissolutionContentAndHelpWithFees() {
         CaseData data = validApplicant2ApprovedCaseDataMap();
         data.getApplication().getHelpWithFees().setNeedHelp(YesOrNo.YES);
-        data.setApplicant2ApprovedDueDate(LOCAL_DATE);
+        data.setDueDate(LOCAL_DATE);
         final HashMap<String, String> templateVars = new HashMap<>();
 
-        when(commonContent.templateVarsForApplicant(data, data.getApplicant1())).thenReturn(templateVars);
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
@@ -90,18 +90,18 @@ class Applicant2ApprovedNotificationTest {
             eq(ENGLISH)
         );
 
-        verify(commonContent).templateVarsForApplicant(data, data.getApplicant1());
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
     void shouldSendEmailToApplicant2WithDivorceContent() {
         CaseData data = validApplicant2ApprovedCaseDataMap();
         data.getApplication().getHelpWithFees().setNeedHelp(YesOrNo.NO);
-        data.setApplicant2ApprovedDueDate(LOCAL_DATE);
+        data.setDueDate(LOCAL_DATE);
 
         final HashMap<String, String> templateVars = new HashMap<>();
 
-        when(commonContent.templateVarsForApplicant(data, data.getApplicant2())).thenReturn(templateVars);
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
 
         notification.sendToApplicant2(data, 1234567890123456L);
 
@@ -118,18 +118,18 @@ class Applicant2ApprovedNotificationTest {
             eq(ENGLISH)
         );
 
-        verify(commonContent).templateVarsForApplicant(data, data.getApplicant2());
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
     void shouldSendEmailToApplicant2WithDissolutionContentAndHelpWithFees() {
         CaseData data = validApplicant2ApprovedCaseDataMap();
         data.getApplication().getHelpWithFees().setNeedHelp(YesOrNo.YES);
-        data.setApplicant2ApprovedDueDate(LOCAL_DATE);
+        data.setDueDate(LOCAL_DATE);
 
         final HashMap<String, String> templateVars = new HashMap<>();
 
-        when(commonContent.templateVarsForApplicant(data, data.getApplicant2())).thenReturn(templateVars);
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
 
         notification.sendToApplicant2(data, 1234567890123456L);
 
@@ -145,7 +145,7 @@ class Applicant2ApprovedNotificationTest {
             eq(ENGLISH)
         );
 
-        verify(commonContent).templateVarsForApplicant(data, data.getApplicant2());
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1());
     }
 }
 

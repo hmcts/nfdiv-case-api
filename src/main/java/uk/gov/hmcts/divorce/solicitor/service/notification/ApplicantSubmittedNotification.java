@@ -36,7 +36,8 @@ public class ApplicantSubmittedNotification {
     public void send(final CaseData caseData, final Long caseId) {
 
         final String applicant1Email = caseData.getApplicant1().getEmail();
-        final Map<String, String> templateVars = commonContent.templateVarsForApplicant(caseData, caseData.getApplicant1());
+        final Map<String, String> templateVars = commonContent.templateVarsForApplicant(
+            caseData, caseData.getApplicant1(), caseData.getApplicant2());
         templateVars.put(APPLICATION_REFERENCE, formatId(caseId));
 
         if (isNotEmpty(applicant1Email)) {

@@ -58,12 +58,11 @@ public class CitizenApplicant2Approve implements CCDConfig<CaseData, State, User
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(data)
                 .errors(validationErrors)
-                .state(AwaitingApplicant2Response)
+                .state(details.getState())
                 .build();
         }
 
         data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
-        data.setApplicant2ApprovedDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
 
         applicant2ApprovedNotification.sendToApplicant1(data, details.getId());
         applicant2ApprovedNotification.sendToApplicant2(data, details.getId());

@@ -45,7 +45,8 @@ public class Applicant2RequestChangesNotification {
 
     public void sendToApplicant1(CaseData caseData, Long id) {
         Map<String, String> configTemplateVars = emailTemplatesConfig.getTemplateVars();
-        Map<String, String> templateVars = commonContent.templateVarsForApplicant(caseData, caseData.getApplicant1());
+        Map<String, String> templateVars = commonContent.templateVarsForApplicant(
+            caseData, caseData.getApplicant1(), caseData.getApplicant2());
 
         templateVars.put(APPLICANT_2_COMMENTS, caseData.getApplication().getApplicant2ExplainsApplicant1IncorrectInformation());
 
@@ -72,7 +73,8 @@ public class Applicant2RequestChangesNotification {
     }
 
     public void sendToApplicant2(CaseData caseData, Long id) {
-        Map<String, String> templateVars = commonContent.templateVarsForApplicant(caseData, caseData.getApplicant2());
+        Map<String, String> templateVars = commonContent.templateVarsForApplicant(
+            caseData, caseData.getApplicant2(), caseData.getApplicant1());
         templateVars.put(FIRST_NAME, caseData.getApplicant2().getFirstName());
         templateVars.put(LAST_NAME, caseData.getApplicant2().getLastName());
 

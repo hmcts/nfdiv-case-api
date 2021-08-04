@@ -47,7 +47,7 @@ class ApplicationSentForReviewApplicant1NotificationTest {
         data.setApplicant2(getApplicant2(Gender.MALE));
         final HashMap<String, String> templateVars = new HashMap<>();
 
-        when(commonContent.templateVarsForApplicant(data, data.getApplicant1())).thenReturn(templateVars);
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
 
         notification.send(data, 1234567890123456L);
 
@@ -59,6 +59,6 @@ class ApplicationSentForReviewApplicant1NotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).templateVarsForApplicant(data, data.getApplicant1());
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2());
     }
 }

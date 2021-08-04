@@ -10,5 +10,5 @@
     "JurisdictionConnections cannot be empty or null"
   ],
   "warnings": null,
-  "state": "AwaitingApplicant2Response"
+  "state": null
 }

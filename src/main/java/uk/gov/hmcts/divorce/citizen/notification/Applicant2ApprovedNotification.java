@@ -30,7 +30,8 @@ public class Applicant2ApprovedNotification {
     private CommonContent commonContent;
 
     public void sendToApplicant1(CaseData caseData, Long id) {
-        Map<String, String> templateVars = commonContent.templateVarsForApplicant(caseData, caseData.getApplicant1());
+        Map<String, String> templateVars = commonContent.templateVarsForApplicant(
+            caseData, caseData.getApplicant1(), caseData.getApplicant2());
         templateVars.put(REMINDER_ACTION_REQUIRED, "Action required: you");
 
         if (caseData.getApplication().getHelpWithFees().getNeedHelp() == YesOrNo.NO) {
@@ -52,8 +53,9 @@ public class Applicant2ApprovedNotification {
     }
 
     public void sendToApplicant2(CaseData caseData, Long id) {
-        Map<String, String> templateVars = commonContent.templateVarsForApplicant(caseData, caseData.getApplicant2());
-        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getApplicant2ApprovedDueDate().toString());
+        Map<String, String> templateVars = commonContent.templateVarsForApplicant(
+            caseData, caseData.getApplicant2(), caseData.getApplicant1());
+        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().toString());
 
         if (caseData.getApplication().getHelpWithFees().getNeedHelp() == YesOrNo.NO) {
             templateVars.put(PAY_FOR, PAY_FOR);

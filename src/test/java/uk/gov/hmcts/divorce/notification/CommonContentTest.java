@@ -74,7 +74,8 @@ class CommonContentTest {
 
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(configTemplateVars);
 
-        final Map<String, String> templateVars = commonContent.templateVarsForApplicant(caseData, caseData.getApplicant1());
+        final Map<String, String> templateVars = commonContent.templateVarsForApplicant(
+            caseData, caseData.getApplicant1(), caseData.getApplicant2());
 
         assertThat(templateVars).isNotEmpty().hasSize(7)
             .contains(
@@ -108,7 +109,8 @@ class CommonContentTest {
 
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(configTemplateVars);
 
-        final Map<String, String> templateVars = commonContent.templateVarsForApplicant(caseData, caseData.getApplicant1());
+        final Map<String, String> templateVars = commonContent.templateVarsForApplicant(
+            caseData, caseData.getApplicant1(), caseData.getApplicant2());
 
         assertThat(templateVars).isNotEmpty().hasSize(7)
             .contains(
