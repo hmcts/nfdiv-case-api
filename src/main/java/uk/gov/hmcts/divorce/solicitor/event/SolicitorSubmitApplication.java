@@ -109,13 +109,13 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         final State currentState = details.getState();
 
         log.info("Setting dummy payment to mock payment process");
-        if (caseData.getPayments() == null || caseData.getPayments().isEmpty()) {
+        if (application.getApplicationPayments() == null || application.getApplicationPayments().isEmpty()) {
             List<ListValue<Payment>> payments = new ArrayList<>();
             payments.add(new ListValue<>(null,
                 solicitorSubmitApplicationService.getDummyPayment(application.getApplicationFeeOrderSummary())));
-            caseData.setPayments(payments);
+            application.setApplicationPayments(payments);
         } else {
-            caseData.getPayments()
+            application.getApplicationPayments()
                 .add(new ListValue<>(null,
                     solicitorSubmitApplicationService.getDummyPayment(application.getApplicationFeeOrderSummary())));
         }
@@ -152,10 +152,8 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
                                                CaseDetails<CaseData, State> beforeDetails) {
         final CaseData caseData = details.getData();
-        final int feesPaid = caseData.getPaymentTotal();
 
-        // TODO apply Submitted.validate()
-        if (String.valueOf(feesPaid).equals(caseData.getApplication().getApplicationFeeOrderSummary().getPaymentTotal())) {
+        if (caseData.getApplication().hasBeenPaidFor()) {
             details.setState(Submitted);
         } else {
             details.setState(AwaitingPayment);

@@ -18,9 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
-import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.ClaimsCostFrom;
 import uk.gov.hmcts.divorce.divorcecase.model.Court;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
@@ -31,7 +29,6 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.List;
-import java.util.Set;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -40,7 +37,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DOCUMENT_TYPE_RESPONDENT_INVITATION;
@@ -204,15 +200,9 @@ public class SolicitorSubmitUpdateDraftAosTest {
         var applicant1 = getApplicant();
         applicant1.setFinancialOrder(NO);
 
-        var application = Application.builder()
-            .divorceCostsClaim(YES)
-            .divorceClaimFrom(Set.of(ClaimsCostFrom.APPLICANT_2))
-            .build();
-
         return CaseData
             .builder()
             .applicant1(applicant1)
-            .application(application)
             .divorceOrDissolution(DIVORCE)
             .divorceUnit(Court.SERVICE_CENTRE)
             .selectedDivorceCentreSiteId("AA07")
@@ -224,16 +214,10 @@ public class SolicitorSubmitUpdateDraftAosTest {
         var applicant1 = getApplicant();
         applicant1.setFinancialOrder(NO);
 
-        var application = Application.builder()
-            .divorceCostsClaim(YES)
-            .divorceClaimFrom(Set.of(ClaimsCostFrom.APPLICANT_2))
-            .build();
-
         return CaseData
             .builder()
             .applicant1(getApplicant())
             .divorceOrDissolution(DIVORCE)
-            .application(application)
             .divorceUnit(Court.SERVICE_CENTRE)
             .selectedDivorceCentreSiteId("AA07")
             .build();

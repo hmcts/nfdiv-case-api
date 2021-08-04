@@ -84,18 +84,17 @@
         }
       ]
     },
-    "payments": [
+    "applicationPayments": [
       {
         "id": "1",
         "value": {
-          "paymentDate": null,
-          "paymentFeeId": null,
-          "paymentAmount": 55000,
-          "paymentSiteId": null,
-          "paymentStatus": "inProgress",
-          "paymentChannel": null,
-          "paymentReference": null,
-          "paymentTransactionId": null
+          "created": null,
+          "feeCode": null,
+          "amount": 55000,
+          "status": "inProgress",
+          "channel": null,
+          "reference": null,
+          "transactionId": null
         }
       }
     ]
