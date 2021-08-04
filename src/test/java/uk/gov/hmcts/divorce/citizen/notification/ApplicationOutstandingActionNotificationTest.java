@@ -63,7 +63,7 @@ class ApplicationOutstandingActionNotificationTest {
         data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
 
         final HashMap<String, String> templateVars = new HashMap<>();
-        when(commonContent.templateVarsFor(data)).thenReturn(templateVars);
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
 
         notification.send(data, 1234567890123456L);
 
@@ -78,7 +78,7 @@ class ApplicationOutstandingActionNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).templateVarsFor(data);
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -95,7 +95,7 @@ class ApplicationOutstandingActionNotificationTest {
         data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
 
         final HashMap<String, String> templateVars = new HashMap<>();
-        when(commonContent.templateVarsFor(data)).thenReturn(templateVars);
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
         when(commonContent.getTheirPartner(data, data.getApplicant2())).thenReturn("husband");
         when(commonContent.getService(data.getDivorceOrDissolution())).thenReturn("divorce");
 
@@ -114,11 +114,14 @@ class ApplicationOutstandingActionNotificationTest {
                         + " postal address in the application. For example you could try to serve them by email,"
                         + " text message or social media."),
                 hasEntry(PAPERS_SERVED_ANOTHER_WAY_APPLY,
-                    "You can apply here: https://www.gov.uk/government/publications/form-d11-application-notice")
+                    "You can apply here: https://www.gov.uk/government/publications/form-d11-application-notice"),
+                hasEntry(FOREIGN_CERTIFICATE, ""),
+                hasEntry(FOREIGN_CERTIFICATE_TRANSLATION, "")
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).templateVarsFor(data);
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).getTheirPartner(data, data.getApplicant2());
     }
 
     @Test
@@ -135,7 +138,7 @@ class ApplicationOutstandingActionNotificationTest {
         data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
 
         final HashMap<String, String> templateVars = new HashMap<>();
-        when(commonContent.templateVarsFor(data)).thenReturn(templateVars);
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
 
         notification.send(data, 1234567890123456L);
 
@@ -150,7 +153,7 @@ class ApplicationOutstandingActionNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).templateVarsFor(data);
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2());
     }
 
 }
