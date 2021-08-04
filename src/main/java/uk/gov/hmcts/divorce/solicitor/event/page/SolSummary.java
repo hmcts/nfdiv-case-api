@@ -3,11 +3,6 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.JOINT_APPLICATION_CONDITION;
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLE_APPLICATION_CONDITION;
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_JOINT_PREVIEW_BANNER;
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_PREVIEW_BANNER;
-
 public class SolSummary implements CcdPageConfiguration {
 
     @Override
@@ -15,14 +10,6 @@ public class SolSummary implements CcdPageConfiguration {
 
         pageBuilder
             .page("SolSummary")
-            .label(
-                "LabelNFDBanner-SolSummary",
-                SOLICITOR_NFD_PREVIEW_BANNER,
-                SOLE_APPLICATION_CONDITION)
-            .label(
-                "LabelNFDJointBanner-SolSummary",
-                SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
-                JOINT_APPLICATION_CONDITION)
             .label("LabelSolAppSummaryPara-1",
                 "# Before you submit\n\n"
                     + "## What happens next\n\n"

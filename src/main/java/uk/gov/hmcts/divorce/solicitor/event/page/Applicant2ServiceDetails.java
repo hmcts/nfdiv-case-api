@@ -9,10 +9,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.JOINT_APPLICATION_CONDITION;
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLE_APPLICATION_CONDITION;
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_JOINT_PREVIEW_BANNER;
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_PREVIEW_BANNER;
 
 public class Applicant2ServiceDetails implements CcdPageConfiguration {
 
@@ -22,14 +18,6 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
         pageBuilder
             .page("Applicant2ServiceDetails")
             .pageLabel("Service details")
-            .label(
-                "LabelNFDBanner-Applicant2ServiceDetails",
-                SOLICITOR_NFD_PREVIEW_BANNER,
-                SOLE_APPLICATION_CONDITION)
-            .label(
-                "LabelNFDJointBanner-Applicant2ServiceDetails",
-                SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
-                JOINT_APPLICATION_CONDITION)
             .complex(CaseData::getApplicant2)
                 .mandatoryWithLabel(Applicant::getSolicitorRepresented, "Is ${labelContentTheApplicant2} represented by a solicitor?")
                 .complex(Applicant::getSolicitor)

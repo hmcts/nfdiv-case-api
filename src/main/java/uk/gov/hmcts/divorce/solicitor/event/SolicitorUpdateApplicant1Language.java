@@ -17,7 +17,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUS
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ_UPDATE;
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_PREVIEW_BANNER;
 
 @Component
 public class SolicitorUpdateApplicant1Language implements CCDConfig<CaseData, State, UserRole> {
@@ -41,7 +40,6 @@ public class SolicitorUpdateApplicant1Language implements CCDConfig<CaseData, St
                 CASEWORKER_LEGAL_ADVISOR))
             .page("langPref")
             .pageLabel("Select Language")
-            .label("LabelNFDBanner-UpdateApplicant1Language", SOLICITOR_NFD_PREVIEW_BANNER)
             .complex(CaseData::getApplicant1)
                 .mandatory(Applicant::getLanguagePreferenceWelsh)
                 .done();
