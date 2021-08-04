@@ -20,7 +20,6 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATIO
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FIRST_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.LAST_NAME;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.PARTNER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SWITCH_TO_SOLE_APPLICATION_DISSOLUTION_URL;
@@ -46,9 +45,9 @@ public class Applicant2RequestChangesNotification {
 
     public void sendToApplicant1(CaseData caseData, Long id) {
         Map<String, String> configTemplateVars = emailTemplatesConfig.getTemplateVars();
-        Map<String, String> templateVars = commonContent.templateVarsFor(caseData);
+        Map<String, String> templateVars = commonContent.templateVarsForApplicant(
+            caseData, caseData.getApplicant1(), caseData.getApplicant2());
 
-        templateVars.put(PARTNER, commonContent.getTheirPartner(caseData, caseData.getApplicant2()));
         templateVars.put(APPLICANT_2_COMMENTS, caseData.getApplication().getApplicant2ExplainsApplicant1IncorrectInformation());
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
@@ -74,10 +73,10 @@ public class Applicant2RequestChangesNotification {
     }
 
     public void sendToApplicant2(CaseData caseData, Long id) {
-        Map<String, String> templateVars = commonContent.templateVarsFor(caseData);
+        Map<String, String> templateVars = commonContent.templateVarsForApplicant(
+            caseData, caseData.getApplicant2(), caseData.getApplicant1());
         templateVars.put(FIRST_NAME, caseData.getApplicant2().getFirstName());
         templateVars.put(LAST_NAME, caseData.getApplicant2().getLastName());
-        templateVars.put(PARTNER, commonContent.getTheirPartner(caseData, caseData.getApplicant1()));
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), FOR_DIVORCE);
