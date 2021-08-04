@@ -5,11 +5,6 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.JOINT_APPLICATION_CONDITION;
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLE_APPLICATION_CONDITION;
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_JOINT_PREVIEW_BANNER;
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_PREVIEW_BANNER;
-
 public class SolAboutApplicant2 implements CcdPageConfiguration {
 
     @Override
@@ -18,14 +13,6 @@ public class SolAboutApplicant2 implements CcdPageConfiguration {
         pageBuilder
             .page("SolAboutApplicant2")
             .pageLabel("About the other party")
-            .label(
-                "LabelNFDBanner-AboutApplicant2",
-                SOLICITOR_NFD_PREVIEW_BANNER,
-                SOLE_APPLICATION_CONDITION)
-            .label(
-                "LabelNFDJointBanner-AboutApplicant2",
-                SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
-                JOINT_APPLICATION_CONDITION)
             .complex(CaseData::getApplicant2)
                 .mandatoryWithLabel(Applicant::getFirstName,
                     "${labelContentTheApplicant2UC}'s first name")

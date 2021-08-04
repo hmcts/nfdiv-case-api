@@ -11,7 +11,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_PREVIEW_BANNER;
 
 @Component
 public class ScheduledForCreate implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
@@ -30,7 +29,6 @@ public class ScheduledForCreate implements CCDConfig<BulkActionCaseData, BulkAct
                 CASEWORKER_COURTADMIN_CTSC))
             .page("scheduleCreate")
             .pageLabel("Schedule bulk list")
-            .label("LabelNFDBanner-ScheduleCreate", SOLICITOR_NFD_PREVIEW_BANNER)
             .optional(BulkActionCaseData::getCaseTitle);// Temporarily setting field needs to be changed later
     }
 }

@@ -7,13 +7,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.DARK_HORIZONTAL_RULE;
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.JOINT_APPLICATION_CONDITION;
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLE_APPLICATION_CONDITION;
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_JOINT_PREVIEW_BANNER;
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_PREVIEW_BANNER;
-
 public class SolAboutApplicant1 implements CcdPageConfiguration {
+
+    private static final String DARK_HORIZONTAL_RULE =
+        "![Dark Rule](https://raw.githubusercontent.com/hmcts/nfdiv-case-api/master/resources/image/LabelDarkHorizontalRule.png)";
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {
@@ -21,14 +18,6 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
         pageBuilder
             .page("SolAboutApplicant1")
             .pageLabel("About the applicant")
-            .label(
-                "LabelNFDBanner-SolAboutApplicant1",
-                SOLICITOR_NFD_PREVIEW_BANNER,
-                SOLE_APPLICATION_CONDITION)
-            .label(
-                "LabelNFDJointBanner-SolAboutApplicant1",
-                SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
-                JOINT_APPLICATION_CONDITION)
             .complex(CaseData::getApplicant1)
                 .mandatoryWithLabel(Applicant::getFirstName,
                     "The applicant's first name")
