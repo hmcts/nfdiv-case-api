@@ -17,7 +17,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_PERSONAL_SERVICE;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
@@ -32,7 +32,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedBySolicitor;
 
 @ExtendWith(MockitoExtension.class)
-class PersonalServiceNotificationTest {
+class SolicitorServiceNotificationTest {
 
     @Mock
     private NotificationService notificationService;
@@ -41,7 +41,7 @@ class PersonalServiceNotificationTest {
     private CommonContent commonContent;
 
     @InjectMocks
-    private PersonalServiceNotification personalServiceNotification;
+    private SolicitorServiceNotification solicitorServiceNotification;
 
     @Test
     void shouldSendPersonalServiceNotificationToApplicantSolicitor() {
@@ -52,11 +52,11 @@ class PersonalServiceNotificationTest {
 
         when(commonContent.commonNotificationTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
 
-        personalServiceNotification.send(caseData, TEST_CASE_ID);
+        solicitorServiceNotification.send(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,
-            APPLICANT_SOLICITOR_PERSONAL_SERVICE,
+            APPLICANT_SOLICITOR_SERVICE,
             personalServiceTemplateVars(),
             ENGLISH
         );

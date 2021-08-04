@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.notification.NoticeOfProceedingsNotification;
-import uk.gov.hmcts.divorce.caseworker.service.notification.PersonalServiceNotification;
+import uk.gov.hmcts.divorce.caseworker.service.notification.SolicitorServiceNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
-import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -25,7 +25,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondent;
 class SendAosNotificationsTest {
 
     @Mock
-    private PersonalServiceNotification personalServiceNotification;
+    private SolicitorServiceNotification solicitorServiceNotification;
 
     @Mock
     private NoticeOfProceedingsNotification noticeOfProceedingsNotification;
@@ -37,7 +37,7 @@ class SendAosNotificationsTest {
     void shouldSendPersonalServiceNotificationIfPersonalServiceApplication() {
 
         final var caseData = caseData();
-        caseData.getApplication().setSolServiceMethod(PERSONAL_SERVICE);
+        caseData.getApplication().setSolServiceMethod(SOLICITOR_SERVICE);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -47,7 +47,7 @@ class SendAosNotificationsTest {
         final CaseDetails<CaseData, State> result = sendAosNotifications.apply(caseDetails);
 
         assertThat(result.getData()).isEqualTo(caseData);
-        verify(personalServiceNotification).send(caseData, TEST_CASE_ID);
+        verify(solicitorServiceNotification).send(caseData, TEST_CASE_ID);
         verifyNoInteractions(noticeOfProceedingsNotification);
     }
 
@@ -67,6 +67,6 @@ class SendAosNotificationsTest {
 
         assertThat(result.getData()).isEqualTo(caseData);
         verify(noticeOfProceedingsNotification).send(caseData, TEST_CASE_ID);
-        verifyNoInteractions(personalServiceNotification);
+        verifyNoInteractions(solicitorServiceNotification);
     }
 }
