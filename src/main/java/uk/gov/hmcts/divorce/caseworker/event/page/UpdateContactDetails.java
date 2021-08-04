@@ -90,7 +90,7 @@ public class UpdateContactDetails  implements CcdPageConfiguration {
                     "### Confidential Address - Take extra care to ensure the applicant's "
                         + "contact details below are not shared with the respondent",
                     "applicant1ContactDetailsConfidential=\"keep\"")
-                .optional(Applicant::getHomeAddress)
+                .mandatory(Applicant::getHomeAddress)
                 .optional(Applicant::getCorrespondenceAddress)
                 .optional(Applicant::getEmail)
                 .optional(Applicant::getPhoneNumber)
@@ -119,7 +119,7 @@ public class UpdateContactDetails  implements CcdPageConfiguration {
                     "### Confidential Address - Take extra care to ensure the respondent's contact "
                         + "details below are not shared with the applicant",
                     "applicant2ContactDetailsConfidential=\"keep\"")
-                .optionalWithLabel(Applicant::getHomeAddress,
+                .mandatoryWithLabel(Applicant::getHomeAddress,
                     "Respondent's home address")
                 .optionalWithLabel(Applicant::getCorrespondenceAddress,
                     "Respondent's service address")
