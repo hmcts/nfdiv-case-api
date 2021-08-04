@@ -14,7 +14,6 @@ import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
-import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.ConfidentialAddress;
@@ -55,6 +54,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConfidentialAddress.SHARE;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
@@ -194,6 +194,7 @@ public class TestDataHelper {
         var marriageDetails = new MarriageDetails();
         marriageDetails.setDate(LocalDate.of(1990, 6, 10));
         marriageDetails.setApplicant1Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME);
+        marriageDetails.setApplicant2Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME);
 
         var jurisdiction = new Jurisdiction();
         jurisdiction.setApplicant1Residence(YES);
@@ -221,6 +222,7 @@ public class TestDataHelper {
             .caseInvite(CaseInvite.builder().applicant2InviteEmailAddress(TEST_USER_EMAIL).build())
             .divorceOrDissolution(DIVORCE)
             .application(application)
+            .applicationType(JOINT_APPLICATION)
             .build();
     }
 
@@ -234,9 +236,7 @@ public class TestDataHelper {
 
     public static CaseData validApplicant2CaseData() {
         CaseData caseData = validApplicant1CaseData();
-        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
-        caseData.setApplicant2(getApplicant2(MALE));
-        caseData.getApplication().getMarriageDetails().setApplicant2Name("test_first_name test_last_name");
+        caseData.setApplicant2(getApplicant(MALE));
         caseData.getApplication().setApplicant2StatementOfTruth(YES);
         caseData.getApplication().setApplicant2PrayerHasBeenGiven(YES);
         return caseData;
