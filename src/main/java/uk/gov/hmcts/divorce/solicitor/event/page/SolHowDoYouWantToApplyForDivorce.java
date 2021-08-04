@@ -9,8 +9,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_PREVIEW_BANNER;
-
 @Slf4j
 public class SolHowDoYouWantToApplyForDivorce implements CcdPageConfiguration {
 
@@ -20,7 +18,6 @@ public class SolHowDoYouWantToApplyForDivorce implements CcdPageConfiguration {
         pageBuilder
             .page("howDoYouWantToApplyForDivorce", this::midEvent)
             .pageLabel("How do you want to apply for the divorce?")
-            .label("LabelNFDBanner-ApplyForDivorce", SOLICITOR_NFD_PREVIEW_BANNER)
             .complex(CaseData::getLabelContent)
                 .readonly(LabelContent::getApplicant2, NEVER_SHOW)
                 .readonly(LabelContent::getApplicant2UC, NEVER_SHOW)
