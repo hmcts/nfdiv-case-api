@@ -46,7 +46,7 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
                         .optional(OrganisationPolicy::getOrgPolicyReference, NEVER_SHOW)
                         .done()
                     .done()
-                .optional(Applicant::getHomeAddress, "applicant2SolicitorRepresented=\"No\"")
+                .mandatoryWithLabel(Applicant::getHomeAddress, "applicant2SolicitorRepresented=\"No\"")
                 .optional(Applicant::getEmail, "applicant2SolicitorRepresented=\"No\"")
                 .mandatory(Applicant::getCorrespondenceAddress, "applicant2SolicitorRepresented=\"No\"")
             .done();
