@@ -23,8 +23,6 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PARTNER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DIVORCE_URL;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.SWITCH_TO_SOLE_APPLICATION_DISSOLUTION_URL;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.SWITCH_TO_SOLE_APPLICATION_DIVORCE_URL;
 
 @Component
 @Slf4j
@@ -55,12 +53,12 @@ public class Applicant2RequestChangesNotification {
             templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), FOR_DIVORCE);
             templateVars.put(APPLICATION_TYPE.toLowerCase(Locale.ROOT), DIVORCE_APPLICATION);
             templateVars.put(SIGN_IN_LINK, configTemplateVars.get(SIGN_IN_DIVORCE_URL));
-            templateVars.put(END_JOINT_APPLICATION_LINK, configTemplateVars.get(SWITCH_TO_SOLE_APPLICATION_DIVORCE_URL));
+            templateVars.put(END_JOINT_APPLICATION_LINK, configTemplateVars.get(SIGN_IN_DIVORCE_URL));
         } else {
             templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), END_CIVIL_PARTNERSHIP);
             templateVars.put(APPLICATION_TYPE.toLowerCase(Locale.ROOT), APPLICATION_TO_END_CIVIL_PARTNERSHIP);
             templateVars.put(SIGN_IN_LINK, configTemplateVars.get(SIGN_IN_DISSOLUTION_URL));
-            templateVars.put(END_JOINT_APPLICATION_LINK, configTemplateVars.get(SWITCH_TO_SOLE_APPLICATION_DISSOLUTION_URL));
+            templateVars.put(END_JOINT_APPLICATION_LINK, configTemplateVars.get(SIGN_IN_DISSOLUTION_URL));
         }
 
         log.info("Sending notification to applicant 1 to request changes: {}", id);
