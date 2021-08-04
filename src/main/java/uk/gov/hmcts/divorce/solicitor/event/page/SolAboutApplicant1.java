@@ -28,21 +28,17 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
                 .mandatoryWithLabel(Applicant::getNameDifferentToMarriageCertificate,
                     "Is the applicant's name different to that on their marriage certificate?")
                 .mandatoryWithoutDefaultValue(Applicant::getNameChangedHow,
-                    "applicant1NameDifferentToMarriageCertificate=\"Yes\"",
-                    "How did they change their name?")
+                "applicant1NameDifferentToMarriageCertificate=\"Yes\"",
+                "How did they change their name?")
                 .mandatoryWithoutDefaultValue(Applicant::getNameChangedHowOtherDetails,
-                    "applicant1NameChangedHow=\"other\"",
-                    "If not through marriage or deed poll, please provide details of how they legally changed they name")
+                "applicant1NameChangedHow=\"other\"",
+                "If not through marriage or deed poll, please provide details of how they legally changed they name")
+                .mandatoryWithLabel(Applicant::getGender,
+                "What is the applicant's gender?")
                 .done()
             .complex(CaseData::getApplication)
                 .mandatoryWithLabel(Application::getDivorceWho,
-                    "Their husband or wife")
-                .done()
-            .complex(CaseData::getApplicant1)
-                .mandatoryWithLabel(Applicant::getGender,
-                    "What is the applicant's gender?")
-                .done()
-            .complex(CaseData::getApplication)
+                "Who are you applying to divorce? (husband/wife)")
                 .complex(Application::getMarriageDetails)
                     .mandatory(MarriageDetails::getIsSameSexCouple)
                     .done()
