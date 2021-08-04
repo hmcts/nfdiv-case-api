@@ -31,7 +31,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
 @Data
@@ -316,10 +316,10 @@ public class Application {
         return applicationPayments == null
             ? 0
             : applicationPayments
-                .stream()
-                .filter(p -> p.getValue().getStatus().equals(SUCCESS))
-                .map(p -> p.getValue().getAmount())
-                .reduce(0, Integer::sum);
+            .stream()
+            .filter(p -> p.getValue().getStatus().equals(SUCCESS))
+            .map(p -> p.getValue().getAmount())
+            .reduce(0, Integer::sum);
     }
 
     @JsonIgnore
@@ -351,7 +351,7 @@ public class Application {
     }
 
     @JsonIgnore
-    public boolean isPersonalServiceMethod() {
-        return PERSONAL_SERVICE.equals(solServiceMethod);
+    public boolean isSolicitorServiceMethod() {
+        return SOLICITOR_SERVICE.equals(solServiceMethod);
     }
 }

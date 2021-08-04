@@ -17,7 +17,7 @@ import java.time.LocalDate;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
-import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -42,10 +42,10 @@ class SetDueDateTest {
     }
 
     @Test
-    void shouldNotSetDueDateIfPersonalService() {
+    void shouldNotSetDueDateIfSolicitorService() {
 
         final var caseData = caseData();
-        caseData.getApplication().setSolServiceMethod(PERSONAL_SERVICE);
+        caseData.getApplication().setSolServiceMethod(SOLICITOR_SERVICE);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
