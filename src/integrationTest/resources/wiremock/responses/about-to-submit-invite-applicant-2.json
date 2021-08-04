@@ -2,7 +2,7 @@
   "data": {
     "divorceOrDissolution": "divorce",
     "marriageApplicant1Name": "test_first_name test_last_name",
-    "marriageApplicant2Name": null,
+    "marriageApplicant2Name": "test_first_name test_last_name",
     "marriageMarriedInUk": null,
     "marriageCertificateInEnglish": null,
     "marriageCertifiedTranslation": null,
