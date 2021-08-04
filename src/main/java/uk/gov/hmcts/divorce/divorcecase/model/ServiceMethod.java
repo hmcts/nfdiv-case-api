@@ -9,8 +9,8 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 @AllArgsConstructor
 public enum ServiceMethod implements HasLabel {
 
-    @JsonProperty("personalService")
-    PERSONAL_SERVICE("Personal Service"),
+    @JsonProperty("solicitorService")
+    SOLICITOR_SERVICE("Solicitor Service"),
 
     @JsonProperty("courtService")
     COURT_SERVICE("Court Service");

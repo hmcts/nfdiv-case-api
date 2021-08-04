@@ -86,11 +86,7 @@
     "jurisdictionBothLastHabituallyResident": null,
     "jurisdictionConnections": null,
     "jurisdictionLegalConnections": null,
-    "divorceCostsClaim": "Yes",
     "applicant1FinancialOrder": "No",
-    "divorceClaimFrom": [
-      "applicant2"
-    ],
     "divorceUnit": "serviceCentre",
     "selectedDivorceCentreSiteId": "AA07",
     "documentsGenerated": [

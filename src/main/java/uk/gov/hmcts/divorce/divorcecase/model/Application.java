@@ -10,22 +10,29 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.payment.model.Payment;
+import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
+import static java.lang.Integer.parseInt;
 import static org.springframework.util.CollectionUtils.isEmpty;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
+import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
 @Data
 @AllArgsConstructor
@@ -93,12 +100,6 @@ public class Application {
         access = {DefaultAccess.class}
     )
     private String solUrgentCaseSupportingInformation;
-
-    @CCD(
-        label = "Does the applicant want to claim costs?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo divorceCostsClaim;
 
     @CCD(
         label = "The applicant wants/will to apply to have the papers served to the respondent another way.",
@@ -233,12 +234,6 @@ public class Application {
     private YesOrNo applicant1KnowsApplicant2Address;
 
     @CCD(
-        label = "Claim costs from",
-        access = {DefaultAccess.class}
-    )
-    private Set<ClaimsCostFrom> divorceClaimFrom;
-
-    @CCD(
         label = "Applicant 2 is using digital channel?",
         access = {DefaultAccess.class}
     )
@@ -255,7 +250,6 @@ public class Application {
         access = {DefaultAccess.class, Applicant2Access.class}
     )
     private Set<DocumentType> applicant2CannotUploadSupportingDocument;
-
 
     @CCD(
         label = "All documents uploaded",
@@ -308,6 +302,37 @@ public class Application {
     )
     private State previousState;
 
+    @CCD(
+        label = "Payments",
+        typeOverride = Collection,
+        typeParameterOverride = "Payment",
+        access = {DefaultAccess.class}
+    )
+    private List<ListValue<Payment>> applicationPayments;
+
+    @JsonIgnore
+    public boolean hasBeenPaidFor() {
+        return parseInt(applicationFeeOrderSummary.getPaymentTotal()) == getPaymentTotal();
+    }
+
+    @JsonIgnore
+    private Integer getPaymentTotal() {
+        return applicationPayments == null
+            ? 0
+            : applicationPayments
+            .stream()
+            .filter(p -> p.getValue().getStatus().equals(SUCCESS))
+            .map(p -> p.getValue().getAmount())
+            .reduce(0, Integer::sum);
+    }
+
+    @JsonIgnore
+    public PaymentStatus getLastPaymentStatus() {
+        return applicationPayments == null || applicationPayments.isEmpty()
+            ? null
+            : applicationPayments.get(applicationPayments.size() - 1).getValue().getStatus();
+    }
+
     @JsonIgnore
     public boolean applicant1HasStatementOfTruth() {
         return YES.equals(applicant1StatementOfTruth);
@@ -330,7 +355,7 @@ public class Application {
     }
 
     @JsonIgnore
-    public boolean isPersonalServiceMethod() {
-        return PERSONAL_SERVICE.equals(solServiceMethod);
+    public boolean isSolicitorServiceMethod() {
+        return SOLICITOR_SERVICE.equals(solServiceMethod);
     }
 }

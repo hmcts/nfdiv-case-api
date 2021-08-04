@@ -15,7 +15,6 @@ import java.util.function.Supplier;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.LINE_1_LINE_2_CITY_POSTCODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
@@ -34,7 +33,6 @@ class CitizenRespondentAosInvitationTemplateContentTest {
     void shouldReturnRespondentSolicitorAosInvitationTemplateContent() {
 
         final CaseData caseData = caseData();
-        caseData.getApplication().setDivorceCostsClaim(YES);
         caseData.getApplicant1().setFinancialOrder(NO);
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()

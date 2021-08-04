@@ -22,7 +22,6 @@ import uk.gov.hmcts.divorce.testutil.CaseDataWireMock;
 import uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock;
 import uk.gov.hmcts.divorce.testutil.FeesWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
-import uk.gov.hmcts.divorce.testutil.TestConstants;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.io.IOException;
@@ -227,43 +226,15 @@ public class SolicitorSubmitApplicationTest {
     @Test
     void givenValidCaseDataWhenAboutToSubmitCallbackIsInvokedThenStateIsChangedAndEmailIsSentToApplicant()
         throws Exception {
+        var data = caseDataWithStatementOfTruth();
+        data.getApplication().setApplicationPayments(null);
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
             .content(objectMapper.writeValueAsString(callbackRequest(
-                caseDataWithStatementOfTruth(),
-                SOLICITOR_SUBMIT,
-                Draft.name())))
-            .accept(APPLICATION_JSON))
-            .andExpect(
-                status().isOk()
-            )
-            .andExpect(
-                content().json(expectedCcdAboutToSubmitCallbackResponse())
-            );
-
-        verify(notificationService)
-            .sendEmail(
-                eq(TEST_SOLICITOR_EMAIL),
-                eq(SOL_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED),
-                anyMap(),
-                eq(ENGLISH));
-
-        verifyNoMoreInteractions(notificationService);
-    }
-
-    @Test
-    void givenValidCaseDataAndValidPaymentWhenAboutToSubmitCallbackIsInvokedThenStateIsChangedAndEmailIsSentToApplicant()
-        throws Exception {
-
-        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(TestConstants.AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(
-                caseDataWithStatementOfTruth(),
+                data,
                 SOLICITOR_SUBMIT,
                 Draft.name())))
             .accept(APPLICATION_JSON))
@@ -291,6 +262,7 @@ public class SolicitorSubmitApplicationTest {
         final var caseData = caseDataWithStatementOfTruth();
         final var documentUuid = setupAuthorizationAndApplicationDocument(caseData);
         stubDeleteFromDocumentManagement(documentUuid, OK);
+        caseData.getApplication().setApplicationPayments(null);
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)

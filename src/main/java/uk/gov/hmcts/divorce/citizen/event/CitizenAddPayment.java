@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotificatio
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,6 +29,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUS
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
+import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.IN_PROGRESS;
+import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
 @Component
 @Slf4j
@@ -66,13 +69,14 @@ public class CitizenAddPayment implements CCDConfig<CaseData, State, UserRole> {
         State state = details.getState();
         List<String> errors = Stream.concat(submittedErrors.stream(), awaitingDocumentsErrors.stream())
             .collect(Collectors.toList());
+        PaymentStatus lastPaymentStatus = data.getApplication().getLastPaymentStatus();
 
-        if (data.isLastPaymentInProgress()) {
+        if (IN_PROGRESS.equals(lastPaymentStatus)) {
             log.info("Case {} payment in progress", details.getId());
 
             state = AwaitingPayment;
             errors.clear();
-        } else if (data.wasLastPaymentUnsuccessful()) {
+        } else if (!SUCCESS.equals(lastPaymentStatus)) {
             log.info("Case {} payment canceled", details.getId());
 
             state = Draft;

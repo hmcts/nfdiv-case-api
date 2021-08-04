@@ -42,11 +42,7 @@
     "applicant2NameChangedHowOtherDetails": null,
     "applicant2PhoneNumber": null,
     "applicant2ContactDetailsConfidential": null,
-    "divorceCostsClaim": "Yes",
     "applicant1FinancialOrder": "No",
-    "divorceClaimFrom": [
-      "applicant2"
-    ],
     "divorceUnit": "serviceCentre",
     "selectedDivorceCentreSiteId": "AA07",
     "applicant1HWFAppliedForFees": null,
