@@ -12,11 +12,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import java.util.ArrayList;
 import java.util.List;
 
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.JOINT_APPLICATION_CONDITION;
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLE_APPLICATION_CONDITION;
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_JOINT_PREVIEW_BANNER;
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_PREVIEW_BANNER;
-
 @Slf4j
 public class MarriageIrretrievablyBroken implements CcdPageConfiguration {
     @Override
@@ -25,14 +20,6 @@ public class MarriageIrretrievablyBroken implements CcdPageConfiguration {
         pageBuilder
             .page("MarriageIrretrievablyBroken", this::midEvent)
             .pageLabel("Has the marriage irretrievably broken down (it cannot be saved)?")
-            .label(
-                "LabelNFDBanner-MarriageIrretrievablyBroken",
-                SOLICITOR_NFD_PREVIEW_BANNER,
-                SOLE_APPLICATION_CONDITION)
-            .label(
-                "LabelNFDJointBanner-MarriageIrretrievablyBroken",
-                SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
-                JOINT_APPLICATION_CONDITION)
             .label(
                 "marriageIrretrievablyBrokenPara-1",
                 "The marriage must have irretrievably broken down for the applicant to get a divorce. "

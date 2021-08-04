@@ -6,11 +6,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.JOINT_APPLICATION_CONDITION;
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLE_APPLICATION_CONDITION;
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_JOINT_PREVIEW_BANNER;
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_PREVIEW_BANNER;
-
 public class SolStatementOfTruth implements CcdPageConfiguration {
 
     private static final String ALWAYS_HIDE = "applicant1StatementOfTruth=\"ALWAYS_HIDE\"";
@@ -22,14 +17,6 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
             .page("SolStatementOfTruth")
             .pageLabel("Statement of truth and reconciliation")
             .readonlyNoSummary(CaseData::getApplicationType, ALWAYS_HIDE)
-            .label(
-                "LabelNFDBanner-SolStatementOfTruth",
-                SOLICITOR_NFD_PREVIEW_BANNER,
-                SOLE_APPLICATION_CONDITION)
-            .label(
-                "LabelNFDJointBanner-SolStatementOfTruth",
-                SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
-                JOINT_APPLICATION_CONDITION)
             .label("LabelSolStatementOfTruthPara-1", "## The applicant is applying to the court")
             .label(
                 "LabelSolStatementOfTruthPara-1.1",
