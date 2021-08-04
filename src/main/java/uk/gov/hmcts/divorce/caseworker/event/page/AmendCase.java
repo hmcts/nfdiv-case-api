@@ -21,7 +21,7 @@ public class AmendCase implements CcdPageConfiguration {
                 .optional(Applicant::getFirstName)
                 .optional(Applicant::getMiddleName)
                 .optional(Applicant::getLastName)
-                .optional(Applicant::getHomeAddress)
+                .mandatory(Applicant::getHomeAddress)
                 .optional(Applicant::getCorrespondenceAddress)
                 .optional(Applicant::getPhoneNumber)
                 .optional(Applicant::getEmail)
@@ -33,7 +33,7 @@ public class AmendCase implements CcdPageConfiguration {
                     "Respondent's middle name(s)")
                 .optionalWithLabel(Applicant::getLastName,
                     "Respondent's last name")
-                .optionalWithLabel(Applicant::getHomeAddress,
+                .mandatoryWithLabel(Applicant::getHomeAddress,
                     "Respondent's home address")
                 .optionalWithLabel(Applicant::getCorrespondenceAddress,
                     "Respondent's service address")
