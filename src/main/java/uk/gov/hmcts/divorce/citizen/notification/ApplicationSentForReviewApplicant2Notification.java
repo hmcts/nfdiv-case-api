@@ -27,8 +27,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_AC
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_YOUR_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_YOUR_DIVORCE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.PARTNER;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.REMINDER;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.REMINDER_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.TO_END_CIVIL_PARTNERSHIP;
 
@@ -46,7 +45,8 @@ public class ApplicationSentForReviewApplicant2Notification {
     private EmailTemplatesConfig emailTemplatesConfig;
 
     public void send(CaseData caseData, Long id) {
-        Map<String, String> templateVars = commonContent.templateVarsFor(caseData);
+        Map<String, String> templateVars = commonContent.templateVarsForApplicant(
+            caseData, caseData.getApplicant2(), caseData.getApplicant1());
 
         templateVars.put(APPLICATION_REFERENCE, formatId(id));
 
@@ -69,9 +69,8 @@ public class ApplicationSentForReviewApplicant2Notification {
 
     private void setDefaultVariables(Map<String, String> templateVars, CaseData caseData) {
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(dateTimeFormatter));
-        templateVars.put(PARTNER, commonContent.getTheirPartner(caseData, caseData.getApplicant1()));
         templateVars.put(ACCESS_CODE, caseData.getCaseInvite().getAccessCode());
-        templateVars.put(REMINDER, APPLICATION);
+        templateVars.put(REMINDER_APPLICATION, APPLICATION);
     }
 
     private void setDivorceVariables(Map<String, String> templateVars) {
