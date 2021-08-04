@@ -24,6 +24,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_SOLICITOR_AMENDED_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.FIRST_NAME;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 
 @ExtendWith(MockitoExtension.class)
@@ -59,6 +61,8 @@ class SolicitorSubmittedNotificationTest {
         solicitorSubmittedNotification.send(caseData, 1234567890123456L);
 
         assertThat(templateVars.get(APPLICATION_REFERENCE), is("1234-5678-9012-3456"));
+        assertThat(templateVars.get(FIRST_NAME), is("test_first_name"));
+        assertThat(templateVars.get(LAST_NAME), is("test_last_name"));
 
         verify(notificationService).sendEmail(
             applicant1SolicitorEmail,
@@ -89,6 +93,8 @@ class SolicitorSubmittedNotificationTest {
         solicitorSubmittedNotification.send(caseData, 1234567890123456L);
 
         assertThat(templateVars.get(APPLICATION_REFERENCE), is("1234-5678-9012-3456"));
+        assertThat(templateVars.get(FIRST_NAME), is("test_first_name"));
+        assertThat(templateVars.get(LAST_NAME), is("test_last_name"));
 
         verify(notificationService).sendEmail(
             applicant1SolicitorEmail,

@@ -16,6 +16,8 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.FIRST_NAME;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.LAST_NAME;
 
 @Slf4j
 @Component
@@ -39,6 +41,8 @@ public class SolicitorSubmittedNotification {
         final Solicitor solicitor = caseData.getApplicant1().getSolicitor();
         final Map<String, String> templateVars = commonContent.templateVarsFor(caseData);
         templateVars.put(APPLICATION_REFERENCE, formatId(caseId));
+        templateVars.put(FIRST_NAME, caseData.getApplicant1().getFirstName());
+        templateVars.put(LAST_NAME, caseData.getApplicant1().getLastName());
 
         if (solicitor != null && isNotEmpty(solicitor.getEmail())) {
 
