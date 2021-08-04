@@ -23,4 +23,9 @@ public class AddSystemUpdateRole {
 
         return existingRoles;
     }
+
+    public boolean isEnvironmentAat() {
+        String environment = System.getenv().getOrDefault("ENVIRONMENT", null);
+        return null != environment && environment.equalsIgnoreCase(ENVIRONMENT_AAT);
+    }
 }

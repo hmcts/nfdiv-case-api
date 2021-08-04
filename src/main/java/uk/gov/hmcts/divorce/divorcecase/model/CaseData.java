@@ -16,11 +16,11 @@ import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessBetaOnlyAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAndSuperUserAccess;
-import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerCourtAdminAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerCourtAdminWithSolicitorAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+import uk.gov.hmcts.divorce.document.model.CaseworkerUploadedDocument;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
-import uk.gov.hmcts.divorce.payment.model.Payment;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -31,8 +31,6 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
-import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.IN_PROGRESS;
-import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -142,29 +140,27 @@ public class CaseData {
     )
     private List<ListValue<DivorceDocument>> documentsGenerated;
 
+    @CCD(
+        label = "Documents uploaded",
+        typeOverride = Collection,
+        typeParameterOverride = "CaseworkerUploadedDocument",
+        access = {DefaultAccess.class}
+    )
+    private List<ListValue<CaseworkerUploadedDocument>> documentsUploaded;
 
     @CCD(
         label = "Confidential documents uploaded",
         typeOverride = Collection,
         typeParameterOverride = "ConfidentialDivorceDocument",
-        access = {CaseworkerCourtAdminAccess.class}
+        access = {CaseworkerCourtAdminWithSolicitorAccess.class}
     )
     private List<ListValue<ConfidentialDivorceDocument>> confidentialDocumentsUploaded;
-
 
     @CCD(
         label = "General Orders",
         access = {CaseworkerAccessBetaOnlyAccess.class}
     )
     private List<ListValue<DivorceGeneralOrder>> generalOrders;
-
-    @CCD(
-        label = "Payments",
-        typeOverride = Collection,
-        typeParameterOverride = "Payment",
-        access = {DefaultAccess.class}
-    )
-    private List<ListValue<Payment>> payments;
 
     @CCD(
         label = "Case ID for previously Amended Case, which was challenged by the respondent",
@@ -198,37 +194,6 @@ public class CaseData {
     @JsonIgnore
     public boolean isAmendedCase() {
         return null != previousCaseId;
-    }
-
-    @JsonIgnore
-    public Integer getPaymentTotal() {
-        return payments == null
-            ? 0
-            : payments
-            .stream()
-            .filter(p -> SUCCESS.equals(p.getValue().getPaymentStatus()))
-            .map(p -> p.getValue().getPaymentAmount())
-            .reduce(0, Integer::sum);
-    }
-
-    @JsonIgnore
-    public Boolean isLastPaymentInProgress() {
-        return payments != null && payments
-            .stream()
-            .reduce((previous, current) -> current)
-            .get()
-            .getValue()
-            .getPaymentStatus() == IN_PROGRESS;
-    }
-
-    @JsonIgnore
-    public Boolean wasLastPaymentUnsuccessful() {
-        return payments != null && payments
-            .stream()
-            .reduce((previous, current) -> current)
-            .get()
-            .getValue()
-            .getPaymentStatus() != SUCCESS;
     }
 
     @JsonIgnore

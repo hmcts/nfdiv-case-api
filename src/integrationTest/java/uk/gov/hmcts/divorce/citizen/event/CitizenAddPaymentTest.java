@@ -97,11 +97,11 @@ public class CitizenAddPaymentTest {
         data.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
         Payment payment = Payment.builder()
-            .paymentAmount(55000)
-            .paymentStatus(IN_PROGRESS)
+            .amount(55000)
+            .status(IN_PROGRESS)
             .build();
 
-        data.setPayments(singletonList(new ListValue<>("1", payment)));
+        data.getApplication().setApplicationPayments(singletonList(new ListValue<>("1", payment)));
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -123,11 +123,11 @@ public class CitizenAddPaymentTest {
         data.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
         Payment payment = Payment.builder()
-            .paymentAmount(55000)
-            .paymentStatus(CANCELLED)
+            .amount(55000)
+            .status(CANCELLED)
             .build();
 
-        data.setPayments(singletonList(new ListValue<>("1", payment)));
+        data.getApplication().setApplicationPayments(singletonList(new ListValue<>("1", payment)));
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -149,11 +149,11 @@ public class CitizenAddPaymentTest {
         data.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
         Payment payment = Payment.builder()
-            .paymentAmount(55000)
-            .paymentStatus(SUCCESS)
+            .amount(55000)
+            .status(SUCCESS)
             .build();
 
-        data.setPayments(singletonList(new ListValue<>("1", payment)));
+        data.getApplication().setApplicationPayments(singletonList(new ListValue<>("1", payment)));
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -180,11 +180,11 @@ public class CitizenAddPaymentTest {
         data.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
         Payment payment = Payment.builder()
-            .paymentAmount(55000)
-            .paymentStatus(SUCCESS)
+            .amount(55000)
+            .status(SUCCESS)
             .build();
 
-        data.setPayments(singletonList(new ListValue<>("1", payment)));
+        data.getApplication().setApplicationPayments(singletonList(new ListValue<>("1", payment)));
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -211,11 +211,11 @@ public class CitizenAddPaymentTest {
         data.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
         Payment payment = Payment.builder()
-            .paymentAmount(55000)
-            .paymentStatus(DECLINED)
+            .amount(55000)
+            .status(DECLINED)
             .build();
 
-        data.setPayments(singletonList(new ListValue<>("1", payment)));
+        data.getApplication().setApplicationPayments(singletonList(new ListValue<>("1", payment)));
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -238,11 +238,11 @@ public class CitizenAddPaymentTest {
         data.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
         Payment payment = Payment.builder()
-            .paymentAmount(55000)
-            .paymentStatus(SUCCESS)
+            .amount(55000)
+            .status(SUCCESS)
             .build();
 
-        data.setPayments(singletonList(new ListValue<>("1", payment)));
+        data.getApplication().setApplicationPayments(singletonList(new ListValue<>("1", payment)));
 
         doThrow(new NotificationException(new NotificationClientException("All template params not passed")))
             .when(notificationService).sendEmail(

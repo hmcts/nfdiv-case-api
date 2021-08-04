@@ -115,16 +115,15 @@ public class SolicitorSubmitApplicationServiceTest {
 
         final ListValue<Payment> payment = new ListValue<>(null, Payment
             .builder()
-            .paymentAmount(55000)
-            .paymentChannel("online")
-            .paymentFeeId("FEE0001")
-            .paymentReference("paymentRef")
-            .paymentSiteId("AA04")
-            .paymentStatus(PaymentStatus.SUCCESS)
-            .paymentTransactionId("ge7po9h5bhbtbd466424src9tk")
+            .amount(55000)
+            .channel("online")
+            .feeCode("FEE0001")
+            .reference("paymentRef")
+            .status(PaymentStatus.SUCCESS)
+            .transactionId("ge7po9h5bhbtbd466424src9tk")
             .build());
 
-        caseData.setPayments(singletonList(payment));
+        caseData.getApplication().setApplicationPayments(singletonList(payment));
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);

@@ -97,9 +97,6 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("marriageCertifiedTranslation", "marriageCertificateInEnglish=\"No\"")
             .field("marriageApplicant1Name")
             .field("marriageApplicant2Name")
-            .label("LabelClaimCosts-Heading", null, "### Claim costs")
-            .field("divorceCostsClaim")
-            .field("divorceClaimFrom", "divorceCostsClaim=\"Yes\"")
             .label("LabelOtherLegalProceedings-Heading", null, "### Other legal proceedings")
             .field("applicant1LegalProceedings")
             .field("applicant1LegalProceedingsRelated", "applicant1LegalProceedings=\"Yes\"")
@@ -147,7 +144,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("documents", "Documents")
             .field(CaseData::getDocumentsGenerated)
             .field(CaseData::getApplicant1DocumentsUploaded)
-            .field(CaseData::getGeneralOrders);
+            .field(CaseData::getGeneralOrders)
+            .field(CaseData::getDocumentsUploaded);
     }
 
     private void buildConfidentialTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -186,7 +184,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("generalApplicationAddedDate")
             .field("generalReferralType")
             .field("alternativeServiceMedium")
-            .field("generalReferralDetails")
+            .field("generalReferralJudgeDetails")
+            .field("generalReferralLegalAdvisorDetails")
             .field("generalReferralFeeRequired");
     }
 

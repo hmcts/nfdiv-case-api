@@ -33,12 +33,12 @@
       }
     ]
   },
-  "payments": [
+  "applicationPayments": [
     {
       "id": "1",
       "value": {
-        "paymentStatus": "inProgress",
-        "paymentAmount": 55000
+        "status": "inProgress",
+        "amount": 55000
       }
     }
   ]

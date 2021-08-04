@@ -20,7 +20,6 @@ public final class DocmosisTemplateConstants {
     public static final String APPLICANT_2_FULL_NAME = "applicant2FullName";
     public static final String MARRIAGE_DATE = "marriageDate";
     public static final String COURT_CASE_DETAILS = "courtCaseDetails";
-    public static final String HAS_COST_ORDERS = "hasCostOrders";
     public static final String HAS_FINANCIAL_ORDERS = "hasFinancialOrders";
     public static final String HAS_FINANCIAL_ORDERS_FOR_CHILD = "hasFinancialOrdersForChild";
     public static final String FINANCIAL_ORDER_CHILD = "financialOrderChild";

@@ -19,7 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
@@ -43,7 +42,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FINANCIAL_ORDER_CHILD;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FINANCIAL_ORDER_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_COST_ORDERS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_FINANCIAL_ORDERS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_FINANCIAL_ORDERS_FOR_CHILD;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
@@ -76,7 +74,6 @@ public class DraftApplicationTemplateContentTest {
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForDivorce() {
         CaseData caseData = caseData();
-        caseData.getApplication().setDivorceCostsClaim(YES);
         caseData.getApplicant1().setFinancialOrder(NO);
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
@@ -95,7 +92,6 @@ public class DraftApplicationTemplateContentTest {
             entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, OF_THE_DIVORCE),
             entry(FINANCIAL_ORDER_CHILD, CHILDREN_OF_THE_APPLICANT_1_AND_APPLICANT_2),
             entry(FINANCIAL_ORDER_OR_DISSOLUTION, CONDITIONAL_ORDER_OF_DIVORCE_FROM),
-            entry(HAS_COST_ORDERS, true),
             entry(HAS_FINANCIAL_ORDERS, false),
             entry(HAS_FINANCIAL_ORDERS_FOR_CHILD, false),
             entry(ISSUE_DATE, "28 April 2021"),
@@ -116,7 +112,6 @@ public class DraftApplicationTemplateContentTest {
     public void shouldSuccessfullyApplyContentFromCaseDataForDissolution() {
         CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DISSOLUTION);
-        caseData.getApplication().setDivorceCostsClaim(NO);
         caseData.getApplicant1().setFinancialOrder(NO);
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
@@ -135,7 +130,6 @@ public class DraftApplicationTemplateContentTest {
             entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, TO_END_THE_CIVIL_PARTNERSHIP),
             entry(FINANCIAL_ORDER_CHILD, CHILDREN_OF_THE_APPLICANT_1_AND_APPLICANT_2),
             entry(FINANCIAL_ORDER_OR_DISSOLUTION, DISSOLUTION_OF_THE_CIVIL_PARTNERSHIP_WITH),
-            entry(HAS_COST_ORDERS, false),
             entry(HAS_FINANCIAL_ORDERS, false),
             entry(HAS_FINANCIAL_ORDERS_FOR_CHILD, false),
             entry(ISSUE_DATE, "28 April 2021"),
@@ -159,7 +153,6 @@ public class DraftApplicationTemplateContentTest {
         marriageDetails.setDate(LocalDate.of(2019, 06, 4));
 
         caseData.setDivorceOrDissolution(DISSOLUTION);
-        caseData.getApplication().setDivorceCostsClaim(NO);
         caseData.getApplicant1().setFinancialOrder(NO);
         caseData.getApplication().setMarriageDetails(marriageDetails);
         caseData.getApplicant2().setSolicitor(
@@ -190,7 +183,6 @@ public class DraftApplicationTemplateContentTest {
         caseData.setApplicant2(getApplicant());
         caseData.getApplicant2().setHomeAddress(address);
         caseData.setDivorceOrDissolution(DISSOLUTION);
-        caseData.getApplication().setDivorceCostsClaim(NO);
         caseData.getApplicant1().setFinancialOrder(NO);
 
         Supplier<Map<String, Object>> templateContentSupplier = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);

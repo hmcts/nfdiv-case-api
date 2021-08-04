@@ -56,7 +56,7 @@ public class SystemProgressCasesToAosOverdueTask {
                     } else {
                         LocalDate aosDueDate = LocalDate.parse(dueDate);
 
-                        if (aosDueDate.isEqual(LocalDate.now()) || aosDueDate.isAfter(LocalDate.now())) {
+                        if (aosDueDate.isEqual(LocalDate.now()) || aosDueDate.isBefore(LocalDate.now())) {
                             log.info("Due date {} for Case id {} is on/before current date hence moving state to AosOverdue",
                                 aosDueDate,
                                 caseDetails.getId()

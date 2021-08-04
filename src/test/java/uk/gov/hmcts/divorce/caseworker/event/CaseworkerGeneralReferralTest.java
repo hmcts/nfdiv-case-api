@@ -104,7 +104,8 @@ public class CaseworkerGeneralReferralTest {
             .generalReferralType(CASEWORKER_REFERRAL)
             .generalReferralReason(GENERAL_APPLICATION_REFERRAL)
             .alternativeServiceMedium(TEXT)
-            .generalReferralDetails("some details")
+            .generalReferralJudgeDetails("some judge details")
+            .generalReferralLegalAdvisorDetails("some legal advisor details")
             .build();
     }
 

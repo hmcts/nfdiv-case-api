@@ -146,8 +146,8 @@ public class CaseValidationTest {
         CaseData caseData = new CaseData();
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
-        Payment payment = Payment.builder().paymentAmount(55000).paymentStatus(SUCCESS).build();
-        caseData.setPayments(singletonList(new ListValue<>("1", payment)));
+        Payment payment = Payment.builder().amount(55000).status(SUCCESS).build();
+        caseData.getApplication().setApplicationPayments(singletonList(new ListValue<>("1", payment)));
         assertFalse(isPaymentIncomplete(caseData));
     }
 
