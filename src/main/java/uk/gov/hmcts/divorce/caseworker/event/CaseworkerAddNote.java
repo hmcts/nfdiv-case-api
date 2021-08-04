@@ -33,7 +33,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_PREVIEW_BANNER;
 
 @Component
 @Slf4j
@@ -68,7 +67,6 @@ public class CaseworkerAddNote implements CCDConfig<CaseData, State, UserRole> {
                 CASEWORKER_LEGAL_ADVISOR))
             .page("addCaseNotes")
             .pageLabel("Add case notes")
-            .label("LabelNFDBanner-AddNotes", SOLICITOR_NFD_PREVIEW_BANNER)
             .optional(CaseData::getNote);
     }
 

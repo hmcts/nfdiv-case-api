@@ -4,11 +4,6 @@ import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.JOINT_APPLICATION_CONDITION;
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLE_APPLICATION_CONDITION;
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_JOINT_PREVIEW_BANNER;
-import static uk.gov.hmcts.divorce.solicitor.event.page.CommonFieldSettings.SOLICITOR_NFD_PREVIEW_BANNER;
-
 public class UploadMarriageCertificate implements CcdPageConfiguration {
 
     @Override
@@ -17,14 +12,6 @@ public class UploadMarriageCertificate implements CcdPageConfiguration {
         pageBuilder
             .page("UploadSupportingDocuments")
             .pageLabel("Upload the marriage certificate")
-            .label(
-                "LabelNFDBanner-UploadSupportingDocuments",
-                SOLICITOR_NFD_PREVIEW_BANNER,
-                SOLE_APPLICATION_CONDITION)
-            .label(
-                "LabelNFDJointBanner-UploadSupportingDocuments",
-                SOLICITOR_NFD_JOINT_PREVIEW_BANNER,
-                JOINT_APPLICATION_CONDITION)
             .label(
                 "LabelUploadDocumentsPara-1",
                 "You need to upload a digital photo or scan of the marriage certificate.\n\n"
