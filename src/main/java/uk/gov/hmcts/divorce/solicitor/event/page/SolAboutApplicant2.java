@@ -32,10 +32,6 @@ public class SolAboutApplicant2 implements CcdPageConfiguration {
                     "If not through marriage or deed poll, please provide details of how they legally changed they name")
                 .mandatoryWithLabel(Applicant::getGender,
                         "What is ${labelContentTheApplicant2}'s gender?")
-                .done()
-            .complex(CaseData::getApplicant2)
-                .optional(Applicant::getLanguagePreferenceWelsh, null, null,
-                "Include a Welsh copy of all generated divorce documents for ${labelContentTheApplicant2}?",
-                "An English copy will still be included");
+                .done();
     }
 }
