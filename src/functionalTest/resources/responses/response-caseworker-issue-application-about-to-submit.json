@@ -56,9 +56,9 @@
     "costsReason": null,
     "dateAosSubmitted": null,
     "applicant2SolicitorRepresented": "Yes",
-    "helpWithFeesAppliedForFees": null,
-    "helpWithFeesReferenceNumber": null,
-    "helpWithFeesNeedHelp": null,
+    "applicant1HWFAppliedForFees": null,
+    "applicant1HWFReferenceNumber": null,
+    "applicant1HWFNeedHelp": null,
     "accessCode": "${json-unit.any-string}",
     "applicationFeeOrderSummary": {
       "Fees": null,
