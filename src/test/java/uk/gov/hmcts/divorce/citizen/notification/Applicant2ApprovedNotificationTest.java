@@ -151,7 +151,7 @@ class Applicant2ApprovedNotificationTest {
     }
 
     @Test
-    void shouldSendEmailToApplicant1WithDivorceContentWithApplicant2HWFNo() {
+    void shouldSendEmailToApplicant1WithDivorceContentWithApplicant2HelpWithFeesNo() {
         CaseData data = validApplicant2ApprovedCaseDataMap();
         data.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
         data.getApplication().getApplicant2HelpWithFees().setNeedHelp(YesOrNo.NO);
@@ -177,7 +177,7 @@ class Applicant2ApprovedNotificationTest {
     }
 
     @Test
-    void shouldSendEmailToApplicant2WithDivorceContentWithApplicant2HWFNo() {
+    void shouldSendEmailToApplicant2WithDivorceContentWithApplicant2HelpWithFeesNo() {
         CaseData data = validApplicant2ApprovedCaseDataMap();
         data.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
         data.getApplication().getApplicant2HelpWithFees().setNeedHelp(YesOrNo.NO);

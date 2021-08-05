@@ -36,7 +36,8 @@ public class Applicant2ApprovedNotification {
         templateVars.put(REMINDER_ACTION_REQUIRED, "Action required: you");
 
         Application application = caseData.getApplication();
-        if (application.getApplicant1HelpWithFees().getNeedHelp() == YesOrNo.NO || application.getApplicant2HelpWithFees().getNeedHelp() == YesOrNo.NO) {
+        if (application.getApplicant1HelpWithFees().getNeedHelp() == YesOrNo.NO
+            || application.getApplicant2HelpWithFees().getNeedHelp() == YesOrNo.NO) {
             templateVars.put(PAY_FOR, PAY_FOR);
             templateVars.put(PAID_FOR, PAID);
         } else {
@@ -60,7 +61,8 @@ public class Applicant2ApprovedNotification {
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().toString());
 
         Application application = caseData.getApplication();
-        if (application.getApplicant1HelpWithFees().getNeedHelp() == YesOrNo.NO || application.getApplicant2HelpWithFees().getNeedHelp() == YesOrNo.NO) {
+        if (application.getApplicant1HelpWithFees().getNeedHelp() == YesOrNo.NO
+            || application.getApplicant2HelpWithFees().getNeedHelp() == YesOrNo.NO) {
             templateVars.put(PAY_FOR, PAY_FOR);
             templateVars.put(PAY_FOR_IT, PAY_FOR_IT);
             templateVars.put(PAID_FOR, PAID_FOR);
