@@ -314,7 +314,7 @@ public class Application {
         label = "Notification of overdue application sent?",
         access = {DefaultAccess.class}
     )
-    private Boolean overdueNotificationSent;
+    private YesOrNo overdueNotificationSent;
 
     @JsonIgnore
     public boolean hasBeenPaidFor() {
@@ -367,6 +367,6 @@ public class Application {
 
     @JsonIgnore
     public boolean hasOverdueNotificationBeenSent() {
-        return overdueNotificationSent != null && overdueNotificationSent.equals(true);
+        return YES.equals(overdueNotificationSent);
     }
 }
