@@ -136,7 +136,7 @@ public class SolicitorUpdateApplicationTest {
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, SOLICITOR_USER_ID, SOLICITOR_ROLE);
 
         final var documentUuid = FilenameUtils.getName(DOCUMENT_URL);
-        stubDeleteFromDocumentManagement(documentUuid, OK);
+        stubDeleteFromDocumentManagement(documentUuid, OK, "1", "caseworker-divorce-solicitor");
 
         final var jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)

@@ -37,12 +37,15 @@ public final class DocManagementStoreWireMock {
         }
     }
 
-    public static void stubDeleteFromDocumentManagement(final String documentUuid, final HttpStatus httpStatus) {
+    public static void stubDeleteFromDocumentManagement(final String documentUuid,
+                                                        final HttpStatus httpStatus,
+                                                        final String userId,
+                                                        final String userRoles) {
         DM_STORE_SERVER.stubFor(delete("/documents/" + documentUuid + "?permanent=true")
             .withHeader(AUTHORIZATION, new EqualToPattern(TEST_AUTHORIZATION_TOKEN))
             .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(TEST_SERVICE_AUTH_TOKEN))
-            .withHeader("user-id", new EqualToPattern("1"))
-            .withHeader("user-roles", new EqualToPattern("caseworker-divorce-solicitor"))
+            .withHeader("user-id", new EqualToPattern(userId))
+            .withHeader("user-roles", new EqualToPattern(userRoles))
             .willReturn(aResponse().withStatus(httpStatus.value())));
     }
 
