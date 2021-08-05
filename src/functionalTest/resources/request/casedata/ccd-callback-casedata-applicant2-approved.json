@@ -19,5 +19,6 @@
   "applicant2LastName": "Smith",
   "applicant2PrayerHasBeenGiven": "YES",
   "applicant2StatementOfTruth": "YES",
-  "helpWithFeesNeedHelp": "Yes"
+  "applicant1HWFNeedHelp": "Yes",
+  "applicant2HWFNeedHelp": "Yes"
 }

@@ -208,7 +208,7 @@ public class TestDataHelper {
         var application = Application.builder()
             .marriageDetails(marriageDetails)
             .jurisdiction(jurisdiction)
-            .helpWithFees(
+            .applicant1HelpWithFees(
                 HelpWithFees.builder()
                     .needHelp(NO)
                     .build()
@@ -237,8 +237,11 @@ public class TestDataHelper {
         CaseData caseData = validApplicant1CaseData();
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.setApplicant2(getApplicant(MALE));
-        caseData.getApplication().setApplicant2StatementOfTruth(YES);
+        caseData.getApplication().setApplicant2HelpWithFees(HelpWithFees.builder()
+            .needHelp(NO)
+            .build());
         caseData.getApplication().setApplicant2PrayerHasBeenGiven(YES);
+        caseData.getApplication().setApplicant2StatementOfTruth(YES);
         return caseData;
     }
 
