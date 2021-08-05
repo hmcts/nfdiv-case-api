@@ -42,7 +42,6 @@ public class SolicitorSubmittedNotification {
         templateVars.put(LAST_NAME, caseData.getApplicant1().getLastName());
 
         if (solicitor != null && isNotEmpty(solicitor.getEmail())) {
-
             final EmailTemplateName templateName;
             final String logMessage;
             if (caseData.isAmendedCase()) {
