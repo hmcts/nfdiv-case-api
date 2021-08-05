@@ -36,12 +36,12 @@ public class SolicitorSubmittedNotification {
 
         final Solicitor solicitor = caseData.getApplicant1().getSolicitor();
         final HashMap<String, String> templateVars = new HashMap<>();
-
         templateVars.put(APPLICATION_REFERENCE, formatId(caseId));
         templateVars.put(FIRST_NAME, caseData.getApplicant1().getFirstName());
         templateVars.put(LAST_NAME, caseData.getApplicant1().getLastName());
 
         if (solicitor != null && isNotEmpty(solicitor.getEmail())) {
+
             final EmailTemplateName templateName;
             final String logMessage;
             if (caseData.isAmendedCase()) {
