@@ -119,7 +119,7 @@ class CitizenSubmitApplicationTest {
         final long caseId = 2L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = CaseData.builder().build();
-        setValidCaseData(caseData).getApplication().getHelpWithFees().setNeedHelp(YesOrNo.YES);
+        setValidCaseData(caseData).getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
 
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
@@ -142,7 +142,7 @@ class CitizenSubmitApplicationTest {
         caseData.getApplicant1().setContactDetailsConfidential(ConfidentialAddress.KEEP);
         caseData.getApplicant1().setFinancialOrder(YesOrNo.NO);
         caseData.setApplicant2(getApplicant(MALE));
-        caseData.getApplication().setHelpWithFees(
+        caseData.getApplication().setApplicant1HelpWithFees(
             HelpWithFees.builder()
                 .needHelp(NO)
                 .build()
