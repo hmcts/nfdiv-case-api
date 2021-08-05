@@ -45,7 +45,7 @@ class Applicant2ApprovedNotificationTest {
     @Test
     void shouldSendEmailToApplicant1WithDivorceContent() {
         CaseData data = validApplicant2ApprovedCaseDataMap();
-        data.getApplication().getHelpWithFees().setNeedHelp(YesOrNo.NO);
+        data.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.NO);
         data.setDueDate(LOCAL_DATE);
 
         final HashMap<String, String> templateVars = new HashMap<>();
@@ -71,7 +71,8 @@ class Applicant2ApprovedNotificationTest {
     @Test
     void shouldSendEmailToApplicant1WithDissolutionContentAndHelpWithFees() {
         CaseData data = validApplicant2ApprovedCaseDataMap();
-        data.getApplication().getHelpWithFees().setNeedHelp(YesOrNo.YES);
+        data.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
+        data.getApplication().getApplicant2HelpWithFees().setNeedHelp(YesOrNo.YES);
         data.setDueDate(LOCAL_DATE);
         final HashMap<String, String> templateVars = new HashMap<>();
 
@@ -96,7 +97,7 @@ class Applicant2ApprovedNotificationTest {
     @Test
     void shouldSendEmailToApplicant2WithDivorceContent() {
         CaseData data = validApplicant2ApprovedCaseDataMap();
-        data.getApplication().getHelpWithFees().setNeedHelp(YesOrNo.NO);
+        data.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.NO);
         data.setDueDate(LOCAL_DATE);
 
         final HashMap<String, String> templateVars = new HashMap<>();
@@ -124,7 +125,8 @@ class Applicant2ApprovedNotificationTest {
     @Test
     void shouldSendEmailToApplicant2WithDissolutionContentAndHelpWithFees() {
         CaseData data = validApplicant2ApprovedCaseDataMap();
-        data.getApplication().getHelpWithFees().setNeedHelp(YesOrNo.YES);
+        data.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
+        data.getApplication().getApplicant2HelpWithFees().setNeedHelp(YesOrNo.YES);
         data.setDueDate(LOCAL_DATE);
 
         final HashMap<String, String> templateVars = new HashMap<>();
@@ -141,6 +143,60 @@ class Applicant2ApprovedNotificationTest {
                 hasEntry(PAY_FOR, ""),
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.toString()),
                 hasEntry(PAID_FOR, "")
+            )),
+            eq(ENGLISH)
+        );
+
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldSendEmailToApplicant1WithDivorceContentWithApplicant2HWFNo() {
+        CaseData data = validApplicant2ApprovedCaseDataMap();
+        data.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
+        data.getApplication().getApplicant2HelpWithFees().setNeedHelp(YesOrNo.NO);
+        data.setDueDate(LOCAL_DATE);
+        final HashMap<String, String> templateVars = new HashMap<>();
+
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+
+        notification.sendToApplicant1(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(JOINT_APPLICANT1_APPLICANT2_APPROVED),
+            argThat(allOf(
+                hasEntry(REMINDER_ACTION_REQUIRED, "Action required: you"),
+                hasEntry(PAY_FOR, PAY_FOR),
+                hasEntry(PAID_FOR, " and paid")
+            )),
+            eq(ENGLISH)
+        );
+
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2());
+    }
+
+    @Test
+    void shouldSendEmailToApplicant2WithDivorceContentWithApplicant2HWFNo() {
+        CaseData data = validApplicant2ApprovedCaseDataMap();
+        data.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
+        data.getApplication().getApplicant2HelpWithFees().setNeedHelp(YesOrNo.NO);
+        data.setDueDate(LOCAL_DATE);
+        final HashMap<String, String> templateVars = new HashMap<>();
+
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+
+        notification.sendToApplicant2(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(JOINT_APPLICANT2_APPLICANT2_APPROVED),
+            argThat(allOf(
+                hasEntry(PAY_FOR_IT, PAY_FOR_IT),
+                hasEntry(PAY_FOR, PAY_FOR),
+                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.toString()),
+                hasEntry(PAID_FOR, PAID_FOR),
+                hasEntry(PAY_FOR_IT, PAY_FOR_IT)
             )),
             eq(ENGLISH)
         );

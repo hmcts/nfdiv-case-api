@@ -235,6 +235,9 @@ public class TestDataHelper {
     public static CaseData validApplicant2ApprovedCaseDataMap() {
         CaseData caseData = validJointApplicant1CaseDataMap();
         caseData.setApplicant2(getApplicant(MALE));
+        caseData.getApplication().setApplicant2HelpWithFees(HelpWithFees.builder()
+            .needHelp(NO)
+            .build());
         caseData.getApplication().setApplicant2PrayerHasBeenGiven(YES);
         caseData.getApplication().setApplicant2StatementOfTruth(YES);
         return caseData;

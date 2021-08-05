@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -34,7 +35,8 @@ public class Applicant2ApprovedNotification {
             caseData, caseData.getApplicant1(), caseData.getApplicant2());
         templateVars.put(REMINDER_ACTION_REQUIRED, "Action required: you");
 
-        if (caseData.getApplication().getHelpWithFees().getNeedHelp() == YesOrNo.NO) {
+        Application application = caseData.getApplication();
+        if (application.getApplicant1HelpWithFees().getNeedHelp() == YesOrNo.NO || application.getApplicant2HelpWithFees().getNeedHelp() == YesOrNo.NO) {
             templateVars.put(PAY_FOR, PAY_FOR);
             templateVars.put(PAID_FOR, PAID);
         } else {
@@ -57,7 +59,8 @@ public class Applicant2ApprovedNotification {
             caseData, caseData.getApplicant2(), caseData.getApplicant1());
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().toString());
 
-        if (caseData.getApplication().getHelpWithFees().getNeedHelp() == YesOrNo.NO) {
+        Application application = caseData.getApplication();
+        if (application.getApplicant1HelpWithFees().getNeedHelp() == YesOrNo.NO || application.getApplicant2HelpWithFees().getNeedHelp() == YesOrNo.NO) {
             templateVars.put(PAY_FOR, PAY_FOR);
             templateVars.put(PAY_FOR_IT, PAY_FOR_IT);
             templateVars.put(PAID_FOR, PAID_FOR);
