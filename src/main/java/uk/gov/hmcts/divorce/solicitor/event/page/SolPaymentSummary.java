@@ -29,7 +29,7 @@ public class SolPaymentSummary implements CcdPageConfiguration {
                 "solPaymentHowToPay=\"feesHelpWith\"")
             .label(
                 "LabelHelpWithFeesReferenceNumber",
-                "Help with fee reference: **${helpWithFeesReferenceNumber}**",
+                "Help with fee reference: **${applicant1HWFReferenceNumber}**",
                 "solPaymentHowToPay=\"feesHelpWith\"");
     }
 }

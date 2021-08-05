@@ -129,7 +129,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void buildPaymentTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("paymentDetailsCourtAdmin", "Payment")
-            .field("helpWithFeesReferenceNumber");
+            .field("applicant1HWFReferenceNumber");
     }
 
     private void buildLanguageTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
