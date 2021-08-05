@@ -45,11 +45,12 @@ public class SendSubmissionNotifications implements CaseTask {
 
     private void sendCitizenNotifications(final CaseData caseData, final Long caseId, final State state) {
 
-        if (Submitted.equals(state) || AwaitingDocuments.equals(state)) {
+        if (Submitted.equals(state)) {
             applicationSubmittedNotification.send(caseData, caseId);
         }
 
         if (AwaitingDocuments.equals(state)) {
+            applicationSubmittedNotification.send(caseData, caseId);
             applicationOutstandingActionNotification.send(caseData, caseId);
         }
     }

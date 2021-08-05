@@ -17,6 +17,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -88,5 +89,24 @@ class SendSubmissionNotificationsTest {
         verify(applicationSubmittedNotification).send(caseData, TEST_CASE_ID);
         verify(applicationOutstandingActionNotification).send(caseData, TEST_CASE_ID);
         verifyNoInteractions(solicitorSubmittedNotification);
+    }
+
+    @Test
+    void shouldDoNothingIfCitizenApplicationAndNotSubmittedOrAwaitingDocumentState() {
+
+        final CaseData caseData = caseData();
+        caseData.setApplication(Application.builder().build());
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+        caseDetails.setState(AwaitingPayment);
+
+        sendSubmissionNotifications.apply(caseDetails);
+
+        verifyNoInteractions(
+            solicitorSubmittedNotification,
+            applicationSubmittedNotification,
+            applicationOutstandingActionNotification);
     }
 }
