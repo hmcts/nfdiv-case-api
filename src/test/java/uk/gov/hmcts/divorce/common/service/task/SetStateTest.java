@@ -36,7 +36,7 @@ class SetStateTest {
     void shouldSetAwaitingHwfDecisionStateIfCitizenNeedsHelpWithFees() {
 
         final Application application = Application.builder()
-            .helpWithFees(HelpWithFees.builder()
+            .applicant1HelpWithFees(HelpWithFees.builder()
                 .needHelp(YES)
                 .build())
             .build();

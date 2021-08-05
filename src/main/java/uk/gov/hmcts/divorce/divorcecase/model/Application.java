@@ -362,7 +362,9 @@ public class Application {
 
     @JsonIgnore
     public boolean isHelpWithFeesApplication() {
-        return null != helpWithFees && null != helpWithFees.getNeedHelp() && helpWithFees.getNeedHelp().toBoolean()
+        return null != applicant1HelpWithFees
+            && null != applicant1HelpWithFees.getNeedHelp()
+            && applicant1HelpWithFees.getNeedHelp().toBoolean()
             || FEES_HELP_WITH.equals(solPaymentHowToPay);
     }
 
