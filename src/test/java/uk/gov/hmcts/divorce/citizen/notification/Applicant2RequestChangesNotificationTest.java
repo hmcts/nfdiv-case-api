@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
@@ -26,7 +27,9 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICAN
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_REQUEST_CHANGES;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_2_COMMENTS;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TYPE;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.END_JOINT_APPLICATION_LINK;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
@@ -55,6 +58,7 @@ class Applicant2RequestChangesNotificationTest {
         final HashMap<String, String> templateVars = new HashMap<>();
 
         when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(SIGN_IN_DIVORCE_URL, "sign in divorce link"));
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
@@ -63,8 +67,8 @@ class Applicant2RequestChangesNotificationTest {
             eq(JOINT_APPLICANT1_NEED_TO_MAKE_CHANGES),
             argThat(allOf(
                 hasEntry(APPLICATION.toLowerCase(Locale.ROOT), "for divorce"),
-                hasEntry(APPLICATION_TYPE.toLowerCase(Locale.ROOT), "divorce application"),
-                hasEntry(APPLICANT_2_COMMENTS, "Not correct!")
+                hasEntry(APPLICANT_2_COMMENTS, "Not correct!"),
+                hasEntry(END_JOINT_APPLICATION_LINK, "sign in divorce link")
             )),
             eq(ENGLISH)
         );
@@ -82,6 +86,7 @@ class Applicant2RequestChangesNotificationTest {
         final HashMap<String, String> templateVars = new HashMap<>();
 
         when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(SIGN_IN_DISSOLUTION_URL, "sign in dissolution link"));
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
@@ -90,8 +95,8 @@ class Applicant2RequestChangesNotificationTest {
             eq(JOINT_APPLICANT1_NEED_TO_MAKE_CHANGES),
             argThat(allOf(
                 hasEntry(APPLICATION.toLowerCase(Locale.ROOT), "to end your civil partnership"),
-                hasEntry(APPLICATION_TYPE.toLowerCase(Locale.ROOT), "application to end your civil partnership"),
-                hasEntry(APPLICANT_2_COMMENTS, "Not correct!")
+                hasEntry(APPLICANT_2_COMMENTS, "Not correct!"),
+                hasEntry(END_JOINT_APPLICATION_LINK, "sign in dissolution link")
             )),
             eq(ENGLISH)
         );

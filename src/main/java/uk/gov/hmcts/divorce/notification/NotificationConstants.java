@@ -13,19 +13,19 @@ public final class NotificationConstants {
     public static final String FOR_YOUR_APPLICATION = " for your divorce/ to end your civil partnership";
     public static final String FOR_YOUR_DIVORCE = " for your divorce";
     public static final String TO_END_CIVIL_PARTNERSHIP = "to end your civil partnership";
+    public static final String FOR_DIVORCE = "for divorce";
     public static final String REMINDER_ACTION_REQUIRED = "Reminder/Action required";
     public static final String REMINDER_APPLICATION = "Reminder: application / Application ";
 
     public static final String CREATE_ACCOUNT_LINK = "create account link";
     public static final String SIGN_IN_URL_NOTIFY_KEY = "signin url";
     public static final String RELATIONSHIP_COURT_HEADER = "relationship court header";
+    public static final String END_JOINT_APPLICATION_LINK = "end joint application link";
 
     public static final String SIGN_IN_DIVORCE_URL = "signInDivorceUrl";
     public static final String APPLICANT_2_SIGN_IN_DIVORCE_URL = "applicant2SignInDivorceUrl";
     public static final String SIGN_IN_DISSOLUTION_URL = "signInDissolutionUrl";
     public static final String APPLICANT_2_SIGN_IN_DISSOLUTION_URL = "applicant2SignInDissolutionUrl";
-    public static final String SWITCH_TO_SOLE_APPLICATION_DIVORCE_URL = "switchToSoleApplicationDivorceUrl";
-    public static final String SWITCH_TO_SOLE_APPLICATION_DISSOLUTION_URL = "switchToSoleApplicationDissolutionUrl";
     public static final String DIVORCE_COURT_EMAIL = "divorceCourtEmail";
     public static final String DISSOLUTION_COURT_EMAIL = "dissolutionCourtEmail";
 
@@ -65,6 +65,8 @@ public final class NotificationConstants {
     public static final String PAY_FOR_IT = " and pay for it";
     public static final String PAID_FOR = " and paid for";
     public static final String PAID = " and paid";
+
+    public static final String REVIEW_DEADLINE_DATE = "review deadline date";
 
     private NotificationConstants() {
     }
