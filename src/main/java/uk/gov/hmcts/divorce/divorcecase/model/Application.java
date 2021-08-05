@@ -71,9 +71,13 @@ public class Application {
     @Builder.Default
     private Jurisdiction jurisdiction = new Jurisdiction();
 
-    @JsonUnwrapped(prefix = "helpWithFees")
+    @JsonUnwrapped(prefix = "applicant1HWF")
     @CCD(access = {DefaultAccess.class})
-    private HelpWithFees helpWithFees;
+    private HelpWithFees applicant1HelpWithFees;
+
+    @JsonUnwrapped(prefix = "applicant2HWF")
+    @CCD(access = {Applicant2Access.class})
+    private HelpWithFees applicant2HelpWithFees;
 
     @CCD(
         label = "Who is the applicant divorcing?",
