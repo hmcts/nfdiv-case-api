@@ -92,7 +92,7 @@ class SendSubmissionNotificationsTest {
     }
 
     @Test
-    void shouldDoNothingIfCitizenApplicationAndNotSubmittedOrAwaitingDocumentState() {
+    void shouldDoNothingIfCitizenApplicationAndNotSubmittedOrNotAwaitingDocumentState() {
 
         final CaseData caseData = caseData();
         caseData.setApplication(Application.builder().build());

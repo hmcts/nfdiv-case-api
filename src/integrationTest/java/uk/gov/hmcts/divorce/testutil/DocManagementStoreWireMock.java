@@ -37,6 +37,14 @@ public final class DocManagementStoreWireMock {
         }
     }
 
+    public static void stubDeleteFromDocumentManagementForSolicitor(final String documentUuid, final HttpStatus httpStatus) {
+        stubDeleteFromDocumentManagement(documentUuid, httpStatus, "1", "caseworker-divorce-solicitor");
+    }
+
+    public static void stubDeleteFromDocumentManagementForCaseworker(final String documentUuid, final HttpStatus httpStatus) {
+        stubDeleteFromDocumentManagement(documentUuid, httpStatus, "2", "caseworker-divorce");
+    }
+
     public static void stubDeleteFromDocumentManagement(final String documentUuid,
                                                         final HttpStatus httpStatus,
                                                         final String userId,

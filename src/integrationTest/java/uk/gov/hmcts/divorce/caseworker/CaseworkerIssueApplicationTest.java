@@ -63,7 +63,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOL
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssembly;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyUnauthorized;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
-import static uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock.stubDeleteFromDocumentManagement;
+import static uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock.stubDeleteFromDocumentManagementForCaseworker;
 import static uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock.stubDownloadBinaryFromDocumentManagement;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.CASEWORKER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SOLICITOR_ROLE;
@@ -297,15 +297,14 @@ public class CaseworkerIssueApplicationTest {
     }
 
     @Test
-    void givenValidCaseDataContainingDraftApplicationDocumentWhenAboutToSubmitCallbackIsInvokedThenDraftApplicationDocumentIsRemoved()
-        throws Exception {
+    void shouldRemoveDraftApplicationDocumentIfCaseDataContainsDraftApplicationDocument() throws Exception {
 
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplicant2().setSolicitorRepresented(NO);
         caseData.getApplicant2().setCorrespondenceAddress(correspondenceAddress());
 
         final var documentUuid = setupAuthorizationAndApplicationDocument(caseData);
-        stubDeleteFromDocumentManagement(documentUuid, OK, "2", "caseworker-divorce");
+        stubDeleteFromDocumentManagementForCaseworker(documentUuid, OK);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
@@ -342,7 +341,7 @@ public class CaseworkerIssueApplicationTest {
     }
 
     @Test
-    void givenCaseDataWithApplicationDocumentAndServiceNotWhitelistedInDocStoreWhenAboutToSubmitCallbackIsInvokedThen403IsReturned()
+    void shouldRespondWithForbiddenStatusIfCaseDataHasDraftApplicationAndServiceNotWhiteListedWithDocStore()
         throws Exception {
 
         final CaseData caseData = validCaseDataForIssueApplication();
@@ -350,7 +349,7 @@ public class CaseworkerIssueApplicationTest {
         caseData.getApplicant2().setCorrespondenceAddress(correspondenceAddress());
 
         final var documentUuid = setupAuthorizationAndApplicationDocument(caseData);
-        stubDeleteFromDocumentManagement(documentUuid, FORBIDDEN, "2", "caseworker-divorce");
+        stubDeleteFromDocumentManagementForCaseworker(documentUuid, FORBIDDEN);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
@@ -377,15 +376,14 @@ public class CaseworkerIssueApplicationTest {
     }
 
     @Test
-    void givenCaseDataWithApplicationDocumentAndServiceAuthValidationFailsInDocStoreWhenAboutToSubmitCallbackIsInvokedThen401IsReturned()
-        throws Exception {
+    void shouldRespondWithUnauthorizedStatusIfCaseDataHasDraftApplicationAndServiceAuthorizationFails() throws Exception {
 
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplicant2().setSolicitorRepresented(NO);
         caseData.getApplicant2().setCorrespondenceAddress(correspondenceAddress());
 
         final var documentUuid = setupAuthorizationAndApplicationDocument(caseData);
-        stubDeleteFromDocumentManagement(documentUuid, UNAUTHORIZED, "2", "caseworker-divorce");
+        stubDeleteFromDocumentManagementForCaseworker(documentUuid, UNAUTHORIZED);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
