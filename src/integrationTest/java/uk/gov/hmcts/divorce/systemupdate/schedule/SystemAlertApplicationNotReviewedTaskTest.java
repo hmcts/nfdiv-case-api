@@ -23,6 +23,7 @@ public class SystemAlertApplicationNotReviewedTaskTest {
 
     @Test
     public void givenApplicationIsRunningApplicationNotReviewedScheduledJobIsExecutedAtLeastOnce() {
+
         await(" Alert application not reviewed task executed at least once")
             .atMost(60, TimeUnit.SECONDS)
             .pollInterval(2, TimeUnit.SECONDS)

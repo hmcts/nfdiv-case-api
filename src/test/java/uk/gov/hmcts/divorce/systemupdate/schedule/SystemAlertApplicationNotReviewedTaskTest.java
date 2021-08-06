@@ -9,8 +9,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.citizen.notification.JointApplicationOverdueNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
 import java.time.LocalDate;
@@ -19,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.singletonList;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -26,12 +30,16 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemAlertApplicationNotReviewed.SYSTEM_APPLICATION_NOT_REVIEWED;
 
 @ExtendWith(MockitoExtension.class)
 public class SystemAlertApplicationNotReviewedTaskTest {
 
     @Mock
     private CcdSearchService ccdSearchService;
+
+    @Mock
+    private CcdUpdateService ccdUpdateService;
 
     @Mock
     private JointApplicationOverdueNotification jointApplicationOverdueNotification;
@@ -66,6 +74,7 @@ public class SystemAlertApplicationNotReviewedTaskTest {
 
         verify(jointApplicationOverdueNotification).send(caseData1, caseDetails1.getId());
         verify(jointApplicationOverdueNotification, times(0)).send(caseData2, caseDetails2.getId());
+        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_APPLICATION_NOT_REVIEWED);
     }
 
     @Test
@@ -84,6 +93,7 @@ public class SystemAlertApplicationNotReviewedTaskTest {
         systemAlertApplicationNotReviewedTask.execute();
 
         verify(jointApplicationOverdueNotification, never()).send(caseData, caseDetails.getId());
+        verify(ccdUpdateService, never()).submitEvent(caseDetails, SYSTEM_APPLICATION_NOT_REVIEWED);
     }
 
     @Test
@@ -101,6 +111,7 @@ public class SystemAlertApplicationNotReviewedTaskTest {
         systemAlertApplicationNotReviewedTask.execute();
 
         verifyNoInteractions(jointApplicationOverdueNotification);
+        verifyNoInteractions(ccdUpdateService);
     }
 
     @Test
@@ -111,5 +122,51 @@ public class SystemAlertApplicationNotReviewedTaskTest {
         systemAlertApplicationNotReviewedTask.execute();
 
         verifyNoInteractions(jointApplicationOverdueNotification);
+        verifyNoInteractions(ccdUpdateService);
+    }
+
+    @Test
+    void shouldStopProcessingIfThereIsConflictDuringSubmission() {
+        final CaseDetails caseDetails1 = mock(CaseDetails.class);
+        final CaseDetails caseDetails2 = mock(CaseDetails.class);
+        final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
+        final CaseData caseData1 = CaseData.builder().dueDate(LocalDate.now()).build();
+
+        when(caseDetails1.getData()).thenReturn(Map.of("dueDate", LocalDate.now()));
+        when(mapper.convertValue(Map.of("dueDate", LocalDate.now()), CaseData.class)).thenReturn(caseData1);
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response)).thenReturn(caseDetailsList);
+
+        doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
+            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_APPLICATION_NOT_REVIEWED);
+
+        systemAlertApplicationNotReviewedTask.execute();
+
+        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_APPLICATION_NOT_REVIEWED);
+        verify(ccdUpdateService, never()).submitEvent(caseDetails2, SYSTEM_APPLICATION_NOT_REVIEWED);
+    }
+
+    @Test
+    void shouldContinueToNextCaseIfExceptionIsThrownWhileProcessingPreviousCase() {
+        final CaseDetails caseDetails1 = mock(CaseDetails.class);
+        final CaseDetails caseDetails2 = mock(CaseDetails.class);
+        final CaseData caseData1 = CaseData.builder().dueDate(LocalDate.now()).build();
+        final CaseData caseData2 = CaseData.builder().dueDate(LocalDate.now().minusDays(5)).build();
+
+        when(caseDetails1.getData()).thenReturn(Map.of("dueDate", LocalDate.now()));
+        when(caseDetails2.getData()).thenReturn(Map.of("dueDate", LocalDate.now().minusDays(5)));
+        when(mapper.convertValue(Map.of("dueDate", LocalDate.now()), CaseData.class)).thenReturn(caseData1);
+        when(mapper.convertValue(Map.of("dueDate", LocalDate.now().minusDays(5)), CaseData.class)).thenReturn(caseData2);
+
+        final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
+
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response)).thenReturn(caseDetailsList);
+
+        doThrow(new CcdManagementException("Failed processing of case", mock(FeignException.class)))
+            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_APPLICATION_NOT_REVIEWED);
+
+        systemAlertApplicationNotReviewedTask.execute();
+
+        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_APPLICATION_NOT_REVIEWED);
+        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_APPLICATION_NOT_REVIEWED);
     }
 }
