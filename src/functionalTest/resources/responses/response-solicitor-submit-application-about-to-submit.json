@@ -43,7 +43,6 @@
     "applicant2PhoneNumber": null,
     "applicant2ContactDetailsConfidential": null,
     "solSignStatementOfTruth": "Yes",
-    "documentsGenerated": [],
     "applicant1HWFAppliedForFees": null,
     "applicant1HWFReferenceNumber": null,
     "applicant1HWFNeedHelp": null,
@@ -97,7 +96,7 @@
       }
     }]
   },
-  "errors": [],
+  "errors": null,
   "warnings": null,
   "state": "Submitted"
 }

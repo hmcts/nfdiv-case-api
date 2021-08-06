@@ -9,7 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.HashMap;
 
 import static org.hamcrest.Matchers.allOf;
@@ -40,7 +40,7 @@ class ApplicationSubmittedNotificationTest {
     @Test
     void shouldCallSendEmailWithSubmissionResponseDate() {
         CaseData data = caseData();
-        data.getApplication().setDateSubmitted(LocalDateTime.of(2021, 4, 21, 1, 1));
+        data.setDueDate(LocalDate.of(2021, 4, 21));
         final HashMap<String, String> templateVars = new HashMap<>();
 
         when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
@@ -51,7 +51,7 @@ class ApplicationSubmittedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(APPLICATION_SUBMITTED),
             argThat(allOf(
-                hasEntry(SUBMISSION_RESPONSE_DATE, "5 May 2021"),
+                hasEntry(SUBMISSION_RESPONSE_DATE, "21 April 2021"),
                 hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456")
             )),
             eq(ENGLISH)

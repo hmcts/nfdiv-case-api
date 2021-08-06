@@ -99,21 +99,7 @@ public enum State {
         name = "Awaiting applicant",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
-    AwaitingDocuments("AwaitingDocuments") {
-        @Override
-        public List<String> validate(CaseData caseData) {
-            List<String> errors = new ArrayList<>();
-
-            if (isPaymentIncomplete(caseData)) {
-                errors.add("Payment incomplete");
-            }
-            if (!caseData.getApplication().hasAwaitingDocuments()) {
-                errors.add("No Awaiting documents");
-            }
-
-            return errors;
-        }
-    },
+    AwaitingDocuments("AwaitingDocuments"),
 
     @CCD(
         name = "Awaiting applicant 1 response",
@@ -256,9 +242,7 @@ public enum State {
             if (isPaymentIncomplete(caseData)) {
                 errors.add("Payment incomplete");
             }
-            if (caseData.getApplication().hasAwaitingDocuments()) {
-                errors.add("Awaiting documents");
-            }
+
             if (!caseData.getApplication().applicant1HasStatementOfTruth() && !caseData.getApplication().hasSolSignStatementOfTruth()) {
                 errors.add("Statement of truth must be accepted by the person making the application");
             }
