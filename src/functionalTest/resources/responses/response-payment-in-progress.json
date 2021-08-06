@@ -99,7 +99,7 @@
       }
     ]
   },
-  "errors": [],
+  "errors": null,
   "state": "AwaitingPayment",
   "warnings": null
 }

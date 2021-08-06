@@ -11,7 +11,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.divorcecase.CaseInfo;
+import uk.gov.hmcts.divorce.common.service.SubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -25,15 +25,14 @@ import uk.gov.hmcts.divorce.solicitor.event.page.SolPaymentSummary;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolStatementOfTruth;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolSummary;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
-import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitApplicationService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
+import static java.lang.Integer.parseInt;
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
@@ -46,15 +45,13 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUS
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
+import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
 @Slf4j
 @Component
 public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SOLICITOR_SUBMIT = "solicitor-submit-application";
-
-    @Autowired
-    private SolicitorSubmitApplicationService solicitorSubmitApplicationService;
 
     @Autowired
     private PaymentService paymentService;
@@ -64,6 +61,9 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
 
     @Autowired
     private HttpServletRequest httpServletRequest;
+
+    @Autowired
+    private SubmissionService submissionService;
 
     private final List<CcdPageConfiguration> pages = asList(
         new SolStatementOfTruth(),
@@ -98,45 +98,44 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             .data(caseData)
             .build();
     }
-
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
-                                                                       CaseDetails<CaseData, State> beforeDetails) {
-
-        log.info("Submit application about to submit callback invoked");
+    
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
+                                                                       final CaseDetails<CaseData, State> beforeDetails) {
 
         final CaseData caseData = details.getData();
         final Application application = caseData.getApplication();
-        final State currentState = details.getState();
+        final Long caseId = details.getId();
 
-        log.info("Setting dummy payment to mock payment process");
+        log.info("Setting dummy payment to mock payment process. CaseID: {}", caseId);
         if (application.getApplicationPayments() == null || application.getApplicationPayments().isEmpty()) {
             List<ListValue<Payment>> payments = new ArrayList<>();
             payments.add(new ListValue<>(null,
-                solicitorSubmitApplicationService.getDummyPayment(application.getApplicationFeeOrderSummary())));
+                getDummyPayment(application.getApplicationFeeOrderSummary())));
             application.setApplicationPayments(payments);
         } else {
             application.getApplicationPayments()
                 .add(new ListValue<>(null,
-                    solicitorSubmitApplicationService.getDummyPayment(application.getApplicationFeeOrderSummary())));
+                    getDummyPayment(application.getApplicationFeeOrderSummary())));
         }
 
         updateApplicant2DigitalDetails(caseData);
 
-        if (!application.applicant1HasStatementOfTruth() && !application.hasSolSignStatementOfTruth()) {
+        log.info("Validating case data CaseID: {}", caseId);
+        final List<String> submittedErrors = Submitted.validate(caseData);
 
+        if (!submittedErrors.isEmpty()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .state(currentState)
-                .errors(singletonList("Statement of truth must be accepted by the person making the application"))
+                .data(details.getData())
+                .state(details.getState())
+                .errors(submittedErrors)
                 .build();
         }
 
-        final CaseInfo caseInfo = solicitorSubmitApplicationService.aboutToSubmit(details);
+        final CaseDetails<CaseData, State> updatedCaseDetails = submissionService.submitApplication(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseInfo.getCaseData())
-            .state(caseInfo.getState())
-            .errors(caseInfo.getErrors())
+            .data(updatedCaseDetails.getData())
+            .state(updatedCaseDetails.getState())
             .build();
     }
 
@@ -178,7 +177,18 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
                 CASEWORKER_COURTADMIN_CTSC,
                 CASEWORKER_COURTADMIN_RDU,
                 CASEWORKER_SUPERUSER,
-                CASEWORKER_LEGAL_ADVISOR)
-            .submittedCallback(this::submitted));
+                CASEWORKER_LEGAL_ADVISOR));
+    }
+
+    private Payment getDummyPayment(final OrderSummary orderSummary) {
+        return Payment
+            .builder()
+            .amount(parseInt(orderSummary.getPaymentTotal()))
+            .channel("online")
+            .feeCode("FEE0001")
+            .reference(orderSummary.getPaymentReference())
+            .status(SUCCESS)
+            .transactionId("ge7po9h5bhbtbd466424src9tk")
+            .build();
     }
 }

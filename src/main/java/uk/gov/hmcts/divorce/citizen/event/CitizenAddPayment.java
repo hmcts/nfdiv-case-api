@@ -7,19 +7,14 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification;
-import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotification;
+import uk.gov.hmcts.divorce.common.service.SubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
@@ -39,10 +34,7 @@ public class CitizenAddPayment implements CCDConfig<CaseData, State, UserRole> {
     public static final String CITIZEN_ADD_PAYMENT = "citizen-add-payment";
 
     @Autowired
-    private ApplicationOutstandingActionNotification outstandingActionNotification;
-
-    @Autowired
-    private ApplicationSubmittedNotification notification;
+    private SubmissionService submissionService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -57,51 +49,48 @@ public class CitizenAddPayment implements CCDConfig<CaseData, State, UserRole> {
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
 
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
-                                                                       CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Add payment about to submit callback invoked");
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
+                                                                       final CaseDetails<CaseData, State> beforeDetails) {
+        final CaseData caseData = details.getData();
+        final Long caseId = details.getId();
 
-        CaseData data = details.getData();
-
-        log.info("Validating case data");
-        List<String> submittedErrors = Submitted.validate(data);
-        List<String> awaitingDocumentsErrors = AwaitingDocuments.validate(data);
-        State state = details.getState();
-        List<String> errors = Stream.concat(submittedErrors.stream(), awaitingDocumentsErrors.stream())
-            .collect(Collectors.toList());
-        PaymentStatus lastPaymentStatus = data.getApplication().getLastPaymentStatus();
+        log.info("Add payment about to submit callback invoked CaseID: {}", caseId);
+        final PaymentStatus lastPaymentStatus = caseData.getApplication().getLastPaymentStatus();
 
         if (IN_PROGRESS.equals(lastPaymentStatus)) {
-            log.info("Case {} payment in progress", details.getId());
+            log.info("Case {} payment in progress", caseId);
 
-            state = AwaitingPayment;
-            errors.clear();
-        } else if (!SUCCESS.equals(lastPaymentStatus)) {
-            log.info("Case {} payment canceled", details.getId());
-
-            state = Draft;
-            errors.clear();
-        } else if (submittedErrors.isEmpty()) {
-            log.info("Case {} submitted", details.getId());
-            data.getApplication().setDateSubmitted(LocalDateTime.now());
-
-            notification.send(data, details.getId());
-            state = Submitted;
-            errors.clear();
-        } else if (awaitingDocumentsErrors.isEmpty()) {
-            log.info("Case {} awaiting documents", details.getId());
-            data.getApplication().setDateSubmitted(LocalDateTime.now());
-
-            notification.send(data, details.getId());
-            outstandingActionNotification.send(data, details.getId());
-            state = AwaitingDocuments;
-            errors.clear();
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(details.getData())
+                .state(AwaitingPayment)
+                .build();
         }
 
+        if (!SUCCESS.equals(lastPaymentStatus)) {
+            log.info("Case {} payment canceled", caseId);
+
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(details.getData())
+                .state(Draft)
+                .build();
+        }
+
+        log.info("Validating case caseData CaseID: {}", caseId);
+        final List<String> submittedErrors = Submitted.validate(caseData);
+
+        if (!submittedErrors.isEmpty()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(details.getData())
+                .state(details.getState())
+                .errors(submittedErrors)
+                .build();
+        }
+
+        final CaseDetails<CaseData, State> updatedCaseDetails = submissionService.submitApplication(details);
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
-            .state(state)
-            .errors(errors)
+            .data(updatedCaseDetails.getData())
+            .state(updatedCaseDetails.getState())
             .build();
     }
 }
