@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.JointApplicationOverdueNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
@@ -85,7 +84,6 @@ public class SystemAlertApplicationNotReviewedTask {
         );
 
         jointApplicationOverdueNotification.send(caseData, caseDetails.getId());
-        caseData.getApplication().setOverdueNotificationSent(YesOrNo.YES);
         ccdUpdateService.submitEvent(caseDetails, SYSTEM_APPLICATION_NOT_REVIEWED);
     }
 
