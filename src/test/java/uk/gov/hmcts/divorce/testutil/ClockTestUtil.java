@@ -3,9 +3,9 @@ package uk.gov.hmcts.divorce.testutil;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 
-import static java.time.LocalDate.ofInstant;
 import static org.mockito.Mockito.when;
 
 public final class ClockTestUtil {
@@ -22,6 +22,10 @@ public final class ClockTestUtil {
     }
 
     public static LocalDate getExpectedLocalDate() {
-        return ofInstant(NOW, ZONE_ID);
+        return LocalDate.ofInstant(NOW, ZONE_ID);
+    }
+
+    public static LocalDateTime getExpectedLocalDateTime() {
+        return LocalDateTime.ofInstant(NOW, ZONE_ID);
     }
 }

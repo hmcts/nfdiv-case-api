@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPack;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDate;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.solicitor.service.task.MiniApplicationRemover;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -21,6 +22,9 @@ import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 @Service
 @Slf4j
 public class IssueApplicationService {
+
+    @Autowired
+    private MiniApplicationRemover miniApplicationRemover;
 
     @Autowired
     private GenerateMiniApplication generateMiniApplication;
@@ -47,6 +51,7 @@ public class IssueApplicationService {
         return caseTasks(
             generateRespondentSolicitorAosInvitation,
             generateCitizenRespondentAosInvitation,
+            miniApplicationRemover,
             generateMiniApplication,
             sendAosPack,
             sendAosNotifications,

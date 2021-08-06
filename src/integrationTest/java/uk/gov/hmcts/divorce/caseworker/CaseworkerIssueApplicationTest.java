@@ -39,11 +39,16 @@ import java.util.List;
 import java.util.UUID;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -58,8 +63,10 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOL
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssembly;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyUnauthorized;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
+import static uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock.stubDeleteFromDocumentManagementForCaseworker;
 import static uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock.stubDownloadBinaryFromDocumentManagement;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.CASEWORKER_ROLE;
+import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SOLICITOR_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamDetails;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamToken;
 import static uk.gov.hmcts.divorce.testutil.SendLetterWireMock.stubSendLetters;
@@ -68,6 +75,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
@@ -78,6 +86,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssueApplication;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.resourceAsBytes;
+
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -287,6 +296,119 @@ public class CaseworkerIssueApplicationTest {
             );
     }
 
+    @Test
+    void shouldRemoveDraftApplicationDocumentIfCaseDataContainsDraftApplicationDocument() throws Exception {
+
+        final CaseData caseData = validCaseDataForIssueApplication();
+        caseData.getApplicant2().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setCorrespondenceAddress(correspondenceAddress());
+
+        final var documentUuid = setupAuthorizationAndApplicationDocument(caseData);
+        stubDeleteFromDocumentManagementForCaseworker(documentUuid, OK);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
+
+        stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "Divorce_CP_Dummy_Template.docx");
+        stubForDocAssemblyWith(MINI_APPLICATION_ID, "Divorce_CP_Mini_Application_Sole_Joint.docx");
+        stubAosPackSendLetter();
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+
+        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_ISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk())
+            .andExpect(
+                content().json(expectedResponse(ISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_NOT_SOL_REP))
+            );
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_SOLICITOR_EMAIL),
+                eq(APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
+                anyMap(),
+                eq(ENGLISH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    void shouldRespondWithForbiddenStatusIfCaseDataHasDraftApplicationAndServiceNotWhiteListedWithDocStore()
+        throws Exception {
+
+        final CaseData caseData = validCaseDataForIssueApplication();
+        caseData.getApplicant2().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setCorrespondenceAddress(correspondenceAddress());
+
+        final var documentUuid = setupAuthorizationAndApplicationDocument(caseData);
+        stubDeleteFromDocumentManagementForCaseworker(documentUuid, FORBIDDEN);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
+
+        stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "Divorce_CP_Dummy_Template.docx");
+        stubForDocAssemblyWith(MINI_APPLICATION_ID, "Divorce_CP_Mini_Application_Sole_Joint.docx");
+        stubAosPackSendLetter();
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+
+        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_ISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isForbidden());
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    void shouldRespondWithUnauthorizedStatusIfCaseDataHasDraftApplicationAndServiceAuthorizationFails() throws Exception {
+
+        final CaseData caseData = validCaseDataForIssueApplication();
+        caseData.getApplicant2().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setCorrespondenceAddress(correspondenceAddress());
+
+        final var documentUuid = setupAuthorizationAndApplicationDocument(caseData);
+        stubDeleteFromDocumentManagementForCaseworker(documentUuid, UNAUTHORIZED);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
+
+        stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "Divorce_CP_Dummy_Template.docx");
+        stubForDocAssemblyWith(MINI_APPLICATION_ID, "Divorce_CP_Mini_Application_Sole_Joint.docx");
+        stubAosPackSendLetter();
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+
+        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_ISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isUnauthorized());
+
+        verifyNoInteractions(notificationService);
+    }
+
     private AddressGlobalUK correspondenceAddress() {
         return AddressGlobalUK.builder()
             .addressLine1("223b")
@@ -337,5 +459,16 @@ public class CaseworkerIssueApplicationTest {
 
     private byte[] loadPdfAsBytes() throws IOException {
         return resourceAsBytes("classpath:Test.pdf");
+    }
+
+    private String setupAuthorizationAndApplicationDocument(CaseData caseData) {
+        final var documentListValue = documentWithType(DIVORCE_APPLICATION);
+        final var generatedDocuments = singletonList(documentListValue);
+
+        caseData.setDocumentsGenerated(generatedDocuments);
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, SOLICITOR_USER_ID, SOLICITOR_ROLE);
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        return FilenameUtils.getName(documentListValue.getValue().getDocumentLink().getUrl());
     }
 }
