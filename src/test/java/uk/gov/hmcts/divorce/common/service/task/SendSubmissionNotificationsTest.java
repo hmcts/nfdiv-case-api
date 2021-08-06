@@ -17,6 +17,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -66,6 +67,23 @@ class SendSubmissionNotificationsTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
         caseDetails.setState(Submitted);
+
+        sendSubmissionNotifications.apply(caseDetails);
+
+        verify(applicationSubmittedNotification).send(caseData, TEST_CASE_ID);
+        verifyNoInteractions(solicitorSubmittedNotification, applicationOutstandingActionNotification);
+    }
+
+    @Test
+    void shouldSendCitizenNotificationIfCitizenApplicationAndAwaitingHwfDecisionState() {
+
+        final CaseData caseData = caseData();
+        caseData.setApplication(Application.builder().build());
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+        caseDetails.setState(AwaitingHWFDecision);
 
         sendSubmissionNotifications.apply(caseDetails);
 

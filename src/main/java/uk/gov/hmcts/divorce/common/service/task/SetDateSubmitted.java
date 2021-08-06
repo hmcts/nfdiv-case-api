@@ -12,6 +12,7 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 
 @Component
@@ -27,7 +28,10 @@ public class SetDateSubmitted implements CaseTask {
         final CaseData caseData = caseDetails.getData();
         final State state = caseDetails.getState();
 
-        if (Submitted.equals(state) || AwaitingDocuments.equals(state)) {
+        if (Submitted.equals(state)
+            || AwaitingDocuments.equals(state)
+            || AwaitingHWFDecision.equals(state)) {
+
             caseData.getApplication().setDateSubmitted(LocalDateTime.now(clock));
             caseData.setDueDate(caseData.getApplication().getDateOfSubmissionResponse());
         }

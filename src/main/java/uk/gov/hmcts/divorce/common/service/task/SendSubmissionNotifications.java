@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.solicitor.service.notification.SolicitorSubmittedNotification;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 
 @Component
@@ -45,12 +46,13 @@ public class SendSubmissionNotifications implements CaseTask {
 
     private void sendCitizenNotifications(final CaseData caseData, final Long caseId, final State state) {
 
-        if (Submitted.equals(state)) {
+        if (Submitted.equals(state)
+            || AwaitingDocuments.equals(state)
+            || AwaitingHWFDecision.equals(state)) {
             applicationSubmittedNotification.send(caseData, caseId);
         }
 
         if (AwaitingDocuments.equals(state)) {
-            applicationSubmittedNotification.send(caseData, caseId);
             applicationOutstandingActionNotification.send(caseData, caseId);
         }
     }
