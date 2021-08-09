@@ -311,6 +311,12 @@ public class Application {
     )
     private List<ListValue<Payment>> applicationPayments;
 
+    @CCD(
+        label = "Notification of overdue application sent?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo overdueNotificationSent;
+
     @JsonIgnore
     public boolean hasBeenPaidFor() {
         return parseInt(applicationFeeOrderSummary.getPaymentTotal()) == getPaymentTotal();
@@ -360,6 +366,11 @@ public class Application {
         return SOLICITOR_SERVICE.equals(solServiceMethod);
     }
 
+    @JsonIgnore
+    public boolean hasOverdueNotificationBeenSent() {
+        return YES.equals(overdueNotificationSent);
+    }
+  
     @JsonIgnore
     public boolean isHelpWithFeesApplication() {
         return null != applicant1HelpWithFees
