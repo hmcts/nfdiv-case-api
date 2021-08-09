@@ -9,14 +9,11 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 @AllArgsConstructor
 public enum FinancialOrderFor implements HasLabel {
 
+    @JsonProperty("me")
+    ME("Me"),
+
     @JsonProperty("children")
-    CHILDREN("Children"),
-
-    @JsonProperty("applicant1")
-    APPLICANT_1("The applicant"),
-
-    @JsonProperty("applicant2")
-    APPLICANT_2("The respondent");
+    CHILDREN("The children");
 
     private final String label;
 }
