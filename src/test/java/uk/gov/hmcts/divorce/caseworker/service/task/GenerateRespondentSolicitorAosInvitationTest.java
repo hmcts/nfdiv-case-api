@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.caseworker.service.task;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -16,20 +17,18 @@ import uk.gov.hmcts.divorce.document.content.RespondentSolicitorAosInvitationTem
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
-import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_AOS_INVITATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_SOLICITOR_AOS_INVITATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DOCUMENT_TYPE_RESPONDENT_INVITATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ACCESS_CODE;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
@@ -45,12 +44,10 @@ public class GenerateRespondentSolicitorAosInvitationTest {
     @Mock
     private RespondentSolicitorAosInvitationTemplateContent templateContent;
 
-    @Mock
-    private HttpServletRequest request;
-
     @InjectMocks
     private GenerateRespondentSolicitorAosInvitation generateRespondentSolicitorAosInvitation;
 
+    @SuppressWarnings("unchecked")
     @Test
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithAosInvitationDocumentIfRespondentIsRepresented() {
 
@@ -67,24 +64,24 @@ public class GenerateRespondentSolicitorAosInvitationTest {
         MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
         classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
-        when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(templateContentSupplier);
 
         final var result = generateRespondentSolicitorAosInvitation.apply(caseDetails);
 
         assertThat(result.getData().getCaseInvite().getAccessCode()).isEqualTo(ACCESS_CODE);
 
+        final ArgumentCaptor<Supplier<String>> filename = ArgumentCaptor.forClass(Supplier.class);
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
-                caseData,
-                DOCUMENT_TYPE_RESPONDENT_INVITATION,
-                templateContentSupplier,
-                TEST_CASE_ID,
-                TEST_AUTHORIZATION_TOKEN,
-                RESP_SOLICITOR_AOS_INVITATION,
-                RESP_AOS_INVITATION_DOCUMENT_NAME,
-                ENGLISH);
+                eq(caseData),
+                eq(DOCUMENT_TYPE_RESPONDENT_INVITATION),
+                eq(templateContentSupplier),
+                eq(TEST_CASE_ID),
+                eq(RESP_SOLICITOR_AOS_INVITATION),
+                eq(ENGLISH),
+                filename.capture());
 
+        assertThat(filename.getValue().get()).isEqualTo(RESP_AOS_INVITATION_DOCUMENT_NAME + TEST_CASE_ID);
         classMock.close();
     }
 
@@ -101,6 +98,6 @@ public class GenerateRespondentSolicitorAosInvitationTest {
         final var result = generateRespondentSolicitorAosInvitation.apply(caseDetails);
 
         assertThat(result.getData()).isEqualTo(caseData);
-        verifyNoInteractions(request, templateContent, caseDataDocumentService);
+        verifyNoInteractions(templateContent, caseDataDocumentService);
     }
 }

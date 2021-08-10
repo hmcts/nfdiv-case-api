@@ -12,17 +12,12 @@ import uk.gov.hmcts.divorce.document.model.DocumentInfo;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Supplier;
-
-import static java.lang.String.format;
 
 @Service
 @Slf4j
 public class DocAssemblyService {
-
-    private static final String DOCUMENT_FILENAME_FMT = "%s%s";
-
+    
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
@@ -39,8 +34,8 @@ public class DocAssemblyService {
                                        final Long caseId,
                                        final String authorisation,
                                        final String templateId,
-                                       final String documentName,
-                                       final LanguagePreference languagePreference) {
+                                       final LanguagePreference languagePreference,
+                                       final Supplier<String> filename) {
 
         final String templateName = docmosisTemplateProvider.templateNameFor(templateId, languagePreference);
 
@@ -65,13 +60,9 @@ public class DocAssemblyService {
             docAssemblyResponse.getRenditionOutputLocation()
         );
 
-        String fileName = Objects.isNull(caseId)
-            ? format(DOCUMENT_FILENAME_FMT, documentName, "") + ".pdf"
-            : format(DOCUMENT_FILENAME_FMT, documentName, caseId) + ".pdf";
-
         return new DocumentInfo(
             docAssemblyResponse.getRenditionOutputLocation(),
-            fileName,
+            filename.get() + ".pdf",
             docAssemblyResponse.getBinaryFilePath()
         );
     }

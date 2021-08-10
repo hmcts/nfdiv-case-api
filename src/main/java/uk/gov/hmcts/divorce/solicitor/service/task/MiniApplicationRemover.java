@@ -9,19 +9,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.solicitor.service.DraftApplicationRemovalService;
 
-import javax.servlet.http.HttpServletRequest;
-
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-
 @Component
 @Slf4j
 public class MiniApplicationRemover implements CaseTask {
 
     @Autowired
     private DraftApplicationRemovalService draftApplicationRemovalService;
-
-    @Autowired
-    private HttpServletRequest request;
 
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
@@ -34,8 +27,7 @@ public class MiniApplicationRemover implements CaseTask {
         final var documentsExcludingApplication =
             draftApplicationRemovalService.removeDraftApplicationDocument(
                 caseData.getDocumentsGenerated(),
-                caseId,
-                request.getHeader(AUTHORIZATION)
+                caseId
             );
 
         caseData.setDocumentsGenerated(documentsExcludingApplication);

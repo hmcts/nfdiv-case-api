@@ -12,9 +12,7 @@ import uk.gov.hmcts.divorce.document.content.DraftApplicationTemplateContent;
 
 import java.util.Map;
 import java.util.function.Supplier;
-import javax.servlet.http.HttpServletRequest;
 
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_DRAFT_APPLICATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
@@ -29,9 +27,6 @@ public class MiniApplicationDraft implements CaseTask {
     @Autowired
     private DraftApplicationTemplateContent templateContent;
 
-    @Autowired
-    private HttpServletRequest request;
-
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
 
@@ -42,16 +37,16 @@ public class MiniApplicationDraft implements CaseTask {
 
         final Supplier<Map<String, Object>> templateContentSupplier = templateContent
             .apply(caseData, caseId, caseDetails.getCreatedDate().toLocalDate());
+        final Supplier<String> filename = () -> DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME + caseId;
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
             DIVORCE_APPLICATION,
             templateContentSupplier,
             caseId,
-            request.getHeader(AUTHORIZATION),
             DIVORCE_MINI_DRAFT_APPLICATION,
-            DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME,
-            caseData.getApplicant1().getLanguagePreference()
+            caseData.getApplicant1().getLanguagePreference(),
+            filename
         );
 
         return caseDetails;

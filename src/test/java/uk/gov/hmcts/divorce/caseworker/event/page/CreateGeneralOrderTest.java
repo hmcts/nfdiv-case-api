@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.caseworker.event.page;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -24,17 +25,16 @@ import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
-import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_GENERAL_ORDER;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getGeneralOrder;
 
@@ -46,9 +46,6 @@ public class CreateGeneralOrderTest {
 
     @Mock
     private GeneralOrderTemplateContent generalOrderTemplateContent;
-
-    @Mock
-    private HttpServletRequest httpServletRequest;
 
     @Mock
     private Clock clock;
@@ -64,6 +61,7 @@ public class CreateGeneralOrderTest {
         when(clock.getZone()).thenReturn(ZoneId.of("Europe/London"));
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     void shouldUpdateCaseWithGeneralOrderDocumentWhenMidEventCallbackIsTriggered() {
         final CaseData caseData = caseData();
@@ -74,8 +72,6 @@ public class CreateGeneralOrderTest {
 
         when(generalOrderTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContentSupplier);
 
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-
         String documentUrl = "http://localhost:8080/4567";
         Document generalOrderDocument = new Document(
             documentUrl,
@@ -85,14 +81,12 @@ public class CreateGeneralOrderTest {
 
         when(
             caseDataDocumentService.renderGeneralOrderDocument(
-                templateContentSupplier,
-                null,
-                TEST_SERVICE_AUTH_TOKEN,
-                DIVORCE_GENERAL_ORDER,
-                GENERAL_ORDER + "2021-06-15 13:39:00",
-                ENGLISH
-            )
-        )
+                eq(templateContentSupplier),
+                eq(TEST_CASE_ID),
+                eq(DIVORCE_GENERAL_ORDER),
+                eq(ENGLISH),
+                any()
+            ))
             .thenReturn(generalOrderDocument);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -106,15 +100,16 @@ public class CreateGeneralOrderTest {
 
         assertThat(actualGeneralOrder.getGeneralOrderDraft()).isEqualTo(generalOrderDocument);
 
-        verify(httpServletRequest).getHeader(AUTHORIZATION);
         verify(generalOrderTemplateContent).apply(caseData, TEST_CASE_ID);
+        final ArgumentCaptor<Supplier<String>> filename = ArgumentCaptor.forClass(Supplier.class);
         verify(caseDataDocumentService).renderGeneralOrderDocument(
-            templateContentSupplier,
-            null,
-            TEST_SERVICE_AUTH_TOKEN,
-            DIVORCE_GENERAL_ORDER,
-            GENERAL_ORDER + "2021-06-15 13:39:00",
-            ENGLISH
+            eq(templateContentSupplier),
+            eq(TEST_CASE_ID),
+            eq(DIVORCE_GENERAL_ORDER),
+            eq(ENGLISH),
+            filename.capture()
         );
+
+        assertThat(filename.getValue().get()).isEqualTo(GENERAL_ORDER + "2021-06-15 13:39:00");
     }
 }

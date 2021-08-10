@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.idam.IdamService;
 
 import java.util.Map;
 import java.util.function.Supplier;
@@ -26,24 +27,28 @@ public class CaseDataDocumentService {
     @Autowired
     private DocumentIdProvider documentIdProvider;
 
+    @Autowired
+    private IdamService idamService;
+
     public void renderDocumentAndUpdateCaseData(final CaseData caseData,
                                                 final DocumentType documentType,
                                                 final Supplier<Map<String, Object>> templateContentSupplier,
                                                 final Long caseId,
-                                                final String authorisation,
                                                 final String templateId,
-                                                final String documentName,
-                                                final LanguagePreference languagePreference) {
+                                                final LanguagePreference languagePreference,
+                                                final Supplier<String> filename) {
 
         log.info("Rendering document request for templateId : {} case id: {}", templateId, caseId);
+
+        final String authorisation = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
 
         final var documentInfo = docAssemblyService.renderDocument(
             templateContentSupplier,
             caseId,
             authorisation,
             templateId,
-            documentName,
-            languagePreference
+            languagePreference,
+            filename
         );
 
         log.info("Adding document to case data for templateId : {} case id: {}", templateId, caseId);
@@ -57,20 +62,21 @@ public class CaseDataDocumentService {
 
     public Document renderGeneralOrderDocument(final Supplier<Map<String, Object>> templateContentSupplier,
                                                final Long caseId,
-                                               final String authorisation,
                                                final String templateId,
-                                               final String documentName,
-                                               final LanguagePreference languagePreference) {
+                                               final LanguagePreference languagePreference,
+                                               final Supplier<String> filename) {
 
         log.info("Rendering document request for templateId : {} ", templateId);
+
+        final String authorisation = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
 
         final var documentInfo = docAssemblyService.renderDocument(
             templateContentSupplier,
             caseId,
             authorisation,
             templateId,
-            documentName,
-            languagePreference
+            languagePreference,
+            filename
         );
 
         return documentFrom(documentInfo);

@@ -10,6 +10,8 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentInfo;
+import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +19,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_GENERAL_ORDER;
@@ -44,6 +47,9 @@ class CaseDataDocumentServiceTest {
     @Mock
     private DocumentIdProvider documentIdProvider;
 
+    @Mock
+    private IdamService idamService;
+
     @InjectMocks
     private CaseDataDocumentService caseDataDocumentService;
 
@@ -53,15 +59,19 @@ class CaseDataDocumentServiceTest {
         final var documentId = "123456";
         final CaseData caseData = caseData();
         final Supplier<Map<String, Object>> templateContentSupplier = HashMap::new;
+        final User systemUser = mock(User.class);
+        final Supplier<String> filename = () -> DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME + TEST_CASE_ID;
 
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
+        when(systemUser.getAuthToken()).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(docAssemblyService
             .renderDocument(
                 templateContentSupplier,
                 TEST_CASE_ID,
                 TEST_AUTHORIZATION_TOKEN,
                 DIVORCE_MINI_DRAFT_APPLICATION,
-                DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME,
-                ENGLISH))
+                ENGLISH,
+                filename))
             .thenReturn(new DocumentInfo(DOC_URL, PDF_FILENAME, DOC_BINARY_URL));
 
         when(documentIdProvider.documentId()).thenReturn(documentId);
@@ -71,10 +81,9 @@ class CaseDataDocumentServiceTest {
             EMAIL,
             templateContentSupplier,
             TEST_CASE_ID,
-            TEST_AUTHORIZATION_TOKEN,
             DIVORCE_MINI_DRAFT_APPLICATION,
-            DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME,
-            ENGLISH);
+            ENGLISH,
+            filename);
 
         final List<ListValue<DivorceDocument>> documentsGenerated = caseData.getDocumentsGenerated();
 
@@ -97,26 +106,28 @@ class CaseDataDocumentServiceTest {
     @Test
     void shouldGenerateAndReturnGeneralOrderDocument() {
 
-        final var documentId = "123456";
         final Supplier<Map<String, Object>> templateContentSupplier = HashMap::new;
+        final User systemUser = mock(User.class);
+        final Supplier<String> filename = () -> GENERAL_ORDER_PDF_FILENAME + TEST_CASE_ID;
 
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
+        when(systemUser.getAuthToken()).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(docAssemblyService
             .renderDocument(
                 templateContentSupplier,
                 TEST_CASE_ID,
                 TEST_AUTHORIZATION_TOKEN,
                 DIVORCE_GENERAL_ORDER,
-                GENERAL_ORDER_PDF_FILENAME,
-                ENGLISH))
+                ENGLISH,
+                filename))
             .thenReturn(new DocumentInfo(DOC_URL, PDF_FILENAME, DOC_BINARY_URL));
 
         final Document result = caseDataDocumentService.renderGeneralOrderDocument(
             templateContentSupplier,
             TEST_CASE_ID,
-            TEST_AUTHORIZATION_TOKEN,
             DIVORCE_GENERAL_ORDER,
-            GENERAL_ORDER_PDF_FILENAME,
-            ENGLISH);
+            ENGLISH,
+            filename);
 
         assertThat(result.getBinaryUrl()).isEqualTo(DOC_BINARY_URL);
         assertThat(result.getUrl()).isEqualTo(DOC_URL);

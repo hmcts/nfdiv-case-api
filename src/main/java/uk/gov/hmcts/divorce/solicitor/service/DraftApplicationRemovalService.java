@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.document.DocumentManagementClient;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 import java.util.List;
@@ -32,9 +33,8 @@ public class DraftApplicationRemovalService {
     private IdamService idamService;
 
     public List<ListValue<DivorceDocument>> removeDraftApplicationDocument(
-        List<ListValue<DivorceDocument>> generatedDocuments,
-        Long caseId,
-        String userAuth
+        final List<ListValue<DivorceDocument>> generatedDocuments,
+        final Long caseId
     ) {
 
         if (isEmpty(generatedDocuments)) {
@@ -42,12 +42,14 @@ public class DraftApplicationRemovalService {
             return emptyList();
         }
 
-        List<ListValue<DivorceDocument>> generatedDocumentsExcludingApplication = generatedDocuments
+        final User systemUser = idamService.retrieveSystemUpdateUserDetails();
+
+        final List<ListValue<DivorceDocument>> generatedDocumentsExcludingApplication = generatedDocuments
             .stream()
             .map(document ->
                 deleteDocumentFromDocumentStore(
                     document,
-                    userAuth,
+                    systemUser,
                     String.valueOf(caseId)
                 )
             )
@@ -60,22 +62,21 @@ public class DraftApplicationRemovalService {
         return generatedDocumentsExcludingApplication;
     }
 
-
     private ListValue<DivorceDocument> deleteDocumentFromDocumentStore(
-        ListValue<DivorceDocument> document,
-        String userAuth,
-        String caseId
+        final ListValue<DivorceDocument> document,
+        final User user,
+        final String caseId
     ) {
         if (isApplicationDocument(document)) {
-            UserDetails solicitorUserDetails = idamService.retrieveUser(userAuth).getUserDetails();
 
-            String solicitorRolesCsv = String.join(",", solicitorUserDetails.getRoles());
+            final UserDetails userDetails = user.getUserDetails();
+            final String solicitorRolesCsv = String.join(",", userDetails.getRoles());
 
             documentManagementClient.deleteDocument(
-                userAuth,
+                user.getAuthToken(),
                 authTokenGenerator.generate(),
                 solicitorRolesCsv,
-                solicitorUserDetails.getId(),
+                userDetails.getId(),
                 FilenameUtils.getName(document.getValue().getDocumentLink().getUrl()),
                 true
             );

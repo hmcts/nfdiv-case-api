@@ -39,7 +39,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.OTHER;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_1_SOL_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
@@ -61,45 +61,37 @@ public class DraftApplicationRemovalServiceTest {
 
     @Test
     public void shouldRemoveDraftApplicationDocumentFromCaseDataAndDeleteApplicationDocumentFromDocManagement() {
-        List<String> solicitorRoles = List.of("caseworker-divorce", "caseworker-divorce-solicitor");
+        final List<String> systemRoles = List.of("caseworker-divorce");
+        final String systemRolesCsv = String.join(",", systemRoles);
+        final ListValue<DivorceDocument> divorceDocumentListValue = documentWithType(DIVORCE_APPLICATION);
+        final String userId = UUID.randomUUID().toString();
+        final User systemUser = systemUser(systemRoles, userId);
 
-        String solicitorRolesCsv = String.join(",", solicitorRoles);
-
-        ListValue<DivorceDocument> divorceDocumentListValue = documentWithType(DIVORCE_APPLICATION);
-
-        String userId = UUID.randomUUID().toString();
-
-        User solicitorUser = solicitorUser(solicitorRoles, userId);
-
-        when(idamService.retrieveUser(APP_1_SOL_AUTH_TOKEN)).thenReturn(solicitorUser);
-
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        String documentUuid = FilenameUtils.getName(divorceDocumentListValue.getValue().getDocumentLink().getUrl());
+        final String documentUuid = FilenameUtils.getName(divorceDocumentListValue.getValue().getDocumentLink().getUrl());
 
         doNothing().when(documentManagementClient).deleteDocument(
-            APP_1_SOL_AUTH_TOKEN,
+            SYSTEM_USER_USER_ID,
             TEST_SERVICE_AUTH_TOKEN,
-            solicitorRolesCsv,
+            systemRolesCsv,
             userId,
             documentUuid,
             true
         );
 
-        List<ListValue<DivorceDocument>> actualDocumentsList = draftApplicationRemovalService.removeDraftApplicationDocument(
+        final List<ListValue<DivorceDocument>> actualDocumentsList = draftApplicationRemovalService.removeDraftApplicationDocument(
             singletonList(divorceDocumentListValue),
-            TEST_CASE_ID,
-            APP_1_SOL_AUTH_TOKEN
+            TEST_CASE_ID
         );
 
-        //assertThat(actualDocumentsList).isEmpty();
-
-        verify(idamService).retrieveUser(APP_1_SOL_AUTH_TOKEN);
+        verify(idamService).retrieveSystemUpdateUserDetails();
         verify(authTokenGenerator).generate();
         verify(documentManagementClient).deleteDocument(
-            APP_1_SOL_AUTH_TOKEN,
+            SYSTEM_USER_USER_ID,
             TEST_SERVICE_AUTH_TOKEN,
-            solicitorRolesCsv,
+            systemRolesCsv,
             userId,
             documentUuid,
             true
@@ -110,24 +102,17 @@ public class DraftApplicationRemovalServiceTest {
 
     @Test
     public void shouldThrow403ForbiddenWhenServiceIsNotWhitelistedInDocManagement() {
-        List<String> solicitorRoles = List.of("caseworker-divorce", "caseworker-divorce-solicitor");
+        final List<String> systemRoles = List.of("caseworker-divorce");
+        final String userId = UUID.randomUUID().toString();
+        final User systemUser = systemUser(systemRoles, userId);
 
-        String solicitorRolesCsv = String.join(",", solicitorRoles);
-
-        ListValue<DivorceDocument> divorceDocumentListValue = documentWithType(DIVORCE_APPLICATION);
-
-        String userId = UUID.randomUUID().toString();
-
-        User solicitorUser = solicitorUser(solicitorRoles, userId);
-
-        when(idamService.retrieveUser(APP_1_SOL_AUTH_TOKEN)).thenReturn(solicitorUser);
-
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        byte[] emptyBody = {};
-        Request request = Request.create(DELETE, EMPTY, Map.of(), emptyBody, UTF_8, null);
+        final byte[] emptyBody = {};
+        final Request request = Request.create(DELETE, EMPTY, Map.of(), emptyBody, UTF_8, null);
 
-        FeignException feignException = FeignException.errorStatus(
+        final FeignException feignException = FeignException.errorStatus(
             "userRolesNotAllowedToDelete",
             Response.builder()
                 .request(request)
@@ -150,35 +135,28 @@ public class DraftApplicationRemovalServiceTest {
 
         assertThatThrownBy(() -> draftApplicationRemovalService.removeDraftApplicationDocument(
             singletonList(documentWithType(DIVORCE_APPLICATION)),
-            TEST_CASE_ID,
-            APP_1_SOL_AUTH_TOKEN
+            TEST_CASE_ID
         ))
             .hasMessageContaining("403 User role is not authorised to delete document")
             .isExactlyInstanceOf(FeignException.Forbidden.class);
 
-        verify(idamService).retrieveUser(APP_1_SOL_AUTH_TOKEN);
+        verify(idamService).retrieveSystemUpdateUserDetails();
         verify(authTokenGenerator).generate();
         verifyNoMoreInteractions(idamService, authTokenGenerator);
     }
 
     @Test
     public void shouldThrow401UnAuthorizedWhenServiceAuthTokenGenerationFails() {
-        List<String> solicitorRoles = List.of("caseworker-divorce", "caseworker-divorce-solicitor");
+        final List<String> systemRoles = List.of("caseworker-divorce");
+        final String userId = UUID.randomUUID().toString();
+        final User systemUser = systemUser(systemRoles, userId);
 
-        String solicitorRolesCsv = String.join(",", solicitorRoles);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
 
-        ListValue<DivorceDocument> divorceDocumentListValue = documentWithType(DIVORCE_APPLICATION);
+        final byte[] emptyBody = {};
+        final Request request = Request.create(GET, EMPTY, Map.of(), emptyBody, UTF_8, null);
 
-        String userId = UUID.randomUUID().toString();
-
-        User solicitorUser = solicitorUser(solicitorRoles, userId);
-
-        when(idamService.retrieveUser(APP_1_SOL_AUTH_TOKEN)).thenReturn(solicitorUser);
-
-        byte[] emptyBody = {};
-        Request request = Request.create(GET, EMPTY, Map.of(), emptyBody, UTF_8, null);
-
-        FeignException feignException = FeignException.errorStatus(
+        final FeignException feignException = FeignException.errorStatus(
             "invalidSecret",
             Response.builder()
                 .request(request)
@@ -192,38 +170,37 @@ public class DraftApplicationRemovalServiceTest {
 
         assertThatThrownBy(() -> draftApplicationRemovalService.removeDraftApplicationDocument(
             singletonList(documentWithType(DIVORCE_APPLICATION)),
-            TEST_CASE_ID,
-            APP_1_SOL_AUTH_TOKEN
+            TEST_CASE_ID
         ))
             .hasMessageContaining("401 Invalid s2s secret")
             .isExactlyInstanceOf(FeignException.Unauthorized.class);
 
-        verify(idamService).retrieveUser(APP_1_SOL_AUTH_TOKEN);
+        verify(idamService).retrieveSystemUpdateUserDetails();
         verifyNoMoreInteractions(idamService);
     }
 
     @Test
     public void shouldNotInvokeDocManagementWhenApplicationDocumentDoesNotExistInGenerateDocuments() {
-        ListValue<DivorceDocument> divorceDocumentListValue = documentWithType(OTHER);
+        final ListValue<DivorceDocument> divorceDocumentListValue = documentWithType(OTHER);
 
-        List<ListValue<DivorceDocument>> actualDocumentsList = draftApplicationRemovalService.removeDraftApplicationDocument(
+        final List<ListValue<DivorceDocument>> actualDocumentsList = draftApplicationRemovalService.removeDraftApplicationDocument(
             singletonList(divorceDocumentListValue),
-            TEST_CASE_ID,
-            APP_1_SOL_AUTH_TOKEN
+            TEST_CASE_ID
         );
 
         assertThat(actualDocumentsList).containsExactlyInAnyOrder(divorceDocumentListValue);
 
-        verifyNoInteractions(idamService, authTokenGenerator, documentManagementClient);
+        verify(idamService).retrieveSystemUpdateUserDetails();
+        verifyNoInteractions(authTokenGenerator, documentManagementClient);
     }
 
-    private User solicitorUser(List<String> solicitorRoles, String userId) {
-        UserDetails userDetails = UserDetails
+    private User systemUser(final List<String> solicitorRoles, final String userId) {
+        final UserDetails userDetails = UserDetails
             .builder()
             .roles(solicitorRoles)
             .id(userId)
             .build();
 
-        return new User(APP_1_SOL_AUTH_TOKEN, userDetails);
+        return new User(SYSTEM_USER_USER_ID, userDetails);
     }
 }
