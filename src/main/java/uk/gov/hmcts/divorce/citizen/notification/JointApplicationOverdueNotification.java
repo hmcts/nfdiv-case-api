@@ -72,7 +72,7 @@ public class JointApplicationOverdueNotification {
             templateVars.put(PAID_FOR, PAID_FOR);
         }
 
-        log.info("Sending notification to applicant 1 to them that applicant 2 has reviewed the application: {}", id);
+        log.info("Sending notification to applicant 1 to notify them that applicant 2 has reviewed the application: {}", id);
 
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
