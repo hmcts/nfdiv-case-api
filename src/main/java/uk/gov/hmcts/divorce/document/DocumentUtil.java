@@ -80,12 +80,16 @@ public final class DocumentUtil {
         List<ListValue<CaseworkerUploadedDocument>> existingDocuments = documentsWithoutIds.get(false);
 
         AtomicInteger listValueIndex = new AtomicInteger(0);
-        newlyAddedDocuments.forEach(uploadedDocumentListValue -> uploadedDocumentListValue.setId(String.valueOf(listValueIndex.incrementAndGet())));
+        newlyAddedDocuments.forEach(
+            uploadedDocumentListValue -> uploadedDocumentListValue.setId(String.valueOf(listValueIndex.incrementAndGet()))
+        );
 
         List<ListValue<CaseworkerUploadedDocument>> sortedDocuments = new ArrayList<>();
         sortedDocuments.addAll(0, newlyAddedDocuments); // add new documents to start of the list
 
-        existingDocuments.forEach(uploadedDocumentListValue -> uploadedDocumentListValue.setId(String.valueOf(listValueIndex.incrementAndGet())));
+        existingDocuments.forEach(
+            uploadedDocumentListValue -> uploadedDocumentListValue.setId(String.valueOf(listValueIndex.incrementAndGet()))
+        );
         sortedDocuments.addAll(1, existingDocuments);
 
         return sortedDocuments;

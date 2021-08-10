@@ -55,7 +55,7 @@ public class CaseworkerUploadDocumentTest {
             getDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003", "d9d.pdf", D9D);
 
         final ListValue<CaseworkerUploadedDocument> doc2 =
-            getDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003", "aos.pdf", ACKNOWLEDGEMENT_OF_SERVICE);
+            getDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130004", "aos.pdf", ACKNOWLEDGEMENT_OF_SERVICE);
 
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
@@ -80,7 +80,7 @@ public class CaseworkerUploadDocumentTest {
             getDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003", "d9d.pdf", D9D);
 
         final ListValue<CaseworkerUploadedDocument> doc2 =
-            getDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003", "bailiff.pdf", BAILIFF_SERVICE);
+            getDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130004", "bailiff.pdf", BAILIFF_SERVICE);
 
         final CaseData previousCaseData = caseData();
         previousCaseData.setDocumentsUploaded(List.of(doc1, doc2));
@@ -88,7 +88,7 @@ public class CaseworkerUploadDocumentTest {
         previousCaseDetails.setData(previousCaseData);
 
         final ListValue<CaseworkerUploadedDocument> doc3 =
-            getDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003", "aos.pdf", ACKNOWLEDGEMENT_OF_SERVICE);
+            getDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130005", "aos.pdf", ACKNOWLEDGEMENT_OF_SERVICE);
 
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
@@ -106,7 +106,11 @@ public class CaseworkerUploadDocumentTest {
         assertThat(actualDocuments.get(2).getValue()).isSameAs(doc2.getValue());
     }
 
-    private ListValue<CaseworkerUploadedDocument> getDocumentListValue(String url, String filename, CaseworkerUploadedDocumentType documentType) {
+    private ListValue<CaseworkerUploadedDocument> getDocumentListValue(
+        String url,
+        String filename,
+        CaseworkerUploadedDocumentType documentType
+    ) {
         return ListValue.<CaseworkerUploadedDocument>builder()
             .id(UUID.randomUUID().toString())
             .value(CaseworkerUploadedDocument.builder()
