@@ -70,12 +70,12 @@ public class DraftApplicationRemovalService {
         if (isApplicationDocument(document)) {
 
             final UserDetails userDetails = user.getUserDetails();
-            final String solicitorRolesCsv = String.join(",", userDetails.getRoles());
+            final String rolesCsv = String.join(",", userDetails.getRoles());
 
             documentManagementClient.deleteDocument(
                 user.getAuthToken(),
                 authTokenGenerator.generate(),
-                solicitorRolesCsv,
+                rolesCsv,
                 userDetails.getId(),
                 FilenameUtils.getName(document.getValue().getDocumentLink().getUrl()),
                 true

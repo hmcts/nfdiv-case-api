@@ -13,9 +13,11 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.CASEWORKER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.BEARER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
 
 public final class DocManagementStoreWireMock {
 
@@ -36,13 +38,9 @@ public final class DocManagementStoreWireMock {
             DM_STORE_SERVER.resetAll();
         }
     }
-
-    public static void stubDeleteFromDocumentManagementForSolicitor(final String documentUuid, final HttpStatus httpStatus) {
-        stubDeleteFromDocumentManagement(documentUuid, httpStatus, "1", "caseworker-divorce-solicitor");
-    }
-
-    public static void stubDeleteFromDocumentManagementForCaseworker(final String documentUuid, final HttpStatus httpStatus) {
-        stubDeleteFromDocumentManagement(documentUuid, httpStatus, "2", "caseworker-divorce");
+    
+    public static void stubDeleteFromDocumentManagementForSystem(final String documentUuid, final HttpStatus httpStatus) {
+        stubDeleteFromDocumentManagement(documentUuid, httpStatus, "4", "caseworker-divorce-systemupdate");
     }
 
     public static void stubDeleteFromDocumentManagement(final String documentUuid,
@@ -50,7 +48,7 @@ public final class DocManagementStoreWireMock {
                                                         final String userId,
                                                         final String userRoles) {
         DM_STORE_SERVER.stubFor(delete("/documents/" + documentUuid + "?permanent=true")
-            .withHeader(AUTHORIZATION, new EqualToPattern(TEST_AUTHORIZATION_TOKEN))
+            .withHeader(AUTHORIZATION, new EqualToPattern(BEARER + TEST_SYSTEM_AUTHORISATION_TOKEN))
             .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(TEST_SERVICE_AUTH_TOKEN))
             .withHeader("user-id", new EqualToPattern(userId))
             .withHeader("user-roles", new EqualToPattern(userRoles))

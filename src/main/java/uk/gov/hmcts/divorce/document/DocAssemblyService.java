@@ -17,7 +17,7 @@ import java.util.function.Supplier;
 @Service
 @Slf4j
 public class DocAssemblyService {
-    
+
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
