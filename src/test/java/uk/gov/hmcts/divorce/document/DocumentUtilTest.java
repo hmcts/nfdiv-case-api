@@ -5,13 +5,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.divorce.document.model.CaseworkerUploadedDocument;
-import uk.gov.hmcts.divorce.document.model.CaseworkerUploadedDocumentType;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentInfo;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -150,88 +147,6 @@ class DocumentUtilTest {
         assertThat(letters.size()).isEqualTo(2);
         assertThat(letters.get(0).getDivorceDocument()).isSameAs(doc2.getValue());
         assertThat(letters.get(1).getDivorceDocument()).isSameAs(doc3.getValue());
-    }
-
-    @Test
-    void shouldSortDocumentsInDescendingOrderWhenThereAreExistingDocuments() {
-        final ListValue<CaseworkerUploadedDocument> existingDocument = ListValue.<CaseworkerUploadedDocument>builder()
-            .id("1")
-            .value(CaseworkerUploadedDocument.builder()
-                .documentType(CaseworkerUploadedDocumentType.D9D)
-                .documentDateAdded(LocalDate.of(2021, 1, 1))
-                .documentLink(Document
-                    .builder()
-                    .url(DOC_URL)
-                    .filename("d9d.pdf")
-                    .binaryUrl(DOC_BINARY_URL)
-                    .build()
-                )
-                .build())
-            .build();
-
-        final ListValue<CaseworkerUploadedDocument> newDocument = ListValue.<CaseworkerUploadedDocument>builder()
-            .value(CaseworkerUploadedDocument.builder()
-                .documentType(CaseworkerUploadedDocumentType.ACKNOWLEDGEMENT_OF_SERVICE)
-                .documentDateAdded(LocalDate.of(2021, 2, 2))
-                .documentLink(Document
-                    .builder()
-                    .url(DOC_URL)
-                    .filename("aos.pdf")
-                    .binaryUrl(DOC_BINARY_URL)
-                    .build()
-                )
-                .build())
-            .build();
-
-        List<ListValue<CaseworkerUploadedDocument>> actualDocuments = DocumentUtil.sortDocumentsInDescendingOrder(
-            List.of(existingDocument),
-            List.of(newDocument, existingDocument)
-        );
-
-        assertThat(actualDocuments.size()).isEqualTo(2);
-        assertThat(actualDocuments.get(0).getValue()).isSameAs(newDocument.getValue());
-        assertThat(actualDocuments.get(1).getValue()).isSameAs(existingDocument.getValue());
-    }
-
-    @Test
-    void shouldReturnDocumentsInOrderWhenThereAreNoExistingDocuments() {
-        final ListValue<CaseworkerUploadedDocument> doc1 = ListValue.<CaseworkerUploadedDocument>builder()
-            .id("1")
-            .value(CaseworkerUploadedDocument.builder()
-                .documentType(CaseworkerUploadedDocumentType.D9D)
-                .documentDateAdded(LocalDate.of(2021, 1, 1))
-                .documentLink(Document
-                    .builder()
-                    .url(DOC_URL)
-                    .filename("d9d.pdf")
-                    .binaryUrl(DOC_BINARY_URL)
-                    .build()
-                )
-                .build())
-            .build();
-
-        final ListValue<CaseworkerUploadedDocument> doc2 = ListValue.<CaseworkerUploadedDocument>builder()
-            .value(CaseworkerUploadedDocument.builder()
-                .documentType(CaseworkerUploadedDocumentType.ACKNOWLEDGEMENT_OF_SERVICE)
-                .documentDateAdded(LocalDate.of(2021, 2, 2))
-                .documentLink(Document
-                    .builder()
-                    .url(DOC_URL)
-                    .filename("aos.pdf")
-                    .binaryUrl(DOC_BINARY_URL)
-                    .build()
-                )
-                .build())
-            .build();
-
-        List<ListValue<CaseworkerUploadedDocument>> actualDocuments = DocumentUtil.sortDocumentsInDescendingOrder(
-            emptyList(),
-            List.of(doc1, doc2)
-        );
-
-        assertThat(actualDocuments.size()).isEqualTo(2);
-        assertThat(actualDocuments.get(0).getValue()).isSameAs(doc1.getValue());
-        assertThat(actualDocuments.get(1).getValue()).isSameAs(doc2.getValue());
     }
 
     private DocumentInfo documentInfo() {

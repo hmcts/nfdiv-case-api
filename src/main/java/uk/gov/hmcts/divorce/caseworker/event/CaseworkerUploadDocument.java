@@ -6,15 +6,10 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.document.DocumentUtil;
-import uk.gov.hmcts.divorce.document.model.CaseworkerUploadedDocument;
-
-import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
@@ -54,12 +49,7 @@ public class CaseworkerUploadDocument implements CCDConfig<CaseData, State, User
 
         var caseData = details.getData();
 
-        List<ListValue<CaseworkerUploadedDocument>> sortedDocuments = DocumentUtil.sortDocumentsInDescendingOrder(
-            beforeDetails.getData().getDocumentsUploaded(),
-            caseData.getDocumentsUploaded()
-        );
-
-        caseData.setDocumentsUploaded(sortedDocuments);
+        caseData.sortUploadedDocuments(beforeDetails.getData().getDocumentsUploaded());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
