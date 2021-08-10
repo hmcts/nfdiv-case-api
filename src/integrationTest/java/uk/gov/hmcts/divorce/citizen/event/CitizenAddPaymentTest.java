@@ -13,7 +13,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
@@ -38,6 +37,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenAddPayment.CITIZEN_ADD_PAYMENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICATION_SUBMITTED;
@@ -91,7 +91,7 @@ public class CitizenAddPaymentTest {
     public void givenLastAddedPaymentIsInProgress() throws Exception {
         CaseData data = caseDataWithOrderSummary();
         data.getApplication().setDateSubmitted(LocalDateTime.now());
-        data.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
+        data.getApplication().setSolSignStatementOfTruth(YES);
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
         data.getApplication().setApplicationFeeOrderSummary(orderSummary);
@@ -117,7 +117,7 @@ public class CitizenAddPaymentTest {
     public void givenLastAddedPaymentWasCanceled() throws Exception {
         CaseData data = caseDataWithOrderSummary();
         data.getApplication().setDateSubmitted(LocalDateTime.now());
-        data.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
+        data.getApplication().setSolSignStatementOfTruth(YES);
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
         data.getApplication().setApplicationFeeOrderSummary(orderSummary);
@@ -143,7 +143,9 @@ public class CitizenAddPaymentTest {
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmail() throws Exception {
         CaseData data = caseDataWithOrderSummary();
         data.getApplication().setDateSubmitted(LocalDateTime.now());
-        data.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
+        data.getApplication().setSolSignStatementOfTruth(YES);
+        data.getApplication().setApplicant1StatementOfTruth(YES);
+        data.getApplication().setSolSignStatementOfTruth(null);
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
         data.getApplication().setApplicationFeeOrderSummary(orderSummary);
@@ -173,8 +175,9 @@ public class CitizenAddPaymentTest {
         CaseData data = caseDataWithOrderSummary();
         data.getApplication().setDateSubmitted(LocalDateTime.now());
         data.setApplicant2(getApplicant2(Gender.MALE));
-        data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
-
+        data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
+        data.getApplication().setApplicant1StatementOfTruth(YES);
+        data.getApplication().setSolSignStatementOfTruth(null);
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
         data.getApplication().setApplicationFeeOrderSummary(orderSummary);
@@ -231,8 +234,8 @@ public class CitizenAddPaymentTest {
     public void givenSendEmailThrowsExceptionWhenCallbackIsInvokedThenReturnBadRequest() throws Exception {
         CaseData data = caseDataWithOrderSummary();
         data.getApplication().setDateSubmitted(LocalDateTime.now());
-
-        data.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
+        data.getApplication().setApplicant1StatementOfTruth(YES);
+        data.getApplication().setSolSignStatementOfTruth(null);
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
         data.getApplication().setApplicationFeeOrderSummary(orderSummary);

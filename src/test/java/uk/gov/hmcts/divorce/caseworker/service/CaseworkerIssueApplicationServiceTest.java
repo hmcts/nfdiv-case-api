@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDate;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.solicitor.service.task.MiniApplicationRemover;
 
 import java.time.Clock;
 
@@ -29,6 +30,9 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerIssueApplicationServiceTest {
+
+    @Mock
+    private MiniApplicationRemover miniApplicationRemover;
 
     @Mock
     private GenerateMiniApplication generateMiniApplication;
@@ -76,6 +80,7 @@ class CaseworkerIssueApplicationServiceTest {
 
         when(generateRespondentSolicitorAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
         when(generateCitizenRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
+        when(miniApplicationRemover.apply(caseDetails)).thenReturn(caseDetails);
         when(generateMiniApplication.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosPack.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosNotifications.apply(caseDetails)).thenReturn(caseDetails);

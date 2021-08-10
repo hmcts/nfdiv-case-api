@@ -75,7 +75,7 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
 
         Application application = caseDataCopy.getApplication();
         State state;
-        if (application.getApplicant1HelpWithFees() != null && application.getApplicant1HelpWithFees().getNeedHelp().toBoolean()) {
+        if (application.isHelpWithFeesApplication()) {
             state = AwaitingHWFDecision;
         } else {
             OrderSummary orderSummary = paymentService.getOrderSummary();

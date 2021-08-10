@@ -99,7 +99,7 @@
       }
     ]
   },
-  "errors": [],
+  "errors": null,
   "state": "Draft",
   "warnings": null
 }
