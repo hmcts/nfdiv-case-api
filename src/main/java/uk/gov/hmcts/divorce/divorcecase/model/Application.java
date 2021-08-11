@@ -323,6 +323,12 @@ public class Application {
     )
     private YesOrNo applicant1ReminderSent;
 
+    @CCD(
+        label = "Reminder that applicant 2 needs to review joint application",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo applicant2ReminderSent;
+
     @JsonIgnore
     public boolean hasBeenPaidFor() {
         return parseInt(applicationFeeOrderSummary.getPaymentTotal()) == getPaymentTotal();

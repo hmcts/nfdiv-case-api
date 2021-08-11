@@ -3,3 +3,4 @@ schedule:
   aos_overdue: '*/1 * * * * *'
   joint_application_overdue: '*/1 * * * * *'
   system_remind_applicant1: '*/1 * * * * *'
+  remind_applicant2: '*/1 * * * * *'

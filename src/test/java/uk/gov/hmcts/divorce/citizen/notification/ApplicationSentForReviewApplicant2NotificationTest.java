@@ -23,6 +23,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.dateTimeFormatter;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.CREATE_ACCOUNT_LINK;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.REMINDER_APPLICATION;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.REMINDER_APPLICATION_VALUE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DIVORCE_TEST_URL;
@@ -93,4 +95,52 @@ class ApplicationSentForReviewApplicant2NotificationTest {
         verify(commonContent).templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1());
     }
 
+    @Test
+    void shouldSendEmailToApplicant2WhileInAwaitingApplicant2ResponseStateWhenSendingReminder() {
+        CaseData data = validJointApplicant1CaseData();
+        data.setDueDate(LOCAL_DATE);
+        final HashMap<String, String> templateVars = new HashMap<>();
+
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
+
+        notification.sendReminder(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW),
+            argThat(allOf(
+                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(dateTimeFormatter)),
+                hasEntry(CREATE_ACCOUNT_LINK, APPLICANT_2_SIGN_IN_DIVORCE_TEST_URL),
+                hasEntry(REMINDER_APPLICATION, REMINDER_APPLICATION_VALUE)
+            )),
+            eq(ENGLISH)
+        );
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldSetTheAppropriateFieldsForDissolutionCasesWhenSendingReminder() {
+        CaseData data = validJointApplicant1CaseData();
+        data.setDueDate(LOCAL_DATE);
+        data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
+        final HashMap<String, String> templateVars = new HashMap<>();
+
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
+
+        notification.sendReminder(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW),
+            argThat(allOf(
+                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(dateTimeFormatter)),
+                hasEntry(CREATE_ACCOUNT_LINK, APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL),
+                hasEntry(REMINDER_APPLICATION, REMINDER_APPLICATION_VALUE)
+            )),
+            eq(ENGLISH)
+        );
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1());
+    }
 }
