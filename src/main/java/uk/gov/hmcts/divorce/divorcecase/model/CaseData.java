@@ -214,8 +214,7 @@ public class CaseData {
             documents.add(listValue);
         }
     }
-
-    @JsonIgnore
+    
     public void sortUploadedDocuments(List<ListValue<CaseworkerUploadedDocument>> previousDocuments) {
         if (isEmpty(previousDocuments)) {
             return;
