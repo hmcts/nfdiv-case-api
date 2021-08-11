@@ -15,7 +15,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDate;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.solicitor.service.task.MiniApplicationRemover;
+import uk.gov.hmcts.divorce.document.task.MiniApplicationRemover;
 
 import java.time.Clock;
 
