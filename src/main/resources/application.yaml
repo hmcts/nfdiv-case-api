@@ -142,6 +142,7 @@ schedule:
   aos_overdue: ${AOS_OVERDUE_SCHEDULED_CRON:0 0 0 * * ?}
   joint_application_overdue: ${JOINT_APPLICATION_OVERDUE_SCHEDULED_CRON:0 0 10 * * ?}
   system_remind_applicant1: ${JOINT_APPLICATION_APP1_REMINDER_SCHEDULED_CRON:0 0 10 * * ?}
+  remind_applicant2: ${JOINT_APPLICATION_REMIND_APP2_CRON:0 0 10 * * ?}
 
 aos_pack:
   due_date_offset_days: ${AOS_PACK_DUE_DATE_OFFSET_DAYS:14}
