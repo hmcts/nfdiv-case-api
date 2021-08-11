@@ -61,5 +61,4 @@ public class CitizenSubmitApplicationTest extends FunctionalTestSuite {
             .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(expectedResponse(RESPONSE_HWF));
     }
-
 }
