@@ -40,7 +40,6 @@ public class MiniApplicationDraftTest {
     @InjectMocks
     private MiniApplicationDraft miniApplicationDraft;
 
-    @SuppressWarnings("unchecked")
     @Test
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithMiniDraftApplicationDocument() {
 

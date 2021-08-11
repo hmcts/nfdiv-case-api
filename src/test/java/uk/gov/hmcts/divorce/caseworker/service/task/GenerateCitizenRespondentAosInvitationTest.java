@@ -45,7 +45,6 @@ class GenerateCitizenRespondentAosInvitationTest {
     @InjectMocks
     private GenerateCitizenRespondentAosInvitation generateCitizenRespondentAosInvitation;
 
-    @SuppressWarnings("unchecked")
     @Test
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithAosInvitationDocumentIfRespondentIsNotRepresented() {
 

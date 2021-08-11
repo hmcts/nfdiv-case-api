@@ -26,8 +26,6 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -60,7 +58,6 @@ public class CreateGeneralOrderTest {
         when(clock.getZone()).thenReturn(ZoneId.of("Europe/London"));
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     void shouldUpdateCaseWithGeneralOrderDocumentWhenMidEventCallbackIsTriggered() {
         final CaseData caseData = caseData();
@@ -80,11 +77,11 @@ public class CreateGeneralOrderTest {
 
         when(
             caseDataDocumentService.renderGeneralOrderDocument(
-                eq(templateContentSupplier),
-                eq(TEST_CASE_ID),
-                eq(DIVORCE_GENERAL_ORDER),
-                eq(ENGLISH),
-                any()
+                templateContentSupplier,
+                TEST_CASE_ID,
+                DIVORCE_GENERAL_ORDER,
+                ENGLISH,
+                GENERAL_ORDER + "2021-06-15 13:39:00"
             ))
             .thenReturn(generalOrderDocument);
 

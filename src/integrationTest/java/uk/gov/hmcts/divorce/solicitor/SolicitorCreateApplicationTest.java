@@ -113,11 +113,11 @@ class SolicitorCreateApplicationTest {
         stubForDocAssembly();
 
         final var jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
-                .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant1AndApplicant2Org(), SOLICITOR_CREATE)))
-                .accept(APPLICATION_JSON))
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant1AndApplicant2Org(), SOLICITOR_CREATE)))
+            .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
             )
@@ -137,11 +137,11 @@ class SolicitorCreateApplicationTest {
         stubGetOrganisationEndpoint(getOrganisationResponseWith(TEST_ORG_ID));
 
         final var jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_THE_SOL_MID_EVENT_URL)
-                .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant1Org(), SOLICITOR_CREATE)))
-                .accept(APPLICATION_JSON))
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant1Org(), SOLICITOR_CREATE)))
+            .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
             )
@@ -161,11 +161,11 @@ class SolicitorCreateApplicationTest {
         stubGetOrganisationEndpoint(getOrganisationResponseWith("TESTORG123"));
 
         final var jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_THE_SOL_MID_EVENT_URL)
-                .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant1Org(), SOLICITOR_CREATE)))
-                .accept(APPLICATION_JSON))
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant1Org(), SOLICITOR_CREATE)))
+            .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
             )
@@ -185,11 +185,11 @@ class SolicitorCreateApplicationTest {
         stubGetOrganisationEndpointForFailure();
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_THE_SOL_MID_EVENT_URL)
-                .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant1Org(), SOLICITOR_CREATE)))
-                .accept(APPLICATION_JSON))
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant1Org(), SOLICITOR_CREATE)))
+            .accept(APPLICATION_JSON))
             .andExpect(
                 status().isForbidden()
             )

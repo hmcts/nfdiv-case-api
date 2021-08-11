@@ -45,7 +45,6 @@ public class GenerateRespondentSolicitorAosInvitationTest {
     @InjectMocks
     private GenerateRespondentSolicitorAosInvitation generateRespondentSolicitorAosInvitation;
 
-    @SuppressWarnings("unchecked")
     @Test
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithAosInvitationDocumentIfRespondentIsRepresented() {
 

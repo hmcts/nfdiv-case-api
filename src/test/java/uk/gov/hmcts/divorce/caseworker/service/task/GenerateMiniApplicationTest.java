@@ -40,7 +40,6 @@ class GenerateMiniApplicationTest {
     @InjectMocks
     private GenerateMiniApplication generateMiniApplication;
 
-    @SuppressWarnings("unchecked")
     @Test
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithMiniApplicationDocument() {
 
