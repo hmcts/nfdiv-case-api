@@ -8,8 +8,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.document.task.MiniApplicationRemover;
 import uk.gov.hmcts.divorce.solicitor.service.task.MiniApplicationDraft;
-import uk.gov.hmcts.divorce.solicitor.service.task.MiniApplicationRemover;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
