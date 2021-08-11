@@ -24,7 +24,12 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
@@ -208,5 +213,30 @@ public class CaseData {
         } else {
             documents.add(listValue);
         }
+    }
+
+    public void sortUploadedDocuments(List<ListValue<CaseworkerUploadedDocument>> previousDocuments) {
+        if (isEmpty(previousDocuments)) {
+            return;
+        }
+
+        Set<String> previousListValueIds = previousDocuments
+            .stream()
+            .map(ListValue::getId)
+            .collect(Collectors.toCollection(HashSet::new));
+
+        //Split the collection into two lists one without id's(newly added documents) and other with id's(existing documents)
+        Map<Boolean, List<ListValue<CaseworkerUploadedDocument>>> documentsWithoutIds = this.getDocumentsUploaded().stream()
+            .collect(Collectors.groupingBy(listValue -> !previousListValueIds.contains(listValue.getId())));
+
+        List<ListValue<CaseworkerUploadedDocument>> sortedDocuments = new ArrayList<>();
+        sortedDocuments.addAll(0,  documentsWithoutIds.get(true)); // add new documents to start of the list
+        sortedDocuments.addAll(1, documentsWithoutIds.get(false));
+
+        sortedDocuments.forEach(
+            uploadedDocumentListValue -> uploadedDocumentListValue.setId(String.valueOf(UUID.randomUUID()))
+        );
+
+        this.setDocumentsUploaded(sortedDocuments);
     }
 }
