@@ -5,7 +5,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -30,7 +29,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_YOUR_D
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.TO_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.TO_END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseDataMap;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(SpringExtension.class)
 class Applicant2NotBrokenNotificationTest {
@@ -46,7 +45,7 @@ class Applicant2NotBrokenNotificationTest {
 
     @Test
     void shouldSendEmailToApplicant1WithDivorceContent() {
-        CaseData data = validJointApplicant1CaseDataMap();
+        CaseData data = validJointApplicant1CaseData();
 
         final HashMap<String, String> templateVars = new HashMap<>();
 
@@ -69,7 +68,7 @@ class Applicant2NotBrokenNotificationTest {
 
     @Test
     void shouldSendEmailToApplicant2WithDivorceContent() {
-        CaseData data = validJointApplicant1CaseDataMap();
+        CaseData data = validJointApplicant1CaseData();
 
         final HashMap<String, String> templateVars = new HashMap<>();
 
@@ -92,7 +91,7 @@ class Applicant2NotBrokenNotificationTest {
 
     @Test
     void shouldSendEmailToApplicant1WithDissolutionContent() {
-        CaseData data = validJointApplicant1CaseDataMap();
+        CaseData data = validJointApplicant1CaseData();
         data.setDivorceOrDissolution(DISSOLUTION);
 
         final HashMap<String, String> templateVars = new HashMap<>();
@@ -116,7 +115,7 @@ class Applicant2NotBrokenNotificationTest {
 
     @Test
     void shouldSendEmailToApplicant2WithDissolutionContent() {
-        CaseData data = validJointApplicant1CaseDataMap();
+        CaseData data = validJointApplicant1CaseData();
         data.setDivorceOrDissolution(DISSOLUTION);
 
         final HashMap<String, String> templateVars = new HashMap<>();

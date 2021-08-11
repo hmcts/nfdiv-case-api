@@ -19,7 +19,7 @@ import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenApplicant2NotBroken.APPLICANT_2_NOT_BROKEN;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseDataMap;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
 class CitizenApplicant2NotBrokenTest {
@@ -45,7 +45,7 @@ class CitizenApplicant2NotBrokenTest {
     void givenEventStartedWithValidCaseThenSendEmailToApplicant1AndApplicant2() {
         final long caseId = 2L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        CaseData caseData = validJointApplicant1CaseDataMap();
+        CaseData caseData = validJointApplicant1CaseData();
 
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
