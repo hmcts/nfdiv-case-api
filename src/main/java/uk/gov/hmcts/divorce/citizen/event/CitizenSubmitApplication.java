@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.payment.PaymentService;
 
 import java.util.List;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
@@ -40,7 +41,7 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
 
         configBuilder
             .event(CITIZEN_SUBMIT)
-            .forStates(Draft, AwaitingPayment)
+            .forStates(Draft, AwaitingPayment, Applicant2Approved)
             .name("Applicant Statement of Truth")
             .description("The applicant confirms SOT")
             .retries(120, 120)
