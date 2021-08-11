@@ -54,6 +54,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConfidentialAddress.SHARE;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
@@ -189,7 +190,7 @@ public class TestDataHelper {
             .build();
     }
 
-    public static CaseData validJointApplicant1CaseDataMap() {
+    public static CaseData validJointApplicant1CaseData() {
         var marriageDetails = new MarriageDetails();
         marriageDetails.setDate(LocalDate.of(1990, 6, 10));
         marriageDetails.setApplicant1Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME);
@@ -224,16 +225,17 @@ public class TestDataHelper {
             .build();
     }
 
-    public static CaseData validApplicant1CaseDataMap() {
-        CaseData caseData = validJointApplicant1CaseDataMap();
+    public static CaseData validApplicant1CaseData() {
+        CaseData caseData = validJointApplicant1CaseData();
         caseData.setApplicant2(getApplicant2(MALE));
         caseData.getApplication().setApplicant1StatementOfTruth(YES);
         caseData.getApplication().setApplicant1PrayerHasBeenGiven(YES);
         return caseData;
     }
 
-    public static CaseData validApplicant2ApprovedCaseDataMap() {
-        CaseData caseData = validJointApplicant1CaseDataMap();
+    public static CaseData validApplicant2CaseData() {
+        CaseData caseData = validApplicant1CaseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
         caseData.setApplicant2(getApplicant(MALE));
         caseData.getApplication().setApplicant2HelpWithFees(HelpWithFees.builder()
             .needHelp(NO)
