@@ -42,7 +42,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.invalidCaseData;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2ApprovedCaseDataMap;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -70,7 +70,7 @@ public class CitizenApplicant2ApproveTest {
 
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmailToApplicant1AndApplicant2() throws Exception {
-        CaseData data = validApplicant2ApprovedCaseDataMap();
+        CaseData data = validApplicant2CaseData();
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
