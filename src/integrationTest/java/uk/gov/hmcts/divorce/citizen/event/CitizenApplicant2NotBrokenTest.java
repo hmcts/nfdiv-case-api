@@ -76,8 +76,6 @@ public class CitizenApplicant2NotBrokenTest {
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmailToApplicant1AndApplicant2() throws Exception {
         CaseData data = validJointApplicant1CaseDataMap();
-        data.setApplicant2(getJointApplicant2(Gender.MALE));
-        data.getApplication().setApplicant2ScreenHasMarriageBroken(YesOrNo.NO);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)

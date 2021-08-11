@@ -50,13 +50,10 @@ class CitizenApplicant2NotBrokenTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
-        caseDetails.setState(State.AwaitingApplicant2Response);
-
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenApplicant2NotBroken.aboutToSubmit(caseDetails, caseDetails);
 
         verify(applicant2NotBrokenNotification).sendToApplicant1(caseData, caseDetails.getId());
         verify(applicant2NotBrokenNotification).sendToApplicant2(caseData, caseDetails.getId());
-        assertThat(response.getState()).isEqualTo(State.AwaitingApplicant2Response);
     }
 
 }

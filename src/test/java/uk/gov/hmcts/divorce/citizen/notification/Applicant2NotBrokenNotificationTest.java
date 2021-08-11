@@ -47,7 +47,6 @@ class Applicant2NotBrokenNotificationTest {
     @Test
     void shouldSendEmailToApplicant1WithDivorceContent() {
         CaseData data = validJointApplicant1CaseDataMap();
-        data.getApplication().setApplicant2ScreenHasMarriageBroken(YesOrNo.NO);
 
         final HashMap<String, String> templateVars = new HashMap<>();
 
@@ -71,7 +70,6 @@ class Applicant2NotBrokenNotificationTest {
     @Test
     void shouldSendEmailToApplicant2WithDivorceContent() {
         CaseData data = validJointApplicant1CaseDataMap();
-        data.getApplication().setApplicant2ScreenHasMarriageBroken(YesOrNo.NO);
 
         final HashMap<String, String> templateVars = new HashMap<>();
 
@@ -96,7 +94,6 @@ class Applicant2NotBrokenNotificationTest {
     void shouldSendEmailToApplicant1WithDissolutionContent() {
         CaseData data = validJointApplicant1CaseDataMap();
         data.setDivorceOrDissolution(DISSOLUTION);
-        data.getApplication().setApplicant2ScreenHasMarriageBroken(YesOrNo.NO);
 
         final HashMap<String, String> templateVars = new HashMap<>();
 
@@ -121,7 +118,6 @@ class Applicant2NotBrokenNotificationTest {
     void shouldSendEmailToApplicant2WithDissolutionContent() {
         CaseData data = validJointApplicant1CaseDataMap();
         data.setDivorceOrDissolution(DISSOLUTION);
-        data.getApplication().setApplicant2ScreenHasMarriageBroken(YesOrNo.NO);
 
         final HashMap<String, String> templateVars = new HashMap<>();
 

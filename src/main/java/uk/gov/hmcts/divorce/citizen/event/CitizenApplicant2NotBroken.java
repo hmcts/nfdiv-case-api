@@ -32,7 +32,7 @@ public class CitizenApplicant2NotBroken implements CCDConfig<CaseData, State, Us
             .event(APPLICANT_2_NOT_BROKEN)
             .forState(AwaitingApplicant2Response)
             .name("Applicant 2 not broken")
-            .description("Applicant 2 has rejected")
+            .description("Applicant 2 union has not broken")
             .grant(CREATE_READ_UPDATE, APPLICANT_2)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
