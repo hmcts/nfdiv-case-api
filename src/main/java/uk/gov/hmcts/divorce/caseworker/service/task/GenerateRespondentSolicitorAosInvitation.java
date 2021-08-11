@@ -42,7 +42,6 @@ public class GenerateRespondentSolicitorAosInvitation implements CaseTask {
         if (caseData.getApplicant2().isRepresented()) {
 
             final Supplier<Map<String, Object>> templateContentSupplier = templateContent.apply(caseData, caseId, createdDate);
-            final Supplier<String> filename = () -> RESP_AOS_INVITATION_DOCUMENT_NAME + caseId;
 
             caseData.getCaseInvite().setAccessCode(generateAccessCode());
 
@@ -53,7 +52,7 @@ public class GenerateRespondentSolicitorAosInvitation implements CaseTask {
                 caseId,
                 RESP_SOLICITOR_AOS_INVITATION,
                 caseData.getApplicant1().getLanguagePreference(),
-                filename
+                RESP_AOS_INVITATION_DOCUMENT_NAME + caseId
             );
         }
 

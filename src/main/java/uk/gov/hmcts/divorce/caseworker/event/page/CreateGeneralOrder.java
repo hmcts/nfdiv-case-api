@@ -42,14 +42,14 @@ public class CreateGeneralOrder implements CcdPageConfiguration {
     public void addTo(PageBuilder pageBuilder) {
         pageBuilder.page("CreateGeneralOrder", this::midEvent)
             .complex(CaseData::getGeneralOrder)
-                .mandatory(GeneralOrder::getGeneralOrderDate)
-                .mandatory(GeneralOrder::getGeneralOrderDivorceParties)
-                .optional(GeneralOrder::getGeneralOrderRecitals)
-                .mandatory(GeneralOrder::getGeneralOrderJudgeType)
-                .mandatory(GeneralOrder::getGeneralOrderJudgeName)
-                .mandatory(GeneralOrder::getGeneralOrderLegalAdvisorName)
-                .mandatory(GeneralOrder::getGeneralOrderDetails)
-                .done();
+            .mandatory(GeneralOrder::getGeneralOrderDate)
+            .mandatory(GeneralOrder::getGeneralOrderDivorceParties)
+            .optional(GeneralOrder::getGeneralOrderRecitals)
+            .mandatory(GeneralOrder::getGeneralOrderJudgeType)
+            .mandatory(GeneralOrder::getGeneralOrderJudgeName)
+            .mandatory(GeneralOrder::getGeneralOrderLegalAdvisorName)
+            .mandatory(GeneralOrder::getGeneralOrderDetails)
+            .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
@@ -65,7 +65,7 @@ public class CreateGeneralOrder implements CcdPageConfiguration {
 
         final Supplier<Map<String, Object>> templateContentSupplier = generalOrderTemplateContent
             .apply(caseDataCopy, caseId);
-        final Supplier<String> filename = () -> GENERAL_ORDER + LocalDateTime.now(clock).format(formatter);
+        final String filename = GENERAL_ORDER + LocalDateTime.now(clock).format(formatter);
 
         log.info("Generating general order document for templateId : {} case caseId: {}", DIVORCE_GENERAL_ORDER, caseId);
 

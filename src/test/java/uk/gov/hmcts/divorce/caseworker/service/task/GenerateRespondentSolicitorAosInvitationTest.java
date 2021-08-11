@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.caseworker.service.task;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -19,7 +18,6 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -70,18 +68,16 @@ public class GenerateRespondentSolicitorAosInvitationTest {
 
         assertThat(result.getData().getCaseInvite().getAccessCode()).isEqualTo(ACCESS_CODE);
 
-        final ArgumentCaptor<Supplier<String>> filename = ArgumentCaptor.forClass(Supplier.class);
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
-                eq(caseData),
-                eq(DOCUMENT_TYPE_RESPONDENT_INVITATION),
-                eq(templateContentSupplier),
-                eq(TEST_CASE_ID),
-                eq(RESP_SOLICITOR_AOS_INVITATION),
-                eq(ENGLISH),
-                filename.capture());
+                caseData,
+                DOCUMENT_TYPE_RESPONDENT_INVITATION,
+                templateContentSupplier,
+                TEST_CASE_ID,
+                RESP_SOLICITOR_AOS_INVITATION,
+                ENGLISH,
+                RESP_AOS_INVITATION_DOCUMENT_NAME + TEST_CASE_ID);
 
-        assertThat(filename.getValue().get()).isEqualTo(RESP_AOS_INVITATION_DOCUMENT_NAME + TEST_CASE_ID);
         classMock.close();
     }
 

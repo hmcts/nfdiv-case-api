@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.caseworker.service.task;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -18,7 +17,6 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -63,18 +61,16 @@ class GenerateMiniApplicationTest {
 
         final var result = generateMiniApplication.apply(caseDetails);
 
-        final ArgumentCaptor<Supplier<String>> filename = ArgumentCaptor.forClass(Supplier.class);
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
-                eq(caseData),
-                eq(DIVORCE_APPLICATION),
-                eq(templateContentSupplier),
-                eq(TEST_CASE_ID),
-                eq(DIVORCE_MINI_APPLICATION),
-                eq(ENGLISH),
-                filename.capture());
+                caseData,
+                DIVORCE_APPLICATION,
+                templateContentSupplier,
+                TEST_CASE_ID,
+                DIVORCE_MINI_APPLICATION,
+                ENGLISH,
+                DIVORCE_MINI_APPLICATION_DOCUMENT_NAME + TEST_CASE_ID);
 
-        assertThat(filename.getValue().get()).isEqualTo(DIVORCE_MINI_APPLICATION_DOCUMENT_NAME + TEST_CASE_ID);
         assertThat(result.getData()).isEqualTo(caseData);
     }
 }

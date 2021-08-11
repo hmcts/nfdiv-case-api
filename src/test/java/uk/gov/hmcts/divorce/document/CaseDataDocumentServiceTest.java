@@ -60,7 +60,7 @@ class CaseDataDocumentServiceTest {
         final CaseData caseData = caseData();
         final Supplier<Map<String, Object>> templateContentSupplier = HashMap::new;
         final User systemUser = mock(User.class);
-        final Supplier<String> filename = () -> DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME + TEST_CASE_ID;
+        final String filename = DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME + TEST_CASE_ID;
 
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
         when(systemUser.getAuthToken()).thenReturn(TEST_AUTHORIZATION_TOKEN);
@@ -108,7 +108,7 @@ class CaseDataDocumentServiceTest {
 
         final Supplier<Map<String, Object>> templateContentSupplier = HashMap::new;
         final User systemUser = mock(User.class);
-        final Supplier<String> filename = () -> GENERAL_ORDER_PDF_FILENAME + TEST_CASE_ID;
+        final String filename = GENERAL_ORDER_PDF_FILENAME + TEST_CASE_ID;
 
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
         when(systemUser.getAuthToken()).thenReturn(TEST_AUTHORIZATION_TOKEN);

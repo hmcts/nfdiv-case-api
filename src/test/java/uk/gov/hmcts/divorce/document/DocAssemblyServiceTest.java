@@ -100,7 +100,7 @@ public class DocAssemblyServiceTest {
             TEST_AUTHORIZATION_TOKEN,
             DIVORCE_MINI_DRAFT_APPLICATION,
             ENGLISH,
-            () -> DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME + TEST_CASE_ID
+            DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME + TEST_CASE_ID
         );
 
         assertThat(documentInfo.getUrl()).isEqualTo(DOC_STORE_BASE_URL_PATH + documentUuid);
@@ -162,7 +162,7 @@ public class DocAssemblyServiceTest {
                 TEST_AUTHORIZATION_TOKEN,
                 DIVORCE_MINI_DRAFT_APPLICATION,
                 ENGLISH,
-                () -> DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME + TEST_CASE_ID
+                DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME + TEST_CASE_ID
             ))
             .isExactlyInstanceOf(FeignException.Unauthorized.class)
             .hasMessageContaining("s2s service not whitelisted");

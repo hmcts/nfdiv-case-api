@@ -37,7 +37,6 @@ public class MiniApplicationDraft implements CaseTask {
 
         final Supplier<Map<String, Object>> templateContentSupplier = templateContent
             .apply(caseData, caseId, caseDetails.getCreatedDate().toLocalDate());
-        final Supplier<String> filename = () -> DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME + caseId;
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
@@ -46,7 +45,7 @@ public class MiniApplicationDraft implements CaseTask {
             caseId,
             DIVORCE_MINI_DRAFT_APPLICATION,
             caseData.getApplicant1().getLanguagePreference(),
-            filename
+            DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME + caseId
         );
 
         return caseDetails;

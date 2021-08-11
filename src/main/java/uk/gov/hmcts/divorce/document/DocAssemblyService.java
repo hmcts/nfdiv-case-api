@@ -35,7 +35,7 @@ public class DocAssemblyService {
                                        final String authorisation,
                                        final String templateId,
                                        final LanguagePreference languagePreference,
-                                       final Supplier<String> filename) {
+                                       final String filename) {
 
         final String templateName = docmosisTemplateProvider.templateNameFor(templateId, languagePreference);
 
@@ -62,7 +62,7 @@ public class DocAssemblyService {
 
         return new DocumentInfo(
             docAssemblyResponse.getRenditionOutputLocation(),
-            filename.get() + ".pdf",
+            filename + ".pdf",
             docAssemblyResponse.getBinaryFilePath()
         );
     }

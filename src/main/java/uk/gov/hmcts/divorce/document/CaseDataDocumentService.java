@@ -36,7 +36,7 @@ public class CaseDataDocumentService {
                                                 final Long caseId,
                                                 final String templateId,
                                                 final LanguagePreference languagePreference,
-                                                final Supplier<String> filename) {
+                                                final String filename) {
 
         log.info("Rendering document request for templateId : {} case id: {}", templateId, caseId);
 
@@ -64,7 +64,7 @@ public class CaseDataDocumentService {
                                                final Long caseId,
                                                final String templateId,
                                                final LanguagePreference languagePreference,
-                                               final Supplier<String> filename) {
+                                               final String filename) {
 
         log.info("Rendering document request for templateId : {} ", templateId);
 

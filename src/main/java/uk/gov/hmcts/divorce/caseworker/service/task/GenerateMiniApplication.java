@@ -38,7 +38,6 @@ public class GenerateMiniApplication implements CaseTask {
         log.info("Executing handler for generating mini application for case id {} ", caseId);
 
         final Supplier<Map<String, Object>> templateContentSupplier = templateContent.apply(caseData, caseId, createdDate);
-        final Supplier<String> filename = () -> DIVORCE_MINI_APPLICATION_DOCUMENT_NAME + caseId;
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
@@ -47,7 +46,7 @@ public class GenerateMiniApplication implements CaseTask {
             caseId,
             DIVORCE_MINI_APPLICATION,
             caseData.getApplicant1().getLanguagePreference(),
-            filename
+            DIVORCE_MINI_APPLICATION_DOCUMENT_NAME + caseId
         );
 
         return caseDetails;

@@ -44,7 +44,6 @@ public class GenerateCitizenRespondentAosInvitation implements CaseTask {
 
             log.info("Generating citizen respondent AoS invitation for case id {} ", caseId);
             final Supplier<Map<String, Object>> templateContentSupplier = templateContent.apply(caseData, caseId, createdDate);
-            final Supplier<String> filename = () -> RESP_AOS_INVITATION_DOCUMENT_NAME + caseId;
 
             caseDataDocumentService.renderDocumentAndUpdateCaseData(
                 caseData,
@@ -53,7 +52,7 @@ public class GenerateCitizenRespondentAosInvitation implements CaseTask {
                 caseId,
                 CITIZEN_RESP_AOS_INVITATION,
                 caseData.getApplicant1().getLanguagePreference(),
-                filename
+                RESP_AOS_INVITATION_DOCUMENT_NAME + caseId
             );
         }
 

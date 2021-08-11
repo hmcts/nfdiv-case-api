@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.caseworker.event.page;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -101,15 +100,12 @@ public class CreateGeneralOrderTest {
         assertThat(actualGeneralOrder.getGeneralOrderDraft()).isEqualTo(generalOrderDocument);
 
         verify(generalOrderTemplateContent).apply(caseData, TEST_CASE_ID);
-        final ArgumentCaptor<Supplier<String>> filename = ArgumentCaptor.forClass(Supplier.class);
         verify(caseDataDocumentService).renderGeneralOrderDocument(
-            eq(templateContentSupplier),
-            eq(TEST_CASE_ID),
-            eq(DIVORCE_GENERAL_ORDER),
-            eq(ENGLISH),
-            filename.capture()
+            templateContentSupplier,
+            TEST_CASE_ID,
+            DIVORCE_GENERAL_ORDER,
+            ENGLISH,
+            GENERAL_ORDER + "2021-06-15 13:39:00"
         );
-
-        assertThat(filename.getValue().get()).isEqualTo(GENERAL_ORDER + "2021-06-15 13:39:00");
     }
 }
