@@ -29,11 +29,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemAlertApplicationNotReviewed.SYSTEM_APPLICATION_NOT_REVIEWED;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicant1ApplicationReviewed.SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED;
 
 @ExtendWith(MockitoExtension.class)
-public class SystemAlertApplicationNotReviewedTaskTest {
+public class SystemRemindApplicant1ApplicationApprovedTaskTest {
 
     @Mock
     private CcdSearchService ccdSearchService;
@@ -48,10 +48,10 @@ public class SystemAlertApplicationNotReviewedTaskTest {
     private ObjectMapper mapper;
 
     @InjectMocks
-    private SystemAlertApplicationNotReviewedTask systemAlertApplicationNotReviewedTask;
+    private SystemRemindApplicant1ApplicationApprovedTask systemRemindApplicant1ApplicationApprovedTask;
 
     @Test
-    void shouldSendEmailForOverdueJointApplication() {
+    void shouldSendReminderEmailIfJointApplicationPastDueDate() {
         final CaseDetails caseDetails1 = mock(CaseDetails.class);
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
 
@@ -68,13 +68,13 @@ public class SystemAlertApplicationNotReviewedTaskTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response)).thenReturn(caseDetailsList);
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant1Response)).thenReturn(caseDetailsList);
 
-        systemAlertApplicationNotReviewedTask.execute();
+        systemRemindApplicant1ApplicationApprovedTask.execute();
 
-        verify(jointApplicationOverdueNotification).sendApplicationNotReviewedEmail(caseData1, caseDetails1.getId());
-        verify(jointApplicationOverdueNotification, times(0)).sendApplicationNotReviewedEmail(caseData2, caseDetails2.getId());
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_APPLICATION_NOT_REVIEWED);
+        verify(jointApplicationOverdueNotification).sendApplicationApprovedReminderToApplicant1(caseData1, caseDetails1.getId());
+        verify(jointApplicationOverdueNotification, times(0)).sendApplicationApprovedReminderToApplicant1(caseData2, caseDetails2.getId());
+        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED);
     }
 
     @Test
@@ -88,16 +88,16 @@ public class SystemAlertApplicationNotReviewedTaskTest {
         when(caseDetails.getId()).thenReturn(1L);
         when(caseDetails.getData()).thenReturn(caseDataMap);
         when(mapper.convertValue(caseDataMap, CaseData.class)).thenReturn(caseData);
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response)).thenReturn(List.of(caseDetails));
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant1Response)).thenReturn(List.of(caseDetails));
 
-        systemAlertApplicationNotReviewedTask.execute();
+        systemRemindApplicant1ApplicationApprovedTask.execute();
 
-        verify(jointApplicationOverdueNotification, never()).sendApplicationNotReviewedEmail(caseData, caseDetails.getId());
-        verify(ccdUpdateService, never()).submitEvent(caseDetails, SYSTEM_APPLICATION_NOT_REVIEWED);
+        verify(jointApplicationOverdueNotification, never()).sendApplicationApprovedReminderToApplicant1(caseData, caseDetails.getId());
+        verify(ccdUpdateService, never()).submitEvent(caseDetails, SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED);
     }
 
     @Test
-    void shouldNotTriggerSystemAlertApplicationNotReviewedTaskOnEachCaseWhenCaseDueDateIsAfterCurrentDate() {
+    void shouldNotTriggerSystemRemindApplicant1ApplicationApprovedTaskOnEachCaseWhenCaseDueDateIsAfterCurrentDate() {
         final CaseDetails caseDetails = mock(CaseDetails.class);
         final CaseData caseData = CaseData.builder().dueDate(LocalDate.now().plusDays(5)).build();
 
@@ -106,9 +106,9 @@ public class SystemAlertApplicationNotReviewedTaskTest {
 
         when(caseDetails.getData()).thenReturn(Map.of("dueDate", LocalDate.now().plusDays(5)));
         when(mapper.convertValue(caseDataMap, CaseData.class)).thenReturn(caseData);
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response)).thenReturn(singletonList(caseDetails));
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant1Response)).thenReturn(singletonList(caseDetails));
 
-        systemAlertApplicationNotReviewedTask.execute();
+        systemRemindApplicant1ApplicationApprovedTask.execute();
 
         verifyNoInteractions(jointApplicationOverdueNotification);
         verifyNoInteractions(ccdUpdateService);
@@ -116,10 +116,10 @@ public class SystemAlertApplicationNotReviewedTaskTest {
 
     @Test
     void shouldNotSubmitEventIfSearchFails() {
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response))
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant1Response))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
-        systemAlertApplicationNotReviewedTask.execute();
+        systemRemindApplicant1ApplicationApprovedTask.execute();
 
         verifyNoInteractions(jointApplicationOverdueNotification);
         verifyNoInteractions(ccdUpdateService);
@@ -134,15 +134,15 @@ public class SystemAlertApplicationNotReviewedTaskTest {
 
         when(caseDetails1.getData()).thenReturn(Map.of("dueDate", LocalDate.now()));
         when(mapper.convertValue(Map.of("dueDate", LocalDate.now()), CaseData.class)).thenReturn(caseData1);
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response)).thenReturn(caseDetailsList);
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant1Response)).thenReturn(caseDetailsList);
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_APPLICATION_NOT_REVIEWED);
+            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED);
 
-        systemAlertApplicationNotReviewedTask.execute();
+        systemRemindApplicant1ApplicationApprovedTask.execute();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_APPLICATION_NOT_REVIEWED);
-        verify(ccdUpdateService, never()).submitEvent(caseDetails2, SYSTEM_APPLICATION_NOT_REVIEWED);
+        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED);
+        verify(ccdUpdateService, never()).submitEvent(caseDetails2, SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED);
     }
 
     @Test
@@ -159,14 +159,14 @@ public class SystemAlertApplicationNotReviewedTaskTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response)).thenReturn(caseDetailsList);
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant1Response)).thenReturn(caseDetailsList);
 
         doThrow(new CcdManagementException("Failed processing of case", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_APPLICATION_NOT_REVIEWED);
+            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED);
 
-        systemAlertApplicationNotReviewedTask.execute();
+        systemRemindApplicant1ApplicationApprovedTask.execute();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_APPLICATION_NOT_REVIEWED);
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_APPLICATION_NOT_REVIEWED);
+        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED);
+        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED);
     }
 }
