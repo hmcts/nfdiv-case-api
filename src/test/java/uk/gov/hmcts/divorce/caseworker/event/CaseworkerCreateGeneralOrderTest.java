@@ -85,7 +85,7 @@ public class CaseworkerCreateGeneralOrderTest {
     }
 
     @Test
-    public void shouldAddToExistingGeneralOrderDocumentsWhenThereIsExistingGeneralOrder() throws Exception {
+    public void shouldAddLatestGeneralOrderDocumentToTopWhenThereIsExistingGeneralOrder() throws Exception {
         final CaseData caseData = caseData();
 
         String documentUrl = "http://localhost:8080/4567";
@@ -117,9 +117,9 @@ public class CaseworkerCreateGeneralOrderTest {
         AboutToStartOrSubmitResponse<CaseData, State> submitResponse = caseworkerCreateGeneralOrder.aboutToSubmit(details, details);
 
         assertThat(submitResponse.getData().getGeneralOrder()).isNull();
-        assertThat(submitResponse.getData().getGeneralOrders()).containsExactlyInAnyOrder(
-            getDivorceGeneralOrderListValue(generalOrder1, LIST_VALUE_ID_1),
-            getDivorceGeneralOrderListValue(generalOrder2, LIST_VALUE_ID_2)
+        assertThat(submitResponse.getData().getGeneralOrders()).containsExactly(
+            getDivorceGeneralOrderListValue(generalOrder2, LIST_VALUE_ID_2),
+            getDivorceGeneralOrderListValue(generalOrder1, LIST_VALUE_ID_1)
         );
     }
 }
