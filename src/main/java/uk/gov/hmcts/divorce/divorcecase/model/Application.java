@@ -317,6 +317,12 @@ public class Application {
     )
     private YesOrNo overdueNotificationSent;
 
+    @CCD(
+        label = "Reminder that applicant 2 has approved application sent?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo applicant1ReminderSent;
+
     @JsonIgnore
     public boolean hasBeenPaidFor() {
         return parseInt(applicationFeeOrderSummary.getPaymentTotal()) == getPaymentTotal();
@@ -367,10 +373,10 @@ public class Application {
     }
 
     @JsonIgnore
-    public boolean hasOverdueNotificationBeenSent() {
-        return YES.equals(overdueNotificationSent);
+    public boolean hasNotificationBeenSent(YesOrNo reminderSent) {
+        return YES.equals(reminderSent);
     }
-  
+
     @JsonIgnore
     public boolean isHelpWithFeesApplication() {
         return null != applicant1HelpWithFees
