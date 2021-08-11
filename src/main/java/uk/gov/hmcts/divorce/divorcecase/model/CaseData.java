@@ -28,7 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -214,7 +214,7 @@ public class CaseData {
             documents.add(listValue);
         }
     }
-    
+
     public void sortUploadedDocuments(List<ListValue<CaseworkerUploadedDocument>> previousDocuments) {
         if (isEmpty(previousDocuments)) {
             return;
@@ -229,21 +229,13 @@ public class CaseData {
         Map<Boolean, List<ListValue<CaseworkerUploadedDocument>>> documentsWithoutIds = this.getDocumentsUploaded().stream()
             .collect(Collectors.groupingBy(listValue -> !previousListValueIds.contains(listValue.getId())));
 
-        List<ListValue<CaseworkerUploadedDocument>> newlyAddedDocuments = documentsWithoutIds.get(true);
-        List<ListValue<CaseworkerUploadedDocument>> existingDocuments = documentsWithoutIds.get(false);
-
-        AtomicInteger listValueIndex = new AtomicInteger(0);
-        newlyAddedDocuments.forEach(
-            uploadedDocumentListValue -> uploadedDocumentListValue.setId(String.valueOf(listValueIndex.incrementAndGet()))
-        );
-
         List<ListValue<CaseworkerUploadedDocument>> sortedDocuments = new ArrayList<>();
-        sortedDocuments.addAll(0, newlyAddedDocuments); // add new documents to start of the list
+        sortedDocuments.addAll(0,  documentsWithoutIds.get(true)); // add new documents to start of the list
+        sortedDocuments.addAll(1, documentsWithoutIds.get(false));
 
-        existingDocuments.forEach(
-            uploadedDocumentListValue -> uploadedDocumentListValue.setId(String.valueOf(listValueIndex.incrementAndGet()))
+        sortedDocuments.forEach(
+            uploadedDocumentListValue -> uploadedDocumentListValue.setId(String.valueOf(UUID.randomUUID()))
         );
-        sortedDocuments.addAll(1, existingDocuments);
 
         this.setDocumentsUploaded(sortedDocuments);
     }
