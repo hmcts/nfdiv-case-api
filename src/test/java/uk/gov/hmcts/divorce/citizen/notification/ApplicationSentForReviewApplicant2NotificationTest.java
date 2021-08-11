@@ -97,7 +97,7 @@ class ApplicationSentForReviewApplicant2NotificationTest {
 
     @Test
     void shouldSendEmailToApplicant2WhileInAwaitingApplicant2ResponseStateWhenSendingReminder() {
-        CaseData data = validJointApplicant1CaseDataMap();
+        CaseData data = validJointApplicant1CaseData();
         data.setDueDate(LOCAL_DATE);
         final HashMap<String, String> templateVars = new HashMap<>();
 
@@ -121,7 +121,7 @@ class ApplicationSentForReviewApplicant2NotificationTest {
 
     @Test
     void shouldSetTheAppropriateFieldsForDissolutionCasesWhenSendingReminder() {
-        CaseData data = validJointApplicant1CaseDataMap();
+        CaseData data = validJointApplicant1CaseData();
         data.setDueDate(LOCAL_DATE);
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         final HashMap<String, String> templateVars = new HashMap<>();
