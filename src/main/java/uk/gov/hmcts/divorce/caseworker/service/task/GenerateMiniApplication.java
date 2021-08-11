@@ -13,9 +13,7 @@ import uk.gov.hmcts.divorce.document.content.MiniApplicationTemplateContent;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.function.Supplier;
-import javax.servlet.http.HttpServletRequest;
 
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_APPLICATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_APPLICATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
@@ -30,16 +28,12 @@ public class GenerateMiniApplication implements CaseTask {
     @Autowired
     private MiniApplicationTemplateContent templateContent;
 
-    @Autowired
-    private HttpServletRequest request;
-
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
 
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
         final LocalDate createdDate = caseDetails.getCreatedDate().toLocalDate();
-        final String userAuthToken = request.getHeader(AUTHORIZATION);
 
         log.info("Executing handler for generating mini application for case id {} ", caseId);
 
@@ -50,10 +44,9 @@ public class GenerateMiniApplication implements CaseTask {
             DIVORCE_APPLICATION,
             templateContentSupplier,
             caseId,
-            userAuthToken,
             DIVORCE_MINI_APPLICATION,
-            DIVORCE_MINI_APPLICATION_DOCUMENT_NAME,
-            caseData.getApplicant1().getLanguagePreference()
+            caseData.getApplicant1().getLanguagePreference(),
+            DIVORCE_MINI_APPLICATION_DOCUMENT_NAME + caseId
         );
 
         return caseDetails;

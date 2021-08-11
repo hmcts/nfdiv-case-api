@@ -17,11 +17,21 @@ public class IdamTokenGenerator {
     @Value("${idam.solicitor.password}")
     private String solicitorPassword;
 
+    @Value("${idam.systemupdate.username}")
+    private String systemUpdateUsername;
+
+    @Value("${idam.systemupdate.password}")
+    private String systemUpdatePassword;
+
     @Autowired
     private IdamClient idamClient;
 
     public String generateIdamTokenForSolicitor() {
         return idamClient.getAccessToken(solicitorUsername, solicitorPassword);
+    }
+
+    public String generateIdamTokenForSystem() {
+        return idamClient.getAccessToken(systemUpdateUsername, systemUpdatePassword);
     }
 
     public UserDetails getUserDetailsFor(final String token) {

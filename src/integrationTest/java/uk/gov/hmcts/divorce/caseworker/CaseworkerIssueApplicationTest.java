@@ -63,10 +63,11 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOL
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssembly;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyUnauthorized;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
-import static uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock.stubDeleteFromDocumentManagementForCaseworker;
+import static uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock.stubDeleteFromDocumentManagementForSystem;
 import static uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock.stubDownloadBinaryFromDocumentManagement;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.CASEWORKER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SOLICITOR_ROLE;
+import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SYSTEM_USER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamDetails;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamToken;
 import static uk.gov.hmcts.divorce.testutil.SendLetterWireMock.stubSendLetters;
@@ -76,9 +77,11 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_USER_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.invalidCaseData;
@@ -173,6 +176,8 @@ public class CaseworkerIssueApplicationTest {
         stubAosPackSendLetter();
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -219,6 +224,8 @@ public class CaseworkerIssueApplicationTest {
         stubAosPackSendLetter();
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -278,7 +285,10 @@ public class CaseworkerIssueApplicationTest {
         caseData.getApplicant2().setCorrespondenceAddress(correspondenceAddress());
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(documentIdProvider.documentId()).thenReturn("Divorce application");
+        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         stubForDocAssemblyUnauthorized();
 
@@ -304,7 +314,7 @@ public class CaseworkerIssueApplicationTest {
         caseData.getApplicant2().setCorrespondenceAddress(correspondenceAddress());
 
         final var documentUuid = setupAuthorizationAndApplicationDocument(caseData);
-        stubDeleteFromDocumentManagementForCaseworker(documentUuid, OK);
+        stubDeleteFromDocumentManagementForSystem(documentUuid, OK);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
@@ -313,7 +323,9 @@ public class CaseworkerIssueApplicationTest {
         stubForDocAssemblyWith(MINI_APPLICATION_ID, "Divorce_CP_Mini_Application_Sole_Joint.docx");
         stubAosPackSendLetter();
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -349,7 +361,7 @@ public class CaseworkerIssueApplicationTest {
         caseData.getApplicant2().setCorrespondenceAddress(correspondenceAddress());
 
         final var documentUuid = setupAuthorizationAndApplicationDocument(caseData);
-        stubDeleteFromDocumentManagementForCaseworker(documentUuid, FORBIDDEN);
+        stubDeleteFromDocumentManagementForSystem(documentUuid, FORBIDDEN);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
@@ -357,8 +369,8 @@ public class CaseworkerIssueApplicationTest {
         stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "Divorce_CP_Dummy_Template.docx");
         stubForDocAssemblyWith(MINI_APPLICATION_ID, "Divorce_CP_Mini_Application_Sole_Joint.docx");
         stubAosPackSendLetter();
-        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
-        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -383,7 +395,7 @@ public class CaseworkerIssueApplicationTest {
         caseData.getApplicant2().setCorrespondenceAddress(correspondenceAddress());
 
         final var documentUuid = setupAuthorizationAndApplicationDocument(caseData);
-        stubDeleteFromDocumentManagementForCaseworker(documentUuid, UNAUTHORIZED);
+        stubDeleteFromDocumentManagementForSystem(documentUuid, UNAUTHORIZED);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
@@ -391,8 +403,8 @@ public class CaseworkerIssueApplicationTest {
         stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "Divorce_CP_Dummy_Template.docx");
         stubForDocAssemblyWith(MINI_APPLICATION_ID, "Divorce_CP_Mini_Application_Sole_Joint.docx");
         stubAosPackSendLetter();
-        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
-        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
