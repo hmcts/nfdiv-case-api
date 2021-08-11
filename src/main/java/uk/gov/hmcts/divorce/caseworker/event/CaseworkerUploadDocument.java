@@ -3,7 +3,9 @@ package uk.gov.hmcts.divorce.caseworker.event;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -30,11 +32,27 @@ public class CaseworkerUploadDocument implements CCDConfig<CaseData, State, User
             .name("Upload document")
             .description("Upload document")
             .explicitGrants()
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .showSummary(false)
             .grant(CREATE_READ_UPDATE, CASEWORKER_COURTADMIN_CTSC, CASEWORKER_COURTADMIN_RDU)
             .grant(READ, SOLICITOR, CASEWORKER_SUPERUSER, CASEWORKER_LEGAL_ADVISOR))
             .page("uploadDocument")
             .pageLabel("Upload document")
             .optional(CaseData::getDocumentsUploaded);
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
+        final CaseDetails<CaseData, State> details,
+        final CaseDetails<CaseData, State> beforeDetails
+    ) {
+        log.info("Callback invoked for {}", CASEWORKER_UPLOAD_DOCUMENT);
+
+        var caseData = details.getData();
+
+        caseData.sortUploadedDocuments(beforeDetails.getData().getDocumentsUploaded());
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .build();
     }
 }

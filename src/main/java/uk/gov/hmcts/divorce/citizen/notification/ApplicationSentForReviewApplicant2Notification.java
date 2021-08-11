@@ -28,6 +28,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_AP
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_YOUR_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_YOUR_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.REMINDER_APPLICATION;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.REMINDER_APPLICATION_VALUE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.TO_END_CIVIL_PARTNERSHIP;
 
@@ -48,9 +49,7 @@ public class ApplicationSentForReviewApplicant2Notification {
         Map<String, String> templateVars = commonContent.templateVarsForApplicant(
             caseData, caseData.getApplicant2(), caseData.getApplicant1());
 
-        templateVars.put(APPLICATION_REFERENCE, formatId(id));
-
-        setDefaultVariables(templateVars, caseData);
+        setDefaultVariables(templateVars, caseData, id);
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             setDivorceVariables(templateVars);
         } else {
@@ -67,7 +66,30 @@ public class ApplicationSentForReviewApplicant2Notification {
         );
     }
 
-    private void setDefaultVariables(Map<String, String> templateVars, CaseData caseData) {
+    public void sendReminder(CaseData caseData, Long id) {
+        Map<String, String> templateVars = commonContent.templateVarsForApplicant(
+            caseData, caseData.getApplicant2(), caseData.getApplicant1());
+
+        setDefaultVariables(templateVars, caseData, id);
+        templateVars.put(REMINDER_APPLICATION, REMINDER_APPLICATION_VALUE);
+        if (caseData.getDivorceOrDissolution().isDivorce()) {
+            setDivorceVariables(templateVars);
+        } else {
+            setDissolutionVariables(templateVars);
+        }
+
+        log.info("Sending reminder to applicant 2 to review case : {}", id);
+
+        notificationService.sendEmail(
+            caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
+            JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW,
+            templateVars,
+            caseData.getApplicant1().getLanguagePreference()
+        );
+    }
+
+    private void setDefaultVariables(Map<String, String> templateVars, CaseData caseData, Long id) {
+        templateVars.put(APPLICATION_REFERENCE, formatId(id));
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(dateTimeFormatter));
         templateVars.put(ACCESS_CODE, caseData.getCaseInvite().getAccessCode());
         templateVars.put(REMINDER_APPLICATION, APPLICATION);

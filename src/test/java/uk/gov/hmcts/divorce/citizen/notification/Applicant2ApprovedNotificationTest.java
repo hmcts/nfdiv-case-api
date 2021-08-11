@@ -28,7 +28,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.REMINDER_A
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2ApprovedCaseDataMap;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 
 @ExtendWith(SpringExtension.class)
 class Applicant2ApprovedNotificationTest {
@@ -44,7 +44,7 @@ class Applicant2ApprovedNotificationTest {
 
     @Test
     void shouldSendEmailToApplicant1WithDivorceContent() {
-        CaseData data = validApplicant2ApprovedCaseDataMap();
+        CaseData data = validApplicant2CaseData();
         data.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.NO);
         data.setDueDate(LOCAL_DATE);
 
@@ -70,7 +70,7 @@ class Applicant2ApprovedNotificationTest {
 
     @Test
     void shouldSendEmailToApplicant1WithDissolutionContentAndHelpWithFees() {
-        CaseData data = validApplicant2ApprovedCaseDataMap();
+        CaseData data = validApplicant2CaseData();
         data.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
         data.getApplication().getApplicant2HelpWithFees().setNeedHelp(YesOrNo.YES);
         data.setDueDate(LOCAL_DATE);
@@ -96,7 +96,7 @@ class Applicant2ApprovedNotificationTest {
 
     @Test
     void shouldSendEmailToApplicant2WithDivorceContent() {
-        CaseData data = validApplicant2ApprovedCaseDataMap();
+        CaseData data = validApplicant2CaseData();
         data.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.NO);
         data.setDueDate(LOCAL_DATE);
 
@@ -124,7 +124,7 @@ class Applicant2ApprovedNotificationTest {
 
     @Test
     void shouldSendEmailToApplicant2WithDissolutionContentAndHelpWithFees() {
-        CaseData data = validApplicant2ApprovedCaseDataMap();
+        CaseData data = validApplicant2CaseData();
         data.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
         data.getApplication().getApplicant2HelpWithFees().setNeedHelp(YesOrNo.YES);
         data.setDueDate(LOCAL_DATE);
@@ -152,7 +152,7 @@ class Applicant2ApprovedNotificationTest {
 
     @Test
     void shouldSendEmailToApplicant1WithDivorceContentWithApplicant2HelpWithFeesNo() {
-        CaseData data = validApplicant2ApprovedCaseDataMap();
+        CaseData data = validApplicant2CaseData();
         data.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
         data.getApplication().getApplicant2HelpWithFees().setNeedHelp(YesOrNo.NO);
         data.setDueDate(LOCAL_DATE);
@@ -178,7 +178,7 @@ class Applicant2ApprovedNotificationTest {
 
     @Test
     void shouldSendEmailToApplicant2WithDivorceContentWithApplicant2HelpWithFeesNo() {
-        CaseData data = validApplicant2ApprovedCaseDataMap();
+        CaseData data = validApplicant2CaseData();
         data.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
         data.getApplication().getApplicant2HelpWithFees().setNeedHelp(YesOrNo.NO);
         data.setDueDate(LOCAL_DATE);

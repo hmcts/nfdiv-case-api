@@ -24,8 +24,14 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toCollection;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
@@ -208,5 +214,59 @@ public class CaseData {
         } else {
             documents.add(listValue);
         }
+    }
+
+    public void sortUploadedDocuments(List<ListValue<CaseworkerUploadedDocument>> previousDocuments) {
+        if (isEmpty(previousDocuments)) {
+            return;
+        }
+
+        Set<String> previousListValueIds = previousDocuments
+            .stream()
+            .map(ListValue::getId)
+            .collect(toCollection(HashSet::new));
+
+        //Split the collection into two lists one without id's(newly added documents) and other with id's(existing documents)
+        Map<Boolean, List<ListValue<CaseworkerUploadedDocument>>> documentsWithoutIds =
+            this.getDocumentsUploaded()
+                .stream()
+                .collect(groupingBy(listValue -> !previousListValueIds.contains(listValue.getId())));
+
+        List<ListValue<CaseworkerUploadedDocument>> sortedDocuments = new ArrayList<>();
+        sortedDocuments.addAll(0, documentsWithoutIds.get(true)); // add new documents to start of the list
+        sortedDocuments.addAll(1, documentsWithoutIds.get(false));
+
+        sortedDocuments.forEach(
+            uploadedDocumentListValue -> uploadedDocumentListValue.setId(String.valueOf(UUID.randomUUID()))
+        );
+
+        this.setDocumentsUploaded(sortedDocuments);
+    }
+
+    public void sortConfidentialDocuments(List<ListValue<ConfidentialDivorceDocument>> previousDocuments) {
+        if (isEmpty(previousDocuments)) {
+            return;
+        }
+
+        Set<String> previousListValueIds = previousDocuments
+            .stream()
+            .map(ListValue::getId)
+            .collect(toCollection(HashSet::new));
+
+        //Split the collection into two lists one without id's(newly added documents) and other with id's(existing documents)
+        Map<Boolean, List<ListValue<ConfidentialDivorceDocument>>> documentsWithoutIds =
+            this.getConfidentialDocumentsUploaded()
+                .stream()
+                .collect(groupingBy(listValue -> !previousListValueIds.contains(listValue.getId())));
+
+        List<ListValue<ConfidentialDivorceDocument>> sortedDocuments = new ArrayList<>();
+        sortedDocuments.addAll(0, documentsWithoutIds.get(true)); // add new documents to start of the list
+        sortedDocuments.addAll(1, documentsWithoutIds.get(false));
+
+        sortedDocuments.forEach(
+            uploadedDocumentListValue -> uploadedDocumentListValue.setId(String.valueOf(UUID.randomUUID()))
+        );
+
+        this.setConfidentialDocumentsUploaded(sortedDocuments);
     }
 }

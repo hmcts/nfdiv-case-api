@@ -86,6 +86,8 @@ schedule:
   awaiting_conditional_order: '0 0 0 * * ?' # Midnight each day
   aos_overdue: '0 0 0 * * ?' # Midnight each day
   joint_application_overdue: '0 0 10 * * ?' # 10am each day
+  system_remind_applicant1: '0 0 10 * * ?' # 10am each day
+  remind_applicant2: '0 0 10 * * ?' # 10am each day
 
 aos_pack:
   due_date_offset_days: 30
