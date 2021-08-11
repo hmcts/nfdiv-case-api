@@ -13,9 +13,7 @@ import uk.gov.hmcts.divorce.document.content.RespondentSolicitorAosInvitationTem
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.function.Supplier;
-import javax.servlet.http.HttpServletRequest;
 
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.util.AccessCodeGenerator.generateAccessCode;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_AOS_INVITATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_SOLICITOR_AOS_INVITATION;
@@ -32,9 +30,6 @@ public class GenerateRespondentSolicitorAosInvitation implements CaseTask {
     @Autowired
     private RespondentSolicitorAosInvitationTemplateContent templateContent;
 
-    @Autowired
-    private HttpServletRequest request;
-
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
 
@@ -47,7 +42,6 @@ public class GenerateRespondentSolicitorAosInvitation implements CaseTask {
         if (caseData.getApplicant2().isRepresented()) {
 
             final Supplier<Map<String, Object>> templateContentSupplier = templateContent.apply(caseData, caseId, createdDate);
-            final String userAuthorisation = request.getHeader(AUTHORIZATION);
 
             caseData.getCaseInvite().setAccessCode(generateAccessCode());
 
@@ -56,10 +50,9 @@ public class GenerateRespondentSolicitorAosInvitation implements CaseTask {
                 DOCUMENT_TYPE_RESPONDENT_INVITATION,
                 templateContentSupplier,
                 caseId,
-                userAuthorisation,
                 RESP_SOLICITOR_AOS_INVITATION,
-                RESP_AOS_INVITATION_DOCUMENT_NAME,
-                caseData.getApplicant1().getLanguagePreference()
+                caseData.getApplicant1().getLanguagePreference(),
+                RESP_AOS_INVITATION_DOCUMENT_NAME + caseId
             );
         }
 

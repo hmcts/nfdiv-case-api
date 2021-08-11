@@ -41,7 +41,7 @@ public class DocumentManagementStore {
             resourceAsBytes(filePath)
         );
 
-        final String accessToken = idamTokenGenerator.generateIdamTokenForSolicitor();
+        final String accessToken = idamTokenGenerator.generateIdamTokenForSystem();
         final String userId = idamTokenGenerator.getUserDetailsFor(accessToken).getId();
 
         final UploadResponse uploadResponse = documentUploadClientApi.upload(

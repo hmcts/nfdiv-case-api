@@ -19,9 +19,10 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.util.ResourceUtils.getFile;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.BEARER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
 
 public final class DocAssemblyWireMock {
 
@@ -50,7 +51,7 @@ public final class DocAssemblyWireMock {
 
         DOC_ASSEMBLY_SERVER.stubFor(
             post("/api/template-renditions")
-                .withHeader(AUTHORIZATION, new EqualToPattern(TEST_AUTHORIZATION_TOKEN))
+                .withHeader(AUTHORIZATION, new EqualToPattern(BEARER + TEST_SYSTEM_AUTHORISATION_TOKEN))
                 .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(TEST_SERVICE_AUTH_TOKEN))
                 .willReturn(aResponse()
                     .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -67,7 +68,7 @@ public final class DocAssemblyWireMock {
 
         DOC_ASSEMBLY_SERVER.stubFor(
             post("/api/template-renditions")
-                .withHeader(AUTHORIZATION, new EqualToPattern(TEST_AUTHORIZATION_TOKEN))
+                .withHeader(AUTHORIZATION, new EqualToPattern(BEARER + TEST_SYSTEM_AUTHORISATION_TOKEN))
                 .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(TEST_SERVICE_AUTH_TOKEN))
                 .withRequestBody(containing(encodedTemplateId))
                 .willReturn(aResponse()
@@ -76,10 +77,10 @@ public final class DocAssemblyWireMock {
         );
     }
 
-    public static void stubForDocAssemblyUnauthorized() throws IOException {
+    public static void stubForDocAssemblyUnauthorized() {
         DOC_ASSEMBLY_SERVER.stubFor(
             post("/api/template-renditions")
-                .withHeader(AUTHORIZATION, new EqualToPattern(TEST_AUTHORIZATION_TOKEN))
+                .withHeader(AUTHORIZATION, new EqualToPattern(BEARER + TEST_SYSTEM_AUTHORISATION_TOKEN))
                 .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(TEST_SERVICE_AUTH_TOKEN))
                 .willReturn(unauthorized()
                     .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE))

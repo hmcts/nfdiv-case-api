@@ -19,9 +19,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.function.Supplier;
-import javax.servlet.http.HttpServletRequest;
 
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_GENERAL_ORDER;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_ORDER;
 
@@ -36,9 +34,6 @@ public class CreateGeneralOrder implements CcdPageConfiguration {
 
     @Autowired
     private GeneralOrderTemplateContent generalOrderTemplateContent;
-
-    @Autowired
-    private HttpServletRequest httpServletRequest;
 
     @Autowired
     private Clock clock;
@@ -70,16 +65,16 @@ public class CreateGeneralOrder implements CcdPageConfiguration {
 
         final Supplier<Map<String, Object>> templateContentSupplier = generalOrderTemplateContent
             .apply(caseDataCopy, caseId);
+        final String filename = GENERAL_ORDER + LocalDateTime.now(clock).format(formatter);
 
         log.info("Generating general order document for templateId : {} case caseId: {}", DIVORCE_GENERAL_ORDER, caseId);
 
         Document generalOrderDocument = caseDataDocumentService.renderGeneralOrderDocument(
             templateContentSupplier,
-            null,// else case caseId will be appended to document name
-            httpServletRequest.getHeader(AUTHORIZATION),
+            caseId,
             DIVORCE_GENERAL_ORDER,
-            GENERAL_ORDER + LocalDateTime.now(clock).format(formatter),
-            caseDataCopy.getApplicant1().getLanguagePreference()
+            caseDataCopy.getApplicant1().getLanguagePreference(),
+            filename
         );
 
         generalOrder.setGeneralOrderDraft(generalOrderDocument);

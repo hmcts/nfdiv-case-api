@@ -16,20 +16,17 @@ import uk.gov.hmcts.divorce.document.content.CitizenRespondentAosInvitationTempl
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
-import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CITIZEN_RESP_AOS_INVITATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_AOS_INVITATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DOCUMENT_TYPE_RESPONDENT_INVITATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ACCESS_CODE;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
@@ -44,9 +41,6 @@ class GenerateCitizenRespondentAosInvitationTest {
 
     @Mock
     private CitizenRespondentAosInvitationTemplateContent templateContent;
-
-    @Mock
-    private HttpServletRequest request;
 
     @InjectMocks
     private GenerateCitizenRespondentAosInvitation generateCitizenRespondentAosInvitation;
@@ -66,7 +60,6 @@ class GenerateCitizenRespondentAosInvitationTest {
         final MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
         classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
-        when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(templateContentSupplier);
 
         final var result = generateCitizenRespondentAosInvitation.apply(caseDetails);
@@ -79,10 +72,9 @@ class GenerateCitizenRespondentAosInvitationTest {
                 DOCUMENT_TYPE_RESPONDENT_INVITATION,
                 templateContentSupplier,
                 TEST_CASE_ID,
-                TEST_AUTHORIZATION_TOKEN,
                 CITIZEN_RESP_AOS_INVITATION,
-                RESP_AOS_INVITATION_DOCUMENT_NAME,
-                ENGLISH);
+                ENGLISH,
+                RESP_AOS_INVITATION_DOCUMENT_NAME + TEST_CASE_ID);
 
         classMock.close();
     }
@@ -101,6 +93,6 @@ class GenerateCitizenRespondentAosInvitationTest {
         final var result = generateCitizenRespondentAosInvitation.apply(caseDetails);
 
         assertThat(result.getData()).isEqualTo(caseData);
-        verifyNoInteractions(request, templateContent, caseDataDocumentService);
+        verifyNoInteractions(templateContent, caseDataDocumentService);
     }
 }
