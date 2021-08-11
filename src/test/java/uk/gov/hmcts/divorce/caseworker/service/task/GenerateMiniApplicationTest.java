@@ -15,18 +15,15 @@ import uk.gov.hmcts.divorce.document.content.MiniApplicationTemplateContent;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
-import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_APPLICATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_APPLICATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
@@ -39,9 +36,6 @@ class GenerateMiniApplicationTest {
 
     @Mock
     private MiniApplicationTemplateContent templateContent;
-
-    @Mock
-    private HttpServletRequest request;
 
     @InjectMocks
     private GenerateMiniApplication generateMiniApplication;
@@ -62,7 +56,6 @@ class GenerateMiniApplicationTest {
 
         final Supplier<Map<String, Object>> templateContentSupplier = HashMap::new;
 
-        when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(templateContentSupplier);
 
         final var result = generateMiniApplication.apply(caseDetails);
@@ -73,10 +66,9 @@ class GenerateMiniApplicationTest {
                 DIVORCE_APPLICATION,
                 templateContentSupplier,
                 TEST_CASE_ID,
-                TEST_AUTHORIZATION_TOKEN,
                 DIVORCE_MINI_APPLICATION,
-                DIVORCE_MINI_APPLICATION_DOCUMENT_NAME,
-                ENGLISH);
+                ENGLISH,
+                DIVORCE_MINI_APPLICATION_DOCUMENT_NAME + TEST_CASE_ID);
 
         assertThat(result.getData()).isEqualTo(caseData);
     }
