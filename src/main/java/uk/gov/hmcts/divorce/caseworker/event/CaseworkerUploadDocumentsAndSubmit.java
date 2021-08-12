@@ -60,8 +60,8 @@ public class CaseworkerUploadDocumentsAndSubmit implements CCDConfig<CaseData, S
                     + "You can upload image files with jpg, jpeg, bmp, tif, tiff or PDF file extensions, maximum size 100MB per file")
             .optional(CaseData::getApplicant1DocumentsUploaded)
             .complex(CaseData::getApplication)
-            .mandatory(Application::getDocumentUploadComplete)
-            .done();
+                .mandatory(Application::getDocumentUploadComplete)
+                .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
