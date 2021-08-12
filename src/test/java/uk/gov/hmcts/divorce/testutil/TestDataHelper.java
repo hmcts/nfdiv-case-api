@@ -486,4 +486,24 @@ public class TestDataHelper {
             .value(divorceGeneralOrder)
             .build();
     }
+
+    public static ListValue<DivorceDocument> getDivorceDocumentListValue(
+        String url,
+        String filename,
+        DocumentType documentType
+    ) {
+        return ListValue.<DivorceDocument>builder()
+            .id(UUID.randomUUID().toString())
+            .value(DivorceDocument.builder()
+                .documentType(documentType)
+                .documentLink(Document
+                    .builder()
+                    .url(url)
+                    .filename(filename)
+                    .binaryUrl(url + "/binary")
+                    .build()
+                )
+                .build())
+            .build();
+    }
 }

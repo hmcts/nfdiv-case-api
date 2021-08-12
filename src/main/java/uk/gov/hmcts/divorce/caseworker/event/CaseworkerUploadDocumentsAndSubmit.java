@@ -60,8 +60,8 @@ public class CaseworkerUploadDocumentsAndSubmit implements CCDConfig<CaseData, S
                     + "You can upload image files with jpg, jpeg, bmp, tif, tiff or PDF file extensions, maximum size 100MB per file")
             .optional(CaseData::getApplicant1DocumentsUploaded)
             .complex(CaseData::getApplication)
-                .mandatory(Application::getDocumentUploadComplete)
-                .done();
+            .mandatory(Application::getDocumentUploadComplete)
+            .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
@@ -80,12 +80,15 @@ public class CaseworkerUploadDocumentsAndSubmit implements CCDConfig<CaseData, S
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Caseworker upload documentsand submit about to submit callback invoked");
+        log.info("Caseworker upload documents and submit about to submit callback invoked");
 
         final CaseData caseData = details.getData();
         final Application application = caseData.getApplication();
 
         allowCaseToBeSubmitted(application);
+
+        //sort app1 documents in descending order so latest documents appears first
+        caseData.sortApplicant1UploadedDocuments(beforeDetails.getData().getApplicant1DocumentsUploaded());
 
         if (application.getDocumentUploadComplete().toBoolean()) {
             return transitionToSubmitted(details, caseData);
