@@ -8,10 +8,16 @@ public final class NotificationConstants {
 
     public static final String APPLICATION = "Application";
     public static final String APPLICATION_TYPE = "Application type";
+    public static final String UNION = "union";
+    public static final String MARRIAGE = "marriage";
+    public static final String CIVIL_PARTNERSHIP = "civil partnership";
     public static final String DIVORCE_APPLICATION = "divorce application";
     public static final String APPLICATION_TO_END_CIVIL_PARTNERSHIP = "application to end your civil partnership";
     public static final String FOR_YOUR_APPLICATION = " for your divorce/ to end your civil partnership";
+    public static final String FOR_A_APPLICATION = "for a divorce / to end your civil partnership";
     public static final String FOR_YOUR_DIVORCE = " for your divorce";
+    public static final String DIVORCE_OR_END_CIVIL_PARTNERSHIP = "divorce / end your civil partnership";
+    public static final String TO_DIVORCE = " to divorce";
     public static final String TO_END_CIVIL_PARTNERSHIP = "to end your civil partnership";
     public static final String FOR_DIVORCE = "for divorce";
     public static final String REMINDER_ACTION_REQUIRED = "Reminder/Action required";
