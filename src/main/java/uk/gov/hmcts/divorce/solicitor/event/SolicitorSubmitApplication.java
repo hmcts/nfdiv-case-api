@@ -27,6 +27,8 @@ import uk.gov.hmcts.divorce.solicitor.event.page.SolSummary;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -87,6 +89,12 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         final OrderSummary orderSummary = paymentService.getOrderSummary();
         final CaseData caseData = details.getData();
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
+
+        caseData.getApplication().setSolApplicationFeeInPounds(
+            NumberFormat.getNumberInstance().format(
+                new BigDecimal(orderSummary.getPaymentTotal()).movePointLeft(2)
+            )
+        );
 
         log.info("Adding the applicant's solicitor case roles");
         ccdAccessService.addApplicant1SolicitorRole(

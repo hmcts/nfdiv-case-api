@@ -1,0 +1,16 @@
+{
+  "divorceOrDissolution": "divorce",
+  "applicant1FirstName": "John",
+  "applicant1LastName": "Smith",
+  "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+  "languagePreferenceWelsh": "NO",
+  "applicant1FinancialOrder": "NO",
+  "divorceUnit": "serviceCentre",
+  "selectedDivorceCentreSiteId": "AA07",
+  "acknowledgementOfService": {
+    "statementOfTruth": "YES",
+    "prayerHasBeenGiven": "YES",
+    "confirmReadPetition": "YES",
+    "jurisdictionAgree": "YES"
+  }
+}

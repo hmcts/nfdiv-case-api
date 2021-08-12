@@ -103,6 +103,20 @@ public class AcknowledgementOfService {
     )
     private String noticeOfProceedingsSolicitorFirm;
 
+    @CCD(
+        label = "I am duly authorised by the respondent to sign this statement.",
+        access = AosAccess.class
+    )
+    private YesOrNo statementOfTruth;
+
+    @CCD(
+        label = "The respondent has given their \"prayer\".",
+        hint = "\"The prayer\" means they confirm they wish to dissolve the union, pay any fees (if applicable),"
+            + " and have decided how money and property will be split (\"financial order\").",
+        access = AosAccess.class
+    )
+    private YesOrNo prayerHasBeenGiven;
+
     @JsonIgnore
     public void setNoticeOfProceedings(final Solicitor solicitor) {
         digitalNoticeOfProceedings = YES;
