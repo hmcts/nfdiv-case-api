@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import java.io.IOException;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -54,7 +55,7 @@ public class CaseworkerUploadDocumentsAndSubmitTest {
         final CaseData caseData = caseDataWithStatementOfTruth();
         caseData.getApplication().setDocumentUploadComplete(YES);
 
-        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_START_URL)
+        mockMvc.perform(post(ABOUT_TO_START_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -76,7 +77,7 @@ public class CaseworkerUploadDocumentsAndSubmitTest {
         final CaseData caseData = caseDataWithStatementOfTruth();
         caseData.getApplication().setDocumentUploadComplete(NO);
 
-        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
@@ -97,7 +98,7 @@ public class CaseworkerUploadDocumentsAndSubmitTest {
         final CaseData caseData = caseDataWithStatementOfTruth();
         caseData.getApplication().setDocumentUploadComplete(YES);
 
-        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)

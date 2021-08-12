@@ -331,6 +331,7 @@ public class TestDataHelper {
         return CallbackRequest
             .builder()
             .eventId(eventId)
+            .caseDetailsBefore(caseDetailsBefore(caseData))
             .caseDetails(
                 CaseDetails
                     .builder()
@@ -348,6 +349,8 @@ public class TestDataHelper {
         return CallbackRequest
             .builder()
             .eventId(eventId)
+            .caseDetailsBefore(
+                caseDetailsBefore(caseData))
             .caseDetails(
                 CaseDetails
                     .builder()
@@ -504,6 +507,15 @@ public class TestDataHelper {
                     .build()
                 )
                 .build())
+            .build();
+    }
+
+    private static CaseDetails caseDetailsBefore(CaseData caseData) {
+        return CaseDetails
+            .builder()
+            .data(OBJECT_MAPPER.convertValue(caseData, TYPE_REFERENCE))
+            .id(TEST_CASE_ID)
+            .caseTypeId(CASE_TYPE)
             .build();
     }
 }
