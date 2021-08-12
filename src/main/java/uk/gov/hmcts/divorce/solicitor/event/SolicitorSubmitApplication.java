@@ -27,11 +27,11 @@ import uk.gov.hmcts.divorce.solicitor.event.page.SolSummary;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
-import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 import static java.lang.Integer.parseInt;
 import static java.util.Arrays.asList;
