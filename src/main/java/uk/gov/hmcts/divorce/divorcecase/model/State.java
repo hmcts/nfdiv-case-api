@@ -200,11 +200,11 @@ public enum State {
     ConditionalOrderRefused("ConditionalOrderRefused"),
 
     @CCD(
-        name = "Defended divorce",
+        name = "Disputed divorce",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
     )
-    DefendedDivorce("DefendedDivorce"),
+    Disputed("Disputed"),
 
     @CCD(
         name = "Draft",
