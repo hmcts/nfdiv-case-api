@@ -71,7 +71,7 @@ public class SolicitorSubmitApplicationTest {
     private SolicitorSubmitApplication solicitorSubmitApplication;
 
     @Test
-    void shouldSetOrderSummaryAndSolicitorRoles() {
+    void shouldSetOrderSummaryAndSolicitorFeesInPoundsAndSolicitorRolesWhenAboutToStartIsInvoked() {
 
         final long caseId = 1L;
         final String authorization = "authorization";
@@ -83,11 +83,14 @@ public class SolicitorSubmitApplicationTest {
 
         when(paymentService.getOrderSummary()).thenReturn(orderSummary);
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(authorization);
+        when(orderSummary.getPaymentTotal()).thenReturn("55000");
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             solicitorSubmitApplication.aboutToStart(caseDetails);
 
         assertThat(response.getData().getApplication().getApplicationFeeOrderSummary()).isEqualTo(orderSummary);
+        assertThat(response.getData().getApplication().getSolApplicationFeeInPounds()).isEqualTo("550");
+
         verify(ccdAccessService).addApplicant1SolicitorRole(
             authorization,
             caseId
