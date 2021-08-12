@@ -107,7 +107,7 @@ public class CaseworkerCreateGeneralOrder implements CCDConfig<CaseData, State, 
             caseDataCopy.setGeneralOrders(singletonList(divorceGeneralOrderListValue));
 
         } else {
-            caseDataCopy.getGeneralOrders().add(divorceGeneralOrderListValue);
+            caseDataCopy.getGeneralOrders().add(0, divorceGeneralOrderListValue);
         }
 
         //clear general order field so that on next general order old data is not shown

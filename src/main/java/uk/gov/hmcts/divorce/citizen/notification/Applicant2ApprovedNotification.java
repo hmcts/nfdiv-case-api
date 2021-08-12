@@ -13,6 +13,7 @@ import java.util.Map;
 
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT2_APPROVED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT2_APPROVED;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.dateTimeFormatter;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PAID;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PAID_FOR;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PAY_FOR;
@@ -58,7 +59,7 @@ public class Applicant2ApprovedNotification {
     public void sendToApplicant2(CaseData caseData, Long id) {
         Map<String, String> templateVars = commonContent.templateVarsForApplicant(
             caseData, caseData.getApplicant2(), caseData.getApplicant1());
-        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().toString());
+        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(dateTimeFormatter));
 
         Application application = caseData.getApplication();
         if (application.getApplicant1HelpWithFees().getNeedHelp() == YesOrNo.NO
