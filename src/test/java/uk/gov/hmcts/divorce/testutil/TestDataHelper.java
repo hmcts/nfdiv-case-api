@@ -331,6 +331,7 @@ public class TestDataHelper {
         return CallbackRequest
             .builder()
             .eventId(eventId)
+            .caseDetailsBefore(caseDetailsBefore(caseData))
             .caseDetails(
                 CaseDetails
                     .builder()
@@ -348,6 +349,8 @@ public class TestDataHelper {
         return CallbackRequest
             .builder()
             .eventId(eventId)
+            .caseDetailsBefore(
+                caseDetailsBefore(caseData))
             .caseDetails(
                 CaseDetails
                     .builder()
@@ -484,6 +487,35 @@ public class TestDataHelper {
             .<DivorceGeneralOrder>builder()
             .id(listValueId)
             .value(divorceGeneralOrder)
+            .build();
+    }
+
+    public static ListValue<DivorceDocument> getDivorceDocumentListValue(
+        String url,
+        String filename,
+        DocumentType documentType
+    ) {
+        return ListValue.<DivorceDocument>builder()
+            .id(UUID.randomUUID().toString())
+            .value(DivorceDocument.builder()
+                .documentType(documentType)
+                .documentLink(Document
+                    .builder()
+                    .url(url)
+                    .filename(filename)
+                    .binaryUrl(url + "/binary")
+                    .build()
+                )
+                .build())
+            .build();
+    }
+
+    private static CaseDetails caseDetailsBefore(CaseData caseData) {
+        return CaseDetails
+            .builder()
+            .data(OBJECT_MAPPER.convertValue(caseData, TYPE_REFERENCE))
+            .id(TEST_CASE_ID)
+            .caseTypeId(CASE_TYPE)
             .build();
     }
 }
