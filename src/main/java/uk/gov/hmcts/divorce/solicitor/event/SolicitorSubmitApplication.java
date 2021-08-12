@@ -98,7 +98,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             .data(caseData)
             .build();
     }
-    
+
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
