@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -13,9 +14,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolStatementOfTruth;
 
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.time.LocalDateTime.now;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Disputed;
@@ -32,6 +35,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 public class SolicitorSubmitAos implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SOLICITOR_SUBMIT_AOS = "solicitor-submit-aos";
+
+    @Autowired
+    private Clock clock;
 
     private final List<CcdPageConfiguration> pages = List.of(
         new Applicant2SolStatementOfTruth()
@@ -56,6 +62,8 @@ public class SolicitorSubmitAos implements CCDConfig<CaseData, State, UserRole> 
                 .errors(errors)
                 .build();
         }
+
+        caseData.getAcknowledgementOfService().setDateAosSubmitted(now(clock));
 
         if (NO.equals(acknowledgementOfService.getJurisdictionAgree())) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()

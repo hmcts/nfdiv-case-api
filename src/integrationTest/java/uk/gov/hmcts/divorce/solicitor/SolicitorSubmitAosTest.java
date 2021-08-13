@@ -13,6 +13,11 @@ import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneOffset;
+
+import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -43,8 +48,14 @@ public class SolicitorSubmitAosTest {
     @MockBean
     private WebMvcConfig webMvcConfig;
 
+    @MockBean
+    private Clock clock;
+
     @Test
-    void shouldSetStateToHoldingForValidUndisputedAos() throws Exception {
+    void shouldSetStateToHoldingAndSetDateAosSubmittedForValidUndisputedAos() throws Exception {
+
+        when(clock.instant()).thenReturn(Instant.parse("2021-06-30T12:30:00.000Z"));
+        when(clock.getZone()).thenReturn(ZoneOffset.UTC);
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .statementOfTruth(YES)
@@ -66,7 +77,11 @@ public class SolicitorSubmitAosTest {
                 .accept(APPLICATION_JSON))
             .andDo(print())
             .andExpect(
-                status().isOk()
-            ).andExpect(jsonPath("$.state").value(Holding.getName()));
+                status().isOk())
+            .andExpect(jsonPath("$.state").value(Holding.getName()))
+            .andExpect(jsonPath("$.data.dateAosSubmitted").isNotEmpty())
+            .andExpect(jsonPath("$.data.dateAosSubmitted")
+                .value("2021-06-30T12:30:00.000"));
+
     }
 }

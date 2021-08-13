@@ -15,10 +15,8 @@ import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolAosOtherProceeding
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolAosjurisdiction;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolConfirmContactDetails;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolReviewApplicant1Application;
-import uk.gov.hmcts.divorce.solicitor.event.updater.AddMiniApplicationLink;
+import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
 
-import java.time.Clock;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -31,16 +29,15 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_A
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
+import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
 @Component
 public class SolicitorDraftAos implements CCDConfig<CaseData, State, UserRole> {
+
     public static final String SOLICITOR_DRAFT_AOS = "solicitor-draft-aos";
 
     @Autowired
     private AddMiniApplicationLink addMiniApplicationLink;
-
-    @Autowired
-    private Clock clock;
 
     private final List<CcdPageConfiguration> pages = asList(
         new Applicant2SolConfirmContactDetails(),
@@ -62,7 +59,6 @@ public class SolicitorDraftAos implements CCDConfig<CaseData, State, UserRole> {
             .name("Draft AoS")
             .description("Draft Acknowledgement of Service")
             .aboutToStartCallback(this::aboutToStart)
-            .aboutToSubmitCallback(this::aboutToSubmit)
             .showSummary()
             .endButtonLabel("Save AoS Response")
             .explicitGrants()
@@ -74,23 +70,11 @@ public class SolicitorDraftAos implements CCDConfig<CaseData, State, UserRole> {
                 CASEWORKER_LEGAL_ADVISOR));
     }
 
-    private AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
-        final CaseDetails<CaseData, State> details,
-        final CaseDetails<CaseData, State> beforeDetails
-    ) {
-        var caseData = details.getData();
-        caseData.getAcknowledgementOfService().setDateAosSubmitted(LocalDateTime.now(clock));
-
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
-            .build();
-    }
-
-    private AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(CaseDetails<CaseData, State> details) {
-        CaseData caseData = addMiniApplicationLink.update(details);
-
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
+            .data(caseTasks(addMiniApplicationLink)
+                .run(details)
+                .getData())
             .build();
     }
 }
