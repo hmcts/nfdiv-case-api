@@ -54,6 +54,7 @@ class CitizenApplicant2NotBrokenTest {
 
         verify(applicant2NotBrokenNotification).sendToApplicant1(caseData, caseDetails.getId());
         verify(applicant2NotBrokenNotification).sendToApplicant2(caseData, caseDetails.getId());
+        assertThat(response.getState()).isEqualTo(State.AwaitingApplicant1Response);
     }
 
 }
