@@ -11,7 +11,6 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolAosCosts;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolAosOtherProceedings;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolAosjurisdiction;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolUpdateAosApplicant1Application;
@@ -39,8 +38,7 @@ public class SolicitorUpdateAos implements CCDConfig<CaseData, State, UserRole> 
     private final List<CcdPageConfiguration> pages = asList(
         new Applicant2SolUpdateAosApplicant1Application(),
         new Applicant2SolAosjurisdiction(),
-        new Applicant2SolAosOtherProceedings(),
-        new Applicant2SolAosCosts()
+        new Applicant2SolAosOtherProceedings()
     );
 
     @Override
