@@ -57,6 +57,7 @@ public class AcknowledgementOfService {
     )
     private String legalProceedingsDescription;
 
+    //TODO: Unused agreeToCosts to be removed at a later date
     @CCD(
         label = "Does respondent agree to costs?",
         typeOverride = FixedList,
@@ -65,12 +66,14 @@ public class AcknowledgementOfService {
     )
     private RespondentAgreeToCosts agreeToCosts;
 
+    //TODO: Unused costsAmount to be removed at a later date
     @CCD(
         label = "Respondent's costs amount",
         access = AosAccess.class
     )
     private String costsAmount;
 
+    //TODO: Unused costsReason to be removed at a later date
     @CCD(
         label = "Respondent's costs reason",
         typeOverride = TextArea,
