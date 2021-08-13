@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.divorce.common.service.SubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -17,7 +18,6 @@ import uk.gov.hmcts.divorce.payment.PaymentService;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
@@ -35,6 +35,9 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
 
     @Autowired
     private PaymentService paymentService;
+
+    @Autowired
+    private SubmissionService submissionService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -55,10 +58,10 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
         log.info("Submit application about to submit callback invoked");
 
         CaseData data = details.getData();
-        CaseData caseDataCopy = data.toBuilder().build();
+        State state = details.getState();
 
         log.info("Validating case data");
-        final List<String> validationErrors = AwaitingPayment.validate(caseDataCopy);
+        final List<String> validationErrors = AwaitingPayment.validate(data);
 
         if (!validationErrors.isEmpty()) {
             log.info("Validation errors: ");
@@ -67,16 +70,18 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
             }
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseDataCopy)
+                .data(data)
                 .errors(validationErrors)
-                .state(Draft)
+                .state(state)
                 .build();
         }
 
-        Application application = caseDataCopy.getApplication();
-        State state;
+        Application application = data.getApplication();
+
         if (application.isHelpWithFeesApplication()) {
-            state = AwaitingHWFDecision;
+            var submittedDetails = submissionService.submitApplication(details);
+            data = submittedDetails.getData();
+            state = submittedDetails.getState();
         } else {
             OrderSummary orderSummary = paymentService.getOrderSummary();
             application.setApplicationFeeOrderSummary(orderSummary);
@@ -84,11 +89,11 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
             state = AwaitingPayment;
         }
 
-        caseDataCopy.getLabelContent().setApplicationType(caseDataCopy.getApplicationType());
-        caseDataCopy.getLabelContent().setUnionType(caseDataCopy.getDivorceOrDissolution());
+        data.getLabelContent().setApplicationType(data.getApplicationType());
+        data.getLabelContent().setUnionType(data.getDivorceOrDissolution());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseDataCopy)
+            .data(data)
             .state(state)
             .build();
     }
