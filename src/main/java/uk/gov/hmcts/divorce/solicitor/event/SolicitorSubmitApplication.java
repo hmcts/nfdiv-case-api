@@ -65,11 +65,14 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
     private HttpServletRequest httpServletRequest;
 
     @Autowired
+    private SolPayment solPayment;
+
+    @Autowired
     private SubmissionService submissionService;
 
     private final List<CcdPageConfiguration> pages = asList(
         new SolStatementOfTruth(),
-        new SolPayment(),
+        solPayment,
         new HelpWithFeesPage(),
         new SolPayAccount(),
         new SolPaymentSummary(),
