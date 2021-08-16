@@ -5,6 +5,7 @@ public final class NotificationConstants {
     public static final String LAST_NAME = "last name";
     public static final String RELATIONSHIP = "relationship";
     public static final String PARTNER = "partner";
+    public static final String THEIR_EMAIL_ADDRESS = "their email address";
 
     public static final String APPLICATION = "Application";
     public static final String APPLICATION_TYPE = "Application type";

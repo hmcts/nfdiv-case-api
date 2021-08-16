@@ -1,0 +1,34 @@
+{
+  "divorceOrDissolution": "divorce",
+  "applicant1FirstName": "John",
+  "applicant1LastName": "Smith",
+  "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+  "applicant2Email": "simulate-delivered@notifications.service.gov.uk",
+  "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
+  "applicant1Gender": "male",
+  "applicant2Gender": "female",
+  "marriageApplicant1Name":"John Smith",
+  "marriageApplicant2Name":"Sarah Smith",
+  "marriageDate": "2020-01-01",
+  "applicant1FinancialOrder": "No",
+  "applicant2FinancialOrder": "No",
+  "jurisdictionApplicant1Residence": "Yes",
+  "jurisdictionApplicant2Residence": "Yes",
+  "jurisdictionConnections": ["A"],
+  "applicant2FirstName": "Sarah",
+  "applicant2LastName": "Smith",
+  "applicant2PrayerHasBeenGiven": "YES",
+  "applicant2StatementOfTruth": "YES",
+  "applicant1HWFNeedHelp": "Yes",
+  "applicant2HWFNeedHelp": "Yes",
+  "notes": [
+    {
+      "id": "1",
+      "value": {
+        "author": "User Test",
+        "date": "2021-01-01",
+        "note": "Marriage date incorrect, correct date: 1/1/2020"
+      }
+    }
+  ]
+}
