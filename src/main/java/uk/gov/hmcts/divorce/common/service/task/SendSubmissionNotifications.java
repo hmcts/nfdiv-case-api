@@ -52,7 +52,7 @@ public class SendSubmissionNotifications implements CaseTask {
             applicationSubmittedNotification.send(caseData, caseId);
         }
 
-        if (AwaitingDocuments.equals(state)) {
+        if (caseData.getApplication().hasAwaitingDocuments()) {
             applicationOutstandingActionNotification.send(caseData, caseId);
         }
     }
