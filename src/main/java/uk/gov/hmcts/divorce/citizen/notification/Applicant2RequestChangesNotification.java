@@ -38,10 +38,8 @@ public class Applicant2RequestChangesNotification {
         templateVars.put(APPLICANT_2_COMMENTS, caseData.getApplication().getApplicant2ExplainsApplicant1IncorrectInformation());
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
-            templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), FOR_DIVORCE);
             templateVars.put(FOR_THE_APPLICATION, THE_DIVORCE);
         } else {
-            templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), TO_END_CIVIL_PARTNERSHIP);
             templateVars.put(FOR_THE_APPLICATION, TO_END_CIVIL_PARTNERSHIP);
         }
 

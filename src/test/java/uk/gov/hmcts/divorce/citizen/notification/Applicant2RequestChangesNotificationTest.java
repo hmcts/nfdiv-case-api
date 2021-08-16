@@ -68,7 +68,6 @@ class Applicant2RequestChangesNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT1_NEED_TO_MAKE_CHANGES),
             argThat(allOf(
-                hasEntry(APPLICATION.toLowerCase(Locale.ROOT), "for divorce"),
                 hasEntry(APPLICANT_2_COMMENTS, "Not correct!"),
                 hasEntry(FOR_THE_APPLICATION, THE_DIVORCE)
             )),
@@ -96,7 +95,6 @@ class Applicant2RequestChangesNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT1_NEED_TO_MAKE_CHANGES),
             argThat(allOf(
-                hasEntry(APPLICATION.toLowerCase(Locale.ROOT), "to end your civil partnership"),
                 hasEntry(APPLICANT_2_COMMENTS, "Not correct!"),
                 hasEntry(FOR_THE_APPLICATION, TO_END_CIVIL_PARTNERSHIP)
             )),
