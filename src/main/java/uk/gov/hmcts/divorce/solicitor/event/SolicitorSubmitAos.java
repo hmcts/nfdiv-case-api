@@ -13,15 +13,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolStatementOfTruth;
+import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitAosService;
 
-import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.time.LocalDateTime.now;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Disputed;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
@@ -37,7 +35,7 @@ public class SolicitorSubmitAos implements CCDConfig<CaseData, State, UserRole> 
     public static final String SOLICITOR_SUBMIT_AOS = "solicitor-submit-aos";
 
     @Autowired
-    private Clock clock;
+    private SolicitorSubmitAosService solicitorSubmitAosService;
 
     private final List<CcdPageConfiguration> pages = List.of(
         new Applicant2SolStatementOfTruth()
@@ -63,18 +61,11 @@ public class SolicitorSubmitAos implements CCDConfig<CaseData, State, UserRole> 
                 .build();
         }
 
-        caseData.getAcknowledgementOfService().setDateAosSubmitted(now(clock));
-
-        if (NO.equals(acknowledgementOfService.getJurisdictionAgree())) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .state(Disputed)
-                .build();
-        }
+        final CaseDetails<CaseData, State> updateDetails = solicitorSubmitAosService.submitAos(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
-            .state(Holding)
+            .data(updateDetails.getData())
+            .state(updateDetails.getState())
             .build();
     }
 

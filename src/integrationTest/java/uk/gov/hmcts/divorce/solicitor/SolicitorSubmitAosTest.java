@@ -14,10 +14,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 
 import java.time.Clock;
-import java.time.Instant;
-import java.time.ZoneOffset;
+import java.time.LocalDate;
 
-import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -26,6 +24,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorSubmitAos.SOLICITOR_SUBMIT_AOS;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getFormattedExpectedDateTime;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
@@ -54,8 +55,8 @@ public class SolicitorSubmitAosTest {
     @Test
     void shouldSetStateToHoldingAndSetDateAosSubmittedForValidUndisputedAos() throws Exception {
 
-        when(clock.instant()).thenReturn(Instant.parse("2021-06-30T12:30:00.000Z"));
-        when(clock.getZone()).thenReturn(ZoneOffset.UTC);
+        setMockClock(clock);
+        final LocalDate issueDate = getExpectedLocalDate().minusDays(7);
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .statementOfTruth(YES)
@@ -65,6 +66,7 @@ public class SolicitorSubmitAosTest {
             .build();
 
         final CaseData caseData = caseData();
+        caseData.getApplication().setIssueDate(issueDate);
         caseData.setAcknowledgementOfService(acknowledgementOfService);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
@@ -76,12 +78,11 @@ public class SolicitorSubmitAosTest {
                         callbackRequest(caseData, SOLICITOR_SUBMIT_AOS)))
                 .accept(APPLICATION_JSON))
             .andDo(print())
-            .andExpect(
-                status().isOk())
+            .andExpect(status().isOk())
             .andExpect(jsonPath("$.state").value(Holding.getName()))
             .andExpect(jsonPath("$.data.dateAosSubmitted").isNotEmpty())
-            .andExpect(jsonPath("$.data.dateAosSubmitted")
-                .value("2021-06-30T12:30:00.000"));
+            .andExpect(jsonPath("$.data.dateAosSubmitted").value(getFormattedExpectedDateTime()))
+            .andExpect(jsonPath("$.data.dueDate").value(issueDate.plusWeeks(20).toString()));
 
     }
 }
