@@ -51,7 +51,7 @@ public class SystemRemindApplicant2Task {
                     final CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
                     final LocalDate reminderDate = caseData.getDueDate().minusDays(FOUR_DAYS);
 
-                    if (!reminderDate.isAfter(LocalDate.now())
+                    if (!reminderDate.isAfter(LocalDate.now()) && caseData.getCaseInvite().getAccessCode() != null
                         && !caseData.getApplication().hasNotificationBeenSent(caseData.getApplication().getApplicant2ReminderSent())
                     ) {
                         notifyApplicant2(caseDetails, caseData, reminderDate);
