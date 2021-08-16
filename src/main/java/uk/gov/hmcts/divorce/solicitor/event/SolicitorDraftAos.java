@@ -11,7 +11,6 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolAosCosts;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolAosOtherProceedings;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolAosjurisdiction;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolConfirmContactDetails;
@@ -47,8 +46,7 @@ public class SolicitorDraftAos implements CCDConfig<CaseData, State, UserRole> {
         new Applicant2SolConfirmContactDetails(),
         new Applicant2SolReviewApplicant1Application(),
         new Applicant2SolAosjurisdiction(),
-        new Applicant2SolAosOtherProceedings(),
-        new Applicant2SolAosCosts()
+        new Applicant2SolAosOtherProceedings()
     );
 
     @Override

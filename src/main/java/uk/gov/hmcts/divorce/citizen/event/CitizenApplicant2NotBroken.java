@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -30,7 +31,7 @@ public class CitizenApplicant2NotBroken implements CCDConfig<CaseData, State, Us
 
         configBuilder
             .event(APPLICANT_2_NOT_BROKEN)
-            .forState(AwaitingApplicant2Response)
+            .forStateTransition(AwaitingApplicant2Response, AwaitingApplicant1Response)
             .name("Applicant 2 not broken")
             .description("Applicant 2 union has not broken")
             .grant(CREATE_READ_UPDATE, APPLICANT_2)
@@ -49,7 +50,7 @@ public class CitizenApplicant2NotBroken implements CCDConfig<CaseData, State, Us
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
-            .state(AwaitingApplicant2Response)
+            .state(AwaitingApplicant1Response)
             .build();
     }
 }

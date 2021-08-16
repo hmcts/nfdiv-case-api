@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.common.service.SubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConfidentialAddress;
@@ -44,6 +45,9 @@ class CitizenSubmitApplicationTest {
 
     @Mock
     private PaymentService paymentService;
+
+    @Mock
+    private SubmissionService submissionService;
 
     @InjectMocks
     private CitizenSubmitApplication citizenSubmitApplication;
@@ -124,6 +128,13 @@ class CitizenSubmitApplicationTest {
 
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
+
+        final CaseDetails<CaseData, State> newDetails = new CaseDetails<>();
+        newDetails.setState(State.AwaitingHWFDecision);
+        newDetails.setData(caseData);
+
+        when(submissionService.submitApplication(caseDetails))
+            .thenReturn(newDetails);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
 
