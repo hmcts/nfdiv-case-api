@@ -217,7 +217,6 @@ public class TestDataHelper {
 
         return CaseData
             .builder()
-            .applicationType(JOINT_APPLICATION)
             .applicant1(applicant1)
             .applicant2(getJointApplicant2(MALE))
             .caseInvite(CaseInvite.builder().applicant2InviteEmailAddress(TEST_USER_EMAIL).build())
@@ -236,6 +235,7 @@ public class TestDataHelper {
 
     public static CaseData validApplicant2CaseData() {
         CaseData caseData = validApplicant1CaseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
         caseData.setApplicant2(getApplicant(MALE));
         caseData.getApplication().setApplicant2HelpWithFees(HelpWithFees.builder()
             .needHelp(NO)

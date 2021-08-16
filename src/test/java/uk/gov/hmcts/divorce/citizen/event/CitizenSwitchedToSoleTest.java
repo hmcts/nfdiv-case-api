@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSwitchedToSole.SWITCHED_TO_SOLE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -42,6 +43,7 @@ class CitizenSwitchedToSoleTest {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = validJointApplicant1CaseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
 
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
