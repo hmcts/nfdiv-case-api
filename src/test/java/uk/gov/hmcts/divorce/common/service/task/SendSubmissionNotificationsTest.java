@@ -96,6 +96,7 @@ class SendSubmissionNotificationsTest {
 
         final CaseData caseData = caseData();
         caseData.setApplication(Application.builder().build());
+        caseData.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
