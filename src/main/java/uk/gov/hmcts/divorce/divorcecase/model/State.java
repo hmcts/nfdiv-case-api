@@ -118,6 +118,19 @@ public enum State {
     },
 
     @CCD(
+        name = "Applicant 1 switched to sole",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
+    )
+    SwitchedToSole("Applicant1SwitchedToSole") {
+        @Override
+        public List<String> validate(CaseData caseData) {
+            List<String> errors = new ArrayList<>();
+            validateApplicant1BasicCase(caseData, errors);
+            return errors;
+        }
+    },
+
+    @CCD(
         name = "Awaiting applicant 2 response",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
