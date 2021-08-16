@@ -27,7 +27,7 @@ public class HoldingPeriodService {
         return holdingPeriodInWeeks;
     }
 
-    public LocalDate getDueDateAfter(final LocalDate issueDate) {
+    public LocalDate getDueDateFor(final LocalDate issueDate) {
         return issueDate.plusWeeks(holdingPeriodInWeeks);
     }
 }

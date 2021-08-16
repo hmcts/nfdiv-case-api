@@ -41,7 +41,7 @@ class HoldingPeriodServiceTest {
 
         final LocalDate issueDate = getExpectedLocalDate();
 
-        assertThat(holdingPeriodService.getDueDateAfter(issueDate))
+        assertThat(holdingPeriodService.getDueDateFor(issueDate))
             .isEqualTo(issueDate.plusWeeks(HOLDING_PERIOD_WEEKS));
     }
 
