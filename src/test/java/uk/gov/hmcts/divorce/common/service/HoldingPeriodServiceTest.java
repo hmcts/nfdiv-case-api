@@ -18,7 +18,7 @@ import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 @ExtendWith(MockitoExtension.class)
 class HoldingPeriodServiceTest {
 
-    private static final int HOLDING_PERIOD_WEEKS = 14;
+    private static final int HOLDING_PERIOD_WEEKS = 20;
 
     @Mock
     private Clock clock;
@@ -46,7 +46,7 @@ class HoldingPeriodServiceTest {
     }
 
     @Test
-    void shouldReturnTrueIfHoldingPeriodIsEqual() {
+    void shouldReturnTrueIfWeeksBetweenIssueDateAndCurrentDateIsEqualToHoldingPeriod() {
 
         setMockClock(clock);
 
@@ -56,7 +56,7 @@ class HoldingPeriodServiceTest {
     }
 
     @Test
-    void shouldReturnTrueIfHoldingPeriodIsGreaterThan() {
+    void shouldReturnTrueIfWeeksBetweenIssueDateAndCurrentDateIsGreaterThanHoldingPeriod() {
 
         setMockClock(clock);
 
@@ -67,7 +67,7 @@ class HoldingPeriodServiceTest {
     }
 
     @Test
-    void shouldReturnFalseIfHoldingPeriodIsLessThan() {
+    void shouldReturnFalseIfWeeksBetweenIssueDateAndCurrentDateIsLessThanHoldingPeriod() {
 
         setMockClock(clock);
 
