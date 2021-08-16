@@ -48,7 +48,7 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
             .name("Applicant Statement of Truth")
             .description("The applicant confirms SOT")
             .retries(120, 120)
-            .grant(CREATE_READ_UPDATE, CITIZEN, CASEWORKER_COURTADMIN_RDU, CASEWORKER_COURTADMIN_CTSC)
+            .grant(CREATE_READ_UPDATE, CITIZEN)
             .grant(READ, CASEWORKER_SUPERUSER)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
