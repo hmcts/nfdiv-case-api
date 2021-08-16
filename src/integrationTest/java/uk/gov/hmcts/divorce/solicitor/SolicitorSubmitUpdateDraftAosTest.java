@@ -4,7 +4,6 @@ package uk.gov.hmcts.divorce.solicitor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -26,8 +25,6 @@ import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.time.Clock;
-import java.time.Instant;
-import java.time.ZoneOffset;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
@@ -44,7 +41,6 @@ import static uk.gov.hmcts.divorce.solicitor.SolicitorCreateApplicationTest.getA
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorDraftAos.SOLICITOR_DRAFT_AOS;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorUpdateAos.SOLICITOR_UPDATE_AOS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
@@ -109,30 +105,6 @@ public class SolicitorSubmitUpdateDraftAosTest {
             .andExpect(jsonPath("$.data.miniApplicationLink.document_url").value(docUrl))
             .andExpect(jsonPath("$.data.miniApplicationLink.document_filename").value(docName))
             .andExpect(jsonPath("$.data.miniApplicationLink.document_binary_url").value(docBinaryUrl));
-    }
-
-    @Test
-    void givenCaseDataWithDivorceApplicationWhenAboutToSubmitCallbackIsInvokedDateAosSubmittedIsSet() throws Exception {
-        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(clock.instant()).thenReturn(Instant.parse("2021-06-30T12:30:00.000Z"));
-        when(clock.getZone()).thenReturn(ZoneOffset.UTC);
-
-        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(
-                objectMapper.writeValueAsString(
-                    callbackRequest(caseDataWithDocument(DIVORCE_APPLICATION),
-                        SOLICITOR_DRAFT_AOS)))
-            .accept(APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(
-                status().isOk()
-            )
-            .andExpect(jsonPath("$.data.dateAosSubmitted").isNotEmpty())
-            .andExpect(jsonPath("$.data.dateAosSubmitted")
-                .value("2021-06-30T12:30:00.000"));
     }
 
     @ParameterizedTest
