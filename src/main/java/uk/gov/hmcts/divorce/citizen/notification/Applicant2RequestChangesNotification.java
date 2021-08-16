@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.citizen.notification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -15,13 +14,10 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICAN
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_REQUEST_CHANGES;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_2_COMMENTS;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.END_JOINT_APPLICATION_LINK;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FIRST_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_THE_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.LAST_NAME;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.THE_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.TO_END_CIVIL_PARTNERSHIP;
 
@@ -35,11 +31,7 @@ public class Applicant2RequestChangesNotification {
     @Autowired
     private CommonContent commonContent;
 
-    @Autowired
-    private EmailTemplatesConfig emailTemplatesConfig;
-
     public void sendToApplicant1(CaseData caseData, Long id) {
-        Map<String, String> configTemplateVars = emailTemplatesConfig.getTemplateVars();
         Map<String, String> templateVars = commonContent.templateVarsForApplicant(
             caseData, caseData.getApplicant1(), caseData.getApplicant2());
 
@@ -47,11 +39,9 @@ public class Applicant2RequestChangesNotification {
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), FOR_DIVORCE);
-            templateVars.put(END_JOINT_APPLICATION_LINK, configTemplateVars.get(SIGN_IN_DIVORCE_URL));
             templateVars.put(FOR_THE_APPLICATION, THE_DIVORCE);
         } else {
             templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), TO_END_CIVIL_PARTNERSHIP);
-            templateVars.put(END_JOINT_APPLICATION_LINK, configTemplateVars.get(SIGN_IN_DISSOLUTION_URL));
             templateVars.put(FOR_THE_APPLICATION, TO_END_CIVIL_PARTNERSHIP);
         }
 

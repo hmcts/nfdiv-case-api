@@ -27,9 +27,11 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICAN
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_REQUEST_CHANGES;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_2_COMMENTS;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.END_JOINT_APPLICATION_LINK;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_THE_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DIVORCE_URL;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.THE_DIVORCE;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.TO_END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
@@ -68,7 +70,7 @@ class Applicant2RequestChangesNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION.toLowerCase(Locale.ROOT), "for divorce"),
                 hasEntry(APPLICANT_2_COMMENTS, "Not correct!"),
-                hasEntry(END_JOINT_APPLICATION_LINK, "sign in divorce link")
+                hasEntry(FOR_THE_APPLICATION, THE_DIVORCE)
             )),
             eq(ENGLISH)
         );
@@ -96,7 +98,7 @@ class Applicant2RequestChangesNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION.toLowerCase(Locale.ROOT), "to end your civil partnership"),
                 hasEntry(APPLICANT_2_COMMENTS, "Not correct!"),
-                hasEntry(END_JOINT_APPLICATION_LINK, "sign in dissolution link")
+                hasEntry(FOR_THE_APPLICATION, TO_END_CIVIL_PARTNERSHIP)
             )),
             eq(ENGLISH)
         );
