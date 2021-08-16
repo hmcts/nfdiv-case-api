@@ -18,9 +18,11 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATIO
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.END_JOINT_APPLICATION_LINK;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FIRST_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_DIVORCE;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_THE_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DIVORCE_URL;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.THE_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.TO_END_CIVIL_PARTNERSHIP;
 
 @Component
@@ -46,9 +48,11 @@ public class Applicant2RequestChangesNotification {
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), FOR_DIVORCE);
             templateVars.put(END_JOINT_APPLICATION_LINK, configTemplateVars.get(SIGN_IN_DIVORCE_URL));
+            templateVars.put(FOR_THE_APPLICATION, THE_DIVORCE);
         } else {
             templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), TO_END_CIVIL_PARTNERSHIP);
             templateVars.put(END_JOINT_APPLICATION_LINK, configTemplateVars.get(SIGN_IN_DISSOLUTION_URL));
+            templateVars.put(FOR_THE_APPLICATION, TO_END_CIVIL_PARTNERSHIP);
         }
 
         log.info("Sending notification to applicant 1 to request changes: {}", id);
