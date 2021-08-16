@@ -21,5 +21,14 @@
   "applicant2StatementOfTruth": "YES",
   "applicant1HWFNeedHelp": "Yes",
   "applicant2HWFNeedHelp": "Yes",
-  "note": "Marriage date incorrect, correct date: 1/1/2020"
+  "notes": [
+    {
+      "id": "1",
+      "value": {
+        "author": "User Test",
+        "date": "2021-01-01",
+        "note": "Marriage date incorrect, correct date: 1/1/2020"
+      }
+    }
+  ]
 }
