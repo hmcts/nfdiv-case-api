@@ -48,3 +48,6 @@ java:
     SEND_LETTER_SERVICE_BASEURL: "http://rpe-send-letter-service-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal"
     AWAITING_CONDITIONAL_ORDER_SCHEDULED_CRON: 0 0 0 * * ? # Midnight each day
     AOS_OVERDUE_SCHEDULED_CRON: 0 0 0 * * ? # Midnight each day
+    JOINT_APPLICATION_OVERDUE_SCHEDULED_CRON: '0 0 10 * * ?' # 10am each day
+    SYSTEM_REMIND_APPLICANT1_SCHEDULED_CRON: '0 0 10 * * ?' # 10am each day
+    REMIND_APPLICANT2_SCHEDFULED_CRON: '0 0 10 * * ?' # 10am each day
