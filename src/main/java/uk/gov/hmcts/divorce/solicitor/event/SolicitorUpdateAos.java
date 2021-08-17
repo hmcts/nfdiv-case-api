@@ -14,7 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolAosOtherProceedings;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolAosjurisdiction;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolUpdateAosApplicant1Application;
-import uk.gov.hmcts.divorce.solicitor.event.updater.AddMiniApplicationLink;
+import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
 
 import java.util.List;
 
@@ -30,6 +30,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 public class SolicitorUpdateAos implements CCDConfig<CaseData, State, UserRole> {
+
     public static final String SOLICITOR_UPDATE_AOS = "solicitor-update-aos";
 
     @Autowired
@@ -65,11 +66,11 @@ public class SolicitorUpdateAos implements CCDConfig<CaseData, State, UserRole> 
                 CASEWORKER_LEGAL_ADVISOR));
     }
 
-    private AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(CaseDetails<CaseData, State> details) {
-        CaseData caseData = addMiniApplicationLink.update(details);
-
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
+            .data(addMiniApplicationLink
+                .apply(details)
+                .getData())
             .build();
     }
 }
