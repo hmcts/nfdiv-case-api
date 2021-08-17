@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.citizen.notification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -16,6 +17,9 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.dateTimeFormatter;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TO_END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_APPLICATION;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DIVORCE_URL;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_URL_NOTIFY_KEY;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.THEIR_EMAIL_ADDRESS;
 
@@ -28,6 +32,9 @@ public class Applicant1ResubmitNotification {
 
     @Autowired
     private CommonContent commonContent;
+
+    @Autowired
+    private EmailTemplatesConfig emailTemplatesConfig;
 
     public void sendToApplicant1(CaseData caseData, Long id) {
         Map<String, String> templateVars = setTemplateVariables(caseData);
@@ -46,6 +53,10 @@ public class Applicant1ResubmitNotification {
 
     public void sendToApplicant2(CaseData caseData, Long id) {
         Map<String, String> templateVars = setTemplateVariables(caseData);
+
+        Map<String, String> configTemplateVars = emailTemplatesConfig.getTemplateVars();
+        String signInLink = caseData.getDivorceOrDissolution().isDivorce() ? SIGN_IN_DIVORCE_URL : SIGN_IN_DISSOLUTION_URL;
+        templateVars.put(SIGN_IN_URL_NOTIFY_KEY, configTemplateVars.get(signInLink) + "/applicant2/check-your-joint-application");
 
         log.info("Sending applicant 1 made changes notification to applicant 2 for case : {}", id);
 

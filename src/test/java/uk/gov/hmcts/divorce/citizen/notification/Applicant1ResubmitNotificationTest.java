@@ -32,6 +32,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DISSOLUTION_TE
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DIVORCE_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConfigTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 
 @ExtendWith(SpringExtension.class)
@@ -48,6 +49,8 @@ class Applicant1ResubmitNotificationTest {
 
     @InjectMocks
     private Applicant1ResubmitNotification notification;
+
+    private String app2CheckJointAnswers = "/applicant2/check-your-joint-application";
 
     @Test
     void shouldSendEmailToApplicant1WithDivorceContent() {
@@ -106,9 +109,9 @@ class Applicant1ResubmitNotificationTest {
         data.setDueDate(LOCAL_DATE);
 
         final HashMap<String, String> templateVars = new HashMap<>();
-        templateVars.put(SIGN_IN_URL_NOTIFY_KEY, SIGN_IN_DIVORCE_TEST_URL);
 
         when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
         notification.sendToApplicant2(data, 1234567890123456L);
 
@@ -118,7 +121,7 @@ class Applicant1ResubmitNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION.toLowerCase(Locale.ROOT), "divorce application"),
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(dateTimeFormatter)),
-                hasEntry(SIGN_IN_URL_NOTIFY_KEY, SIGN_IN_DIVORCE_TEST_URL)
+                hasEntry(SIGN_IN_URL_NOTIFY_KEY, SIGN_IN_DIVORCE_TEST_URL + app2CheckJointAnswers)
             )),
             eq(ENGLISH)
         );
@@ -133,9 +136,9 @@ class Applicant1ResubmitNotificationTest {
         data.setDueDate(LOCAL_DATE);
 
         final HashMap<String, String> templateVars = new HashMap<>();
-        templateVars.put(SIGN_IN_URL_NOTIFY_KEY, SIGN_IN_DISSOLUTION_TEST_URL);
 
         when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
         notification.sendToApplicant2(data, 1234567890123456L);
 
@@ -145,7 +148,7 @@ class Applicant1ResubmitNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION.toLowerCase(Locale.ROOT), "application to end your civil partnership"),
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(dateTimeFormatter)),
-                hasEntry(SIGN_IN_URL_NOTIFY_KEY, SIGN_IN_DISSOLUTION_TEST_URL)
+                hasEntry(SIGN_IN_URL_NOTIFY_KEY, SIGN_IN_DISSOLUTION_TEST_URL + app2CheckJointAnswers)
             )),
             eq(ENGLISH)
         );
