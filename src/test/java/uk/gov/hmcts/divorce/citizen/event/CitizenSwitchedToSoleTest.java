@@ -50,7 +50,6 @@ class CitizenSwitchedToSoleTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getState()).isEqualTo(State.SwitchedToSole);
         assertThat(response.getData().getApplicationType()).isEqualTo(SOLE_APPLICATION);
 
     }
