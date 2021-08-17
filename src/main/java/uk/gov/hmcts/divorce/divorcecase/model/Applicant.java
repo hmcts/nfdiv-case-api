@@ -144,6 +144,11 @@ public class Applicant {
     )
     private String legalProceedingsDetails;
 
+    @CCD(
+        label = "Applicant's PCQ ID"
+    )
+    private String pcqId;
+
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
         return languagePreferenceWelsh == null || languagePreferenceWelsh.equals(YesOrNo.NO)
