@@ -45,7 +45,6 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
-            .state(SwitchedToSole)
             .build();
     }
 }
