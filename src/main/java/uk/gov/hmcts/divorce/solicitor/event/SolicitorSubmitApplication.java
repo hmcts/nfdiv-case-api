@@ -2,12 +2,12 @@ package uk.gov.hmcts.divorce.solicitor.event;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
@@ -17,7 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.PaymentService;
-import uk.gov.hmcts.divorce.payment.model.Payment;
+import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.solicitor.event.page.HelpWithFeesPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayAccount;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayment;
@@ -27,14 +27,13 @@ import uk.gov.hmcts.divorce.solicitor.event.page.SolSummary;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 
-import static java.lang.Integer.parseInt;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
@@ -47,7 +46,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUS
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
-import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
 @Slf4j
 @Component
@@ -70,17 +68,19 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
     @Autowired
     private SubmissionService submissionService;
 
-    private final List<CcdPageConfiguration> pages = asList(
-        new SolStatementOfTruth(),
-        solPayment,
-        new HelpWithFeesPage(),
-        new SolPayAccount(),
-        new SolPaymentSummary(),
-        new SolSummary());
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        final List<CcdPageConfiguration> pages = asList(
+            new SolStatementOfTruth(),
+            solPayment,
+            new HelpWithFeesPage(),
+            new SolPayAccount(),
+            new SolPaymentSummary(),
+            new SolSummary());
+
         final PageBuilder pageBuilder = addEventConfig(configBuilder);
+
         pages.forEach(page -> page.addTo(pageBuilder));
     }
 
@@ -117,18 +117,6 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         final Application application = caseData.getApplication();
         final Long caseId = details.getId();
 
-        log.info("Setting dummy payment to mock payment process. CaseID: {}", caseId);
-        if (application.getApplicationPayments() == null || application.getApplicationPayments().isEmpty()) {
-            List<ListValue<Payment>> payments = new ArrayList<>();
-            payments.add(new ListValue<>(null,
-                getDummyPayment(application.getApplicationFeeOrderSummary())));
-            application.setApplicationPayments(payments);
-        } else {
-            application.getApplicationPayments()
-                .add(new ListValue<>(null,
-                    getDummyPayment(application.getApplicationFeeOrderSummary())));
-        }
-
         updateApplicant2DigitalDetails(caseData);
 
         log.info("Validating case data CaseID: {}", caseId);
@@ -142,6 +130,15 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
                 .build();
         }
 
+        PbaResponse response = paymentService.processPbaPayment(caseData, details.getId());
+
+        if (response.getHttpStatus() != HttpStatus.CREATED) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(details.getData())
+                .errors(singletonList(response.getErrorMessage()))
+                .build();
+        }
+
         final CaseDetails<CaseData, State> updatedCaseDetails = submissionService.submitApplication(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -149,6 +146,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             .state(updatedCaseDetails.getState())
             .build();
     }
+
 
     private void updateApplicant2DigitalDetails(CaseData caseData) {
         if (caseData.getApplicant2().getSolicitor() != null) {
@@ -189,17 +187,5 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
                 CASEWORKER_COURTADMIN_RDU,
                 CASEWORKER_SUPERUSER,
                 CASEWORKER_LEGAL_ADVISOR));
-    }
-
-    private Payment getDummyPayment(final OrderSummary orderSummary) {
-        return Payment
-            .builder()
-            .amount(parseInt(orderSummary.getPaymentTotal()))
-            .channel("online")
-            .feeCode("FEE0001")
-            .reference(orderSummary.getPaymentReference())
-            .status(SUCCESS)
-            .transactionId("ge7po9h5bhbtbd466424src9tk")
-            .build();
     }
 }

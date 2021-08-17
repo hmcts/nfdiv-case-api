@@ -99,6 +99,7 @@ public class SolPayment implements CcdPageConfiguration {
 
         PBAOrganisationResponse pbaOrganisationResponse = Objects.requireNonNull(responseEntity.getBody());
 
+        System.out.println("PBA Numbers " + pbaOrganisationResponse.getOrganisationEntityResponse().getPaymentAccount());
         return pbaOrganisationResponse.getOrganisationEntityResponse().getPaymentAccount();
     }
 

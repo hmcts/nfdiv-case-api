@@ -2,12 +2,19 @@ package uk.gov.hmcts.divorce.payment;
 
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
+import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentRequest;
+import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
 
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.payment.FeesAndPayConstants.CHANNEL;
 import static uk.gov.hmcts.divorce.payment.FeesAndPayConstants.EVENT;
 import static uk.gov.hmcts.divorce.payment.FeesAndPayConstants.JURISDICTION_1;
@@ -30,4 +37,12 @@ public interface FeesAndPaymentsClient {
         @RequestParam(SERVICE) final String service,
         @RequestParam(KEYWORD) final String keyword
     );
+
+    @ApiOperation("Handles Solicitor Payment By Account (PBA) Payments")
+    @PostMapping(value = "/credit-account-payments")
+    ResponseEntity<CreditAccountPaymentResponse> creditAccountPayment(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String authorisation,
+        @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorisation,
+        CreditAccountPaymentRequest creditAccountPaymentRequest);
+
 }

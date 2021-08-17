@@ -26,11 +26,11 @@ idam:
     url: ${IDAM_API_BASEURL:https://idam-api.aat.platform.hmcts.net}
   s2s-auth:
     url: ${TEST_S2S_URL:http://rpe-service-auth-provider-aat.service.core-compute-aat.internal}
-    secret: ${S2S_SECRET:dummy}
+    secret: HDNIOOGINKEIB5ZZ
     microservice: nfdiv_case_api
   solicitor:
-    username: ${IDAM_SOLICITOR_USERNAME:dummysolicitor@test.com}
-    password: ${IDAM_SOLICITOR_PASSWORD:dummy}
+    username: TEST_SOLICITOR@mailinator.com
+    password: genericPassword123
   caseworker:
     username: ${IDAM_CASEWORKER_USERNAME:dummycaseworker@test.com}
     password: ${IDAM_CASEWORKER_PASSWORD:dummy}
@@ -39,7 +39,7 @@ idam:
     password: ${IDAM_SYSTEM_UPDATE_PASSWORD:dummy}
   client:
     id: 'divorce'
-    secret: ${OAUTH2_CLIENT_SECRET:dummy}
+    secret: thUphEveC2Ekuqedaneh4jEcRuba4t2t
     redirect_uri: ${IDAM_API_REDIRECT_URL:http://localhost:3001/oauth2/callback}
 
 s2s-authorised:
@@ -91,3 +91,9 @@ court:
       postCode: 'CM20 9QT'
       email: 'divorcecase@justice.gov.uk'
       phoneNumber: '0300 303 0642'
+
+pba:
+  ref:
+    data:
+      service:
+        url: ${PRD_API_BASEURL:http://rd-professional-api-aat.service.core-compute-aat.internal}
