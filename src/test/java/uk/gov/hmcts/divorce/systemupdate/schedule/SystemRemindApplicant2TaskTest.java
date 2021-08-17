@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewApplicant2Notification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
@@ -63,6 +64,13 @@ public class SystemRemindApplicant2TaskTest {
         final CaseData caseData2 = CaseData.builder()
             .dueDate(LocalDate.now().plusDays(10))
             .build();
+
+        CaseInvite caseInvite = CaseInvite.builder()
+            .accessCode("123456789")
+            .build();
+
+        caseData1.setCaseInvite(caseInvite);
+        caseData2.setCaseInvite(caseInvite);
 
         when(caseDetails1.getData()).thenReturn(Map.of("dueDate", LocalDate.now().plusDays(4)));
         when(caseDetails1.getId()).thenReturn(1L);
@@ -120,6 +128,12 @@ public class SystemRemindApplicant2TaskTest {
             .dueDate(LocalDate.now().plusDays(4))
             .build();
 
+        CaseInvite caseInvite = CaseInvite.builder()
+            .accessCode("123456789")
+            .build();
+
+        caseData1.setCaseInvite(caseInvite);
+
         when(caseDetails1.getData()).thenReturn(Map.of("dueDate", LocalDate.now().plusDays(4)));
         when(mapper.convertValue(anyMap(), eq(CaseData.class))).thenReturn(caseData1);
         when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response)).thenReturn(caseDetailsList);
@@ -144,6 +158,13 @@ public class SystemRemindApplicant2TaskTest {
         final CaseData caseData2 = CaseData.builder()
             .dueDate(LocalDate.now().plusDays(3))
             .build();
+
+        CaseInvite caseInvite = CaseInvite.builder()
+            .accessCode("123456789")
+            .build();
+
+        caseData1.setCaseInvite(caseInvite);
+        caseData2.setCaseInvite(caseInvite);
 
         when(caseDetails1.getData()).thenReturn(Map.of("dueDate", LocalDate.now().plusDays(4)));
         when(caseDetails2.getData()).thenReturn(Map.of("dueDate", LocalDate.now().plusDays(3)));

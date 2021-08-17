@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -12,13 +13,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolStatementOfTruth;
+import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitAosService;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Disputed;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
@@ -32,6 +33,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 public class SolicitorSubmitAos implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SOLICITOR_SUBMIT_AOS = "solicitor-submit-aos";
+
+    @Autowired
+    private SolicitorSubmitAosService solicitorSubmitAosService;
 
     private final List<CcdPageConfiguration> pages = List.of(
         new Applicant2SolStatementOfTruth()
@@ -57,16 +61,11 @@ public class SolicitorSubmitAos implements CCDConfig<CaseData, State, UserRole> 
                 .build();
         }
 
-        if (NO.equals(acknowledgementOfService.getJurisdictionAgree())) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .state(Disputed)
-                .build();
-        }
+        final CaseDetails<CaseData, State> updateDetails = solicitorSubmitAosService.submitAos(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
-            .state(Holding)
+            .data(updateDetails.getData())
+            .state(updateDetails.getState())
             .build();
     }
 
