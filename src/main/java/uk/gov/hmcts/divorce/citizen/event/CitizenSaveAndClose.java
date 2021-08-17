@@ -9,8 +9,13 @@ import uk.gov.hmcts.divorce.citizen.notification.SaveAndSignOutNotificationHandl
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
+import uk.gov.hmcts.reform.idam.client.models.User;
 
+import javax.servlet.http.HttpServletRequest;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -22,6 +27,12 @@ public class CitizenSaveAndClose implements CCDConfig<CaseData, State, UserRole>
 
     @Autowired
     private SaveAndSignOutNotificationHandler saveAndSignOutNotificationHandler;
+
+    @Autowired
+    private HttpServletRequest request;
+
+    @Autowired
+    private IdamService idamService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -38,7 +49,8 @@ public class CitizenSaveAndClose implements CCDConfig<CaseData, State, UserRole>
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
                                                CaseDetails<CaseData, State> beforeDetails) {
-        saveAndSignOutNotificationHandler.notifyApplicant(details.getData());
+        User user = idamService.retrieveUser(request.getHeader(AUTHORIZATION));
+        saveAndSignOutNotificationHandler.notifyApplicant(details.getData(), user.getUserDetails());
 
         return SubmittedCallbackResponse.builder().build();
     }

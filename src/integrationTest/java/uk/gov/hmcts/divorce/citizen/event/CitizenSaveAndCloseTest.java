@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,17 +12,21 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.citizen.notification.SaveAndSignOutNotificationHandler;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
-import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
+import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.notification.exception.NotificationException;
-import uk.gov.hmcts.divorce.payment.FeesAndPaymentsClient;
+import uk.gov.hmcts.reform.idam.client.models.User;
+import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 import uk.gov.service.notify.NotificationClientException;
 
 import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -56,19 +61,28 @@ public class CitizenSaveAndCloseTest {
     private NotificationService notificationService;
 
     @MockBean
-    private RequestInterceptor requestInterceptor;
+    private IdamService idamService;
 
     @MockBean
     private WebMvcConfig webMvcConfig;
 
-    @MockBean
-    private FeesAndPaymentsClient feesAndPaymentsClient;
+    @BeforeEach
+    public void setUp() {
+        final var userDetails = UserDetails.builder()
+            .email("test@test.com")
+            .id("app1")
+            .build();
+
+        when(idamService.retrieveUser(anyString()))
+            .thenReturn(new User("token", userDetails));
+    }
 
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmail() throws Exception {
         mockMvc.perform(post(SUBMITTED_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(AUTHORIZATION, AUTH_HEADER_VALUE)
             .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithOrderSummary(), CITIZEN_SAVE_AND_CLOSE)))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
@@ -83,6 +97,7 @@ public class CitizenSaveAndCloseTest {
     public void givenRequestBodyIsNullWhenEndpointInvokedThenReturnBadRequest() throws Exception {
         mockMvc.perform(post(SUBMITTED_URL)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(AUTHORIZATION, AUTH_HEADER_VALUE)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON))
             .andExpect(status().isBadRequest());
@@ -100,6 +115,7 @@ public class CitizenSaveAndCloseTest {
         mockMvc.perform(post(SUBMITTED_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(AUTHORIZATION, AUTH_HEADER_VALUE)
             .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithOrderSummary(), CITIZEN_SAVE_AND_CLOSE)))
             .accept(APPLICATION_JSON))
             .andExpect(status().isBadRequest())
