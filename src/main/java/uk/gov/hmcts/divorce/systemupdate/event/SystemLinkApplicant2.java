@@ -56,7 +56,6 @@ public class SystemLinkApplicant2 implements CCDConfig<CaseData, State, UserRole
         );
 
         data.getCaseInvite().setAccessCode(null);
-        data.getCaseInvite().setApplicant2UserId(null);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
