@@ -5,27 +5,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.collection.IsMapContaining.hasEntry;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SAVE_SIGN_OUT;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_URL_NOTIFY_KEY;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DISSOLUTION_TEST_URL;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DIVORCE_TEST_URL;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConfigTemplateVars;
 
 @ExtendWith(MockitoExtension.class)
 class SaveAndSignOutNotificationHandlerTest {
@@ -34,47 +24,45 @@ class SaveAndSignOutNotificationHandlerTest {
     private NotificationService notificationService;
 
     @Mock
-    private EmailTemplatesConfig emailTemplatesConfig;
-
-    @Mock
     private CommonContent commonContent;
 
     @InjectMocks
     private SaveAndSignOutNotificationHandler saveAndSignOutNotificationHandler;
 
     @Test
-    void shouldCallSendEmailWhenNotifyApplicantIsInvokedForGivenCaseData() {
-        when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
+    void shouldCallSendEmailToApp1WhenNotifyApplicantIsInvokedForGivenCaseData() {
+        final var userDetails = UserDetails.builder()
+            .email("app1@test.com")
+            .id("app1")
+            .build();
 
-        saveAndSignOutNotificationHandler.notifyApplicant(caseData());
+        saveAndSignOutNotificationHandler.notifyApplicant(caseData(), userDetails);
 
         verify(notificationService).sendEmail(
-            eq(TEST_USER_EMAIL),
+            eq("app1@test.com"),
             eq(SAVE_SIGN_OUT),
-            argThat(allOf(hasEntry(SIGN_IN_URL_NOTIFY_KEY, SIGN_IN_DIVORCE_TEST_URL))), // NOSONAR
+            any(),
             eq(ENGLISH)
         );
-        verify(emailTemplatesConfig).getTemplateVars();
-        verifyNoMoreInteractions(emailTemplatesConfig, notificationService);
     }
 
     @Test
-    void shouldSetTheAppropriateFieldsForDissolutionCases() {
-        when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
+    void shouldCallSendEmailToApp2WhenNotifyApplicantIsInvokedForGivenCaseData() {
+        final var userDetails = UserDetails.builder()
+            .email("app2@test.com")
+            .id("app2")
+            .build();
 
-        CaseData caseData = caseData();
-        caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
-        saveAndSignOutNotificationHandler.notifyApplicant(caseData);
+        final var caseData = caseData();
+        caseData.setCaseInvite(CaseInvite.builder().applicant2UserId("app").build());
+        saveAndSignOutNotificationHandler.notifyApplicant(caseData, userDetails);
 
         verify(notificationService).sendEmail(
-            eq(TEST_USER_EMAIL),
+            eq("app2@test.com"),
             eq(SAVE_SIGN_OUT),
-            argThat(allOf(hasEntry(SIGN_IN_URL_NOTIFY_KEY, SIGN_IN_DISSOLUTION_TEST_URL))), // NOSONAR
+            any(),
             eq(ENGLISH)
         );
-
-        verify(emailTemplatesConfig).getTemplateVars();
-        verifyNoMoreInteractions(emailTemplatesConfig, notificationService);
     }
 
 }

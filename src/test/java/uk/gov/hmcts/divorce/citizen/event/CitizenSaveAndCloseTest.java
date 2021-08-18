@@ -12,9 +12,17 @@ import uk.gov.hmcts.divorce.citizen.notification.SaveAndSignOutNotificationHandl
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.reform.idam.client.models.User;
+import uk.gov.hmcts.reform.idam.client.models.UserDetails;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSaveAndClose.CITIZEN_SAVE_AND_CLOSE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -25,6 +33,12 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 public class CitizenSaveAndCloseTest {
     @Mock
     private SaveAndSignOutNotificationHandler saveAndSignOutNotificationHandler;
+
+    @Mock
+    private IdamService idamService;
+
+    @Mock
+    private HttpServletRequest request;
 
     @InjectMocks
     private CitizenSaveAndClose citizenSaveAndClose;
@@ -41,15 +55,24 @@ public class CitizenSaveAndCloseTest {
     }
 
     @Test
-    public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmail() throws Exception {
-        final CaseData caseData = caseData();
-        caseData.getApplicant1().setEmail("test@test.com");
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+    public void givenCallbackIsInvokedThenSendEmail() {
+        final var caseData = caseData();
+        final var details = new CaseDetails<CaseData, State>();
         details.setData(caseData);
+
+        when(request.getHeader(AUTHORIZATION))
+            .thenReturn("token");
+
+        final var userDetails = UserDetails.builder()
+            .email("test@test.com")
+            .id("app1")
+            .build();
+
+        when(idamService.retrieveUser(anyString()))
+            .thenReturn(new User("token", userDetails));
 
         citizenSaveAndClose.submitted(details, details);
 
-        verify(saveAndSignOutNotificationHandler).notifyApplicant(caseData);
+        verify(saveAndSignOutNotificationHandler).notifyApplicant(caseData, userDetails);
     }
 }
