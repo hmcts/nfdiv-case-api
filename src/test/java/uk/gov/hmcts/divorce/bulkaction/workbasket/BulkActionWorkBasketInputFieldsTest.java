@@ -34,7 +34,7 @@ class BulkActionWorkBasketInputFieldsTest {
                 "showCondition")
             .contains(
                 tuple("[CASE_REFERENCE]",
-                    "CCD Case Number",
+                    "Case Number",
                     null,
                     null)
             );
