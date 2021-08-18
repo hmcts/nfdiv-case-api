@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
@@ -17,6 +18,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.PaymentService;
+import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.solicitor.event.page.HelpWithFeesPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayAccount;
@@ -27,14 +29,18 @@ import uk.gov.hmcts.divorce.solicitor.event.page.SolSummary;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
-import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import javax.servlet.http.HttpServletRequest;
 
+import static java.lang.Integer.parseInt;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
@@ -46,6 +52,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUS
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
+import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
 @Slf4j
 @Component
@@ -67,7 +74,6 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
 
     @Autowired
     private SubmissionService submissionService;
-
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -113,9 +119,23 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
-        final CaseData caseData = details.getData();
-        final Application application = caseData.getApplication();
+        final var caseData = details.getData();
+        final var application = caseData.getApplication();
+        final var applicationFeeOrderSummary = application.getApplicationFeeOrderSummary();
         final Long caseId = details.getId();
+
+        if (caseData.getApplication().isSolicitorPaymentMethodPba()) {
+            PbaResponse response = paymentService.processPbaPayment(caseData, caseId);
+
+            if (response.getHttpStatus() == HttpStatus.CREATED) {
+                updateCaseDataWithPaymentDetails(application, applicationFeeOrderSummary, response);
+            } else {
+                return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                    .data(details.getData())
+                    .errors(singletonList(response.getErrorMessage()))
+                    .build();
+            }
+        }
 
         updateApplicant2DigitalDetails(caseData);
 
@@ -130,31 +150,12 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
                 .build();
         }
 
-        PbaResponse response = paymentService.processPbaPayment(caseData, details.getId());
-
-        if (response.getHttpStatus() != HttpStatus.CREATED) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(details.getData())
-                .errors(singletonList(response.getErrorMessage()))
-                .build();
-        }
-
         final CaseDetails<CaseData, State> updatedCaseDetails = submissionService.submitApplication(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updatedCaseDetails.getData())
             .state(updatedCaseDetails.getState())
             .build();
-    }
-
-
-    private void updateApplicant2DigitalDetails(CaseData caseData) {
-        if (caseData.getApplicant2().getSolicitor() != null) {
-            log.info("Applicant 2 has a solicitor and is digital");
-
-            caseData.getApplication().setApp2ContactMethodIsDigital(YES);
-            caseData.getApplicant2().setSolicitorRepresented(YES);
-        }
     }
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
@@ -168,6 +169,37 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         }
 
         return SubmittedCallbackResponse.builder().build();
+    }
+
+    private void updateCaseDataWithPaymentDetails(Application application, OrderSummary applicationFeeOrderSummary, PbaResponse response) {
+        var payment = Payment
+            .builder()
+            .amount(parseInt(applicationFeeOrderSummary.getPaymentTotal()))
+            .channel("online")
+            .feeCode(applicationFeeOrderSummary.getFees().get(0).getValue().getCode())
+            .reference(response.getPaymentReference())
+            .status(SUCCESS)
+            .build();
+
+
+        if (isEmpty(application.getApplicationPayments())) {
+            List<ListValue<Payment>> payments = new ArrayList<>();
+            payments.add(new ListValue<>(UUID.randomUUID().toString(), payment));
+            application.setApplicationPayments(payments);
+        } else {
+            application.getApplicationPayments()
+                .add(new ListValue<Payment>(UUID.randomUUID().toString(), payment));
+        }
+    }
+
+
+    private void updateApplicant2DigitalDetails(CaseData caseData) {
+        if (caseData.getApplicant2().getSolicitor() != null) {
+            log.info("Applicant 2 has a solicitor and is digital");
+
+            caseData.getApplication().setApp2ContactMethodIsDigital(YES);
+            caseData.getApplicant2().setSolicitorRepresented(YES);
+        }
     }
 
     private PageBuilder addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

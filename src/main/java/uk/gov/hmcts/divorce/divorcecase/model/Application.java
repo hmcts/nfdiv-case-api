@@ -33,6 +33,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEES_HELP_WITH;
+import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
 @Data
@@ -406,5 +407,9 @@ public class Application {
     @JsonIgnore
     public boolean isSolicitorApplication() {
         return hasSolSignStatementOfTruth();
+    }
+
+    public boolean isSolicitorPaymentMethodPba() {
+        return FEE_PAY_BY_ACCOUNT.equals(this.getSolPaymentHowToPay());
     }
 }

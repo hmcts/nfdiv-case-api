@@ -541,7 +541,7 @@ public class TestDataHelper {
             .build();
     }
 
-    private static ListValue<Fee> getFeeListValue() {
+    public static ListValue<Fee> getFeeListValue() {
         return ListValue
             .<Fee>builder()
             .value(Fee

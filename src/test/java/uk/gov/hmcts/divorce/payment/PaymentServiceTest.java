@@ -22,10 +22,10 @@ import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.payment.model.StatusHistoriesItem;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 
 import static feign.Request.HttpMethod.GET;
 import static feign.Request.HttpMethod.POST;
@@ -48,8 +48,8 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static uk.gov.hmcts.divorce.payment.PaymentService.CAE0001;
-import static uk.gov.hmcts.divorce.payment.PaymentService.CAE0004;
+import static uk.gov.hmcts.divorce.payment.PaymentService.CA_E0001;
+import static uk.gov.hmcts.divorce.payment.PaymentService.CA_E0004;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
@@ -178,15 +178,15 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void shouldReturn403WithErrorCodeCAE0004WhenAccountIsDeletedOrOnHold() throws Exception {
+    public void shouldReturn403WithErrorCodeCae0004WhenAccountIsDeletedOrOnHold() throws Exception {
         var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        CreditAccountPaymentResponse creditAccountPaymentResponse = buildPaymentClientResponse(CAE0004, "Your account is on hold");
+        CreditAccountPaymentResponse creditAccountPaymentResponse = buildPaymentClientResponse(CA_E0004, "Your account is on hold");
 
-        FeignException feignException = feignException(creditAccountPaymentResponse, FORBIDDEN);
+        FeignException feignException = feignException(creditAccountPaymentResponse);
 
         when(objectMapper.readValue(
             feignException.contentUTF8().getBytes(),
@@ -212,15 +212,16 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void shouldReturn403WithErrorCodeCAE0001WhenAccountHasInsufficientBalance() throws Exception {
+    public void shouldReturn403WithErrorCodeCae0001WhenAccountHasInsufficientBalance() throws Exception {
         var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        CreditAccountPaymentResponse creditAccountPaymentResponse = buildPaymentClientResponse(CAE0001, "Fee account has insufficient funds available");
+        CreditAccountPaymentResponse creditAccountPaymentResponse =
+            buildPaymentClientResponse(CA_E0001, "Fee account has insufficient funds available");
 
-        FeignException feignException = feignException(creditAccountPaymentResponse, FORBIDDEN);
+        FeignException feignException = feignException(creditAccountPaymentResponse);
 
         when(objectMapper.readValue(
             feignException.contentUTF8().getBytes(),
@@ -284,7 +285,7 @@ public class PaymentServiceTest {
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
 
-        FeignException feignException = feignException(null, FORBIDDEN);
+        FeignException feignException = feignException(null);
 
         doThrow(new IOException("error parsing response"))
             .when(objectMapper).readValue(
@@ -345,10 +346,10 @@ public class PaymentServiceTest {
             .build();
     }
 
-    private FeignException feignException(CreditAccountPaymentResponse creditAccountPaymentResponse, HttpStatus httpStatus) throws JsonProcessingException {
+    private FeignException feignException(CreditAccountPaymentResponse creditAccountPaymentResponse) throws JsonProcessingException {
         byte[] body = new ObjectMapper().writeValueAsString(creditAccountPaymentResponse).getBytes();
         Request request = Request.create(POST, EMPTY, Map.of(), null, UTF_8, null);
 
-        return new FeignException.FeignClientException(httpStatus.value(), "error", request, body);
+        return new FeignException.FeignClientException(HttpStatus.FORBIDDEN.value(), "error", request, body);
     }
 }

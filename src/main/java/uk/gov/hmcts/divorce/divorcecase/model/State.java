@@ -8,7 +8,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseAccessAdministrator;
 import java.util.ArrayList;
 import java.util.List;
 
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.isPaymentIncomplete;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant1BasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant2BasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant2RequestChanges;
@@ -241,10 +240,6 @@ public enum State {
         @Override
         public List<String> validate(CaseData caseData) {
             List<String> errors = new ArrayList<>();
-
-            if (isPaymentIncomplete(caseData)) {
-                errors.add("Payment incomplete");
-            }
 
             if (!caseData.getApplication().applicant1HasStatementOfTruth() && !caseData.getApplication().hasSolSignStatementOfTruth()) {
                 errors.add("Statement of truth must be accepted by the person making the application");

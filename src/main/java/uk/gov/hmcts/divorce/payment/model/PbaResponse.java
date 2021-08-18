@@ -11,4 +11,6 @@ public class PbaResponse {
     private HttpStatus httpStatus;
 
     private String errorMessage;
+
+    private String paymentReference;
 }

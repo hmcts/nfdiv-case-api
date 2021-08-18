@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PBAOrganisationResponse {
+public class PbaOrganisationResponse {
 
     @JsonProperty
     private OrganisationEntityResponse organisationEntityResponse;

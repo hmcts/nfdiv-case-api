@@ -16,21 +16,24 @@ import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentRequest;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
 import uk.gov.hmcts.divorce.payment.model.PaymentItem;
-import uk.gov.hmcts.divorce.payment.model.PbaErrorMessage;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.payment.model.StatusHistoriesItem;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.Fee.getValueInPence;
+import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.CAE0001;
+import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.CAE0004;
+import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.GENERAL;
+import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.NOT_FOUND;
 
 @Service
 @Slf4j
@@ -42,8 +45,8 @@ public class PaymentService {
     private static final String FAMILY_COURT = "family court";
     private static final String DIVORCE = "divorce";
     private static final String GBP = "GBP";
-    public static final String CAE0001 = "CA-E0001";
-    public static final String CAE0004 = "CA-E0004";
+    public static final String CA_E0001 = "CA-E0001";
+    public static final String CA_E0004 = "CA-E0004";
 
     @Autowired
     private HttpServletRequest httpServletRequest;
@@ -77,17 +80,32 @@ public class PaymentService {
     public PbaResponse processPbaPayment(CaseData caseData, Long caseId) {
         log.info("Processing PBA payment for case id {}", caseId);
 
-        ResponseEntity<CreditAccountPaymentResponse> paymentResponseResponseEntity = null;
+        ResponseEntity<CreditAccountPaymentResponse> paymentResponseEntity = null;
 
         String pbaNumber = getPbaNumber(caseData);
 
-        String errorMessage = null;
         try {
-            paymentResponseResponseEntity = feesAndPaymentsClient.creditAccountPayment(
+            paymentResponseEntity = feesAndPaymentsClient.creditAccountPayment(
                 httpServletRequest.getHeader(AUTHORIZATION),
                 authTokenGenerator.generate(),
                 creditAccountPaymentRequest(caseData, caseId)
             );
+
+            String paymentReference = Optional.ofNullable(paymentResponseEntity)
+                .map(response ->
+                    Optional.ofNullable(response.getBody())
+                        .map(CreditAccountPaymentResponse::getStatus)
+                        .orElseGet(() -> null)
+                )
+                .orElseGet(() -> null);
+
+            log.info("For case id {} successfully processed PBA payment for account number {}",
+                caseId,
+                getPbaNumber(caseData)
+            );
+
+            return new PbaResponse(paymentResponseEntity.getStatusCode(), null, paymentReference);
+
         } catch (FeignException exception) {
             log.error("For case id {} unsuccessful payment for account number {} with exception {}",
                 caseId,
@@ -96,13 +114,23 @@ public class PaymentService {
             );
             return getPbaErrorResponse(pbaNumber, exception);
         }
+    }
 
-        log.info("For case id {} successfully processed PBA payment for account number {}",
-            caseId,
-            getPbaNumber(caseData)
-        );
+    private CreditAccountPaymentResponse getPaymentResponse(FeignException exception) {
+        CreditAccountPaymentResponse creditAccountPaymentResponse = null;
 
-        return new PbaResponse(paymentResponseResponseEntity.getStatusCode(), null);
+        try {
+            creditAccountPaymentResponse = objectMapper.readValue(
+                exception.contentUTF8().getBytes(),
+                CreditAccountPaymentResponse.class
+            );
+        } catch (IOException ioException) {
+            log.warn("Could not convert error response to CreditAccountPaymentResponse object. Error message was {}",
+                exception.contentUTF8()
+            );
+        }
+
+        return creditAccountPaymentResponse;
     }
 
     private ListValue<Fee> getFee(final FeeResponse feeResponse) {
@@ -121,66 +149,59 @@ public class PaymentService {
     }
 
     private PbaResponse getPbaErrorResponse(String pbaNumber, FeignException exception) {
-        String errorMessage = null;
-        CreditAccountPaymentResponse creditAccountPaymentResponse = null;
-
         HttpStatus httpStatus = Optional.ofNullable(HttpStatus.resolve(exception.status()))
             .orElseGet(() -> HttpStatus.INTERNAL_SERVER_ERROR);
 
         if (httpStatus == HttpStatus.NOT_FOUND) {
-            errorMessage = String.format(PbaErrorMessage.NOT_FOUND.value(), pbaNumber);
-            return new PbaResponse(httpStatus, errorMessage);
+            return new PbaResponse(httpStatus, String.format(NOT_FOUND.value(), pbaNumber), null);
         }
 
-        try {
-            creditAccountPaymentResponse = objectMapper.readValue(
-                exception.contentUTF8().getBytes(),
-                CreditAccountPaymentResponse.class
-            );
-        } catch (IOException ioException) {
-            log.warn("Could not convert error response to CreditAccountPaymentResponse object. Error message was {}",
-                exception.contentUTF8()
-            );
-            errorMessage = PbaErrorMessage.GENERAL.value();
-            return new PbaResponse(httpStatus, errorMessage);
+        CreditAccountPaymentResponse creditAccountPaymentResponse = getPaymentResponse(exception);
+
+        if (creditAccountPaymentResponse == null) {
+            return new PbaResponse(httpStatus, GENERAL.value(), null);
         }
 
         List<StatusHistoriesItem> statusHistories = Objects.requireNonNull(creditAccountPaymentResponse).getStatusHistories();
 
         if (isEmpty(statusHistories)) {
-            return new PbaResponse(httpStatus, PbaErrorMessage.GENERAL.value());
+            return new PbaResponse(httpStatus, GENERAL.value(), null);
         }
 
         StatusHistoriesItem statusHistoriesItem = statusHistories.get(0);
 
         String errorCode = statusHistoriesItem.getErrorCode();
 
-        errorMessage = populateErrorResponse(pbaNumber, creditAccountPaymentResponse, httpStatus, errorCode);
+        String errorMessage = populateErrorResponse(pbaNumber, creditAccountPaymentResponse, httpStatus, errorCode);
 
-        return new PbaResponse(httpStatus, errorMessage);
+        return new PbaResponse(httpStatus, errorMessage, null);
     }
 
-    private String populateErrorResponse(String pbaNumber, CreditAccountPaymentResponse creditAccountPaymentResponse, HttpStatus httpStatus, String errorCode) {
+    private String populateErrorResponse(
+        String pbaNumber,
+        CreditAccountPaymentResponse creditAccountPaymentResponse,
+        HttpStatus httpStatus,
+        String errorCode
+    ) {
         String errorMessage = null;
-        
         if (httpStatus == HttpStatus.FORBIDDEN) {
-            if (errorCode.equalsIgnoreCase(CAE0001)) {
+            if (errorCode.equalsIgnoreCase(CA_E0001)) {
                 log.info("Payment Reference: {} Generating error message for {} error code",
                     creditAccountPaymentResponse.getPaymentReference(),
-                    CAE0001
+                    CA_E0001
                 );
-                errorMessage = String.format(PbaErrorMessage.CAE0001.value(), pbaNumber);
+                errorMessage = String.format(CAE0001.value(), pbaNumber);
             }
-            if (errorCode.equalsIgnoreCase(CAE0004)) {
+            if (errorCode.equalsIgnoreCase(CA_E0004)) {
                 log.info("Payment Reference: {} Generating error message for {} error code",
                     creditAccountPaymentResponse.getPaymentReference(),
-                    CAE0004
+                    CA_E0004
                 );
-                errorMessage = String.format(PbaErrorMessage.CAE0004.value(), pbaNumber);
+                errorMessage = String.format(CAE0004.value(), pbaNumber);
             }
 
         } else {
-            errorMessage = PbaErrorMessage.GENERAL.value();
+            errorMessage = GENERAL.value();
         }
         return errorMessage;
     }
@@ -205,7 +226,9 @@ public class PaymentService {
         creditAccountPaymentRequest.setAmount(orderSummary.getPaymentTotal());
         creditAccountPaymentRequest.setCcdCaseNumber(String.valueOf(caseId));
 
-        List<PaymentItem> paymentItemList = populateFeesPaymentItems(caseData, caseId, orderSummary.getPaymentTotal(), fee, solicitor.getReference());
+        List<PaymentItem> paymentItemList =
+            populateFeesPaymentItems(caseData, caseId, orderSummary.getPaymentTotal(), fee, solicitor.getReference());
+
         creditAccountPaymentRequest.setFees(paymentItemList);
 
         return creditAccountPaymentRequest;

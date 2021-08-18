@@ -15,7 +15,7 @@ public interface PbaRefDataClient {
 
     @ApiOperation("Retrieves Solicitor Pay By Account (PBA) numbers for payment")
     @GetMapping(value = "/refdata/external/v1/organisations/pbas")
-    ResponseEntity<PBAOrganisationResponse> retrievePbaNumbers(
+    ResponseEntity<PbaOrganisationResponse> retrievePbaNumbers(
         @RequestHeader(AUTHORIZATION) String authorisation,
         @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorisation,
         @RequestHeader("UserEmail") String email);

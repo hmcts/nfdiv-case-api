@@ -14,19 +14,18 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.divorce.solicitor.client.pba.PBAOrganisationResponse;
+import uk.gov.hmcts.divorce.solicitor.client.pba.PbaOrganisationResponse;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaRefDataClient;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT;
 
 @Component
 @Slf4j
@@ -65,7 +64,8 @@ public class SolPayment implements CcdPageConfiguration {
         log.info("Mid-event callback triggered for SolPayment page");
 
         CaseData caseData = details.getData();
-        if (!isSolicitorPaymentMethodPba(caseData)) {
+
+        if (!caseData.getApplication().isSolicitorPaymentMethodPba()) {
             log.info("Payment method is not PBA for case id {}  :", details.getId());
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
@@ -94,18 +94,11 @@ public class SolPayment implements CcdPageConfiguration {
         UserDetails solUserDetails = idamService.retrieveUser(solicitorAuthToken).getUserDetails();
         String solicitorEmail = solUserDetails.getEmail();
 
-        ResponseEntity<PBAOrganisationResponse> responseEntity =
+        ResponseEntity<PbaOrganisationResponse> responseEntity =
             pbaRefDataClient.retrievePbaNumbers(solicitorAuthToken, authTokenGenerator.generate(), solicitorEmail);
 
-        PBAOrganisationResponse pbaOrganisationResponse = Objects.requireNonNull(responseEntity.getBody());
+        PbaOrganisationResponse pbaOrganisationResponse = Objects.requireNonNull(responseEntity.getBody());
 
-        System.out.println("PBA Numbers " + pbaOrganisationResponse.getOrganisationEntityResponse().getPaymentAccount());
         return pbaOrganisationResponse.getOrganisationEntityResponse().getPaymentAccount();
     }
-
-    private boolean isSolicitorPaymentMethodPba(CaseData caseData) {
-        return FEE_PAY_BY_ACCOUNT.equals(caseData.getApplication().getSolPaymentHowToPay());
-    }
-
-
 }

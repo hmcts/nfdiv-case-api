@@ -10,7 +10,8 @@ public enum PbaErrorMessage {
     private final String message;
 
     public static final String ERROR_INFO = "Please try again after 2 minutes with a different Payment Account, or alternatively "
-        + "use a different payment method. For Payment Account support call 01633 652125 (Option 3) or email MiddleOffice.DDServices@liberata.com.";
+        + "use a different payment method. "
+        + "For Payment Account support call 01633 652125 (Option 3) or email MiddleOffice.DDServices@liberata.com.";
 
     PbaErrorMessage(String errorMessage) {
         this.message = errorMessage + " " + ERROR_INFO;
