@@ -24,6 +24,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static java.util.Collections.singletonList;
@@ -40,9 +41,9 @@ public class PaymentService {
     private static final String FAMILY = "family";
     private static final String FAMILY_COURT = "family court";
     private static final String DIVORCE = "divorce";
-    public static final String GBP = "GBP";
-    private static final String CAE0001 = "CA-E0001";
-    private static final String CAE0004 = "CA-E0004";
+    private static final String GBP = "GBP";
+    public static final String CAE0001 = "CA-E0001";
+    public static final String CAE0004 = "CA-E0004";
 
     @Autowired
     private HttpServletRequest httpServletRequest;
@@ -73,29 +74,8 @@ public class PaymentService {
             .build();
     }
 
-    private ListValue<Fee> getFee(final FeeResponse feeResponse) {
-        return ListValue
-            .<Fee>builder()
-            .value(
-                Fee
-                    .builder()
-                    .amount(getValueInPence(feeResponse.getAmount()))
-                    .code(feeResponse.getFeeCode())
-                    .description(feeResponse.getDescription())
-                    .version(String.valueOf(feeResponse.getVersion()))
-                    .build()
-            )
-            .build();
-    }
-
     public PbaResponse processPbaPayment(CaseData caseData, Long caseId) {
         log.info("Processing PBA payment for case id {}", caseId);
-
-        feesAndPaymentsClient.creditAccountPayment(
-            httpServletRequest.getHeader(AUTHORIZATION),
-            authTokenGenerator.generate(),
-            creditAccountPaymentRequest(caseData, caseId)
-        );
 
         ResponseEntity<CreditAccountPaymentResponse> paymentResponseResponseEntity = null;
 
@@ -111,7 +91,7 @@ public class PaymentService {
         } catch (FeignException exception) {
             log.error("For case id {} unsuccessful payment for account number {} with exception {}",
                 caseId,
-                getPbaNumber(caseData),
+                pbaNumber,
                 exception.getMessage()
             );
             return getPbaErrorResponse(pbaNumber, exception);
@@ -125,12 +105,33 @@ public class PaymentService {
         return new PbaResponse(paymentResponseResponseEntity.getStatusCode(), null);
     }
 
+    private ListValue<Fee> getFee(final FeeResponse feeResponse) {
+        return ListValue
+            .<Fee>builder()
+            .value(
+                Fee
+                    .builder()
+                    .amount(getValueInPence(feeResponse.getAmount()))
+                    .code(feeResponse.getFeeCode())
+                    .description(feeResponse.getDescription())
+                    .version(String.valueOf(feeResponse.getVersion()))
+                    .build()
+            )
+            .build();
+    }
+
     private PbaResponse getPbaErrorResponse(String pbaNumber, FeignException exception) {
         String errorMessage = null;
+        CreditAccountPaymentResponse creditAccountPaymentResponse = null;
+
         HttpStatus httpStatus = Optional.ofNullable(HttpStatus.resolve(exception.status()))
             .orElseGet(() -> HttpStatus.INTERNAL_SERVER_ERROR);
 
-        CreditAccountPaymentResponse creditAccountPaymentResponse = null;
+        if (httpStatus == HttpStatus.NOT_FOUND) {
+            errorMessage = String.format(PbaErrorMessage.NOT_FOUND.value(), pbaNumber);
+            return new PbaResponse(httpStatus, errorMessage);
+        }
+
         try {
             creditAccountPaymentResponse = objectMapper.readValue(
                 exception.contentUTF8().getBytes(),
@@ -141,9 +142,10 @@ public class PaymentService {
                 exception.contentUTF8()
             );
             errorMessage = PbaErrorMessage.GENERAL.value();
+            return new PbaResponse(httpStatus, errorMessage);
         }
 
-        List<StatusHistoriesItem> statusHistories = creditAccountPaymentResponse.getStatusHistories();
+        List<StatusHistoriesItem> statusHistories = Objects.requireNonNull(creditAccountPaymentResponse).getStatusHistories();
 
         if (isEmpty(statusHistories)) {
             return new PbaResponse(httpStatus, PbaErrorMessage.GENERAL.value());
@@ -153,6 +155,14 @@ public class PaymentService {
 
         String errorCode = statusHistoriesItem.getErrorCode();
 
+        errorMessage = populateErrorResponse(pbaNumber, creditAccountPaymentResponse, httpStatus, errorCode);
+
+        return new PbaResponse(httpStatus, errorMessage);
+    }
+
+    private String populateErrorResponse(String pbaNumber, CreditAccountPaymentResponse creditAccountPaymentResponse, HttpStatus httpStatus, String errorCode) {
+        String errorMessage = null;
+        
         if (httpStatus == HttpStatus.FORBIDDEN) {
             if (errorCode.equalsIgnoreCase(CAE0001)) {
                 log.info("Payment Reference: {} Generating error message for {} error code",
@@ -168,17 +178,16 @@ public class PaymentService {
                 );
                 errorMessage = String.format(PbaErrorMessage.CAE0004.value(), pbaNumber);
             }
-        } else if (httpStatus == HttpStatus.NOT_FOUND) {
-            errorMessage = String.format(PbaErrorMessage.NOT_FOUND.value(), pbaNumber);
+
         } else {
             errorMessage = PbaErrorMessage.GENERAL.value();
         }
-        return new PbaResponse(httpStatus, errorMessage);
+        return errorMessage;
     }
 
     private CreditAccountPaymentRequest creditAccountPaymentRequest(CaseData caseData, Long caseId) {
-        CreditAccountPaymentRequest creditAccountPaymentRequest = new CreditAccountPaymentRequest();
-        OrderSummary orderSummary = caseData.getApplication().getApplicationFeeOrderSummary();
+        var creditAccountPaymentRequest = new CreditAccountPaymentRequest();
+        var orderSummary = caseData.getApplication().getApplicationFeeOrderSummary();
 
         creditAccountPaymentRequest.setService(DIVORCE);
         creditAccountPaymentRequest.setCurrency(GBP);
