@@ -33,7 +33,7 @@ class WorkBasketInputFieldsTest {
                 "showCondition")
             .contains(
                 tuple("[CASE_REFERENCE]",
-                    "CCD Case Number",
+                    "Case Number",
                     null,
                     null),
                 tuple("applicant1HomeAddress",
