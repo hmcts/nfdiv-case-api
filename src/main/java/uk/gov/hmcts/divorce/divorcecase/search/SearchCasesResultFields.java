@@ -15,7 +15,7 @@ public class SearchCasesResultFields implements CCDConfig<CaseData, State, UserR
 
         configBuilder
             .searchCasesFields()
-            .field("[CASE_REFERENCE]", "Case reference", null, null, "1:ASC")
+            .field("[CASE_REFERENCE]", "Case Number", null, null, "1:ASC")
             .createdDateField()
             .field("applicant1LastName", "App. last name")
             .lastModifiedDate()
