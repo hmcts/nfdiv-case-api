@@ -84,7 +84,7 @@ public class SystemRemindApplicant2TaskTest {
 
         when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response)).thenReturn(caseDetailsList);
 
-        systemRemindApplicant2Task.execute();
+        systemRemindApplicant2Task.run();
 
         verify(applicationSentForReviewApplicant2Notification).sendReminder(caseData1, caseDetails1.getId());
         verify(applicationSentForReviewApplicant2Notification, times(0)).sendReminder(caseData2, caseDetails2.getId());
@@ -102,7 +102,7 @@ public class SystemRemindApplicant2TaskTest {
         when(mapper.convertValue(anyMap(), eq(CaseData.class))).thenReturn(caseData);
         when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response)).thenReturn(singletonList(caseDetails));
 
-        systemRemindApplicant2Task.execute();
+        systemRemindApplicant2Task.run();
 
         verifyNoInteractions(applicationSentForReviewApplicant2Notification);
         verifyNoInteractions(ccdUpdateService);
@@ -113,7 +113,7 @@ public class SystemRemindApplicant2TaskTest {
         when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
-        systemRemindApplicant2Task.execute();
+        systemRemindApplicant2Task.run();
 
         verifyNoInteractions(applicationSentForReviewApplicant2Notification);
         verifyNoInteractions(ccdUpdateService);
@@ -141,7 +141,7 @@ public class SystemRemindApplicant2TaskTest {
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT2);
 
-        systemRemindApplicant2Task.execute();
+        systemRemindApplicant2Task.run();
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT2);
         verify(ccdUpdateService, never()).submitEvent(caseDetails2, SYSTEM_REMIND_APPLICANT2);
@@ -178,7 +178,7 @@ public class SystemRemindApplicant2TaskTest {
         doThrow(new CcdManagementException("Failed processing of case", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT2);
 
-        systemRemindApplicant2Task.execute();
+        systemRemindApplicant2Task.run();
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT2);
         verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_REMIND_APPLICANT2);

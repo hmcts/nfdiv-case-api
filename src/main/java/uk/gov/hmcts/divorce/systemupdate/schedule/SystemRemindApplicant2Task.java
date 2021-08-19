@@ -22,7 +22,7 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicant2.SYS
 
 @Component
 @Slf4j
-public class SystemRemindApplicant2Task {
+public class SystemRemindApplicant2Task implements Runnable {
 
     private static final int FOUR_DAYS = 4;
 
@@ -39,7 +39,8 @@ public class SystemRemindApplicant2Task {
     private ObjectMapper objectMapper;
 
     @Scheduled(cron = "${schedule.remind_applicant2}")
-    public void execute() {
+    @Override
+    public void run() {
         log.info("Remind applicant 2 scheduled task started");
 
         try {

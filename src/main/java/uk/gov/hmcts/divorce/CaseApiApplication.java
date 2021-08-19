@@ -1,11 +1,13 @@
 package uk.gov.hmcts.divorce;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import uk.gov.hmcts.divorce.common.service.ScheduledTaskRunner;
 import uk.gov.hmcts.divorce.document.DocAssemblyClient;
 import uk.gov.hmcts.divorce.document.DocumentManagementClient;
 import uk.gov.hmcts.divorce.payment.FeesAndPaymentsClient;
@@ -39,6 +41,9 @@ import static org.codehaus.groovy.runtime.InvokerHelper.asList;
 @Slf4j
 public class CaseApiApplication implements CommandLineRunner {
 
+    @Autowired
+    ScheduledTaskRunner taskRunner;
+
     public static void main(final String[] args) {
         final var application = new SpringApplication(CaseApiApplication.class);
         final var instance = application.run(args);
@@ -56,6 +61,6 @@ public class CaseApiApplication implements CommandLineRunner {
             return;
         }
 
-        log.info("EXECUTING : {}", args[runArgPos + 1]);
+        taskRunner.run(args[runArgPos + 1]);
     }
 }
