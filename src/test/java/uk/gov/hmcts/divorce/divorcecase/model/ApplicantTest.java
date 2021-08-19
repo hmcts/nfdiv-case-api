@@ -11,7 +11,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 class ApplicantTest {
 
     @Test
-    void shouldReturnEnglishIfLanguagePreferenceWelshIsNotNullOrNo() {
+    void shouldReturnEnglishIfLanguagePreferenceWelshIsNoOrNull() {
 
         assertThat(Applicant.builder().languagePreferenceWelsh(NO).build()
             .getLanguagePreference())

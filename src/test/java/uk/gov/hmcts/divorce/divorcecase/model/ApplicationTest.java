@@ -63,7 +63,7 @@ class ApplicationTest {
     }
 
     @Test
-    void shouldReturnSumSuccessfulPaymentTotalForApplicationPayments() {
+    void shouldReturnSuccessfulPaymentTotalForApplicationPayments() {
 
         final List<ListValue<Payment>> payments = new ArrayList<>();
         payments.add(paymentValue(payment(500, SUCCESS)));
