@@ -61,7 +61,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
     @Autowired
     private CcdAccessService ccdAccessService;
 
-    @Autowired(required = false)
+    @Autowired
     private HttpServletRequest httpServletRequest;
 
     @Autowired

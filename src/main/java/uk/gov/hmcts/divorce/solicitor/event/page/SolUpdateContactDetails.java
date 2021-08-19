@@ -27,7 +27,7 @@ public class SolUpdateContactDetails implements CcdPageConfiguration {
     @Autowired
     private SolicitorCreateApplicationService solicitorCreateApplicationService;
 
-    @Autowired(required = false)
+    @Autowired
     private HttpServletRequest request;
 
     @Override

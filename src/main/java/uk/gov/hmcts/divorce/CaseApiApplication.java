@@ -3,10 +3,8 @@ package uk.gov.hmcts.divorce;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import uk.gov.hmcts.divorce.document.DocAssemblyClient;
 import uk.gov.hmcts.divorce.document.DocumentManagementClient;
@@ -17,6 +15,10 @@ import uk.gov.hmcts.reform.ccd.client.CaseUserApi;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataClientAutoConfiguration;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
+
+import java.util.Arrays;
+
+import static org.codehaus.groovy.runtime.InvokerHelper.asList;
 
 @SpringBootApplication(
     exclude = {CoreCaseDataClientAutoConfiguration.class},
@@ -40,26 +42,22 @@ import uk.gov.hmcts.reform.idam.client.IdamApi;
 public class CaseApiApplication implements CommandLineRunner {
 
     public static void main(final String[] args) {
-        SpringApplication application = new SpringApplication(CaseApiApplication.class);
+        final var application = new SpringApplication(CaseApiApplication.class);
+        final var instance = application.run(args);
 
-        if (args.length == 0) {
-            application.run(args);
-        } else {
-            application.setWebApplicationType(WebApplicationType.NONE);
-            application.run(args).close();
+        if (asList(args).contains("run")) {
+            instance.close();
         }
     }
 
     @Override
     public void run(String... args) {
-        if (args.length == 0) {
+        final var runArgPos = asList(args).indexOf("run");
+
+        if (runArgPos == -1 || runArgPos + 1 >= args.length) {
             return;
         }
 
-        log.info("EXECUTING : command line runner");
-
-        for (int i = 0; i < args.length; ++i) {
-            log.info("args[{}]: {}", i, args[i]);
-        }
+        log.info("EXECUTING : {}", args[runArgPos + 1]);
     }
 }

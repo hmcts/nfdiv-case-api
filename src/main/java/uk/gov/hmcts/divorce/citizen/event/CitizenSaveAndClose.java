@@ -27,7 +27,7 @@ public class CitizenSaveAndClose implements CCDConfig<CaseData, State, UserRole>
     @Autowired
     private SaveAndSignOutNotificationHandler saveAndSignOutNotificationHandler;
 
-    @Autowired(required = false)
+    @Autowired
     private HttpServletRequest request;
 
     @Autowired
