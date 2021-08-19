@@ -116,7 +116,7 @@ public class SystemRemindApplicant2TaskTest {
 
         when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response)).thenReturn(caseDetailsList);
 
-        systemRemindApplicant2Task.execute();
+        systemRemindApplicant2Task.run();
 
         verifyNoInteractions(applicationSentForReviewApplicant2Notification, ccdUpdateService);
     }
