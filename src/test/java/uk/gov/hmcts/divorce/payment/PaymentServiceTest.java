@@ -67,6 +67,9 @@ public class PaymentServiceTest {
     private FeesAndPaymentsClient feesAndPaymentsClient;
 
     @Mock
+    private PaymentPbaClient paymentPbaClient;
+
+    @Mock
     private HttpServletRequest httpServletRequest;
 
     @Mock
@@ -154,7 +157,7 @@ public class PaymentServiceTest {
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        when(feesAndPaymentsClient.creditAccountPayment(
+        when(paymentPbaClient.creditAccountPayment(
                 eq(TEST_AUTHORIZATION_TOKEN),
                 eq(TEST_SERVICE_AUTH_TOKEN),
                 any(CreditAccountPaymentRequest.class)
@@ -170,7 +173,7 @@ public class PaymentServiceTest {
 
         verify(httpServletRequest).getHeader(AUTHORIZATION);
         verify(authTokenGenerator).generate();
-        verify(feesAndPaymentsClient).creditAccountPayment(
+        verify(paymentPbaClient).creditAccountPayment(
             eq(TEST_AUTHORIZATION_TOKEN),
             eq(TEST_SERVICE_AUTH_TOKEN),
             any(CreditAccountPaymentRequest.class)
@@ -194,7 +197,7 @@ public class PaymentServiceTest {
         )).thenReturn(creditAccountPaymentResponse);
 
         doThrow(feignException)
-            .when(feesAndPaymentsClient).creditAccountPayment(
+            .when(paymentPbaClient).creditAccountPayment(
                 eq(TEST_AUTHORIZATION_TOKEN),
                 eq(TEST_SERVICE_AUTH_TOKEN),
                 any(CreditAccountPaymentRequest.class)
@@ -229,7 +232,7 @@ public class PaymentServiceTest {
         )).thenReturn(creditAccountPaymentResponse);
 
         doThrow(feignException)
-            .when(feesAndPaymentsClient).creditAccountPayment(
+            .when(paymentPbaClient).creditAccountPayment(
                 eq(TEST_AUTHORIZATION_TOKEN),
                 eq(TEST_SERVICE_AUTH_TOKEN),
                 any(CreditAccountPaymentRequest.class)
@@ -259,7 +262,7 @@ public class PaymentServiceTest {
         FeignException feignException = new FeignException.FeignClientException(NOT_FOUND.value(), "error", request, body);
 
         doThrow(feignException)
-            .when(feesAndPaymentsClient).creditAccountPayment(
+            .when(paymentPbaClient).creditAccountPayment(
                 eq(TEST_AUTHORIZATION_TOKEN),
                 eq(TEST_SERVICE_AUTH_TOKEN),
                 any(CreditAccountPaymentRequest.class)
@@ -294,7 +297,7 @@ public class PaymentServiceTest {
             );
 
         doThrow(feignException)
-            .when(feesAndPaymentsClient).creditAccountPayment(
+            .when(paymentPbaClient).creditAccountPayment(
                 eq(TEST_AUTHORIZATION_TOKEN),
                 eq(TEST_SERVICE_AUTH_TOKEN),
                 any(CreditAccountPaymentRequest.class)

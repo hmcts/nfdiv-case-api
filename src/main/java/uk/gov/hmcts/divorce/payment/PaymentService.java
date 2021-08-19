@@ -11,7 +11,6 @@ import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentRequest;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
@@ -55,6 +54,9 @@ public class PaymentService {
     private FeesAndPaymentsClient feesAndPaymentsClient;
 
     @Autowired
+    private PaymentPbaClient paymentPbaClient;
+
+    @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
     @Autowired
@@ -85,7 +87,7 @@ public class PaymentService {
         String pbaNumber = getPbaNumber(caseData);
 
         try {
-            paymentResponseEntity = feesAndPaymentsClient.creditAccountPayment(
+            paymentResponseEntity = paymentPbaClient.creditAccountPayment(
                 httpServletRequest.getHeader(AUTHORIZATION),
                 authTokenGenerator.generate(),
                 creditAccountPaymentRequest(caseData, caseId)
@@ -94,7 +96,7 @@ public class PaymentService {
             String paymentReference = Optional.ofNullable(paymentResponseEntity)
                 .map(response ->
                     Optional.ofNullable(response.getBody())
-                        .map(CreditAccountPaymentResponse::getStatus)
+                        .map(CreditAccountPaymentResponse::getPaymentReference)
                         .orElseGet(() -> null)
                 )
                 .orElseGet(() -> null);
@@ -215,7 +217,7 @@ public class PaymentService {
         creditAccountPaymentRequest.setSiteId(caseData.getSelectedDivorceCentreSiteId());
         creditAccountPaymentRequest.setAccountNumber(getPbaNumber(caseData));
 
-        final Solicitor solicitor = caseData.getApplicant1().getSolicitor();
+        final var solicitor = caseData.getApplicant1().getSolicitor();
         creditAccountPaymentRequest.setOrganisationName(solicitor.getOrganisationPolicy().getOrganisation().getOrganisationName());
 
         creditAccountPaymentRequest.setCustomerReference(solicitor.getReference());

@@ -10,19 +10,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
+import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
 import uk.gov.hmcts.divorce.testutil.CaseDataWireMock;
 import uk.gov.hmcts.divorce.testutil.FeesWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
+import uk.gov.hmcts.divorce.testutil.PaymentWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.io.IOException;
 
 import static java.util.Objects.requireNonNull;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
+import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
@@ -35,6 +43,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorSubmitApplication.SOLICITOR_SUBMIT;
@@ -48,6 +57,7 @@ import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SYSTEM_USER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamDetails;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamFailure;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamToken;
+import static uk.gov.hmcts.divorce.testutil.PaymentWireMock.stubCreditAccountPayment;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
@@ -59,11 +69,16 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithOrderSummary;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithStatementOfTruth;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFeeResponseAsJson;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getPbaNumbersForAccount;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.orderSummaryWithFee;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @ExtendWith(SpringExtension.class)
@@ -72,7 +87,8 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 @ContextConfiguration(initializers = {
     FeesWireMock.PropertiesInitializer.class,
     IdamWireMock.PropertiesInitializer.class,
-    CaseDataWireMock.PropertiesInitializer.class})
+    CaseDataWireMock.PropertiesInitializer.class,
+    PaymentWireMock.PropertiesInitializer.class})
 public class SolicitorSubmitApplicationTest {
 
     @Autowired
@@ -95,6 +111,7 @@ public class SolicitorSubmitApplicationTest {
         IdamWireMock.start();
         CaseDataWireMock.start();
         FeesWireMock.start();
+        PaymentWireMock.start();
     }
 
     @AfterAll
@@ -102,6 +119,7 @@ public class SolicitorSubmitApplicationTest {
         IdamWireMock.stopAndReset();
         CaseDataWireMock.stopAndReset();
         FeesWireMock.stopAndReset();
+        PaymentWireMock.stopAndReset();
     }
 
     @Test
@@ -118,11 +136,11 @@ public class SolicitorSubmitApplicationTest {
         stubForCcdCaseRoles();
 
         mockMvc.perform(post(ABOUT_TO_START_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithOrderSummary(), SOLICITOR_SUBMIT)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithOrderSummary(), SOLICITOR_SUBMIT)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
             )
@@ -140,11 +158,11 @@ public class SolicitorSubmitApplicationTest {
         stubForFeesNotFound();
 
         mockMvc.perform(post(ABOUT_TO_START_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithOrderSummary(), SOLICITOR_SUBMIT)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithOrderSummary(), SOLICITOR_SUBMIT)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isNotFound()
             )
@@ -165,11 +183,11 @@ public class SolicitorSubmitApplicationTest {
         stubForIdamFailure();
 
         mockMvc.perform(post(ABOUT_TO_START_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithOrderSummary(), SOLICITOR_SUBMIT)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithOrderSummary(), SOLICITOR_SUBMIT)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isUnauthorized()
             )
@@ -196,11 +214,11 @@ public class SolicitorSubmitApplicationTest {
         stubForCcdCaseRolesUpdateFailure();
 
         mockMvc.perform(post(ABOUT_TO_START_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithOrderSummary(), SOLICITOR_SUBMIT)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithOrderSummary(), SOLICITOR_SUBMIT)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isForbidden()
             )
@@ -212,24 +230,40 @@ public class SolicitorSubmitApplicationTest {
     @Test
     void givenValidCaseDataWhenAboutToSubmitCallbackIsInvokedThenStateIsChangedAndEmailIsSentToApplicant()
         throws Exception {
+
+        stubCreditAccountPayment(
+            HttpStatus.CREATED,
+            CreditAccountPaymentResponse
+                .builder()
+                .status(PaymentStatus.SUCCESS.toString())
+                .caseReference(TEST_CASE_ID.toString())
+                .build()
+        );
+
         var data = caseDataWithStatementOfTruth();
         data.getApplication().setApplicationPayments(null);
+        data.getApplication().setSolPaymentHowToPay(FEE_PAY_BY_ACCOUNT);
+        data.getApplication().setPbaNumbers(getPbaNumbersForAccount("PBA0012345"));
+        data.getApplication().setApplicationFeeOrderSummary(orderSummaryWithFee());
+        data.getApplicant1().getSolicitor().setOrganisationPolicy(organisationPolicy());
 
-        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(
-                data,
-                SOLICITOR_SUBMIT,
-                Draft.name())))
-            .accept(APPLICATION_JSON))
+        MvcResult mvcResult = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_SERVICE_AUTH_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(
+                    data,
+                    SOLICITOR_SUBMIT,
+                    Draft.name())))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
             )
-            .andExpect(
-                content().json(expectedCcdAboutToSubmitCallbackResponse())
-            );
+            .andReturn();
+
+        assertThatJson(mvcResult.getResponse().getContentAsString())
+            .when(TREATING_NULL_AS_ABSENT)
+            .isEqualTo(json(expectedCcdAboutToSubmitCallbackResponse()));
 
         verify(notificationService)
             .sendEmail(
@@ -246,14 +280,14 @@ public class SolicitorSubmitApplicationTest {
         throws Exception {
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(callbackRequest(
-                caseDataWithOrderSummary(),
-                SOLICITOR_SUBMIT,
-                Draft.name())))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(
+                    caseDataWithOrderSummary(),
+                    SOLICITOR_SUBMIT,
+                    Draft.name())))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()
             )

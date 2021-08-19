@@ -182,13 +182,7 @@ public class TestDataHelper {
 
     public static CaseData caseDataWithOrderSummary() {
         var application = Application.builder()
-            .applicationFeeOrderSummary(
-                OrderSummary
-                    .builder()
-                    .paymentTotal("55000")
-                    .fees(singletonList(getFeeListValue()))
-                    .build()
-            )
+            .applicationFeeOrderSummary(orderSummaryWithFee())
             .build();
 
         return CaseData
@@ -198,7 +192,6 @@ public class TestDataHelper {
             .application(application)
             .build();
     }
-
 
     public static CaseData validJointApplicant1CaseData() {
         var marriageDetails = new MarriageDetails();
@@ -551,6 +544,14 @@ public class TestDataHelper {
                 .code("FEE002")
                 .build()
             )
+            .build();
+    }
+
+    public static OrderSummary orderSummaryWithFee() {
+        return OrderSummary
+            .builder()
+            .paymentTotal("55000")
+            .fees(singletonList(getFeeListValue()))
             .build();
     }
 }

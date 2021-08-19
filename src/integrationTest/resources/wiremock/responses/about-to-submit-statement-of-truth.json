@@ -1,11 +1,68 @@
 {
   "data": {
     "divorceOrDissolution": "divorce",
+    "labelContentUnionType": "dissolution",
     "applicant1FirstName": "test_first_name",
+    "applicant1MiddleName": "test_middle_name",
     "applicant1LastName": "test_last_name",
     "applicant1Email": "test@test.com",
+    "applicant1LanguagePreferenceWelsh": "No",
+    "solicitorPaymentMethodPba": true,
     "applicant1SolicitorEmail": "solicitor@test.com",
-    "solSignStatementOfTruth": "Yes"
+    "applicant1ContactDetailsConfidential": "share",
+    "applicant1Gender": "female",
+    "applicant1SolicitorOrganisationPolicy": {
+      "Organisation": {
+        "OrganisationName": "Test Organisation",
+        "OrganisationID": "ABC123"
+      }
+    },
+    "applicant2SolicitorRepresented": "Yes",
+    "solSignStatementOfTruth": "Yes",
+    "solPaymentHowToPay": "feePayByAccount",
+    "pbaNumbers": {
+      "value": {
+        "code": "${json-unit.ignore}",
+        "label": "PBA0012345"
+      },
+      "list_items": null,
+      "valueLabel": "PBA0012345",
+      "valueCode": "${json-unit.ignore}"
+    },
+    "feeAccountReference": null,
+    "applicationFeeOrderSummary": {
+      "PaymentReference": null,
+      "Fees": [
+        {
+          "id": null,
+          "value": {
+            "FeeAmount": "550",
+            "FeeCode": "FEE002",
+            "FeeDescription": "fees for divorce",
+            "FeeVersion": null
+          }
+        }
+      ],
+      "PaymentTotal": "55000"
+    },
+    "app2ContactMethodIsDigital": "Yes",
+    "dateSubmitted": "${json-unit.ignore}",
+    "applicationPayments": [
+      {
+        "id": "${json-unit.ignore}",
+        "value": {
+          "created": null,
+          "updated": null,
+          "feeCode": "FEE002",
+          "amount": 55000,
+          "status": "success",
+          "channel": "online",
+          "reference": null,
+          "transactionId": null
+        }
+      }
+    ],
+    "dueDate": "2021-09-02"
   },
   "errors": null,
   "warnings": null,

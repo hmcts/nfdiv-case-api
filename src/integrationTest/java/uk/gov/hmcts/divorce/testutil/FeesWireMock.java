@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.testutil;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
@@ -34,7 +33,7 @@ public final class FeesWireMock {
         }
     }
 
-    public static void stubForFeesLookup(final String feeResponse) throws JsonProcessingException {
+    public static void stubForFeesLookup(final String feeResponse) {
         FEES_SERVER.stubFor(get("/fees-register/fees/lookup"
             + "?channel=default&event=issue&jurisdiction1=family&jurisdiction2=family+court&service=divorce")
             .willReturn(aResponse()
