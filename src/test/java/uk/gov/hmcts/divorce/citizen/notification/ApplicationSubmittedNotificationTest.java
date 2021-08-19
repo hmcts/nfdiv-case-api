@@ -22,8 +22,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.jointCaseDataWithOrderSummary;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationSubmittedNotificationTest {
@@ -38,14 +40,14 @@ class ApplicationSubmittedNotificationTest {
     private ApplicationSubmittedNotification notification;
 
     @Test
-    void shouldCallSendEmailWithSubmissionResponseDate() {
+    void shouldSendEmailToApplicant1WithSubmissionResponseDate() {
         CaseData data = caseData();
         data.setDueDate(LocalDate.of(2021, 4, 21));
         final HashMap<String, String> templateVars = new HashMap<>();
 
         when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
 
-        notification.send(data, 1234567890123456L);
+        notification.sendToApplicant1(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -57,5 +59,27 @@ class ApplicationSubmittedNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2());
+    }
+
+    @Test
+    void shouldSendEmailToApplicant2WithSubmissionResponseDate() {
+        CaseData data = jointCaseDataWithOrderSummary();
+        data.setDueDate(LocalDate.of(2021, 4, 21));
+        final HashMap<String, String> templateVars = new HashMap<>();
+
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
+
+        notification.sendToApplicant2(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(APPLICATION_SUBMITTED),
+            argThat(allOf(
+                hasEntry(SUBMISSION_RESPONSE_DATE, "21 April 2021"),
+                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456")
+            )),
+            eq(ENGLISH)
+        );
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1());
     }
 }

@@ -69,7 +69,7 @@ public class CitizenAddPaymentTest extends FunctionalTestSuite {
     }
 
     @Test
-    public void shouldPassValidationAndGiveSuccessWhenCaseDataValid() throws IOException {
+    public void shouldPassValidationAndGiveSuccessWhenCaseDataValidAndSendEmailToApplicant1AndApplicant2() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
         Response response = triggerCallback(request, CITIZEN_ADD_PAYMENT, ABOUT_TO_SUBMIT_URL);
 

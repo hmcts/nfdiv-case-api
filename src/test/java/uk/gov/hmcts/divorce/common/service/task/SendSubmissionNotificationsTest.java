@@ -70,7 +70,7 @@ class SendSubmissionNotificationsTest {
 
         sendSubmissionNotifications.apply(caseDetails);
 
-        verify(applicationSubmittedNotification).send(caseData, TEST_CASE_ID);
+        verify(applicationSubmittedNotification).sendToApplicant1(caseData, TEST_CASE_ID);
         verifyNoInteractions(solicitorSubmittedNotification, applicationOutstandingActionNotification);
     }
 
@@ -87,7 +87,7 @@ class SendSubmissionNotificationsTest {
 
         sendSubmissionNotifications.apply(caseDetails);
 
-        verify(applicationSubmittedNotification).send(caseData, TEST_CASE_ID);
+        verify(applicationSubmittedNotification).sendToApplicant1(caseData, TEST_CASE_ID);
         verifyNoInteractions(solicitorSubmittedNotification, applicationOutstandingActionNotification);
     }
 
@@ -105,7 +105,7 @@ class SendSubmissionNotificationsTest {
 
         sendSubmissionNotifications.apply(caseDetails);
 
-        verify(applicationSubmittedNotification).send(caseData, TEST_CASE_ID);
+        verify(applicationSubmittedNotification).sendToApplicant1(caseData, TEST_CASE_ID);
         verify(applicationOutstandingActionNotification).send(caseData, TEST_CASE_ID);
         verifyNoInteractions(solicitorSubmittedNotification);
     }
