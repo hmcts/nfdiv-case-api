@@ -59,7 +59,7 @@ class ApplicationTest {
 
     @Test
     void shouldReturnZeroPaymentTotalForNullApplicationPayments() {
-        assertThat(Application.builder().build().getPaymentTotal()).isEqualTo(0);
+        assertThat(Application.builder().build().getPaymentTotal()).isZero();
     }
 
     @Test

@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.citizen.notification.JointApplicationOverdueNotification;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
@@ -29,6 +30,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicant1ApplicationReviewed.SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED;
 
@@ -75,6 +77,28 @@ public class SystemRemindApplicant1ApplicationApprovedTaskTest {
         verify(jointApplicationOverdueNotification).sendApplicationApprovedReminderToApplicant1(caseData1, caseDetails1.getId());
         verify(jointApplicationOverdueNotification, times(0)).sendApplicationApprovedReminderToApplicant1(caseData2, caseDetails2.getId());
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED);
+    }
+
+    @Test
+    void shouldNotSendReminderEmailIfApplicant1ReminderSent() {
+        final CaseDetails caseDetails1 = mock(CaseDetails.class);
+        final CaseData caseData1 = CaseData.builder()
+            .dueDate(LocalDate.now())
+            .application(Application.builder()
+                .applicant1ReminderSent(YES)
+                .build())
+            .build();
+
+        when(caseDetails1.getData()).thenReturn(Map.of("dueDate", LocalDate.now()));
+        when(mapper.convertValue(Map.of("dueDate", LocalDate.now()), CaseData.class)).thenReturn(caseData1);
+
+        final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
+
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant1Response)).thenReturn(caseDetailsList);
+
+        systemRemindApplicant1ApplicationApprovedTask.execute();
+
+        verifyNoInteractions(jointApplicationOverdueNotification, ccdUpdateService);
     }
 
     @Test
