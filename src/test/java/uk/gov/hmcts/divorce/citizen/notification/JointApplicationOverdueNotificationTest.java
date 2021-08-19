@@ -28,6 +28,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_APPROVED_APPLICANT1_REMINDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_OVERDUE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TO_END_A_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TYPE;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_APPLICATION;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PAID_FOR;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PAY_FOR;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.REMINDER_ACTION_REQUIRED;
@@ -67,7 +71,8 @@ public class JointApplicationOverdueNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICATION_OVERDUE),
             argThat(allOf(
-                hasEntry(APPLICATION.toLowerCase(Locale.ROOT), "for divorce"),
+                hasEntry(APPLICATION.toLowerCase(Locale.ROOT), FOR_DIVORCE),
+                hasEntry(APPLICATION_TYPE.toLowerCase(Locale.ROOT), DIVORCE_APPLICATION),
                 hasEntry(REVIEW_DEADLINE_DATE, LocalDate.now().toString())
             )),
             eq(ENGLISH)
@@ -94,6 +99,7 @@ public class JointApplicationOverdueNotificationTest {
             eq(JOINT_APPLICATION_OVERDUE),
             argThat(allOf(
                 hasEntry(APPLICATION.toLowerCase(Locale.ROOT), "to end your civil partnership"),
+                hasEntry(APPLICATION_TYPE.toLowerCase(Locale.ROOT), APPLICATION_TO_END_A_CIVIL_PARTNERSHIP),
                 hasEntry(REVIEW_DEADLINE_DATE, LocalDate.now().toString())
             )),
             eq(ENGLISH)
@@ -118,7 +124,7 @@ public class JointApplicationOverdueNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICATION_APPROVED_APPLICANT1_REMINDER),
             argThat(allOf(
-                hasEntry(APPLICATION.toLowerCase(Locale.ROOT), "for divorce"),
+                hasEntry(APPLICATION.toLowerCase(Locale.ROOT), FOR_DIVORCE),
                 hasEntry(REMINDER_ACTION_REQUIRED, REMINDER_ACTION_REQUIRED),
                 hasEntry(PAY_FOR, PAY_FOR),
                 hasEntry(PAID_FOR, PAID_FOR)
