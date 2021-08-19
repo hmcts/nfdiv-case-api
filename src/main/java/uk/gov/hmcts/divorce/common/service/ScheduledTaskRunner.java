@@ -33,6 +33,7 @@ public class ScheduledTaskRunner {
         try {
             return (Runnable) context.getBean(beanName);
         } catch (Exception e) {
+            log.error("Error finding task", e);
             return null;
         }
     }
