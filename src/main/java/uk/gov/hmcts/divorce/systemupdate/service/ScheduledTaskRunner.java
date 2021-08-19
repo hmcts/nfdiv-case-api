@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.common.service;
+package uk.gov.hmcts.divorce.systemupdate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
