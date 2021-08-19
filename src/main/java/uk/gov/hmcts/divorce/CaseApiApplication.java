@@ -16,8 +16,6 @@ import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataClientAutoConfiguration;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
 
-import java.util.Arrays;
-
 import static org.codehaus.groovy.runtime.InvokerHelper.asList;
 
 @SpringBootApplication(
