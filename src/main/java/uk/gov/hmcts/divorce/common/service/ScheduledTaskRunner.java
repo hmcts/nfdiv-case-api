@@ -2,34 +2,39 @@ package uk.gov.hmcts.divorce.common.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.divorce.systemupdate.schedule.SystemRemindApplicant2Task;
+
+import javax.annotation.Nullable;
+
+import static java.lang.Character.toLowerCase;
 
 @Service
 @Slf4j
 public class ScheduledTaskRunner {
 
     @Autowired
-    private SystemRemindApplicant2Task systemRemindApplicant2Task;
+    ApplicationContext context;
 
     public void run(String taskName) {
-        final var task = getTask(taskName);
+        final var beanName = toLowerCase(taskName.charAt(0)) + taskName.substring(1);
+        final var task = getTask(beanName);
 
         if (task != null) {
-            log.info("EXECUTING : {}", taskName);
+            log.info("Running task: {}", beanName);
             task.run();
         } else {
-            log.error("Task not found: {}", taskName);
+            log.error("Task not found: {}", beanName);
         }
     }
 
-
-    private Runnable getTask(final String taskName) {
-        switch (taskName) {
-            case "Applicant2Reminder":
-                return systemRemindApplicant2Task;
-            default:
-                return null;
+    @Nullable
+    private Runnable getTask(String beanName) {
+        try {
+            return (Runnable) context.getBean(beanName);
+        } catch (Exception e) {
+            return null;
         }
     }
+
 }
