@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewApplicant2Notification;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
@@ -32,6 +33,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicant2.SYSTEM_REMIND_APPLICANT2;
 
@@ -89,6 +91,34 @@ public class SystemRemindApplicant2TaskTest {
         verify(applicationSentForReviewApplicant2Notification).sendReminder(caseData1, caseDetails1.getId());
         verify(applicationSentForReviewApplicant2Notification, times(0)).sendReminder(caseData2, caseDetails2.getId());
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT2);
+    }
+
+    @Test
+    void shouldNotSendReminderEmailToApplicant2IfApplicant2ReminderSent() {
+        final CaseDetails caseDetails1 = mock(CaseDetails.class);
+        final CaseData caseData1 = CaseData.builder()
+            .dueDate(LocalDate.now())
+            .application(Application.builder()
+                .applicant2ReminderSent(YES)
+                .build())
+            .build();
+
+        final CaseInvite caseInvite = CaseInvite.builder()
+            .accessCode("123456789")
+            .build();
+
+        caseData1.setCaseInvite(caseInvite);
+
+        when(caseDetails1.getData()).thenReturn(Map.of("dueDate", LocalDate.now().plusDays(4)));
+        when(mapper.convertValue(Map.of("dueDate", LocalDate.now().plusDays(4)), CaseData.class)).thenReturn(caseData1);
+
+        final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
+
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response)).thenReturn(caseDetailsList);
+
+        systemRemindApplicant2Task.execute();
+
+        verifyNoInteractions(applicationSentForReviewApplicant2Notification, ccdUpdateService);
     }
 
     @Test

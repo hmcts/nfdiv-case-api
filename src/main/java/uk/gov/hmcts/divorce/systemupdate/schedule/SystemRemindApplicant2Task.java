@@ -53,7 +53,7 @@ public class SystemRemindApplicant2Task implements Runnable {
                     final LocalDate reminderDate = caseData.getDueDate().minusDays(FOUR_DAYS);
 
                     if (!reminderDate.isAfter(LocalDate.now()) && caseData.getCaseInvite().getAccessCode() != null
-                        && !caseData.getApplication().hasNotificationBeenSent(caseData.getApplication().getApplicant2ReminderSent())
+                        && !caseData.getApplication().isApplicant2ReminderSent()
                     ) {
                         notifyApplicant2(caseDetails, caseData, reminderDate);
                         log.info("~~~~~~~~~~~~~SystemRemindApplicant2Task "
