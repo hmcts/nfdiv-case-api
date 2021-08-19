@@ -26,7 +26,7 @@ public class SystemLinkApplicant2 implements CCDConfig<CaseData, State, UserRole
     @Autowired
     private CcdAccessService ccdAccessService;
 
-    @Autowired
+    @Autowired(required = false)
     private HttpServletRequest httpServletRequest;
 
     public static final String SYSTEM_LINK_APPLICANT_2 = "system-link-applicant2";

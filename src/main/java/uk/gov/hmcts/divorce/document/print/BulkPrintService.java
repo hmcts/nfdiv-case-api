@@ -38,7 +38,7 @@ public class BulkPrintService {
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
-    @Autowired
+    @Autowired(required = false)
     private HttpServletRequest request;
 
     @Autowired

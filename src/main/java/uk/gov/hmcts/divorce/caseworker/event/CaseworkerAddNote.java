@@ -39,7 +39,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 public class CaseworkerAddNote implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_ADD_NOTE = "caseworker-add-note";
 
-    @Autowired
+    @Autowired(required = false)
     private HttpServletRequest request;
 
     @Autowired

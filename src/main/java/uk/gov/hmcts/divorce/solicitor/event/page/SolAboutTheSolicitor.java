@@ -28,7 +28,7 @@ public class SolAboutTheSolicitor implements CcdPageConfiguration {
     @Autowired
     private SolicitorCreateApplicationService solicitorCreateApplicationService;
 
-    @Autowired
+    @Autowired(required = false)
     private HttpServletRequest request;
 
     @Override
