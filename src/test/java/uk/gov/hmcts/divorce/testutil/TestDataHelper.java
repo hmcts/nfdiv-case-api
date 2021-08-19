@@ -521,7 +521,8 @@ public class TestDataHelper {
                     .builder()
                     .code(UUID.randomUUID())
                     .label(accountNumber)
-                    .build())
+                    .build()
+            )
             .build();
     }
 

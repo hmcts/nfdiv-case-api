@@ -75,7 +75,7 @@ public final class PaymentWireMock {
 
     private static CreditAccountPaymentRequest getCreditAccountPaymentRequest(OrderSummary orderSummary) {
         var request = new CreditAccountPaymentRequest();
-        request.setService("divorce");
+        request.setService("DIVORCE");
         request.setCurrency("GBP");
         request.setAmount(orderSummary.getPaymentTotal());
         request.setCcdCaseNumber(TEST_CASE_ID.toString());

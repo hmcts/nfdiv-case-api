@@ -409,6 +409,7 @@ public class Application {
         return hasSolSignStatementOfTruth();
     }
 
+    @JsonIgnore
     public boolean isSolicitorPaymentMethodPba() {
         return FEE_PAY_BY_ACCOUNT.equals(this.getSolPaymentHowToPay());
     }

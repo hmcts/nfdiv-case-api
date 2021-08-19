@@ -43,6 +43,7 @@ public class PaymentService {
     private static final String FAMILY = "family";
     private static final String FAMILY_COURT = "family court";
     private static final String DIVORCE = "divorce";
+    private static final String DIVORCE_SERVICE = "DIVORCE";
     private static final String GBP = "GBP";
     public static final String CA_E0001 = "CA-E0001";
     public static final String CA_E0004 = "CA-E0004";
@@ -96,14 +97,15 @@ public class PaymentService {
             String paymentReference = Optional.ofNullable(paymentResponseEntity)
                 .map(response ->
                     Optional.ofNullable(response.getBody())
-                        .map(CreditAccountPaymentResponse::getPaymentReference)
+                        .map(CreditAccountPaymentResponse::getReference)
                         .orElseGet(() -> null)
                 )
                 .orElseGet(() -> null);
 
-            log.info("For case id {} successfully processed PBA payment for account number {}",
+            log.info("For case id {} successfully processed PBA payment for account number {} and payment reference {}",
                 caseId,
-                getPbaNumber(caseData)
+                pbaNumber,
+                paymentReference
             );
 
             return new PbaResponse(paymentResponseEntity.getStatusCode(), null, paymentReference);
@@ -212,7 +214,7 @@ public class PaymentService {
         var creditAccountPaymentRequest = new CreditAccountPaymentRequest();
         var orderSummary = caseData.getApplication().getApplicationFeeOrderSummary();
 
-        creditAccountPaymentRequest.setService(DIVORCE);
+        creditAccountPaymentRequest.setService(DIVORCE_SERVICE);
         creditAccountPaymentRequest.setCurrency(GBP);
         creditAccountPaymentRequest.setSiteId(caseData.getSelectedDivorceCentreSiteId());
         creditAccountPaymentRequest.setAccountNumber(getPbaNumber(caseData));
@@ -227,6 +229,7 @@ public class PaymentService {
 
         creditAccountPaymentRequest.setAmount(orderSummary.getPaymentTotal());
         creditAccountPaymentRequest.setCcdCaseNumber(String.valueOf(caseId));
+        creditAccountPaymentRequest.setSiteId(caseData.getSelectedDivorceCentreSiteId());
 
         List<PaymentItem> paymentItemList =
             populateFeesPaymentItems(caseData, caseId, orderSummary.getPaymentTotal(), fee, solicitor.getReference());

@@ -7,10 +7,9 @@
     "applicant1LastName": "test_last_name",
     "applicant1Email": "test@test.com",
     "applicant1LanguagePreferenceWelsh": "No",
-    "solicitorPaymentMethodPba": true,
-    "applicant1SolicitorEmail": "solicitor@test.com",
     "applicant1ContactDetailsConfidential": "share",
     "applicant1Gender": "female",
+    "applicant1SolicitorEmail": "solicitor@test.com",
     "applicant1SolicitorOrganisationPolicy": {
       "Organisation": {
         "OrganisationName": "Test Organisation",
@@ -22,14 +21,13 @@
     "solPaymentHowToPay": "feePayByAccount",
     "pbaNumbers": {
       "value": {
-        "code": "${json-unit.ignore}",
+        "code": "${json-unit.any-string}",
         "label": "PBA0012345"
       },
       "list_items": null,
       "valueLabel": "PBA0012345",
-      "valueCode": "${json-unit.ignore}"
+      "valueCode": "${json-unit.any-string}"
     },
-    "feeAccountReference": null,
     "applicationFeeOrderSummary": {
       "PaymentReference": null,
       "Fees": [
@@ -46,10 +44,10 @@
       "PaymentTotal": "55000"
     },
     "app2ContactMethodIsDigital": "Yes",
-    "dateSubmitted": "${json-unit.ignore}",
+    "dateSubmitted": "${json-unit.any-string}",
     "applicationPayments": [
       {
-        "id": "${json-unit.ignore}",
+        "id": "${json-unit.any-string}",
         "value": {
           "created": null,
           "updated": null,

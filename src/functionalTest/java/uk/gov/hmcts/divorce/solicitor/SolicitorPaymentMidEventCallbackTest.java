@@ -9,7 +9,7 @@ import java.util.Map;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
-import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
+import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -36,9 +36,9 @@ public class SolicitorPaymentMidEventCallbackTest extends FunctionalTestSuite {
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
         assertThatJson(response.asString())
-            .when(IGNORING_EXTRA_FIELDS)
+            .when(TREATING_NULL_AS_ABSENT)
             .isEqualTo(json(expectedResponse(
-                "classpath:responses/response-solicitor-create-mid-event.json"
+                "classpath:responses/response-solicitor-payment-mid-event.json"
             )));
     }
 }
