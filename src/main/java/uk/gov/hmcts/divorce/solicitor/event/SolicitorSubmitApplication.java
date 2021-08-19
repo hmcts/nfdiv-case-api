@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.solicitor.event;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -13,7 +12,6 @@ import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.SubmissionService;
-import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -27,7 +25,6 @@ import uk.gov.hmcts.divorce.solicitor.event.page.SolPaymentSummary;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolStatementOfTruth;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolSummary;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
-import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
@@ -40,9 +37,9 @@ import static java.lang.Integer.parseInt;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
@@ -119,25 +116,8 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
-        final var caseData = details.getData();
-        final var application = caseData.getApplication();
-        final var applicationFeeOrderSummary = application.getApplicationFeeOrderSummary();
         final Long caseId = details.getId();
-
-        if (caseData.getApplication().isSolicitorPaymentMethodPba()) {
-            PbaResponse response = paymentService.processPbaPayment(caseData, caseId);
-
-            if (response.getHttpStatus() == HttpStatus.CREATED) {
-                updateCaseDataWithPaymentDetails(application, applicationFeeOrderSummary, response);
-            } else {
-                return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                    .data(details.getData())
-                    .errors(singletonList(response.getErrorMessage()))
-                    .build();
-            }
-        }
-
-        updateApplicant2DigitalDetails(caseData);
+        final var caseData = details.getData();
 
         log.info("Validating case data CaseID: {}", caseId);
         final List<String> submittedErrors = Submitted.validate(caseData);
@@ -150,6 +130,24 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
                 .build();
         }
 
+        final var application = caseData.getApplication();
+        final var applicationFeeOrderSummary = application.getApplicationFeeOrderSummary();
+
+        if (caseData.getApplication().isSolicitorPaymentMethodPba()) {
+            PbaResponse response = paymentService.processPbaPayment(caseData, caseId);
+
+            if (response.getHttpStatus() == CREATED) {
+                updateCaseDataWithPaymentDetails(applicationFeeOrderSummary,caseData, response.getPaymentReference());
+            } else {
+                return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                    .data(details.getData())
+                    .errors(singletonList(response.getErrorMessage()))
+                    .build();
+            }
+        }
+
+        updateApplicant2DigitalDetails(caseData);
+
         final CaseDetails<CaseData, State> updatedCaseDetails = submissionService.submitApplication(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -158,29 +156,22 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             .build();
     }
 
-    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
-                                               CaseDetails<CaseData, State> beforeDetails) {
-        final CaseData caseData = details.getData();
-
-        if (caseData.getApplication().hasBeenPaidFor()) {
-            details.setState(Submitted);
-        } else {
-            details.setState(AwaitingPayment);
-        }
-
-        return SubmittedCallbackResponse.builder().build();
-    }
-
-    private void updateCaseDataWithPaymentDetails(Application application, OrderSummary applicationFeeOrderSummary, PbaResponse response) {
+    private void updateCaseDataWithPaymentDetails(
+        OrderSummary applicationFeeOrderSummary,
+        CaseData caseData,
+        String paymentReference
+    ) {
         var payment = Payment
             .builder()
             .amount(parseInt(applicationFeeOrderSummary.getPaymentTotal()))
             .channel("online")
             .feeCode(applicationFeeOrderSummary.getFees().get(0).getValue().getCode())
-            .reference(response.getPaymentReference())
+            .reference(paymentReference)
             .status(SUCCESS)
             .build();
 
+
+        var application = caseData.getApplication();
 
         if (isEmpty(application.getApplicationPayments())) {
             List<ListValue<Payment>> payments = new ArrayList<>();
@@ -191,7 +182,6 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
                 .add(new ListValue<Payment>(UUID.randomUUID().toString(), payment));
         }
     }
-
 
     private void updateApplicant2DigitalDetails(CaseData caseData) {
         if (caseData.getApplicant2().getSolicitor() != null) {

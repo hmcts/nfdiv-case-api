@@ -5,7 +5,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
@@ -41,6 +40,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT;
@@ -132,6 +133,7 @@ public class SolicitorSubmitApplicationTest {
             .application(Application.builder()
                 .applicationPayments(payments)
                 .solPaymentHowToPay(FEE_PAY_BY_ACCOUNT)
+                .solSignStatementOfTruth(YES)
                 .applicationFeeOrderSummary(OrderSummary.builder()
                     .paymentTotal("55000")
                     .fees(singletonList(getFeeListValue()))
@@ -141,8 +143,16 @@ public class SolicitorSubmitApplicationTest {
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
-        PbaResponse pbaResponse = new PbaResponse(HttpStatus.CREATED, null, "1234");
+        PbaResponse pbaResponse = new PbaResponse(CREATED, null, "1234");
         when(paymentService.processPbaPayment(caseData, TEST_CASE_ID)).thenReturn(pbaResponse);
+
+
+        final CaseDetails<CaseData, State> expectedCaseDetails = new CaseDetails<>();
+        expectedCaseDetails.setId(TEST_CASE_ID);
+        expectedCaseDetails.setData(caseData);
+        expectedCaseDetails.setState(Submitted);
+
+        when(submissionService.submitApplication(caseDetails)).thenReturn(expectedCaseDetails);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             solicitorSubmitApplication.aboutToSubmit(caseDetails, new CaseDetails<>());
@@ -216,7 +226,7 @@ public class SolicitorSubmitApplicationTest {
     @Test
     void shouldReturnWithoutErrorIfStatementOfTruthIsNull() {
 
-        final CaseData caseData = CaseData.builder().build();
+        final var caseData = CaseData.builder().build();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setApplicationFeeOrderSummary(OrderSummary.builder()
             .paymentTotal("55000")
@@ -226,12 +236,8 @@ public class SolicitorSubmitApplicationTest {
         caseDetails.setData(caseData);
         caseDetails.setState(Draft);
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
-        final CaseDetails<CaseData, State> expectedCaseDetails = new CaseDetails<>();
-        expectedCaseDetails.setId(TEST_CASE_ID);
-        expectedCaseDetails.setData(caseData);
-        expectedCaseDetails.setState(Submitted);
 
-        when(submissionService.submitApplication(caseDetails)).thenReturn(expectedCaseDetails);
+        mockExpectedCaseDetails(caseDetails, caseData, Submitted);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitApplication
             .aboutToSubmit(caseDetails, beforeCaseDetails);
@@ -244,7 +250,7 @@ public class SolicitorSubmitApplicationTest {
     @Test
     void shouldReturnWithoutErrorIfSolStatementOfTruthIsNull() {
 
-        final CaseData caseData = CaseData.builder().build();
+        final var caseData = CaseData.builder().build();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setApplicationFeeOrderSummary(
             OrderSummary
@@ -259,7 +265,8 @@ public class SolicitorSubmitApplicationTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
-        caseDetails.setState(Draft);
+
+        mockExpectedCaseDetails(caseDetails, caseData, Draft);
 
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
         final CaseDetails<CaseData, State> expectedCaseDetails = CaseDetails.<CaseData, State>builder()
@@ -269,7 +276,7 @@ public class SolicitorSubmitApplicationTest {
 
         when(submissionService.submitApplication(caseDetails)).thenReturn(expectedCaseDetails);
 
-        PbaResponse pbaResponse = new PbaResponse(HttpStatus.CREATED, null, "1234");
+        var pbaResponse = new PbaResponse(CREATED, null, "1234");
         when(paymentService.processPbaPayment(caseData, TEST_CASE_ID)).thenReturn(pbaResponse);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitApplication
@@ -303,9 +310,8 @@ public class SolicitorSubmitApplicationTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
-        caseDetails.setState(Draft);
 
-        when(submissionService.submitApplication(caseDetails)).thenReturn(caseDetails);
+        mockExpectedCaseDetails(caseDetails, caseData, Draft);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitApplication
             .aboutToSubmit(caseDetails, new CaseDetails<>());
@@ -338,22 +344,26 @@ public class SolicitorSubmitApplicationTest {
         final CaseData caseData = CaseData.builder().build();
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
         caseData.getApplication().setApplicationPayments(payments);
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
 
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
-        solicitorSubmitApplication.submitted(caseDetails, beforeCaseDetails);
+        mockExpectedCaseDetails(caseDetails, caseData, Submitted);
 
-        assertThat(caseDetails.getState()).isEqualTo(Submitted);
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            solicitorSubmitApplication.aboutToSubmit(caseDetails, beforeCaseDetails);
+
+        assertThat(response.getState()).isEqualTo(Submitted);
     }
 
     @Test
     void shouldSetStateToAwaitingPaymentIfPaymentNotYetSuccessful() {
 
-        final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("1000").build();
+        final var orderSummary = OrderSummary.builder().paymentTotal("1000").build();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
-        final Payment payment = Payment
+        final var payment = Payment
             .builder()
             .created(LocalDateTime.now())
             .amount(parseInt(orderSummary.getPaymentTotal()))
@@ -369,25 +379,30 @@ public class SolicitorSubmitApplicationTest {
             .build();
         List<ListValue<Payment>> payments = new ArrayList<>();
         payments.add(paymentListValue);
-        final CaseData caseData = CaseData.builder().build();
+        final var caseData = CaseData.builder().build();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
         caseData.getApplication().setApplicationPayments(payments);
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
-        solicitorSubmitApplication.submitted(caseDetails, beforeCaseDetails);
+        mockExpectedCaseDetails(caseDetails, caseData, AwaitingPayment);
 
-        assertThat(caseDetails.getState()).isEqualTo(AwaitingPayment);
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            solicitorSubmitApplication.aboutToSubmit(caseDetails, beforeCaseDetails);
+
+        assertThat(response.getState()).isEqualTo(AwaitingPayment);
     }
 
     @Test
     void shouldSetStateToAwaitingPaymentWhenHelpWithFeesIsSelectedAndNoPaymentIsMade() {
 
-        final OrderSummary orderSummary = OrderSummary.builder().paymentTotal("1000").build();
+        final var orderSummary = OrderSummary.builder().paymentTotal("1000").build();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
 
-        final CaseData caseData = CaseData.builder().build();
+        final var caseData = CaseData.builder().build();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setApplicant1HelpWithFees(
             HelpWithFees.builder()
                 .appliedForFees(YES)
@@ -397,8 +412,78 @@ public class SolicitorSubmitApplicationTest {
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
-        solicitorSubmitApplication.submitted(caseDetails, beforeCaseDetails);
+        mockExpectedCaseDetails(caseDetails, caseData, AwaitingPayment);
 
-        assertThat(caseDetails.getState()).isEqualTo(AwaitingPayment);
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            solicitorSubmitApplication.aboutToSubmit(caseDetails, beforeCaseDetails);
+
+        assertThat(response.getState()).isEqualTo(AwaitingPayment);
+    }
+
+    @Test
+    void shouldSetStateToSubmittedIfPaymentMethodIsPbaAndPbaPaymentIsProcessedSuccessfully() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
+
+        final CaseData caseData = CaseData.builder().build();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
+        caseData.getApplication().setSolPaymentHowToPay(FEE_PAY_BY_ACCOUNT);
+        caseData.getApplication().setApplicationFeeOrderSummary(
+            OrderSummary
+                .builder()
+                .paymentTotal("55000")
+                .fees(singletonList(getFeeListValue()))
+                .build()
+        );
+
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final var pbaResponse = new PbaResponse(CREATED, null, "1234");
+        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID)).thenReturn(pbaResponse);
+
+        mockExpectedCaseDetails(caseDetails, caseData, Submitted);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            solicitorSubmitApplication.aboutToSubmit(caseDetails, beforeCaseDetails);
+
+        assertThat(response.getState()).isEqualTo(Submitted);
+    }
+
+    @Test
+    void shouldReturnErrorMessageIfPaymentMethodIsPbaAndPbaPaymentIsIsNotSuccessful() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
+
+        final var caseData = CaseData.builder().build();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
+        caseData.getApplication().setSolPaymentHowToPay(FEE_PAY_BY_ACCOUNT);
+        caseData.getApplication().setApplicationFeeOrderSummary(
+            OrderSummary
+                .builder()
+                .paymentTotal("55000")
+                .fees(singletonList(getFeeListValue()))
+                .build()
+        );
+
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final var pbaResponse = new PbaResponse(FORBIDDEN, "Account balance insufficient", null);
+        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID)).thenReturn(pbaResponse);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            solicitorSubmitApplication.aboutToSubmit(caseDetails, beforeCaseDetails);
+
+        assertThat(response.getErrors()).containsExactly("Account balance insufficient");
+    }
+
+    private void mockExpectedCaseDetails(CaseDetails<CaseData, State> caseDetails, CaseData caseData, State state) {
+        final CaseDetails<CaseData, State> expectedCaseDetails = new CaseDetails<>();
+        expectedCaseDetails.setData(caseData);
+        expectedCaseDetails.setId(TEST_CASE_ID);
+        expectedCaseDetails.setState(state);
+
+        when(submissionService.submitApplication(caseDetails)).thenReturn(expectedCaseDetails);
     }
 }
