@@ -68,7 +68,7 @@
       }
     ],
     "selectedDivorceCentreSiteId": "AA04",
-    "dueDate": "2021-09-02"
+    "dueDate": "${json-unit.any-string}"
   },
   "errors": null,
   "warnings": null,
