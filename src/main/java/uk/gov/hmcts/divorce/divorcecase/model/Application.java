@@ -331,11 +331,12 @@ public class Application {
 
     @JsonIgnore
     public boolean hasBeenPaidFor() {
-        return parseInt(applicationFeeOrderSummary.getPaymentTotal()) == getPaymentTotal();
+        return null != applicationFeeOrderSummary
+            && parseInt(applicationFeeOrderSummary.getPaymentTotal()) == getPaymentTotal();
     }
 
     @JsonIgnore
-    private Integer getPaymentTotal() {
+    public Integer getPaymentTotal() {
         return applicationPayments == null
             ? 0
             : applicationPayments
@@ -367,6 +368,7 @@ public class Application {
         return dateSubmitted == null ? null : dateSubmitted.plusDays(SUBMISSION_RESPONSE_DAYS).toLocalDate();
     }
 
+    @JsonIgnore
     public boolean hasAwaitingDocuments() {
         return applicant1WantsToHavePapersServedAnotherWay != null
             && applicant1WantsToHavePapersServedAnotherWay.toBoolean()
@@ -379,8 +381,18 @@ public class Application {
     }
 
     @JsonIgnore
-    public boolean hasNotificationBeenSent(YesOrNo reminderSent) {
-        return YES.equals(reminderSent);
+    public boolean isApplicant2ReminderSent() {
+        return YES.equals(applicant2ReminderSent);
+    }
+
+    @JsonIgnore
+    public boolean isApplicant1ReminderSent() {
+        return YES.equals(applicant1ReminderSent);
+    }
+
+    @JsonIgnore
+    public boolean isOverdueNotificationSent() {
+        return YES.equals(overdueNotificationSent);
     }
 
     @JsonIgnore
