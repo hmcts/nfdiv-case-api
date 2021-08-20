@@ -111,7 +111,7 @@
     "digitalNoticeOfProceedings":null,
     "divorceWho":null,
     "documentUploadComplete":null,
-    "dueDate":"2021-09-02",
+    "dueDate": "${json-unit.any-string}",
     "feeAccountReference":null,
     "generalApplicationAddedDate":null,
     "generalApplicationFrom":null,
