@@ -41,6 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.util.ResourceUtils.getFile;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitApplication.CITIZEN_SUBMIT;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICATION_SUBMITTED;
@@ -115,6 +116,7 @@ public class CitizenSubmitApplicationTest {
         stubForFeesLookup(TestDataHelper.getFeeResponseAsJson());
 
         CaseData caseData = validApplicant1CaseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
