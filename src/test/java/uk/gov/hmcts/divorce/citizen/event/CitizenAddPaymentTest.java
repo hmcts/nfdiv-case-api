@@ -133,9 +133,6 @@ public class CitizenAddPaymentTest {
         assertThat(result.getData()).isSameAs(expectedCaseData);
         assertThat(result.getState()).isSameAs(Submitted);
         verify(submissionService).submitApplication(details);
-
-        verify(applicationSubmittedNotification).sendToApplicant1(caseData, details.getId());
-        verify(applicationSubmittedNotification).sendToApplicant2(caseData, details.getId());
     }
 
     @Test

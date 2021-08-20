@@ -33,9 +33,6 @@ public class CitizenAddPayment implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CITIZEN_ADD_PAYMENT = "citizen-add-payment";
 
-    // @Autowired
-    // private ApplicationSubmittedNotification applicationSubmittedNotification;
-
     @Autowired
     private SubmissionService submissionService;
 
@@ -90,11 +87,6 @@ public class CitizenAddPayment implements CCDConfig<CaseData, State, UserRole> {
         }
 
         final CaseDetails<CaseData, State> updatedCaseDetails = submissionService.submitApplication(details);
-
-        // applicationSubmittedNotification.sendToApplicant2(caseData, details.getId());
-        // if (!caseData.getApplicationType().isSole()) {
-        //     applicationSubmittedNotification.sendToApplicant2(caseData, details.getId());
-        // }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updatedCaseDetails.getData())
