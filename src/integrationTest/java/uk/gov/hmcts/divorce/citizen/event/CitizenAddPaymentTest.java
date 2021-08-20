@@ -175,10 +175,9 @@ public class CitizenAddPaymentTest {
     }
 
     @Test
-    public void givenValidCaseDataWhenCallbackIsInvokedThenSendTwoEmail() throws Exception {
-        CaseData data = caseDataWithOrderSummary();
+    public void givenValidCaseDataWhenCallbackIsInvokedThenSendThreeEmails() throws Exception {
+        CaseData data = jointCaseDataWithOrderSummary();
         data.getApplication().setDateSubmitted(LocalDateTime.now());
-        data.setApplicant2(getApplicant2(Gender.MALE));
         data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
         data.getApplication().setApplicant1StatementOfTruth(YES);
         data.getApplication().setSolSignStatementOfTruth(null);
@@ -202,6 +201,9 @@ public class CitizenAddPaymentTest {
 
         verify(notificationService)
             .sendEmail(eq(TEST_USER_EMAIL), eq(APPLICATION_SUBMITTED), anyMap(), eq(ENGLISH));
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(APPLICATION_SUBMITTED), anyMap(), eq(ENGLISH));
 
         verify(notificationService)
             .sendEmail(eq(TEST_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(ENGLISH));
