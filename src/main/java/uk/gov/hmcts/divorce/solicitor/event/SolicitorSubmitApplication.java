@@ -137,7 +137,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             PbaResponse response = paymentService.processPbaPayment(caseData, caseId);
 
             if (response.getHttpStatus() == CREATED) {
-                updateCaseDataWithPaymentDetails(applicationFeeOrderSummary,caseData, response.getPaymentReference());
+                updateCaseDataWithPaymentDetails(applicationFeeOrderSummary, caseData, response.getPaymentReference());
             } else {
                 return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                     .data(details.getData())
