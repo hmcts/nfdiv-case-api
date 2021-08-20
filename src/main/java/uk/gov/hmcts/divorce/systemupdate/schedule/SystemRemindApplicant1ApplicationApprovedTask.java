@@ -58,7 +58,7 @@ public class SystemRemindApplicant1ApplicationApprovedTask {
                         );
                     } else {
                         if (!dueDate.isAfter(LocalDate.now())
-                            && !caseData.getApplication().hasNotificationBeenSent(caseData.getApplication().getApplicant1ReminderSent())
+                            && !caseData.getApplication().isApplicant1ReminderSent()
                         ) {
                             notifyApplicant1(caseDetails, caseData, dueDate);
                             log.info(

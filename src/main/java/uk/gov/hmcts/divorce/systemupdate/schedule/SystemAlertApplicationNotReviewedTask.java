@@ -58,7 +58,7 @@ public class SystemAlertApplicationNotReviewedTask {
                         );
                     } else {
                         if (!dueDate.isAfter(LocalDate.now())
-                            && !caseData.getApplication().hasNotificationBeenSent(caseData.getApplication().getOverdueNotificationSent())
+                            && !caseData.getApplication().isOverdueNotificationSent()
                         ) {
                             notifyApplicant1(caseDetails, caseData, dueDate);
                             log.info("~~~~~~~~~~~~~SystemAlertApplicationNotReviewedTask "

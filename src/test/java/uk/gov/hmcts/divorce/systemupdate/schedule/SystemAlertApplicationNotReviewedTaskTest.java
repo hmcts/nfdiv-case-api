@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.citizen.notification.JointApplicationOverdueNotification;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
@@ -29,6 +30,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemAlertApplicationNotReviewed.SYSTEM_APPLICATION_NOT_REVIEWED;
 
@@ -75,6 +77,28 @@ public class SystemAlertApplicationNotReviewedTaskTest {
         verify(jointApplicationOverdueNotification).sendApplicationNotReviewedEmail(caseData1, caseDetails1.getId());
         verify(jointApplicationOverdueNotification, times(0)).sendApplicationNotReviewedEmail(caseData2, caseDetails2.getId());
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_APPLICATION_NOT_REVIEWED);
+    }
+
+    @Test
+    void shouldNotSendEmailForOverdueJointApplicationIfOverdueNotificationSent() {
+        final CaseDetails caseDetails1 = mock(CaseDetails.class);
+        final CaseData caseData1 = CaseData.builder()
+            .dueDate(LocalDate.now())
+            .application(Application.builder()
+                .overdueNotificationSent(YES)
+                .build())
+            .build();
+
+        when(caseDetails1.getData()).thenReturn(Map.of("dueDate", LocalDate.now()));
+        when(mapper.convertValue(Map.of("dueDate", LocalDate.now()), CaseData.class)).thenReturn(caseData1);
+
+        final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
+
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response)).thenReturn(caseDetailsList);
+
+        systemAlertApplicationNotReviewedTask.execute();
+
+        verifyNoInteractions(jointApplicationOverdueNotification, ccdUpdateService);
     }
 
     @Test

@@ -13,6 +13,9 @@ import java.util.Map;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_APPROVED_APPLICANT1_REMINDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_OVERDUE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TO_END_A_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TYPE;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PAID_FOR;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PAY_FOR;
@@ -36,8 +39,10 @@ public class JointApplicationOverdueNotification {
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), FOR_DIVORCE);
+            templateVars.put(APPLICATION_TYPE.toLowerCase(Locale.ROOT), DIVORCE_APPLICATION);
         } else {
             templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), TO_END_CIVIL_PARTNERSHIP);
+            templateVars.put(APPLICATION_TYPE.toLowerCase(Locale.ROOT), APPLICATION_TO_END_A_CIVIL_PARTNERSHIP);
         }
 
         templateVars.put(REVIEW_DEADLINE_DATE, caseData.getDueDate().toString());
