@@ -144,8 +144,7 @@ public class SolicitorSubmitApplicationTest {
         caseDetails.setId(TEST_CASE_ID);
 
         PbaResponse pbaResponse = new PbaResponse(CREATED, null, "1234");
-        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID)).thenReturn(pbaResponse);
-
+        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null)).thenReturn(pbaResponse);
 
         final CaseDetails<CaseData, State> expectedCaseDetails = new CaseDetails<>();
         expectedCaseDetails.setId(TEST_CASE_ID);
@@ -277,7 +276,7 @@ public class SolicitorSubmitApplicationTest {
         when(submissionService.submitApplication(caseDetails)).thenReturn(expectedCaseDetails);
 
         var pbaResponse = new PbaResponse(CREATED, null, "1234");
-        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID)).thenReturn(pbaResponse);
+        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null)).thenReturn(pbaResponse);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitApplication
             .aboutToSubmit(caseDetails, beforeCaseDetails);
@@ -440,7 +439,7 @@ public class SolicitorSubmitApplicationTest {
         caseDetails.setId(TEST_CASE_ID);
 
         final var pbaResponse = new PbaResponse(CREATED, null, "1234");
-        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID)).thenReturn(pbaResponse);
+        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null)).thenReturn(pbaResponse);
 
         mockExpectedCaseDetails(caseDetails, caseData, Submitted);
 
@@ -470,7 +469,7 @@ public class SolicitorSubmitApplicationTest {
         caseDetails.setId(TEST_CASE_ID);
 
         final var pbaResponse = new PbaResponse(FORBIDDEN, "Account balance insufficient", null);
-        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID)).thenReturn(pbaResponse);
+        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null)).thenReturn(pbaResponse);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             solicitorSubmitApplication.aboutToSubmit(caseDetails, beforeCaseDetails);

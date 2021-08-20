@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentRequest;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
@@ -80,7 +81,7 @@ public class PaymentService {
             .build();
     }
 
-    public PbaResponse processPbaPayment(CaseData caseData, Long caseId) {
+    public PbaResponse processPbaPayment(CaseData caseData, Long caseId, Solicitor solicitor) {
         log.info("Processing PBA payment for case id {}", caseId);
 
         ResponseEntity<CreditAccountPaymentResponse> paymentResponseEntity = null;
@@ -91,7 +92,7 @@ public class PaymentService {
             paymentResponseEntity = paymentPbaClient.creditAccountPayment(
                 httpServletRequest.getHeader(AUTHORIZATION),
                 authTokenGenerator.generate(),
-                creditAccountPaymentRequest(caseData, caseId)
+                creditAccountPaymentRequest(caseData, caseId, solicitor)
             );
 
             String paymentReference = Optional.ofNullable(paymentResponseEntity)
@@ -210,7 +211,7 @@ public class PaymentService {
         return errorMessage;
     }
 
-    private CreditAccountPaymentRequest creditAccountPaymentRequest(CaseData caseData, Long caseId) {
+    private CreditAccountPaymentRequest creditAccountPaymentRequest(CaseData caseData, Long caseId, Solicitor solicitor) {
         var creditAccountPaymentRequest = new CreditAccountPaymentRequest();
         var orderSummary = caseData.getApplication().getApplicationFeeOrderSummary();
 
@@ -219,7 +220,6 @@ public class PaymentService {
         creditAccountPaymentRequest.setSiteId(caseData.getSelectedDivorceCentreSiteId());
         creditAccountPaymentRequest.setAccountNumber(getPbaNumber(caseData));
 
-        final var solicitor = caseData.getApplicant1().getSolicitor();
         creditAccountPaymentRequest.setOrganisationName(solicitor.getOrganisationPolicy().getOrganisation().getOrganisationName());
 
         creditAccountPaymentRequest.setCustomerReference(solicitor.getReference());

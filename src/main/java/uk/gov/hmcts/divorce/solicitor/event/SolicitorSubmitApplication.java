@@ -134,10 +134,10 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         final var applicationFeeOrderSummary = application.getApplicationFeeOrderSummary();
 
         if (caseData.getApplication().isSolicitorPaymentMethodPba()) {
-            PbaResponse response = paymentService.processPbaPayment(caseData, caseId);
+            PbaResponse response = paymentService.processPbaPayment(caseData, caseId, caseData.getApplicant1().getSolicitor());
 
             if (response.getHttpStatus() == CREATED) {
-                updateCaseDataWithPaymentDetails(applicationFeeOrderSummary,caseData, response.getPaymentReference());
+                updateCaseDataWithPaymentDetails(applicationFeeOrderSummary, caseData, response.getPaymentReference());
             } else {
                 return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                     .data(details.getData())

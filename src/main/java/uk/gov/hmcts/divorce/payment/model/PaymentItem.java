@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
 
-import java.util.Optional;
-
 @Data
 @ToString
 @Builder
@@ -37,12 +35,4 @@ public class PaymentItem {
 
     @JsonProperty("version")
     private String version;
-
-    public void setCalculatedAmount(String calculatedAmount) {
-        this.calculatedAmount = Optional.ofNullable(calculatedAmount)
-                .map(Double::parseDouble)
-                .map(i -> i / 100).map(String::valueOf)
-                .orElse(calculatedAmount);
-    }
-
 }

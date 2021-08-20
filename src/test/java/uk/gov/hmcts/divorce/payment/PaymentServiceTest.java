@@ -166,7 +166,7 @@ public class PaymentServiceTest {
 
         when(responseEntity.getStatusCode()).thenReturn(CREATED);
 
-        PbaResponse response = paymentService.processPbaPayment(caseData, TEST_CASE_ID);
+        PbaResponse response = paymentService.processPbaPayment(caseData, TEST_CASE_ID, solicitor());
 
         assertThat(response.getErrorMessage()).isNull();
         assertThat(response.getHttpStatus()).isEqualTo(CREATED);
@@ -203,7 +203,7 @@ public class PaymentServiceTest {
                 any(CreditAccountPaymentRequest.class)
             );
 
-        PbaResponse response = paymentService.processPbaPayment(caseData, TEST_CASE_ID);
+        PbaResponse response = paymentService.processPbaPayment(caseData, TEST_CASE_ID, solicitor());
 
         assertThat(response.getHttpStatus()).isEqualTo(FORBIDDEN);
         assertThat(response.getErrorMessage())
@@ -238,7 +238,7 @@ public class PaymentServiceTest {
                 any(CreditAccountPaymentRequest.class)
             );
 
-        PbaResponse response = paymentService.processPbaPayment(caseData, TEST_CASE_ID);
+        PbaResponse response = paymentService.processPbaPayment(caseData, TEST_CASE_ID, solicitor());
 
         assertThat(response.getHttpStatus()).isEqualTo(FORBIDDEN);
         assertThat(response.getErrorMessage())
@@ -268,7 +268,7 @@ public class PaymentServiceTest {
                 any(CreditAccountPaymentRequest.class)
             );
 
-        PbaResponse response = paymentService.processPbaPayment(caseData, TEST_CASE_ID);
+        PbaResponse response = paymentService.processPbaPayment(caseData, TEST_CASE_ID, solicitor());
 
         assertThat(response.getHttpStatus()).isEqualTo(NOT_FOUND);
         assertThat(response.getErrorMessage())
@@ -303,7 +303,7 @@ public class PaymentServiceTest {
                 any(CreditAccountPaymentRequest.class)
             );
 
-        PbaResponse response = paymentService.processPbaPayment(caseData, TEST_CASE_ID);
+        PbaResponse response = paymentService.processPbaPayment(caseData, TEST_CASE_ID, solicitor());
 
         assertThat(response.getHttpStatus()).isEqualTo(FORBIDDEN);
         assertThat(response.getErrorMessage())
@@ -354,5 +354,13 @@ public class PaymentServiceTest {
         Request request = Request.create(POST, EMPTY, Map.of(), null, UTF_8, null);
 
         return new FeignException.FeignClientException(HttpStatus.FORBIDDEN.value(), "error", request, body);
+    }
+
+    private Solicitor solicitor() {
+        return Solicitor
+            .builder()
+            .organisationPolicy(organisationPolicy())
+            .reference("testref")
+            .build();
     }
 }
