@@ -81,6 +81,7 @@ class SendSubmissionNotificationsTest {
     void shouldSendCitizenNotificationIfCitizenApplicationAndAwaitingHwfDecisionState() {
 
         final CaseData caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
         caseData.setApplication(Application.builder().build());
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -99,6 +100,7 @@ class SendSubmissionNotificationsTest {
 
         final CaseData caseData = caseData();
         caseData.setApplication(Application.builder().build());
+        caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -117,6 +119,7 @@ class SendSubmissionNotificationsTest {
     void shouldDoNothingIfCitizenApplicationAndNotSubmittedOrNotAwaitingDocumentState() {
 
         final CaseData caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
         caseData.setApplication(Application.builder().build());
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
