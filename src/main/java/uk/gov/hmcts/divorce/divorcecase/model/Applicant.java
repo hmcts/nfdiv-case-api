@@ -19,6 +19,7 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 
@@ -151,7 +152,7 @@ public class Applicant {
 
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
-        return languagePreferenceWelsh == null || languagePreferenceWelsh.equals(YesOrNo.NO)
+        return languagePreferenceWelsh == null || languagePreferenceWelsh.equals(NO)
             ? ENGLISH
             : WELSH;
     }
