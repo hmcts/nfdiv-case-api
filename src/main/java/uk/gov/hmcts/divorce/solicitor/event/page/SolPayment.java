@@ -79,9 +79,11 @@ public class SolPayment implements CcdPageConfiguration {
 
         DynamicList pbaNumbersDynamicList = DynamicList
             .builder()
+            .value(DynamicListElement.builder().build())
             .listItems(pbaAccountNumbers)
             .build();
 
+        log.info("DynamicList {}", pbaNumbersDynamicList);
         caseData.getApplication().setPbaNumbers(pbaNumbersDynamicList);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

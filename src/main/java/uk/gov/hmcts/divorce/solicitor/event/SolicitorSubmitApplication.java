@@ -110,6 +110,8 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
+            .errors(null)
+            .warnings(null)
             .build();
     }
 
