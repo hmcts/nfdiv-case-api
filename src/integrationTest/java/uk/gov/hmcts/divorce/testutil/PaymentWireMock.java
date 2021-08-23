@@ -14,17 +14,26 @@ import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentRequest;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
 import uk.gov.hmcts.divorce.payment.model.PaymentItem;
+import uk.gov.hmcts.divorce.solicitor.client.pba.OrganisationEntityResponse;
+import uk.gov.hmcts.divorce.solicitor.client.pba.PbaOrganisationResponse;
+
+import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.orderSummaryWithFee;
 
 public final class PaymentWireMock {
@@ -32,6 +41,7 @@ public final class PaymentWireMock {
     private static final WireMockServer PAYMENTS_SERVER = new WireMockServer(wireMockConfig().dynamicPort());
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static PbaOrganisationResponse pbaOrganisationResponse;
 
     private PaymentWireMock() {
     }
@@ -64,11 +74,32 @@ public final class PaymentWireMock {
                 .withBody(OBJECT_MAPPER.writeValueAsString(response))));
     }
 
+    public static void stubPbaNumbersRetrieval() throws JsonProcessingException {
+
+        var pbaOrganisationResponse = PbaOrganisationResponse.builder().build();
+        pbaOrganisationResponse.setOrganisationEntityResponse(
+            OrganisationEntityResponse
+                .builder()
+                .paymentAccount(List.of("PBA0012345"))
+                .build()
+        );
+
+        PAYMENTS_SERVER.stubFor(get("/refdata/external/v1/organisations/pbas")
+            .withHeader(AUTHORIZATION, new EqualToPattern(TEST_AUTHORIZATION_TOKEN))
+            .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(AUTH_HEADER_VALUE))
+            .withHeader("UserEmail", new EqualToPattern(TEST_USER_EMAIL))
+            .willReturn(aResponse()
+                .withStatus(OK.value())
+                .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                .withBody(OBJECT_MAPPER.writeValueAsString(pbaOrganisationResponse))));
+    }
+
     public static class PropertiesInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         @Override
         public void initialize(ConfigurableApplicationContext applicationContext) {
             TestPropertyValues
                 .of("payment.service.api.baseurl=" + "http://localhost:" + PAYMENTS_SERVER.port())
+                .and("pba.ref.data.service.url=" + "http://localhost:" + PAYMENTS_SERVER.port())
                 .applyTo(applicationContext.getEnvironment());
         }
     }

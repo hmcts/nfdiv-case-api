@@ -54,7 +54,9 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFeeListValue;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getPbaNumbersForAccount;
 
 @ExtendWith(MockitoExtension.class)
 public class SolicitorSubmitApplicationTest {
@@ -81,7 +83,7 @@ public class SolicitorSubmitApplicationTest {
     private SolicitorSubmitApplication solicitorSubmitApplication;
 
     @Test
-    void shouldSetOrderSummaryAndSolicitorFeesInPoundsAndSolicitorRolesWhenAboutToStartIsInvoked() {
+    void shouldSetOrderSummaryAndSolicitorFeesInPoundsAndSolicitorRolesAndPbaNumbersWhenAboutToStartIsInvoked() {
 
         final long caseId = 1L;
         final String authorization = "authorization";
@@ -94,6 +96,16 @@ public class SolicitorSubmitApplicationTest {
         when(paymentService.getOrderSummary()).thenReturn(orderSummary);
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(authorization);
         when(orderSummary.getPaymentTotal()).thenReturn("55000");
+
+        var midEventCaseData = caseData();
+        midEventCaseData.getApplication().setPbaNumbers(getPbaNumbersForAccount("PBA0012345"));
+
+        var pbaResponse
+            = AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(midEventCaseData)
+            .build();
+
+        when(solPayment.midEvent(caseDetails, caseDetails)).thenReturn(pbaResponse);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             solicitorSubmitApplication.aboutToStart(caseDetails);

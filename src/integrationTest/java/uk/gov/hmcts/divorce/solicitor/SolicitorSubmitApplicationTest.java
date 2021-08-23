@@ -32,6 +32,7 @@ import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -58,6 +59,7 @@ import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamDetails;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamFailure;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamToken;
 import static uk.gov.hmcts.divorce.testutil.PaymentWireMock.stubCreditAccountPayment;
+import static uk.gov.hmcts.divorce.testutil.PaymentWireMock.stubPbaNumbersRetrieval;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
@@ -130,8 +132,9 @@ public class SolicitorSubmitApplicationTest {
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, SOLICITOR_USER_ID, SOLICITOR_ROLE);
         stubForIdamDetails(SYSTEM_UPDATE_AUTH_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(SYSTEM_UPDATE_AUTH_TOKEN);
+        stubPbaNumbersRetrieval();
 
-        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
+        when(serviceTokenGenerator.generate()).thenReturn(AUTH_HEADER_VALUE);
 
         stubForCcdCaseRoles();
 
@@ -148,7 +151,7 @@ public class SolicitorSubmitApplicationTest {
                 content().json(expectedCcdCallbackResponse())
             );
 
-        verify(serviceTokenGenerator).generate();
+        verify(serviceTokenGenerator,times(2)).generate();
         verifyNoMoreInteractions(serviceTokenGenerator);
     }
 
