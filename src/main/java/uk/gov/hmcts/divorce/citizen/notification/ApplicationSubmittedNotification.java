@@ -32,7 +32,7 @@ public class ApplicationSubmittedNotification {
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(dateTimeFormatter));
         templateVars.put(APPLICATION_REFERENCE, formatId(id));
 
-        log.info("Sending application submitted notification for case : {}", id);
+        log.info("Sending application submitted notification to applicant 1 for case : {}", id);
 
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
@@ -49,7 +49,7 @@ public class ApplicationSubmittedNotification {
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(dateTimeFormatter));
         templateVars.put(APPLICATION_REFERENCE, formatId(id));
 
-        log.info("Sending application submitted notification for case : {}", id);
+        log.info("Sending application submitted notification to applicant 2 for case : {}", id);
 
         notificationService.sendEmail(
             caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
