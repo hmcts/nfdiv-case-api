@@ -8,6 +8,9 @@ import feign.FeignException;
 import feign.Request;
 import feign.Response;
 import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.ccd.sdk.type.DynamicList;
+import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
+import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
@@ -179,7 +182,7 @@ public class TestDataHelper {
 
     public static CaseData caseDataWithOrderSummary() {
         var application = Application.builder()
-            .applicationFeeOrderSummary(OrderSummary.builder().paymentTotal("55000").build())
+            .applicationFeeOrderSummary(orderSummaryWithFee())
             .build();
 
         return CaseData
@@ -510,12 +513,46 @@ public class TestDataHelper {
             .build();
     }
 
+    public static DynamicList getPbaNumbersForAccount(String accountNumber) {
+        return DynamicList
+            .builder()
+            .value(
+                DynamicListElement
+                    .builder()
+                    .code(UUID.randomUUID())
+                    .label(accountNumber)
+                    .build()
+            )
+            .build();
+    }
+
     private static CaseDetails caseDetailsBefore(CaseData caseData) {
         return CaseDetails
             .builder()
             .data(OBJECT_MAPPER.convertValue(caseData, TYPE_REFERENCE))
             .id(TEST_CASE_ID)
             .caseTypeId(CASE_TYPE)
+            .build();
+    }
+
+    public static ListValue<Fee> getFeeListValue() {
+        return ListValue
+            .<Fee>builder()
+            .value(Fee
+                .builder()
+                .amount("550")
+                .description("fees for divorce")
+                .code("FEE002")
+                .build()
+            )
+            .build();
+    }
+
+    public static OrderSummary orderSummaryWithFee() {
+        return OrderSummary
+            .builder()
+            .paymentTotal("55000")
+            .fees(singletonList(getFeeListValue()))
             .build();
     }
 }

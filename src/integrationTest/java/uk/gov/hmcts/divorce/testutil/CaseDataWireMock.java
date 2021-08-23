@@ -12,6 +12,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.BEARER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
@@ -41,7 +42,7 @@ public final class CaseDataWireMock {
     public static void stubForCcdCaseRoles() {
         CASE_DATA_SERVER.stubFor(put(urlMatching("/cases/[0-9]+/users/[0-9]+"))
             .withHeader(HttpHeaders.AUTHORIZATION, new EqualToPattern(BEARER + SYSTEM_UPDATE_AUTH_TOKEN))
-            .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(SERVICE_AUTHORIZATION))
+            .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(AUTH_HEADER_VALUE))
             .withRequestBody(new EqualToJsonPattern(
                 "{\"user_id\" : \"1\", \"case_roles\":[\"[CREATOR]\",\"[APPONESOLICITOR]\"]}",
                 true,
