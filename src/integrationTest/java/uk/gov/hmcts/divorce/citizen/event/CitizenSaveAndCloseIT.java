@@ -45,7 +45,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithOrderSumm
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-public class CitizenSaveAndCloseTest {
+public class CitizenSaveAndCloseIT {
 
     @Autowired
     private MockMvc mockMvc;

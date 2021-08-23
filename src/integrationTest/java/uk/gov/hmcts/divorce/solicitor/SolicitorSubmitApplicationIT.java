@@ -91,7 +91,7 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
     IdamWireMock.PropertiesInitializer.class,
     CaseDataWireMock.PropertiesInitializer.class,
     PaymentWireMock.PropertiesInitializer.class})
-public class SolicitorSubmitApplicationTest {
+public class SolicitorSubmitApplicationIT {
 
     @Autowired
     private MockMvc mockMvc;

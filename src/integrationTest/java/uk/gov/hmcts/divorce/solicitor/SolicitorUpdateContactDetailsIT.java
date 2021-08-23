@@ -29,7 +29,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
-import static uk.gov.hmcts.divorce.solicitor.SolicitorCreateApplicationTest.getApplicant;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorUpdateContactDetails.SOLICITOR_UPDATE_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.start;
 import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.stopAndReset;
@@ -44,6 +43,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOK
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicantWithAddress;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
@@ -53,7 +53,7 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 @ContextConfiguration(initializers = {
     PrdOrganisationWireMock.PropertiesInitializer.class
 })
-public class SolicitorUpdateContactDetailsTest {
+public class SolicitorUpdateContactDetailsIT {
 
     @Autowired
     private MockMvc mockMvc;
@@ -128,7 +128,7 @@ public class SolicitorUpdateContactDetailsTest {
     }
 
     private CaseData caseData() {
-        var applicant1 = getApplicant();
+        var applicant1 = getApplicantWithAddress();
         applicant1.setFinancialOrder(NO);
 
         return CaseData

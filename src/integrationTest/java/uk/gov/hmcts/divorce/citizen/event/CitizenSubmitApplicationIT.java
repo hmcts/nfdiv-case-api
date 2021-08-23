@@ -62,7 +62,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseDa
 @ContextConfiguration(initializers = {
     FeesWireMock.PropertiesInitializer.class,
 })
-public class CitizenSubmitApplicationTest {
+public class CitizenSubmitApplicationIT {
 
     @Autowired
     private MockMvc mockMvc;

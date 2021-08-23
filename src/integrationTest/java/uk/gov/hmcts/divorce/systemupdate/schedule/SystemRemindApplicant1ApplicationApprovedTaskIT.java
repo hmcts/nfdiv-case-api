@@ -16,16 +16,17 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("schedule_test")
-public class SystemProgressHeldCasesTaskTest {
+public class SystemRemindApplicant1ApplicationApprovedTaskIT {
 
     @SpyBean
-    private SystemProgressHeldCasesTask awaitingConditionalOrderTask;
+    private SystemRemindApplicant1ApplicationApprovedTask systemRemindApplicant1ApplicationApprovedTask;
 
     @Test
-    public void givenApplicationIsRunningAwaitingConditionalOrderScheduledJobIsExecutedAtLeastOnce() {
-        await(" Awaiting Conditional order task executed atleast once")
+    public void givenApplicationIsRunningRemindApplicant1ApplicationApprovedScheduledJobIsExecutedAtLeastOnce() {
+
+        await("Remind applicant 1 application reviewed task executed at least once")
             .atMost(60, TimeUnit.SECONDS)
             .pollInterval(2, TimeUnit.SECONDS)
-            .until(() -> verify(awaitingConditionalOrderTask, atLeastOnce()).execute());
+            .until(() -> verify(systemRemindApplicant1ApplicationApprovedTask, atLeastOnce()).execute());
     }
 }

@@ -38,7 +38,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-public class SolicitorSubmitAosTest {
+public class SolicitorSubmitAosIT {
 
     @Autowired
     private MockMvc mockMvc;

@@ -16,15 +16,17 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("schedule_test")
-class SystemProgressCasesToAosOverdueTaskTest {
+public class SystemAlertApplicationNotReviewedTaskIT {
+
     @SpyBean
-    private SystemProgressCasesToAosOverdueTask progressCasesToAosOverdueTask;
+    private SystemAlertApplicationNotReviewedTask systemAlertApplicationNotReviewedTask;
 
     @Test
-    public void givenApplicationIsRunningAosOverdueScheduledJobIsExecutedAtLeastOnce() {
-        await(" Awaiting aos overdue task executed atleast once")
+    public void givenApplicationIsRunningApplicationNotReviewedScheduledJobIsExecutedAtLeastOnce() {
+
+        await("Alert application not reviewed task executed at least once")
             .atMost(60, TimeUnit.SECONDS)
             .pollInterval(2, TimeUnit.SECONDS)
-            .until(() -> verify(progressCasesToAosOverdueTask, atLeastOnce()).execute());
+            .until(() -> verify(systemAlertApplicationNotReviewedTask, atLeastOnce()).execute());
     }
 }

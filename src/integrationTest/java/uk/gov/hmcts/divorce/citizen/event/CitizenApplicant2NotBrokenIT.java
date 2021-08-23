@@ -49,7 +49,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1C
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-public class CitizenApplicant2NotBrokenTest {
+public class CitizenApplicant2NotBrokenIT {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 

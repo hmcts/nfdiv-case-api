@@ -100,7 +100,7 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.resourceAsBytes;
     IdamWireMock.PropertiesInitializer.class,
     DocManagementStoreWireMock.PropertiesInitializer.class,
     SendLetterWireMock.PropertiesInitializer.class})
-public class CaseworkerIssueApplicationTest {
+public class CaseworkerIssueApplicationIT {
 
     private static final String CASEWORKER_ISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_SOL_REP =
         "classpath:caseworker-issue-application-about-to-submit-app2-sol-rep-response.json";

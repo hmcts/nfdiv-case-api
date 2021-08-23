@@ -16,17 +16,17 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("schedule_test")
-public class SystemAlertApplicationNotReviewedTaskTest {
+public class SystemRemindApplicant2TaskIT {
 
     @SpyBean
-    private SystemAlertApplicationNotReviewedTask systemAlertApplicationNotReviewedTask;
+    private SystemRemindApplicant2Task systemRemindApplicant2Task;
 
     @Test
     public void givenApplicationIsRunningApplicationNotReviewedScheduledJobIsExecutedAtLeastOnce() {
 
-        await("Alert application not reviewed task executed at least once")
+        await("Remind applicant 2 task executed at least once")
             .atMost(60, TimeUnit.SECONDS)
             .pollInterval(2, TimeUnit.SECONDS)
-            .until(() -> verify(systemAlertApplicationNotReviewedTask, atLeastOnce()).execute());
+            .until(() -> verify(systemRemindApplicant2Task, atLeastOnce()).execute());
     }
 }

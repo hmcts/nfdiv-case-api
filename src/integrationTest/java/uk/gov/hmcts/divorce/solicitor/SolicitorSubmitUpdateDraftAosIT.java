@@ -37,7 +37,6 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DOCUMENT_TYPE_RESPONDENT_INVITATION;
-import static uk.gov.hmcts.divorce.solicitor.SolicitorCreateApplicationTest.getApplicant;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorDraftAos.SOLICITOR_DRAFT_AOS;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorUpdateAos.SOLICITOR_UPDATE_AOS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
@@ -46,6 +45,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicantWithAddress;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -53,7 +53,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 @ContextConfiguration(initializers = {
     IdamWireMock.PropertiesInitializer.class
 })
-public class SolicitorSubmitUpdateDraftAosTest {
+public class SolicitorSubmitUpdateDraftAosIT {
     @Autowired
     private MockMvc mockMvc;
 
@@ -169,7 +169,7 @@ public class SolicitorSubmitUpdateDraftAosTest {
             .value(divorceDocument)
             .build();
 
-        var applicant1 = getApplicant();
+        var applicant1 = getApplicantWithAddress();
         applicant1.setFinancialOrder(NO);
 
         return CaseData
@@ -183,12 +183,12 @@ public class SolicitorSubmitUpdateDraftAosTest {
     }
 
     private CaseData caseDataWithoutDivorceApplication() {
-        var applicant1 = getApplicant();
+        var applicant1 = getApplicantWithAddress();
         applicant1.setFinancialOrder(NO);
 
         return CaseData
             .builder()
-            .applicant1(getApplicant())
+            .applicant1(applicant1)
             .divorceOrDissolution(DIVORCE)
             .divorceUnit(Court.SERVICE_CENTRE)
             .selectedDivorceCentreSiteId("AA07")

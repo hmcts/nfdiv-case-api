@@ -59,7 +59,7 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
     DocAssemblyWireMock.PropertiesInitializer.class,
     IdamWireMock.PropertiesInitializer.class
 })
-public class CaseworkerCreateGeneralOrderTest {
+public class CaseworkerCreateGeneralOrderIT {
     @Autowired
     private MockMvc mockMvc;
 

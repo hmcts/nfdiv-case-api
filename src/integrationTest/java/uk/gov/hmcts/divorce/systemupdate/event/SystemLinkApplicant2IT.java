@@ -61,7 +61,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 @ContextConfiguration(initializers = {
     IdamWireMock.PropertiesInitializer.class,
     CaseDataWireMock.PropertiesInitializer.class})
-public class SystemLinkApplicant2Test {
+public class SystemLinkApplicant2IT {
 
     @Autowired
     private MockMvc mockMvc;

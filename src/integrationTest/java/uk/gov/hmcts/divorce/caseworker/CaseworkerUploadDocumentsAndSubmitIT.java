@@ -37,7 +37,7 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-public class CaseworkerUploadDocumentsAndSubmitTest {
+public class CaseworkerUploadDocumentsAndSubmitIT {
 
     @Autowired
     private MockMvc mockMvc;

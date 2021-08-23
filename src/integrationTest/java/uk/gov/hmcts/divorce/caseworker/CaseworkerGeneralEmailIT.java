@@ -62,7 +62,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @DirtiesContext
-public class CaseworkerGeneralEmailTest {
+public class CaseworkerGeneralEmailIT {
 
     @Autowired
     private GeneralEmailNotification generalEmailNotification;

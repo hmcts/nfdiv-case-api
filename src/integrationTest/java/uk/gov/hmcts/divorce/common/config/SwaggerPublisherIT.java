@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 @ContextConfiguration(classes = SwaggerConfiguration.class)
 @AutoConfigureMockMvc
-class SwaggerPublisherTest {
+class SwaggerPublisherIT {
 
     @Autowired
     private MockMvc mvc;

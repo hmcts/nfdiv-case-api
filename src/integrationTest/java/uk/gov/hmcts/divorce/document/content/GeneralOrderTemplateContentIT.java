@@ -28,7 +28,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getGeneralOrder;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class GeneralOrderTemplateContentTest {
+public class GeneralOrderTemplateContentIT {
 
     @Autowired
     private GeneralOrderTemplateContent templateContent;

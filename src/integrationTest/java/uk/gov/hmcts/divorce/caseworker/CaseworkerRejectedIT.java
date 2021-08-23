@@ -51,7 +51,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 @ContextConfiguration(initializers = {
     IdamWireMock.PropertiesInitializer.class
 })
-public class CaseworkerRejectedTest {
+public class CaseworkerRejectedIT {
     @Autowired
     private MockMvc mockMvc;
 

@@ -47,7 +47,7 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ContextConfiguration(initializers = {IdamWireMock.PropertiesInitializer.class})
-public class CaseworkerAddNoteTest {
+public class CaseworkerAddNoteIT {
 
     private static final String CASEWORKER_ADD_NOTE_RESPONSE =
         "classpath:caseworker-add-note-response.json";

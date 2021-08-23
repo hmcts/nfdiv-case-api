@@ -33,7 +33,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
         "s2s.stub=false"
     }
 )
-public class RequestInterceptorTest {
+public class RequestInterceptorIT {
 
     @Autowired
     private MockMvc mockMvc;
