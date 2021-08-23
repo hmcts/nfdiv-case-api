@@ -28,9 +28,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.Fee.getValueInPence;
 import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.CAE0001;
+import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.CAE0003;
 import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.CAE0004;
 import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.GENERAL;
 import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.NOT_FOUND;
@@ -48,6 +50,7 @@ public class PaymentService {
     private static final String GBP = "GBP";
     public static final String CA_E0001 = "CA-E0001";
     public static final String CA_E0004 = "CA-E0004";
+    public static final String CA_E0003 = "CA-E0003";
 
     @Autowired
     private HttpServletRequest httpServletRequest;
@@ -109,7 +112,9 @@ public class PaymentService {
                 paymentReference
             );
 
-            return new PbaResponse(paymentResponseEntity.getStatusCode(), null, paymentReference);
+            if (paymentResponseEntity != null) {
+                return new PbaResponse(paymentResponseEntity.getStatusCode(), null, paymentReference);
+            }
 
         } catch (FeignException exception) {
             log.error("For case id {} unsuccessful payment for account number {} with exception {}",
@@ -119,6 +124,7 @@ public class PaymentService {
             );
             return getPbaErrorResponse(pbaNumber, exception);
         }
+        return new PbaResponse(INTERNAL_SERVER_ERROR, GENERAL.value(), null);
     }
 
     private CreditAccountPaymentResponse getPaymentResponse(FeignException exception) {
@@ -155,7 +161,7 @@ public class PaymentService {
 
     private PbaResponse getPbaErrorResponse(String pbaNumber, FeignException exception) {
         HttpStatus httpStatus = Optional.ofNullable(HttpStatus.resolve(exception.status()))
-            .orElseGet(() -> HttpStatus.INTERNAL_SERVER_ERROR);
+            .orElseGet(() -> INTERNAL_SERVER_ERROR);
 
         if (httpStatus == HttpStatus.NOT_FOUND) {
             return new PbaResponse(httpStatus, String.format(NOT_FOUND.value(), pbaNumber), null);
@@ -190,21 +196,38 @@ public class PaymentService {
     ) {
         String errorMessage = null;
         if (httpStatus == HttpStatus.FORBIDDEN) {
-            if (errorCode.equalsIgnoreCase(CA_E0001)) {
-                log.info("Payment Reference: {} Generating error message for {} error code",
-                    creditAccountPaymentResponse.getPaymentReference(),
-                    CA_E0001
-                );
-                errorMessage = String.format(CAE0001.value(), pbaNumber);
-            }
-            if (errorCode.equalsIgnoreCase(CA_E0004)) {
-                log.info("Payment Reference: {} Generating error message for {} error code",
-                    creditAccountPaymentResponse.getPaymentReference(),
-                    CA_E0004
-                );
-                errorMessage = String.format(CAE0004.value(), pbaNumber);
-            }
+            switch (errorCode) {
+                case CA_E0001:
+                    log.info("Payment Reference: {} Generating error message for {} error code",
+                        creditAccountPaymentResponse.getPaymentReference(),
+                        errorCode
+                    );
+                    errorMessage = String.format(CAE0001.value(), pbaNumber);
+                    break;
+                case CA_E0004:
+                    log.info("Payment Reference: {} Generating error message for {} error code",
+                        creditAccountPaymentResponse.getPaymentReference(),
+                        errorCode
+                    );
+                    errorMessage = String.format(CAE0004.value(), pbaNumber);
+                    break;
 
+                case CA_E0003:
+                    log.info("Payment Reference: {} Generating error message for {} error code",
+                        creditAccountPaymentResponse.getPaymentReference(),
+                        errorCode
+                    );
+                    errorMessage = String.format(CAE0003.value(), pbaNumber);
+                    break;
+
+                default:
+                    log.info("Payment Reference: {} Generating error message for {} error code",
+                        creditAccountPaymentResponse.getPaymentReference(),
+                        errorCode
+                    );
+                    errorMessage = GENERAL.value();
+                    break;
+            }
         } else {
             errorMessage = GENERAL.value();
         }
