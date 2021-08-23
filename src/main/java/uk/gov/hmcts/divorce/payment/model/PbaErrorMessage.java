@@ -3,7 +3,8 @@ package uk.gov.hmcts.divorce.payment.model;
 public enum PbaErrorMessage {
 
     CAE0001("Fee account %s has insufficient funds available."),
-    CAE0004("Payment Account %s has been deleted or is on hold."),
+    CAE0003("Payment Account %s is on hold."),
+    CAE0004("Payment Account %s has been deleted."),
     NOT_FOUND("Payment Account %s cannot be found."),
     GENERAL("Payment request failed.");
 

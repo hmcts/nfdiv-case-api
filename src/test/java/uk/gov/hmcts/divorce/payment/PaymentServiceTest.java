@@ -49,6 +49,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static uk.gov.hmcts.divorce.payment.PaymentService.CA_E0001;
+import static uk.gov.hmcts.divorce.payment.PaymentService.CA_E0003;
 import static uk.gov.hmcts.divorce.payment.PaymentService.CA_E0004;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
@@ -181,13 +182,13 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void shouldReturn403WithErrorCodeCae0004WhenAccountIsDeletedOrOnHold() throws Exception {
+    public void shouldReturn403WithErrorCodeCae0004WhenAccountIsDeleted() throws Exception {
         var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        CreditAccountPaymentResponse creditAccountPaymentResponse = buildPaymentClientResponse(CA_E0004, "Your account is on hold");
+        CreditAccountPaymentResponse creditAccountPaymentResponse = buildPaymentClientResponse(CA_E0004, "Your account is deleted");
 
         FeignException feignException = feignException(creditAccountPaymentResponse);
 
@@ -208,7 +209,41 @@ public class PaymentServiceTest {
         assertThat(response.getHttpStatus()).isEqualTo(FORBIDDEN);
         assertThat(response.getErrorMessage())
             .isEqualTo(
-                "Payment Account PBA0012345 has been deleted or is on hold. "
+                "Payment Account PBA0012345 has been deleted. "
+                    + "Please try again after 2 minutes with a different Payment Account, or alternatively use a different payment method. "
+                    + "For Payment Account support call 01633 652125 (Option 3) or email MiddleOffice.DDServices@liberata.com."
+            );
+    }
+
+    @Test
+    public void shouldReturn403WithErrorCodeCae0003WhenAccountIsHold() throws Exception {
+        var caseData = caseData();
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        CreditAccountPaymentResponse creditAccountPaymentResponse = buildPaymentClientResponse(CA_E0003, "Your account is on hold");
+
+        FeignException feignException = feignException(creditAccountPaymentResponse);
+
+        when(objectMapper.readValue(
+            feignException.contentUTF8().getBytes(),
+            CreditAccountPaymentResponse.class
+        )).thenReturn(creditAccountPaymentResponse);
+
+        doThrow(feignException)
+            .when(paymentPbaClient).creditAccountPayment(
+                eq(TEST_AUTHORIZATION_TOKEN),
+                eq(TEST_SERVICE_AUTH_TOKEN),
+                any(CreditAccountPaymentRequest.class)
+            );
+
+        PbaResponse response = paymentService.processPbaPayment(caseData, TEST_CASE_ID, solicitor());
+
+        assertThat(response.getHttpStatus()).isEqualTo(FORBIDDEN);
+        assertThat(response.getErrorMessage())
+            .isEqualTo(
+                "Payment Account PBA0012345 is on hold. "
                     + "Please try again after 2 minutes with a different Payment Account, or alternatively use a different payment method. "
                     + "For Payment Account support call 01633 652125 (Option 3) or email MiddleOffice.DDServices@liberata.com."
             );
