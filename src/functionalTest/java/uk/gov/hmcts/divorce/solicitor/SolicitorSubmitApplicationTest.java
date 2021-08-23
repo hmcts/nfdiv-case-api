@@ -60,7 +60,6 @@ public class SolicitorSubmitApplicationTest extends FunctionalTestSuite {
     }
 
     @Test
-    @Disabled("Disabled so that we don't exhaust PBA account on every run. Enable when required to test PBA account payments")
     public void shouldChangeStateToSubmittedIfPaymentProcessed() throws Exception {
         CallbackRequest request = CallbackRequest
             .builder()
