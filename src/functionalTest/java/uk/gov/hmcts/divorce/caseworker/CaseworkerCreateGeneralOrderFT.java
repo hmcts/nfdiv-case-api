@@ -19,7 +19,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.CREATE_GENERAL_ORDER_M
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
-public class CaseworkerCreateGeneralOrderTest extends FunctionalTestSuite {
+public class CaseworkerCreateGeneralOrderFT extends FunctionalTestSuite {
 
     @Test
     public void shouldGenerateOrderDocumentAndUpdateCaseDataWhenMidEventIsTriggered() throws Exception {

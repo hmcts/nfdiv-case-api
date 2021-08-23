@@ -20,7 +20,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
-public class CitizenAddPaymentTest extends FunctionalTestSuite {
+public class CitizenAddPaymentFT extends FunctionalTestSuite {
 
     private static final String PAYMENT_IN_PROGRESS_REQUEST =
         "classpath:request/casedata/ccd-callback-casedata-payment-in-progress.json";

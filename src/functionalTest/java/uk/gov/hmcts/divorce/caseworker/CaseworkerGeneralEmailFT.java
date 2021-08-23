@@ -31,7 +31,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 
 @SpringBootTest
-public class CaseworkerGeneralEmailTest extends FunctionalTestSuite {
+public class CaseworkerGeneralEmailFT extends FunctionalTestSuite {
 
     private static final String GOV_UK_TEST_EMAIL = "simulate-delivered@notifications.service.gov.uk";
 

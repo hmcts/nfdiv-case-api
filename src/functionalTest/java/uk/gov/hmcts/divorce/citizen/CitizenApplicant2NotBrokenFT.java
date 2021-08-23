@@ -14,22 +14,22 @@ import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenInviteApplicant2.CITIZEN_INVITE_APPLICANT_2;
+import static uk.gov.hmcts.divorce.citizen.event.CitizenApplicant2NotBroken.APPLICANT_2_NOT_BROKEN;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
-public class CitizenInviteApplicant2Test extends FunctionalTestSuite {
+public class CitizenApplicant2NotBrokenFT extends FunctionalTestSuite {
 
-    private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata-applicant1-invite-applicant2.json";
-    private static final String RESPONSE = "classpath:responses/response-applicant1-invite-applicant2.json";
+    private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata-applicant2-not-broken.json";
+    private static final String RESPONSE = "classpath:responses/response-applicant2-not-broken.json";
 
     @Test
     public void shouldSendEmailToApplicant1AndApplicant2WhenAllTemplateParamsAreValid() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
 
-        Response response = triggerCallback(request, CITIZEN_INVITE_APPLICANT_2, ABOUT_TO_SUBMIT_URL);
+        Response response = triggerCallback(request, APPLICANT_2_NOT_BROKEN, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 

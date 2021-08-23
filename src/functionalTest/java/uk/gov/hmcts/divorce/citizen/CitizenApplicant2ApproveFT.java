@@ -20,7 +20,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
-public class CitizenApplicant2ApproveTest extends FunctionalTestSuite {
+public class CitizenApplicant2ApproveFT extends FunctionalTestSuite {
 
     private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata-applicant2-approved.json";
     private static final String RESPONSE = "classpath:responses/response-applicant2-approved.json";

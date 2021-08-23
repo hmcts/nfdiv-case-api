@@ -14,7 +14,7 @@ import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 
 @SpringBootTest
-public class SolicitorSubmitAosTest extends FunctionalTestSuite {
+public class SolicitorSubmitAosFT extends FunctionalTestSuite {
 
     private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata-solicitor-submit-aos.json";
 

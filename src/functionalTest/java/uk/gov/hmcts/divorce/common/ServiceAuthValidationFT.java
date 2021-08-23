@@ -21,7 +21,7 @@ import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
 
 @SpringBootTest
-public class ServiceAuthValidationTest extends FunctionalTestSuite {
+public class ServiceAuthValidationFT extends FunctionalTestSuite {
 
     private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata.json";
 

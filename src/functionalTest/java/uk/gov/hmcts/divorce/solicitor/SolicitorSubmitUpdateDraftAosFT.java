@@ -21,7 +21,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationContactIn
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
-public class SolicitorSubmitUpdateDraftAosTest extends FunctionalTestSuite {
+public class SolicitorSubmitUpdateDraftAosFT extends FunctionalTestSuite {
 
     private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata-solicitor-draft-aos.json";
 

@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor;
+package uk.gov.hmcts.divorce.caseworker;
 
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
@@ -12,28 +12,20 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.FINANCIAL_ORDER;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreateApplication.SOLICITOR_CREATE;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.CASEWORKER_ISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationContactInformation;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
-public class SolicitorCreateApplicationTest extends FunctionalTestSuite {
+public class CaseworkerIssueApplicationFT extends FunctionalTestSuite {
 
-    private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata.json";
-    private static final String LANGUAGE_PREFERENCE_WELSH = "languagePreferenceWelsh";
+    private static final String REQUEST = "classpath:request/casedata/ccd-callback-caseworker-issue-application-about-to-submit.json";
 
     @Test
-    public void shouldUpdateCaseDataWithClaimCostsAndCourtDetailsWhenAboutToSubmitCallbackIsSuccessful() throws Exception {
-        Map<String, Object> caseData = caseData(REQUEST);
-        caseData.put(LANGUAGE_PREFERENCE_WELSH, NO);
-        caseData.put(FINANCIAL_ORDER, NO);
-        caseData.put("applicant2OrgContactInformation", organisationContactInformation());
-
-        Response response = triggerCallback(caseData, SOLICITOR_CREATE, ABOUT_TO_SUBMIT_URL);
+    public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessful() throws Exception {
+        final Map<String, Object> caseData = caseData(REQUEST);
+        final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
@@ -42,7 +34,7 @@ public class SolicitorCreateApplicationTest extends FunctionalTestSuite {
         assertThatJson(response.asString())
             .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedResponse(
-                "classpath:responses/response-solicitor-create-about-to-submit.json"
+                "classpath:responses/response-caseworker-issue-application-about-to-submit.json"
             )));
     }
 }

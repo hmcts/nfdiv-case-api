@@ -1,40 +1,42 @@
-package uk.gov.hmcts.divorce.caseworker;
+package uk.gov.hmcts.divorce.citizen;
 
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 
+import java.io.IOException;
 import java.util.Map;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
+import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAddNote.CASEWORKER_ADD_NOTE;
+import static uk.gov.hmcts.divorce.citizen.event.CitizenApplicant1Resubmit.APPLICANT_1_RESUBMIT;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
-public class CaseworkerAddNoteTest extends FunctionalTestSuite {
+public class CitizenApplicant1ResubmitFT extends FunctionalTestSuite {
 
-    private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata.json";
+    private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata-applicant1-resubmit-application.json";
+    private static final String RESPONSE = "classpath:responses/response-applicant1-resubmit-application.json";
 
     @Test
-    public void shouldUpdateCaseDataWithNotesWhenAboutToSubmitCallbackIsInvoked() throws Exception {
-        final Map<String, Object> caseData = caseData(REQUEST);
+    public void shouldSendEmailToApplicant1AndApplicant2WhenAllTemplateParamsAreValid() throws IOException {
+        Map<String, Object> request = caseData(REQUEST);
 
-        final Response response = triggerCallback(caseData, CASEWORKER_ADD_NOTE, ABOUT_TO_SUBMIT_URL);
+        Response response = triggerCallback(request, APPLICANT_1_RESUBMIT, ABOUT_TO_SUBMIT_URL);
+
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
-        // notes.date value is compared using ${json-unit.any-string}
-        // assertion will fail if the above value is missing
         assertThatJson(response.asString())
             .when(IGNORING_EXTRA_FIELDS)
-            .isEqualTo(json(expectedResponse(
-                "classpath:responses/response-caseworker-add-notes-about-to-submit.json"
-            )));
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(RESPONSE)));
     }
+
 }

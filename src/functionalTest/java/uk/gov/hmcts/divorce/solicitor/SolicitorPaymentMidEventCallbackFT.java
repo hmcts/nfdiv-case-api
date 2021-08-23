@@ -21,7 +21,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SOL_PAYMENT_MID_EVENT_
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
-public class SolicitorPaymentMidEventCallbackTest extends FunctionalTestSuite {
+public class SolicitorPaymentMidEventCallbackFT extends FunctionalTestSuite {
 
     private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata.json";
     private static final String LANGUAGE_PREFERENCE_WELSH = "languagePreferenceWelsh";

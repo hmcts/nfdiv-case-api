@@ -29,7 +29,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_UPDATE_CONTA
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
-public class SolicitorMidEventCallbackTest extends FunctionalTestSuite {
+public class SolicitorMidEventCallbackFT extends FunctionalTestSuite {
 
     private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata.json";
     private static final String LANGUAGE_PREFERENCE_WELSH = "languagePreferenceWelsh";
