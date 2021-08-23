@@ -61,8 +61,6 @@ public class SystemAlertApplicationNotReviewedTask {
                             && !caseData.getApplication().isOverdueNotificationSent()
                         ) {
                             notifyApplicant1(caseDetails, caseData, dueDate);
-                            log.info("~~~~~~~~~~~~~SystemAlertApplicationNotReviewedTask "
-                                + "notifyApplicant1 completed for case with ID {}", caseDetails.getId());
                         }
                     }
                 } catch (final CcdManagementException e) {
