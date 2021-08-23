@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.solicitor;
 
 import io.restassured.response.Response;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
@@ -26,6 +27,7 @@ public class SolicitorPaymentMidEventCallbackTest extends FunctionalTestSuite {
     private static final String LANGUAGE_PREFERENCE_WELSH = "languagePreferenceWelsh";
 
     @Test
+    @Disabled("Temporarily disabled as pba numbers are retrieved in about to  start")
     public void shouldRetrieveAndSetPbaNumbersWhenMidEventCallbackIsInvoked() throws Exception {
         Map<String, Object> caseData = caseData(REQUEST);
         caseData.put(LANGUAGE_PREFERENCE_WELSH, NO);
