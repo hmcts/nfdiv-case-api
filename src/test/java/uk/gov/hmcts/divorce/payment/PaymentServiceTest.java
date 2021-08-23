@@ -47,6 +47,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static uk.gov.hmcts.divorce.payment.PaymentService.CA_E0001;
 import static uk.gov.hmcts.divorce.payment.PaymentService.CA_E0003;
@@ -250,6 +251,30 @@ public class PaymentServiceTest {
     }
 
     @Test
+    public void shouldReturn4InternalServerErrorWhenResponseEntityIsNull() throws Exception {
+        var caseData = caseData();
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        when(paymentPbaClient.creditAccountPayment(
+            eq(TEST_AUTHORIZATION_TOKEN),
+            eq(TEST_SERVICE_AUTH_TOKEN),
+            any(CreditAccountPaymentRequest.class)
+        )).thenReturn(null);
+
+        PbaResponse response = paymentService.processPbaPayment(caseData, TEST_CASE_ID, solicitor());
+
+        assertThat(response.getHttpStatus()).isEqualTo(INTERNAL_SERVER_ERROR);
+        assertThat(response.getErrorMessage())
+            .isEqualTo(
+                "Payment request failed. "
+                    + "Please try again after 2 minutes with a different Payment Account, or alternatively use a different payment method. "
+                    + "For Payment Account support call 01633 652125 (Option 3) or email MiddleOffice.DDServices@liberata.com."
+            );
+    }
+
+    @Test
     public void shouldReturn403WithErrorCodeCae0001WhenAccountHasInsufficientBalance() throws Exception {
         var caseData = caseData();
 
@@ -279,6 +304,41 @@ public class PaymentServiceTest {
         assertThat(response.getErrorMessage())
             .isEqualTo(
                 "Fee account PBA0012345 has insufficient funds available. "
+                    + "Please try again after 2 minutes with a different Payment Account, or alternatively use a different payment method. "
+                    + "For Payment Account support call 01633 652125 (Option 3) or email MiddleOffice.DDServices@liberata.com."
+            );
+    }
+
+    @Test
+    public void shouldReturnGeneralErrorWhenErrorCodeIsUnknown() throws Exception {
+        var caseData = caseData();
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        CreditAccountPaymentResponse creditAccountPaymentResponse =
+            buildPaymentClientResponse("error_code", "Some error");
+
+        FeignException feignException = feignException(creditAccountPaymentResponse);
+
+        when(objectMapper.readValue(
+            feignException.contentUTF8().getBytes(),
+            CreditAccountPaymentResponse.class
+        )).thenReturn(creditAccountPaymentResponse);
+
+        doThrow(feignException)
+            .when(paymentPbaClient).creditAccountPayment(
+                eq(TEST_AUTHORIZATION_TOKEN),
+                eq(TEST_SERVICE_AUTH_TOKEN),
+                any(CreditAccountPaymentRequest.class)
+            );
+
+        PbaResponse response = paymentService.processPbaPayment(caseData, TEST_CASE_ID, solicitor());
+
+        assertThat(response.getHttpStatus()).isEqualTo(FORBIDDEN);
+        assertThat(response.getErrorMessage())
+            .isEqualTo(
+                "Payment request failed. "
                     + "Please try again after 2 minutes with a different Payment Account, or alternatively use a different payment method. "
                     + "For Payment Account support call 01633 652125 (Option 3) or email MiddleOffice.DDServices@liberata.com."
             );
