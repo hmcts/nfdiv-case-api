@@ -17,7 +17,7 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import java.time.LocalDate;
 import java.util.List;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicant1ApplicationReviewed.SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED;
 
 @Component
@@ -43,7 +43,7 @@ public class SystemRemindApplicant1ApplicationApprovedTask {
 
         try {
             final List<CaseDetails> casesInAwaitingApplicant1Response =
-                ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant1Response);
+                ccdSearchService.searchForAllCasesWithStateOf(Applicant2Approved);
 
             for (final CaseDetails caseDetails : casesInAwaitingApplicant1Response) {
                 try {
