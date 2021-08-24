@@ -312,6 +312,7 @@ public class TestDataHelper {
 
         return marriageDetails;
     }
+
     public static Jurisdiction getJurisdiction() {
         final Jurisdiction jurisdiction = new Jurisdiction();
         jurisdiction.setConnections(Set.of(APP_1_RESIDENT_JOINT));
