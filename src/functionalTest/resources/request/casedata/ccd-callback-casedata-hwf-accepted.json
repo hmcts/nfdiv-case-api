@@ -19,27 +19,5 @@
   "solSignStatementOfTruth": "YES",
   "jurisdictionApplicant1Residence": "YES",
   "jurisdictionApplicant2Residence": "YES",
-  "jurisdictionConnections": ["A"],
-  "applicationFeeOrderSummary": {
-    "PaymentTotal": "55000",
-    "PaymentReference": null,
-    "Fees": [
-      {
-        "id": null,
-        "value": {
-          "FeeDescription": "Filing an application for a divorce, nullity or civil partnership dissolution",
-          "FeeVersion": "5",
-          "FeeCode": "FEE0002",
-          "FeeAmount": "55000"
-        }
-      }
-    ]
-  },
-  "applicationPayments": [{
-    "id": "1",
-    "value": {
-      "status": "success",
-      "amount": 55000
-    }
-  }]
+  "jurisdictionConnections": ["A"]
 }

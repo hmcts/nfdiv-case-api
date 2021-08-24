@@ -77,6 +77,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DISSOLUTION_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DIVORCE_TEST_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
@@ -207,6 +208,16 @@ public class TestDataHelper {
             .divorceOrDissolution(DIVORCE)
             .application(application)
             .build();
+    }
+
+    public static CaseData jointCaseDataWithOrderSummary() {
+        CaseData caseData = caseDataWithOrderSummary();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.setCaseInvite(new CaseInvite());
+        caseData.getCaseInvite().setApplicant2InviteEmailAddress(TEST_APPLICANT_2_USER_EMAIL);
+        caseData.setApplicant2(getApplicant(MALE));
+
+        return caseData;
     }
 
     public static CaseData validJointApplicant1CaseData() {
