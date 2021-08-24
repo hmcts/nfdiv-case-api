@@ -24,6 +24,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUS
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateReadyForPayment;
 
 @Slf4j
 @Component
@@ -59,7 +60,7 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
         State state = details.getState();
 
         log.info("Validating case data");
-        final List<String> validationErrors = AwaitingPayment.validate(data);
+        final List<String> validationErrors = validateReadyForPayment(data);
 
         if (!validationErrors.isEmpty()) {
             log.info("Validation errors: ");

@@ -37,11 +37,13 @@ public final class ValidationUtil {
             errorList);
         addToErrorList(checkIfConfidentialAddressNullOrEmpty(caseData.getApplicant1().getContactDetailsConfidential(),
             "Applicant1ContactDetailsConfidential"), errorList);
+
+        if (!caseData.getApplication().applicant1HasStatementOfTruth() && !caseData.getApplication().hasSolSignStatementOfTruth()) {
+            errorList.add("Statement of truth must be accepted by the person making the application");
+        }
+
         addToErrorList(checkIfYesOrNoIsNullOrEmptyOrNo(
             caseData.getApplication().getApplicant1PrayerHasBeenGiven(), "Applicant1PrayerHasBeenGiven"), errorList);
-        addToErrorList(
-            checkIfYesOrNoIsNullOrEmptyOrNo(caseData.getApplication().getApplicant1StatementOfTruth(), "Applicant1StatementOfTruth"),
-            errorList);
         addToErrorList(checkIfDateIsAllowed(caseData.getApplication().getMarriageDetails().getDate(), "MarriageDate"), errorList);
         addListToErrorList(caseData.getApplication().getJurisdiction().validate(), errorList);
     }
@@ -151,10 +153,6 @@ public final class ValidationUtil {
 
     private static boolean isInTheFuture(LocalDate date) {
         return date.isAfter(LocalDate.now());
-    }
-
-    public static boolean isPaymentIncomplete(CaseData caseData) {
-        return !caseData.getApplication().hasBeenPaidFor();
     }
 
     public static void validateCaseFieldsForIssueApplication(MarriageDetails marriageDetails, List<String> errorList) {

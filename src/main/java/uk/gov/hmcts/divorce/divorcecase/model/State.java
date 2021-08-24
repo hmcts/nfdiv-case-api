@@ -5,15 +5,6 @@ import lombok.RequiredArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseAccessAdministrator;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant1BasicCase;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant2BasicCase;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant2RequestChanges;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBasicCase;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCaseFieldsForIssueApplication;
-
 @RequiredArgsConstructor
 @Getter
 public enum State {
@@ -30,15 +21,7 @@ public enum State {
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
     )
-    AwaitingAos("AwaitingAos") {
-        @Override
-        public List<String> validate(CaseData caseData) {
-            List<String> errors = new ArrayList<>();
-            validateBasicCase(caseData, errors);
-            validateCaseFieldsForIssueApplication(caseData.getApplication().getMarriageDetails(), errors);
-            return errors;
-        }
-    },
+    AwaitingAos("AwaitingAos"),
 
     @CCD(
         name = "AoS drafted",
@@ -58,30 +41,13 @@ public enum State {
         name = "Applicant 2 approved",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
-    Applicant2Approved("Applicant2Approved") {
-        @Override
-        public List<String> validate(CaseData caseData) {
-            List<String> errors = new ArrayList<>();
-            validateApplicant2BasicCase(caseData, errors);
-            return errors;
-        }
-    },
+    Applicant2Approved("Applicant2Approved"),
 
     @CCD(
         name = "Application awaiting payment",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
-    AwaitingPayment("AwaitingPayment") {
-        @Override
-        public List<String> validate(CaseData caseData) {
-            List<String> errors = new ArrayList<>();
-            validateBasicCase(caseData, errors);
-            if (caseData.getApplicationType() != null && !caseData.getApplicationType().isSole()) {
-                validateApplicant2BasicCase(caseData, errors);
-            }
-            return errors;
-        }
-    },
+    AwaitingPayment("AwaitingPayment"),
 
     @CCD(
         name = "Application rejected",
@@ -107,27 +73,13 @@ public enum State {
         name = "Awaiting applicant 1 response",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
-    AwaitingApplicant1Response("AwaitingApplicant1Response") {
-        @Override
-        public List<String> validate(CaseData caseData) {
-            List<String> errors = new ArrayList<>();
-            validateApplicant2RequestChanges(caseData, errors);
-            return errors;
-        }
-    },
+    AwaitingApplicant1Response("AwaitingApplicant1Response"),
 
     @CCD(
         name = "Awaiting applicant 2 response",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
-    AwaitingApplicant2Response("AwaitingApplicant2Response") {
-        @Override
-        public List<String> validate(CaseData caseData) {
-            List<String> errors = new ArrayList<>();
-            validateApplicant1BasicCase(caseData, errors);
-            return errors;
-        }
-    },
+    AwaitingApplicant2Response("AwaitingApplicant2Response"),
 
     @CCD(
         name = "Awaiting clarification",
@@ -236,24 +188,9 @@ public enum State {
         name = "Submitted",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
-    Submitted("Submitted") {
-        @Override
-        public List<String> validate(CaseData caseData) {
-            List<String> errors = new ArrayList<>();
-
-            if (!caseData.getApplication().applicant1HasStatementOfTruth() && !caseData.getApplication().hasSolSignStatementOfTruth()) {
-                errors.add("Statement of truth must be accepted by the person making the application");
-            }
-
-            return errors;
-        }
-    };
+    Submitted("Submitted");
 
     private final String name;
-
-    public List<String> validate(CaseData data) {
-        return null;
-    }
 
 }
 

@@ -1,12 +1,9 @@
 package uk.gov.hmcts.divorce.divorcecase.validation;
 
 import org.junit.jupiter.api.Test;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
-import uk.gov.hmcts.divorce.payment.model.Payment;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -15,7 +12,6 @@ import java.util.List;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static java.time.temporal.ChronoUnit.YEARS;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -26,10 +22,8 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.checkIf
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.checkIfStringNullOrEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.checkIfYesOrNoIsNullOrEmptyOrNo;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.checkIfYesOrNoNullOrEmpty;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.isPaymentIncomplete;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCaseFieldsForIssueApplication;
-import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
 public class CaseValidationTest {
 
@@ -130,25 +124,6 @@ public class CaseValidationTest {
         String response = checkIfDateIsAllowed(LocalDate.now().minus(360, DAYS), "field");
 
         assertThat(response).isEqualTo("field" + LESS_THAN_ONE_YEAR_AGO);
-    }
-
-    @Test
-    public void shouldReturnTrueWhenPaymentIsIncompleted() {
-        CaseData caseData = new CaseData();
-        OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
-
-        assertTrue(isPaymentIncomplete(caseData));
-    }
-
-    @Test
-    public void shouldReturnFalseWhenPaymentIsCompleted() {
-        CaseData caseData = new CaseData();
-        OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
-        caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
-        Payment payment = Payment.builder().amount(55000).status(SUCCESS).build();
-        caseData.getApplication().setApplicationPayments(singletonList(new ListValue<>("1", payment)));
-        assertFalse(isPaymentIncomplete(caseData));
     }
 
     @Test

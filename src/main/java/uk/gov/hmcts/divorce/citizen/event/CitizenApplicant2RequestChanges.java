@@ -12,12 +12,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant2RequestChanges;
 
 @Slf4j
 @Component
@@ -47,7 +49,7 @@ public class CitizenApplicant2RequestChanges implements CCDConfig<CaseData, Stat
         CaseData data = details.getData();
 
         log.info("Validating case data");
-        final List<String> validationErrors = AwaitingApplicant1Response.validate(data);
+        final List<String> validationErrors = validate(data);
 
         if (!validationErrors.isEmpty()) {
             log.info("Validation errors: {} ", validationErrors);
@@ -66,5 +68,11 @@ public class CitizenApplicant2RequestChanges implements CCDConfig<CaseData, Stat
             .data(data)
             .state(AwaitingApplicant1Response)
             .build();
+    }
+
+    private List<String> validate(CaseData caseData) {
+        List<String> errors = new ArrayList<>();
+        validateApplicant2RequestChanges(caseData, errors);
+        return errors;
     }
 }
