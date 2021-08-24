@@ -113,6 +113,7 @@ public class TestDataHelper {
             .gender(gender)
             .languagePreferenceWelsh(NO)
             .contactDetailsConfidential(SHARE)
+            .financialOrder(NO)
             .build();
     }
 
@@ -198,16 +199,10 @@ public class TestDataHelper {
     }
 
     public static CaseData caseDataWithOrderSummary() {
-        var application = Application.builder()
-            .applicationFeeOrderSummary(orderSummaryWithFee())
-            .build();
+        var caseData = validApplicant1CaseData();
+        caseData.getApplication().setApplicationFeeOrderSummary(orderSummaryWithFee());
 
-        return CaseData
-            .builder()
-            .applicant1(getApplicant())
-            .divorceOrDissolution(DIVORCE)
-            .application(application)
-            .build();
+        return caseData;
     }
 
     public static CaseData jointCaseDataWithOrderSummary() {
@@ -293,16 +288,38 @@ public class TestDataHelper {
 
         var application = Application.builder()
             .solSignStatementOfTruth(YES)
+            .applicant1PrayerHasBeenGiven(YES)
             .applicationFeeOrderSummary(orderSummary)
             .applicationPayments(singletonList(payment))
+            .marriageDetails(getMarriageDetails())
+            .jurisdiction(getJurisdiction())
             .build();
 
         return CaseData
             .builder()
             .applicant1(applicant1)
+            .applicant2(getApplicant2(FEMALE))
             .divorceOrDissolution(DIVORCE)
             .application(application)
             .build();
+    }
+
+    public static MarriageDetails getMarriageDetails() {
+        var marriageDetails = new MarriageDetails();
+        marriageDetails.setDate(LocalDate.of(1990, 6, 10));
+        marriageDetails.setApplicant1Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME);
+        marriageDetails.setApplicant2Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME);
+
+        return marriageDetails;
+    }
+
+    public static Jurisdiction getJurisdiction() {
+        final Jurisdiction jurisdiction = new Jurisdiction();
+        jurisdiction.setConnections(Set.of(APP_1_RESIDENT_JOINT));
+        jurisdiction.setApplicant1Residence(YES);
+        jurisdiction.setApplicant2Residence(YES);
+
+        return jurisdiction;
     }
 
     public static CaseData validCaseDataForIssueApplication() {
@@ -311,11 +328,6 @@ public class TestDataHelper {
         marriageDetails.setApplicant2Name(format("%s %s", TEST_FIRST_NAME, TEST_LAST_NAME));
         marriageDetails.setDate(LocalDate.of(1990, 6, 10));
         marriageDetails.setPlaceOfMarriage("Somewhere");
-
-        final Jurisdiction jurisdiction = new Jurisdiction();
-        jurisdiction.setConnections(Set.of(APP_1_RESIDENT_JOINT));
-        jurisdiction.setApplicant1Residence(YES);
-        jurisdiction.setApplicant2Residence(YES);
 
         final CaseData caseData = caseDataWithStatementOfTruth();
         caseData.getApplicant1().setFinancialOrder(NO);
@@ -326,7 +338,7 @@ public class TestDataHelper {
         application.setMarriageDetails(marriageDetails);
         application.setApplicant1PrayerHasBeenGiven(YES);
         application.setApplicant1StatementOfTruth(YES);
-        application.setJurisdiction(jurisdiction);
+        application.setJurisdiction(getJurisdiction());
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplicant2().setFinancialOrder(NO);
         caseData.getApplicant1().setLegalProceedings(NO);

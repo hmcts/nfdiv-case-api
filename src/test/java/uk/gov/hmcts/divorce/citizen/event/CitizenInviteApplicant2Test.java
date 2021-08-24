@@ -64,6 +64,7 @@ public class CitizenInviteApplicant2Test {
     @Test
     void givenEventStartedWithInvalidCaseThenGiveValidationErrors() {
         CaseData caseData = caseData();
+        caseData.getApplicant1().setFinancialOrder(null);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);

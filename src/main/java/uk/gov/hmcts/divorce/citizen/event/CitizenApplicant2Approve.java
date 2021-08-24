@@ -20,6 +20,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant2BasicCase;
 
 @Slf4j
 @Component
@@ -50,7 +51,7 @@ public class CitizenApplicant2Approve implements CCDConfig<CaseData, State, User
         CaseData data = details.getData();
 
         log.info("Validating case data");
-        final List<String> validationErrors = Applicant2Approved.validate(data);
+        final List<String> validationErrors = validateApplicant2BasicCase(data);
 
         if (!validationErrors.isEmpty()) {
             log.info("Validation errors: {} ", validationErrors);
@@ -72,4 +73,5 @@ public class CitizenApplicant2Approve implements CCDConfig<CaseData, State, User
             .state(Applicant2Approved)
             .build();
     }
+
 }

@@ -14,7 +14,6 @@ import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.common.service.SubmissionService;
-import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
@@ -57,6 +56,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFeeListValue;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getPbaNumbersForAccount;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
 public class SolicitorSubmitApplicationTest {
@@ -141,17 +141,15 @@ public class SolicitorSubmitApplicationTest {
             .build();
         final List<ListValue<Payment>> payments = new ArrayList<>();
         payments.add(paymentListValue);
-        final CaseData caseData = CaseData.builder()
-            .application(Application.builder()
-                .applicationPayments(payments)
-                .solPaymentHowToPay(FEE_PAY_BY_ACCOUNT)
-                .solSignStatementOfTruth(YES)
-                .applicationFeeOrderSummary(OrderSummary.builder()
+        final CaseData caseData = validApplicant1CaseData();
+        caseData.getApplication().setApplicationPayments(payments);
+        caseData.getApplication().setSolPaymentHowToPay(FEE_PAY_BY_ACCOUNT);
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
+        caseData.getApplication().setApplicationFeeOrderSummary(OrderSummary.builder()
                     .paymentTotal("55000")
                     .fees(singletonList(getFeeListValue()))
-                    .build())
-                .build())
-            .build();
+                    .build());
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
@@ -168,6 +166,7 @@ public class SolicitorSubmitApplicationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             solicitorSubmitApplication.aboutToSubmit(caseDetails, new CaseDetails<>());
 
+        assertThat(response.getErrors()).isNull();
         assertThat(response.getData().getApplication().getApplicationPayments()).hasSize(2);
     }
 
@@ -185,7 +184,7 @@ public class SolicitorSubmitApplicationTest {
     @Test
     void shouldReturnWithoutErrorIfStatementOfTruthOrSolStatementOfTruthAreSetToYes() {
 
-        final CaseData caseData = CaseData.builder().build();
+        final CaseData caseData = validApplicant1CaseData();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setApplicationFeeOrderSummary(OrderSummary.builder()
             .paymentTotal("55000")
@@ -213,7 +212,7 @@ public class SolicitorSubmitApplicationTest {
     @Test
     void shouldReturnErrorIfStatementOfTruthAndSolStatementOfTruthIsSetToNo() {
 
-        final CaseData caseData = CaseData.builder().build();
+        final CaseData caseData = validApplicant1CaseData();
         caseData.getApplication().setApplicant1StatementOfTruth(NO);
         caseData.getApplication().setSolSignStatementOfTruth(NO);
         caseData.getApplication().setApplicationFeeOrderSummary(OrderSummary.builder()
@@ -237,7 +236,7 @@ public class SolicitorSubmitApplicationTest {
     @Test
     void shouldReturnWithoutErrorIfStatementOfTruthIsNull() {
 
-        final var caseData = CaseData.builder().build();
+        final var caseData = validApplicant1CaseData();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setApplicationFeeOrderSummary(OrderSummary.builder()
             .paymentTotal("55000")
@@ -261,7 +260,7 @@ public class SolicitorSubmitApplicationTest {
     @Test
     void shouldReturnWithoutErrorIfSolStatementOfTruthIsNull() {
 
-        final var caseData = CaseData.builder().build();
+        final var caseData = validApplicant1CaseData();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setApplicationFeeOrderSummary(
             OrderSummary
@@ -294,8 +293,8 @@ public class SolicitorSubmitApplicationTest {
             .aboutToSubmit(caseDetails, beforeCaseDetails);
 
         assertThat(response.getData()).isEqualTo(caseData);
-        assertThat(response.getState()).isEqualTo(Submitted);
         assertThat(response.getErrors()).isNull();
+        assertThat(response.getState()).isEqualTo(Submitted);
     }
 
     @Test
@@ -309,7 +308,7 @@ public class SolicitorSubmitApplicationTest {
             )
             .build();
 
-        final CaseData caseData = CaseData.builder().build();
+        final CaseData caseData = validApplicant1CaseData();
         caseData.getApplication().setApplicant1StatementOfTruth(YES);
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setApplicationFeeOrderSummary(OrderSummary.builder()
@@ -352,7 +351,7 @@ public class SolicitorSubmitApplicationTest {
             .build();
         List<ListValue<Payment>> payments = new ArrayList<>();
         payments.add(paymentListValue);
-        final CaseData caseData = CaseData.builder().build();
+        final CaseData caseData = validApplicant1CaseData();
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
         caseData.getApplication().setApplicationPayments(payments);
         caseData.getApplication().setSolSignStatementOfTruth(YES);
@@ -390,7 +389,7 @@ public class SolicitorSubmitApplicationTest {
             .build();
         List<ListValue<Payment>> payments = new ArrayList<>();
         payments.add(paymentListValue);
-        final var caseData = CaseData.builder().build();
+        final var caseData = validApplicant1CaseData();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
         caseData.getApplication().setApplicationPayments(payments);
@@ -412,7 +411,7 @@ public class SolicitorSubmitApplicationTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
 
-        final var caseData = CaseData.builder().build();
+        final var caseData = validApplicant1CaseData();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setApplicant1HelpWithFees(
             HelpWithFees.builder()
@@ -436,7 +435,7 @@ public class SolicitorSubmitApplicationTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
 
-        final CaseData caseData = CaseData.builder().build();
+        final CaseData caseData = validApplicant1CaseData();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setSolPaymentHowToPay(FEE_PAY_BY_ACCOUNT);
         caseData.getApplication().setApplicationFeeOrderSummary(
@@ -466,7 +465,7 @@ public class SolicitorSubmitApplicationTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
 
-        final var caseData = CaseData.builder().build();
+        final var caseData = validApplicant1CaseData();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setSolPaymentHowToPay(FEE_PAY_BY_ACCOUNT);
         caseData.getApplication().setApplicationFeeOrderSummary(
