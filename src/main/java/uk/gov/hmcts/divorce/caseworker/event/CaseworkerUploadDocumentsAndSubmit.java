@@ -26,6 +26,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUS
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateSubmission;
 
 @Slf4j
 @Component
@@ -103,7 +104,7 @@ public class CaseworkerUploadDocumentsAndSubmit implements CCDConfig<CaseData, S
     private AboutToStartOrSubmitResponse<CaseData, State> transitionToSubmitted(final CaseDetails<CaseData, State> details,
                                                                                 final CaseData caseData) {
 
-        final List<String> submittedErrors = Submitted.validate(caseData);
+        final List<String> submittedErrors = validateSubmission(caseData.getApplication());
 
         final State state;
         if (submittedErrors.isEmpty()) {

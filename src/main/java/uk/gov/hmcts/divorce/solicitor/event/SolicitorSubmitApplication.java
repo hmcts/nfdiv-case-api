@@ -47,6 +47,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUS
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateSubmission;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
 @Slf4j
@@ -129,7 +130,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         updateApplicant2DigitalDetails(caseData);
 
         log.info("Validating case data CaseID: {}", caseId);
-        final List<String> submittedErrors = Submitted.validate(caseData);
+        final List<String> submittedErrors = validateSubmission(application);
 
         if (!submittedErrors.isEmpty()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()

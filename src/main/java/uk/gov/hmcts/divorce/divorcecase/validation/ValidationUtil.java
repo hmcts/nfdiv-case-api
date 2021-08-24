@@ -153,10 +153,6 @@ public final class ValidationUtil {
         return date.isAfter(LocalDate.now());
     }
 
-    public static boolean isPaymentIncomplete(CaseData caseData) {
-        return !caseData.getApplication().hasBeenPaidFor();
-    }
-
     public static void validateCaseFieldsForIssueApplication(MarriageDetails marriageDetails, List<String> errorList) {
         //MarriageApplicant1Name and MarriageDate are validated in validateBasicCase
         addToErrorList(checkIfStringNullOrEmpty(marriageDetails.getApplicant2Name(), "MarriageApplicant2Name"), errorList);
