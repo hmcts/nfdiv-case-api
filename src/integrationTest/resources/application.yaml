@@ -105,3 +105,15 @@ court:
       postCode: 'CM20 9QT'
       email: 'divorcecase@justice.gov.uk'
       phoneNumber: '0300 303 0642'
+
+pba:
+  ref:
+    data:
+      service:
+        url: ${PRD_API_BASEURL:http://rd-professional-api-aat.service.core-compute-aat.internal}
+
+
+payment:
+  service:
+    api:
+      baseurl: http://localhost:4015

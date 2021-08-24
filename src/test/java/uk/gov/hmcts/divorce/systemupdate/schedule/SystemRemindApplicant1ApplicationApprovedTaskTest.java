@@ -31,7 +31,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicant1ApplicationReviewed.SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED;
 
 @ExtendWith(MockitoExtension.class)
@@ -70,7 +70,7 @@ public class SystemRemindApplicant1ApplicationApprovedTaskTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant1Response)).thenReturn(caseDetailsList);
+        when(ccdSearchService.searchForAllCasesWithStateOf(Applicant2Approved)).thenReturn(caseDetailsList);
 
         systemRemindApplicant1ApplicationApprovedTask.execute();
 
@@ -94,7 +94,7 @@ public class SystemRemindApplicant1ApplicationApprovedTaskTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
 
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant1Response)).thenReturn(caseDetailsList);
+        when(ccdSearchService.searchForAllCasesWithStateOf(Applicant2Approved)).thenReturn(caseDetailsList);
 
         systemRemindApplicant1ApplicationApprovedTask.execute();
 
@@ -112,7 +112,7 @@ public class SystemRemindApplicant1ApplicationApprovedTaskTest {
         when(caseDetails.getId()).thenReturn(1L);
         when(caseDetails.getData()).thenReturn(caseDataMap);
         when(mapper.convertValue(caseDataMap, CaseData.class)).thenReturn(caseData);
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant1Response)).thenReturn(List.of(caseDetails));
+        when(ccdSearchService.searchForAllCasesWithStateOf(Applicant2Approved)).thenReturn(List.of(caseDetails));
 
         systemRemindApplicant1ApplicationApprovedTask.execute();
 
@@ -130,7 +130,7 @@ public class SystemRemindApplicant1ApplicationApprovedTaskTest {
 
         when(caseDetails.getData()).thenReturn(Map.of("dueDate", LocalDate.now().plusDays(5)));
         when(mapper.convertValue(caseDataMap, CaseData.class)).thenReturn(caseData);
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant1Response)).thenReturn(singletonList(caseDetails));
+        when(ccdSearchService.searchForAllCasesWithStateOf(Applicant2Approved)).thenReturn(singletonList(caseDetails));
 
         systemRemindApplicant1ApplicationApprovedTask.execute();
 
@@ -140,7 +140,7 @@ public class SystemRemindApplicant1ApplicationApprovedTaskTest {
 
     @Test
     void shouldNotSubmitEventIfSearchFails() {
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant1Response))
+        when(ccdSearchService.searchForAllCasesWithStateOf(Applicant2Approved))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
         systemRemindApplicant1ApplicationApprovedTask.execute();
@@ -158,7 +158,7 @@ public class SystemRemindApplicant1ApplicationApprovedTaskTest {
 
         when(caseDetails1.getData()).thenReturn(Map.of("dueDate", LocalDate.now()));
         when(mapper.convertValue(Map.of("dueDate", LocalDate.now()), CaseData.class)).thenReturn(caseData1);
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant1Response)).thenReturn(caseDetailsList);
+        when(ccdSearchService.searchForAllCasesWithStateOf(Applicant2Approved)).thenReturn(caseDetailsList);
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED);
@@ -183,7 +183,7 @@ public class SystemRemindApplicant1ApplicationApprovedTaskTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant1Response)).thenReturn(caseDetailsList);
+        when(ccdSearchService.searchForAllCasesWithStateOf(Applicant2Approved)).thenReturn(caseDetailsList);
 
         doThrow(new CcdManagementException("Failed processing of case", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED);

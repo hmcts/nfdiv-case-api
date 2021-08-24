@@ -14,6 +14,7 @@ buildscript {
 plugins {
   id 'application'
   id 'checkstyle'
+  id 'idea'
   id 'pmd'
   id 'jacoco'
   id 'org.owasp.dependencycheck' version '6.2.2'
@@ -21,7 +22,7 @@ plugins {
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'org.springframework.boot' version '2.5.3'
   id 'com.github.ben-manes.versions' version '0.38.0'
-  id 'hmcts.ccd.sdk' version '0.23.7'
+  id 'hmcts.ccd.sdk' version '0.23.9'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -49,6 +50,13 @@ sourceSets {
       runtimeClasspath += main.output
       srcDir file('src/integrationTest/java')
     }
+  }
+}
+
+idea {
+  module {
+    testSourceDirs += file('src/integrationTest/java')
+    testSourceDirs += file('src/functionalTest/java')
   }
 }
 
@@ -273,7 +281,7 @@ dependencies {
 
   testImplementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
-  testImplementation group: 'org.mockito', name: 'mockito-inline', version: '3.11.2'
+  testImplementation group: 'org.mockito', name: 'mockito-inline', version: '3.12.1'
 
   testImplementation group: 'com.jayway.awaitility', name: 'awaitility', version: versions.awaitility
 

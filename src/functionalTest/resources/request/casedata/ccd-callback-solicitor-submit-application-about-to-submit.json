@@ -19,5 +19,32 @@
         }
       }
     ]
-  }
+  },
+  "solPaymentHowToPay": "feePayByAccount",
+  "pbaNumbers": {
+    "value": {
+      "code": "93018b67-a1af-4c1e-afa0-22de272bb5f2",
+      "label": "PBA0082311"
+    },
+    "list_items": [
+      {
+        "code": "93018b67-a1af-4c1e-afa0-22de272bb5f2",
+        "label": "PBA0082311"
+      },
+      {
+        "code": "93018b67-a1af-4c1e-afa0-22de272bb5f2",
+        "label": "PBA0087672"
+      }
+    ],
+    "valueLabel": null,
+    "valueCode": null
+  },
+  "applicant1SolicitorOrganisationPolicy": {
+    "Organisation": {
+      "OrganisationName": "Test 1 Organisation",
+      "OrganisationID": "ABC456"
+    }
+  },
+  "applicant1SolicitorReference": "customerRef1",
+  "selectedDivorceCentreSiteId": "AA04"
 }

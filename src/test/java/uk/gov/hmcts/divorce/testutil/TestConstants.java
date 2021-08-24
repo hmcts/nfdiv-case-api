@@ -17,6 +17,7 @@ public final class TestConstants {
     public static final String ABOUT_TO_SUBMIT_URL = "/callbacks/about-to-submit";
     public static final String SUBMITTED_URL = "/callbacks/submitted";
     public static final String ABOUT_THE_SOL_MID_EVENT_URL = "/callbacks/mid-event?page=SolAboutTheSolicitor";
+    public static final String SOL_PAYMENT_MID_EVENT_URL = "/callbacks/mid-event?page=SolPayment";
     public static final String SOLICITOR_UPDATE_CONTACT_MID_EVENT_URL = "/callbacks/mid-event?page=SolUpdateContactDetails";
     public static final String CREATE_GENERAL_ORDER_MID_EVENT_URL = "/callbacks/mid-event?page=CreateGeneralOrder";
 
