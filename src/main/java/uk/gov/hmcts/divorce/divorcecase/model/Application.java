@@ -365,6 +365,11 @@ public class Application {
     }
 
     @JsonIgnore
+    public boolean hasStatementOfTruth() {
+        return applicant1HasStatementOfTruth() || hasSolSignStatementOfTruth();
+    }
+
+    @JsonIgnore
     public LocalDate getDateOfSubmissionResponse() {
         return dateSubmitted == null ? null : dateSubmitted.plusDays(SUBMISSION_RESPONSE_DAYS).toLocalDate();
     }

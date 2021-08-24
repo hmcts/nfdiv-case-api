@@ -9,9 +9,11 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -28,7 +30,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.RES
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.CANNOT_EXIST;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.CONNECTION;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.EMPTY;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.addToErrorList;
 
 @Data
 @AllArgsConstructor
@@ -99,28 +100,26 @@ public class Jurisdiction {
     private Set<LegalConnections> legalConnections;
 
     public List<String> validate() {
-        List<String> errorList = new ArrayList<>();
-
         if (isEmpty(legalConnections)) {
             if (isEmpty(connections)) {
-                errorList.add("JurisdictionConnections" + EMPTY);
+                return List.of("JurisdictionConnections" + EMPTY);
             } else {
-                addToErrorList(validateJurisdictionConnectionA(), errorList);
-                addToErrorList(validateJurisdictionConnectionB(), errorList);
-                addToErrorList(validateJurisdictionConnectionC(), errorList);
-                addToErrorList(validateJurisdictionConnectionD(), errorList);
-                addToErrorList(validateJurisdictionConnectionE(), errorList);
-                addToErrorList(validateJurisdictionConnectionF(), errorList);
-                addToErrorList(validateJurisdictionConnectionG(), errorList);
-                addToErrorList(validateJurisdictionConnectionH(), errorList);
-                addToErrorList(validateJurisdictionConnectionI(), errorList);
-                addToErrorList(validateJurisdictionConnectionJ(), errorList);
+                return Stream.of(
+                    validateJurisdictionConnectionA(),
+                    validateJurisdictionConnectionB(),
+                    validateJurisdictionConnectionC(),
+                    validateJurisdictionConnectionD(),
+                    validateJurisdictionConnectionE(),
+                    validateJurisdictionConnectionF(),
+                    validateJurisdictionConnectionG(),
+                    validateJurisdictionConnectionH(),
+                    validateJurisdictionConnectionI(),
+                    validateJurisdictionConnectionJ()
+                ).filter(Objects::nonNull).collect(Collectors.toList());
             }
-        } else {
-            return emptyList();
         }
 
-        return errorList;
+        return emptyList();
     }
 
     private String validateJurisdictionConnectionA() {

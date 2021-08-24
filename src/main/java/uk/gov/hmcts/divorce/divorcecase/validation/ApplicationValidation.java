@@ -6,6 +6,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import java.util.ArrayList;
 import java.util.List;
 
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.flattenLists;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant2BasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCaseFieldsForIssueApplication;
@@ -17,11 +18,12 @@ public final class ApplicationValidation {
     }
 
     public static List<String> validateReadyForPayment(CaseData caseData) {
-        List<String> errors = new ArrayList<>();
-        validateBasicCase(caseData, errors);
+        List<String> errors = validateBasicCase(caseData);
+
         if (caseData.getApplicationType() != null && !caseData.getApplicationType().isSole()) {
-            validateApplicant2BasicCase(caseData, errors);
+            errors.addAll(validateApplicant2BasicCase(caseData));
         }
+
         return errors;
     }
 
@@ -40,10 +42,10 @@ public final class ApplicationValidation {
     }
 
     public static List<String> validateIssue(CaseData caseData) {
-        List<String> errors = new ArrayList<>();
-        validateBasicCase(caseData, errors);
-        validateCaseFieldsForIssueApplication(caseData.getApplication().getMarriageDetails(), errors);
-        return errors;
+        return flattenLists(
+            validateBasicCase(caseData),
+            validateCaseFieldsForIssueApplication(caseData.getApplication().getMarriageDetails())
+        );
     }
 
 }

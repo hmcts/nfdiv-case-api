@@ -14,7 +14,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
@@ -52,7 +51,7 @@ public class CitizenApplicant1Resubmit implements CCDConfig<CaseData, State, Use
         CaseData data = details.getData();
 
         log.info("Validating case data");
-        final List<String> validationErrors = validate(data);
+        final List<String> validationErrors = validateApplicant1BasicCase(data);
 
         if (!validationErrors.isEmpty()) {
             log.info("Validation errors: {} ", validationErrors);
@@ -75,10 +74,5 @@ public class CitizenApplicant1Resubmit implements CCDConfig<CaseData, State, Use
             .build();
     }
 
-    private List<String> validate(CaseData caseData) {
-        List<String> errors = new ArrayList<>();
-        validateApplicant1BasicCase(caseData, errors);
-        return errors;
-    }
 }
 

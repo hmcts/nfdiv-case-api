@@ -1,15 +1,19 @@
 package uk.gov.hmcts.divorce.divorcecase.validation;
 
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.ConfidentialAddress;
-import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.time.temporal.ChronoUnit.YEARS;
+import static java.util.Collections.emptyList;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 
 public final class ValidationUtil {
 
@@ -20,126 +24,89 @@ public final class ValidationUtil {
     public static final String MUST_BE_YES = " must be YES";
     public static final String CONNECTION = "Connection ";
     public static final String CANNOT_EXIST = " cannot exist";
+    public static final String SOT_REQUIRED = "Statement of truth must be accepted by the person making the application";
 
     private ValidationUtil() {
     }
 
-    public static void validateBasicCase(CaseData caseData, List<String> errorList) {
-        addToErrorList(checkIfStringNullOrEmpty(caseData.getApplicant1().getFirstName(), "Applicant1FirstName"), errorList);
-        addToErrorList(checkIfStringNullOrEmpty(caseData.getApplicant1().getLastName(), "Applicant1LastName"), errorList);
-        addToErrorList(checkIfStringNullOrEmpty(caseData.getApplicant2().getFirstName(), "Applicant2FirstName"), errorList);
-        addToErrorList(checkIfStringNullOrEmpty(caseData.getApplicant2().getLastName(), "Applicant2LastName"), errorList);
-        addToErrorList(checkIfYesOrNoNullOrEmpty(caseData.getApplicant1().getFinancialOrder(), "Applicant1FinancialOrder"), errorList);
-        addToErrorList(checkIfGenderNullOrEmpty(caseData.getApplicant1().getGender(), "Applicant1Gender"), errorList);
-        addToErrorList(checkIfGenderNullOrEmpty(caseData.getApplicant2().getGender(), "Applicant2Gender"), errorList);
-        addToErrorList(checkIfStringNullOrEmpty(caseData.getApplication().getMarriageDetails().getApplicant1Name(),
-            "MarriageApplicant1Name"),
-            errorList);
-        addToErrorList(checkIfConfidentialAddressNullOrEmpty(caseData.getApplicant1().getContactDetailsConfidential(),
-            "Applicant1ContactDetailsConfidential"), errorList);
-
-        if (!caseData.getApplication().applicant1HasStatementOfTruth() && !caseData.getApplication().hasSolSignStatementOfTruth()) {
-            errorList.add("Statement of truth must be accepted by the person making the application");
-        }
-
-        addToErrorList(checkIfYesOrNoIsNullOrEmptyOrNo(
-            caseData.getApplication().getApplicant1PrayerHasBeenGiven(), "Applicant1PrayerHasBeenGiven"), errorList);
-        addToErrorList(checkIfDateIsAllowed(caseData.getApplication().getMarriageDetails().getDate(), "MarriageDate"), errorList);
-        addListToErrorList(caseData.getApplication().getJurisdiction().validate(), errorList);
+    public static List<String> validateBasicCase(CaseData caseData) {
+        return flattenLists(
+            notNull(caseData.getApplicant1().getFirstName(), "Applicant1FirstName"),
+            notNull(caseData.getApplicant1().getLastName(), "Applicant1LastName"),
+            notNull(caseData.getApplicant2().getFirstName(), "Applicant2FirstName"),
+            notNull(caseData.getApplicant2().getLastName(), "Applicant2LastName"),
+            notNull(caseData.getApplicant1().getFinancialOrder(), "Applicant1FinancialOrder"),
+            notNull(caseData.getApplicant1().getGender(), "Applicant1Gender"),
+            notNull(caseData.getApplicant2().getGender(), "Applicant2Gender"),
+            notNull(caseData.getApplication().getMarriageDetails().getApplicant1Name(), "MarriageApplicant1Name"),
+            notNull(caseData.getApplicant1().getContactDetailsConfidential(), "Applicant1ContactDetailsConfidential"),
+            hasStatementOfTruth(caseData.getApplication()),
+            notNullOrNo(caseData.getApplication().getApplicant1PrayerHasBeenGiven(), "Applicant1PrayerHasBeenGiven"),
+            validateMarriageDate(caseData.getApplication().getMarriageDetails().getDate(), "MarriageDate"),
+            caseData.getApplication().getJurisdiction().validate()
+        );
     }
 
-    public static void validateApplicant1BasicCase(CaseData caseData, List<String> errorList) {
-        addToErrorList(checkIfStringNullOrEmpty(caseData.getApplicant1().getFirstName(), "Applicant1FirstName"), errorList);
-        addToErrorList(checkIfStringNullOrEmpty(caseData.getApplicant1().getLastName(), "Applicant1LastName"), errorList);
-        addToErrorList(checkIfYesOrNoNullOrEmpty(caseData.getApplicant1().getFinancialOrder(), "Applicant1FinancialOrder"), errorList);
-        addToErrorList(checkIfGenderNullOrEmpty(caseData.getApplicant1().getGender(), "Applicant1Gender"), errorList);
-        addToErrorList(checkIfGenderNullOrEmpty(caseData.getApplicant2().getGender(), "Applicant2Gender"), errorList);
-        addToErrorList(checkIfStringNullOrEmpty(
-            caseData.getApplication().getMarriageDetails().getApplicant1Name(), "MarriageApplicant1Name"), errorList);
-        addToErrorList(checkIfDateIsAllowed(caseData.getApplication().getMarriageDetails().getDate(), "MarriageDate"), errorList);
-        addListToErrorList(caseData.getApplication().getJurisdiction().validate(), errorList);
+    private static List<String> hasStatementOfTruth(Application application) {
+        return application.hasStatementOfTruth() ? emptyList() : List.of(SOT_REQUIRED);
     }
 
-    public static void validateApplicant2BasicCase(CaseData caseData, List<String> errorList) {
-        addToErrorList(checkIfStringNullOrEmpty(caseData.getApplicant2().getFirstName(), "Applicant2FirstName"), errorList);
-        addToErrorList(checkIfStringNullOrEmpty(caseData.getApplicant2().getLastName(), "Applicant2LastName"), errorList);
-        addToErrorList(checkIfYesOrNoNullOrEmpty(
-            caseData.getApplication().getApplicant2StatementOfTruth(), "Applicant2StatementOfTruth"), errorList);
-        addToErrorList(checkIfYesOrNoNullOrEmpty(
-            caseData.getApplication().getApplicant2PrayerHasBeenGiven(), "Applicant2PrayerHasBeenGiven"), errorList);
-        addToErrorList(checkIfStringNullOrEmpty(
-            caseData.getApplication().getMarriageDetails().getApplicant2Name(), "MarriageApplicant2Name"), errorList);
-        addToErrorList(checkIfDateIsAllowed(caseData.getApplication().getMarriageDetails().getDate(), "MarriageDate"), errorList);
-        addListToErrorList(caseData.getApplication().getJurisdiction().validate(), errorList);
+    public static List<String> validateApplicant1BasicCase(CaseData caseData) {
+        return flattenLists(
+            notNull(caseData.getApplicant1().getFirstName(), "Applicant1FirstName"),
+            notNull(caseData.getApplicant1().getLastName(), "Applicant1LastName"),
+            notNull(caseData.getApplicant1().getFinancialOrder(), "Applicant1FinancialOrder"),
+            notNull(caseData.getApplicant1().getGender(), "Applicant1Gender"),
+            notNull(caseData.getApplicant2().getGender(), "Applicant2Gender"),
+            notNull(caseData.getApplication().getMarriageDetails().getApplicant1Name(), "MarriageApplicant1Name"),
+            validateMarriageDate(caseData.getApplication().getMarriageDetails().getDate(), "MarriageDate"),
+            caseData.getApplication().getJurisdiction().validate()
+        );
     }
 
-    public static void validateApplicant2RequestChanges(CaseData caseData, List<String> errorList) {
-        addToErrorList(checkIfYesOrNoNullOrEmpty(caseData.getApplication().getApplicant2ConfirmApplicant1Information(),
-            "Applicant2ConfirmApplicant1Information"), errorList);
-        addToErrorList(checkIfStringNullOrEmpty(caseData.getApplication().getApplicant2ExplainsApplicant1IncorrectInformation(),
-            "Applicant2ExplainsApplicant1IncorrectInformation"), errorList);
+    public static List<String> validateApplicant2BasicCase(CaseData caseData) {
+        return flattenLists(
+            notNull(caseData.getApplicant2().getFirstName(), "Applicant2FirstName"),
+            notNull(caseData.getApplicant2().getLastName(), "Applicant2LastName"),
+            notNull(caseData.getApplication().getApplicant2StatementOfTruth(), "Applicant2StatementOfTruth"),
+            notNull(caseData.getApplication().getApplicant2PrayerHasBeenGiven(), "Applicant2PrayerHasBeenGiven"),
+            notNull(caseData.getApplication().getMarriageDetails().getApplicant2Name(), "MarriageApplicant2Name"),
+            validateMarriageDate(caseData.getApplication().getMarriageDetails().getDate(), "MarriageDate"),
+            caseData.getApplication().getJurisdiction().validate()
+        );
     }
 
-    public static void addToErrorList(String error, List<String> errorList) {
-        if (error != null) {
-            errorList.add(error);
-        }
+    public static List<String> validateApplicant2RequestChanges(Application application) {
+        return flattenLists(
+            notNull(application.getApplicant2ConfirmApplicant1Information(), "Applicant2ConfirmApplicant1Information"),
+            notNull(application.getApplicant2ExplainsApplicant1IncorrectInformation(), "Applicant2ExplainsApplicant1IncorrectInformation")
+        );
     }
 
-    public static void addListToErrorList(List<String> errors, List<String> errorList) {
-        if (errors != null) {
-            errorList.addAll(errors);
-        }
+    public static List<String> notNull(Object value, String field) {
+        return value == null ? List.of(field + EMPTY) : emptyList();
     }
 
-    public static String checkIfStringNullOrEmpty(String string, String field) {
-        if (string == null) {
-            return field + EMPTY;
-        }
-        return null;
-    }
-
-    public static String checkIfYesOrNoNullOrEmpty(YesOrNo yesOrNo, String field) {
+    public static List<String> notNullOrNo(YesOrNo yesOrNo, String field) {
         if (yesOrNo == null) {
-            return field + EMPTY;
+            return List.of(field + EMPTY);
+        } else if (NO.equals(yesOrNo)) {
+            return List.of(field + MUST_BE_YES);
         }
-        return null;
+        return emptyList();
     }
 
-    public static String checkIfGenderNullOrEmpty(Gender gender, String field) {
-        if (gender == null) {
-            return field + EMPTY;
-        }
-        return null;
-    }
-
-    public static String checkIfConfidentialAddressNullOrEmpty(ConfidentialAddress confidentialAddress, String field) {
-        if (confidentialAddress == null) {
-            return field + EMPTY;
-        }
-        return null;
-    }
-
-    public static String checkIfYesOrNoIsNullOrEmptyOrNo(YesOrNo yesOrNo, String field) {
-        if (yesOrNo == null) {
-            return field + EMPTY;
-        } else if (yesOrNo.equals(YesOrNo.NO)) {
-            return field + MUST_BE_YES;
-        }
-        return null;
-    }
-
-    public static String checkIfDateIsAllowed(LocalDate localDate, String field) {
+    public static List<String> validateMarriageDate(LocalDate localDate, String field) {
         if (localDate == null) {
-            return field + EMPTY;
+            return List.of(field + EMPTY);
         } else if (isLessThanOneYearAgo(localDate)) {
-            return field + LESS_THAN_ONE_YEAR_AGO;
+            return List.of(field + LESS_THAN_ONE_YEAR_AGO);
         } else if (isOverOneHundredYearsAgo(localDate)) {
-            return field + MORE_THAN_ONE_HUNDRED_YEARS_AGO;
+            return List.of(field + MORE_THAN_ONE_HUNDRED_YEARS_AGO);
         } else if (isInTheFuture(localDate)) {
-            return field + IN_THE_FUTURE;
+            return List.of(field + IN_THE_FUTURE);
         }
-        return null;
+        return emptyList();
     }
 
     private static boolean isLessThanOneYearAgo(LocalDate date) {
@@ -155,9 +122,16 @@ public final class ValidationUtil {
         return date.isAfter(LocalDate.now());
     }
 
-    public static void validateCaseFieldsForIssueApplication(MarriageDetails marriageDetails, List<String> errorList) {
+    public static List<String> validateCaseFieldsForIssueApplication(MarriageDetails marriageDetails) {
         //MarriageApplicant1Name and MarriageDate are validated in validateBasicCase
-        addToErrorList(checkIfStringNullOrEmpty(marriageDetails.getApplicant2Name(), "MarriageApplicant2Name"), errorList);
-        addToErrorList(checkIfStringNullOrEmpty(marriageDetails.getPlaceOfMarriage(), "PlaceOfMarriage"), errorList);
+        return flattenLists(
+            notNull(marriageDetails.getApplicant2Name(), "MarriageApplicant2Name"),
+            notNull(marriageDetails.getPlaceOfMarriage(), "PlaceOfMarriage")
+        );
+    }
+
+    @SafeVarargs
+    public static <E> List<E> flattenLists(List<E>... lists) {
+        return Arrays.stream(lists).flatMap(Collection::stream).collect(Collectors.toList());
     }
 }
