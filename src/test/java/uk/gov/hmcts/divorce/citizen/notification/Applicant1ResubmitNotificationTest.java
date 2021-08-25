@@ -30,6 +30,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.THEIR_EMAIL_ADDRESS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DISSOLUTION_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DIVORCE_TEST_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConfigTemplateVars;
@@ -69,7 +70,7 @@ class Applicant1ResubmitNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION.toLowerCase(Locale.ROOT), "divorce application"),
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(dateTimeFormatter)),
-                hasEntry(THEIR_EMAIL_ADDRESS, TEST_USER_EMAIL)
+                hasEntry(THEIR_EMAIL_ADDRESS, TEST_APPLICANT_2_USER_EMAIL)
             )),
             eq(ENGLISH)
         );
@@ -95,7 +96,7 @@ class Applicant1ResubmitNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION.toLowerCase(Locale.ROOT), "application to end your civil partnership"),
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(dateTimeFormatter)),
-                hasEntry(THEIR_EMAIL_ADDRESS, TEST_USER_EMAIL)
+                hasEntry(THEIR_EMAIL_ADDRESS, TEST_APPLICANT_2_USER_EMAIL)
             )),
             eq(ENGLISH)
         );
@@ -116,7 +117,7 @@ class Applicant1ResubmitNotificationTest {
         notification.sendToApplicant2(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
-            eq(TEST_USER_EMAIL),
+            eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE),
             argThat(allOf(
                 hasEntry(APPLICATION.toLowerCase(Locale.ROOT), "divorce application"),
@@ -143,7 +144,7 @@ class Applicant1ResubmitNotificationTest {
         notification.sendToApplicant2(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
-            eq(TEST_USER_EMAIL),
+            eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE),
             argThat(allOf(
                 hasEntry(APPLICATION.toLowerCase(Locale.ROOT), "application to end your civil partnership"),

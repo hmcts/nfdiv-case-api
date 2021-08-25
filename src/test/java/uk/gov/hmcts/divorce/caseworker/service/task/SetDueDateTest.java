@@ -8,7 +8,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
@@ -17,7 +16,6 @@ import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
@@ -32,7 +30,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondent;
 class SetDueDateTest {
 
     private static final long DUE_DATE_OFFSET_DAYS = 14L;
-    private static final long DUE_DATE_HOLDING_PERIOD = 141L;
+    private static final long DUE_DATE_HOLDING_PERIOD = 20L;
 
     @Mock
     private Clock clock;
@@ -43,6 +41,7 @@ class SetDueDateTest {
     @BeforeEach
     void setPageSize() {
         ReflectionTestUtils.setField(setDueDate, "dueDateOffsetDays", DUE_DATE_OFFSET_DAYS);
+        ReflectionTestUtils.setField(setDueDate, "dueDateHoldingPeriodInWeeks", DUE_DATE_HOLDING_PERIOD);
     }
 
     @Test
@@ -87,7 +86,6 @@ class SetDueDateTest {
     void shouldSetDueDateIfNotSolicitorApplication() {
         setMockClock(clock);
         final var caseData = caseData();
-//        caseData.getApplication().setSolSignStatementOfTruth(NO);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -96,7 +94,7 @@ class SetDueDateTest {
 
         final CaseDetails<CaseData, State> result = setDueDate.apply(caseDetails);
 
-        final LocalDate expectedDueDate = getExpectedLocalDate().plusDays(DUE_DATE_HOLDING_PERIOD);
+        final LocalDate expectedDueDate = getExpectedLocalDate().plusWeeks(DUE_DATE_HOLDING_PERIOD);
 
         assertThat(result.getData().getDueDate()).isEqualTo(expectedDueDate);
     }

@@ -34,11 +34,9 @@ public class SetDueDate implements CaseTask {
                 caseDetails.getData().setDueDate(LocalDate.now(clock).plusDays(dueDateOffsetDays));
             }
         } else {
-            log.info("Setting Holding due date.  Case ID: {}", caseDetails.getId());
+            log.info("Setting holding due date.  Case ID: {}", caseDetails.getId());
             caseDetails.getData().setDueDate(LocalDate.now(clock).plusWeeks(dueDateHoldingPeriodInWeeks));
         }
-
-//        caseDetails.getData().setDueDate(LocalDate.now(clock).plusWeeks(dueDateOffsetDays));
 
         return caseDetails;
     }

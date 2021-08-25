@@ -145,6 +145,6 @@
     "applicant1StatementOfTruth": "Yes"
   },
   "errors": null,
-  "state": null,
+  "state": "AwaitingAos",
   "warnings": null
 }
