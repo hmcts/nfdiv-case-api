@@ -17,13 +17,13 @@ import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateSubmission;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.IN_PROGRESS;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
@@ -76,7 +76,7 @@ public class CitizenAddPayment implements CCDConfig<CaseData, State, UserRole> {
         }
 
         log.info("Validating case caseData CaseID: {}", caseId);
-        final List<String> submittedErrors = Submitted.validate(caseData);
+        final List<String> submittedErrors = validateSubmission(caseData.getApplication());
 
         if (!submittedErrors.isEmpty()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()

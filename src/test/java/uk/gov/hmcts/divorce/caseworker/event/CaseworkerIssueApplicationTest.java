@@ -97,7 +97,7 @@ class CaseworkerIssueApplicationTest {
                 "MarriageApplicant1Name cannot be empty or null",
                 "Applicant1ContactDetailsConfidential cannot be empty or null",
                 "Applicant1PrayerHasBeenGiven cannot be empty or null",
-                "Applicant1StatementOfTruth cannot be empty or null",
+                "Statement of truth must be accepted by the person making the application",
                 "MarriageDate cannot be empty or null",
                 "JurisdictionConnections cannot be empty or null",
                 "MarriageApplicant2Name cannot be empty or null",
