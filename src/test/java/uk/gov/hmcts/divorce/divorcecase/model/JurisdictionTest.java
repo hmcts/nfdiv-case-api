@@ -117,11 +117,11 @@ public class JurisdictionTest {
     public void shouldReturnErrorWhenJurisdictionConnectionIsJ() {
         Jurisdiction jurisdiction = new Jurisdiction();
 
-        jurisdiction.setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
+        jurisdiction.setConnections(Set.of(JurisdictionConnections.APP_1_RESIDENT_JOINT));
 
         List<String> errors = jurisdiction.validate();
 
-        assertThat(errors, contains(CONNECTION + JurisdictionConnections.APP_1_APP_2_RESIDENT + CANNOT_EXIST));
+        assertThat(errors, contains(CONNECTION + JurisdictionConnections.APP_1_RESIDENT_JOINT + CANNOT_EXIST));
     }
 
     @Test

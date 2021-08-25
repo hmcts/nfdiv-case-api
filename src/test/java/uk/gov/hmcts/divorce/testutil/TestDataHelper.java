@@ -64,7 +64,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ConfidentialAddress.SHARE;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
-import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_RESIDENT;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_JOINT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_2_SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_2_SIGN_IN_DIVORCE_URL;
@@ -218,7 +218,7 @@ public class TestDataHelper {
         var jurisdiction = new Jurisdiction();
         jurisdiction.setApplicant1Residence(YES);
         jurisdiction.setApplicant2Residence(YES);
-        jurisdiction.setConnections(Set.of(APP_1_APP_2_RESIDENT));
+        jurisdiction.setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
 
         var applicant1 = getApplicant();
         applicant1.setContactDetailsConfidential(ConfidentialAddress.KEEP);
@@ -302,7 +302,7 @@ public class TestDataHelper {
         marriageDetails.setPlaceOfMarriage("Somewhere");
 
         final Jurisdiction jurisdiction = new Jurisdiction();
-        jurisdiction.setConnections(Set.of(APP_1_APP_2_RESIDENT));
+        jurisdiction.setConnections(Set.of(APP_1_RESIDENT_JOINT));
         jurisdiction.setApplicant1Residence(YES);
         jurisdiction.setApplicant2Residence(YES);
 
