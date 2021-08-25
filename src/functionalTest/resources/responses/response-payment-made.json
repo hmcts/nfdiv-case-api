@@ -1,6 +1,7 @@
 {
   "data": {
     "divorceOrDissolution": "divorce",
+    "applicationType": "jointApplication",
     "applicant1Gender": "female",
     "applicant2Gender": "male",
     "marriageDate": "2020-04-28",
@@ -9,7 +10,8 @@
     "applicant1MiddleName": "B",
     "applicant1LastName": "Bob",
     "applicant1ContactDetailsConfidential": "keep",
-    "applicant1Email": "test@mailinator.com",
+    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+    "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
     "applicant1AgreedToReceiveEmails": null,
     "applicant1NameChangedHow": null,
     "applicant1NameDifferentToMarriageCertificate": null,

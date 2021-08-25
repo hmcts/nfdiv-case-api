@@ -28,17 +28,17 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
                 .mandatoryWithLabel(Applicant::getNameDifferentToMarriageCertificate,
                     "Is the applicant's name different to that on their marriage certificate?")
                 .mandatoryWithoutDefaultValue(Applicant::getNameChangedHow,
-                    "applicant1NameDifferentToMarriageCertificate=\"Yes\"",
-                    "How did they change their name?")
+                "applicant1NameDifferentToMarriageCertificate=\"Yes\"",
+                "How did they change their name?")
                 .mandatoryWithoutDefaultValue(Applicant::getNameChangedHowOtherDetails,
-                    "applicant1NameChangedHow=\"other\"",
-                    "If not through marriage or deed poll, please provide details of how they legally changed they name")
+                "applicant1NameChangedHow=\"other\"",
+                "If not through marriage or deed poll, please provide details of how they legally changed they name")
                 .mandatoryWithLabel(Applicant::getGender,
-                    "What is the applicant's gender?")
+                "What is the applicant's gender?")
                 .done()
             .complex(CaseData::getApplication)
                 .mandatoryWithLabel(Application::getDivorceWho,
-                    "Who are you applying to divorce? (husband/wife)")
+                "Who is the applicant applying to divorce? (husband/wife)")
                 .complex(Application::getMarriageDetails)
                     .mandatory(MarriageDetails::getIsSameSexCouple)
                     .done()
@@ -52,7 +52,7 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
                     "The applicant's home address")
                 .label("LabelHorizontalLine1-SolAboutApplicant1", DARK_HORIZONTAL_RULE)
                 .mandatoryWithLabel(Applicant::getContactDetailsConfidential,
-                    "Keep the applicant's contact details private from ${labelContentTheApplicant2}?")
+                    "Keep the applicant's contact details private from ${labelContentTheApplicant2}? (yes/ no)")
                 .done();
     }
 }

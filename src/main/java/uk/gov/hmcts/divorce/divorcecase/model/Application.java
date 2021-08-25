@@ -91,7 +91,7 @@ public class Application {
     private WhoDivorcing divorceWho;
 
     @CCD(
-        label = "Is this an urgent jurisdiction case?",
+        label = "Does this case require urgent issue due to jurisdiction or other financial matters?",
         access = {DefaultAccess.class}
     )
     private YesOrNo solUrgentCase;
@@ -131,8 +131,6 @@ public class Application {
 
     @CCD(
         label = "The applicant has given their \"prayer\".",
-        hint = "\"The prayer\" means they confirm they wish to dissolve the union, pay any fees (if applicable),"
-            + " and have decided how money and property will be split (\"financial order\").",
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant1PrayerHasBeenGiven;
@@ -362,6 +360,11 @@ public class Application {
     @JsonIgnore
     public boolean hasSolSignStatementOfTruth() {
         return YES.equals(solSignStatementOfTruth);
+    }
+
+    @JsonIgnore
+    public boolean hasStatementOfTruth() {
+        return applicant1HasStatementOfTruth() || hasSolSignStatementOfTruth();
     }
 
     @JsonIgnore

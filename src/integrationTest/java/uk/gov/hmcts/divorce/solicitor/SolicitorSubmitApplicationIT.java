@@ -282,12 +282,15 @@ public class SolicitorSubmitApplicationIT {
     void givenInValidCaseDataWhenAboutToSubmitCallbackIsInvokedThenStateIsNotChangedAndErrorIsReturned()
         throws Exception {
 
+        var caseData = caseDataWithOrderSummary();
+        caseData.getApplication().setApplicant1StatementOfTruth(null);
+
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .content(objectMapper.writeValueAsString(callbackRequest(
-                    caseDataWithOrderSummary(),
+                    caseData,
                     SOLICITOR_SUBMIT,
                     Draft.name())))
                 .accept(APPLICATION_JSON))

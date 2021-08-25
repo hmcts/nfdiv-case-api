@@ -18,7 +18,6 @@ import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotificatio
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.notification.exception.NotificationException;
 import uk.gov.hmcts.divorce.payment.model.Payment;
@@ -49,10 +48,11 @@ import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithOrderSummary;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant2;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.jointCaseDataWithOrderSummary;
 
 
 @ExtendWith(SpringExtension.class)
@@ -140,8 +140,8 @@ public class CitizenAddPaymentIT {
     }
 
     @Test
-    public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmail() throws Exception {
-        CaseData data = caseDataWithOrderSummary();
+    public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmailToApplicant1AndApplicant2() throws Exception {
+        CaseData data = jointCaseDataWithOrderSummary();
         data.getApplication().setDateSubmitted(LocalDateTime.now());
         data.getApplication().setSolSignStatementOfTruth(YES);
         data.getApplication().setApplicant1StatementOfTruth(YES);
@@ -166,15 +166,16 @@ public class CitizenAddPaymentIT {
 
         verify(notificationService)
             .sendEmail(eq(TEST_USER_EMAIL), eq(APPLICATION_SUBMITTED), anyMap(), eq(ENGLISH));
+        verify(notificationService)
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(APPLICATION_SUBMITTED), anyMap(), eq(ENGLISH));
 
         verifyNoMoreInteractions(notificationService);
     }
 
     @Test
-    public void givenValidCaseDataWhenCallbackIsInvokedThenSendTwoEmail() throws Exception {
-        CaseData data = caseDataWithOrderSummary();
+    public void givenValidCaseDataWhenCallbackIsInvokedThenSendThreeEmails() throws Exception {
+        CaseData data = jointCaseDataWithOrderSummary();
         data.getApplication().setDateSubmitted(LocalDateTime.now());
-        data.setApplicant2(getApplicant2(Gender.MALE));
         data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
         data.getApplication().setApplicant1StatementOfTruth(YES);
         data.getApplication().setSolSignStatementOfTruth(null);
@@ -198,6 +199,9 @@ public class CitizenAddPaymentIT {
 
         verify(notificationService)
             .sendEmail(eq(TEST_USER_EMAIL), eq(APPLICATION_SUBMITTED), anyMap(), eq(ENGLISH));
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(APPLICATION_SUBMITTED), anyMap(), eq(ENGLISH));
 
         verify(notificationService)
             .sendEmail(eq(TEST_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(ENGLISH));

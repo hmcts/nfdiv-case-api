@@ -49,7 +49,14 @@ public class SendSubmissionNotifications implements CaseTask {
         if (Submitted.equals(state)
             || AwaitingDocuments.equals(state)
             || AwaitingHWFDecision.equals(state)) {
-            applicationSubmittedNotification.send(caseData, caseId);
+
+            log.info("Sending application submitted notification to applicant 1 for case : {}", caseId);
+            applicationSubmittedNotification.sendToApplicant1(caseData, caseId);
+            if (!caseData.getApplicationType().isSole()) {
+
+                log.info("Sending application submitted notification to applicant 2 for case : {}", caseId);
+                applicationSubmittedNotification.sendToApplicant2(caseData, caseId);
+            }
         }
 
         if (caseData.getApplication().hasAwaitingDocuments()) {

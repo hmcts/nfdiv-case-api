@@ -25,17 +25,34 @@ public class ApplicationSubmittedNotification {
     @Autowired
     private CommonContent commonContent;
 
-    public void send(CaseData caseData, Long id) {
+    public void sendToApplicant1(CaseData caseData, Long id) {
         Map<String, String> templateVars = commonContent.templateVarsForApplicant(
             caseData, caseData.getApplicant1(), caseData.getApplicant2());
 
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(dateTimeFormatter));
         templateVars.put(APPLICATION_REFERENCE, formatId(id));
 
-        log.info("Sending application submitted notification for case : {}", id);
+        log.info("Sending application submitted notification to applicant 1 for case : {}", id);
 
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
+            APPLICATION_SUBMITTED,
+            templateVars,
+            caseData.getApplicant1().getLanguagePreference()
+        );
+    }
+
+    public void sendToApplicant2(CaseData caseData, Long id) {
+        Map<String, String> templateVars = commonContent.templateVarsForApplicant(
+            caseData, caseData.getApplicant2(), caseData.getApplicant1());
+
+        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(dateTimeFormatter));
+        templateVars.put(APPLICATION_REFERENCE, formatId(id));
+
+        log.info("Sending application submitted notification to applicant 2 for case : {}", id);
+
+        notificationService.sendEmail(
+            caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
             APPLICATION_SUBMITTED,
             templateVars,
             caseData.getApplicant1().getLanguagePreference()

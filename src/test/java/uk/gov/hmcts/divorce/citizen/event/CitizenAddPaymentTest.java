@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.common.service.SubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -35,12 +36,16 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigB
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 
 @ExtendWith(MockitoExtension.class)
 public class CitizenAddPaymentTest {
 
     private static final String STATEMENT_OF_TRUTH_ERROR_MESSAGE =
         "Statement of truth must be accepted by the person making the application";
+
+    @Mock
+    private ApplicationSubmittedNotification applicationSubmittedNotification;
 
     @Mock
     private SubmissionService submissionService;
@@ -104,11 +109,9 @@ public class CitizenAddPaymentTest {
     }
 
     @Test
-    void givenValidCaseDataWhenCallbackIsInvokedThenApplicationIsSubmitted() {
-        final CaseData caseData = caseData();
-        caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
+    void givenValidJointCaseDataWhenCallbackIsInvokedThenApplicationIsSubmittedAndSendEmailToApplicant1AndApplicant2() {
+        final CaseData caseData = validApplicant2CaseData();
         caseData.getApplication().setApplicant1StatementOfTruth(YES);
-        caseData.getApplication().setSolSignStatementOfTruth(YES);
         final CaseData expectedCaseData = CaseData.builder().build();
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
