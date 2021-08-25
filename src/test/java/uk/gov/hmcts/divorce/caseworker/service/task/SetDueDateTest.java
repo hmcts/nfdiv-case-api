@@ -94,7 +94,7 @@ class SetDueDateTest {
 
         final CaseDetails<CaseData, State> result = setDueDate.apply(caseDetails);
 
-        final LocalDate expectedDueDate = getExpectedLocalDate().plusWeeks(DUE_DATE_HOLDING_PERIOD);
+        final LocalDate expectedDueDate = getExpectedLocalDate().plusWeeks(DUE_DATE_HOLDING_PERIOD).plusDays(1);
 
         assertThat(result.getData().getDueDate()).isEqualTo(expectedDueDate);
     }
