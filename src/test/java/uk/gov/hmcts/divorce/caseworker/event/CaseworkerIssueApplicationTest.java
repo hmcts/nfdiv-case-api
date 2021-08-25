@@ -58,6 +58,7 @@ class CaseworkerIssueApplicationTest {
 
         final var caseData = caseDataWithAllMandatoryFields();
         final var expectedCaseData = CaseData.builder().build();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);

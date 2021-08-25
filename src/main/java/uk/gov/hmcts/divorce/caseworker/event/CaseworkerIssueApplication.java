@@ -29,7 +29,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUS
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateIssue;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateCitizenIssue;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateSolicitorIssue;
 
 @Component
 @Slf4j
@@ -76,7 +77,8 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
 
         log.info("Caseworker issue application about to submit callback invoked");
 
-        final List<String> caseValidationErrors = validateIssue(details.getData());
+        final List<String> caseValidationErrors =
+            caseData.getApplication().isSolicitorApplication() ? validateSolicitorIssue(caseData) : validateCitizenIssue(caseData);
 
         if (!isEmpty(caseValidationErrors)) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
