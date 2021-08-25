@@ -160,8 +160,10 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void buildMarriageCertificateTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("marriageDetails", "Marriage Certificate")
+            .field("labelContentTheApplicant2UC", "marriageMarriedInUk=\"NEVER_SHOW\"")
             .field("marriageApplicant1Name")
             .field("marriageApplicant2Name")
+            .field("marriageDate")
             .field("marriageMarriedInUk")
             .field("marriagePlaceOfMarriage", "marriageMarriedInUk=\"No\"")
             .field("marriageCountryOfMarriage", "marriageMarriedInUk=\"No\"")
