@@ -76,15 +76,13 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
 
         log.info("Caseworker issue application about to submit callback invoked");
 
-        if (caseData.getApplication().isSolicitorApplication()) {
-            final List<String> caseValidationErrors = validateIssue(details.getData());
+        final List<String> caseValidationErrors = validateIssue(details.getData());
 
-            if (!isEmpty(caseValidationErrors)) {
-                return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                    .data(caseData)
-                    .errors(caseValidationErrors)
-                    .build();
-            }
+        if (!isEmpty(caseValidationErrors)) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(caseValidationErrors)
+                .build();
         }
 
         final CaseDetails<CaseData, State> result = issueApplicationService.issueApplication(details);
