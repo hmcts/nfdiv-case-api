@@ -15,15 +15,6 @@
     "applicant1NameDifferentToMarriageCertificate": null,
     "applicant1LastNameChangedWhenMarried": null,
     "applicant1PhoneNumber": null,
-    "applicant1SolicitorName": "Applicant 1 Solicitor",
-    "applicant1SolicitorEmail": "applicant1.solicitor@example.com",
-    "applicant1SolicitorAddress": "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom",
-    "applicant1SolicitorOrganisationPolicy": {
-      "Organisation": {
-        "OrganisationName": "Test 1 Organisation",
-        "OrganisationID": "ABC456"
-      }
-    },
     "applicant2AgreedToReceiveEmails": null,
     "applicant2ContactDetailsConfidential": "share",
     "applicant2CorrespondenceAddress": null,
@@ -38,15 +29,6 @@
     "applicant2NameDifferentToMarriageCertificate": null,
     "applicant2LastNameChangedWhenMarried": null,
     "applicant2PhoneNumber": null,
-    "applicant2SolicitorName": "Applicant 2 Solicitor",
-    "applicant2SolicitorEmail": "applicant2.solicitor@example.com",
-    "applicant2SolicitorAddress": "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom",
-    "applicant2SolicitorOrganisationPolicy": {
-      "Organisation": {
-        "OrganisationName": "Test 2 Organisation",
-        "OrganisationID": "ABC123"
-      }
-    },
     "confirmReadPetition": null,
     "jurisdictionAgree": null,
     "jurisdictionDisagreeReason": null,
@@ -56,11 +38,10 @@
     "costsAmount": null,
     "costsReason": null,
     "dateAosSubmitted": null,
-    "applicant2SolicitorRepresented": "Yes",
+    "applicant2SolicitorRepresented": null,
     "applicant1HWFAppliedForFees": null,
     "applicant1HWFReferenceNumber": null,
     "applicant1HWFNeedHelp": null,
-    "accessCode": "${json-unit.any-string}",
     "applicationFeeOrderSummary": {
       "Fees": null,
       "PaymentReference": null,
@@ -68,38 +49,6 @@
     },
     "divorceOrDissolution": "divorce",
     "documentUploadComplete": "Yes",
-    "documentsGenerated": [
-      {
-        "id": "${json-unit.any-string}",
-        "value": {
-          "documentDateAdded": null,
-          "documentComment": null,
-          "documentFileName": "aosinvitation-1234567890123456.pdf",
-          "documentType": "aos",
-          "documentEmailContent": null,
-          "documentLink": {
-            "document_url": "${json-unit.any-string}",
-            "document_filename": "aosinvitation-1234567890123456.pdf",
-            "document_binary_url": "${json-unit.any-string}"
-          }
-        }
-      },
-      {
-        "id": "${json-unit.any-string}",
-        "value": {
-          "documentDateAdded": null,
-          "documentComment": null,
-          "documentFileName": "mini-application-1234567890123456.pdf",
-          "documentType": "divorceApplication",
-          "documentEmailContent": null,
-          "documentLink": {
-            "document_url": "${json-unit.any-string}",
-            "document_filename": "mini-application-1234567890123456.pdf",
-            "document_binary_url": "${json-unit.any-string}"
-          }
-        }
-      }
-    ],
     "applicant1FinancialOrder": "No",
     "issueDate": "${json-unit.any-string}",
     "jurisdictionApp1HabituallyResLastSixMonths": null,
@@ -141,10 +90,11 @@
       }
     ],
     "applicant1PrayerHasBeenGiven": "Yes",
-    "solSignStatementOfTruth": "Yes",
-    "applicant1StatementOfTruth": "Yes"
+    "applicant1StatementOfTruth": "Yes",
+    "applicant2PrayerHasBeenGiven": "Yes",
+    "applicant2StatementOfTruth": "Yes"
   },
   "errors": null,
-  "state": null,
+  "state": "Holding",
   "warnings": null
 }

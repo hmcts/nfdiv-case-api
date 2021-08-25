@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateMiniApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentSolicitorAosInvitation;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPack;
+import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDate;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
@@ -47,6 +48,9 @@ class CaseworkerIssueApplicationServiceTest {
     private SendAosPack sendAosPack;
 
     @Mock
+    private SendApplicationIssueNotifications sendApplicationIssueNotifications;
+
+    @Mock
     private SendAosNotifications sendAosNotifications;
 
     @Mock
@@ -59,10 +63,34 @@ class CaseworkerIssueApplicationServiceTest {
     private IssueApplicationService issueApplicationService;
 
     @Test
-    void shouldRunIssueApplicationTasks() {
+    void shouldRunIssueApplicationTasksForCitizenApplication() {
+
+        final CaseData caseData = caseData();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(1L);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+
+        setMockClock(clock);
+
+        when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
+        when(setDueDate.apply(caseDetails)).thenReturn(caseDetails);
+
+        final CaseDetails<CaseData, State> response = issueApplicationService.issueApplication(caseDetails);
+
+        var expectedCaseData = caseData();
+        expectedCaseData.getApplication().setIssueDate(getExpectedLocalDate());
+
+        assertThat(response.getData()).isEqualTo(expectedCaseData);
+    }
+
+    @Test
+    void shouldRunIssueApplicationTasksForSolicitorApplication() {
 
         final CaseData caseData = caseData();
         caseData.getApplicant2().setSolicitorRepresented(YES);
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
 
         final Solicitor solicitor = Solicitor.builder()
             .name("testsol")
@@ -92,6 +120,7 @@ class CaseworkerIssueApplicationServiceTest {
         expectedCaseData.getApplication().setIssueDate(getExpectedLocalDate());
         expectedCaseData.getApplicant2().setSolicitorRepresented(YES);
         expectedCaseData.getApplicant2().setSolicitor(solicitor);
+        expectedCaseData.getApplication().setSolSignStatementOfTruth(YES);
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
     }

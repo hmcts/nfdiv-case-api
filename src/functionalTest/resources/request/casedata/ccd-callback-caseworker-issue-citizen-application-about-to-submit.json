@@ -1,6 +1,6 @@
 {
   "divorceOrDissolution": "divorce",
-  "applicationType": "soleApplication",
+  "applicationType": "jointApplication",
   "applicant1FirstName": "test_first_name",
   "applicant1MiddleName": "test_middle_name",
   "applicant1LastName": "test_last_name",
@@ -15,19 +15,6 @@
   "applicant1ContactDetailsConfidential": "share",
   "applicant1Gender": "female",
   "applicant1CorrespondenceAddress": null,
-  "applicant1SolicitorRepresented": "Yes",
-  "applicant1SolicitorName": "Applicant 1 Solicitor",
-  "applicant1SolicitorReference": null,
-  "applicant1SolicitorPhone": null,
-  "applicant1SolicitorEmail": "applicant1.solicitor@example.com",
-  "applicant1SolicitorAddress": "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom",
-  "applicant1SolicitorAgreeToReceiveEmails": null,
-  "applicant1SolicitorOrganisationPolicy": {
-    "Organisation": {
-      "OrganisationName": "Test 1 Organisation",
-      "OrganisationID": "ABC456"
-    }
-  },
   "applicant2FirstName": "test_first_name",
   "applicant2MiddleName": "test_middle_name",
   "applicant2LastName": "test_last_name",
@@ -43,19 +30,6 @@
   "applicant2ContactDetailsConfidential": "share",
   "applicant2Gender": "female",
   "applicant2CorrespondenceAddress": null,
-  "applicant2SolicitorRepresented": "Yes",
-  "applicant2SolicitorName": "Applicant 2 Solicitor",
-  "applicant2SolicitorReference": null,
-  "applicant2SolicitorPhone": null,
-  "applicant2SolicitorEmail": "applicant2.solicitor@example.com",
-  "applicant2SolicitorAddress": "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom",
-  "applicant2SolicitorAgreeToReceiveEmails": null,
-  "applicant2SolicitorOrganisationPolicy": {
-    "Organisation": {
-      "OrganisationName": "Test 2 Organisation",
-      "OrganisationID": "ABC123"
-    }
-  },
   "marriageApplicant1Name": "test_first_name test_last_name",
   "marriageApplicant2Name": "test_first_name test_last_name",
   "marriageMarriedInUk": null,
@@ -84,7 +58,8 @@
   "applicant2FinancialOrder": "No",
   "applicant1PrayerHasBeenGiven": "Yes",
   "applicant1StatementOfTruth": "Yes",
-  "solSignStatementOfTruth": "Yes",
+  "applicant2PrayerHasBeenGiven": "Yes",
+  "applicant2StatementOfTruth": "Yes",
   "applicationFeeOrderSummary": {
     "PaymentReference": null,
     "Fees": null,

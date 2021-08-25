@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateMiniApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentSolicitorAosInvitation;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPack;
+import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDate;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -39,6 +40,9 @@ public class IssueApplicationService {
     private SendAosPack sendAosPack;
 
     @Autowired
+    private SendApplicationIssueNotifications sendApplicationIssueNotifications;
+
+    @Autowired
     private SendAosNotifications sendAosNotifications;
 
     @Autowired
@@ -48,6 +52,16 @@ public class IssueApplicationService {
     private Clock clock;
 
     public CaseDetails<CaseData, State> issueApplication(final CaseDetails<CaseData, State> caseDetails) {
+        if (!caseDetails.getData().getApplication().isSolicitorApplication()) {
+            return caseTasks(
+                setDueDate,
+                sendApplicationIssueNotifications,
+                details -> {
+                    details.getData().getApplication().setIssueDate(LocalDate.now(clock));
+                    return details;
+                }
+            ).run(caseDetails);
+        }
         return caseTasks(
             generateRespondentSolicitorAosInvitation,
             generateCitizenRespondentAosInvitation,

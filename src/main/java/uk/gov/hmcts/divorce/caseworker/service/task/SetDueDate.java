@@ -19,15 +19,27 @@ public class SetDueDate implements CaseTask {
     @Value("${aos_pack.due_date_offset_days}")
     private long dueDateOffsetDays;
 
+    @Value("${case_progression.holding_period_in_weeks}")
+    private long dueDateHoldingPeriodInWeeks;
+
     @Autowired
     private Clock clock;
 
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
-        if (!caseDetails.getData().getApplication().isSolicitorServiceMethod()) {
-            log.info("Setting due date.  Case ID: {}", caseDetails.getId());
-            caseDetails.getData().setDueDate(LocalDate.now(clock).plusDays(dueDateOffsetDays));
+
+        if (caseDetails.getData().getApplication().isSolicitorApplication()) {
+            if (!caseDetails.getData().getApplication().isSolicitorServiceMethod()) {
+                log.info("Setting due date.  Case ID: {}", caseDetails.getId());
+                caseDetails.getData().setDueDate(LocalDate.now(clock).plusDays(dueDateOffsetDays));
+            }
+        } else {
+            log.info("Setting Holding due date.  Case ID: {}", caseDetails.getId());
+            caseDetails.getData().setDueDate(LocalDate.now(clock).plusWeeks(dueDateHoldingPeriodInWeeks));
         }
+
+//        caseDetails.getData().setDueDate(LocalDate.now(clock).plusWeeks(dueDateOffsetDays));
+
         return caseDetails;
     }
 }

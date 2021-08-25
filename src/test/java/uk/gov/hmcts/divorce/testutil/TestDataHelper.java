@@ -225,6 +225,7 @@ public class TestDataHelper {
         marriageDetails.setDate(LocalDate.of(1990, 6, 10));
         marriageDetails.setApplicant1Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME);
         marriageDetails.setApplicant2Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME);
+        marriageDetails.setMarriedInUk(YES);
 
         var jurisdiction = new Jurisdiction();
         jurisdiction.setApplicant1Residence(YES);
@@ -249,7 +250,7 @@ public class TestDataHelper {
             .builder()
             .applicant1(applicant1)
             .applicant2(getJointApplicant2(MALE))
-            .caseInvite(CaseInvite.builder().applicant2InviteEmailAddress(TEST_USER_EMAIL).build())
+            .caseInvite(CaseInvite.builder().applicant2InviteEmailAddress(TEST_APPLICANT_2_USER_EMAIL).build())
             .divorceOrDissolution(DIVORCE)
             .application(application)
             .build();
