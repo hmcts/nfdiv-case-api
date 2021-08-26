@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.divorce.solicitor.notification.AwaitingConditionalOrderNotification;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
+import uk.gov.hmcts.divorce.solicitor.notification.AwaitingConditionalOrderNotification;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
@@ -100,7 +100,10 @@ public class SystemProgressHeldCasesTask {
             log.info("For case id {} applicant is represented by solicitor hence sending conditional order notification email", caseId);
             conditionalOrderNotification.send(caseDataMap, caseId);
         } else {
-            log.info("For case id {} applicant is not represented by solicitor hence not sending conditional order notification email", caseId);
+            log.info(
+                "For case id {} applicant is not represented by solicitor hence not sending conditional order notification email",
+                caseId
+            );
         }
 
     }

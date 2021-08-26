@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
-import uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.HashMap;
@@ -38,17 +37,17 @@ public class AwaitingConditionalOrderNotification {
 
     public void send(Map<String, Object> caseDataMap, Long caseId) {
 
-        String applicant1SolicitorEmail = getValueForKeyWithDefaultValue(caseDataMap, APPLICANT_1_SOLICITOR_EMAIL);
-        String applicant1SolicitorName = getValueForKeyWithDefaultValue(caseDataMap, APPLICANT_1_SOLICITOR_NAME);
+        final String applicant1SolicitorEmail = getValueForKeyWithDefaultValue(caseDataMap, APPLICANT_1_SOLICITOR_EMAIL);
+        final String applicant1SolicitorName = getValueForKeyWithDefaultValue(caseDataMap, APPLICANT_1_SOLICITOR_NAME);
 
-        String applicant1FirstName = getValueForKeyWithDefaultValue(caseDataMap, APPLICANT_1_FIRST_NAME);
-        String applicant1LastName = getValueForKeyWithDefaultValue(caseDataMap, APPLICANT_1_LAST_NAME);
+        final String applicant1FirstName = getValueForKeyWithDefaultValue(caseDataMap, APPLICANT_1_FIRST_NAME);
+        final String applicant1LastName = getValueForKeyWithDefaultValue(caseDataMap, APPLICANT_1_LAST_NAME);
 
-        String applicant2FirstName = getValueForKeyWithDefaultValue(caseDataMap, APPLICANT_2_FIRST_NAME);
-        String applicant2LastName = getValueForKeyWithDefaultValue(caseDataMap, APPLICANT_2_LAST_NAME);
+        final String applicant2FirstName = getValueForKeyWithDefaultValue(caseDataMap, APPLICANT_2_FIRST_NAME);
+        final String applicant2LastName = getValueForKeyWithDefaultValue(caseDataMap, APPLICANT_2_LAST_NAME);
 
-        YesOrNo langPref = (YesOrNo) caseDataMap.getOrDefault(APPLICANT_1_LANGUAGE_PREFERENCE_WELSH, NO);
-        LanguagePreference languagePreference =
+        final YesOrNo langPref = (YesOrNo) caseDataMap.getOrDefault(APPLICANT_1_LANGUAGE_PREFERENCE_WELSH, NO);
+        final LanguagePreference languagePreference =
             langPref == null || langPref.equals(NO)
                 ? ENGLISH
                 : WELSH;
