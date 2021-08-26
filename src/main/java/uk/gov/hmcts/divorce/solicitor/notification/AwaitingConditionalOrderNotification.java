@@ -37,14 +37,14 @@ public class AwaitingConditionalOrderNotification {
 
     public void send(Map<String, Object> caseDataMap, Long caseId) {
 
-        final String applicant1SolicitorEmail = getValueForKeyWithDefaultValue(caseDataMap, APPLICANT_1_SOLICITOR_EMAIL);
-        final String applicant1SolicitorName = getValueForKeyWithDefaultValue(caseDataMap, APPLICANT_1_SOLICITOR_NAME);
+        final String applicant1SolicitorEmail = (String) caseDataMap.getOrDefault(APPLICANT_1_SOLICITOR_EMAIL, "");
+        final String applicant1SolicitorName = (String) caseDataMap.getOrDefault(APPLICANT_1_SOLICITOR_NAME, "");
 
-        final String applicant1FirstName = getValueForKeyWithDefaultValue(caseDataMap, APPLICANT_1_FIRST_NAME);
-        final String applicant1LastName = getValueForKeyWithDefaultValue(caseDataMap, APPLICANT_1_LAST_NAME);
+        final String applicant1FirstName = (String) caseDataMap.getOrDefault(APPLICANT_1_FIRST_NAME, "");
+        final String applicant1LastName = (String) caseDataMap.getOrDefault(APPLICANT_1_LAST_NAME, "");
 
-        final String applicant2FirstName = getValueForKeyWithDefaultValue(caseDataMap, APPLICANT_2_FIRST_NAME);
-        final String applicant2LastName = getValueForKeyWithDefaultValue(caseDataMap, APPLICANT_2_LAST_NAME);
+        final String applicant2FirstName = (String) caseDataMap.getOrDefault(APPLICANT_2_FIRST_NAME, "");
+        final String applicant2LastName = (String) caseDataMap.getOrDefault(APPLICANT_2_LAST_NAME, "");
 
         final YesOrNo langPref = (YesOrNo) caseDataMap.getOrDefault(APPLICANT_1_LANGUAGE_PREFERENCE_WELSH, NO);
         final LanguagePreference languagePreference =
@@ -66,9 +66,5 @@ public class AwaitingConditionalOrderNotification {
         );
 
         log.info("Successfully sent awaiting conditional order notification for case : {}", caseId);
-    }
-
-    private String getValueForKeyWithDefaultValue(Map<String, Object> caseDataMap, String key) {
-        return (String) caseDataMap.getOrDefault(key, null);
     }
 }
