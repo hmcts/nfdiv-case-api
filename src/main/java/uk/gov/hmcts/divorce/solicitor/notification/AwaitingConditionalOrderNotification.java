@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -14,13 +15,6 @@ import static java.lang.String.join;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
-import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_FIRST_NAME;
-import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_LANGUAGE_PREFERENCE_WELSH;
-import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_LAST_NAME;
-import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_SOLICITOR_EMAIL;
-import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_SOLICITOR_NAME;
-import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_FIRST_NAME;
-import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_AWAITING_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_NAME;
@@ -35,22 +29,21 @@ public class AwaitingConditionalOrderNotification {
     @Autowired
     private NotificationService notificationService;
 
-    public void send(Map<String, Object> caseDataMap, Long caseId) {
+    public void send(CaseData caseData, Long caseId) {
 
-        final String applicant1SolicitorEmail = (String) caseDataMap.getOrDefault(APPLICANT_1_SOLICITOR_EMAIL, "");
-        final String applicant1SolicitorName = (String) caseDataMap.getOrDefault(APPLICANT_1_SOLICITOR_NAME, "");
+        final String applicant1SolicitorEmail = caseData.getApplicant1().getSolicitor().getEmail();
+        final String applicant1SolicitorName = caseData.getApplicant1().getSolicitor().getName();
 
-        final String applicant1FirstName = (String) caseDataMap.getOrDefault(APPLICANT_1_FIRST_NAME, "");
-        final String applicant1LastName = (String) caseDataMap.getOrDefault(APPLICANT_1_LAST_NAME, "");
+        final String applicant1FirstName = caseData.getApplicant1().getFirstName();
+        final String applicant1LastName = caseData.getApplicant1().getLastName();
 
-        final String applicant2FirstName = (String) caseDataMap.getOrDefault(APPLICANT_2_FIRST_NAME, "");
-        final String applicant2LastName = (String) caseDataMap.getOrDefault(APPLICANT_2_LAST_NAME, "");
+        final String applicant2FirstName = caseData.getApplicant2().getFirstName();
+        final String applicant2LastName = caseData.getApplicant2().getLastName();
 
-        final YesOrNo langPref = (YesOrNo) caseDataMap.getOrDefault(APPLICANT_1_LANGUAGE_PREFERENCE_WELSH, NO);
-        final LanguagePreference languagePreference =
-            langPref == null || langPref.equals(NO)
-                ? ENGLISH
-                : WELSH;
+        final YesOrNo languagePreferenceWelsh = caseData.getApplicant1().getLanguagePreferenceWelsh();
+        final LanguagePreference languagePreference = languagePreferenceWelsh.equals(NO)
+            ? ENGLISH
+            : WELSH;
 
         final Map<String, String> templateVars = new HashMap<>();
         templateVars.put(APPLICANT_NAME, join(" ", applicant1FirstName, applicant1LastName));

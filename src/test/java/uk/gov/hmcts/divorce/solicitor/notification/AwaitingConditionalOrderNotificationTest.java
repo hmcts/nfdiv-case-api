@@ -5,10 +5,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-
-import java.util.Map;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
@@ -17,11 +18,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_FIRST_NAME;
-import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_LANGUAGE_PREFERENCE_WELSH;
-import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_LAST_NAME;
-import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_SOLICITOR_EMAIL;
-import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_AWAITING_CONDITIONAL_ORDER;
@@ -48,15 +44,32 @@ class AwaitingConditionalOrderNotificationTest {
 
     @Test
     void shouldSendEmailToApplicant1WithSubmissionResponseDate() {
-        Map<String, Object> data = Map.of(
-            APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME,
-            APPLICANT_1_LAST_NAME, TEST_LAST_NAME,
-            APPLICANT_2_FIRST_NAME, APPLICANT_2_FIRST_NAME,
-            APPLICANT_2_LAST_NAME, APPLICANT_2_LAST_NAME,
-            APPLICANT_1_SOLICITOR_NAME, TEST_SOLICITOR_NAME,
-            APPLICANT_1_SOLICITOR_EMAIL, TEST_SOLICITOR_EMAIL,
-            APPLICANT_1_LANGUAGE_PREFERENCE_WELSH, NO
-        );
+
+        var data = CaseData
+            .builder()
+            .applicant1(
+                Applicant
+                    .builder()
+                    .firstName(TEST_FIRST_NAME)
+                    .lastName(TEST_LAST_NAME)
+                    .languagePreferenceWelsh(NO)
+                    .solicitor(
+                        Solicitor
+                            .builder()
+                            .email(TEST_SOLICITOR_EMAIL)
+                            .name(TEST_SOLICITOR_NAME)
+                            .build()
+                    )
+                    .build()
+            )
+            .applicant2(
+                Applicant
+                    .builder()
+                    .firstName(APPLICANT_2_FIRST_NAME)
+                    .lastName(APPLICANT_2_LAST_NAME)
+                    .build()
+            )
+            .build();
 
         conditionalOrderNotification.send(data, 1234567890123456L);
 
