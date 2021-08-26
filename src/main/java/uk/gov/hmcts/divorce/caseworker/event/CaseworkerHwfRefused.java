@@ -30,6 +30,7 @@ public class CaseworkerHwfRefused implements CCDConfig<CaseData, State, UserRole
             .forStateTransition(AwaitingHWFDecision, AwaitingDocuments)
             .name("HWF Refused")
             .description("HWF Refused")
+            .showEventNotes()
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASEWORKER_COURTADMIN_CTSC, CASEWORKER_COURTADMIN_RDU)
             .grant(READ, SOLICITOR, CASEWORKER_SUPERUSER, CASEWORKER_LEGAL_ADVISOR));

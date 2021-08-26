@@ -51,7 +51,7 @@ class SystemProgressHeldCasesTaskTest {
         final CaseDetails caseDetails1 = mock(CaseDetails.class);
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
         final CaseDetails caseDetails3 = mock(CaseDetails.class);
-        final LocalDate issueDate1 = parse("2021-01-01");
+        final LocalDate issueDate1 = parse("2021-01-01");f
         final LocalDate issueDate2 = parse("2021-01-02");
         final LocalDate issueDate3 = parse("2020-12-02");
 
