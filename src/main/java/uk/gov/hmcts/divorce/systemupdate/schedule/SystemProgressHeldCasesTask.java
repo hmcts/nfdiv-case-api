@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.citizen.notification.AwaitingConditionalOrderNotification;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
@@ -35,7 +36,11 @@ public class SystemProgressHeldCasesTask {
     @Autowired
     private CcdSearchService ccdSearchService;
 
+    @Autowired
+    private AwaitingConditionalOrderNotification conditionalOrderNotification;
+
     private static final String ISSUE_DATE_KEY = "issueDate";
+    private static final String APPLICANT1_SOLICITOR_REPRESENTED = "applicant1SolicitorRepresented";
 
     @Scheduled(cron = "${schedule.awaiting_conditional_order}")
     public void execute() {
@@ -63,7 +68,14 @@ public class SystemProgressHeldCasesTask {
                                 caseDetails.getId(),
                                 holdingPeriodService.getHoldingPeriodInWeeks()
                             );
+
+                            //Set Issue date as null
+                            caseDetails.getData().put(ISSUE_DATE_KEY, null);
+
                             ccdUpdateService.submitEvent(caseDetails, SYSTEM_PROGRESS_HELD_CASE);
+
+                            // trigger notification to applicant's solicitor
+                            triggerEmailNotification(caseDataMap, caseDetails.getId());
                         }
                     }
                 } catch (final CcdManagementException e) {
@@ -79,5 +91,17 @@ public class SystemProgressHeldCasesTask {
                 + "due to conflict with another running awaiting conditional order task"
             );
         }
+    }
+
+    private void triggerEmailNotification(Map<String, Object> caseDataMap, Long caseId) {
+        boolean applicant1SolicitorRepresented = (boolean) caseDataMap.getOrDefault(APPLICANT1_SOLICITOR_REPRESENTED, false);
+
+        if (applicant1SolicitorRepresented) {
+            log.info("For case id {} applicant is represented by solicitor hence sending conditional order notification email", caseId);
+            conditionalOrderNotification.send(caseDataMap, caseId);
+        } else {
+            log.info("For case id {} applicant is not represented by solicitor hence not sending conditional order notification email", caseId);
+        }
+
     }
 }

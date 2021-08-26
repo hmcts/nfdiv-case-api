@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.divorce.citizen.notification.AwaitingConditionalOrderNotification;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
@@ -21,9 +22,13 @@ import java.util.Map;
 
 import static java.time.LocalDate.parse;
 import static java.util.Collections.singletonList;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -43,11 +48,14 @@ class SystemProgressHeldCasesTaskTest {
     @Mock
     private CcdSearchService ccdSearchService;
 
+    @Mock
+    private AwaitingConditionalOrderNotification conditionalOrderNotification;
+
     @InjectMocks
     private SystemProgressHeldCasesTask awaitingConditionalOrderTask;
 
     @Test
-    void shouldTriggerAwaitingConditionalOrderOnEachCaseWhenCaseHasFinishedHoldingPeriod() {
+    void shouldTriggerAwaitingConditionalOrderOnEachCaseAndSendNotificationWhenCaseHasFinishedHoldingPeriod() {
         final CaseDetails caseDetails1 = mock(CaseDetails.class);
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
         final CaseDetails caseDetails3 = mock(CaseDetails.class);
@@ -55,9 +63,9 @@ class SystemProgressHeldCasesTaskTest {
         final LocalDate issueDate2 = parse("2021-01-02");
         final LocalDate issueDate3 = parse("2020-12-02");
 
-        when(caseDetails1.getData()).thenReturn(Map.of("issueDate", issueDate1.toString()));
-        when(caseDetails2.getData()).thenReturn(Map.of("issueDate", issueDate2.toString()));
-        when(caseDetails3.getData()).thenReturn(Map.of("issueDate", issueDate3.toString()));
+        caseDataMapWithIssueDate(caseDetails1, issueDate1);
+        caseDataMapWithIssueDate(caseDetails2, issueDate2);
+        caseDataMapWithIssueDate(caseDetails3, issueDate3);
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2, caseDetails3);
 
@@ -67,12 +75,15 @@ class SystemProgressHeldCasesTaskTest {
         when(holdingPeriodService.getHoldingPeriodInWeeks()).thenReturn(14);
         when(ccdSearchService.searchForAllCasesWithStateOf(Holding)).thenReturn(caseDetailsList);
 
+        doNothing().when(conditionalOrderNotification).send(anyMap(), anyLong());
+
         awaitingConditionalOrderTask.execute();
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_HELD_CASE);
         verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_PROGRESS_HELD_CASE);
 
-        verifyNoMoreInteractions(ccdUpdateService);
+        verify(conditionalOrderNotification, times(2)).send(anyMap(), anyLong());
+        verifyNoMoreInteractions(ccdUpdateService, conditionalOrderNotification);
     }
 
     @Test
@@ -158,5 +169,12 @@ class SystemProgressHeldCasesTaskTest {
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_HELD_CASE);
         verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_PROGRESS_HELD_CASE);
+    }
+
+    private void caseDataMapWithIssueDate(CaseDetails caseDetails1, LocalDate issueDate) {
+        Map<String, Object> caseDataMap = new java.util.HashMap<>();
+        caseDataMap.put("issueDate", issueDate.toString());
+        caseDataMap.put("applicant1SolicitorRepresented", true);
+        when(caseDetails1.getData()).thenReturn(caseDataMap);
     }
 }
