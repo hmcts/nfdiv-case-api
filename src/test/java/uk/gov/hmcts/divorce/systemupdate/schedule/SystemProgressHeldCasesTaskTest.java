@@ -130,7 +130,7 @@ class SystemProgressHeldCasesTaskTest {
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
         final LocalDate issueDate = parse("2021-01-01");
 
-        when(caseDetails1.getData()).thenReturn(Map.of("issueDate", issueDate.toString()));
+        caseDataMapWithIssueDate(caseDetails1, issueDate);
 
         when(holdingPeriodService.isHoldingPeriodFinished(issueDate)).thenReturn(true);
         when(holdingPeriodService.getHoldingPeriodInWeeks()).thenReturn(14);
@@ -152,8 +152,8 @@ class SystemProgressHeldCasesTaskTest {
         final LocalDate issueDate1 = parse("2021-01-01");
         final LocalDate issueDate2 = parse("2021-01-02");
 
-        when(caseDetails1.getData()).thenReturn(Map.of("issueDate", issueDate1.toString()));
-        when(caseDetails2.getData()).thenReturn(Map.of("issueDate", issueDate2.toString()));
+        caseDataMapWithIssueDate(caseDetails1, issueDate1);
+        caseDataMapWithIssueDate(caseDetails2, issueDate2);
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
@@ -165,10 +165,13 @@ class SystemProgressHeldCasesTaskTest {
         doThrow(new CcdManagementException("Failed processing of case", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_HELD_CASE);
 
+        doNothing().when(conditionalOrderNotification).send(anyMap(), anyLong());
+
         awaitingConditionalOrderTask.execute();
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_HELD_CASE);
         verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_PROGRESS_HELD_CASE);
+        verify(conditionalOrderNotification, times(1)).send(anyMap(), anyLong());
     }
 
     private void caseDataMapWithIssueDate(CaseDetails caseDetails1, LocalDate issueDate) {
