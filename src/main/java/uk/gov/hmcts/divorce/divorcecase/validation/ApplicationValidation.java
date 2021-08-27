@@ -47,4 +47,5 @@ public final class ApplicationValidation {
             validateCaseFieldsForIssueApplication(caseData.getApplication().getMarriageDetails())
         );
     }
+    
 }
