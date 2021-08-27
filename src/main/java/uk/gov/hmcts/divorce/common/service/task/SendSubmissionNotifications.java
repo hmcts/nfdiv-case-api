@@ -59,8 +59,12 @@ public class SendSubmissionNotifications implements CaseTask {
             }
         }
 
-        if (caseData.getApplication().hasAwaitingDocuments()) {
-            applicationOutstandingActionNotification.send(caseData, caseId);
+        if (caseData.getApplication().hasAwaitingApplicant1Documents()) {
+            applicationOutstandingActionNotification.sendToApplicant1(caseData, caseId);
         }
+        if (caseData.getApplication().hasAwaitingApplicant2Documents()) {
+            applicationOutstandingActionNotification.sendToApplicant2(caseData, caseId);
+        }
+
     }
 }

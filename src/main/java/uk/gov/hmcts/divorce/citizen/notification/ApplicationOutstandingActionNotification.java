@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
+import java.util.Set;
 
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_ACTIONS;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -36,25 +37,50 @@ public class ApplicationOutstandingActionNotification {
     @Autowired
     private CommonContent commonContent;
 
-    public void send(CaseData caseData, Long id) {
+    public void sendToApplicant1(CaseData caseData, Long id) {
         Map<String, String> templateVars = commonContent.templateVarsForApplicant(
             caseData, caseData.getApplicant1(), caseData.getApplicant2());
 
         templateVars.put(APPLICATION_REFERENCE, formatId(id));
 
         setDefaultVariables(templateVars);
-        if (caseData.getApplication().getApplicant1WantsToHavePapersServedAnotherWay() == YesOrNo.YES) {
+        if (caseData.getApplication().getApplicant1WantsToHavePapersServedAnotherWay() == YesOrNo.YES
+            && caseData.getApplicationType().isSole()) {
             setPapersServedAnotherWay(templateVars, caseData);
         }
         if (caseData.getApplication().getApplicant1CannotUploadSupportingDocument() != null
             && !caseData.getApplication().getApplicant1CannotUploadSupportingDocument().isEmpty()) {
-            setMissingSupportingDocumentType(templateVars, caseData);
+            setMissingSupportingDocumentType(
+                templateVars, caseData, caseData.getApplication().getApplicant1CannotUploadSupportingDocument());
         }
 
-        log.info("Sending application outstanding actions notification for case : {}", id);
+        log.info("Sending application outstanding actions notification to applicant 1 for case : {}", id);
 
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
+            OUTSTANDING_ACTIONS,
+            templateVars,
+            caseData.getApplicant1().getLanguagePreference()
+        );
+    }
+
+    public void sendToApplicant2(CaseData caseData, Long id) {
+        Map<String, String> templateVars = commonContent.templateVarsForApplicant(
+            caseData, caseData.getApplicant2(), caseData.getApplicant1());
+
+        templateVars.put(APPLICATION_REFERENCE, formatId(id));
+
+        setDefaultVariables(templateVars);
+        if (caseData.getApplication().getApplicant2CannotUploadSupportingDocument() != null
+            && !caseData.getApplication().getApplicant2CannotUploadSupportingDocument().isEmpty()) {
+            setMissingSupportingDocumentType(
+                templateVars, caseData, caseData.getApplication().getApplicant2CannotUploadSupportingDocument());
+        }
+
+        log.info("Sending application outstanding actions notification to applicant 2 for case : {}", id);
+
+        notificationService.sendEmail(
+            caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
             OUTSTANDING_ACTIONS,
             templateVars,
             caseData.getApplicant1().getLanguagePreference()
@@ -91,7 +117,8 @@ public class ApplicationOutstandingActionNotification {
             "You can apply here: https://www.gov.uk/government/publications/form-d11-application-notice");
     }
 
-    private void setMissingSupportingDocumentType(Map<String, String> templateVars,  CaseData caseData) {
+    private void setMissingSupportingDocumentType(
+        Map<String, String> templateVars,  CaseData caseData, Set<DocumentType> applicantCannotUploadSupportingDocument) {
         String marriageOrCivilPartnership = caseData.getDivorceOrDissolution().isDivorce() ? "marriage" : "civil partnership";
         String certificate = String.format("* Your original %s certificate or a certified copy", marriageOrCivilPartnership);
         String foreignCertificate = String.format("* Your original foreign %s certificate", marriageOrCivilPartnership);
@@ -99,7 +126,7 @@ public class ApplicationOutstandingActionNotification {
             String.format("* A certified translation of your foreign %s certificate", marriageOrCivilPartnership);
         String nameChangeProof = "* Proof that you changed your name. For example deed poll or statutory declaration";
 
-        for (DocumentType docType : caseData.getApplication().getApplicant1CannotUploadSupportingDocument()) {
+        for (DocumentType docType : applicantCannotUploadSupportingDocument) {
             switch (docType) {
                 case MARRIAGE_CERTIFICATE:
                     if (caseData.getApplication().getMarriageDetails().getMarriedInUk().toBoolean()) {

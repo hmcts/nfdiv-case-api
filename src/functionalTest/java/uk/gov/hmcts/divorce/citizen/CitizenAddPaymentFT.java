@@ -37,6 +37,11 @@ public class CitizenAddPaymentFT extends FunctionalTestSuite {
     private static final String RESPONSE =
         "classpath:responses/response-payment-made.json";
 
+    public static final String JOINT_AWAITING_DOCUMENTS_REQUEST =
+        "classpath:request/casedata/ccd-callback-casedata-joint-application-payment-made-awaiting-documents.json";
+    public static final String JOINT_AWAITING_DOCUMENTS_RESPONSE =
+        "classpath:responses/response-joint-application-payment-made-awaiting-documents.json";
+
     private static final String AWAITING_DOCUMENTS_REQUEST =
         "classpath:request/casedata/ccd-callback-casedata-payment-made-awaiting-documents.json";
     private static final String AWAITING_DOCUMENTS_RESPONSE =
@@ -92,6 +97,19 @@ public class CitizenAddPaymentFT extends FunctionalTestSuite {
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(AWAITING_DOCUMENTS_RESPONSE)));
+    }
+
+    @Test
+    public void shouldPassValidationAndGiveSuccessWhenCaseDataValidAndAwaitingDocumentJointApplication() throws IOException {
+        Map<String, Object> request = caseData(JOINT_AWAITING_DOCUMENTS_REQUEST);
+        Response response = triggerCallback(request, CITIZEN_ADD_PAYMENT, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(JOINT_AWAITING_DOCUMENTS_RESPONSE)));
     }
 
 }

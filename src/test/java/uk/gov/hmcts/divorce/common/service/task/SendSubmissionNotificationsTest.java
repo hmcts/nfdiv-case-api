@@ -13,6 +13,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.solicitor.service.notification.SolicitorSubmittedNotification;
 
+import java.util.Set;
+
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -21,6 +23,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -96,7 +99,7 @@ class SendSubmissionNotificationsTest {
     }
 
     @Test
-    void shouldSendCitizenNotificationAndOutstandingNotificationIfCitizenApplicationAndAwaitingDocumentsState() {
+    void shouldSendApplicant1NotificationAndOutstandingNotificationIfCitizenApplicationAndAwaitingDocumentsState() {
 
         final CaseData caseData = caseData();
         caseData.setApplication(Application.builder().build());
@@ -111,7 +114,28 @@ class SendSubmissionNotificationsTest {
         sendSubmissionNotifications.apply(caseDetails);
 
         verify(applicationSubmittedNotification).sendToApplicant1(caseData, TEST_CASE_ID);
-        verify(applicationOutstandingActionNotification).send(caseData, TEST_CASE_ID);
+        verify(applicationOutstandingActionNotification).sendToApplicant1(caseData, TEST_CASE_ID);
+        verifyNoInteractions(solicitorSubmittedNotification);
+    }
+
+    @Test
+    void shouldSendApplicant2NotificationAndOutstandingNotificationIfCitizenApplicationAndAwaitingDocumentsState() {
+
+        final CaseData caseData = caseData();
+        caseData.setApplication(Application.builder().build());
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.getApplication().setApplicant2CannotUploadSupportingDocument(Set.of(NAME_CHANGE_EVIDENCE));
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+        caseDetails.setState(AwaitingDocuments);
+
+        sendSubmissionNotifications.apply(caseDetails);
+
+        verify(applicationSubmittedNotification).sendToApplicant1(caseData, TEST_CASE_ID);
+        verify(applicationSubmittedNotification).sendToApplicant2(caseData, TEST_CASE_ID);
+        verify(applicationOutstandingActionNotification).sendToApplicant2(caseData, TEST_CASE_ID);
         verifyNoInteractions(solicitorSubmittedNotification);
     }
 
