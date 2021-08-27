@@ -21,24 +21,27 @@ public class SendAosPack implements CaseTask {
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
 
-        final Long caseId = caseDetails.getId();
-        final CaseData caseData = caseDetails.getData();
+        if (caseDetails.getData().getApplication().isSolicitorApplication()) {
 
-        if (!caseData.getApplication().isSolicitorServiceMethod()) {
+            final Long caseId = caseDetails.getId();
+            final CaseData caseData = caseDetails.getData();
 
-            final Applicant respondent = caseData.getApplicant2();
-            final Solicitor respondentSolicitor = respondent.getSolicitor();
+            if (!caseData.getApplication().isSolicitorServiceMethod()) {
 
-            if (respondent.isRepresented()) {
-                log.info("Sending respondent AoS pack to bulk print, "
-                    + "respondent is represented by digital solicitor.  Case ID: {}:", caseId);
-                aosPackPrinter.print(caseData, caseId);
+                final Applicant respondent = caseData.getApplicant2();
+                final Solicitor respondentSolicitor = respondent.getSolicitor();
 
-                log.info("Setting Notice Of Proceedings information. CaseID: {}", caseId);
-                caseData.getAcknowledgementOfService().setNoticeOfProceedings(respondentSolicitor);
-            } else {
-                log.info("Sending respondent AoS pack to bulk print, respondent is not represented.  CaseID: {}", caseId);
-                aosPackPrinter.print(caseData, caseId);
+                if (respondent.isRepresented()) {
+                    log.info("Sending respondent AoS pack to bulk print, "
+                        + "respondent is represented by digital solicitor.  Case ID: {}:", caseId);
+                    aosPackPrinter.print(caseData, caseId);
+
+                    log.info("Setting Notice Of Proceedings information. CaseID: {}", caseId);
+                    caseData.getAcknowledgementOfService().setNoticeOfProceedings(respondentSolicitor);
+                } else {
+                    log.info("Sending respondent AoS pack to bulk print, respondent is not represented.  CaseID: {}", caseId);
+                    aosPackPrinter.print(caseData, caseId);
+                }
             }
         }
 

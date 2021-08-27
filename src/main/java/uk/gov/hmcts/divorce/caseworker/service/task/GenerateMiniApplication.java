@@ -31,23 +31,26 @@ public class GenerateMiniApplication implements CaseTask {
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
 
-        final Long caseId = caseDetails.getId();
-        final CaseData caseData = caseDetails.getData();
-        final LocalDate createdDate = caseDetails.getCreatedDate().toLocalDate();
+        if (caseDetails.getData().getApplication().isSolicitorApplication()) {
 
-        log.info("Executing handler for generating mini application for case id {} ", caseId);
+            final Long caseId = caseDetails.getId();
+            final CaseData caseData = caseDetails.getData();
+            final LocalDate createdDate = caseDetails.getCreatedDate().toLocalDate();
 
-        final Supplier<Map<String, Object>> templateContentSupplier = templateContent.apply(caseData, caseId, createdDate);
+            log.info("Executing handler for generating mini application for case id {} ", caseId);
 
-        caseDataDocumentService.renderDocumentAndUpdateCaseData(
-            caseData,
-            DIVORCE_APPLICATION,
-            templateContentSupplier,
-            caseId,
-            DIVORCE_MINI_APPLICATION,
-            caseData.getApplicant1().getLanguagePreference(),
-            DIVORCE_MINI_APPLICATION_DOCUMENT_NAME + caseId
-        );
+            final Supplier<Map<String, Object>> templateContentSupplier = templateContent.apply(caseData, caseId, createdDate);
+
+            caseDataDocumentService.renderDocumentAndUpdateCaseData(
+                caseData,
+                DIVORCE_APPLICATION,
+                templateContentSupplier,
+                caseId,
+                DIVORCE_MINI_APPLICATION,
+                caseData.getApplicant1().getLanguagePreference(),
+                DIVORCE_MINI_APPLICATION_DOCUMENT_NAME + caseId
+            );
+        }
 
         return caseDetails;
     }

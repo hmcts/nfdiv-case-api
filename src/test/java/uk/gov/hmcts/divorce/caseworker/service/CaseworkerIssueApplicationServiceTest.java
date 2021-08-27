@@ -74,8 +74,14 @@ class CaseworkerIssueApplicationServiceTest {
 
         setMockClock(clock);
 
-        when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateRespondentSolicitorAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateCitizenRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
+        when(miniApplicationRemover.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateMiniApplication.apply(caseDetails)).thenReturn(caseDetails);
+        when(sendAosPack.apply(caseDetails)).thenReturn(caseDetails);
+        when(sendAosNotifications.apply(caseDetails)).thenReturn(caseDetails);
         when(setDueDate.apply(caseDetails)).thenReturn(caseDetails);
+        when(sendApplicationIssueNotifications.apply((caseDetails))).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = issueApplicationService.issueApplication(caseDetails);
 
@@ -113,6 +119,7 @@ class CaseworkerIssueApplicationServiceTest {
         when(sendAosPack.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosNotifications.apply(caseDetails)).thenReturn(caseDetails);
         when(setDueDate.apply(caseDetails)).thenReturn(caseDetails);
+        when(sendApplicationIssueNotifications.apply((caseDetails))).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = issueApplicationService.issueApplication(caseDetails);
 

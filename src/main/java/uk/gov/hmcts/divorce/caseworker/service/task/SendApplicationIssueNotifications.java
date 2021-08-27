@@ -17,11 +17,14 @@ public class SendApplicationIssueNotifications implements CaseTask {
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
 
-        final CaseData caseData = caseDetails.getData();
-        final Long caseId = caseDetails.getId();
+        if (!caseDetails.getData().getApplication().isSolicitorApplication()) {
 
-        jointApplicationIssueNotification.sendToApplicant1(caseData, caseId);
-        jointApplicationIssueNotification.sendToApplicant2(caseData, caseId);
+            final CaseData caseData = caseDetails.getData();
+            final Long caseId = caseDetails.getId();
+
+            jointApplicationIssueNotification.sendToApplicant1(caseData, caseId);
+            jointApplicationIssueNotification.sendToApplicant2(caseData, caseId);
+        }
 
         return caseDetails;
     }

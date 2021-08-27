@@ -28,14 +28,14 @@ public class SetDueDate implements CaseTask {
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
 
-        if (caseDetails.getData().getApplication().isSolicitorApplication()) {
-            if (!caseDetails.getData().getApplication().isSolicitorServiceMethod()) {
-                log.info("Setting due date.  Case ID: {}", caseDetails.getId());
-                caseDetails.getData().setDueDate(LocalDate.now(clock).plusDays(dueDateOffsetDays));
-            }
-        } else {
+
+        if (!caseDetails.getData().getApplication().isSolicitorApplication()) {
             log.info("Setting holding due date.  Case ID: {}", caseDetails.getId());
             caseDetails.getData().setDueDate(LocalDate.now(clock).plusWeeks(dueDateHoldingPeriodInWeeks).plusDays(1));
+
+        } else if (!caseDetails.getData().getApplication().isSolicitorServiceMethod()) {
+            log.info("Setting due date.  Case ID: {}", caseDetails.getId());
+            caseDetails.getData().setDueDate(LocalDate.now(clock).plusDays(dueDateOffsetDays));
         }
 
         return caseDetails;

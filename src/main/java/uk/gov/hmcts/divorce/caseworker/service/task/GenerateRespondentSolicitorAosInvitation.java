@@ -33,27 +33,30 @@ public class GenerateRespondentSolicitorAosInvitation implements CaseTask {
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
 
-        final Long caseId = caseDetails.getId();
-        final CaseData caseData = caseDetails.getData();
-        final LocalDate createdDate = caseDetails.getCreatedDate().toLocalDate();
+        if (caseDetails.getData().getApplication().isSolicitorApplication()) {
 
-        log.info("Executing handler for generating respondent aos invitation for case id {} ", caseId);
+            final Long caseId = caseDetails.getId();
+            final CaseData caseData = caseDetails.getData();
+            final LocalDate createdDate = caseDetails.getCreatedDate().toLocalDate();
 
-        if (caseData.getApplicant2().isRepresented()) {
+            log.info("Executing handler for generating respondent aos invitation for case id {} ", caseId);
 
-            final Supplier<Map<String, Object>> templateContentSupplier = templateContent.apply(caseData, caseId, createdDate);
+            if (caseData.getApplicant2().isRepresented()) {
 
-            caseData.getCaseInvite().setAccessCode(generateAccessCode());
+                final Supplier<Map<String, Object>> templateContentSupplier = templateContent.apply(caseData, caseId, createdDate);
 
-            caseDataDocumentService.renderDocumentAndUpdateCaseData(
-                caseData,
-                DOCUMENT_TYPE_RESPONDENT_INVITATION,
-                templateContentSupplier,
-                caseId,
-                RESP_SOLICITOR_AOS_INVITATION,
-                caseData.getApplicant1().getLanguagePreference(),
-                RESP_AOS_INVITATION_DOCUMENT_NAME + caseId
-            );
+                caseData.getCaseInvite().setAccessCode(generateAccessCode());
+
+                caseDataDocumentService.renderDocumentAndUpdateCaseData(
+                    caseData,
+                    DOCUMENT_TYPE_RESPONDENT_INVITATION,
+                    templateContentSupplier,
+                    caseId,
+                    RESP_SOLICITOR_AOS_INVITATION,
+                    caseData.getApplicant1().getLanguagePreference(),
+                    RESP_AOS_INVITATION_DOCUMENT_NAME + caseId
+                );
+            }
         }
 
         return caseDetails;

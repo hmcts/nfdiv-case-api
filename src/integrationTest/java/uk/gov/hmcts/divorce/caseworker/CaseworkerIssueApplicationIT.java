@@ -163,6 +163,7 @@ public class CaseworkerIssueApplicationIT {
     @Test
     void shouldSendApplicationIssueNotificationsForCitizenApplication() throws Exception {
         final CaseData caseData = validApplicant2CaseData();
+        caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("London");
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");

@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.flattenLists;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant1BasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant2BasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCaseFieldsForIssueApplication;
@@ -42,18 +41,10 @@ public final class ApplicationValidation {
         return errors;
     }
 
-    public static List<String> validateSolicitorIssue(CaseData caseData) {
+    public static List<String> validateIssue(CaseData caseData) {
         return flattenLists(
             validateBasicCase(caseData),
             validateCaseFieldsForIssueApplication(caseData.getApplication().getMarriageDetails())
         );
     }
-
-    public static List<String> validateCitizenIssue(CaseData caseData) {
-        return flattenLists(
-            validateApplicant1BasicCase(caseData),
-            validateApplicant2BasicCase(caseData)
-        );
-    }
-
 }

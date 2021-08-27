@@ -52,16 +52,6 @@ public class IssueApplicationService {
     private Clock clock;
 
     public CaseDetails<CaseData, State> issueApplication(final CaseDetails<CaseData, State> caseDetails) {
-        if (!caseDetails.getData().getApplication().isSolicitorApplication()) {
-            return caseTasks(
-                setDueDate,
-                sendApplicationIssueNotifications,
-                details -> {
-                    details.getData().getApplication().setIssueDate(LocalDate.now(clock));
-                    return details;
-                }
-            ).run(caseDetails);
-        }
         return caseTasks(
             generateRespondentSolicitorAosInvitation,
             generateCitizenRespondentAosInvitation,
@@ -70,6 +60,7 @@ public class IssueApplicationService {
             sendAosPack,
             sendAosNotifications,
             setDueDate,
+            sendApplicationIssueNotifications,
             details -> {
                 details.getData().getApplication().setIssueDate(LocalDate.now(clock));
                 return details;
