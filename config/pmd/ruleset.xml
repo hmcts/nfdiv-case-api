@@ -30,6 +30,7 @@
     <exclude name="FieldNamingConventions"/>
     <exclude name="UnnecessaryAnnotationValueElement"/>
     <exclude name="LinguisticNaming"/>
+    <exclude name="ConfusingTernary"/>
   </rule>
   <rule ref="category/java/codestyle.xml/ClassNamingConventions">
     <properties>
@@ -77,6 +78,7 @@
   </rule>
   <rule ref="category/java/multithreading.xml">
     <exclude name="UseConcurrentHashMap"/>
+    <exclude name="DoNotUseThreads"/>
   </rule>
   <rule ref="category/java/performance.xml"/>
   <rule ref="category/java/security.xml"/>
@@ -93,11 +95,6 @@
   <rule ref="category/java/design.xml/TooManyMethods">
     <properties>
       <property name="maxmethods" value="13" />
-    </properties>
-  </rule>
-  <rule ref="category/java/codestyle.xml/ConfusingTernary">
-    <properties>
-      <property name="ignoreElseIf" value="true" />
     </properties>
   </rule>
 
