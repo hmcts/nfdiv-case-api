@@ -1,0 +1,23 @@
+{
+  "divorceOrDissolution": "divorce",
+  "applicationType": "jointApplication",
+  "applicant1Gender": "female",
+  "applicant2Gender": "male",
+  "marriageDate": "2020-04-28",
+  "applicant1FirstName": "Billy",
+  "applicant1MiddleName": "B",
+  "applicant1LastName": "Bob",
+  "applicant1ContactDetailsConfidential": "keep",
+  "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+  "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
+  "applicant2FirstName": "test_first_name",
+  "applicant2LastName": "test_last_name",
+  "marriageApplicant1Name": "test_first_name test_last_name",
+  "applicant1WantsToHavePapersServedAnotherWay": "NO",
+  "applicant1FinancialOrder": "NO",
+  "applicant1PrayerHasBeenGiven": "YES",
+  "solSignStatementOfTruth": "YES",
+  "jurisdictionApplicant1Residence": "YES",
+  "jurisdictionApplicant2Residence": "YES",
+  "jurisdictionConnections": ["A"]
+}

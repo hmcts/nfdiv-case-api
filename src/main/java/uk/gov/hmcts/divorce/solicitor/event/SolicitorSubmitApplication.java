@@ -12,12 +12,12 @@ import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.SubmissionService;
-import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.payment.model.Payment;
+import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.solicitor.event.page.HelpWithFeesPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayAccount;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayment;
@@ -25,21 +25,22 @@ import uk.gov.hmcts.divorce.solicitor.event.page.SolPaymentSummary;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolStatementOfTruth;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolSummary;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
-import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 
 import static java.lang.Integer.parseInt;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
@@ -47,6 +48,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUS
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateReadyForPayment;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
 @Slf4j
@@ -65,19 +67,23 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
     private HttpServletRequest httpServletRequest;
 
     @Autowired
-    private SubmissionService submissionService;
+    private SolPayment solPayment;
 
-    private final List<CcdPageConfiguration> pages = asList(
-        new SolStatementOfTruth(),
-        new SolPayment(),
-        new HelpWithFeesPage(),
-        new SolPayAccount(),
-        new SolPaymentSummary(),
-        new SolSummary());
+    @Autowired
+    private SubmissionService submissionService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        final List<CcdPageConfiguration> pages = asList(
+            new SolStatementOfTruth(),
+            solPayment,
+            new HelpWithFeesPage(),
+            new SolPayAccount(),
+            new SolPaymentSummary(),
+            new SolSummary());
+
         final PageBuilder pageBuilder = addEventConfig(configBuilder);
+
         pages.forEach(page -> page.addTo(pageBuilder));
     }
 
@@ -102,34 +108,27 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             details.getId()
         );
 
+        //Temporarily retrieve PBA numbers in about to start event as mid-event callback has bug in exui
+        log.info("Retrieving Pba numbers in event {} for about to start", SOLICITOR_SUBMIT);
+        AboutToStartOrSubmitResponse<CaseData, State> response = solPayment.midEvent(details, details);
+
+        caseData.getApplication().setPbaNumbers(response.getData().getApplication().getPbaNumbers());
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
+            .errors(null)
+            .warnings(null)
             .build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
-        final CaseData caseData = details.getData();
-        final Application application = caseData.getApplication();
         final Long caseId = details.getId();
-
-        log.info("Setting dummy payment to mock payment process. CaseID: {}", caseId);
-        if (application.getApplicationPayments() == null || application.getApplicationPayments().isEmpty()) {
-            List<ListValue<Payment>> payments = new ArrayList<>();
-            payments.add(new ListValue<>(null,
-                getDummyPayment(application.getApplicationFeeOrderSummary())));
-            application.setApplicationPayments(payments);
-        } else {
-            application.getApplicationPayments()
-                .add(new ListValue<>(null,
-                    getDummyPayment(application.getApplicationFeeOrderSummary())));
-        }
-
-        updateApplicant2DigitalDetails(caseData);
+        final var caseData = details.getData();
 
         log.info("Validating case data CaseID: {}", caseId);
-        final List<String> submittedErrors = Submitted.validate(caseData);
+        final List<String> submittedErrors = validateReadyForPayment(caseData);
 
         if (!submittedErrors.isEmpty()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -139,12 +138,57 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
                 .build();
         }
 
+        final var application = caseData.getApplication();
+        final var applicationFeeOrderSummary = application.getApplicationFeeOrderSummary();
+
+        if (caseData.getApplication().isSolicitorPaymentMethodPba()) {
+            PbaResponse response = paymentService.processPbaPayment(caseData, caseId, caseData.getApplicant1().getSolicitor());
+
+            if (response.getHttpStatus() == CREATED) {
+                updateCaseDataWithPaymentDetails(applicationFeeOrderSummary, caseData, response.getPaymentReference());
+            } else {
+                return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                    .data(details.getData())
+                    .errors(singletonList(response.getErrorMessage()))
+                    .build();
+            }
+        }
+
+        updateApplicant2DigitalDetails(caseData);
+
         final CaseDetails<CaseData, State> updatedCaseDetails = submissionService.submitApplication(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updatedCaseDetails.getData())
             .state(updatedCaseDetails.getState())
             .build();
+    }
+
+    private void updateCaseDataWithPaymentDetails(
+        OrderSummary applicationFeeOrderSummary,
+        CaseData caseData,
+        String paymentReference
+    ) {
+        var payment = Payment
+            .builder()
+            .amount(parseInt(applicationFeeOrderSummary.getPaymentTotal()))
+            .channel("online")
+            .feeCode(applicationFeeOrderSummary.getFees().get(0).getValue().getCode())
+            .reference(paymentReference)
+            .status(SUCCESS)
+            .build();
+
+
+        var application = caseData.getApplication();
+
+        if (isEmpty(application.getApplicationPayments())) {
+            List<ListValue<Payment>> payments = new ArrayList<>();
+            payments.add(new ListValue<>(UUID.randomUUID().toString(), payment));
+            application.setApplicationPayments(payments);
+        } else {
+            application.getApplicationPayments()
+                .add(new ListValue<Payment>(UUID.randomUUID().toString(), payment));
+        }
     }
 
     private void updateApplicant2DigitalDetails(CaseData caseData) {
@@ -154,19 +198,6 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             caseData.getApplication().setApp2ContactMethodIsDigital(YES);
             caseData.getApplicant2().setSolicitorRepresented(YES);
         }
-    }
-
-    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
-                                               CaseDetails<CaseData, State> beforeDetails) {
-        final CaseData caseData = details.getData();
-
-        if (caseData.getApplication().hasBeenPaidFor()) {
-            details.setState(Submitted);
-        } else {
-            details.setState(AwaitingPayment);
-        }
-
-        return SubmittedCallbackResponse.builder().build();
     }
 
     private PageBuilder addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -186,17 +217,5 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
                 CASEWORKER_COURTADMIN_RDU,
                 CASEWORKER_SUPERUSER,
                 CASEWORKER_LEGAL_ADVISOR));
-    }
-
-    private Payment getDummyPayment(final OrderSummary orderSummary) {
-        return Payment
-            .builder()
-            .amount(parseInt(orderSummary.getPaymentTotal()))
-            .channel("online")
-            .feeCode("FEE0001")
-            .reference(orderSummary.getPaymentReference())
-            .status(SUCCESS)
-            .transactionId("ge7po9h5bhbtbd466424src9tk")
-            .build();
     }
 }

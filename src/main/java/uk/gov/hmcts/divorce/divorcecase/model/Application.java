@@ -33,6 +33,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEES_HELP_WITH;
+import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
 @Data
@@ -90,7 +91,7 @@ public class Application {
     private WhoDivorcing divorceWho;
 
     @CCD(
-        label = "Is this an urgent jurisdiction case?",
+        label = "Does this case require urgent issue due to jurisdiction or other financial matters?",
         access = {DefaultAccess.class}
     )
     private YesOrNo solUrgentCase;
@@ -130,8 +131,6 @@ public class Application {
 
     @CCD(
         label = "The applicant has given their \"prayer\".",
-        hint = "\"The prayer\" means they confirm they wish to dissolve the union, pay any fees (if applicable),"
-            + " and have decided how money and property will be split (\"financial order\").",
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant1PrayerHasBeenGiven;
@@ -364,6 +363,11 @@ public class Application {
     }
 
     @JsonIgnore
+    public boolean hasStatementOfTruth() {
+        return applicant1HasStatementOfTruth() || hasSolSignStatementOfTruth();
+    }
+
+    @JsonIgnore
     public LocalDate getDateOfSubmissionResponse() {
         return dateSubmitted == null ? null : dateSubmitted.plusDays(SUBMISSION_RESPONSE_DAYS).toLocalDate();
     }
@@ -406,5 +410,10 @@ public class Application {
     @JsonIgnore
     public boolean isSolicitorApplication() {
         return hasSolSignStatementOfTruth();
+    }
+
+    @JsonIgnore
+    public boolean isSolicitorPaymentMethodPba() {
+        return FEE_PAY_BY_ACCOUNT.equals(this.getSolPaymentHowToPay());
     }
 }

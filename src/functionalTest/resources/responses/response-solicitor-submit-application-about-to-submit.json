@@ -1,100 +1,105 @@
 {
   "data": {
     "divorceOrDissolution": "divorce",
-    "marriageApplicant1Name": null,
-    "marriageApplicant2Name": null,
-    "applicant1FirstName": "John",
-    "applicant1LastName": "Smith",
-    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
-    "applicant1MiddleName": null,
-    "applicant1AgreedToReceiveEmails": null,
-    "applicant1NameChangedHow": null,
-    "applicant1NameDifferentToMarriageCertificate": null,
-    "applicant1LastNameChangedWhenMarried": null,
-    "applicant1PhoneNumber": null,
-    "applicant1NameChangedHowOtherDetails": null,
-    "applicant1LanguagePreferenceWelsh": null,
-    "applicant1ContactDetailsConfidential": null,
-    "applicant1Gender": null,
-    "applicant1CorrespondenceAddress": null,
-    "applicant1SolicitorRepresented": null,
-    "applicant2CorrespondenceAddress": null,
+    "applicationType": "soleApplication",
+    "applicant1FirstName": "test_first_name",
+    "applicant1MiddleName": "test_middle_name",
+    "applicant1LastName": "test_last_name",
+    "applicant1Email": "applicant1@example.com",
+    "applicant1LanguagePreferenceWelsh": "No",
+    "applicant1ContactDetailsConfidential": "share",
+    "applicant1Gender": "female",
+    "applicant1SolicitorRepresented": "Yes",
+    "applicant1SolicitorName": "Applicant 1 Solicitor",
+    "applicant1SolicitorEmail": "applicant1.solicitor@example.com",
+    "applicant1SolicitorAddress": "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom",
+    "applicant2FirstName": "test_first_name",
+    "applicant2MiddleName": "test_middle_name",
+    "applicant2LastName": "test_last_name",
+    "applicant2Email": "applicant2@example.com",
+    "applicant2LanguagePreferenceWelsh": "No",
+    "applicant2ContactDetailsConfidential": "share",
+    "applicant2Gender": "female",
+    "marriageApplicant1Name": "test_first_name test_last_name",
+    "marriageApplicant2Name": "test_first_name test_last_name",
+    "marriagePlaceOfMarriage": "Somewhere",
+    "marriageDate": "1990-06-10",
+    "jurisdictionApplicant1Residence": "Yes",
+    "jurisdictionApplicant2Residence": "Yes",
+    "jurisdictionConnections": [
+      "J"
+    ],
+    "applicant1LegalProceedings": "Yes",
+    "applicant1FinancialOrder": "No",
+    "applicant2FinancialOrder": "No",
+    "applicant1PrayerHasBeenGiven": "Yes",
+    "applicant1StatementOfTruth": "Yes",
+    "documentUploadComplete": "Yes",
+    "applicant1SolicitorReference": "customerRef1",
     "applicant2SolicitorRepresented": "Yes",
-    "confirmReadPetition": null,
-    "jurisdictionAgree": null,
-    "jurisdictionDisagreeReason": null,
-    "legalProceedingsExist": null,
-    "legalProceedingsDescription": null,
-    "agreeToCosts": null,
-    "costsAmount": null,
-    "costsReason": null,
-    "dateAosSubmitted": null,
-    "applicant2Gender": null,
-    "applicant2FirstName": null,
-    "applicant2MiddleName": null,
-    "applicant2LastName": null,
-    "applicant2AgreedToReceiveEmails": null,
-    "applicant2Email": null,
-    "applicant2LanguagePreferenceWelsh": null,
-    "applicant2NameChangedHow": null,
-    "applicant2NameDifferentToMarriageCertificate": null,
-    "applicant2LastNameChangedWhenMarried": null,
-    "applicant2NameChangedHowOtherDetails": null,
-    "applicant2PhoneNumber": null,
-    "applicant2ContactDetailsConfidential": null,
-    "solSignStatementOfTruth": "Yes",
-    "applicant1HWFAppliedForFees": null,
-    "applicant1HWFReferenceNumber": null,
-    "applicant1HWFNeedHelp": null,
-    "jurisdictionApplicant1Residence": null,
-    "jurisdictionApplicant2Residence":null,
-    "jurisdictionApplicant1Domicile":null,
-    "jurisdictionApplicant2Domicile":null,
-    "jurisdictionApp1HabituallyResLastTwelveMonths":null,
-    "jurisdictionApp1HabituallyResLastSixMonths":null,
-    "jurisdictionResidualEligible":null,
-    "jurisdictionBothLastHabituallyResident":null,
-    "jurisdictionConnections": null,
-    "jurisdictionLegalConnections": null,
-    "marriageMarriedInUk":null,
-    "marriageCertificateInEnglish":null,
-    "marriageCertifiedTranslation":null,
-    "marriageCountryOfMarriage":null,
-    "marriagePlaceOfMarriage":null,
-    "marriageDate":null,
-    "marriageIsSameSexCouple":null,
-    "marriageCertifyMarriageCertificateIsCorrect": null,
-    "marriageMarriageCertificateIsIncorrectDetails": null,
-    "marriageIssueApplicationWithoutMarriageCertificate": null,
-    "dateSubmitted": "${json-unit.ignore}",
-    "applicant1WantsToHavePapersServedAnotherWay": "No",
+    "applicant1SolicitorOrganisationPolicy": {
+      "Organisation": {
+        "OrganisationName": "Test 1 Organisation",
+        "OrganisationID": "ABC456"
+      }
+    },
+    "applicant1WantsToHavePapersServedAnotherWay": null,
+    "solPaymentHowToPay": "feePayByAccount",
+    "pbaNumbers": {
+      "value": {
+        "code": "93018b67-a1af-4c1e-afa0-22de272bb5f2",
+        "label": "PBA0082311"
+      },
+      "list_items": [
+        {
+          "code": "93018b67-a1af-4c1e-afa0-22de272bb5f2",
+          "label": "PBA0082311"
+        },
+        {
+          "code": "93018b67-a1af-4c1e-afa0-22de272bb5f2",
+          "label": "PBA0087672"
+        }
+      ],
+      "valueLabel": "PBA0082311",
+      "valueCode": "93018b67-a1af-4c1e-afa0-22de272bb5f2"
+    },
     "applicationFeeOrderSummary": {
-      "PaymentTotal": "55000",
       "PaymentReference": null,
       "Fees": [
         {
           "id": null,
           "value": {
-            "FeeDescription": "Filing an application for a divorce, nullity or civil partnership dissolution",
-            "FeeVersion": "5",
+            "FeeAmount": "55000",
             "FeeCode": "FEE0002",
-            "FeeAmount": "55000"
+            "FeeDescription": "Filing an application for a divorce, nullity or civil partnership dissolution",
+            "FeeVersion": "5"
           }
         }
-      ]
+      ],
+      "PaymentTotal": "55000"
     },
-    "applicationPayments": [{
-      "id": null,
-      "value": {
-        "created": null,
-        "feeCode": "FEE0001",
-        "amount": 55000,
-        "status": "success",
-        "channel": "online",
-        "reference": null,
-        "transactionId": "ge7po9h5bhbtbd466424src9tk"
+    "app2ContactMethodIsDigital": "Yes",
+    "dateSubmitted": "${json-unit.any-string}",
+    "applicant2ConfirmApplicant1Information": null,
+    "applicant2ExplainsApplicant1IncorrectInformation": null,
+    "solSignStatementOfTruth": "Yes",
+    "applicationPayments": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "created": null,
+          "updated": null,
+          "feeCode": "FEE0002",
+          "amount": 55000,
+          "status": "success",
+          "channel": "online",
+          "reference": "${json-unit.any-string}",
+          "transactionId": null
+        }
       }
-    }]
+    ],
+    "selectedDivorceCentreSiteId": "AA04",
+    "dueDate": "${json-unit.any-string}"
   },
   "errors": null,
   "warnings": null,

@@ -56,8 +56,6 @@ public class SystemRemindApplicant2Task implements Runnable {
                         && !caseData.getApplication().isApplicant2ReminderSent()
                     ) {
                         notifyApplicant2(caseDetails, caseData, reminderDate);
-                        log.info("~~~~~~~~~~~~~SystemRemindApplicant2Task "
-                            + "notifyApplicant2 completed for case with ID {}", caseDetails.getId());
                     }
                 } catch (final CcdManagementException e) {
                     log.info("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());

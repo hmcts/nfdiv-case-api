@@ -12,6 +12,7 @@ import java.util.Map;
 
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_APPROVED_APPLICANT1_REMINDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_OVERDUE;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.dateTimeFormatter;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TO_END_A_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TYPE;
@@ -45,7 +46,7 @@ public class JointApplicationOverdueNotification {
             templateVars.put(APPLICATION_TYPE.toLowerCase(Locale.ROOT), APPLICATION_TO_END_A_CIVIL_PARTNERSHIP);
         }
 
-        templateVars.put(REVIEW_DEADLINE_DATE, caseData.getDueDate().toString());
+        templateVars.put(REVIEW_DEADLINE_DATE, caseData.getDueDate().format(dateTimeFormatter));
 
         log.info("Sending notification to applicant 1 to notify them of overdue joint application: {}", id);
 

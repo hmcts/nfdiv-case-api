@@ -4,6 +4,8 @@ public final class CaseFieldsConstants {
 
     public static final String APPLICANT_1_FIRST_NAME = "applicant1FirstName";
     public static final String APPLICANT_1_LAST_NAME = "applicant1LastName";
+    public static final String APPLICANT_2_FIRST_NAME = "applicant2FirstName";
+    public static final String APPLICANT_2_LAST_NAME = "applicant2LastName";
     public static final String APPLICANT_1_EMAIL = "applicant1Email";
     public static final String APPLICANT_1_SOLICITOR_EMAIL = "applicant1SolicitorEmail";
     public static final String FIRSTNAME = "FirstName";
@@ -13,6 +15,9 @@ public final class CaseFieldsConstants {
     public static final String FINANCIAL_ORDER = "applicant1FinancialOrder";
     public static final String APPLICANT_1_ORGANISATION_POLICY = "applicant1SolicitorOrganisationPolicy";
     public static final String APPLICANT_1_STATEMENT_OF_TRUTH = "applicant1StatementOfTruth";
+    public static final String APPLICANT_1_SOLICITOR_NAME = "applicant1SolicitorName";
+    public static final String APPLICANT_1_LANGUAGE_PREFERENCE_WELSH = "applicant1LanguagePreferenceWelsh";
+
     public static final String SOL_STATEMENT_OF_TRUTH = "solSignStatementOfTruth";
 
     // required for Checkstyle

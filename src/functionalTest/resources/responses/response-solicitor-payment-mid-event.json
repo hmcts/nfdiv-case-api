@@ -1,0 +1,29 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "applicant1FirstName": "John",
+    "applicant1LastName": "Smith",
+    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+    "applicant1FinancialOrder": "No",
+    "applicant2Gender": "female",
+    "solPaymentHowToPay": "feePayByAccount",
+    "pbaNumbers": {
+      "value": null,
+      "list_items": [
+        {
+          "code": "${json-unit.any-string}",
+          "label": "PBA0082311"
+        },
+        {
+          "code": "${json-unit.any-string}",
+          "label": "PBA0087672"
+        }
+      ],
+      "valueLabel": null,
+      "valueCode": null
+    }
+  },
+  "errors": null,
+  "warnings": null,
+  "state": null
+}

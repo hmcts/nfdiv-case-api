@@ -10,7 +10,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import uk.gov.hmcts.divorce.document.DocAssemblyClient;
 import uk.gov.hmcts.divorce.document.DocumentManagementClient;
 import uk.gov.hmcts.divorce.payment.FeesAndPaymentsClient;
+import uk.gov.hmcts.divorce.payment.PaymentPbaClient;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
+import uk.gov.hmcts.divorce.solicitor.client.pba.PbaRefDataClient;
 import uk.gov.hmcts.divorce.systemupdate.service.ScheduledTaskRunner;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 import uk.gov.hmcts.reform.ccd.client.CaseUserApi;
@@ -33,7 +35,9 @@ import static org.codehaus.groovy.runtime.InvokerHelper.asList;
         DocAssemblyClient.class,
         CoreCaseDataApi.class,
         DocumentManagementClient.class,
-        OrganisationClient.class
+        OrganisationClient.class,
+        PbaRefDataClient.class,
+        PaymentPbaClient.class
     }
 )
 @EnableScheduling

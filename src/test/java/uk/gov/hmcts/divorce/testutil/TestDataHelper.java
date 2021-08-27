@@ -7,7 +7,11 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import feign.FeignException;
 import feign.Request;
 import feign.Response;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.ccd.sdk.type.DynamicList;
+import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
+import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
@@ -73,6 +77,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DISSOLUTION_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DIVORCE_TEST_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
@@ -108,6 +113,22 @@ public class TestDataHelper {
             .gender(gender)
             .languagePreferenceWelsh(NO)
             .contactDetailsConfidential(SHARE)
+            .financialOrder(NO)
+            .build();
+    }
+
+    public static Applicant getApplicantWithAddress() {
+        return Applicant.builder()
+            .firstName(TEST_FIRST_NAME)
+            .middleName(TEST_MIDDLE_NAME)
+            .lastName(TEST_LAST_NAME)
+            .email(TEST_USER_EMAIL)
+            .languagePreferenceWelsh(NO)
+            .homeAddress(AddressGlobalUK.builder()
+                .addressLine1("line 1")
+                .postTown("town")
+                .postCode("postcode")
+                .build())
             .build();
     }
 
@@ -178,16 +199,20 @@ public class TestDataHelper {
     }
 
     public static CaseData caseDataWithOrderSummary() {
-        var application = Application.builder()
-            .applicationFeeOrderSummary(OrderSummary.builder().paymentTotal("55000").build())
-            .build();
+        var caseData = validApplicant1CaseData();
+        caseData.getApplication().setApplicationFeeOrderSummary(orderSummaryWithFee());
 
-        return CaseData
-            .builder()
-            .applicant1(getApplicant())
-            .divorceOrDissolution(DIVORCE)
-            .application(application)
-            .build();
+        return caseData;
+    }
+
+    public static CaseData jointCaseDataWithOrderSummary() {
+        CaseData caseData = caseDataWithOrderSummary();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.setCaseInvite(new CaseInvite());
+        caseData.getCaseInvite().setApplicant2InviteEmailAddress(TEST_APPLICANT_2_USER_EMAIL);
+        caseData.setApplicant2(getApplicant(MALE));
+
+        return caseData;
     }
 
     public static CaseData validJointApplicant1CaseData() {
@@ -263,16 +288,38 @@ public class TestDataHelper {
 
         var application = Application.builder()
             .solSignStatementOfTruth(YES)
+            .applicant1PrayerHasBeenGiven(YES)
             .applicationFeeOrderSummary(orderSummary)
             .applicationPayments(singletonList(payment))
+            .marriageDetails(getMarriageDetails())
+            .jurisdiction(getJurisdiction())
             .build();
 
         return CaseData
             .builder()
             .applicant1(applicant1)
+            .applicant2(getApplicant2(FEMALE))
             .divorceOrDissolution(DIVORCE)
             .application(application)
             .build();
+    }
+
+    public static MarriageDetails getMarriageDetails() {
+        var marriageDetails = new MarriageDetails();
+        marriageDetails.setDate(LocalDate.of(1990, 6, 10));
+        marriageDetails.setApplicant1Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME);
+        marriageDetails.setApplicant2Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME);
+
+        return marriageDetails;
+    }
+
+    public static Jurisdiction getJurisdiction() {
+        final Jurisdiction jurisdiction = new Jurisdiction();
+        jurisdiction.setConnections(Set.of(APP_1_RESIDENT_JOINT));
+        jurisdiction.setApplicant1Residence(YES);
+        jurisdiction.setApplicant2Residence(YES);
+
+        return jurisdiction;
     }
 
     public static CaseData validCaseDataForIssueApplication() {
@@ -281,11 +328,6 @@ public class TestDataHelper {
         marriageDetails.setApplicant2Name(format("%s %s", TEST_FIRST_NAME, TEST_LAST_NAME));
         marriageDetails.setDate(LocalDate.of(1990, 6, 10));
         marriageDetails.setPlaceOfMarriage("Somewhere");
-
-        final Jurisdiction jurisdiction = new Jurisdiction();
-        jurisdiction.setConnections(Set.of(APP_1_RESIDENT_JOINT));
-        jurisdiction.setApplicant1Residence(YES);
-        jurisdiction.setApplicant2Residence(YES);
 
         final CaseData caseData = caseDataWithStatementOfTruth();
         caseData.getApplicant1().setFinancialOrder(NO);
@@ -296,7 +338,7 @@ public class TestDataHelper {
         application.setMarriageDetails(marriageDetails);
         application.setApplicant1PrayerHasBeenGiven(YES);
         application.setApplicant1StatementOfTruth(YES);
-        application.setJurisdiction(jurisdiction);
+        application.setJurisdiction(getJurisdiction());
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplicant2().setFinancialOrder(NO);
         caseData.getApplicant1().setLegalProceedings(NO);
@@ -510,12 +552,46 @@ public class TestDataHelper {
             .build();
     }
 
+    public static DynamicList getPbaNumbersForAccount(String accountNumber) {
+        return DynamicList
+            .builder()
+            .value(
+                DynamicListElement
+                    .builder()
+                    .code(UUID.randomUUID())
+                    .label(accountNumber)
+                    .build()
+            )
+            .build();
+    }
+
     private static CaseDetails caseDetailsBefore(CaseData caseData) {
         return CaseDetails
             .builder()
             .data(OBJECT_MAPPER.convertValue(caseData, TYPE_REFERENCE))
             .id(TEST_CASE_ID)
             .caseTypeId(CASE_TYPE)
+            .build();
+    }
+
+    public static ListValue<Fee> getFeeListValue() {
+        return ListValue
+            .<Fee>builder()
+            .value(Fee
+                .builder()
+                .amount("550")
+                .description("fees for divorce")
+                .code("FEE002")
+                .build()
+            )
+            .build();
+    }
+
+    public static OrderSummary orderSummaryWithFee() {
+        return OrderSummary
+            .builder()
+            .paymentTotal("55000")
+            .fees(singletonList(getFeeListValue()))
             .build();
     }
 }
