@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.systemupdate.schedule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -26,7 +25,7 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemProgressHeldCase.SYS
 /**
  * Any cases that were issued >= 20 weeks ago AND are in the Holding state will be moved to AwaitingConditionalOrder by this task.
  */
-public class SystemProgressHeldCasesTask {
+public class SystemProgressHeldCasesTask implements Runnable {
 
     @Autowired
     private HoldingPeriodService holdingPeriodService;
@@ -45,8 +44,8 @@ public class SystemProgressHeldCasesTask {
 
     private static final String ISSUE_DATE_KEY = "issueDate";
 
-    @Scheduled(cron = "${schedule.awaiting_conditional_order}")
-    public void execute() {
+    @Override
+    public void run() {
 
         log.info("Awaiting conditional order scheduled task started");
 

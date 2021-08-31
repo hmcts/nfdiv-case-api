@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.systemupdate.schedule;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
@@ -23,7 +22,7 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemProgressCaseToAosOve
 /**
  * Any cases which are in AwaitingAos or AosDrafted state and whose due date >= current date will be moved to AosOverdue by this task.
  */
-public class SystemProgressCasesToAosOverdueTask {
+public class SystemProgressCasesToAosOverdueTask implements Runnable {
 
     @Autowired
     private CcdUpdateService ccdUpdateService;
@@ -33,8 +32,8 @@ public class SystemProgressCasesToAosOverdueTask {
 
     private static final String DUE_DATE = "dueDate";
 
-    @Scheduled(cron = "${schedule.aos_overdue}")
-    public void execute() {
+    @Override
+    public void run() {
 
         log.info("Aos overdue scheduled task started");
 
