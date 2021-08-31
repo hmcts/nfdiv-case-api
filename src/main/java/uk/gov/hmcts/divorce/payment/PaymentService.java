@@ -47,6 +47,7 @@ public class PaymentService {
     private static final String FAMILY_COURT = "family court";
     private static final String DIVORCE = "divorce";
     private static final String DIVORCE_SERVICE = "DIVORCE";
+    private static final String FEE_LOOKUP_KEYWORD = "DivorceCivPart";
     private static final String GBP = "GBP";
     public static final String CA_E0001 = "CA-E0001";
     public static final String CA_E0004 = "CA-E0004";
@@ -74,7 +75,7 @@ public class PaymentService {
             FAMILY,
             FAMILY_COURT,
             DIVORCE,
-            null
+            FEE_LOOKUP_KEYWORD
         );
 
         return OrderSummary

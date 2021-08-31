@@ -38,7 +38,6 @@ import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
@@ -96,7 +95,7 @@ public class PaymentServiceTest {
                 anyString(),
                 anyString(),
                 anyString(),
-                isNull()
+                anyString()
             );
 
         OrderSummary orderSummary = paymentService.getOrderSummary();
@@ -115,7 +114,7 @@ public class PaymentServiceTest {
                 anyString(),
                 anyString(),
                 anyString(),
-                isNull()
+                anyString()
             );
 
         verifyNoMoreInteractions(feesAndPaymentsClient);
@@ -144,7 +143,7 @@ public class PaymentServiceTest {
                 anyString(),
                 anyString(),
                 anyString(),
-                isNull()
+                anyString()
             );
 
         assertThatThrownBy(() -> paymentService.getOrderSummary())
