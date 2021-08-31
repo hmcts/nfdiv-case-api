@@ -283,7 +283,7 @@ dependencies {
 
   testImplementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
-  testImplementation group: 'org.mockito', name: 'mockito-inline', version: '3.12.3'
+  testImplementation group: 'org.mockito', name: 'mockito-inline', version: '3.12.4'
 
   testImplementation group: 'com.jayway.awaitility', name: 'awaitility', version: versions.awaitility
 
