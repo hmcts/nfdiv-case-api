@@ -16,7 +16,7 @@ async function getFiles(dir) {
 }
 
 function getCronName(taskName) {
-  return "nfdiv-" + taskName.match(/[A-Z][a-z]+/g).filter(part => part != "task").join("-").toLowerCase();
+  return "nfdiv-cron-" + taskName.match(/[A-Z][a-z]+/g).filter(part => part != "task").join("-").toLowerCase();
 }
 
 function getClusterOverride(taskName, cronName, schedule) {
@@ -82,7 +82,7 @@ async function main(taskName, cnpFluxPath, schedule) {
   }
 
   const cronName = getCronName(taskName);
-  const cronDirectory = cnpFluxPath + nfdivNamespace + cronName;
+  const cronDirectory = cnpFluxPath + nfdivNamespace + cronName + "/";
 
   try {
     await mkdir(cronDirectory);
