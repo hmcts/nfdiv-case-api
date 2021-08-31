@@ -72,7 +72,7 @@ public class SystemAlertApplicationNotReviewedTaskTest {
 
         when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response)).thenReturn(caseDetailsList);
 
-        systemAlertApplicationNotReviewedTask.execute();
+        systemAlertApplicationNotReviewedTask.run();
 
         verify(jointApplicationOverdueNotification).sendApplicationNotReviewedEmail(caseData1, caseDetails1.getId());
         verify(jointApplicationOverdueNotification, times(0)).sendApplicationNotReviewedEmail(caseData2, caseDetails2.getId());
@@ -96,7 +96,7 @@ public class SystemAlertApplicationNotReviewedTaskTest {
 
         when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response)).thenReturn(caseDetailsList);
 
-        systemAlertApplicationNotReviewedTask.execute();
+        systemAlertApplicationNotReviewedTask.run();
 
         verifyNoInteractions(jointApplicationOverdueNotification, ccdUpdateService);
     }
@@ -114,7 +114,7 @@ public class SystemAlertApplicationNotReviewedTaskTest {
         when(mapper.convertValue(caseDataMap, CaseData.class)).thenReturn(caseData);
         when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response)).thenReturn(List.of(caseDetails));
 
-        systemAlertApplicationNotReviewedTask.execute();
+        systemAlertApplicationNotReviewedTask.run();
 
         verify(jointApplicationOverdueNotification, never()).sendApplicationNotReviewedEmail(caseData, caseDetails.getId());
         verify(ccdUpdateService, never()).submitEvent(caseDetails, SYSTEM_APPLICATION_NOT_REVIEWED);
@@ -132,7 +132,7 @@ public class SystemAlertApplicationNotReviewedTaskTest {
         when(mapper.convertValue(caseDataMap, CaseData.class)).thenReturn(caseData);
         when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response)).thenReturn(singletonList(caseDetails));
 
-        systemAlertApplicationNotReviewedTask.execute();
+        systemAlertApplicationNotReviewedTask.run();
 
         verifyNoInteractions(jointApplicationOverdueNotification);
         verifyNoInteractions(ccdUpdateService);
@@ -143,7 +143,7 @@ public class SystemAlertApplicationNotReviewedTaskTest {
         when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
-        systemAlertApplicationNotReviewedTask.execute();
+        systemAlertApplicationNotReviewedTask.run();
 
         verifyNoInteractions(jointApplicationOverdueNotification);
         verifyNoInteractions(ccdUpdateService);
@@ -163,7 +163,7 @@ public class SystemAlertApplicationNotReviewedTaskTest {
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_APPLICATION_NOT_REVIEWED);
 
-        systemAlertApplicationNotReviewedTask.execute();
+        systemAlertApplicationNotReviewedTask.run();
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_APPLICATION_NOT_REVIEWED);
         verify(ccdUpdateService, never()).submitEvent(caseDetails2, SYSTEM_APPLICATION_NOT_REVIEWED);
@@ -188,7 +188,7 @@ public class SystemAlertApplicationNotReviewedTaskTest {
         doThrow(new CcdManagementException("Failed processing of case", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_APPLICATION_NOT_REVIEWED);
 
-        systemAlertApplicationNotReviewedTask.execute();
+        systemAlertApplicationNotReviewedTask.run();
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_APPLICATION_NOT_REVIEWED);
         verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_APPLICATION_NOT_REVIEWED);
