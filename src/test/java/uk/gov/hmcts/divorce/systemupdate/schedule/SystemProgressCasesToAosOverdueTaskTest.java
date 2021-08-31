@@ -52,7 +52,7 @@ class SystemProgressCasesToAosOverdueTaskTest {
 
         when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingAos)).thenReturn(caseDetailsList);
 
-        progressCasesToAosOverdueTask.execute();
+        progressCasesToAosOverdueTask.run();
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_TO_AOS_OVERDUE);
         verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_PROGRESS_TO_AOS_OVERDUE);
@@ -69,7 +69,7 @@ class SystemProgressCasesToAosOverdueTaskTest {
 
         when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingAos)).thenReturn(List.of(caseDetails));
 
-        progressCasesToAosOverdueTask.execute();
+        progressCasesToAosOverdueTask.run();
 
         verify(ccdUpdateService, never()).submitEvent(caseDetails, SYSTEM_PROGRESS_TO_AOS_OVERDUE);
     }
@@ -82,7 +82,7 @@ class SystemProgressCasesToAosOverdueTaskTest {
 
         when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingAos)).thenReturn(singletonList(caseDetails));
 
-        progressCasesToAosOverdueTask.execute();
+        progressCasesToAosOverdueTask.run();
 
         verifyNoInteractions(ccdUpdateService);
     }
@@ -92,7 +92,7 @@ class SystemProgressCasesToAosOverdueTaskTest {
         when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingAos))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
-        progressCasesToAosOverdueTask.execute();
+        progressCasesToAosOverdueTask.run();
 
         verifyNoInteractions(ccdUpdateService);
     }
@@ -110,7 +110,7 @@ class SystemProgressCasesToAosOverdueTaskTest {
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_TO_AOS_OVERDUE);
 
-        progressCasesToAosOverdueTask.execute();
+        progressCasesToAosOverdueTask.run();
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_TO_AOS_OVERDUE);
         verify(ccdUpdateService, never()).submitEvent(caseDetails2, SYSTEM_PROGRESS_TO_AOS_OVERDUE);
@@ -131,7 +131,7 @@ class SystemProgressCasesToAosOverdueTaskTest {
         doThrow(new CcdManagementException("Failed processing of case", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_TO_AOS_OVERDUE);
 
-        progressCasesToAosOverdueTask.execute();
+        progressCasesToAosOverdueTask.run();
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_TO_AOS_OVERDUE);
         verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_PROGRESS_TO_AOS_OVERDUE);

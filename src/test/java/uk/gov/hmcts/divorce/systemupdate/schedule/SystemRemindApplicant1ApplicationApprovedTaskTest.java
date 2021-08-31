@@ -72,7 +72,7 @@ public class SystemRemindApplicant1ApplicationApprovedTaskTest {
 
         when(ccdSearchService.searchForAllCasesWithStateOf(Applicant2Approved)).thenReturn(caseDetailsList);
 
-        systemRemindApplicant1ApplicationApprovedTask.execute();
+        systemRemindApplicant1ApplicationApprovedTask.run();
 
         verify(jointApplicationOverdueNotification).sendApplicationApprovedReminderToApplicant1(caseData1, caseDetails1.getId());
         verify(jointApplicationOverdueNotification, times(0)).sendApplicationApprovedReminderToApplicant1(caseData2, caseDetails2.getId());
@@ -96,7 +96,7 @@ public class SystemRemindApplicant1ApplicationApprovedTaskTest {
 
         when(ccdSearchService.searchForAllCasesWithStateOf(Applicant2Approved)).thenReturn(caseDetailsList);
 
-        systemRemindApplicant1ApplicationApprovedTask.execute();
+        systemRemindApplicant1ApplicationApprovedTask.run();
 
         verifyNoInteractions(jointApplicationOverdueNotification, ccdUpdateService);
     }
@@ -114,7 +114,7 @@ public class SystemRemindApplicant1ApplicationApprovedTaskTest {
         when(mapper.convertValue(caseDataMap, CaseData.class)).thenReturn(caseData);
         when(ccdSearchService.searchForAllCasesWithStateOf(Applicant2Approved)).thenReturn(List.of(caseDetails));
 
-        systemRemindApplicant1ApplicationApprovedTask.execute();
+        systemRemindApplicant1ApplicationApprovedTask.run();
 
         verify(jointApplicationOverdueNotification, never()).sendApplicationApprovedReminderToApplicant1(caseData, caseDetails.getId());
         verify(ccdUpdateService, never()).submitEvent(caseDetails, SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED);
@@ -132,7 +132,7 @@ public class SystemRemindApplicant1ApplicationApprovedTaskTest {
         when(mapper.convertValue(caseDataMap, CaseData.class)).thenReturn(caseData);
         when(ccdSearchService.searchForAllCasesWithStateOf(Applicant2Approved)).thenReturn(singletonList(caseDetails));
 
-        systemRemindApplicant1ApplicationApprovedTask.execute();
+        systemRemindApplicant1ApplicationApprovedTask.run();
 
         verifyNoInteractions(jointApplicationOverdueNotification);
         verifyNoInteractions(ccdUpdateService);
@@ -143,7 +143,7 @@ public class SystemRemindApplicant1ApplicationApprovedTaskTest {
         when(ccdSearchService.searchForAllCasesWithStateOf(Applicant2Approved))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
-        systemRemindApplicant1ApplicationApprovedTask.execute();
+        systemRemindApplicant1ApplicationApprovedTask.run();
 
         verifyNoInteractions(jointApplicationOverdueNotification);
         verifyNoInteractions(ccdUpdateService);
@@ -163,7 +163,7 @@ public class SystemRemindApplicant1ApplicationApprovedTaskTest {
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED);
 
-        systemRemindApplicant1ApplicationApprovedTask.execute();
+        systemRemindApplicant1ApplicationApprovedTask.run();
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED);
         verify(ccdUpdateService, never()).submitEvent(caseDetails2, SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED);
@@ -188,7 +188,7 @@ public class SystemRemindApplicant1ApplicationApprovedTaskTest {
         doThrow(new CcdManagementException("Failed processing of case", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED);
 
-        systemRemindApplicant1ApplicationApprovedTask.execute();
+        systemRemindApplicant1ApplicationApprovedTask.run();
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED);
         verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED);
