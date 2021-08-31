@@ -37,6 +37,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenAddPayment.CITIZEN_ADD_PAYMENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -181,6 +182,7 @@ public class CitizenAddPaymentIT {
     public void givenValidJointCaseDataWhenCallbackIsInvokedThenSendFourEmails() throws Exception {
         CaseData data = jointCaseDataWithOrderSummary();
         data.getApplication().setDateSubmitted(LocalDateTime.now());
+        data.getApplication().getMarriageDetails().setMarriedInUk(NO);
         data.getApplication().setApplicant1CannotUploadSupportingDocument(Set.of(MARRIAGE_CERTIFICATE, MARRIAGE_CERTIFICATE_TRANSLATION));
         data.getApplication().setApplicant2CannotUploadSupportingDocument(Set.of(NAME_CHANGE_EVIDENCE));
 
