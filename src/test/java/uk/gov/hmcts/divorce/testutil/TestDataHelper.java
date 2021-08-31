@@ -211,6 +211,8 @@ public class TestDataHelper {
         caseData.setCaseInvite(new CaseInvite());
         caseData.getCaseInvite().setApplicant2InviteEmailAddress(TEST_APPLICANT_2_USER_EMAIL);
         caseData.setApplicant2(getApplicant(MALE));
+        caseData.getApplication().setApplicant2StatementOfTruth(YES);
+        caseData.getApplication().setApplicant2PrayerHasBeenGiven(YES);
 
         return caseData;
     }

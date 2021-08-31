@@ -89,7 +89,6 @@ class ApplicationOutstandingActionNotificationTest {
     void shouldCallSendEmailToApplicant2ForSupportingDocuments() {
         CaseData data = validApplicant2CaseData();
         data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.NO);
-
         data.getApplication().setApplicant2CannotUploadSupportingDocument(Set.of(NAME_CHANGE_EVIDENCE));
 
         final HashMap<String, String> templateVars = new HashMap<>();

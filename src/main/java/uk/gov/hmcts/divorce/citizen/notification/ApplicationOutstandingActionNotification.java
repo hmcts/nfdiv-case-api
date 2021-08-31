@@ -71,11 +71,7 @@ public class ApplicationOutstandingActionNotification {
         templateVars.put(APPLICATION_REFERENCE, formatId(id));
 
         setDefaultVariables(templateVars);
-        if (caseData.getApplication().getApplicant2CannotUploadSupportingDocument() != null
-            && !caseData.getApplication().getApplicant2CannotUploadSupportingDocument().isEmpty()) {
-            setMissingSupportingDocumentType(
-                templateVars, caseData, caseData.getApplication().getApplicant2CannotUploadSupportingDocument());
-        }
+        setMissingSupportingDocumentType(templateVars, caseData, caseData.getApplication().getApplicant2CannotUploadSupportingDocument());
 
         log.info("Sending application outstanding actions notification to applicant 2 for case : {}", id);
 
