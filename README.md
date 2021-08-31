@@ -90,7 +90,7 @@ To configure a new cron in AAT please checkout the [cnp-flux-config](https://git
 
 Then create a PR in the cnp-flux-config repository.
 
-Note that that the cron will only run in the aat-00 cluster as we don't have a way to run the job once over multiple clusters. Let's hope that cluster doesn't go down.
+Note that the cron will only run in the aat-00 cluster as we don't have a way to run the job once over multiple clusters. Let's hope that cluster doesn't go down.
 
 ## License
 
