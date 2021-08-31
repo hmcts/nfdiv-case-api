@@ -126,7 +126,7 @@ class CitizenApplicant2ApproveTest {
         caseData.getApplication().setApplicant2ConfirmApplicant1Information(YesOrNo.YES);
 
         Jurisdiction jurisdiction = new Jurisdiction();
-        jurisdiction.setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_LAST_RESIDENT));
+        jurisdiction.setJurisdictionConnections(Set.of(JurisdictionConnections.APP_1_APP_2_LAST_RESIDENT));
         jurisdiction.setBothLastHabituallyResident(YesOrNo.YES);
         caseData.getApplication().setJurisdiction(jurisdiction);
         return caseData;

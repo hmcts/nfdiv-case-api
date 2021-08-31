@@ -15,7 +15,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Collections.emptyList;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_DOMICILED;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_LAST_RESIDENT;
@@ -90,8 +89,9 @@ public class Jurisdiction {
         hint = "Tick all the reasons that apply:",
         access = {DefaultAccess.class}
     )
-    private Set<JurisdictionConnections> connections;
+    private Set<JurisdictionConnections> jurisdictionConnections;
 
+    /*
     @CCD(
         label = "Legal connections",
         hint = "Tick all the reasons that apply:",
@@ -99,31 +99,30 @@ public class Jurisdiction {
     )
     private Set<LegalConnections> legalConnections;
 
+    Before removal of legalConnections
+    If legalConnections is not empty then validate returns emptyList()
+    */
     public List<String> validate() {
-        if (isEmpty(legalConnections)) {
-            if (isEmpty(connections)) {
-                return List.of("JurisdictionConnections" + EMPTY);
-            } else {
-                return Stream.of(
-                    validateJurisdictionConnectionA(),
-                    validateJurisdictionConnectionB(),
-                    validateJurisdictionConnectionC(),
-                    validateJurisdictionConnectionD(),
-                    validateJurisdictionConnectionE(),
-                    validateJurisdictionConnectionF(),
-                    validateJurisdictionConnectionG(),
-                    validateJurisdictionConnectionH(),
-                    validateJurisdictionConnectionI(),
-                    validateJurisdictionConnectionJ()
-                ).filter(Objects::nonNull).collect(Collectors.toList());
-            }
+        if (isEmpty(jurisdictionConnections)) {
+            return List.of("JurisdictionConnections" + EMPTY);
+        } else {
+            return Stream.of(
+                validateJurisdictionConnectionA(),
+                validateJurisdictionConnectionB(),
+                validateJurisdictionConnectionC(),
+                validateJurisdictionConnectionD(),
+                validateJurisdictionConnectionE(),
+                validateJurisdictionConnectionF(),
+                validateJurisdictionConnectionG(),
+                validateJurisdictionConnectionH(),
+                validateJurisdictionConnectionI(),
+                validateJurisdictionConnectionJ()
+            ).filter(Objects::nonNull).collect(Collectors.toList());
         }
-
-        return emptyList();
     }
 
     private String validateJurisdictionConnectionA() {
-        if (connections.contains(APP_1_APP_2_RESIDENT)
+        if (jurisdictionConnections.contains(APP_1_APP_2_RESIDENT)
             && (applicant1Residence != YesOrNo.YES
             || applicant2Residence != YesOrNo.YES)) {
             return CONNECTION + APP_1_APP_2_RESIDENT + CANNOT_EXIST;
@@ -132,21 +131,21 @@ public class Jurisdiction {
     }
 
     private String validateJurisdictionConnectionB() {
-        if (connections.contains(APP_1_APP_2_LAST_RESIDENT) && bothLastHabituallyResident != YesOrNo.YES) {
+        if (jurisdictionConnections.contains(APP_1_APP_2_LAST_RESIDENT) && bothLastHabituallyResident != YesOrNo.YES) {
             return CONNECTION + APP_1_APP_2_LAST_RESIDENT + CANNOT_EXIST;
         }
         return null;
     }
 
     private String validateJurisdictionConnectionC() {
-        if (connections.contains(APP_2_RESIDENT) && applicant2Residence != YesOrNo.YES) {
+        if (jurisdictionConnections.contains(APP_2_RESIDENT) && applicant2Residence != YesOrNo.YES) {
             return CONNECTION + APP_2_RESIDENT + CANNOT_EXIST;
         }
         return null;
     }
 
     private String validateJurisdictionConnectionD() {
-        if (connections.contains(APP_1_RESIDENT_TWELVE_MONTHS)
+        if (jurisdictionConnections.contains(APP_1_RESIDENT_TWELVE_MONTHS)
             && (applicant1Residence != YesOrNo.YES
             || app1HabituallyResLastTwelveMonths != YesOrNo.YES)) {
             return CONNECTION + APP_1_RESIDENT_TWELVE_MONTHS + CANNOT_EXIST;
@@ -155,7 +154,7 @@ public class Jurisdiction {
     }
 
     private String validateJurisdictionConnectionE() {
-        if (connections.contains(APP_1_RESIDENT_SIX_MONTHS)
+        if (jurisdictionConnections.contains(APP_1_RESIDENT_SIX_MONTHS)
             && (applicant1Residence != YesOrNo.YES
             || app1HabituallyResLastSixMonths != YesOrNo.YES)) {
             return CONNECTION + APP_1_RESIDENT_SIX_MONTHS + CANNOT_EXIST;
@@ -164,7 +163,7 @@ public class Jurisdiction {
     }
 
     private String validateJurisdictionConnectionF() {
-        if (connections.contains(APP_1_APP_2_DOMICILED)
+        if (jurisdictionConnections.contains(APP_1_APP_2_DOMICILED)
             && (applicant1Domicile != YesOrNo.YES
             || applicant2Domicile != YesOrNo.YES)) {
             return CONNECTION + APP_1_APP_2_DOMICILED + CANNOT_EXIST;
@@ -173,28 +172,28 @@ public class Jurisdiction {
     }
 
     private String validateJurisdictionConnectionG() {
-        if (connections.contains(APP_1_DOMICILED) && applicant1Domicile != YesOrNo.YES) {
+        if (jurisdictionConnections.contains(APP_1_DOMICILED) && applicant1Domicile != YesOrNo.YES) {
             return CONNECTION + APP_1_DOMICILED + CANNOT_EXIST;
         }
         return null;
     }
 
     private String validateJurisdictionConnectionH() {
-        if (connections.contains(APP_2_DOMICILED) && applicant2Domicile != YesOrNo.YES) {
+        if (jurisdictionConnections.contains(APP_2_DOMICILED) && applicant2Domicile != YesOrNo.YES) {
             return CONNECTION + APP_2_DOMICILED + CANNOT_EXIST;
         }
         return null;
     }
 
     private String validateJurisdictionConnectionI() {
-        if (connections.contains(RESIDUAL_JURISDICTION) && residualEligible != YesOrNo.YES) {
+        if (jurisdictionConnections.contains(RESIDUAL_JURISDICTION) && residualEligible != YesOrNo.YES) {
             return CONNECTION + RESIDUAL_JURISDICTION + CANNOT_EXIST;
         }
         return null;
     }
 
     private String validateJurisdictionConnectionJ() {
-        if (connections.contains(APP_1_RESIDENT_JOINT) && applicant1Residence != YesOrNo.YES) {
+        if (jurisdictionConnections.contains(APP_1_RESIDENT_JOINT) && applicant1Residence != YesOrNo.YES) {
             return CONNECTION + APP_1_RESIDENT_JOINT + CANNOT_EXIST;
         }
         return null;

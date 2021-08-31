@@ -10,13 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.IssueApplicationService;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.ConfidentialAddress;
-import uk.gov.hmcts.divorce.divorcecase.model.Gender;
-import uk.gov.hmcts.divorce.divorcecase.model.LegalConnections;
-import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.divorcecase.model.*;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -128,7 +122,7 @@ class CaseworkerIssueApplicationTest {
         caseData.getApplicant1().setFinancialOrder(NO);
         caseData.getApplication().setApplicant1PrayerHasBeenGiven(YES);
         caseData.getApplication().setApplicant1StatementOfTruth(YES);
-        caseData.getApplication().getJurisdiction().setLegalConnections(Set.of(LegalConnections.APPLICANT_RESPONDENT_RESIDENT));
+        caseData.getApplication().getJurisdiction().setJurisdictionConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
         caseData.getApplication().getMarriageDetails().setApplicant1Name("app1Name");
         caseData.getApplication().getMarriageDetails().setDate(LocalDate.of(2009, 1, 1));
         caseData.getApplication().getMarriageDetails().setApplicant2Name("app2Name");

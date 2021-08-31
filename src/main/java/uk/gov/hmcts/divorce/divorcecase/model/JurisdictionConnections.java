@@ -10,6 +10,10 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 @AllArgsConstructor
 public enum JurisdictionConnections implements HasLabel {
 
+    @JsonProperty("J")
+    @JsonPropertyDescription("The applicant habitually resides in England and Wales")
+    APP_1_RESIDENT_JOINT("J"),
+
     @JsonProperty("A")
     @JsonPropertyDescription("The applicant and the respondent are habitually resident in England and Wales")
     APP_1_APP_2_RESIDENT("A"),
@@ -50,11 +54,7 @@ public enum JurisdictionConnections implements HasLabel {
         + "England or Wales or, in the case of a same sex couple, married each other under "
         + "the law of England and Wales and it would be in the interests of justice for "
         + "the court to assume jurisdiction in this case (same sex married couples only)")
-    RESIDUAL_JURISDICTION("I"),
-
-    @JsonProperty("J")
-    @JsonPropertyDescription("The applicant habitually resides in England and Wales")
-    APP_1_RESIDENT_JOINT("J");
+    RESIDUAL_JURISDICTION("I");
 
     private final String label;
 }
