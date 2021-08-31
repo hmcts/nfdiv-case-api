@@ -27,6 +27,6 @@ public class SystemRemindApplicant2TaskIT {
         await("Remind applicant 2 task executed at least once")
             .atMost(60, TimeUnit.SECONDS)
             .pollInterval(2, TimeUnit.SECONDS)
-            .until(() -> verify(systemRemindApplicant2Task, atLeastOnce()).execute());
+            .until(() -> verify(systemRemindApplicant2Task, atLeastOnce()).run());
     }
 }
