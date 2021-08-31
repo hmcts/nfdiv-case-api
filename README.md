@@ -70,26 +70,6 @@ To generate the CCD JSON files from the Java Model run the following from the ro
 
     ./gradlew generateTypeScript
 
-### Crons
-
-You can manually run a cron task from the cli:
-
-```
-java -jar nfdiv-case-api.jar run [taskName]
-
-# E.g.
-java -jar nfdiv-case-api.jar run SystemProgressHeldCasesTask
-
-```
-
-To configure a new cron in AAT please checkout the [cnp-flux-config](https://github.com/hmcts/cnp-flux-config/) repository and run:
-
-```
-./bin/add-cron.sh SystemProgressHeldCasesTask ~/cnp-flux-config "0/10 * * * *"
-```
-
-Then create a PR in the cnp-flux-config repository.
-
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
