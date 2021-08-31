@@ -102,7 +102,7 @@ async function main(taskName, cnpFluxPath, schedule) {
 
   const updatedOverlay = aatClusterOverlay
                           .replace("bases:", "bases:\n" + `- ../../../namespaces/nfdiv/${cronName}/${cronName}.yaml`)
-                          .replace("patchesStrategicMerge:", "patchesStrategicMerge:\n" + `- ../../../namespaces/nfdiv/${cronName}/${cronName}.yaml`);
+                          .replace("patchesStrategicMerge:", "patchesStrategicMerge:\n" + `- ../../../namespaces/nfdiv/${cronName}/aat-00.yaml`);
 
   writeFile(cnpFluxPath + aatClusterOverlayPath, updatedOverlay);
   console.log(`Added ${taskName} to cnp-flux-config.`);
