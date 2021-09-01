@@ -86,7 +86,7 @@ class SystemProgressHeldCasesTaskTest {
 
         doNothing().when(conditionalOrderNotification).send(any(CaseData.class), anyLong());
 
-        awaitingConditionalOrderTask.execute();
+        awaitingConditionalOrderTask.run();
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_HELD_CASE);
         verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_PROGRESS_HELD_CASE);
@@ -105,7 +105,7 @@ class SystemProgressHeldCasesTaskTest {
 
         when(ccdSearchService.searchForAllCasesWithStateOf(Holding)).thenReturn(caseDetailsList);
 
-        awaitingConditionalOrderTask.execute();
+        awaitingConditionalOrderTask.run();
 
         verify(ccdUpdateService, never()).submitEvent(caseDetails, SYSTEM_PROGRESS_HELD_CASE);
     }
@@ -119,7 +119,7 @@ class SystemProgressHeldCasesTaskTest {
 
         when(ccdSearchService.searchForAllCasesWithStateOf(Holding)).thenReturn(singletonList(caseDetails1));
 
-        awaitingConditionalOrderTask.execute();
+        awaitingConditionalOrderTask.run();
 
         verifyNoInteractions(ccdUpdateService);
     }
@@ -129,7 +129,7 @@ class SystemProgressHeldCasesTaskTest {
         when(ccdSearchService.searchForAllCasesWithStateOf(Holding))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
-        awaitingConditionalOrderTask.execute();
+        awaitingConditionalOrderTask.run();
 
         verifyNoInteractions(ccdUpdateService);
     }
@@ -150,7 +150,7 @@ class SystemProgressHeldCasesTaskTest {
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_HELD_CASE);
 
-        awaitingConditionalOrderTask.execute();
+        awaitingConditionalOrderTask.run();
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_HELD_CASE);
         verify(ccdUpdateService, never()).submitEvent(caseDetails2, SYSTEM_PROGRESS_HELD_CASE);
@@ -178,7 +178,7 @@ class SystemProgressHeldCasesTaskTest {
         mockInteractions(caseDetails1, issueDate1, caseDataMap(caseDetails1, issueDate1));
         mockInteractions(caseDetails2, issueDate2, caseDataMap(caseDetails2, issueDate2));
 
-        awaitingConditionalOrderTask.execute();
+        awaitingConditionalOrderTask.run();
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_HELD_CASE);
         verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_PROGRESS_HELD_CASE);
