@@ -27,7 +27,7 @@ public class SetState implements CaseTask {
             caseDetails.setState(AwaitingHWFDecision);
         } else if (!application.hasBeenPaidFor()) {
             caseDetails.setState(AwaitingPayment);
-        } else if (application.hasAwaitingDocuments()) {
+        } else if (application.hasAwaitingApplicant1Documents()) {
             caseDetails.setState(AwaitingDocuments);
         } else {
             caseDetails.setState(Submitted);

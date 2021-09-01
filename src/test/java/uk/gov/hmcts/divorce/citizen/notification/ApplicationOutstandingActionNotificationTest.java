@@ -23,7 +23,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_ACTIONS;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.CERTIFICATE;
@@ -36,6 +38,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.PAPERS_SER
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant2;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationOutstandingActionNotificationTest {
@@ -51,7 +54,7 @@ class ApplicationOutstandingActionNotificationTest {
 
     @Test
     @SuppressWarnings("squid:S6068")
-    void shouldCallSendEmailForSupportingDocuments() {
+    void shouldCallSendEmailToApplicant1ForSupportingDocuments() {
         CaseData data = caseData();
         data.setApplicant2(getApplicant2(Gender.MALE));
         data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.NO);
@@ -65,7 +68,7 @@ class ApplicationOutstandingActionNotificationTest {
         final HashMap<String, String> templateVars = new HashMap<>();
         when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
 
-        notification.send(data, 1234567890123456L);
+        notification.sendToApplicant1(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -82,9 +85,33 @@ class ApplicationOutstandingActionNotificationTest {
     }
 
     @Test
+    void shouldCallSendEmailToApplicant2ForSupportingDocuments() {
+        CaseData data = validApplicant2CaseData();
+        data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.NO);
+        data.getApplication().setApplicant2CannotUploadSupportingDocument(Set.of(NAME_CHANGE_EVIDENCE));
+
+        final HashMap<String, String> templateVars = new HashMap<>();
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
+
+        notification.sendToApplicant2(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(OUTSTANDING_ACTIONS),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),
+                hasEntry(NAME_CHANGE_PROOF, "* Proof that you changed your name. For example deed poll or statutory declaration")
+            )),
+            eq(ENGLISH)
+        );
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
     @SuppressWarnings("squid:S6068")
     void shouldCallSendEmailForPapersServedAnotherWay() {
         CaseData data = caseData();
+        data.setApplicationType(SOLE_APPLICATION);
         data.setApplicant2(getApplicant2(Gender.MALE));
         data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.YES);
         data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
@@ -99,7 +126,7 @@ class ApplicationOutstandingActionNotificationTest {
         when(commonContent.getTheirPartner(data, data.getApplicant2())).thenReturn("husband");
         when(commonContent.getService(data.getDivorceOrDissolution())).thenReturn("divorce");
 
-        notification.send(data, 1234567890123456L);
+        notification.sendToApplicant1(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -128,6 +155,7 @@ class ApplicationOutstandingActionNotificationTest {
     @SuppressWarnings("squid:S6068")
     void shouldCallSendEmailForCivil() {
         CaseData data = caseData();
+        data.setApplicationType(SOLE_APPLICATION);
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.YES);
         data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
@@ -140,7 +168,7 @@ class ApplicationOutstandingActionNotificationTest {
         final HashMap<String, String> templateVars = new HashMap<>();
         when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
 
-        notification.send(data, 1234567890123456L);
+        notification.sendToApplicant1(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),

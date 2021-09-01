@@ -373,10 +373,15 @@ public class Application {
     }
 
     @JsonIgnore
-    public boolean hasAwaitingDocuments() {
+    public boolean hasAwaitingApplicant1Documents() {
         return applicant1WantsToHavePapersServedAnotherWay != null
             && applicant1WantsToHavePapersServedAnotherWay.toBoolean()
             || !isEmpty(applicant1CannotUploadSupportingDocument);
+    }
+
+    @JsonIgnore
+    public boolean hasAwaitingApplicant2Documents() {
+        return !isEmpty(applicant2CannotUploadSupportingDocument);
     }
 
     @JsonIgnore
