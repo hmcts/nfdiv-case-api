@@ -166,7 +166,7 @@ class CitizenSubmitApplicationTest {
         caseData.getApplication().setApplicant1StatementOfTruth(YesOrNo.YES);
         caseData.getApplication().getMarriageDetails().setDate(LocalDate.now().minus(2, ChronoUnit.YEARS));
         Jurisdiction jurisdiction = new Jurisdiction();
-        jurisdiction.setJurisdictionConnections(Set.of(JurisdictionConnections.APP_1_APP_2_LAST_RESIDENT));
+        jurisdiction.setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_LAST_RESIDENT));
         jurisdiction.setBothLastHabituallyResident(YesOrNo.YES);
         caseData.getApplication().setJurisdiction(jurisdiction);
         return caseData;

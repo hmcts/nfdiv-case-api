@@ -224,7 +224,7 @@ public class TestDataHelper {
         var jurisdiction = new Jurisdiction();
         jurisdiction.setApplicant1Residence(YES);
         jurisdiction.setApplicant2Residence(YES);
-        jurisdiction.setJurisdictionConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
+        jurisdiction.setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
 
         var applicant1 = getApplicant();
         applicant1.setContactDetailsConfidential(ConfidentialAddress.KEEP);
@@ -315,7 +315,7 @@ public class TestDataHelper {
 
     public static Jurisdiction getJurisdiction() {
         final Jurisdiction jurisdiction = new Jurisdiction();
-        jurisdiction.setJurisdictionConnections(Set.of(APP_1_RESIDENT_JOINT));
+        jurisdiction.setConnections(Set.of(APP_1_RESIDENT_JOINT));
         jurisdiction.setApplicant1Residence(YES);
         jurisdiction.setApplicant2Residence(YES);
 
