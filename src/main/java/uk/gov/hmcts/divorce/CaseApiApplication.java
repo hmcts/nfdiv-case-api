@@ -1,5 +1,8 @@
 package uk.gov.hmcts.divorce;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
@@ -10,11 +13,14 @@ import uk.gov.hmcts.divorce.payment.FeesAndPaymentsClient;
 import uk.gov.hmcts.divorce.payment.PaymentPbaClient;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaRefDataClient;
+import uk.gov.hmcts.divorce.systemupdate.service.ScheduledTaskRunner;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 import uk.gov.hmcts.reform.ccd.client.CaseUserApi;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataClientAutoConfiguration;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
+
+import static org.codehaus.groovy.runtime.InvokerHelper.asList;
 
 @SpringBootApplication(
     exclude = {CoreCaseDataClientAutoConfiguration.class},
@@ -36,9 +42,29 @@ import uk.gov.hmcts.reform.idam.client.IdamApi;
 )
 @EnableScheduling
 @SuppressWarnings("HideUtilityClassConstructor") // Spring needs a constructor, its not a utility class
-public class CaseApiApplication {
+@Slf4j
+public class CaseApiApplication implements CommandLineRunner {
+
+    @Autowired
+    ScheduledTaskRunner taskRunner;
 
     public static void main(final String[] args) {
-        SpringApplication.run(CaseApiApplication.class, args);
+        final var application = new SpringApplication(CaseApiApplication.class);
+        final var instance = application.run(args);
+
+        if (asList(args).contains("run")) {
+            instance.close();
+        }
+    }
+
+    @Override
+    public void run(String... args) {
+        final var runArgPos = asList(args).indexOf("run");
+
+        if (runArgPos == -1 || runArgPos + 1 >= args.length) {
+            return;
+        }
+
+        taskRunner.run(args[runArgPos + 1]);
     }
 }

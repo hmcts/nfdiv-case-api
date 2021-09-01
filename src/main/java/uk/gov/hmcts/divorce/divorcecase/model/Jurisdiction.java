@@ -173,22 +173,22 @@ public class Jurisdiction {
     }
 
     private String validateJurisdictionConnectionG() {
-        if (connections.contains(RESIDUAL_JURISDICTION) && residualEligible != YesOrNo.YES) {
-            return CONNECTION + RESIDUAL_JURISDICTION + CANNOT_EXIST;
-        }
-        return null;
-    }
-
-    private String validateJurisdictionConnectionH() {
         if (connections.contains(APP_1_DOMICILED) && applicant1Domicile != YesOrNo.YES) {
             return CONNECTION + APP_1_DOMICILED + CANNOT_EXIST;
         }
         return null;
     }
 
-    private String validateJurisdictionConnectionI() {
+    private String validateJurisdictionConnectionH() {
         if (connections.contains(APP_2_DOMICILED) && applicant2Domicile != YesOrNo.YES) {
             return CONNECTION + APP_2_DOMICILED + CANNOT_EXIST;
+        }
+        return null;
+    }
+
+    private String validateJurisdictionConnectionI() {
+        if (connections.contains(RESIDUAL_JURISDICTION) && residualEligible != YesOrNo.YES) {
+            return CONNECTION + RESIDUAL_JURISDICTION + CANNOT_EXIST;
         }
         return null;
     }

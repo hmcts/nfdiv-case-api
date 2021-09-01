@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.systemupdate.schedule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewApplicant2Notification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -22,7 +21,7 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicant2.SYS
 
 @Component
 @Slf4j
-public class SystemRemindApplicant2Task {
+public class SystemRemindApplicant2Task implements Runnable {
 
     private static final int FOUR_DAYS = 4;
 
@@ -38,8 +37,8 @@ public class SystemRemindApplicant2Task {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Scheduled(cron = "${schedule.remind_applicant2}")
-    public void execute() {
+    @Override
+    public void run() {
         log.info("Remind applicant 2 scheduled task started");
 
         try {

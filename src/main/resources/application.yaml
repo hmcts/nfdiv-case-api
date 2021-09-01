@@ -67,6 +67,7 @@ uk:
             GENERAL_EMAIL_RESPONDENT: 'fccb96fb-7d6a-41f3-9d63-bebfc76829ef'
             GENERAL_EMAIL_RESPONDENT_SOLICITOR: 'ac9a9948-25d8-4e59-8025-89860c251d3a'
             GENERAL_EMAIL_OTHER_PARTY: '2c188c63-db80-46b4-a1e2-53fdc510d5b9'
+            SOLICITOR_AWAITING_CONDITIONAL_ORDER: '3f2e50a1-b4ae-4466-bb8c-eac55563aa02'
           welsh:
             SAVE_SIGN_OUT: '6e9526c5-9380-4bf1-879a-b8e401e39a6f'
             OUTSTANDING_ACTIONS: '1bc9ce05-557b-4cf6-9e20-87d57d55e89c'
@@ -81,6 +82,7 @@ uk:
             GENERAL_EMAIL_RESPONDENT: 'fccb96fb-7d6a-41f3-9d63-bebfc76829ef'
             GENERAL_EMAIL_RESPONDENT_SOLICITOR: 'ac9a9948-25d8-4e59-8025-89860c251d3a'
             GENERAL_EMAIL_OTHER_PARTY: '2c188c63-db80-46b4-a1e2-53fdc510d5b9'
+            SOLICITOR_AWAITING_CONDITIONAL_ORDER: '3f2e50a1-b4ae-4466-bb8c-eac55563aa02'
 
 s2s-authorised:
   services: ${S2S_AUTHORISED_SERVICES:ccd_data}
@@ -141,13 +143,6 @@ prd:
 
 send-letter:
   url: ${SEND_LETTER_SERVICE_BASEURL:http://rpe-send-letter-service-aat.service.core-compute-aat.internal}
-
-schedule:
-  awaiting_conditional_order: ${AWAITING_CONDITIONAL_ORDER_SCHEDULED_CRON:0 0 0 * * ?}
-  aos_overdue: ${AOS_OVERDUE_SCHEDULED_CRON:0 0 0 * * ?}
-  joint_application_overdue: ${JOINT_APPLICATION_OVERDUE_SCHEDULED_CRON:0 0 10 * * ?}
-  system_remind_applicant1: ${JOINT_APPLICATION_APP1_REMINDER_SCHEDULED_CRON:0 0 10 * * ?}
-  remind_applicant2: ${JOINT_APPLICATION_REMIND_APP2_CRON:0 0 10 * * ?}
 
 aos_pack:
   due_date_offset_days: ${AOS_PACK_DUE_DATE_OFFSET_DAYS:14}
