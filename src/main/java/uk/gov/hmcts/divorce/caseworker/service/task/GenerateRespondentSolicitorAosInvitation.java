@@ -33,30 +33,27 @@ public class GenerateRespondentSolicitorAosInvitation implements CaseTask {
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
 
-        if (caseDetails.getData().getApplication().isSolicitorApplication()) {
+        final Long caseId = caseDetails.getId();
+        final CaseData caseData = caseDetails.getData();
+        final LocalDate createdDate = caseDetails.getCreatedDate().toLocalDate();
 
-            final Long caseId = caseDetails.getId();
-            final CaseData caseData = caseDetails.getData();
-            final LocalDate createdDate = caseDetails.getCreatedDate().toLocalDate();
+        log.info("Executing handler for generating respondent aos invitation for case id {} ", caseId);
 
-            log.info("Executing handler for generating respondent aos invitation for case id {} ", caseId);
+        if (caseDetails.getData().getApplication().isSolicitorApplication() && caseData.getApplicant2().isRepresented()) {
 
-            if (caseData.getApplicant2().isRepresented()) {
+            final Supplier<Map<String, Object>> templateContentSupplier = templateContent.apply(caseData, caseId, createdDate);
 
-                final Supplier<Map<String, Object>> templateContentSupplier = templateContent.apply(caseData, caseId, createdDate);
+            caseData.getCaseInvite().setAccessCode(generateAccessCode());
 
-                caseData.getCaseInvite().setAccessCode(generateAccessCode());
-
-                caseDataDocumentService.renderDocumentAndUpdateCaseData(
-                    caseData,
-                    DOCUMENT_TYPE_RESPONDENT_INVITATION,
-                    templateContentSupplier,
-                    caseId,
-                    RESP_SOLICITOR_AOS_INVITATION,
-                    caseData.getApplicant1().getLanguagePreference(),
-                    RESP_AOS_INVITATION_DOCUMENT_NAME + caseId
-                );
-            }
+            caseDataDocumentService.renderDocumentAndUpdateCaseData(
+                caseData,
+                DOCUMENT_TYPE_RESPONDENT_INVITATION,
+                templateContentSupplier,
+                caseId,
+                RESP_SOLICITOR_AOS_INVITATION,
+                caseData.getApplicant1().getLanguagePreference(),
+                RESP_AOS_INVITATION_DOCUMENT_NAME + caseId
+            );
         }
 
         return caseDetails;
