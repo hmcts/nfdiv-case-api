@@ -16,7 +16,7 @@ async function getFiles(dir) {
 }
 
 function getCronName(taskName) {
-  return "nfdiv-cron-" + taskName.match(/[A-Z][a-z]+/g).filter(part => part != "task").join("-").toLowerCase();
+  return "nfdiv-cron-" + taskName.match(/[A-Z0-9][a-z0-9]+/g).filter(part => part !== "Task" && part !== "System").join("-").toLowerCase();
 }
 
 function getClusterOverride(taskName, cronName, schedule) {
@@ -45,11 +45,11 @@ spec:
   releaseName: ${cronName}
   chart:
     git: git@github.com:hmcts/nfdiv-cron
-    ref: 0.0.6
+    ref: 0.0.7
     path: nfdiv-cron
   values:
     job:
-      image: hmctspublic.azurecr.io/nfdiv/case-api:prod-00fe383-20210826060439
+      image: hmctspublic.azurecr.io/nfdiv/case-api:prod-00fe383-20210826060439  #{"$imagepolicy": "flux-system:nfdiv-case-api"}
       args:
         - run
         - ${taskName}
