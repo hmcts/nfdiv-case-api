@@ -53,8 +53,6 @@ public class CaseworkerIssueApplicationFT extends FunctionalTestSuite {
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
-        // document_url and document_binary_url are ignored using ${json-unit.ignore}
-        // assertion will fail if the above elements are missing actual value
         assertThatJson(response.asString())
             .when(IGNORING_EXTRA_FIELDS)
             .when(TREATING_NULL_AS_ABSENT)
