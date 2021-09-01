@@ -84,13 +84,13 @@ public class CaseValidationTest {
     public void shouldReturnTrueWhenCaseHasAwaitingDocuments() {
         CaseData caseData = new CaseData();
         caseData.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
-        assertTrue(caseData.getApplication().hasAwaitingDocuments());
+        assertTrue(caseData.getApplication().hasAwaitingApplicant1Documents());
     }
 
     @Test
     public void shouldReturnFalseWhenCaseDoesNotHaveAwaitingDocuments() {
         CaseData caseData = new CaseData();
-        assertFalse(caseData.getApplication().hasAwaitingDocuments());
+        assertFalse(caseData.getApplication().hasAwaitingApplicant1Documents());
     }
 
     @Test

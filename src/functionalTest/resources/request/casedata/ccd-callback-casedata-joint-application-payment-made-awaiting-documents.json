@@ -1,0 +1,50 @@
+{
+  "applicationType": "jointApplication",
+  "divorceOrDissolution": "divorce",
+  "applicant1Gender": "female",
+  "applicant2Gender": "male",
+  "marriageDate": "2020-04-28",
+  "applicant1FirstName": "Billy",
+  "applicant1MiddleName": "B",
+  "applicant1LastName": "Bob",
+  "applicant1ContactDetailsConfidential": "keep",
+  "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+  "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
+  "applicant2FirstName": "Sarah",
+  "applicant2LastName": "Smith",
+  "marriageApplicant1Name": "test_first_name test_last_name",
+  "applicant1FinancialOrder": "NO",
+  "applicant2FinancialOrder": "NO",
+  "applicant1PrayerHasBeenGiven": "YES",
+  "applicant1StatementOfTruth": "YES",
+  "applicant2PrayerHasBeenGiven": "YES",
+  "applicant2StatementOfTruth": "YES",
+  "jurisdictionApplicant1Residence": "YES",
+  "jurisdictionApplicant2Residence": "YES",
+  "jurisdictionConnections": ["A"],
+  "applicant1CannotUploadSupportingDocument": ["marriageCertificate", "nameChangeEvidence"],
+  "applicant2CannotUploadSupportingDocument": ["nameChangeEvidence"],
+  "marriageMarriedInUk": "YES",
+  "applicationFeeOrderSummary": {
+    "PaymentTotal": "55000",
+    "PaymentReference": null,
+    "Fees": [
+      {
+        "id": null,
+        "value": {
+          "FeeDescription": "Filing an application for a divorce, nullity or civil partnership dissolution",
+          "FeeVersion": "5",
+          "FeeCode": "FEE0002",
+          "FeeAmount": "55000"
+        }
+      }
+    ]
+  },
+  "applicationPayments": [{
+    "id": "1",
+    "value": {
+      "status": "success",
+      "amount": 55000
+    }
+  }]
+}

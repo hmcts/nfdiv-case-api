@@ -12,6 +12,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
+import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenAddPayment.CITIZEN_ADD_PAYMENT;
@@ -36,6 +37,11 @@ public class CitizenAddPaymentFT extends FunctionalTestSuite {
         "classpath:request/casedata/ccd-callback-casedata-payment-made.json";
     private static final String RESPONSE =
         "classpath:responses/response-payment-made.json";
+
+    public static final String JOINT_AWAITING_DOCUMENTS_REQUEST =
+        "classpath:request/casedata/ccd-callback-casedata-joint-application-payment-made-awaiting-documents.json";
+    public static final String JOINT_AWAITING_DOCUMENTS_RESPONSE =
+        "classpath:responses/response-joint-application-payment-made-awaiting-documents.json";
 
     private static final String AWAITING_DOCUMENTS_REQUEST =
         "classpath:request/casedata/ccd-callback-casedata-payment-made-awaiting-documents.json";
@@ -92,6 +98,20 @@ public class CitizenAddPaymentFT extends FunctionalTestSuite {
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(AWAITING_DOCUMENTS_RESPONSE)));
+    }
+
+    @Test
+    public void shouldPassValidationAndGiveSuccessWhenCaseDataValidAndAwaitingDocumentJointApplication() throws IOException {
+        Map<String, Object> request = caseData(JOINT_AWAITING_DOCUMENTS_REQUEST);
+        Response response = triggerCallback(request, CITIZEN_ADD_PAYMENT, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(TREATING_NULL_AS_ABSENT)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(JOINT_AWAITING_DOCUMENTS_RESPONSE)));
     }
 
 }
