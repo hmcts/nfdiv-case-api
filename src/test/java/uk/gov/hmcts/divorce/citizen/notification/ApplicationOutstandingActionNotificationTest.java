@@ -85,7 +85,6 @@ class ApplicationOutstandingActionNotificationTest {
     }
 
     @Test
-    @SuppressWarnings("squid:S6068")
     void shouldCallSendEmailToApplicant2ForSupportingDocuments() {
         CaseData data = validApplicant2CaseData();
         data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.NO);

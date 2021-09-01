@@ -12,6 +12,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
+import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenAddPayment.CITIZEN_ADD_PAYMENT;
@@ -108,6 +109,7 @@ public class CitizenAddPaymentFT extends FunctionalTestSuite {
 
         assertThatJson(response.asString())
             .when(IGNORING_EXTRA_FIELDS)
+            .when(TREATING_NULL_AS_ABSENT)
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(JOINT_AWAITING_DOCUMENTS_RESPONSE)));
     }

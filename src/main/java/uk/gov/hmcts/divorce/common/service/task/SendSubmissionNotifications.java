@@ -60,9 +60,11 @@ public class SendSubmissionNotifications implements CaseTask {
         }
 
         if (caseData.getApplication().hasAwaitingApplicant1Documents()) {
+            log.info("Triggering applicant 1 has outstanding actions notification");
             applicationOutstandingActionNotification.sendToApplicant1(caseData, caseId);
         }
         if (caseData.getApplication().hasAwaitingApplicant2Documents()) {
+            log.info("Triggering applicant 2 has outstanding actions notification");
             applicationOutstandingActionNotification.sendToApplicant2(caseData, caseId);
         }
 
