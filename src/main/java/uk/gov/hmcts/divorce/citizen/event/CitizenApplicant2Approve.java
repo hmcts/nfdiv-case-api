@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
@@ -65,7 +66,12 @@ public class CitizenApplicant2Approve implements CCDConfig<CaseData, State, User
 
         data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
 
-        applicant2ApprovedNotification.sendToApplicant1(data, details.getId());
+        if (data.getApplication().isHelpWithFeesApplication() && data.getApplication().getApplicant2HelpWithFees().getNeedHelp() != YES) {
+            applicant2ApprovedNotification.sendToApplicant1WithDeniedHwf(data, details.getId());
+        } else {
+            applicant2ApprovedNotification.sendToApplicant1(data, details.getId());
+        }
+
         applicant2ApprovedNotification.sendToApplicant2(data, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
