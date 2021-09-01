@@ -105,11 +105,38 @@ class CitizenApplicant2ApproveTest {
         assertThat(response.getState()).isEqualTo(State.Applicant2Approved);
     }
 
+    @Test
+    void givenEventStartedWithValidCaseThenChangeStateApplicant2ApprovedAndSendEmailToApplicant1AndApplicant2WithDeniedHwf() {
+        final long caseId = 2L;
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        CaseData caseData = CaseData.builder().build();
+        setValidCaseData(caseData);
+        caseData.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
+        caseData.getApplication().getApplicant2HelpWithFees().setNeedHelp(YesOrNo.NO);
+
+        caseDetails.setData(caseData);
+        caseDetails.setId(caseId);
+
+        caseDetails.setState(State.AwaitingApplicant2Response);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenApplicant2Approve.aboutToSubmit(caseDetails, caseDetails);
+
+        verify(applicant2ApprovedNotification).sendToApplicant1WithDeniedHwf(caseData, caseDetails.getId());
+        verify(applicant2ApprovedNotification).sendToApplicant2(caseData, caseDetails.getId());
+        assertThat(response.getState()).isEqualTo(State.Applicant2Approved);
+    }
+
     private CaseData setValidCaseData(CaseData caseData) {
         caseData.setApplicant1(getApplicant());
         caseData.setApplicant2(getApplicant(MALE));
         caseData.getApplicant1().setContactDetailsConfidential(ConfidentialAddress.SHARE);
         caseData.getApplication().setApplicant1HelpWithFees(
+            HelpWithFees.builder()
+                .needHelp(NO)
+                .build()
+        );
+
+        caseData.getApplication().setApplicant2HelpWithFees(
             HelpWithFees.builder()
                 .needHelp(NO)
                 .build()

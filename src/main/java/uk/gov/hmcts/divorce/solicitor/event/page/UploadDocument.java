@@ -4,14 +4,14 @@ import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 
-public class UploadMarriageCertificate implements CcdPageConfiguration {
+public class UploadDocument implements CcdPageConfiguration {
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {
 
         pageBuilder
             .page("UploadSupportingDocuments")
-            .pageLabel("Upload the marriage certificate")
+            .pageLabel("Upload Documents")
             .label(
                 "LabelUploadDocumentsPara-1",
                 "You need to upload a digital photo or scan of the marriage certificate.\n\n"
