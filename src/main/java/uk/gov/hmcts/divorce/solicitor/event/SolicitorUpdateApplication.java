@@ -23,7 +23,7 @@ import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant1;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant2;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutTheSolicitor;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolHowDoYouWantToApplyForDivorce;
-import uk.gov.hmcts.divorce.solicitor.event.page.UploadMarriageCertificate;
+import uk.gov.hmcts.divorce.solicitor.event.page.UploadDocument;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorUpdateApplicationService;
 
 import java.util.List;
@@ -65,7 +65,7 @@ public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, Us
             new MarriageCertificateDetails(),
             new OtherLegalProceedings(),
             new FinancialOrders(),
-            new UploadMarriageCertificate(),
+            new UploadDocument(),
             new LanguagePreference(),
             new JurisdictionApplyForDivorce()
         );
