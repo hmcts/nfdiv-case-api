@@ -124,7 +124,7 @@ public class CitizenApplicant2ApproveIT {
             .sendEmail(eq(TEST_USER_EMAIL), eq(JOINT_APPLICANT1_APPLICANT2_APPROVED_WITHOUT_HWF), anyMap(), eq(ENGLISH));
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(JOINT_APPLICANT2_APPLICANT2_APPROVED), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(JOINT_APPLICANT2_APPLICANT2_APPROVED), anyMap(), eq(ENGLISH));
 
         verifyNoMoreInteractions(notificationService);
     }
