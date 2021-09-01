@@ -33,30 +33,27 @@ public class GenerateCitizenRespondentAosInvitation implements CaseTask {
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
 
-        if (caseDetails.getData().getApplication().isSolicitorApplication()) {
+        final Long caseId = caseDetails.getId();
+        final CaseData caseData = caseDetails.getData();
+        final LocalDate createdDate = caseDetails.getCreatedDate().toLocalDate();
 
-            final Long caseId = caseDetails.getId();
-            final CaseData caseData = caseDetails.getData();
-            final LocalDate createdDate = caseDetails.getCreatedDate().toLocalDate();
+        if (caseDetails.getData().getApplication().isSolicitorApplication() && !caseData.getApplicant2().isRepresented()) {
 
-            if (!caseData.getApplicant2().isRepresented()) {
+            log.info("Generating access code to allow the respondent to access the application");
+            caseData.getCaseInvite().setAccessCode(generateAccessCode());
 
-                log.info("Generating access code to allow the respondent to access the application");
-                caseData.getCaseInvite().setAccessCode(generateAccessCode());
+            log.info("Generating citizen respondent AoS invitation for case id {} ", caseId);
+            final Supplier<Map<String, Object>> templateContentSupplier = templateContent.apply(caseData, caseId, createdDate);
 
-                log.info("Generating citizen respondent AoS invitation for case id {} ", caseId);
-                final Supplier<Map<String, Object>> templateContentSupplier = templateContent.apply(caseData, caseId, createdDate);
-
-                caseDataDocumentService.renderDocumentAndUpdateCaseData(
-                    caseData,
-                    DOCUMENT_TYPE_RESPONDENT_INVITATION,
-                    templateContentSupplier,
-                    caseId,
-                    CITIZEN_RESP_AOS_INVITATION,
-                    caseData.getApplicant1().getLanguagePreference(),
-                    RESP_AOS_INVITATION_DOCUMENT_NAME + caseId
-                );
-            }
+            caseDataDocumentService.renderDocumentAndUpdateCaseData(
+                caseData,
+                DOCUMENT_TYPE_RESPONDENT_INVITATION,
+                templateContentSupplier,
+                caseId,
+                CITIZEN_RESP_AOS_INVITATION,
+                caseData.getApplicant1().getLanguagePreference(),
+                RESP_AOS_INVITATION_DOCUMENT_NAME + caseId
+            );
         }
 
         return caseDetails;
