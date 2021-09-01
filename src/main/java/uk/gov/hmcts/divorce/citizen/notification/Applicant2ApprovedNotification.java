@@ -72,7 +72,7 @@ public class Applicant2ApprovedNotification {
             templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), APPLICATION_TO_END_CIVIL_PARTNERSHIP);
         }
 
-        log.info("Sending applicant 2 approved without HWF notification to applicant 1 for case : {}", id);
+        log.info("Sending applicant 2 denied HWF notification to applicant 1 for case : {}", id);
 
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),

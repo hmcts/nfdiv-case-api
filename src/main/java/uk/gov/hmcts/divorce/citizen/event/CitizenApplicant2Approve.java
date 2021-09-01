@@ -67,8 +67,10 @@ public class CitizenApplicant2Approve implements CCDConfig<CaseData, State, User
         data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
 
         if (data.getApplication().isHelpWithFeesApplication() && data.getApplication().getApplicant2HelpWithFees().getNeedHelp() != YES) {
+            log.info("Triggering applicant 2 denied HWF notification for applicant 1");
             applicant2ApprovedNotification.sendToApplicant1WithDeniedHwf(data, details.getId());
         } else {
+            log.info("Triggering applicant 2 approved notification for applicant 1");
             applicant2ApprovedNotification.sendToApplicant1(data, details.getId());
         }
 
