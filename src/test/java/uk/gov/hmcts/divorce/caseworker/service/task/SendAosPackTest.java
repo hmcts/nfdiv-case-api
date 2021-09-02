@@ -61,6 +61,7 @@ class SendAosPackTest {
 
         final var caseData = caseData();
         caseData.getApplication().setSolServiceMethod(COURT_SERVICE);
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.setApplicant2(respondent());
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -84,6 +85,7 @@ class SendAosPackTest {
 
         final var caseData = caseData();
         caseData.getApplication().setSolServiceMethod(COURT_SERVICE);
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.setApplicant2(respondentWithDigitalSolicitor());
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();

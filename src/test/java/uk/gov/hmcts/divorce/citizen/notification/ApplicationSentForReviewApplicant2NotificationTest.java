@@ -28,7 +28,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.REMINDER_A
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DIVORCE_TEST_URL;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConfigTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
@@ -60,7 +60,7 @@ class ApplicationSentForReviewApplicant2NotificationTest {
         notification.send(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
-            eq(TEST_USER_EMAIL),
+            eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW),
             argThat(allOf(
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(dateTimeFormatter)),
@@ -84,7 +84,7 @@ class ApplicationSentForReviewApplicant2NotificationTest {
         notification.send(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
-            eq(TEST_USER_EMAIL),
+            eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW),
             argThat(allOf(
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(dateTimeFormatter)),
@@ -107,7 +107,7 @@ class ApplicationSentForReviewApplicant2NotificationTest {
         notification.sendReminder(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
-            eq(TEST_USER_EMAIL),
+            eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW),
             argThat(allOf(
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(dateTimeFormatter)),
@@ -132,7 +132,7 @@ class ApplicationSentForReviewApplicant2NotificationTest {
         notification.sendReminder(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
-            eq(TEST_USER_EMAIL),
+            eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW),
             argThat(allOf(
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(dateTimeFormatter)),

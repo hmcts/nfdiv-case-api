@@ -1,0 +1,58 @@
+{
+  "data": {
+    "applicant1ContactDetailsConfidential": "share",
+    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+    "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
+    "applicant1FirstName": "test_first_name",
+    "applicant1Gender": "female",
+    "applicant1LanguagePreferenceWelsh": "No",
+    "applicant1LastName": "test_last_name",
+    "applicant1MiddleName": "test_middle_name",
+    "applicant2ContactDetailsConfidential": "share",
+    "applicant2Email": "applicant2@example.com",
+    "applicant2FirstName": "test_first_name",
+    "applicant2Gender": "female",
+    "applicant2LanguagePreferenceWelsh": "No",
+    "applicant2LastName": "test_last_name",
+    "applicant2MiddleName": "test_middle_name",
+    "applicationFeeOrderSummary": {
+      "Fees": null,
+      "PaymentReference": null,
+      "PaymentTotal": "55000"
+    },
+    "divorceOrDissolution": "divorce",
+    "documentUploadComplete": "Yes",
+    "applicant1FinancialOrder": "No",
+    "issueDate": "${json-unit.any-string}",
+    "jurisdictionApplicant1Residence": "Yes",
+    "jurisdictionApplicant2Residence": "Yes",
+    "jurisdictionConnections": [
+      "J"
+    ],
+    "marriageApplicant1Name": "test_first_name test_last_name",
+    "marriageApplicant2Name": "test_first_name test_last_name",
+    "marriageDate": "1990-06-10",
+    "marriagePlaceOfMarriage": "Somewhere",
+    "applicationPayments": [
+      {
+        "id": null,
+        "value": {
+          "amount": 55000,
+          "channel": "online",
+          "created": null,
+          "feeCode": "FEE0001",
+          "reference": "paymentRef",
+          "status": "success",
+          "transactionId": "ge7po9h5bhbtbd466424src9tk"
+        }
+      }
+    ],
+    "applicant1PrayerHasBeenGiven": "Yes",
+    "applicant1StatementOfTruth": "Yes",
+    "applicant2PrayerHasBeenGiven": "Yes",
+    "applicant2StatementOfTruth": "Yes"
+  },
+  "errors": null,
+  "state": "Holding",
+  "warnings": null
+}

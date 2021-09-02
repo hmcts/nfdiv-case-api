@@ -35,6 +35,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.NAME_CHANG
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PAPERS_SERVED_ANOTHER_WAY_APPLY;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PAPERS_SERVED_ANOTHER_WAY_PARAGRAPH;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PAPERS_SERVED_ANOTHER_WAY_TITLE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant2;
@@ -96,7 +97,7 @@ class ApplicationOutstandingActionNotificationTest {
         notification.sendToApplicant2(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
-            eq(TEST_USER_EMAIL),
+            eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(OUTSTANDING_ACTIONS),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, "1234-5678-9012-3456"),

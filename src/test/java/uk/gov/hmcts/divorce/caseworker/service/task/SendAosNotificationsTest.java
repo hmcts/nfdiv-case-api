@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -37,6 +38,7 @@ class SendAosNotificationsTest {
     void shouldSendPersonalServiceNotificationIfPersonalServiceApplication() {
 
         final var caseData = caseData();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setSolServiceMethod(SOLICITOR_SERVICE);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -55,6 +57,7 @@ class SendAosNotificationsTest {
     void shouldSendNoticeOfProceedingsIfNotPersonalServiceApplication() {
 
         final var caseData = caseData();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setSolServiceMethod(COURT_SERVICE);
         caseData.setApplicant2(respondent());
 
