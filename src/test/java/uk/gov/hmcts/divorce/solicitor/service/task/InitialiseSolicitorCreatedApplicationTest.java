@@ -21,7 +21,7 @@ class InitialiseSolicitorCreatedApplicationTest {
     private InitialiseSolicitorCreatedApplication initialiseSolicitorCreatedApplication;
 
     @Test
-    void shouldSetApplicationCreatedDateFromCaseDetailsCreatedDateAndApplicant1SolicitorRepresentedToTrue() {
+    void shouldSetApplicationCreatedDateToCaseDetailsCreatedDateAndApplicant1SolicitorRepresentedToTrue() {
 
         final CaseData caseData = caseData();
 
