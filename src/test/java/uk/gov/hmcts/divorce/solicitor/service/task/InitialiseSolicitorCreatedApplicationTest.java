@@ -15,7 +15,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-class initialiseSolicitorCreatedApplicationTest {
+class InitialiseSolicitorCreatedApplicationTest {
 
     @InjectMocks
     private InitialiseSolicitorCreatedApplication initialiseSolicitorCreatedApplication;
