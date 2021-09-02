@@ -59,7 +59,7 @@ public class ApplicationIssuedNotificationTest {
     @Test
     void shouldSendEmailToSoleApplicant1WithDivorceContent() {
         CaseData data = validCaseDataForIssueApplication();
-        data.setDueDate(LocalDate.now());
+        data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
 
         final HashMap<String, String> templateVars = new HashMap<>();
@@ -89,7 +89,7 @@ public class ApplicationIssuedNotificationTest {
     void shouldSendEmailToSoleApplicant1WithDissolutionContent() {
         CaseData data = validCaseDataForIssueApplication();
         data.setDivorceOrDissolution(DISSOLUTION);
-        data.setDueDate(LocalDate.now());
+        data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
 
         final HashMap<String, String> templateVars = new HashMap<>();
@@ -118,7 +118,7 @@ public class ApplicationIssuedNotificationTest {
     @Test
     void shouldSendEmailToJointApplicant1WithDivorceContent() {
         CaseData data = validJointApplicant1CaseData();
-        data.setDueDate(LocalDate.now());
+        data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
 
         final HashMap<String, String> templateVars = new HashMap<>();
@@ -148,7 +148,7 @@ public class ApplicationIssuedNotificationTest {
     void shouldSendEmailToJointApplicant1WithDissolutionContent() {
         CaseData data = validJointApplicant1CaseData();
         data.setDivorceOrDissolution(DISSOLUTION);
-        data.setDueDate(LocalDate.now());
+        data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
 
         final HashMap<String, String> templateVars = new HashMap<>();
@@ -177,7 +177,7 @@ public class ApplicationIssuedNotificationTest {
     @Test
     void shouldSendEmailToApplicant2WithDivorceContent() {
         CaseData data = validJointApplicant1CaseData();
-        data.setDueDate(LocalDate.now());
+        data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
 
         final HashMap<String, String> templateVars = new HashMap<>();
@@ -207,7 +207,7 @@ public class ApplicationIssuedNotificationTest {
     void shouldSendEmailToApplicant2WithDissolutionContent() {
         CaseData data = validJointApplicant1CaseData();
         data.setDivorceOrDissolution(DISSOLUTION);
-        data.setDueDate(LocalDate.now());
+        data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
 
         final HashMap<String, String> templateVars = new HashMap<>();
