@@ -97,5 +97,10 @@
       <property name="maxmethods" value="13" />
     </properties>
   </rule>
+  <rule ref="category/java/design.xml/ExcessiveMethodLength">
+    <properties>
+      <property name="minimum" value="150.0" />
+    </properties>
+  </rule>
 
 </ruleset>
