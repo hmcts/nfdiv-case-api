@@ -21,7 +21,7 @@ class InitialiseSolicitorCreatedApplicationTest {
     private InitialiseSolicitorCreatedApplication initialiseSolicitorCreatedApplication;
 
     @Test
-    void shouldSetApplicationCreatedDateFromCaseDetailsCreatedDate() {
+    void shouldSetApplicationCreatedDateFromCaseDetailsCreatedDateAndApplicant1SolicitorRepresentedToTrue() {
 
         final CaseData caseData = caseData();
 
@@ -32,19 +32,6 @@ class InitialiseSolicitorCreatedApplicationTest {
         final CaseDetails<CaseData, State> result = initialiseSolicitorCreatedApplication.apply(caseDetails);
 
         assertThat(result.getData().getApplication().getCreatedDate()).isEqualTo(LOCAL_DATE);
-    }
-
-    @Test
-    void shouldSetApplicant1SolicitorRepresentedToTrue() {
-
-        final CaseData caseData = caseData();
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
-        caseDetails.setData(caseData);
-
-        final CaseDetails<CaseData, State> result = initialiseSolicitorCreatedApplication.apply(caseDetails);
-
         assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(YES);
     }
 }
