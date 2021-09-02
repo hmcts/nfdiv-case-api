@@ -61,6 +61,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.DOCUMENT_TYPE_RES
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssembly;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyUnauthorized;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
@@ -112,8 +113,10 @@ public class CaseworkerIssueApplicationIT {
         "classpath:caseworker-issue-application-about-to-submit-app2-not-sol-rep-response.json";
     private static final String CASEWORKER_ISSUE_APPLICATION_ABOUT_TO_SUBMIT_ERROR =
         "classpath:caseworker-issue-application-about-to-submit-error-response.json";
-    private static final String CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT =
-        "classpath:caseworker-issue-citizen-application-about-to-submit-response.json";
+    private static final String SOLE_CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT =
+        "classpath:caseworker-issue-sole-citizen-application-about-to-submit-response.json";
+    private static final String JOINT_CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT =
+        "classpath:caseworker-issue-joint-citizen-application-about-to-submit-response.json";
     public static final String MINI_APPLICATION_ID = "5cd725e8-f053-4493-9cbe-bb69d1905ae3";
     public static final String AOS_COVER_LETTER_ID = "c35b1868-e397-457a-aa67-ac1422bb8100";
 
@@ -161,12 +164,11 @@ public class CaseworkerIssueApplicationIT {
     }
 
     @Test
-    void shouldSendApplicationIssueNotificationsForCitizenApplication() throws Exception {
-        final CaseData caseData = validApplicant2CaseData();
-        caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("London");
+    void shouldSendApplicationIssueNotificationsForSoleCitizenApplication() throws Exception {
+        final CaseData caseData = validCaseDataForIssueApplication();
+        caseData.getApplication().setSolSignStatementOfTruth(null);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -185,7 +187,44 @@ public class CaseworkerIssueApplicationIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                content().json(expectedResponse(CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT))
+                content().json(expectedResponse(SOLE_CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT))
+            );
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_USER_EMAIL),
+                eq(SOL_APPLICANT_APPLICATION_ACCEPTED),
+                anyMap(),
+                eq(ENGLISH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendApplicationIssueNotificationsForJointCitizenApplication() throws Exception {
+        final CaseData caseData = validApplicant2CaseData();
+        caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("London");
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+
+        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(
+                callbackRequest(
+                    caseData,
+                    CASEWORKER_ISSUE_APPLICATION)))
+            .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk())
+            .andExpect(
+                content().json(expectedResponse(JOINT_CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT))
             );
 
         verify(notificationService)

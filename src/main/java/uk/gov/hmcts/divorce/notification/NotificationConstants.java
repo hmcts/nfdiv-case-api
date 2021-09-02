@@ -85,6 +85,17 @@ public final class NotificationConstants {
 
     public static final String REVIEW_DEADLINE_DATE = "review deadline date";
 
+    public static final String SERVICE = "service";
+    public static final String DIVORCE_SERVICE = "divorce service";
+    public static final String CIVIL_PARTNERSHIP_SERVICE = "End A Civil Partnership Service";
+    public static final String GOV_UK_LINK = "gov uk link";
+    public static final String DIVORCE_GOV_UK_LINK = "www.gov.uk/divorce";
+    public static final String CIVIL_PARTNERSHIP_GOV_UK_LINK = "https://www.gov.uk/end-civil-partnership";
+    public static final String CITIZENS_ADVICE_LINK = "citizens advice link";
+    public static final String DIVORCE_CITIZENS_ADVICE_LINK = "https://www.citizensadvice.org.uk/family/how-to-separate1/getting-a-divorce/";
+    public static final String CIVIL_PARTNERSHIP_CITIZENS_ADVICE_LINK = "https://www.citizensadvice.org.uk/family/how-to-separate1/ending-a-civil-partnership/";
+
+
     private NotificationConstants() {
     }
 }
