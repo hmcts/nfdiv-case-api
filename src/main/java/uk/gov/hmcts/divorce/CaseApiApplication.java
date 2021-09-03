@@ -59,6 +59,7 @@ public class CaseApiApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        log.info("Boot args: {}", asList(args));
         final var runArgPos = asList(args).indexOf("run");
 
         if (runArgPos == -1 || runArgPos + 1 >= args.length) {
