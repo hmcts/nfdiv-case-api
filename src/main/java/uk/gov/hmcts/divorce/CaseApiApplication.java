@@ -20,8 +20,6 @@ import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataClientAutoConfiguration;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
 
-import static org.codehaus.groovy.runtime.InvokerHelper.asList;
-
 @SpringBootApplication(
     exclude = {CoreCaseDataClientAutoConfiguration.class},
     scanBasePackages = {"uk.gov.hmcts.ccd.sdk", "uk.gov.hmcts.divorce"}
