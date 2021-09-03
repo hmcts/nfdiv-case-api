@@ -20,8 +20,6 @@ import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataClientAutoConfiguration;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
 
-import static org.codehaus.groovy.runtime.InvokerHelper.asList;
-
 @SpringBootApplication(
     exclude = {CoreCaseDataClientAutoConfiguration.class},
     scanBasePackages = {"uk.gov.hmcts.ccd.sdk", "uk.gov.hmcts.divorce"}
@@ -52,20 +50,15 @@ public class CaseApiApplication implements CommandLineRunner {
         final var application = new SpringApplication(CaseApiApplication.class);
         final var instance = application.run(args);
 
-        if (asList(args).contains("run")) {
+        if (System.getenv("TASK_NAME") != null) {
             instance.close();
         }
     }
 
     @Override
     public void run(String... args) {
-        log.info("Boot args: {}", asList(args));
-        final var runArgPos = asList(args).indexOf("run");
-
-        if (runArgPos == -1 || runArgPos + 1 >= args.length) {
-            return;
+        if (System.getenv("TASK_NAME") != null) {
+            taskRunner.run(System.getenv("TASK_NAME"));
         }
-
-        taskRunner.run(args[runArgPos + 1]);
     }
 }
