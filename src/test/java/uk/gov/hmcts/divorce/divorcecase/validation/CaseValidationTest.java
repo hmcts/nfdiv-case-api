@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.divorcecase.validation;
 
 import org.junit.jupiter.api.Test;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
@@ -25,8 +24,8 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.notNull
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.notNullOrNo;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCaseFieldsForIssueApplication;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateMarriageDate;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateJurisdictionConnections;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateMarriageDate;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 public class CaseValidationTest {
