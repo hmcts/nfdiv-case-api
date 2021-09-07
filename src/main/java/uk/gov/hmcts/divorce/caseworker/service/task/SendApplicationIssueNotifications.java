@@ -3,7 +3,7 @@ package uk.gov.hmcts.divorce.caseworker.service.task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.divorce.citizen.notification.JointApplicationIssueNotification;
+import uk.gov.hmcts.divorce.citizen.notification.ApplicationIssuedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
@@ -12,7 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 public class SendApplicationIssueNotifications implements CaseTask {
 
     @Autowired
-    private JointApplicationIssueNotification jointApplicationIssueNotification;
+    private ApplicationIssuedNotification applicationIssuedNotification;
 
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
@@ -22,8 +22,12 @@ public class SendApplicationIssueNotifications implements CaseTask {
             final CaseData caseData = caseDetails.getData();
             final Long caseId = caseDetails.getId();
 
-            jointApplicationIssueNotification.sendToApplicant1(caseData, caseId);
-            jointApplicationIssueNotification.sendToApplicant2(caseData, caseId);
+            if (caseData.getApplicationType().isSole()) {
+                applicationIssuedNotification.sendToSoleApplicant1(caseData, caseId);
+            } else {
+                applicationIssuedNotification.sendToJointApplicant1(caseData, caseId);
+                applicationIssuedNotification.sendToJointApplicant2(caseData, caseId);
+            }
         }
 
         return caseDetails;
