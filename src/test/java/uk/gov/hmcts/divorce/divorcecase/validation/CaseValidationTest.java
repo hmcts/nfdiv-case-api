@@ -19,7 +19,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.*;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionTest.CANNOT_EXIST;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionTest.CONNECTION;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.notNull;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.notNullOrNo;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBasicCase;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCaseFieldsForIssueApplication;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateMarriageDate;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateJurisdictionConnections;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 public class CaseValidationTest {
@@ -46,7 +53,7 @@ public class CaseValidationTest {
 
     @Test
     public void shouldReturnErrorWhenYesOrNoIsNo() {
-        List<String> response = notNullOrNo(YesOrNo.NO, "field");
+        List<String> response = notNullOrNo(NO, "field");
 
         assertThat(response).isEqualTo(List.of("field" + MUST_BE_YES));
     }
@@ -86,7 +93,7 @@ public class CaseValidationTest {
     @Test
     public void shouldReturnTrueWhenCaseHasAwaitingDocuments() {
         CaseData caseData = new CaseData();
-        caseData.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
+        caseData.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
         assertTrue(caseData.getApplication().hasAwaitingApplicant1Documents());
     }
 
