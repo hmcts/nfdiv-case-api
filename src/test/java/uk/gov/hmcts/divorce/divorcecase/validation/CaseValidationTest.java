@@ -2,22 +2,25 @@ package uk.gov.hmcts.divorce.divorcecase.validation;
 
 import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 import static java.time.temporal.ChronoUnit.YEARS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.notNull;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.notNullOrNo;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBasicCase;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCaseFieldsForIssueApplication;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateMarriageDate;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.*;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 public class CaseValidationTest {
 
@@ -124,4 +127,47 @@ public class CaseValidationTest {
 
         assertThat(errors).isEmpty();
     }
+
+    @Test
+    public void shouldOnlyValidateEmptyJurisdictionConnectionsForSolicitorApplication() {
+        final CaseData caseData = caseData();
+        caseData.setApplication(Application.builder()
+            .solSignStatementOfTruth(YES)
+            .build());
+
+        caseData.getApplication().getJurisdiction().setConnections(Collections.emptySet());
+
+        List<String> errors = validateJurisdictionConnections(caseData.getApplication());
+
+        assertThat(errors).containsOnly("JurisdictionConnections" + ValidationUtil.EMPTY);
+    }
+
+    @Test
+    public void shouldReturnEmptyListForNonEmptyJurisdictionConnectionsForSolicitorApplication() {
+        final CaseData caseData = caseData();
+        caseData.setApplication(Application.builder()
+            .solSignStatementOfTruth(YES)
+            .build());
+
+        caseData.getApplication().getJurisdiction().setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
+
+        List<String> errors = validateJurisdictionConnections(caseData.getApplication());
+
+        assertThat(errors).isEmpty();
+    }
+
+    @Test
+    public void shouldValidateJurisdictionConnectionsForCitizenApplication() {
+        final CaseData caseData = caseData();
+        caseData.setApplication(Application.builder()
+            .solSignStatementOfTruth(NO)
+            .build());
+
+        caseData.getApplication().getJurisdiction().setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
+
+        List<String> errors = validateJurisdictionConnections(caseData.getApplication());
+
+        assertThat(errors).contains(CONNECTION + JurisdictionConnections.APP_1_APP_2_RESIDENT + CANNOT_EXIST);
+    }
+
 }

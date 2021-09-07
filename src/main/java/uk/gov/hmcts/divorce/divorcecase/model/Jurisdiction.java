@@ -85,7 +85,7 @@ public class Jurisdiction {
     private YesOrNo bothLastHabituallyResident;
 
     @CCD(
-        label = "Jurisdiction connections",
+        label = "Legal connections",
         hint = "Tick all the reasons that apply:",
         access = {DefaultAccess.class}
     )

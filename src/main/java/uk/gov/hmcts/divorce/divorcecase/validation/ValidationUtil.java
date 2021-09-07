@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import static java.time.temporal.ChronoUnit.YEARS;
 import static java.util.Collections.emptyList;
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 
 public final class ValidationUtil {
@@ -43,7 +44,7 @@ public final class ValidationUtil {
             hasStatementOfTruth(caseData.getApplication()),
             notNullOrNo(caseData.getApplication().getApplicant1PrayerHasBeenGiven(), "Applicant1PrayerHasBeenGiven"),
             validateMarriageDate(caseData.getApplication().getMarriageDetails().getDate(), "MarriageDate"),
-            caseData.getApplication().getJurisdiction().validate()
+            validateJurisdictionConnections(caseData.getApplication())
         );
     }
 
@@ -107,6 +108,16 @@ public final class ValidationUtil {
             return List.of(field + IN_THE_FUTURE);
         }
         return emptyList();
+    }
+
+    public static List<String> validateJurisdictionConnections(Application application) {
+        if (application.isSolicitorApplication()) {
+            if (isEmpty(application.getJurisdiction().getConnections())) {
+                return List.of("JurisdictionConnections" + EMPTY);
+            }
+            return emptyList();
+        }
+        return application.getJurisdiction().validate();
     }
 
     private static boolean isLessThanOneYearAgo(LocalDate date) {
