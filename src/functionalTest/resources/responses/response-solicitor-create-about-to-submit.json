@@ -17,7 +17,7 @@
     "applicant1ContactDetailsConfidential": null,
     "applicant1Gender": null,
     "applicant1CorrespondenceAddress": null,
-    "applicant1SolicitorRepresented": null,
+    "applicant1SolicitorRepresented": "Yes",
     "applicant2CorrespondenceAddress": null,
     "applicant2SolicitorRepresented": null,
     "confirmReadPetition": null,
