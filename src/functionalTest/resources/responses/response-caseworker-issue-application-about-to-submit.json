@@ -3,7 +3,8 @@
     "applicant1AgreedToReceiveEmails": null,
     "applicant1ContactDetailsConfidential": "share",
     "applicant1CorrespondenceAddress": null,
-    "applicant1Email": "applicant1@example.com",
+    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+    "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
     "applicant1FirstName": "test_first_name",
     "applicant1Gender": "female",
     "applicant1LanguagePreferenceWelsh": "No",
@@ -144,6 +145,6 @@
     "applicant1StatementOfTruth": "Yes"
   },
   "errors": null,
-  "state": null,
+  "state": "AwaitingAos",
   "warnings": null
 }

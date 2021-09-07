@@ -33,6 +33,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.PAY_FOR;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PAY_FOR_IT;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.REMINDER_ACTION_REQUIRED;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
@@ -114,7 +115,7 @@ class Applicant2ApprovedNotificationTest {
         notification.sendToApplicant2(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
-            eq(TEST_USER_EMAIL),
+            eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_APPLICANT2_APPLICANT2_APPROVED),
             argThat(allOf(
                 hasEntry(PAY_FOR_IT, PAY_FOR_IT),
@@ -143,7 +144,7 @@ class Applicant2ApprovedNotificationTest {
         notification.sendToApplicant2(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
-            eq(TEST_USER_EMAIL),
+            eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_APPLICANT2_APPLICANT2_APPROVED),
             argThat(allOf(
                 hasEntry(PAY_FOR_IT, ""),
@@ -196,7 +197,7 @@ class Applicant2ApprovedNotificationTest {
         notification.sendToApplicant2(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
-            eq(TEST_USER_EMAIL),
+            eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_APPLICANT2_APPLICANT2_APPROVED),
             argThat(allOf(
                 hasEntry(PAY_FOR_IT, PAY_FOR_IT),

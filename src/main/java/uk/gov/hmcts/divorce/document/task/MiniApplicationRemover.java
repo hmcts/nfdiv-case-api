@@ -19,20 +19,23 @@ public class MiniApplicationRemover implements CaseTask {
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
 
-        final var caseId = caseDetails.getId();
-        final var caseData = caseDetails.getData();
+        if (caseDetails.getData().getApplication().isSolicitorApplication()) {
 
-        log.info("Removing application documents from case data and document management for {}", caseId);
+            final var caseId = caseDetails.getId();
+            final var caseData = caseDetails.getData();
 
-        final var documentsExcludingApplication =
-            draftApplicationRemovalService.removeDraftApplicationDocument(
-                caseData.getDocumentsGenerated(),
-                caseId
-            );
+            log.info("Removing application documents from case data and document management for {}", caseId);
 
-        caseData.setDocumentsGenerated(documentsExcludingApplication);
+            final var documentsExcludingApplication =
+                draftApplicationRemovalService.removeDraftApplicationDocument(
+                    caseData.getDocumentsGenerated(),
+                    caseId
+                );
 
-        log.info("Successfully removed application documents from case data for case id {}", caseId);
+            caseData.setDocumentsGenerated(documentsExcludingApplication);
+
+            log.info("Successfully removed application documents from case data for case id {}", caseId);
+        }
 
         return caseDetails;
     }

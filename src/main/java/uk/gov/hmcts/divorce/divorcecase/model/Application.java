@@ -291,6 +291,13 @@ public class Application {
     private LocalDate issueDate;
 
     @CCD(
+        label = "Date when the application was created",
+        access = {DefaultAccess.class}
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate createdDate;
+
+    @CCD(
         label = "Reject reason",
         access = {CaseworkerAccess.class}
     )

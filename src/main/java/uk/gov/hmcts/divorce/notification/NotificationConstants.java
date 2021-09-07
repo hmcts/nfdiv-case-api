@@ -11,7 +11,10 @@ public final class NotificationConstants {
     public static final String APPLICATION_TYPE = "Application type";
     public static final String UNION = "union";
     public static final String MARRIAGE = "marriage";
+    public static final String DIVORCE = "divorce";
     public static final String CIVIL_PARTNERSHIP = "civil partnership";
+    public static final String YOUR_DIVORCE = "Your divorce";
+    public static final String ENDING_CIVIL_PARTNERSHIP = "Ending your civil partnership";
     public static final String DIVORCE_APPLICATION = "divorce application";
     public static final String APPLICATION_TO_END_A_CIVIL_PARTNERSHIP = "application to end a civil partnership";
     public static final String APPLICATION_TO_END_CIVIL_PARTNERSHIP = "application to end your civil partnership";
@@ -27,6 +30,9 @@ public final class NotificationConstants {
     public static final String REMINDER_ACTION_REQUIRED = "Reminder/Action required";
     public static final String REMINDER_APPLICATION = "Reminder: application / Application ";
     public static final String REMINDER_APPLICATION_VALUE = "Reminder: application";
+    public static final String PROCESS = "process";
+    public static final String DIVORCE_PROCESS = "divorce process";
+    public static final String CIVIL_PARTNERSHIP_PROCESS = "process to end your civil partnership";
 
     public static final String CREATE_ACCOUNT_LINK = "create account link";
     public static final String SIGN_IN_URL_NOTIFY_KEY = "signin url";

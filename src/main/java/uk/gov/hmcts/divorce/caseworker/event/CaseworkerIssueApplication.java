@@ -15,12 +15,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import java.util.EnumSet;
 import java.util.List;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
@@ -44,8 +44,7 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_ISSUE_APPLICATION)
-            .forStateTransition(EnumSet.of(Submitted, AwaitingDocuments),
-                AwaitingAos)
+            .forStates(Submitted, AwaitingDocuments, AwaitingAos)
             .name("Application issued")
             .description("Application issued")
             .showSummary()
@@ -73,13 +72,15 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
+        CaseData caseData = details.getData();
+
         log.info("Caseworker issue application about to submit callback invoked");
 
         final List<String> caseValidationErrors = validateIssue(details.getData());
 
         if (!isEmpty(caseValidationErrors)) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(details.getData())
+                .data(caseData)
                 .errors(caseValidationErrors)
                 .build();
         }
@@ -88,6 +89,7 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(result.getData())
+            .state(caseData.getApplication().isSolicitorApplication() ? AwaitingAos : Holding)
             .build();
     }
 }

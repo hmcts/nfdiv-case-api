@@ -24,7 +24,7 @@
     "applicant1ContactDetailsConfidential": null,
     "applicant1Gender": null,
     "applicant1CorrespondenceAddress": null,
-    "applicant1SolicitorRepresented": null,
+    "applicant1SolicitorRepresented": "Yes",
     "applicant1SolicitorOrganisationPolicy": {
       "Organisation": {
         "OrganisationName": "Test Organisation",

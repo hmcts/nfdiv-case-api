@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.CaseInfo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
+import uk.gov.hmcts.divorce.solicitor.service.task.InitialiseSolicitorCreatedApplication;
 import uk.gov.hmcts.divorce.solicitor.service.task.MiniApplicationDraft;
 import uk.gov.hmcts.divorce.solicitor.service.task.SolicitorCourtDetails;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -18,6 +19,9 @@ import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 @Service
 @Slf4j
 public class SolicitorCreateApplicationService {
+
+    @Autowired
+    private InitialiseSolicitorCreatedApplication initialiseSolicitorCreatedApplication;
 
     @Autowired
     private SolicitorCourtDetails solicitorCourtDetails;
@@ -34,6 +38,7 @@ public class SolicitorCreateApplicationService {
     public CaseDetails<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> caseDetails) {
 
         return caseTasks(
+            initialiseSolicitorCreatedApplication,
             solicitorCourtDetails,
             miniApplicationDraft
         ).run(caseDetails);
