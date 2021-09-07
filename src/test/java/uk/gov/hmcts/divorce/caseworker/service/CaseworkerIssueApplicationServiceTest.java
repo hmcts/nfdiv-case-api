@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SendAosNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPack;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDate;
+import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -31,6 +32,9 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerIssueApplicationServiceTest {
+
+    @Mock
+    private SetPostIssueState setPostIssueState;
 
     @Mock
     private MiniApplicationRemover miniApplicationRemover;
@@ -74,6 +78,7 @@ class CaseworkerIssueApplicationServiceTest {
 
         setMockClock(clock);
 
+        when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(generateRespondentSolicitorAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
         when(generateCitizenRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
         when(miniApplicationRemover.apply(caseDetails)).thenReturn(caseDetails);
@@ -112,6 +117,7 @@ class CaseworkerIssueApplicationServiceTest {
 
         setMockClock(clock);
 
+        when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(generateRespondentSolicitorAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
         when(generateCitizenRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
         when(miniApplicationRemover.apply(caseDetails)).thenReturn(caseDetails);

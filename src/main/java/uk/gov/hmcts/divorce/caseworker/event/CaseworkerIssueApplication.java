@@ -20,7 +20,6 @@ import java.util.List;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
@@ -89,7 +88,7 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(result.getData())
-            .state(caseData.getApplication().isSolicitorApplication() ? AwaitingAos : Holding)
+            .state(result.getState())
             .build();
     }
 }
