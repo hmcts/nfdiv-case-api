@@ -25,10 +25,14 @@ public class CaseworkerIssueApplicationFT extends FunctionalTestSuite {
         "classpath:request/casedata/ccd-callback-caseworker-issue-application-about-to-submit.json";
     private static final String SOLICITOR_RESPONSE =
         "classpath:responses/response-caseworker-issue-application-about-to-submit.json";
-    private static final String CITIZEN_REQUEST =
-        "classpath:request/casedata/ccd-callback-caseworker-issue-citizen-application-about-to-submit.json";
-    private static final String CITIZEN_RESPONSE =
-        "classpath:responses/response-caseworker-issue-citizen-application-about-to-submit.json";
+    private static final String SOLE_CITIZEN_REQUEST =
+        "classpath:request/casedata/ccd-callback-caseworker-issue-sole-citizen-application-about-to-submit.json";
+    private static final String SOLE_CITIZEN_RESPONSE =
+        "classpath:responses/response-caseworker-issue-sole-citizen-application-about-to-submit.json";
+    private static final String JOINT_CITIZEN_REQUEST =
+        "classpath:request/casedata/ccd-callback-caseworker-issue-joint-citizen-application-about-to-submit.json";
+    private static final String JOINT_CITIZEN_RESPONSE =
+        "classpath:responses/response-caseworker-issue-joint-citizen-application-about-to-submit.json";
 
     @Test
     public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessfulForSolicitorApplication() throws Exception {
@@ -47,8 +51,8 @@ public class CaseworkerIssueApplicationFT extends FunctionalTestSuite {
     }
 
     @Test
-    public void shouldUpdateCaseDataAndSendEmailsWhenAboutToSubmitCallbackIsSuccessfulForCitizenApplication() throws Exception {
-        final Map<String, Object> caseData = caseData(CITIZEN_REQUEST);
+    public void shouldUpdateCaseDataAndSendEmailWhenAboutToSubmitCallbackIsSuccessfulForSoleCitizenApplication() throws Exception {
+        final Map<String, Object> caseData = caseData(SOLE_CITIZEN_REQUEST);
         final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
@@ -57,7 +61,22 @@ public class CaseworkerIssueApplicationFT extends FunctionalTestSuite {
             .when(IGNORING_EXTRA_FIELDS)
             .when(TREATING_NULL_AS_ABSENT)
             .isEqualTo(json(expectedResponse(
-                CITIZEN_RESPONSE
+                SOLE_CITIZEN_RESPONSE
+            )));
+    }
+
+    @Test
+    public void shouldUpdateCaseDataAndSendEmailsWhenAboutToSubmitCallbackIsSuccessfulForJointCitizenApplication() throws Exception {
+        final Map<String, Object> caseData = caseData(JOINT_CITIZEN_REQUEST);
+        final Response response = triggerCallback(caseData, CASEWORKER_ISSUE_APPLICATION, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(TREATING_NULL_AS_ABSENT)
+            .isEqualTo(json(expectedResponse(
+                JOINT_CITIZEN_RESPONSE
             )));
     }
 }

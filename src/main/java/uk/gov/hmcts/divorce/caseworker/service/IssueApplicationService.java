@@ -60,11 +60,11 @@ public class IssueApplicationService {
             sendAosPack,
             sendAosNotifications,
             setDueDate,
-            sendApplicationIssueNotifications,
             details -> {
                 details.getData().getApplication().setIssueDate(LocalDate.now(clock));
                 return details;
-            }
+            },
+            sendApplicationIssueNotifications
         ).run(caseDetails);
     }
 }
