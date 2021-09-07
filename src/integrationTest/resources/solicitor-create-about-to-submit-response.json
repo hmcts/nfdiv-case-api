@@ -85,7 +85,6 @@
     "jurisdictionResidualEligible": null,
     "jurisdictionBothLastHabituallyResident": null,
     "jurisdictionConnections": null,
-    "jurisdictionLegalConnections": null,
     "applicant1FinancialOrder": "No",
     "divorceUnit": "serviceCentre",
     "selectedDivorceCentreSiteId": "AA07",
