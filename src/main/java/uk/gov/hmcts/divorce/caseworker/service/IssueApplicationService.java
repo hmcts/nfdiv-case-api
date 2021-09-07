@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SendAosNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPack;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDate;
+import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.task.MiniApplicationRemover;
@@ -23,6 +24,9 @@ import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 @Service
 @Slf4j
 public class IssueApplicationService {
+
+    @Autowired
+    private SetPostIssueState setPostIssueState;
 
     @Autowired
     private MiniApplicationRemover miniApplicationRemover;
@@ -53,6 +57,7 @@ public class IssueApplicationService {
 
     public CaseDetails<CaseData, State> issueApplication(final CaseDetails<CaseData, State> caseDetails) {
         return caseTasks(
+            setPostIssueState,
             generateRespondentSolicitorAosInvitation,
             generateCitizenRespondentAosInvitation,
             miniApplicationRemover,

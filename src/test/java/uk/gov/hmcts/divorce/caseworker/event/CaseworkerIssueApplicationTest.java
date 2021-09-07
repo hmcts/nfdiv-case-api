@@ -27,6 +27,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.CASEWORKER_ISSUE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
@@ -69,12 +70,14 @@ class CaseworkerIssueApplicationTest {
         expectedDetails.setData(expectedCaseData);
         expectedDetails.setId(1L);
         expectedDetails.setCreatedDate(LOCAL_DATE_TIME);
+        expectedDetails.setState(AwaitingService);
 
         when(issueApplicationService.issueApplication(details)).thenReturn(expectedDetails);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(details, null);
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
+        assertThat(response.getState()).isEqualTo(AwaitingService);
         verify(issueApplicationService).issueApplication(details);
     }
 
