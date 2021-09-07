@@ -15,7 +15,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import java.time.LocalDateTime;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
-import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 
@@ -56,30 +55,6 @@ public class AcknowledgementOfService {
         access = AosAccess.class
     )
     private String legalProceedingsDescription;
-
-    //TODO: Unused agreeToCosts to be removed at a later date
-    @CCD(
-        label = "Does respondent agree to costs?",
-        typeOverride = FixedList,
-        typeParameterOverride = "RespondentAgreeToCosts",
-        access = AosAccess.class
-    )
-    private RespondentAgreeToCosts agreeToCosts;
-
-    //TODO: Unused costsAmount to be removed at a later date
-    @CCD(
-        label = "Respondent's costs amount",
-        access = AosAccess.class
-    )
-    private String costsAmount;
-
-    //TODO: Unused costsReason to be removed at a later date
-    @CCD(
-        label = "Respondent's costs reason",
-        typeOverride = TextArea,
-        access = AosAccess.class
-    )
-    private String costsReason;
 
     @CCD(
         label = "Date AoS submitted to HMCTS",
