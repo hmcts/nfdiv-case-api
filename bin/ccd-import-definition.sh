@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+BASEDIR=$(realpath $(dirname ${0})/../../)
+if [ -f $BASEDIR/.env ]
+then
+  export $(cat $BASEDIR/.env | sed 's/#.*//g' | xargs)
+fi
 set -eu
 
 dir=$(dirname ${0})

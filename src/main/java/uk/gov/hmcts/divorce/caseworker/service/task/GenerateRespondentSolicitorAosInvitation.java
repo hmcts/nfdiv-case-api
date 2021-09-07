@@ -39,7 +39,7 @@ public class GenerateRespondentSolicitorAosInvitation implements CaseTask {
 
         log.info("Executing handler for generating respondent aos invitation for case id {} ", caseId);
 
-        if (caseData.getApplicant2().isRepresented()) {
+        if (caseDetails.getData().getApplication().isSolicitorApplication() && caseData.getApplicant2().isRepresented()) {
 
             final Supplier<Map<String, Object>> templateContentSupplier = templateContent.apply(caseData, caseId, createdDate);
 

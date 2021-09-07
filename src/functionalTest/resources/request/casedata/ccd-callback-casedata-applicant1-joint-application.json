@@ -1,4 +1,5 @@
 {
+  "divorceOrDissolution": "divorce",
   "applicationType": "jointApplication",
   "applicant1Gender": "female",
   "applicant2Gender": "male",
@@ -19,7 +20,6 @@
   "applicant1StatementOfTruth": "YES",
   "applicant2PrayerHasBeenGiven": "YES",
   "applicant2StatementOfTruth": "YES",
-  "solSignStatementOfTruth": "YES",
   "jurisdictionApplicant1Residence": "YES",
   "jurisdictionApplicant2Residence": "YES",
   "jurisdictionConnections": ["A"]

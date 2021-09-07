@@ -58,6 +58,7 @@ class CaseworkerIssueApplicationTest {
 
         final var caseData = caseDataWithAllMandatoryFields();
         final var expectedCaseData = CaseData.builder().build();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -80,6 +81,7 @@ class CaseworkerIssueApplicationTest {
     @Test
     void shouldFailCaseDataValidationWhenMandatoryFieldsAreNotPopulatedForIssueApplication() {
         final var caseData = invalidCaseData();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -97,7 +99,6 @@ class CaseworkerIssueApplicationTest {
                 "MarriageApplicant1Name cannot be empty or null",
                 "Applicant1ContactDetailsConfidential cannot be empty or null",
                 "Applicant1PrayerHasBeenGiven cannot be empty or null",
-                "Statement of truth must be accepted by the person making the application",
                 "MarriageDate cannot be empty or null",
                 "JurisdictionConnections cannot be empty or null",
                 "MarriageApplicant2Name cannot be empty or null",

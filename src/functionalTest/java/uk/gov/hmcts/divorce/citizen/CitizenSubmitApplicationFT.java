@@ -13,6 +13,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 import static java.time.temporal.ChronoUnit.YEARS;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
+import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
@@ -28,8 +29,12 @@ public class CitizenSubmitApplicationFT extends FunctionalTestSuite {
         "classpath:request/casedata/ccd-callback-casedata-applicant1-statement-of-truth.json";
     private static final String REQUEST_JOINT =
         "classpath:request/casedata/ccd-callback-casedata-applicant1-joint-application.json";
+    private static final String REQUEST_JOINT_HWF =
+        "classpath:request/casedata/ccd-callback-casedata-joint-application-help-with-fees-awaiting-documents.json";
     private static final String RESPONSE = "classpath:responses/response-applicant1-statement-of-truth.json";
     private static final String RESPONSE_JOINT = "classpath:responses/response-applicant1-joint-application.json";
+    private static final String RESPONSE_JOINT_HWF =
+        "classpath:responses/response-joint-application-help-with-fees-awaiting-documents.json";
     private static final String RESPONSE_HWF = "classpath:responses/response-applicant1-help-with-fees.json";
 
     @Test
@@ -79,5 +84,19 @@ public class CitizenSubmitApplicationFT extends FunctionalTestSuite {
         assertThatJson(response.asString())
             .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(expectedResponse(RESPONSE_JOINT));
+    }
+
+    @Test
+    public void shouldPassValidationAndSendEmailsToApplicant1AndApplicant2() throws IOException {
+        Map<String, Object> request = caseData(REQUEST_JOINT_HWF);
+
+        Response response = triggerCallback(request, CITIZEN_SUBMIT, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(RESPONSE_JOINT_HWF)));
     }
 }

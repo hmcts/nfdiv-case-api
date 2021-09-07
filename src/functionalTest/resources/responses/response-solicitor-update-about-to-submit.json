@@ -20,6 +20,7 @@
     "applicant1SolicitorRepresented": null,
     "applicant2CorrespondenceAddress": null,
     "applicant2SolicitorRepresented": null,
+    "solSignStatementOfTruth": "Yes",
     "confirmReadPetition": null,
     "jurisdictionAgree": null,
     "jurisdictionDisagreeReason": null,

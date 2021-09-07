@@ -24,6 +24,7 @@ import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.service.notify.NotificationClientException;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.anyMap;
@@ -36,9 +37,14 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenAddPayment.CITIZEN_ADD_PAYMENT;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE_TRANSLATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_ACTIONS;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.CANCELLED;
@@ -140,12 +146,11 @@ public class CitizenAddPaymentIT {
     }
 
     @Test
-    public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmailToApplicant1AndApplicant2() throws Exception {
-        CaseData data = jointCaseDataWithOrderSummary();
+    public void givenValidSoleCaseDataWhenCallbackIsInvokedThenSendEmailsToApplicant1() throws Exception {
+        CaseData data = caseDataWithOrderSummary();
+        data.setApplicationType(SOLE_APPLICATION);
+        data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
         data.getApplication().setDateSubmitted(LocalDateTime.now());
-        data.getApplication().setSolSignStatementOfTruth(YES);
-        data.getApplication().setApplicant1StatementOfTruth(YES);
-        data.getApplication().setSolSignStatementOfTruth(null);
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
         data.getApplication().setApplicationFeeOrderSummary(orderSummary);
@@ -166,19 +171,20 @@ public class CitizenAddPaymentIT {
 
         verify(notificationService)
             .sendEmail(eq(TEST_USER_EMAIL), eq(APPLICATION_SUBMITTED), anyMap(), eq(ENGLISH));
+
         verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(APPLICATION_SUBMITTED), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(ENGLISH));
 
         verifyNoMoreInteractions(notificationService);
     }
 
     @Test
-    public void givenValidCaseDataWhenCallbackIsInvokedThenSendThreeEmails() throws Exception {
+    public void givenValidJointCaseDataWhenCallbackIsInvokedThenSendFourEmails() throws Exception {
         CaseData data = jointCaseDataWithOrderSummary();
         data.getApplication().setDateSubmitted(LocalDateTime.now());
-        data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
-        data.getApplication().setApplicant1StatementOfTruth(YES);
-        data.getApplication().setSolSignStatementOfTruth(null);
+        data.getApplication().getMarriageDetails().setMarriedInUk(NO);
+        data.getApplication().setApplicant1CannotUploadSupportingDocument(Set.of(MARRIAGE_CERTIFICATE, MARRIAGE_CERTIFICATE_TRANSLATION));
+        data.getApplication().setApplicant2CannotUploadSupportingDocument(Set.of(NAME_CHANGE_EVIDENCE));
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
         data.getApplication().setApplicationFeeOrderSummary(orderSummary);
@@ -205,6 +211,9 @@ public class CitizenAddPaymentIT {
 
         verify(notificationService)
             .sendEmail(eq(TEST_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(ENGLISH));
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(ENGLISH));
 
         verifyNoMoreInteractions(notificationService);
     }

@@ -12,7 +12,7 @@
   "applicant2Email": "test@test.com",
   "applicant2FirstName": "test_first_name",
   "applicant2Gender": "male",
-  "applicant2InviteEmailAddress": "test@test.com",
+  "applicant2InviteEmailAddress": "applicant2@test.com",
   "applicant2LanguagePreferenceWelsh": "No",
   "applicant2LastName": "test_last_name",
   "applicant2MiddleName": "test_middle_name",

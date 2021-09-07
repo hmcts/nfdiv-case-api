@@ -28,6 +28,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_YOUR_A
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_YOUR_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.TO_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.TO_END_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
@@ -77,7 +78,7 @@ class Applicant2NotBrokenNotificationTest {
         notification.sendToApplicant2(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
-            eq(TEST_USER_EMAIL),
+            eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_APPLICANT2_APPLICANT2_REJECTED),
             argThat(allOf(
                 hasEntry(FOR_YOUR_APPLICATION, FOR_YOUR_DIVORCE),
@@ -125,7 +126,7 @@ class Applicant2NotBrokenNotificationTest {
         notification.sendToApplicant2(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
-            eq(TEST_USER_EMAIL),
+            eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_APPLICANT2_APPLICANT2_REJECTED),
             argThat(allOf(
                 hasEntry(FOR_YOUR_APPLICATION, TO_END_CIVIL_PARTNERSHIP),

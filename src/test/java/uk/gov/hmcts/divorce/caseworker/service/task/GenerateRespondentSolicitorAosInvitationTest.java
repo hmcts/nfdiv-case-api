@@ -22,6 +22,7 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_AOS_INVITATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_SOLICITOR_AOS_INVITATION;
@@ -49,6 +50,7 @@ public class GenerateRespondentSolicitorAosInvitationTest {
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithAosInvitationDocumentIfRespondentIsRepresented() {
 
         final var caseData = caseData();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.setApplicant2(respondentWithDigitalSolicitor());
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();

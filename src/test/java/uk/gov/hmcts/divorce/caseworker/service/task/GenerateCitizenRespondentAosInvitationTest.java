@@ -22,6 +22,7 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CITIZEN_RESP_AOS_INVITATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_AOS_INVITATION_DOCUMENT_NAME;
@@ -49,6 +50,7 @@ class GenerateCitizenRespondentAosInvitationTest {
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithAosInvitationDocumentIfRespondentIsNotRepresented() {
 
         final var caseData = caseData();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);

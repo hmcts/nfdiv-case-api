@@ -291,6 +291,13 @@ public class Application {
     private LocalDate issueDate;
 
     @CCD(
+        label = "Date when the application was created",
+        access = {DefaultAccess.class}
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate createdDate;
+
+    @CCD(
         label = "Reject reason",
         access = {CaseworkerAccess.class}
     )
@@ -373,10 +380,15 @@ public class Application {
     }
 
     @JsonIgnore
-    public boolean hasAwaitingDocuments() {
+    public boolean hasAwaitingApplicant1Documents() {
         return applicant1WantsToHavePapersServedAnotherWay != null
             && applicant1WantsToHavePapersServedAnotherWay.toBoolean()
             || !isEmpty(applicant1CannotUploadSupportingDocument);
+    }
+
+    @JsonIgnore
+    public boolean hasAwaitingApplicant2Documents() {
+        return !isEmpty(applicant2CannotUploadSupportingDocument);
     }
 
     @JsonIgnore

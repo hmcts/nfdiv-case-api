@@ -166,7 +166,7 @@ class ApplicationTest {
             .applicant1WantsToHavePapersServedAnotherWay(YES)
             .build();
 
-        assertThat(application.hasAwaitingDocuments()).isTrue();
+        assertThat(application.hasAwaitingApplicant1Documents()).isTrue();
     }
 
     @Test
@@ -177,7 +177,7 @@ class ApplicationTest {
             .applicant1CannotUploadSupportingDocument(Set.of(DIVORCE_APPLICATION))
             .build();
 
-        assertThat(application.hasAwaitingDocuments()).isTrue();
+        assertThat(application.hasAwaitingApplicant1Documents()).isTrue();
     }
 
     @Test
@@ -187,7 +187,7 @@ class ApplicationTest {
             .applicant1WantsToHavePapersServedAnotherWay(NO)
             .build();
 
-        assertThat(application.hasAwaitingDocuments()).isFalse();
+        assertThat(application.hasAwaitingApplicant1Documents()).isFalse();
     }
 
     @Test
@@ -196,7 +196,7 @@ class ApplicationTest {
         final var application = Application.builder()
             .build();
 
-        assertThat(application.hasAwaitingDocuments()).isFalse();
+        assertThat(application.hasAwaitingApplicant1Documents()).isFalse();
     }
 
     @Test

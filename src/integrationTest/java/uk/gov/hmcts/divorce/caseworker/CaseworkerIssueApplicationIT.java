@@ -59,6 +59,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DOCUMENT_TYPE_RESPONDENT_INVITATION;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssembly;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyUnauthorized;
@@ -78,14 +79,17 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.invalidCaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssueApplication;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.resourceAsBytes;
@@ -108,6 +112,8 @@ public class CaseworkerIssueApplicationIT {
         "classpath:caseworker-issue-application-about-to-submit-app2-not-sol-rep-response.json";
     private static final String CASEWORKER_ISSUE_APPLICATION_ABOUT_TO_SUBMIT_ERROR =
         "classpath:caseworker-issue-application-about-to-submit-error-response.json";
+    private static final String CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT =
+        "classpath:caseworker-issue-citizen-application-about-to-submit-response.json";
     public static final String MINI_APPLICATION_ID = "5cd725e8-f053-4493-9cbe-bb69d1905ae3";
     public static final String AOS_COVER_LETTER_ID = "c35b1868-e397-457a-aa67-ac1422bb8100";
 
@@ -152,6 +158,50 @@ public class CaseworkerIssueApplicationIT {
     void setClock() {
         when(clock.instant()).thenReturn(Instant.parse("2021-06-17T12:00:00.000Z"));
         when(clock.getZone()).thenReturn(ZoneId.systemDefault());
+    }
+
+    @Test
+    void shouldSendApplicationIssueNotificationsForCitizenApplication() throws Exception {
+        final CaseData caseData = validApplicant2CaseData();
+        caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("London");
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
+
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+
+        mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .content(objectMapper.writeValueAsString(
+                callbackRequest(
+                    caseData,
+                    CASEWORKER_ISSUE_APPLICATION)))
+            .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk())
+            .andExpect(
+                content().json(expectedResponse(CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT))
+            );
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_USER_EMAIL),
+                eq(JOINT_APPLICATION_ACCEPTED),
+                anyMap(),
+                eq(ENGLISH));
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_APPLICANT_2_USER_EMAIL),
+                eq(JOINT_APPLICATION_ACCEPTED),
+                anyMap(),
+                eq(ENGLISH));
+
+        verifyNoMoreInteractions(notificationService);
     }
 
     @Test
@@ -255,6 +305,7 @@ public class CaseworkerIssueApplicationIT {
     @Test
     void givenInvalidCaseDataWhenAboutToSubmitCallbackIsInvokedThenResponseContainsErrors() throws Exception {
         final CaseData caseData = invalidCaseData();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Divorce application");
