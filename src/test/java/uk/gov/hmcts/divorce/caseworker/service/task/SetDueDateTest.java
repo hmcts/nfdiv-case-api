@@ -30,7 +30,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondent;
 class SetDueDateTest {
 
     private static final long DUE_DATE_OFFSET_DAYS = 14L;
-    private static final long DUE_DATE_HOLDING_PERIOD = 20L;
+    private static final long HOLDING_PERIOD_IN_WEEKS = 20L;
 
     @Mock
     private Clock clock;
@@ -41,7 +41,7 @@ class SetDueDateTest {
     @BeforeEach
     void setPageSize() {
         ReflectionTestUtils.setField(setDueDate, "dueDateOffsetDays", DUE_DATE_OFFSET_DAYS);
-        ReflectionTestUtils.setField(setDueDate, "dueDateHoldingPeriodInWeeks", DUE_DATE_HOLDING_PERIOD);
+        ReflectionTestUtils.setField(setDueDate, "holdingPeriodInWeeks", HOLDING_PERIOD_IN_WEEKS);
     }
 
     @Test
@@ -94,7 +94,7 @@ class SetDueDateTest {
 
         final CaseDetails<CaseData, State> result = setDueDate.apply(caseDetails);
 
-        final LocalDate expectedDueDate = getExpectedLocalDate().plusWeeks(DUE_DATE_HOLDING_PERIOD).plusDays(1);
+        final LocalDate expectedDueDate = getExpectedLocalDate().plusWeeks(HOLDING_PERIOD_IN_WEEKS).plusDays(1);
 
         assertThat(result.getData().getDueDate()).isEqualTo(expectedDueDate);
     }

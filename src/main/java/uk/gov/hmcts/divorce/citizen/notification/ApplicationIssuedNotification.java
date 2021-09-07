@@ -20,29 +20,30 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATIO
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TO_END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TYPE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.CITIZENS_ADVICE_LINK;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.CIVIL_PARTNERSHIP_ACCOUNT;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.CIVIL_PARTNERSHIP_CITIZENS_ADVICE_LINK;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.CIVIL_PARTNERSHIP_GOV_UK_LINK;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.CIVIL_PARTNERSHIP_PROCESS;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.CIVIL_PARTNERSHIP_SERVICE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_ACCOUNT;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_APPLICATION;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_CITIZENS_ADVICE_LINK;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_GOV_UK_LINK;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_PROCESS;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_SERVICE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.ENDING_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.GOV_UK_LINK;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PROCESS;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.REVIEW_DEADLINE_DATE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.SERVICE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.YOUR_DIVORCE;
 
 @Component
 @Slf4j
 public class ApplicationIssuedNotification {
+
+    private static final String SERVICE = "service";
+    private static final String DIVORCE_SERVICE = "divorce service";
+    private static final String CIVIL_PARTNERSHIP_SERVICE = "End A Civil Partnership Service";
+    private static final String GOV_UK_LINK = "gov uk link";
+    private static final String DIVORCE_GOV_UK_LINK = "https://www.gov.uk/divorce";
+    private static final String CIVIL_PARTNERSHIP_GOV_UK_LINK = "https://www.gov.uk/end-civil-partnership";
+    private static final String CITIZENS_ADVICE_LINK = "citizens advice link";
+    private static final String DIVORCE_CITIZENS_ADVICE_LINK = "https://www.citizensadvice.org.uk/family/how-to-separate1/getting-a-divorce/";
+    private static final String CIVIL_PARTNERSHIP_CITIZENS_ADVICE_LINK = "https://www.citizensadvice.org.uk/family/how-to-separate1/ending-a-civil-partnership/";
 
     @Autowired
     private NotificationService notificationService;
@@ -64,7 +65,7 @@ public class ApplicationIssuedNotification {
             templateVars.put(GOV_UK_LINK, CIVIL_PARTNERSHIP_GOV_UK_LINK);
             templateVars.put(CITIZENS_ADVICE_LINK, CIVIL_PARTNERSHIP_CITIZENS_ADVICE_LINK);
         }
-        
+
         templateVars.put(REVIEW_DEADLINE_DATE, caseData.getApplication().getIssueDate().plusDays(14).format(dateTimeFormatter));
 
         notificationService.sendEmail(
