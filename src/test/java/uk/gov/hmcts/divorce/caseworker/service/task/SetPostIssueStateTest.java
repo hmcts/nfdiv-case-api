@@ -24,7 +24,7 @@ class SetPostIssueStateTest {
     private SetPostIssueState setPostIssueState;
 
     @Test
-    void shouldSetStateToAwaitingService() {
+    void shouldSetStateToAwaitingServiceWhenApplicationIsSolicitorApplicationAndServiceMethodIsSolicitorService() {
 
         final CaseData caseData = CaseData.builder()
             .application(Application.builder()
@@ -42,7 +42,7 @@ class SetPostIssueStateTest {
     }
 
     @Test
-    void shouldSetStateToAwaitingAos() {
+    void shouldSetStateToAwaitingAosWhenApplicationIsSolicitorApplicationAndServiceMethodIsCourtService() {
 
         final CaseData caseData = CaseData.builder()
             .application(Application.builder()
@@ -60,7 +60,7 @@ class SetPostIssueStateTest {
     }
 
     @Test
-    void shouldSetStateToHolding() {
+    void shouldSetStateToHoldingWhenApplicationIsNotSolicitorApplication() {
 
         final CaseData caseData = CaseData.builder()
             .application(Application.builder().build())
