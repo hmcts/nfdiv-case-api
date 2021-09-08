@@ -184,6 +184,13 @@ public enum State {
     AwaitingPronouncement("AwaitingPronouncement"),
 
     @CCD(
+        name = "Pending dispute",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    PendingDispute("PendingDispute"),
+
+    @CCD(
         name = "Pending rejection",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
