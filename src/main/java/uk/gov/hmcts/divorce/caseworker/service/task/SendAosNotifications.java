@@ -21,13 +21,16 @@ public class SendAosNotifications implements CaseTask {
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
 
-        final CaseData caseData = caseDetails.getData();
-        final Long caseId = caseDetails.getId();
+        if (caseDetails.getData().getApplication().isSolicitorApplication()) {
 
-        if (caseData.getApplication().isSolicitorServiceMethod()) {
-            solicitorServiceNotification.send(caseData, caseId);
-        } else {
-            noticeOfProceedingsNotification.send(caseData, caseId);
+            final CaseData caseData = caseDetails.getData();
+            final Long caseId = caseDetails.getId();
+
+            if (caseData.getApplication().isSolicitorServiceMethod()) {
+                solicitorServiceNotification.send(caseData, caseId);
+            } else {
+                noticeOfProceedingsNotification.send(caseData, caseId);
+            }
         }
 
         return caseDetails;

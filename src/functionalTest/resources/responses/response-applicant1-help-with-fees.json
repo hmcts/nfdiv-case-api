@@ -33,9 +33,6 @@
     "jurisdictionDisagreeReason": null,
     "legalProceedingsExist": null,
     "legalProceedingsDescription": null,
-    "agreeToCosts": null,
-    "costsAmount": null,
-    "costsReason": null,
     "dateAosSubmitted": null,
     "applicant2MiddleName": null,
     "applicant2AgreedToReceiveEmails": null,
@@ -60,7 +57,6 @@
     "jurisdictionConnections": [
       "A"
     ],
-    "jurisdictionLegalConnections": null,
     "applicant1ContactDetailsConfidential": "keep",
     "applicant2FirstName": "test_first_name",
     "applicant2LastName": "test_last_name",

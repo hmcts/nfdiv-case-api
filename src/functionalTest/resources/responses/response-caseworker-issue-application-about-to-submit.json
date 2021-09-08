@@ -3,7 +3,8 @@
     "applicant1AgreedToReceiveEmails": null,
     "applicant1ContactDetailsConfidential": "share",
     "applicant1CorrespondenceAddress": null,
-    "applicant1Email": "applicant1@example.com",
+    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+    "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
     "applicant1FirstName": "test_first_name",
     "applicant1Gender": "female",
     "applicant1LanguagePreferenceWelsh": "No",
@@ -51,9 +52,6 @@
     "jurisdictionDisagreeReason": null,
     "legalProceedingsExist": null,
     "legalProceedingsDescription": null,
-    "agreeToCosts": null,
-    "costsAmount": null,
-    "costsReason": null,
     "dateAosSubmitted": null,
     "applicant2SolicitorRepresented": "Yes",
     "applicant1HWFAppliedForFees": null,
@@ -112,7 +110,6 @@
       "J"
     ],
     "jurisdictionResidualEligible": null,
-    "jurisdictionLegalConnections": null,
     "marriageApplicant1Name": "test_first_name test_last_name",
     "marriageApplicant2Name": "test_first_name test_last_name",
     "marriageCertificateInEnglish": null,
@@ -144,6 +141,6 @@
     "applicant1StatementOfTruth": "Yes"
   },
   "errors": null,
-  "state": null,
+  "state": "AwaitingAos",
   "warnings": null
 }

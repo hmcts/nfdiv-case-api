@@ -15,7 +15,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Collections.emptyList;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_DOMICILED;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_LAST_RESIDENT;
@@ -86,40 +85,29 @@ public class Jurisdiction {
     private YesOrNo bothLastHabituallyResident;
 
     @CCD(
-        label = "Jurisdiction connections",
+        label = "Legal connections",
         hint = "Tick all the reasons that apply:",
         access = {DefaultAccess.class}
     )
     private Set<JurisdictionConnections> connections;
 
-    @CCD(
-        label = "Legal connections",
-        hint = "Tick all the reasons that apply:",
-        access = {DefaultAccess.class}
-    )
-    private Set<LegalConnections> legalConnections;
-
     public List<String> validate() {
-        if (isEmpty(legalConnections)) {
-            if (isEmpty(connections)) {
-                return List.of("JurisdictionConnections" + EMPTY);
-            } else {
-                return Stream.of(
-                    validateJurisdictionConnectionA(),
-                    validateJurisdictionConnectionB(),
-                    validateJurisdictionConnectionC(),
-                    validateJurisdictionConnectionD(),
-                    validateJurisdictionConnectionE(),
-                    validateJurisdictionConnectionF(),
-                    validateJurisdictionConnectionG(),
-                    validateJurisdictionConnectionH(),
-                    validateJurisdictionConnectionI(),
-                    validateJurisdictionConnectionJ()
-                ).filter(Objects::nonNull).collect(Collectors.toList());
-            }
+        if (isEmpty(connections)) {
+            return List.of("JurisdictionConnections" + EMPTY);
+        } else {
+            return Stream.of(
+                validateJurisdictionConnectionA(),
+                validateJurisdictionConnectionB(),
+                validateJurisdictionConnectionC(),
+                validateJurisdictionConnectionD(),
+                validateJurisdictionConnectionE(),
+                validateJurisdictionConnectionF(),
+                validateJurisdictionConnectionG(),
+                validateJurisdictionConnectionH(),
+                validateJurisdictionConnectionI(),
+                validateJurisdictionConnectionJ()
+            ).filter(Objects::nonNull).collect(Collectors.toList());
         }
-
-        return emptyList();
     }
 
     private String validateJurisdictionConnectionA() {

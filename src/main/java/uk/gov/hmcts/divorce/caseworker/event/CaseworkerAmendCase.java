@@ -20,8 +20,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderRefused;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Disputed;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingDispute;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
@@ -45,7 +45,7 @@ public class CaseworkerAmendCase implements CCDConfig<CaseData, State, UserRole>
         return new PageBuilder(configBuilder
             .event(CASEWORKER_AMEND_CASE)
             .forStates(AwaitingAos, AosDrafted, AosOverdue,
-                Disputed, Holding, AwaitingConditionalOrder,
+                PendingDispute, Holding, AwaitingConditionalOrder,
                 ConditionalOrderDrafted, AwaitingLegalAdvisorReferral, AwaitingClarification,
                 ConditionalOrderRefused, AwaitingPronouncement, ConditionalOrderPronounced)
             .name("Update case")

@@ -17,6 +17,7 @@ import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
@@ -36,6 +37,7 @@ class MiniApplicationRemoverTest {
 
         final var generatedDocuments = singletonList(documentWithType(DIVORCE_APPLICATION));
         final var caseData = CaseData.builder().build();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.setDocumentsGenerated(generatedDocuments);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();

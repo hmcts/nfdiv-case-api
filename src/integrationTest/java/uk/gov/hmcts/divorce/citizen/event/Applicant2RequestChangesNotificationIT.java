@@ -39,6 +39,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICAN
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
@@ -70,7 +71,6 @@ public class Applicant2RequestChangesNotificationIT {
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmailToApplicant2() throws Exception {
         CaseData data = validJointApplicant1CaseData();
-        data.getCaseInvite().setApplicant2InviteEmailAddress(TEST_USER_EMAIL);
         data.getApplication().setApplicant2ConfirmApplicant1Information(YesOrNo.NO);
         data.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation("Some issues");
 
@@ -92,7 +92,7 @@ public class Applicant2RequestChangesNotificationIT {
             .sendEmail(eq(TEST_USER_EMAIL), eq(JOINT_APPLICANT1_NEED_TO_MAKE_CHANGES), anyMap(), eq(ENGLISH));
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(JOINT_APPLICANT2_REQUEST_CHANGES), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(JOINT_APPLICANT2_REQUEST_CHANGES), anyMap(), eq(ENGLISH));
 
         verifyNoMoreInteractions(notificationService);
     }

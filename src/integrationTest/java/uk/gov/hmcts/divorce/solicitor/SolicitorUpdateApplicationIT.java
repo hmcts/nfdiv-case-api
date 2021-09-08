@@ -35,6 +35,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorUpdateApplication.SOLICITOR_UPDATE;
@@ -174,7 +175,8 @@ public class SolicitorUpdateApplicationIT {
     }
 
     private CaseData caseDataWithDocument() {
-        final CaseData caseDate = caseDataWithNoDocument();
+        final CaseData caseData = caseDataWithNoDocument();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
 
         Document ccdDocument = new Document(
             "http://dm-store-aat.service.core-compute-aat.internal/documents/8d2bd0f2-80e9-4b0f-b38d-2c138b243e27",
@@ -195,7 +197,7 @@ public class SolicitorUpdateApplicationIT {
             .value(divorceDocument)
             .build();
 
-        caseDate.setDocumentsGenerated(singletonList(divorceDocumentListValue));
-        return caseDate;
+        caseData.setDocumentsGenerated(singletonList(divorceDocumentListValue));
+        return caseData;
     }
 }

@@ -14,7 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
-import uk.gov.hmcts.divorce.divorcecase.model.LegalConnections;
+import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
@@ -27,6 +27,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.CASEWORKER_ISSUE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
@@ -58,6 +59,7 @@ class CaseworkerIssueApplicationTest {
 
         final var caseData = caseDataWithAllMandatoryFields();
         final var expectedCaseData = CaseData.builder().build();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -68,18 +70,21 @@ class CaseworkerIssueApplicationTest {
         expectedDetails.setData(expectedCaseData);
         expectedDetails.setId(1L);
         expectedDetails.setCreatedDate(LOCAL_DATE_TIME);
+        expectedDetails.setState(AwaitingService);
 
         when(issueApplicationService.issueApplication(details)).thenReturn(expectedDetails);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(details, null);
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
+        assertThat(response.getState()).isEqualTo(AwaitingService);
         verify(issueApplicationService).issueApplication(details);
     }
 
     @Test
     void shouldFailCaseDataValidationWhenMandatoryFieldsAreNotPopulatedForIssueApplication() {
         final var caseData = invalidCaseData();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -97,7 +102,6 @@ class CaseworkerIssueApplicationTest {
                 "MarriageApplicant1Name cannot be empty or null",
                 "Applicant1ContactDetailsConfidential cannot be empty or null",
                 "Applicant1PrayerHasBeenGiven cannot be empty or null",
-                "Statement of truth must be accepted by the person making the application",
                 "MarriageDate cannot be empty or null",
                 "JurisdictionConnections cannot be empty or null",
                 "MarriageApplicant2Name cannot be empty or null",
@@ -128,7 +132,9 @@ class CaseworkerIssueApplicationTest {
         caseData.getApplicant1().setFinancialOrder(NO);
         caseData.getApplication().setApplicant1PrayerHasBeenGiven(YES);
         caseData.getApplication().setApplicant1StatementOfTruth(YES);
-        caseData.getApplication().getJurisdiction().setLegalConnections(Set.of(LegalConnections.APPLICANT_RESPONDENT_RESIDENT));
+        caseData.getApplication().getJurisdiction().setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
+        caseData.getApplication().getJurisdiction().setApplicant1Residence(YES);
+        caseData.getApplication().getJurisdiction().setApplicant2Residence(YES);
         caseData.getApplication().getMarriageDetails().setApplicant1Name("app1Name");
         caseData.getApplication().getMarriageDetails().setDate(LocalDate.of(2009, 1, 1));
         caseData.getApplication().getMarriageDetails().setApplicant2Name("app2Name");

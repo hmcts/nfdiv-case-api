@@ -24,7 +24,7 @@ public class SendAosPack implements CaseTask {
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
 
-        if (!caseData.getApplication().isSolicitorServiceMethod()) {
+        if (caseDetails.getData().getApplication().isSolicitorApplication() && !caseData.getApplication().isSolicitorServiceMethod()) {
 
             final Applicant respondent = caseData.getApplicant2();
             final Solicitor respondentSolicitor = respondent.getSolicitor();
