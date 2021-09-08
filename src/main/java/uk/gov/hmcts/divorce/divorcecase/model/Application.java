@@ -130,7 +130,7 @@ public class Application {
     private YesOrNo solStatementOfReconciliationDiscussed;
 
     @CCD(
-        label = "The applicant has given their \"prayer\".",
+        label = "The applicant has given their 'prayer'.",
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant1PrayerHasBeenGiven;
