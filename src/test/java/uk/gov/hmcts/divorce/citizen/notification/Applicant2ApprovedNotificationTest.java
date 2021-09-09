@@ -24,7 +24,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT2_APPROVED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT2_APPROVED_WITHOUT_HWF;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT2_APPROVED;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.dateTimeFormatter;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TO_END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_APPLICATION;
@@ -120,7 +120,7 @@ class Applicant2ApprovedNotificationTest {
             argThat(allOf(
                 hasEntry(PAY_FOR_IT, PAY_FOR_IT),
                 hasEntry(PAY_FOR, PAY_FOR),
-                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(dateTimeFormatter)),
+                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER)),
                 hasEntry(PAID_FOR, PAID_FOR),
                 hasEntry(PAY_FOR_IT, PAY_FOR_IT)
             )),
@@ -149,7 +149,7 @@ class Applicant2ApprovedNotificationTest {
             argThat(allOf(
                 hasEntry(PAY_FOR_IT, ""),
                 hasEntry(PAY_FOR, ""),
-                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(dateTimeFormatter)),
+                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER)),
                 hasEntry(PAID_FOR, "")
             )),
             eq(ENGLISH)
@@ -202,7 +202,7 @@ class Applicant2ApprovedNotificationTest {
             argThat(allOf(
                 hasEntry(PAY_FOR_IT, PAY_FOR_IT),
                 hasEntry(PAY_FOR, PAY_FOR),
-                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(dateTimeFormatter)),
+                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER)),
                 hasEntry(PAID_FOR, PAID_FOR),
                 hasEntry(PAY_FOR_IT, PAY_FOR_IT)
             )),
