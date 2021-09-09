@@ -7,7 +7,7 @@ import static java.time.format.DateTimeFormatter.ofPattern;
 
 public final class FormatUtil {
 
-    public static final DateTimeFormatter dateTimeFormatter = ofPattern("d MMMM yyyy");
+    public static final DateTimeFormatter DATE_TIME_FORMATTER = ofPattern("d MMMM yyyy");
 
     private FormatUtil() {
     }

@@ -14,7 +14,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.dateTimeFormatter;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
@@ -24,6 +24,7 @@ public class RespondentAnswersTemplateContent {
     private static final String RESP_JURISDICTION_DISAGREE_REASON = "respJurisdictionDisagreeReason";
     private static final String RESP_LEGAL_PROCEEDINGS_EXIST = "respLegalProceedingsExist";
     private static final String RESP_LEGAL_PROCEEDINGS_DESCRIPTION = "respLegalProceedingsDescription";
+    private static final String RESP_SOLICITOR_REPRESENTED = "respSolicitorRepresented";
 
     public Supplier<Map<String, Object>> apply(final CaseData caseData,
                                                final Long ccdCaseReference,
@@ -33,7 +34,7 @@ public class RespondentAnswersTemplateContent {
             log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
 
             Map<String, Object> templateData = new HashMap<>();
-            templateData.put(ISSUE_DATE, createdDate.format(dateTimeFormatter));
+            templateData.put(ISSUE_DATE, createdDate.format(DATE_TIME_FORMATTER));
             templateData.put(CCD_CASE_REFERENCE, ccdCaseReference);
 
             var application = caseData.getApplication();
@@ -41,7 +42,7 @@ public class RespondentAnswersTemplateContent {
             templateData.put(APPLICANT_2_FULL_NAME, application.getMarriageDetails().getApplicant2Name());
 
             String respSolicitorRepresented = YesOrNo.from(caseData.getApplicant2().isRepresented()).getValue();
-            templateData.put("respSolicitorRepresented", respSolicitorRepresented);
+            templateData.put(RESP_SOLICITOR_REPRESENTED, respSolicitorRepresented);
 
             var acknowledgementOfService = caseData.getAcknowledgementOfService();
             templateData.put(RESP_JURISDICTION_AGREE, acknowledgementOfService.getJurisdictionAgree().getValue());
