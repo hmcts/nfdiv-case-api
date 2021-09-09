@@ -127,8 +127,8 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             .build();
     }
 
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
-                                                                       CaseDetails<CaseData, State> beforeDetails) {
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
+                                                                       final CaseDetails<CaseData, State> beforeDetails) {
 
         final Long caseId = details.getId();
         final var caseData = details.getData();
