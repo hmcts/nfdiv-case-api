@@ -6,7 +6,6 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -15,12 +14,12 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.dateTimeFormatter;
 
 @Component
 @Slf4j
 public class RespondentAnswersTemplateContent {
 
-    private static final DateTimeFormatter TEMPLATE_DATE_FORMAT = DateTimeFormatter.ofPattern("d MMMM yyyy");
     private static final String RESP_JURISDICTION_AGREE = "respJurisdictionAgree";
     private static final String RESP_JURISDICTION_DISAGREE_REASON = "respJurisdictionDisagreeReason";
     private static final String RESP_LEGAL_PROCEEDINGS_EXIST = "respLegalProceedingsExist";
@@ -34,7 +33,7 @@ public class RespondentAnswersTemplateContent {
             log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
 
             Map<String, Object> templateData = new HashMap<>();
-            templateData.put(ISSUE_DATE, createdDate.format(TEMPLATE_DATE_FORMAT));
+            templateData.put(ISSUE_DATE, createdDate.format(dateTimeFormatter));
             templateData.put(CCD_CASE_REFERENCE, ccdCaseReference);
 
             var application = caseData.getApplication();
