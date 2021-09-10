@@ -30,8 +30,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
@@ -101,8 +100,7 @@ public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, Us
             .grant(CREATE_READ_UPDATE, SOLICITOR)
             .grant(READ_UPDATE, CASEWORKER_SUPERUSER)
             .grant(READ,
-                CASEWORKER_COURTADMIN_CTSC,
-                CASEWORKER_COURTADMIN_RDU,
+                CASEWORKER_COURTADMIN,
                 CASEWORKER_LEGAL_ADVISOR));
     }
 }

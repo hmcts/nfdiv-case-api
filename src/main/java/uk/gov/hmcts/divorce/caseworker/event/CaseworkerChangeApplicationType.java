@@ -9,8 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
@@ -32,8 +31,7 @@ public class CaseworkerChangeApplicationType implements CCDConfig<CaseData, Stat
             .description("Change application type from joint to sole application")
             .explicitGrants()
             .grant(CREATE_READ_UPDATE,
-                CASEWORKER_COURTADMIN_CTSC,
-                CASEWORKER_COURTADMIN_RDU,
+                CASEWORKER_COURTADMIN,
                 CASEWORKER_LEGAL_ADVISOR)
             .grant(READ, SOLICITOR, CASEWORKER_SUPERUSER))
             .page("changeApplicationTypePage")

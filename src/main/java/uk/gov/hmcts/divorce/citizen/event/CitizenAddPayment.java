@@ -17,8 +17,7 @@ import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -44,7 +43,7 @@ public class CitizenAddPayment implements CCDConfig<CaseData, State, UserRole> {
             .name("Payment made")
             .description("Payment made")
             .retries(120, 120)
-            .grant(CREATE_READ_UPDATE, CITIZEN, CASEWORKER_COURTADMIN_RDU, CASEWORKER_COURTADMIN_CTSC)
+            .grant(CREATE_READ_UPDATE, CITIZEN, CASEWORKER_COURTADMIN)
             .grant(READ, CASEWORKER_SUPERUSER)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }

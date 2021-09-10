@@ -7,8 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.HasRole;
 import uk.gov.hmcts.ccd.sdk.api.Permission;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
@@ -28,8 +27,7 @@ public class OrganisationPolicyAccess implements HasAccessControl {
         grants.putAll(SOLICITOR, CREATE_READ_UPDATE_DELETE);
 
         grants.putAll(CASEWORKER_SUPERUSER, READ);
-        grants.putAll(CASEWORKER_COURTADMIN_CTSC, READ);
-        grants.putAll(CASEWORKER_COURTADMIN_RDU, READ);
+        grants.putAll(CASEWORKER_COURTADMIN, READ);
         grants.putAll(CASEWORKER_LEGAL_ADVISOR, READ);
 
         return grants;

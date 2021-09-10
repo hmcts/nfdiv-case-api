@@ -27,8 +27,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.C;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.R;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.U;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SYSTEMUPDATE;
@@ -86,10 +85,9 @@ class SolicitorCreateApplicationTest {
             .put(CASEWORKER_SYSTEMUPDATE, C)
             .put(CASEWORKER_SYSTEMUPDATE, R)
             .put(CASEWORKER_SYSTEMUPDATE, U)
-            .put(CASEWORKER_COURTADMIN_RDU, R)
             .put(CASEWORKER_SUPERUSER, R)
             .put(CASEWORKER_SUPERUSER, U)
-            .put(CASEWORKER_COURTADMIN_CTSC, R)
+            .put(CASEWORKER_COURTADMIN, R)
             .put(CASEWORKER_LEGAL_ADVISOR, R)
             .build();
 

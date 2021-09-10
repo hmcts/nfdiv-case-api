@@ -12,8 +12,7 @@ import static uk.gov.hmcts.ccd.sdk.api.Permission.R;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.U;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SYSTEMUPDATE;
 
@@ -25,13 +24,12 @@ class AosAccessTest {
         final SetMultimap<HasRole, Permission> grants = new AosAccess().getGrants();
 
         assertThat(grants)
-            .hasSize(12)
+            .hasSize(11)
             .contains(
                 entry(CASEWORKER_SYSTEMUPDATE, C),
                 entry(CASEWORKER_SYSTEMUPDATE, R),
                 entry(CASEWORKER_SYSTEMUPDATE, U),
-                entry(CASEWORKER_COURTADMIN_CTSC, R),
-                entry(CASEWORKER_COURTADMIN_RDU, R),
+                entry(CASEWORKER_COURTADMIN, R),
                 entry(CASEWORKER_LEGAL_ADVISOR, R),
                 entry(APPLICANT_2_SOLICITOR, C),
                 entry(APPLICANT_2_SOLICITOR, R),

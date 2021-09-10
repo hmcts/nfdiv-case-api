@@ -8,8 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.Permission;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
@@ -20,8 +19,7 @@ public class Applicant2Access implements HasAccessControl {
     public SetMultimap<HasRole, Permission> getGrants() {
         SetMultimap<HasRole, Permission> grants = HashMultimap.create();
         grants.putAll(CASEWORKER_SYSTEMUPDATE, Permissions.READ);
-        grants.putAll(CASEWORKER_COURTADMIN_CTSC, Permissions.READ);
-        grants.putAll(CASEWORKER_COURTADMIN_RDU, Permissions.READ);
+        grants.putAll(CASEWORKER_COURTADMIN, Permissions.READ);
         grants.putAll(CASEWORKER_LEGAL_ADVISOR, Permissions.READ);
         grants.putAll(CITIZEN, Permissions.READ);
         grants.putAll(CREATOR, Permissions.READ);

@@ -21,8 +21,7 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -60,8 +59,7 @@ public class SolicitorUpdateAos implements CCDConfig<CaseData, State, UserRole> 
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
             .grant(READ,
-                CASEWORKER_COURTADMIN_CTSC,
-                CASEWORKER_COURTADMIN_RDU,
+                CASEWORKER_COURTADMIN,
                 CASEWORKER_SUPERUSER,
                 CASEWORKER_LEGAL_ADVISOR));
     }

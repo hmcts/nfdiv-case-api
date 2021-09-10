@@ -8,8 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
@@ -29,8 +28,7 @@ public class CaseworkerUpdateApplicationType implements CCDConfig<CaseData, Stat
             .description("Update application type")
             .explicitGrants()
             .grant(CREATE_READ_UPDATE,
-                CASEWORKER_COURTADMIN_CTSC,
-                CASEWORKER_COURTADMIN_RDU)
+                CASEWORKER_COURTADMIN)
             .grant(READ,
                 SOLICITOR,
                 CASEWORKER_SUPERUSER,

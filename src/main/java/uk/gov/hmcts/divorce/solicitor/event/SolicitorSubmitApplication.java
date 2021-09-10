@@ -44,8 +44,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
@@ -230,8 +229,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, SOLICITOR)
             .grant(READ,
-                CASEWORKER_COURTADMIN_CTSC,
-                CASEWORKER_COURTADMIN_RDU,
+                CASEWORKER_COURTADMIN,
                 CASEWORKER_SUPERUSER,
                 CASEWORKER_LEGAL_ADVISOR));
     }

@@ -13,8 +13,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
@@ -46,7 +45,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     //TODO: Need to revisit this tab once the field stated in the ticket NFDIV-595 are available
     private void buildAosTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("aosDetails", "AoS")
-            .forRoles(CASEWORKER_COURTADMIN_RDU, CASEWORKER_COURTADMIN_CTSC, CASEWORKER_LEGAL_ADVISOR,
+            .forRoles(CASEWORKER_COURTADMIN, CASEWORKER_LEGAL_ADVISOR,
                 CASEWORKER_SUPERUSER, SOLICITOR)
             .showCondition("applicationType=\"soleApplication\" AND "
                 + andNotShowForState(Draft, AwaitingHWFDecision, AwaitingPayment, Submitted, AwaitingDocuments))
@@ -88,7 +87,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void buildConfidentialTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("Confidential", "Confidential Address")
-            .forRoles(CASEWORKER_COURTADMIN_RDU, CASEWORKER_COURTADMIN_CTSC, CASEWORKER_LEGAL_ADVISOR)
+            .forRoles(CASEWORKER_COURTADMIN, CASEWORKER_LEGAL_ADVISOR)
             .showCondition("applicant1ContactDetailsConfidential=\"keep\"")
             .field("applicant1CorrespondenceAddress")
             .field("applicant1PhoneNumber")
@@ -117,7 +116,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void buildGeneralReferralTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("generalReferral", "General Referral")
-            .forRoles(CASEWORKER_COURTADMIN_RDU, CASEWORKER_COURTADMIN_CTSC, CASEWORKER_LEGAL_ADVISOR, CASEWORKER_SUPERUSER)
+            .forRoles(CASEWORKER_COURTADMIN, CASEWORKER_LEGAL_ADVISOR, CASEWORKER_SUPERUSER)
             .field("generalReferralReason")
             .field("generalApplicationFrom", "generalApplicationFrom=\"*\"")
             .field("generalApplicationReferralDate", "generalApplicationReferralDate=\"*\"")
@@ -131,7 +130,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void buildConfidentialDocumentsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("confidentialDocuments", "Confidential Document")
-            .forRoles(CASEWORKER_COURTADMIN_RDU, CASEWORKER_COURTADMIN_CTSC, CASEWORKER_LEGAL_ADVISOR, CASEWORKER_SUPERUSER)
+            .forRoles(CASEWORKER_COURTADMIN, CASEWORKER_LEGAL_ADVISOR, CASEWORKER_SUPERUSER)
             .field(CaseData::getConfidentialDocumentsUploaded);
     }
 }

@@ -21,8 +21,7 @@ import static uk.gov.hmcts.ccd.sdk.api.Permission.C;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.R;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.U;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SYSTEMUPDATE;
@@ -64,10 +63,7 @@ public class NoFaultDivorceTest {
         assertThat(configBuilder.build().getStateRolePermissions().columnMap().get(CASEWORKER_LEGAL_ADVISOR))
             .contains(entry(Draft, Set.of(R)));
 
-        assertThat(configBuilder.build().getStateRolePermissions().columnMap().get(CASEWORKER_COURTADMIN_CTSC))
-            .contains(entry(Draft, Set.of(R)));
-
-        assertThat(configBuilder.build().getStateRolePermissions().columnMap().get(CASEWORKER_COURTADMIN_RDU))
+        assertThat(configBuilder.build().getStateRolePermissions().columnMap().get(CASEWORKER_COURTADMIN))
             .contains(entry(Draft, Set.of(R)));
 
         verify(addSystemUpdateRole).isEnvironmentAat();
@@ -95,10 +91,7 @@ public class NoFaultDivorceTest {
         assertThat(configBuilder.build().getStateRolePermissions().columnMap().get(CASEWORKER_LEGAL_ADVISOR))
             .contains(entry(Draft, Set.of(R)));
 
-        assertThat(configBuilder.build().getStateRolePermissions().columnMap().get(CASEWORKER_COURTADMIN_CTSC))
-            .contains(entry(Draft, Set.of(R)));
-
-        assertThat(configBuilder.build().getStateRolePermissions().columnMap().get(CASEWORKER_COURTADMIN_RDU))
+        assertThat(configBuilder.build().getStateRolePermissions().columnMap().get(CASEWORKER_COURTADMIN))
             .contains(entry(Draft, Set.of(R)));
 
         verify(addSystemUpdateRole).isEnvironmentAat();

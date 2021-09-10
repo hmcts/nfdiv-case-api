@@ -10,8 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.UpdateApplicant1ContactDetails;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
@@ -44,8 +43,7 @@ public class SolicitorUpdateApplicant1ContactDetails implements CCDConfig<CaseDa
             .grant(CREATE_READ_UPDATE, SOLICITOR)
             .grant(READ_UPDATE, CASEWORKER_SUPERUSER)
             .grant(READ,
-                CASEWORKER_COURTADMIN_CTSC,
-                CASEWORKER_COURTADMIN_RDU,
+                CASEWORKER_COURTADMIN,
                 CASEWORKER_LEGAL_ADVISOR));
     }
 }
