@@ -69,9 +69,6 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
         );
 
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
-        if (data.getApplicant2().getContactDetailsConfidential().equals(KEEP)) {
-            data.getApplicant2().setHomeAddress(null);
-        }
         removeApplicant2AnswersFromCase(data);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
