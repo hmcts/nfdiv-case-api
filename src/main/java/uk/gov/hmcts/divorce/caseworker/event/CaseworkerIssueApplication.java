@@ -64,13 +64,13 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
             .page("issueApplication")
             .pageLabel("Issue Divorce Application")
             .complex(CaseData::getApplication)
-            .complex(Application::getMarriageDetails)
-            .optional(MarriageDetails::getDate)
-            .optional(MarriageDetails::getApplicant1Name)
-            .optional(MarriageDetails::getApplicant2Name)
-            .mandatory(MarriageDetails::getPlaceOfMarriage)
-            .done()
-            .done();
+                .complex(Application::getMarriageDetails)
+                    .optional(MarriageDetails::getDate)
+                    .optional(MarriageDetails::getApplicant1Name)
+                    .optional(MarriageDetails::getApplicant2Name)
+                    .mandatory(MarriageDetails::getPlaceOfMarriage)
+                    .done()
+                .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
