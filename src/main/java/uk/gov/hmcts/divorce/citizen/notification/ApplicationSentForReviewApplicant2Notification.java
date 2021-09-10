@@ -12,7 +12,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.dateTimeFormatter;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.ACCOUNT;
@@ -90,7 +90,7 @@ public class ApplicationSentForReviewApplicant2Notification {
 
     private void setDefaultVariables(Map<String, String> templateVars, CaseData caseData, Long id) {
         templateVars.put(APPLICATION_REFERENCE, formatId(id));
-        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(dateTimeFormatter));
+        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         templateVars.put(ACCESS_CODE, caseData.getCaseInvite().getAccessCode());
         templateVars.put(REMINDER_APPLICATION, APPLICATION);
     }

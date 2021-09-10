@@ -9,7 +9,6 @@ import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotificatio
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
-import uk.gov.hmcts.divorce.solicitor.service.notification.SolicitorSubmittedNotification;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
@@ -17,16 +16,13 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 
 @Component
 @Slf4j
-public class SendSubmissionNotifications implements CaseTask {
+public class SendCitizenSubmissionNotifications implements CaseTask {
 
     @Autowired
     private ApplicationOutstandingActionNotification applicationOutstandingActionNotification;
 
     @Autowired
     private ApplicationSubmittedNotification applicationSubmittedNotification;
-
-    @Autowired
-    private SolicitorSubmittedNotification solicitorSubmittedNotification;
 
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
@@ -35,9 +31,7 @@ public class SendSubmissionNotifications implements CaseTask {
         final Long caseId = caseDetails.getId();
         final State state = caseDetails.getState();
 
-        if (caseData.getApplication().isSolicitorApplication()) {
-            solicitorSubmittedNotification.send(caseData, caseId);
-        } else {
+        if (!caseData.getApplication().isSolicitorApplication()) {
             sendCitizenNotifications(caseData, caseId, state);
         }
 

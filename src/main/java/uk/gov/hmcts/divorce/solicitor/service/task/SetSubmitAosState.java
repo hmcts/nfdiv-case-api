@@ -8,8 +8,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Disputed;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingDispute;
 
 @Component
 @Slf4j
@@ -19,7 +19,7 @@ public class SetSubmitAosState implements CaseTask {
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> caseDetails) {
 
         if (NO.equals(caseDetails.getData().getAcknowledgementOfService().getJurisdictionAgree())) {
-            caseDetails.setState(Disputed);
+            caseDetails.setState(PendingDispute);
         } else {
             caseDetails.setState(Holding);
         }

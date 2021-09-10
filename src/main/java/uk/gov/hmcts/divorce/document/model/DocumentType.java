@@ -90,6 +90,9 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("generalOrder")
     GENERAL_ORDER("General Order"),
 
+    @JsonProperty("respondentAnswers")
+    RESPONDENT_ANSWERS("Respondent Answers"),
+
     @JsonProperty("other")
     OTHER("Other");
 

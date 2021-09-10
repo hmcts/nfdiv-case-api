@@ -1,0 +1,39 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "applicant1FirstName": "John",
+    "applicant1LastName": "Smith",
+    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+    "applicant1FinancialOrder": "No",
+    "issueDate": "2021-06-17",
+    "jurisdictionAgree": "Yes",
+    "legalProceedingsExist": "Yes",
+    "legalProceedingsDescription": "some description",
+    "dateAosSubmitted": "${json-unit.any-string}",
+    "statementOfTruth": "Yes",
+    "prayerHasBeenGiven": "Yes",
+    "divorceUnit": "serviceCentre",
+    "selectedDivorceCentreSiteId": "AA07",
+    "documentsGenerated": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentDateAdded": null,
+          "documentComment": null,
+          "documentFileName": "respondentAnswers.pdf",
+          "documentType": "respondentAnswers",
+          "documentEmailContent": null,
+          "documentLink": {
+            "document_url": "${json-unit.any-string}",
+            "document_filename": "respondentAnswers.pdf",
+            "document_binary_url": "${json-unit.any-string}"
+          }
+        }
+      }
+    ],
+    "dueDate": "${json-unit.any-string}"
+  },
+  "errors": null,
+  "warnings": null,
+  "state": "Holding"
+}
