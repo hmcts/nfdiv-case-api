@@ -27,11 +27,11 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.C;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.R;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.U;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SYSTEMUPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreateApplication.SOLICITOR_CREATE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -70,7 +70,7 @@ class SolicitorCreateApplicationTest {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         when(addSystemUpdateRole.addIfConfiguredForEnvironment(anyList()))
-            .thenReturn(List.of(SOLICITOR, CASEWORKER_SYSTEMUPDATE));
+            .thenReturn(List.of(SOLICITOR, SYSTEMUPDATE));
 
         solicitorCreateApplication.configure(configBuilder);
 
@@ -82,13 +82,13 @@ class SolicitorCreateApplicationTest {
             .put(SOLICITOR, C)
             .put(SOLICITOR, R)
             .put(SOLICITOR, U)
-            .put(CASEWORKER_SYSTEMUPDATE, C)
-            .put(CASEWORKER_SYSTEMUPDATE, R)
-            .put(CASEWORKER_SYSTEMUPDATE, U)
-            .put(CASEWORKER_SUPERUSER, R)
-            .put(CASEWORKER_SUPERUSER, U)
-            .put(CASEWORKER_COURTADMIN, R)
-            .put(CASEWORKER_LEGAL_ADVISOR, R)
+            .put(SYSTEMUPDATE, C)
+            .put(SYSTEMUPDATE, R)
+            .put(SYSTEMUPDATE, U)
+            .put(SUPER_USER, R)
+            .put(SUPER_USER, U)
+            .put(CASE_WORKER, R)
+            .put(LEGAL_ADVISOR, R)
             .build();
 
         assertThat(getEventsFrom(configBuilder).values())

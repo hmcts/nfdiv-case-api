@@ -22,9 +22,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderProno
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderRefused;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingDispute;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
@@ -52,9 +52,9 @@ public class CaseworkerAmendCase implements CCDConfig<CaseData, State, UserRole>
             .showSummary()
             .explicitGrants()
             .grant(CREATE_READ_UPDATE,
-                CASEWORKER_COURTADMIN)
+                CASE_WORKER)
             .grant(READ,
-                CASEWORKER_SUPERUSER,
-                CASEWORKER_LEGAL_ADVISOR));
+                SUPER_USER,
+                LEGAL_ADVISOR));
     }
 }

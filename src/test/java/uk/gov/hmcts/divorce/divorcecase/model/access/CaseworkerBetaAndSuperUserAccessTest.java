@@ -11,8 +11,8 @@ import static uk.gov.hmcts.ccd.sdk.api.Permission.C;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.D;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.R;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.U;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 
 class CaseworkerBetaAndSuperUserAccessTest {
 
@@ -24,13 +24,13 @@ class CaseworkerBetaAndSuperUserAccessTest {
         assertThat(grants)
             .hasSize(7)
             .contains(
-                entry(CASEWORKER_SUPERUSER, C),
-                entry(CASEWORKER_SUPERUSER, R),
-                entry(CASEWORKER_SUPERUSER, U),
-                entry(CASEWORKER_SUPERUSER, D),
-                entry(CASEWORKER_COURTADMIN, C),
-                entry(CASEWORKER_COURTADMIN, R),
-                entry(CASEWORKER_COURTADMIN, U)
+                entry(SUPER_USER, C),
+                entry(SUPER_USER, R),
+                entry(SUPER_USER, U),
+                entry(SUPER_USER, D),
+                entry(CASE_WORKER, C),
+                entry(CASE_WORKER, R),
+                entry(CASE_WORKER, U)
             );
     }
 }

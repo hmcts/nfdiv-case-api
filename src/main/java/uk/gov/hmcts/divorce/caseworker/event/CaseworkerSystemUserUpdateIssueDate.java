@@ -10,7 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SYSTEMUPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
@@ -27,7 +27,7 @@ public class CaseworkerSystemUserUpdateIssueDate implements CCDConfig<CaseData, 
             .name("Update issue date")
             .description("Update issue date")
             .explicitGrants()
-            .grant(CREATE_READ_UPDATE,CASEWORKER_SYSTEMUPDATE))
+            .grant(CREATE_READ_UPDATE, SYSTEMUPDATE))
             .page("updateIssueDate")
             .complex(CaseData::getApplication)
                 .mandatory(Application::getIssueDate)

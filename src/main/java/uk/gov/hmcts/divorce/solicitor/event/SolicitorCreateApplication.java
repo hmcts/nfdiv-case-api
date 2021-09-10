@@ -32,10 +32,10 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ_UPDATE;
@@ -106,7 +106,7 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
             .aboutToSubmitCallback(this::aboutToSubmit)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, updatedRoles.toArray(UserRole[]::new))
-            .grant(READ_UPDATE, CASEWORKER_SUPERUSER)
-            .grant(READ, CASEWORKER_COURTADMIN, CASEWORKER_LEGAL_ADVISOR));
+            .grant(READ_UPDATE, SUPER_USER)
+            .grant(READ, CASE_WORKER, LEGAL_ADVISOR));
     }
 }

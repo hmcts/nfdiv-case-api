@@ -10,10 +10,10 @@ import static org.assertj.guava.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.C;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.R;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.U;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 
 class CaseworkerCourtAdminWithSolicitorAccessTest {
 
@@ -25,12 +25,12 @@ class CaseworkerCourtAdminWithSolicitorAccessTest {
         assertThat(grants)
             .hasSize(6)
             .contains(
-                entry(CASEWORKER_LEGAL_ADVISOR, R),
-                entry(CASEWORKER_SUPERUSER, R),
+                entry(LEGAL_ADVISOR, R),
+                entry(SUPER_USER, R),
                 entry(SOLICITOR, R),
-                entry(CASEWORKER_COURTADMIN, C),
-                entry(CASEWORKER_COURTADMIN, R),
-                entry(CASEWORKER_COURTADMIN, U)
+                entry(CASE_WORKER, C),
+                entry(CASE_WORKER, R),
+                entry(CASE_WORKER, U)
             );
     }
 }
