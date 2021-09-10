@@ -17,17 +17,22 @@ import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 
 import java.time.LocalDate;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.CASEWORKER_ISSUE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorServicePack.CASEWORKER_ISSUE_SOLICITOR_SERVICE_PACK;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
@@ -39,6 +44,9 @@ class CaseworkerIssueApplicationTest {
 
     @Mock
     private IssueApplicationService issueApplicationService;
+
+    @Mock
+    private CcdUpdateService ccdUpdateService;
 
     @InjectMocks
     private CaseworkerIssueApplication caseworkerIssueApplication;
@@ -108,6 +116,49 @@ class CaseworkerIssueApplicationTest {
                 "PlaceOfMarriage cannot be empty or null",
                 "Applicant1Gender cannot be empty or null"
             );
+    }
+
+    @Test
+    void shouldSubmitCcdSystemIssueSolicitorServicePackEventOnSubmittedCallbackIfSolicitorService() {
+
+        final var caseData = caseData();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
+        caseData.getApplication().setSolServiceMethod(SOLICITOR_SERVICE);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        caseworkerIssueApplication.submitted(caseDetails, null);
+
+        verify(ccdUpdateService).submitEvent(caseDetails, CASEWORKER_ISSUE_SOLICITOR_SERVICE_PACK);
+    }
+
+    @Test
+    void shouldNotSubmitCcdSystemIssueSolicitorServicePackEventOnSubmittedCallbackIfCourtService() {
+
+        final var caseData = caseData();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
+        caseData.getApplication().setSolServiceMethod(COURT_SERVICE);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        caseworkerIssueApplication.submitted(caseDetails, null);
+
+        verifyNoInteractions(ccdUpdateService);
+    }
+
+    @Test
+    void shouldNotSubmitCcdSystemIssueSolicitorServicePackEventOnSubmittedCallbackIfNotSolicitorApplication() {
+
+        final var caseData = caseData();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        caseworkerIssueApplication.submitted(caseDetails, null);
+
+        verifyNoInteractions(ccdUpdateService);
     }
 
     private CaseData caseDataWithAllMandatoryFields() {
