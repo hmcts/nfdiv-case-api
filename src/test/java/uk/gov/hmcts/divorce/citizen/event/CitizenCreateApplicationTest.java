@@ -25,8 +25,8 @@ import static uk.gov.hmcts.ccd.sdk.api.Permission.C;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.R;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.U;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenCreateApplication.CITIZEN_CREATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
@@ -68,7 +68,7 @@ class CitizenCreateApplicationTest {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         when(addSystemUpdateRole.addIfConfiguredForEnvironment(anyList()))
-            .thenReturn(List.of(CITIZEN, CASEWORKER_SYSTEMUPDATE));
+            .thenReturn(List.of(CITIZEN, SYSTEMUPDATE));
 
         citizenCreateApplication.configure(configBuilder);
 
@@ -80,9 +80,9 @@ class CitizenCreateApplicationTest {
             .put(CITIZEN, C)
             .put(CITIZEN, R)
             .put(CITIZEN, U)
-            .put(CASEWORKER_SYSTEMUPDATE, C)
-            .put(CASEWORKER_SYSTEMUPDATE, R)
-            .put(CASEWORKER_SYSTEMUPDATE, U)
+            .put(SYSTEMUPDATE, C)
+            .put(SYSTEMUPDATE, R)
+            .put(SYSTEMUPDATE, U)
             .build();
 
         assertThat(getEventsFrom(configBuilder).values())

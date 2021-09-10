@@ -21,13 +21,12 @@ import static uk.gov.hmcts.ccd.sdk.api.Permission.C;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.R;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.U;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SYSTEMUPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,22 +51,19 @@ public class NoFaultDivorceTest {
         assertThat(configBuilder.build().getStateRolePermissions().columnMap().get(CITIZEN))
             .contains(entry(Draft, Set.of(C, R, U)));
 
-        assertThat(configBuilder.build().getStateRolePermissions().columnMap().get(CASEWORKER_SYSTEMUPDATE))
+        assertThat(configBuilder.build().getStateRolePermissions().columnMap().get(SYSTEMUPDATE))
             .contains(entry(Draft, Set.of(C, R, U)));
 
         assertThat(configBuilder.build().getStateRolePermissions().columnMap().get(SOLICITOR))
             .contains(entry(Draft, Set.of(C, R, U)));
 
-        assertThat(configBuilder.build().getStateRolePermissions().columnMap().get(CASEWORKER_SUPERUSER))
+        assertThat(configBuilder.build().getStateRolePermissions().columnMap().get(SUPER_USER))
             .contains(entry(Draft, Set.of(C, R, U)));
 
-        assertThat(configBuilder.build().getStateRolePermissions().columnMap().get(CASEWORKER_LEGAL_ADVISOR))
+        assertThat(configBuilder.build().getStateRolePermissions().columnMap().get(LEGAL_ADVISOR))
             .contains(entry(Draft, Set.of(R)));
 
-        assertThat(configBuilder.build().getStateRolePermissions().columnMap().get(CASEWORKER_COURTADMIN_CTSC))
-            .contains(entry(Draft, Set.of(R)));
-
-        assertThat(configBuilder.build().getStateRolePermissions().columnMap().get(CASEWORKER_COURTADMIN_RDU))
+        assertThat(configBuilder.build().getStateRolePermissions().columnMap().get(CASE_WORKER))
             .contains(entry(Draft, Set.of(R)));
 
         verify(addSystemUpdateRole).isEnvironmentAat();
@@ -89,16 +85,13 @@ public class NoFaultDivorceTest {
         assertThat(configBuilder.build().getStateRolePermissions().columnMap().get(SOLICITOR))
             .contains(entry(Draft, Set.of(C, R, U)));
 
-        assertThat(configBuilder.build().getStateRolePermissions().columnMap().get(CASEWORKER_SUPERUSER))
+        assertThat(configBuilder.build().getStateRolePermissions().columnMap().get(SUPER_USER))
             .contains(entry(Draft, Set.of(C, R, U)));
 
-        assertThat(configBuilder.build().getStateRolePermissions().columnMap().get(CASEWORKER_LEGAL_ADVISOR))
+        assertThat(configBuilder.build().getStateRolePermissions().columnMap().get(LEGAL_ADVISOR))
             .contains(entry(Draft, Set.of(R)));
 
-        assertThat(configBuilder.build().getStateRolePermissions().columnMap().get(CASEWORKER_COURTADMIN_CTSC))
-            .contains(entry(Draft, Set.of(R)));
-
-        assertThat(configBuilder.build().getStateRolePermissions().columnMap().get(CASEWORKER_COURTADMIN_RDU))
+        assertThat(configBuilder.build().getStateRolePermissions().columnMap().get(CASE_WORKER))
             .contains(entry(Draft, Set.of(R)));
 
         verify(addSystemUpdateRole).isEnvironmentAat();
