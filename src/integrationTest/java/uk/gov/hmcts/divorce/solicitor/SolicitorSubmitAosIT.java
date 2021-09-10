@@ -20,9 +20,6 @@ import uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
-import java.time.Clock;
-import java.time.LocalDate;
-
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.mockito.Mockito.when;
@@ -31,7 +28,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorSubmitAos.SOLICITOR_SUBMIT_AOS;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
-import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SYSTEM_USER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamDetails;
@@ -66,9 +62,6 @@ public class SolicitorSubmitAosIT {
     private WebMvcConfig webMvcConfig;
 
     @MockBean
-    private Clock clock;
-
-    @MockBean
     private AuthTokenGenerator serviceTokenGenerator;
 
     @BeforeAll
@@ -88,9 +81,6 @@ public class SolicitorSubmitAosIT {
     @Test
     void shouldSetStateToHoldingAndSetDateAosSubmittedAndGenerateRespondentPdfForValidUndisputedAos() throws Exception {
 
-        setMockClock(clock);
-        final LocalDate issueDate = getExpectedLocalDate().minusDays(7);
-
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .statementOfTruth(YES)
             .prayerHasBeenGiven(YES)
@@ -101,7 +91,7 @@ public class SolicitorSubmitAosIT {
             .build();
 
         final CaseData caseData = caseData();
-        caseData.getApplication().setIssueDate(issueDate);
+        caseData.getApplication().setIssueDate(getExpectedLocalDate());
         caseData.setAcknowledgementOfService(acknowledgementOfService);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
