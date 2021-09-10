@@ -27,7 +27,7 @@ import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_APPROVED_APPLICANT1_REMINDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_OVERDUE;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.dateTimeFormatter;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TO_END_A_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TYPE;
@@ -74,7 +74,7 @@ public class JointApplicationOverdueNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION.toLowerCase(Locale.ROOT), FOR_DIVORCE),
                 hasEntry(APPLICATION_TYPE.toLowerCase(Locale.ROOT), DIVORCE_APPLICATION),
-                hasEntry(REVIEW_DEADLINE_DATE, LocalDate.now().format(dateTimeFormatter))
+                hasEntry(REVIEW_DEADLINE_DATE, LocalDate.now().format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -101,7 +101,7 @@ public class JointApplicationOverdueNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION.toLowerCase(Locale.ROOT), "to end your civil partnership"),
                 hasEntry(APPLICATION_TYPE.toLowerCase(Locale.ROOT), APPLICATION_TO_END_A_CIVIL_PARTNERSHIP),
-                hasEntry(REVIEW_DEADLINE_DATE, LocalDate.now().format(dateTimeFormatter))
+                hasEntry(REVIEW_DEADLINE_DATE, LocalDate.now().format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );

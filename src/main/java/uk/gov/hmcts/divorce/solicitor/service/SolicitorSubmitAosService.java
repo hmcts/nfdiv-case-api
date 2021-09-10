@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.solicitor.service.task.GenerateRespondentAnswersDoc;
 import uk.gov.hmcts.divorce.solicitor.service.task.SetSubmissionAndDueDate;
 import uk.gov.hmcts.divorce.solicitor.service.task.SetSubmitAosState;
 
@@ -21,10 +22,14 @@ public class SolicitorSubmitAosService {
     @Autowired
     private SetSubmissionAndDueDate setSubmissionAndDueDate;
 
+    @Autowired
+    private GenerateRespondentAnswersDoc generateRespondentAnswersDoc;
+
     public CaseDetails<CaseData, State> submitAos(final CaseDetails<CaseData, State> caseDetails) {
         return caseTasks(
             setSubmitAosState,
-            setSubmissionAndDueDate
+            setSubmissionAndDueDate,
+            generateRespondentAnswersDoc
         ).run(caseDetails);
     }
 }

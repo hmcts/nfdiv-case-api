@@ -1,0 +1,43 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "labelContentUnionType": "dissolution",
+    "applicant1FirstName": "test_first_name",
+    "applicant1MiddleName": "test_middle_name",
+    "applicant1LastName": "test_last_name",
+    "applicant1Email": "test@test.com",
+    "applicant1LanguagePreferenceWelsh": "No",
+    "applicant1ContactDetailsConfidential": "share",
+    "applicant1Gender": "female",
+    "applicant1FinancialOrder": "No",
+    "issueDate": "2021-09-02",
+    "confirmReadPetition": "Yes",
+    "jurisdictionAgree": "Yes",
+    "legalProceedingsExist": "Yes",
+    "legalProceedingsDescription": "some description",
+    "dateAosSubmitted": "${json-unit.any-string}",
+    "statementOfTruth": "Yes",
+    "prayerHasBeenGiven": "Yes",
+    "documentsGenerated": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentDateAdded": null,
+          "documentComment": null,
+          "documentFileName": "respondentAnswers.pdf",
+          "documentType": "respondentAnswers",
+          "documentEmailContent": null,
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100",
+            "document_filename": "respondentAnswers.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100/binary"
+          }
+        }
+      }
+    ],
+    "dueDate": "${json-unit.any-string}"
+  },
+  "errors": null,
+  "warnings": null,
+  "state": "Holding"
+}
