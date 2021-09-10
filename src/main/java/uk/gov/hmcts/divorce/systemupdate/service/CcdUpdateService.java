@@ -4,7 +4,10 @@ import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
@@ -35,6 +38,9 @@ public class CcdUpdateService {
 
     @Autowired
     private CcdCaseDataContentProvider ccdCaseDataContentProvider;
+
+    @Autowired
+    private CaseDetailsConverter caseDetailsConverter;
 
     public void submitEvent(final CaseDetails caseDetails, final String eventId) {
 
@@ -82,5 +88,11 @@ public class CcdUpdateService {
 
             throw new CcdManagementException(message, e);
         }
+    }
+
+    public void submitEvent(final uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails,
+                            final String eventId) {
+
+        submitEvent(caseDetailsConverter.convertToReformModel(caseDetails), eventId);
     }
 }

@@ -14,6 +14,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.List;
 
@@ -28,6 +30,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateIssue;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorServicePack.CASEWORKER_ISSUE_SOLICITOR_SERVICE_PACK;
 
 @Component
 @Slf4j
@@ -37,6 +40,9 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
 
     @Autowired
     private IssueApplicationService issueApplicationService;
+
+    @Autowired
+    private CcdUpdateService ccdUpdateService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -48,6 +54,7 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
             .showSummary()
             .explicitGrants()
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE,
                 CASE_WORKER)
             .grant(READ,
@@ -57,13 +64,13 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
             .page("issueApplication")
             .pageLabel("Issue Divorce Application")
             .complex(CaseData::getApplication)
-                .complex(Application::getMarriageDetails)
-                    .optional(MarriageDetails::getDate)
-                    .optional(MarriageDetails::getApplicant1Name)
-                    .optional(MarriageDetails::getApplicant2Name)
-                    .mandatory(MarriageDetails::getPlaceOfMarriage)
-                    .done()
-                .done();
+            .complex(Application::getMarriageDetails)
+            .optional(MarriageDetails::getDate)
+            .optional(MarriageDetails::getApplicant1Name)
+            .optional(MarriageDetails::getApplicant2Name)
+            .mandatory(MarriageDetails::getPlaceOfMarriage)
+            .done()
+            .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
@@ -71,7 +78,7 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
 
         CaseData caseData = details.getData();
 
-        log.info("Caseworker issue application about to submit callback invoked");
+        log.info("Caseworker issue application about to submit callback invoked for case id: {}", details.getId());
 
         final List<String> caseValidationErrors = validateIssue(details.getData());
 
@@ -88,5 +95,19 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
             .data(result.getData())
             .state(result.getState())
             .build();
+    }
+
+    public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,
+                                               final CaseDetails<CaseData, State> beforeDetails) {
+
+        log.info("Caseworker issue application submitted callback invoked for case id: {}", details.getId());
+
+        final Application application = details.getData().getApplication();
+
+        if (application.isSolicitorApplication() && application.isSolicitorServiceMethod()) {
+            ccdUpdateService.submitEvent(details, CASEWORKER_ISSUE_SOLICITOR_SERVICE_PACK);
+        }
+
+        return SubmittedCallbackResponse.builder().build();
     }
 }
