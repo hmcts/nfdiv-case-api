@@ -23,13 +23,13 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 @Slf4j
 public class SystemIssueSolicitorServicePack implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String CASEWORKER_ISSUE_SOLICITOR_SERVICE_PACK = "system-issue-solicitor-service-pack";
+    public static final String SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK = "system-issue-solicitor-service-pack";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         new PageBuilder(configBuilder
-            .event(CASEWORKER_ISSUE_SOLICITOR_SERVICE_PACK)
+            .event(SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK)
             .forState(AwaitingService)
             .name("Issue Solicitor Service Pack")
             .description("Issue Solicitor Service Pack to applicant's solicitor (if service method = Solicitor Service)")

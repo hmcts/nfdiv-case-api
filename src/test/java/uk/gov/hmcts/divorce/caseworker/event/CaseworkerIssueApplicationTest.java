@@ -32,7 +32,7 @@ import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.C
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorServicePack.CASEWORKER_ISSUE_SOLICITOR_SERVICE_PACK;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorServicePack.SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
@@ -130,7 +130,7 @@ class CaseworkerIssueApplicationTest {
 
         caseworkerIssueApplication.submitted(caseDetails, null);
 
-        verify(ccdUpdateService).submitEvent(caseDetails, CASEWORKER_ISSUE_SOLICITOR_SERVICE_PACK);
+        verify(ccdUpdateService).submitEvent(caseDetails, SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK);
     }
 
     @Test

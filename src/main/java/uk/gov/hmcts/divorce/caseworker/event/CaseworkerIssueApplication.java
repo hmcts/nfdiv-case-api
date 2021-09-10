@@ -30,7 +30,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateIssue;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorServicePack.CASEWORKER_ISSUE_SOLICITOR_SERVICE_PACK;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorServicePack.SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK;
 
 @Component
 @Slf4j
@@ -105,7 +105,8 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
         final Application application = details.getData().getApplication();
 
         if (application.isSolicitorApplication() && application.isSolicitorServiceMethod()) {
-            ccdUpdateService.submitEvent(details, CASEWORKER_ISSUE_SOLICITOR_SERVICE_PACK);
+            log.info("Submitting system-issue-solicitor-service-pack event for case id: {}", details.getId());
+            ccdUpdateService.submitEvent(details, SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK);
         }
 
         return SubmittedCallbackResponse.builder().build();
