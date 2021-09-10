@@ -27,10 +27,10 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-class SetStateTest {
+class SetStateAfterSubmissionTest {
 
     @InjectMocks
-    private SetState setState;
+    private SetStateAfterSubmission setStateAfterSubmission;
 
     @Test
     void shouldSetAwaitingHwfDecisionStateIfCitizenNeedsHelpWithFees() {
@@ -49,7 +49,7 @@ class SetStateTest {
         caseDetails.setData(caseData);
         caseDetails.setState(Draft);
 
-        final CaseDetails<CaseData, State> result = setState.apply(caseDetails);
+        final CaseDetails<CaseData, State> result = setStateAfterSubmission.apply(caseDetails);
 
         assertThat(result.getState()).isEqualTo(AwaitingHWFDecision);
     }
@@ -69,7 +69,7 @@ class SetStateTest {
         caseDetails.setData(caseData);
         caseDetails.setState(Draft);
 
-        final CaseDetails<CaseData, State> result = setState.apply(caseDetails);
+        final CaseDetails<CaseData, State> result = setStateAfterSubmission.apply(caseDetails);
 
         assertThat(result.getState()).isEqualTo(AwaitingHWFDecision);
     }
@@ -91,7 +91,7 @@ class SetStateTest {
         caseDetails.setData(caseData);
         caseDetails.setState(Draft);
 
-        final CaseDetails<CaseData, State> result = setState.apply(caseDetails);
+        final CaseDetails<CaseData, State> result = setStateAfterSubmission.apply(caseDetails);
 
         assertThat(result.getState()).isEqualTo(AwaitingPayment);
     }
@@ -121,7 +121,7 @@ class SetStateTest {
         caseDetails.setData(caseData);
         caseDetails.setState(Draft);
 
-        final CaseDetails<CaseData, State> result = setState.apply(caseDetails);
+        final CaseDetails<CaseData, State> result = setStateAfterSubmission.apply(caseDetails);
 
         assertThat(result.getState()).isEqualTo(AwaitingDocuments);
     }
@@ -150,7 +150,7 @@ class SetStateTest {
         caseDetails.setData(caseData);
         caseDetails.setState(Draft);
 
-        final CaseDetails<CaseData, State> result = setState.apply(caseDetails);
+        final CaseDetails<CaseData, State> result = setStateAfterSubmission.apply(caseDetails);
 
         assertThat(result.getState()).isEqualTo(Submitted);
     }
