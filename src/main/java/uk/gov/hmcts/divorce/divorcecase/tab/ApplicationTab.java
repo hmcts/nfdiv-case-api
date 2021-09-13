@@ -20,8 +20,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
         addApplicant2(tabBuilder);
         addMarriageAndCertificate(tabBuilder);
         addLegalConnections(tabBuilder);
-        addOtherLegalProceedings(tabBuilder);
-        addFinancialOrderAndSot(tabBuilder);
+        addOtherProceedings(tabBuilder);
         addSolicitorService(tabBuilder);
     }
 
@@ -131,17 +130,12 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("jurisdictionConnections");
     }
 
-    private void addOtherLegalProceedings(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
+    private void addOtherProceedings(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
         tabBuilder
-            .label("LabelOtherLegalProceedings-Heading", null, "### Other legal proceedings")
+            .label("LabelOtherProceedings-Heading", null, "### Applicant's other proceedings:")
             .field("applicant1LegalProceedings")
             .field("applicant1LegalProceedingsRelated", "applicant1LegalProceedings=\"Yes\"")
-            .field("applicant1LegalProceedingsDetails", "applicant1LegalProceedings=\"Yes\"");
-    }
-
-    private void addFinancialOrderAndSot(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
-        tabBuilder
-            .label("LabelFinancialOrder-Heading", null, "### Financial order")
+            .field("applicant1LegalProceedingsDetails", "applicant1LegalProceedings=\"Yes\"")
             .field("applicant1FinancialOrder")
             .field("applicant1FinancialOrderFor", "applicant1FinancialOrder=\"Yes\"")
             .field("applicant1StatementOfTruth")
