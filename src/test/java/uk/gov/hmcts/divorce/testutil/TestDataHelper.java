@@ -123,6 +123,7 @@ public class TestDataHelper {
             .middleName(TEST_MIDDLE_NAME)
             .lastName(TEST_LAST_NAME)
             .email(TEST_USER_EMAIL)
+            .gender(MALE)
             .languagePreferenceWelsh(NO)
             .homeAddress(AddressGlobalUK.builder()
                 .addressLine1("line 1")
@@ -232,6 +233,7 @@ public class TestDataHelper {
         var applicant1 = getApplicant();
         applicant1.setContactDetailsConfidential(ConfidentialAddress.KEEP);
         applicant1.setFinancialOrder(NO);
+        applicant1.setLegalProceedings(NO);
 
         var application = Application.builder()
             .marriageDetails(marriageDetails)
@@ -264,7 +266,7 @@ public class TestDataHelper {
     public static CaseData validApplicant2CaseData() {
         CaseData caseData = validApplicant1CaseData();
         caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.setApplicant2(getApplicant(MALE));
+        caseData.setApplicant2(getApplicantWithAddress());
         caseData.getApplication().setApplicant2HelpWithFees(HelpWithFees.builder()
             .needHelp(NO)
             .build());
@@ -334,7 +336,7 @@ public class TestDataHelper {
 
         final CaseData caseData = caseDataWithStatementOfTruth();
         caseData.getApplicant1().setFinancialOrder(NO);
-        caseData.setApplicant2(getApplicant());
+        caseData.setApplicant2(getApplicantWithAddress());
 
         final Application application = caseData.getApplication();
         application.setDocumentUploadComplete(YES);
