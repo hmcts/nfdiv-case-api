@@ -51,6 +51,11 @@ public class Applicant {
     private YesOrNo agreedToReceiveEmails;
 
     @CCD(
+        label = "Has the applicant confirmed the receipt"
+    )
+    private YesOrNo confirmReceipt;
+
+    @CCD(
         label = "Is the language preference Welsh?",
         hint = "Select \"No\" for English or \"Yes\" for bilingual"
     )
