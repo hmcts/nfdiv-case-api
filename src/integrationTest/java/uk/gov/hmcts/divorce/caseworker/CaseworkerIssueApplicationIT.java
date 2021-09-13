@@ -358,6 +358,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setSolServiceMethod(SOLICITOR_SERVICE);
         caseData.getApplicant2().setSolicitorRepresented(YES);
+        caseData.getApplicant2().setHomeAddress(null);
         caseData.getApplicant2().setSolicitor(
             Solicitor
                 .builder()
