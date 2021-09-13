@@ -6,7 +6,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import java.util.ArrayList;
 import java.util.List;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SYSTEMUPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 
 @Component
 public class AddSystemUpdateRole {
@@ -18,7 +18,7 @@ public class AddSystemUpdateRole {
         String environment = System.getenv().getOrDefault("ENVIRONMENT", null);
 
         if (null != environment && environment.equalsIgnoreCase(ENVIRONMENT_AAT)) {
-            existingRoles.add(CASEWORKER_SYSTEMUPDATE);
+            existingRoles.add(SYSTEMUPDATE);
         }
 
         return existingRoles;

@@ -9,8 +9,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
@@ -29,6 +29,6 @@ public class CitizenUpdateApplication implements CCDConfig<CaseData, State, User
             .description("Patch a divorce or dissolution")
             .retries(120, 120)
             .grant(CREATE_READ_UPDATE, CREATOR)
-            .grant(READ, CASEWORKER_SUPERUSER);
+            .grant(READ, SUPER_USER);
     }
 }

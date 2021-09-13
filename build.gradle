@@ -200,7 +200,7 @@ def versions = [
   awaitility        : '1.7.0',
   jackson           : '2.12.4',
   junit             : '5.7.2',
-  junitPlatform     : '1.7.2',
+  junitPlatform     : '1.8.0',
   lombok            : '1.18.20',
   reformsJavaLogging: '5.1.7',
   springBoot        : springBoot.class.package.implementationVersion,

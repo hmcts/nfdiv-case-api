@@ -11,13 +11,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SYSTEMUPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
@@ -39,14 +38,13 @@ public class NoFaultDivorce implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.omitHistoryForRoles(SOLICITOR, APPLICANT_2_SOLICITOR);
 
         configBuilder.grant(Draft, CREATE_READ_UPDATE, CITIZEN);
-        configBuilder.grant(Draft, READ, CASEWORKER_COURTADMIN_CTSC);
-        configBuilder.grant(Draft, READ, CASEWORKER_COURTADMIN_RDU);
+        configBuilder.grant(Draft, READ, CASE_WORKER);
         configBuilder.grant(Draft, CREATE_READ_UPDATE, SOLICITOR);
-        configBuilder.grant(Draft, CREATE_READ_UPDATE, CASEWORKER_SUPERUSER);
-        configBuilder.grant(Draft, READ, CASEWORKER_LEGAL_ADVISOR);
+        configBuilder.grant(Draft, CREATE_READ_UPDATE, SUPER_USER);
+        configBuilder.grant(Draft, READ, LEGAL_ADVISOR);
 
         if (addSystemUpdateRole.isEnvironmentAat()) {
-            configBuilder.grant(Draft, CREATE_READ_UPDATE, CASEWORKER_SYSTEMUPDATE);
+            configBuilder.grant(Draft, CREATE_READ_UPDATE, SYSTEMUPDATE);
         }
     }
 }
