@@ -1,6 +1,10 @@
 {
   "data": {
+    "accessCode":"${json-unit.any-string}",
+    "applicationType":"soleApplication",
     "divorceOrDissolution": "divorce",
+    "labelContentUnionType":"dissolution",
+    "solServiceMethod":"solicitorService",
     "applicant1FirstName": "test_first_name",
     "applicant1MiddleName": "test_middle_name",
     "applicant1LastName": "test_last_name",
@@ -9,6 +13,7 @@
     "applicant1ContactDetailsConfidential": "share",
     "applicant1Gender": "female",
     "applicant1SolicitorEmail": "solicitor@test.com",
+    "applicant1LegalProceedings":"No",
     "applicant2FirstName": "test_first_name",
     "applicant2MiddleName": "test_middle_name",
     "applicant2LastName": "test_last_name",
@@ -16,10 +21,17 @@
     "applicant2LanguagePreferenceWelsh": "No",
     "applicant2ContactDetailsConfidential": "share",
     "applicant2Gender": "female",
+    "applicant2FinancialOrder":"No",
     "applicant2SolicitorRepresented": "Yes",
     "applicant2SolicitorName": "testsol",
     "applicant2SolicitorEmail": "solicitor@test.com",
     "applicant2SolicitorAddress": "223b\nBaker Street\nLondon\nGreater London\nNW1 5FG\nUnited Kingdom",
+    "applicant2SolicitorOrganisationPolicy": {
+      "Organisation": {
+        "OrganisationID": "ABC123",
+        "OrganisationName": "Test Organisation"
+      }
+    },
     "marriageApplicant1Name": "test_first_name test_last_name",
     "marriageApplicant2Name": "test_first_name test_last_name",
     "marriagePlaceOfMarriage": "Somewhere",
@@ -75,7 +87,7 @@
       }
     ],
     "documentUploadComplete": "Yes",
-    "issueDate": "2021-06-17",
+    "issueDate": "2021-06-17"
   },
   "state": "AwaitingService"
 }
