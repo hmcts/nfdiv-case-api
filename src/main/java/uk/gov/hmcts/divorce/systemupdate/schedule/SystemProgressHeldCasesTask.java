@@ -42,7 +42,7 @@ public class SystemProgressHeldCasesTask implements Runnable {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private static final String ISSUE_DATE_KEY = "issueDate";
+    private static final String DUE_DATE = "dueDate";
 
     @Override
     public void run() {
@@ -72,8 +72,8 @@ public class SystemProgressHeldCasesTask implements Runnable {
                                 holdingPeriodService.getHoldingPeriodInWeeks()
                             );
 
-                            //Set Issue date as null
-                            caseDetails.getData().put(ISSUE_DATE_KEY, null);
+                            //Set due date as null
+                            caseDetails.getData().put(DUE_DATE, null);
 
                             ccdUpdateService.submitEvent(caseDetails, SYSTEM_PROGRESS_HELD_CASE);
 

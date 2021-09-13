@@ -228,7 +228,39 @@ public class MiniApplicationTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyApplicant2PostalAddressIfApplicant2IsNotSolicitorRepresented() {
+    public void shouldSuccessfullyApplyApplicant2PostalAddressIfApplicant2IsNotSolicitorRepresentedAndIsSolicitorApplication() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
+        caseData.setDivorceOrDissolution(DISSOLUTION);
+        caseData.getApplicant1().setLegalProceedings(YES);
+
+        caseData.setApplicant2(getApplicant());
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+
+        AddressGlobalUK address = AddressGlobalUK.builder()
+            .addressLine1("221b")
+            .addressLine2("Baker Street")
+            .postTown("London")
+            .county("Greater London")
+            .postCode("NW1 6XE")
+            .country("United Kingdom")
+            .build();
+
+        caseData.getApplicant2().setCorrespondenceAddress(address);
+
+        caseData.getApplicant1().setHomeAddress(address);
+        caseData.getApplicant1().setFinancialOrder(NO);
+
+        Supplier<Map<String, Object>> templateContentSupplier = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
+
+        assertThat(templateContentSupplier.get()).contains(
+            entry(APPLICANT_2_POSTAL_ADDRESS, "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom")
+        );
+    }
+
+    @Test
+    public void shouldSuccessfullyApplyApplicant2PostalAddressIfApplicant2IsNotSolicitorRepresentedAndIsCitizenApplication() {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.setDivorceOrDissolution(DISSOLUTION);
@@ -246,7 +278,7 @@ public class MiniApplicationTemplateContentTest {
             .country("United Kingdom")
             .build();
 
-        caseData.getApplicant2().setCorrespondenceAddress(address);
+        caseData.getApplicant2().setHomeAddress(address);
 
         caseData.getApplicant1().setHomeAddress(address);
         caseData.getApplicant1().setFinancialOrder(NO);
