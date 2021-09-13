@@ -1,0 +1,93 @@
+{
+  "data": {
+    "accessCode":"${json-unit.any-string}",
+    "applicationType":"soleApplication",
+    "divorceOrDissolution": "divorce",
+    "labelContentUnionType":"dissolution",
+    "solServiceMethod":"solicitorService",
+    "applicant1FirstName": "test_first_name",
+    "applicant1MiddleName": "test_middle_name",
+    "applicant1LastName": "test_last_name",
+    "applicant1Email": "test@test.com",
+    "applicant1LanguagePreferenceWelsh": "No",
+    "applicant1ContactDetailsConfidential": "share",
+    "applicant1Gender": "female",
+    "applicant1SolicitorEmail": "solicitor@test.com",
+    "applicant1LegalProceedings":"No",
+    "applicant2FirstName": "test_first_name",
+    "applicant2MiddleName": "test_middle_name",
+    "applicant2LastName": "test_last_name",
+    "applicant2Email": "test@test.com",
+    "applicant2LanguagePreferenceWelsh": "No",
+    "applicant2ContactDetailsConfidential": "share",
+    "applicant2Gender": "female",
+    "applicant2FinancialOrder":"No",
+    "applicant2SolicitorRepresented": "Yes",
+    "applicant2SolicitorName": "testsol",
+    "applicant2SolicitorEmail": "solicitor@test.com",
+    "applicant2SolicitorAddress": "223b\nBaker Street\nLondon\nGreater London\nNW1 5FG\nUnited Kingdom",
+    "applicant2SolicitorOrganisationPolicy": {
+      "Organisation": {
+        "OrganisationID": "ABC123",
+        "OrganisationName": "Test Organisation"
+      }
+    },
+    "marriageApplicant1Name": "test_first_name test_last_name",
+    "marriageApplicant2Name": "test_first_name test_last_name",
+    "marriagePlaceOfMarriage": "Somewhere",
+    "marriageDate": "1990-06-10",
+    "jurisdictionApplicant1Residence": "Yes",
+    "jurisdictionApplicant2Residence": "Yes",
+    "jurisdictionConnections": [
+      "J"
+    ],
+    "applicant1FinancialOrder": "No",
+    "applicant1PrayerHasBeenGiven": "Yes",
+    "applicant1StatementOfTruth": "Yes",
+    "solSignStatementOfTruth": "Yes",
+    "applicationFeeOrderSummary": {
+      "PaymentTotal": "55000"
+    },
+    "documentsGenerated": [
+      {
+        "id": "Respondent Invitation",
+        "value": {
+          "documentFileName": "aosinvitation-1616591401473378.pdf",
+          "documentType": "aos",
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100",
+            "document_filename": "aosinvitation-1616591401473378.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100/binary"
+          }
+        }
+      },
+      {
+        "id": "Divorce application",
+        "value": {
+          "documentFileName": "mini-application-1616591401473378.pdf",
+          "documentType": "divorceApplication",
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+            "document_filename": "mini-application-1616591401473378.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
+          }
+        }
+      }
+    ],
+    "applicationPayments": [
+      {
+        "value": {
+          "feeCode": "FEE0001",
+          "amount": 55000,
+          "status": "success",
+          "channel": "online",
+          "reference": "paymentRef",
+          "transactionId": "ge7po9h5bhbtbd466424src9tk"
+        }
+      }
+    ],
+    "documentUploadComplete": "Yes",
+    "issueDate": "2021-06-17"
+  },
+  "state": "AwaitingService"
+}

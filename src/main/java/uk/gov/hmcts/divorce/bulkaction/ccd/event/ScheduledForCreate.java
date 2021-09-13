@@ -26,7 +26,7 @@ public class ScheduledForCreate implements CCDConfig<BulkActionCaseData, BulkAct
             .explicitGrants()
             .grant(CREATE_READ_UPDATE,
                 SUPER_USER,
-                    CASE_WORKER))
+                CASE_WORKER))
             .page("scheduleCreate")
             .pageLabel("Schedule bulk list")
             .optional(BulkActionCaseData::getCaseTitle);// Temporarily setting field needs to be changed later
