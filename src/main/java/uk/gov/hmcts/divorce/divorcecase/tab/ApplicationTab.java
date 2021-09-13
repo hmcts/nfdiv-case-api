@@ -56,6 +56,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1Email", "applicant1ContactDetailsConfidential=\"share\"")
             .field("applicant1HomeAddress", "applicant1ContactDetailsConfidential=\"share\"")
             .field("applicant1CorrespondenceAddress", "applicant1ContactDetailsConfidential=\"share\"")
+            .field("applicant1ScreenHasMarriageBroken")
 
             //Applicant 1 Solicitor
             .field("applicant1SolicitorRepresented", "applicationType=\"NEVER_SHOW\"")
@@ -93,6 +94,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2HomeAddress", "applicant2ContactDetailsConfidential=\"share\"")
             .field("applicant2CorrespondenceAddress", "applicant2ContactDetailsConfidential=\"share\"")
             .field("applicant2AgreedToReceiveEmails")
+            .field("applicant2ScreenHasMarriageBroken")
 
             //Applicant 2 Solicitor
             .field("applicant2SolicitorRepresented", "applicationType=\"NEVER_SHOW\"")
