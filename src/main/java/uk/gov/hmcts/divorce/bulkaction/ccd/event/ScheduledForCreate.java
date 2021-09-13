@@ -8,8 +8,8 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
@@ -25,8 +25,8 @@ public class ScheduledForCreate implements CCDConfig<BulkActionCaseData, BulkAct
             .description("Schedule bulk list created")
             .explicitGrants()
             .grant(CREATE_READ_UPDATE,
-                CASEWORKER_SUPERUSER,
-                CASEWORKER_COURTADMIN_CTSC))
+                SUPER_USER,
+                CASE_WORKER))
             .page("scheduleCreate")
             .pageLabel("Schedule bulk list")
             .optional(BulkActionCaseData::getCaseTitle);// Temporarily setting field needs to be changed later

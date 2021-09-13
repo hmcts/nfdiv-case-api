@@ -10,7 +10,7 @@
     "applicant1ContactDetailsConfidential": "share",
     "applicant1Gender": "female",
     "applicant1FinancialOrder": "No",
-    "issueDate": "2021-09-02",
+    "issueDate": "${json-unit.any-string}",
     "confirmReadPetition": "Yes",
     "jurisdictionAgree": "Yes",
     "legalProceedingsExist": "Yes",
