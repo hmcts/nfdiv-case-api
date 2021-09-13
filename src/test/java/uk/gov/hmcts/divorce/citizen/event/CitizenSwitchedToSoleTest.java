@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.citizen.event;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -11,6 +12,9 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSwitchedToSole.CITIZEN_SWITCH_TO_SOLE;
@@ -22,6 +26,12 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1C
 
 @ExtendWith(MockitoExtension.class)
 class CitizenSwitchedToSoleTest {
+
+    @Mock
+    private CcdAccessService ccdAccessService;
+
+    @Mock
+    private HttpServletRequest httpServletRequest;
 
     @InjectMocks
     private CitizenSwitchedToSole citizenSwitchedToSole;
