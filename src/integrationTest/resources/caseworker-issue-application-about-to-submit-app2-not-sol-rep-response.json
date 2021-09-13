@@ -28,8 +28,8 @@
     "applicant2NameChangedHow": null,
     "applicant2NameChangedHowOtherDetails": null,
     "applicant2PhoneNumber": null,
-    "applicant2ContactDetailsConfidential": "share",
-    "applicant2Gender": "female",
+    "applicant2ContactDetailsConfidential": null,
+    "applicant2Gender": "male",
     "applicant2CorrespondenceAddress": {
       "AddressLine1": "223b",
       "AddressLine2": "Baker Street",

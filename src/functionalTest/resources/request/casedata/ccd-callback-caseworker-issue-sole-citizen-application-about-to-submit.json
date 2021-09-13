@@ -5,6 +5,20 @@
   "applicant1MiddleName": "test_middle_name",
   "applicant1LastName": "test_last_name",
   "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+  "applicant1HomeAddress": {
+    "addressLine1": "221a Baker Street",
+    "postTown": "London",
+    "county": "Greater London",
+    "postCode": "NW1 6XE",
+    "country": "United Kingdom"
+  },
+  "applicant2HomeAddress": {
+    "addressLine1": "221a Baker Street",
+    "postTown": "London",
+    "county": "Greater London",
+    "postCode": "NW1 6XE",
+    "country": "United Kingdom"
+  },
   "applicant1LanguagePreferenceWelsh": "No",
   "applicant1ContactDetailsConfidential": "share",
   "applicant1Gender": "female",
