@@ -21,7 +21,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
         addMarriageAndCertificate(tabBuilder);
         addLegalConnections(tabBuilder);
         addOtherProceedings(tabBuilder);
-        addSolicitorService(tabBuilder);
+        addService(tabBuilder);
     }
 
     private void addHeaderFields(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
@@ -46,6 +46,8 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1NameChangedHowOtherDetails", "applicant1NameChangedHow=\"other\"")
             .field("applicant1ContactDetailsConfidential", "applicationType=\"NEVER_SHOW\"")
             .field("divorceWho")
+            .field("applicant1ScreenHasMarriageBroken")
+            .field("applicant1PcqId")
             .label("LabelApplicant1DetailsAreConfidential-Heading",
                 "applicant1ContactDetailsConfidential=\"keep\"",
                 "#### The applicant's contact details are confidential")
@@ -56,7 +58,6 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1Email", "applicant1ContactDetailsConfidential=\"share\"")
             .field("applicant1HomeAddress", "applicant1ContactDetailsConfidential=\"share\"")
             .field("applicant1CorrespondenceAddress", "applicant1ContactDetailsConfidential=\"share\"")
-            .field("applicant1ScreenHasMarriageBroken")
 
             //Applicant 1 Solicitor
             .field("applicant1SolicitorRepresented", "applicationType=\"NEVER_SHOW\"")
@@ -80,6 +81,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2LastName")
             .field("applicant2Gender")
             .field("applicant2NameDifferentToMarriageCertificate")
+            .field("applicant2ScreenHasMarriageBroken")
             .field("applicant2NameChangedHow", "applicant2NameDifferentToMarriageCertificate=\"Yes\"")
             .field("applicant2NameChangedHowOtherDetails", "applicant2NameChangedHow=\"other\"")
             .field("applicant2ContactDetailsConfidential", "applicationType=\"NEVER_SHOW\"")
@@ -94,7 +96,6 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2HomeAddress", "applicant2ContactDetailsConfidential=\"share\"")
             .field("applicant2CorrespondenceAddress", "applicant2ContactDetailsConfidential=\"share\"")
             .field("applicant2AgreedToReceiveEmails")
-            .field("applicant2ScreenHasMarriageBroken")
 
             //Applicant 2 Solicitor
             .field("applicant2SolicitorRepresented", "applicationType=\"NEVER_SHOW\"")
@@ -140,18 +141,19 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1LegalProceedingsDetails", "applicant1LegalProceedings=\"Yes\"")
             .field("applicant1FinancialOrder")
             .field("applicant1FinancialOrderFor", "applicant1FinancialOrder=\"Yes\"")
-            .field("applicant1StatementOfTruth")
-            .field("solSignStatementOfTruth")
-            .field("solStatementOfReconciliationCertify")
-            .field("solStatementOfReconciliationDiscussed")
-            .field("statementOfReconciliationComments")
             .field("solUrgentCase")
             .field("solUrgentCaseSupportingInformation", "solUrgentCase=\"Yes\"")
+            .field("solStatementOfReconciliationCertify")
+            .field("solStatementOfReconciliationDiscussed")
+            .field("applicant1PrayerHasBeenGiven")
+            .field("applicant1StatementOfTruth")
+            .field("solSignStatementOfTruth")
             .field("solStatementOfReconciliationName")
-            .field("solStatementOfReconciliationFirm");
+            .field("solStatementOfReconciliationFirm")
+            .field("statementOfReconciliationComments");
     }
 
-    private void addSolicitorService(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
+    private void addService(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
         tabBuilder
             .label("Label-SolicitorService", "solServiceMethod=\"solicitorService\"", "### Solicitor Service")
             .field("solServiceMethod", "solServiceMethod=\"*\"");
