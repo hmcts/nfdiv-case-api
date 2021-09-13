@@ -23,6 +23,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Res
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Slf4j
@@ -51,6 +52,7 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
             .name("Application switched to sole")
             .description("Application type switched to sole")
             .grant(CREATE_READ_UPDATE, CITIZEN)
+            .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
