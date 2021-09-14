@@ -111,7 +111,7 @@ class Applicant1ResubmitNotificationTest {
 
         final HashMap<String, String> templateVars = new HashMap<>();
 
-        when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
         notification.sendToApplicant2(data, 1234567890123456L);
@@ -127,7 +127,7 @@ class Applicant1ResubmitNotificationTest {
             eq(ENGLISH)
         );
 
-        verify(commonContent).templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -138,7 +138,7 @@ class Applicant1ResubmitNotificationTest {
 
         final HashMap<String, String> templateVars = new HashMap<>();
 
-        when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
         notification.sendToApplicant2(data, 1234567890123456L);
@@ -153,6 +153,6 @@ class Applicant1ResubmitNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1());
     }
 }
