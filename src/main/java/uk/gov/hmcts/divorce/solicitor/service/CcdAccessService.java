@@ -68,11 +68,11 @@ public class CcdAccessService {
         log.info("Successfully linked applicant 2 to case Id {} ", caseId);
     }
 
-    public void unlinkUserFromApplication(String userToken, Long caseId, String userToRemoveId) {
-        User user = idamService.retrieveUser(userToken);
+    public void unlinkUserFromApplication(String caseworkerUserToken, Long caseId, String userToRemoveId) {
+        User caseworkerUser = idamService.retrieveUser(caseworkerUserToken);
 
         caseUserApi.updateCaseRolesForUser(
-            user.getAuthToken(),
+            caseworkerUser.getAuthToken(),
             authTokenGenerator.generate(),
             String.valueOf(caseId),
             userToRemoveId,
