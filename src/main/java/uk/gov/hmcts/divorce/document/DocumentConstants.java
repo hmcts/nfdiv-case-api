@@ -4,6 +4,8 @@ public final class DocumentConstants {
 
     public static final String DIVORCE_MINI_APPLICATION = "DIVORCE_MINI_APPLICATION";
     public static final String DIVORCE_MINI_APPLICATION_DOCUMENT_NAME = "mini-application-";
+    public static final String RESPONDENT_ANSWERS_DOCUMENT_NAME = "respondentAnswers";
+    public static final String RESPONDENT_ANSWERS_TEMPLATE_ID = "RESPONDENT_ANSWERS";
 
     public static final String DIVORCE_MINI_DRAFT_APPLICATION = "DIVORCE_MINI_DRAFT_APPLICATION";
     public static final String DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME = "draft-mini-application-";

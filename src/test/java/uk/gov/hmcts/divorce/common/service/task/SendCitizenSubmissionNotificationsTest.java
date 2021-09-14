@@ -11,7 +11,6 @@ import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotificatio
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.solicitor.service.notification.SolicitorSubmittedNotification;
 
 import java.util.Set;
 
@@ -28,10 +27,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-class SendSubmissionNotificationsTest {
-
-    @Mock
-    private SolicitorSubmittedNotification solicitorSubmittedNotification;
+class SendCitizenSubmissionNotificationsTest {
 
     @Mock
     private ApplicationOutstandingActionNotification applicationOutstandingActionNotification;
@@ -40,26 +36,7 @@ class SendSubmissionNotificationsTest {
     private ApplicationSubmittedNotification applicationSubmittedNotification;
 
     @InjectMocks
-    private SendSubmissionNotifications sendSubmissionNotifications;
-
-    @Test
-    void shouldSendSolicitorNotificationsIfSolicitorApplication() {
-
-        final CaseData caseData = caseData();
-        caseData.setApplication(Application.builder()
-            .solSignStatementOfTruth(YES)
-            .build());
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setId(TEST_CASE_ID);
-        caseDetails.setData(caseData);
-        caseDetails.setState(Submitted);
-
-        sendSubmissionNotifications.apply(caseDetails);
-
-        verify(solicitorSubmittedNotification).send(caseData, TEST_CASE_ID);
-        verifyNoInteractions(applicationSubmittedNotification, applicationOutstandingActionNotification);
-    }
+    private SendCitizenSubmissionNotifications sendCitizenSubmissionNotifications;
 
     @Test
     void shouldSendCitizenNotificationsIfCitizenApplicationAndSubmittedState() {
@@ -73,11 +50,10 @@ class SendSubmissionNotificationsTest {
         caseDetails.setData(caseData);
         caseDetails.setState(Submitted);
 
-        sendSubmissionNotifications.apply(caseDetails);
+        sendCitizenSubmissionNotifications.apply(caseDetails);
 
         verify(applicationSubmittedNotification).sendToApplicant1(caseData, TEST_CASE_ID);
         verify(applicationSubmittedNotification).sendToApplicant2(caseData, TEST_CASE_ID);
-        verifyNoInteractions(solicitorSubmittedNotification, applicationOutstandingActionNotification);
     }
 
     @Test
@@ -92,10 +68,9 @@ class SendSubmissionNotificationsTest {
         caseDetails.setData(caseData);
         caseDetails.setState(AwaitingHWFDecision);
 
-        sendSubmissionNotifications.apply(caseDetails);
+        sendCitizenSubmissionNotifications.apply(caseDetails);
 
         verify(applicationSubmittedNotification).sendToApplicant1(caseData, TEST_CASE_ID);
-        verifyNoInteractions(solicitorSubmittedNotification, applicationOutstandingActionNotification);
     }
 
     @Test
@@ -111,11 +86,10 @@ class SendSubmissionNotificationsTest {
         caseDetails.setData(caseData);
         caseDetails.setState(AwaitingDocuments);
 
-        sendSubmissionNotifications.apply(caseDetails);
+        sendCitizenSubmissionNotifications.apply(caseDetails);
 
         verify(applicationSubmittedNotification).sendToApplicant1(caseData, TEST_CASE_ID);
         verify(applicationOutstandingActionNotification).sendToApplicant1(caseData, TEST_CASE_ID);
-        verifyNoInteractions(solicitorSubmittedNotification);
     }
 
     @Test
@@ -131,12 +105,11 @@ class SendSubmissionNotificationsTest {
         caseDetails.setData(caseData);
         caseDetails.setState(AwaitingDocuments);
 
-        sendSubmissionNotifications.apply(caseDetails);
+        sendCitizenSubmissionNotifications.apply(caseDetails);
 
         verify(applicationSubmittedNotification).sendToApplicant1(caseData, TEST_CASE_ID);
         verify(applicationSubmittedNotification).sendToApplicant2(caseData, TEST_CASE_ID);
         verify(applicationOutstandingActionNotification).sendToApplicant2(caseData, TEST_CASE_ID);
-        verifyNoInteractions(solicitorSubmittedNotification);
     }
 
     @Test
@@ -151,10 +124,9 @@ class SendSubmissionNotificationsTest {
         caseDetails.setData(caseData);
         caseDetails.setState(AwaitingPayment);
 
-        sendSubmissionNotifications.apply(caseDetails);
+        sendCitizenSubmissionNotifications.apply(caseDetails);
 
         verifyNoInteractions(
-            solicitorSubmittedNotification,
             applicationSubmittedNotification,
             applicationOutstandingActionNotification);
     }

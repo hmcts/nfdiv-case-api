@@ -13,7 +13,7 @@ import java.util.Map;
 
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_APPLICATION_ACCEPTED;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.dateTimeFormatter;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.ACCOUNT;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION;
@@ -66,7 +66,7 @@ public class ApplicationIssuedNotification {
             templateVars.put(CITIZENS_ADVICE_LINK, CIVIL_PARTNERSHIP_CITIZENS_ADVICE_LINK);
         }
 
-        templateVars.put(REVIEW_DEADLINE_DATE, caseData.getApplication().getIssueDate().plusDays(14).format(dateTimeFormatter));
+        templateVars.put(REVIEW_DEADLINE_DATE, caseData.getApplication().getIssueDate().plusDays(14).format(DATE_TIME_FORMATTER));
 
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
@@ -107,7 +107,7 @@ public class ApplicationIssuedNotification {
             caseData, applicant, respondent);
 
         templateVars.put(APPLICATION_REFERENCE, formatId(id));
-        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(dateTimeFormatter));
+        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), DIVORCE_APPLICATION);

@@ -22,7 +22,7 @@
     },
     "applicant1PhoneNumber": null,
     "applicant1ContactDetailsConfidential": null,
-    "applicant1Gender": null,
+    "applicant1Gender": "male",
     "applicant1CorrespondenceAddress": null,
     "applicant1SolicitorRepresented": "Yes",
     "applicant1SolicitorOrganisationPolicy": {

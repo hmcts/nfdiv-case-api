@@ -13,7 +13,7 @@ import java.util.Map;
 
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT1_CHANGES_MADE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.dateTimeFormatter;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TO_END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_APPLICATION;
@@ -37,8 +37,12 @@ public class Applicant1ResubmitNotification {
     private EmailTemplatesConfig emailTemplatesConfig;
 
     public void sendToApplicant1(CaseData caseData, Long id) {
-        Map<String, String> templateVars = setTemplateVariables(caseData);
+        Map<String, String> templateVars = commonContent.templateVarsForApplicant(
+            caseData, caseData.getApplicant1(), caseData.getApplicant2());
 
+        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
+        templateVars.put(APPLICATION.toLowerCase(Locale.ROOT),
+            caseData.getDivorceOrDissolution().isDivorce() ? DIVORCE_APPLICATION : APPLICATION_TO_END_CIVIL_PARTNERSHIP);
         templateVars.put(THEIR_EMAIL_ADDRESS, caseData.getCaseInvite().getApplicant2InviteEmailAddress());
 
         log.info("Sending applicant 1 made changes notification to applicant 1 for case : {}", id);
@@ -52,7 +56,12 @@ public class Applicant1ResubmitNotification {
     }
 
     public void sendToApplicant2(CaseData caseData, Long id) {
-        Map<String, String> templateVars = setTemplateVariables(caseData);
+        Map<String, String> templateVars = commonContent.templateVarsForApplicant(
+            caseData, caseData.getApplicant2(), caseData.getApplicant1());
+
+        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
+        templateVars.put(APPLICATION.toLowerCase(Locale.ROOT),
+            caseData.getDivorceOrDissolution().isDivorce() ? DIVORCE_APPLICATION : APPLICATION_TO_END_CIVIL_PARTNERSHIP);
 
         Map<String, String> configTemplateVars = emailTemplatesConfig.getTemplateVars();
         String signInLink = caseData.getDivorceOrDissolution().isDivorce() ? SIGN_IN_DIVORCE_URL : SIGN_IN_DISSOLUTION_URL;
@@ -64,18 +73,7 @@ public class Applicant1ResubmitNotification {
             caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
             JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE,
             templateVars,
-            caseData.getApplicant1().getLanguagePreference()
+            caseData.getApplicant2().getLanguagePreference()
         );
-    }
-
-    private Map<String, String> setTemplateVariables(CaseData caseData) {
-        Map<String, String> templateVars = commonContent.templateVarsForApplicant(
-            caseData, caseData.getApplicant1(), caseData.getApplicant2());
-
-        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(dateTimeFormatter));
-        templateVars.put(APPLICATION.toLowerCase(Locale.ROOT),
-            caseData.getDivorceOrDissolution().isDivorce() ? DIVORCE_APPLICATION : APPLICATION_TO_END_CIVIL_PARTNERSHIP);
-
-        return templateVars;
     }
 }

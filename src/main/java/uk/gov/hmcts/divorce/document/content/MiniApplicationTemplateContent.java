@@ -131,7 +131,8 @@ public class MiniApplicationTemplateContent {
             templateData.put(FINANCIAL_ORDER_CHILD_JOINT, CHILDREN_OF_THE_APPLICANT_1_AND_APPLICANT_2);
 
             String applicant1PostalAddress = deriveApplicant1PostalAddress(caseData.getApplicant1());
-            String applicant2PostalAddress = deriveApplicant2PostalAddress(caseData.getApplicant2());
+            String applicant2PostalAddress = deriveApplicant2PostalAddress(
+                caseData.getApplicant2(), caseData.getApplication().isSolicitorApplication());
 
             templateData.put(APPLICANT_1_POSTAL_ADDRESS, applicant1PostalAddress);
             templateData.put(APPLICANT_2_POSTAL_ADDRESS, applicant2PostalAddress);
@@ -163,13 +164,14 @@ public class MiniApplicationTemplateContent {
         return applicantPostalAddress;
     }
 
-    private String deriveApplicant2PostalAddress(Applicant applicant) {
+    private String deriveApplicant2PostalAddress(Applicant applicant, Boolean isSolicitorApplication) {
         String applicantPostalAddress;
 
         if (applicant.isRepresented()) {
             applicantPostalAddress = applicant.getSolicitor().getAddress();
         } else {
-            AddressGlobalUK applicantHomeAddress = applicant.getCorrespondenceAddress();
+            AddressGlobalUK applicantHomeAddress =
+                isSolicitorApplication ? applicant.getCorrespondenceAddress() : applicant.getHomeAddress();
 
             applicantPostalAddress =
                 Stream.of(

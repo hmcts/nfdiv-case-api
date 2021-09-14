@@ -8,10 +8,9 @@
   "divorceUnit": "serviceCentre",
   "selectedDivorceCentreSiteId": "AA07",
   "issueDate": "2021-06-17",
-  "acknowledgementOfService": {
-    "statementOfTruth": "YES",
-    "prayerHasBeenGiven": "YES",
-    "confirmReadPetition": "YES",
-    "jurisdictionAgree": "YES"
-  }
+  "jurisdictionAgree": "Yes",
+  "legalProceedingsExist": "Yes",
+  "legalProceedingsDescription": "some description",
+  "statementOfTruth": "Yes",
+  "prayerHasBeenGiven": "Yes"
 }

@@ -11,7 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SYSTEMUPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
@@ -27,7 +27,7 @@ public class SystemRemindApplicant1ApplicationReviewed implements CCDConfig<Case
             .forState(AwaitingApplicant1Response)
             .name("Remind Applicant 1")
             .description("Remind Applicant 1 that Application has been reviewed by Applicant 2")
-            .grant(CREATE_READ_UPDATE, CASEWORKER_SYSTEMUPDATE)
+            .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
