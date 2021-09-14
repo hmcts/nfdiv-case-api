@@ -9,6 +9,7 @@ import uk.gov.hmcts.reform.ccd.client.CaseUserApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseUser;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
+import java.util.Collections;
 import java.util.Set;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
@@ -65,5 +66,19 @@ public class CcdAccessService {
         );
 
         log.info("Successfully linked applicant 2 to case Id {} ", caseId);
+    }
+
+    public void unlinkUserFromApplication(String caseworkerUserToken, Long caseId, String userToRemoveId) {
+        User caseworkerUser = idamService.retrieveUser(caseworkerUserToken);
+
+        caseUserApi.updateCaseRolesForUser(
+            caseworkerUser.getAuthToken(),
+            authTokenGenerator.generate(),
+            String.valueOf(caseId),
+            userToRemoveId,
+            new CaseUser(userToRemoveId, Collections.emptySet())
+        );
+
+        log.info("Successfully unlinked applicant from case Id {} ", caseId);
     }
 }
