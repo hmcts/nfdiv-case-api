@@ -7,7 +7,6 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -58,10 +57,6 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
         log.info("Applicant 1 switched to sole about to submit callback invoked");
-
-        // how to know who triggered the switch to sole (app1 vs app2)?
-        // do we need 2 events or just use case role?
-
         CaseData data = details.getData();
 
         log.info("Unlinking Applicant 2 from Case");
@@ -72,36 +67,11 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
         );
 
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
-        removeApplicant2AnswersFromCase(data);
+        data.setCaseInvite(null);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
             .state(Draft)
             .build();
-    }
-
-    private CaseData removeApplicant2AnswersFromCase(CaseData caseData) {
-        Applicant applicant2Existing = caseData.getApplicant2();
-        Applicant applicant2 = Applicant.builder()
-            .firstName(applicant2Existing.getFirstName())
-            .middleName(applicant2Existing.getMiddleName())
-            .lastName(applicant2Existing.getLastName())
-            .email(applicant2Existing.getEmail())
-            .build();
-
-        caseData.setApplicant2(applicant2);
-
-        caseData.setApplicant2DocumentsUploaded(null);
-        caseData.getApplication().setApplicant2ScreenHasMarriageBroken(null);
-        caseData.getApplication().setApplicant2HelpWithFees(null);
-        caseData.getApplication().setApplicant2StatementOfTruth(null);
-        caseData.getApplication().setApplicant2AgreeToReceiveEmails(null);
-        caseData.getApplication().setApplicant2CannotUploadSupportingDocument(null);
-        caseData.getApplication().setApplicant2ConfirmApplicant1Information(null);
-        caseData.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation(null);
-        caseData.getApplication().setApplicant2ReminderSent(null);
-
-        caseData.setCaseInvite(null);
-        return caseData;
     }
 }
