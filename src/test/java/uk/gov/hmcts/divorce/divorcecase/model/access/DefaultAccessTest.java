@@ -10,14 +10,13 @@ import static org.assertj.guava.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.C;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.R;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.U;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SYSTEMUPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 
 class DefaultAccessTest {
 
@@ -27,20 +26,19 @@ class DefaultAccessTest {
         final SetMultimap<HasRole, Permission> grants = new DefaultAccess().getGrants();
 
         assertThat(grants)
-            .hasSize(12)
+            .hasSize(11)
             .contains(
                 entry(CREATOR, C),
                 entry(CREATOR, R),
                 entry(CREATOR, U),
-                entry(CASEWORKER_SYSTEMUPDATE, C),
-                entry(CASEWORKER_SYSTEMUPDATE, R),
-                entry(CASEWORKER_SYSTEMUPDATE, U),
-                entry(CASEWORKER_COURTADMIN_CTSC, R),
-                entry(CASEWORKER_COURTADMIN_RDU, R),
+                entry(SYSTEMUPDATE, C),
+                entry(SYSTEMUPDATE, R),
+                entry(SYSTEMUPDATE, U),
+                entry(CASE_WORKER, R),
                 entry(SOLICITOR, R),
                 entry(CITIZEN, R),
-                entry(CASEWORKER_SUPERUSER, R),
-                entry(CASEWORKER_LEGAL_ADVISOR, R)
+                entry(SUPER_USER, R),
+                entry(LEGAL_ADVISOR, R)
             );
     }
 }

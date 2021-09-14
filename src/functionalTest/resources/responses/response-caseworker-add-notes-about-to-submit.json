@@ -36,9 +36,6 @@
     "jurisdictionDisagreeReason": null,
     "legalProceedingsExist": null,
     "legalProceedingsDescription": null,
-    "agreeToCosts": null,
-    "costsAmount": null,
-    "costsReason": null,
     "dateAosSubmitted": null,
     "marriageApplicant1Name": null,
     "marriageApplicant2Name": null,
@@ -64,7 +61,6 @@
     "jurisdictionResidualEligible": null,
     "jurisdictionBothLastHabituallyResident": null,
     "jurisdictionConnections": null,
-    "jurisdictionLegalConnections": null,
     "notes": [
       {
         "id": "1",

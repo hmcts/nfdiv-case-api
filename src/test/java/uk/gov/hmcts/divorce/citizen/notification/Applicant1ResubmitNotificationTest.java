@@ -23,7 +23,7 @@ import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT1_CHANGES_MADE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.dateTimeFormatter;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_URL_NOTIFY_KEY;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
@@ -69,7 +69,7 @@ class Applicant1ResubmitNotificationTest {
             eq(JOINT_APPLICANT1_APPLICANT1_CHANGES_MADE),
             argThat(allOf(
                 hasEntry(APPLICATION.toLowerCase(Locale.ROOT), "divorce application"),
-                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(dateTimeFormatter)),
+                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER)),
                 hasEntry(THEIR_EMAIL_ADDRESS, TEST_APPLICANT_2_USER_EMAIL)
             )),
             eq(ENGLISH)
@@ -95,7 +95,7 @@ class Applicant1ResubmitNotificationTest {
             eq(JOINT_APPLICANT1_APPLICANT1_CHANGES_MADE),
             argThat(allOf(
                 hasEntry(APPLICATION.toLowerCase(Locale.ROOT), "application to end your civil partnership"),
-                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(dateTimeFormatter)),
+                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER)),
                 hasEntry(THEIR_EMAIL_ADDRESS, TEST_APPLICANT_2_USER_EMAIL)
             )),
             eq(ENGLISH)
@@ -121,7 +121,7 @@ class Applicant1ResubmitNotificationTest {
             eq(JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE),
             argThat(allOf(
                 hasEntry(APPLICATION.toLowerCase(Locale.ROOT), "divorce application"),
-                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(dateTimeFormatter)),
+                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER)),
                 hasEntry(SIGN_IN_URL_NOTIFY_KEY, SIGN_IN_DIVORCE_TEST_URL + app2CheckJointAnswers)
             )),
             eq(ENGLISH)
@@ -148,7 +148,7 @@ class Applicant1ResubmitNotificationTest {
             eq(JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE),
             argThat(allOf(
                 hasEntry(APPLICATION.toLowerCase(Locale.ROOT), "application to end your civil partnership"),
-                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(dateTimeFormatter)),
+                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER)),
                 hasEntry(SIGN_IN_URL_NOTIFY_KEY, SIGN_IN_DISSOLUTION_TEST_URL + app2CheckJointAnswers)
             )),
             eq(ENGLISH)

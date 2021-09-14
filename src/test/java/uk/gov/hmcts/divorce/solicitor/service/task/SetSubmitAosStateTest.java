@@ -13,8 +13,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Disputed;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingDispute;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,7 +39,7 @@ class SetSubmitAosStateTest {
 
         final CaseDetails<CaseData, State> result = setSubmitAosState.apply(caseDetails);
 
-        assertThat(result.getState()).isEqualTo(Disputed);
+        assertThat(result.getState()).isEqualTo(PendingDispute);
     }
 
     @Test

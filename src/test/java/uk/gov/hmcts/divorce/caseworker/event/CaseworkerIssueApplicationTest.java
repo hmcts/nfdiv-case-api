@@ -14,19 +14,25 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
-import uk.gov.hmcts.divorce.divorcecase.model.LegalConnections;
+import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 
 import java.time.LocalDate;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.CASEWORKER_ISSUE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorServicePack.SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
@@ -38,6 +44,9 @@ class CaseworkerIssueApplicationTest {
 
     @Mock
     private IssueApplicationService issueApplicationService;
+
+    @Mock
+    private CcdUpdateService ccdUpdateService;
 
     @InjectMocks
     private CaseworkerIssueApplication caseworkerIssueApplication;
@@ -69,12 +78,14 @@ class CaseworkerIssueApplicationTest {
         expectedDetails.setData(expectedCaseData);
         expectedDetails.setId(1L);
         expectedDetails.setCreatedDate(LOCAL_DATE_TIME);
+        expectedDetails.setState(AwaitingService);
 
         when(issueApplicationService.issueApplication(details)).thenReturn(expectedDetails);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(details, null);
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
+        assertThat(response.getState()).isEqualTo(AwaitingService);
         verify(issueApplicationService).issueApplication(details);
     }
 
@@ -107,6 +118,49 @@ class CaseworkerIssueApplicationTest {
             );
     }
 
+    @Test
+    void shouldSubmitCcdSystemIssueSolicitorServicePackEventOnSubmittedCallbackIfSolicitorService() {
+
+        final var caseData = caseData();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
+        caseData.getApplication().setSolServiceMethod(SOLICITOR_SERVICE);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        caseworkerIssueApplication.submitted(caseDetails, null);
+
+        verify(ccdUpdateService).submitEvent(caseDetails, SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK);
+    }
+
+    @Test
+    void shouldNotSubmitCcdSystemIssueSolicitorServicePackEventOnSubmittedCallbackIfCourtService() {
+
+        final var caseData = caseData();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
+        caseData.getApplication().setSolServiceMethod(COURT_SERVICE);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        caseworkerIssueApplication.submitted(caseDetails, null);
+
+        verifyNoInteractions(ccdUpdateService);
+    }
+
+    @Test
+    void shouldNotSubmitCcdSystemIssueSolicitorServicePackEventOnSubmittedCallbackIfNotSolicitorApplication() {
+
+        final var caseData = caseData();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        caseworkerIssueApplication.submitted(caseDetails, null);
+
+        verifyNoInteractions(ccdUpdateService);
+    }
+
     private CaseData caseDataWithAllMandatoryFields() {
         var caseData = caseData();
         caseData.setApplicant2(Applicant
@@ -129,7 +183,9 @@ class CaseworkerIssueApplicationTest {
         caseData.getApplicant1().setFinancialOrder(NO);
         caseData.getApplication().setApplicant1PrayerHasBeenGiven(YES);
         caseData.getApplication().setApplicant1StatementOfTruth(YES);
-        caseData.getApplication().getJurisdiction().setLegalConnections(Set.of(LegalConnections.APPLICANT_RESPONDENT_RESIDENT));
+        caseData.getApplication().getJurisdiction().setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
+        caseData.getApplication().getJurisdiction().setApplicant1Residence(YES);
+        caseData.getApplication().getJurisdiction().setApplicant2Residence(YES);
         caseData.getApplication().getMarriageDetails().setApplicant1Name("app1Name");
         caseData.getApplication().getMarriageDetails().setDate(LocalDate.of(2009, 1, 1));
         caseData.getApplication().getMarriageDetails().setApplicant2Name("app2Name");

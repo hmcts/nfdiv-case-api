@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.dateTimeFormatter;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.CREATE_ACCOUNT_LINK;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.REMINDER_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.REMINDER_APPLICATION_VALUE;
@@ -63,7 +63,7 @@ class ApplicationSentForReviewApplicant2NotificationTest {
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW),
             argThat(allOf(
-                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(dateTimeFormatter)),
+                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER)),
                 hasEntry(CREATE_ACCOUNT_LINK, APPLICANT_2_SIGN_IN_DIVORCE_TEST_URL)
             )),
             eq(ENGLISH)
@@ -87,7 +87,7 @@ class ApplicationSentForReviewApplicant2NotificationTest {
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW),
             argThat(allOf(
-                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(dateTimeFormatter)),
+                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER)),
                 hasEntry(CREATE_ACCOUNT_LINK, APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL)
             )),
             eq(ENGLISH)
@@ -110,7 +110,7 @@ class ApplicationSentForReviewApplicant2NotificationTest {
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW),
             argThat(allOf(
-                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(dateTimeFormatter)),
+                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER)),
                 hasEntry(CREATE_ACCOUNT_LINK, APPLICANT_2_SIGN_IN_DIVORCE_TEST_URL),
                 hasEntry(REMINDER_APPLICATION, REMINDER_APPLICATION_VALUE)
             )),
@@ -135,7 +135,7 @@ class ApplicationSentForReviewApplicant2NotificationTest {
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW),
             argThat(allOf(
-                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(dateTimeFormatter)),
+                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER)),
                 hasEntry(CREATE_ACCOUNT_LINK, APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL),
                 hasEntry(REMINDER_APPLICATION, REMINDER_APPLICATION_VALUE)
             )),

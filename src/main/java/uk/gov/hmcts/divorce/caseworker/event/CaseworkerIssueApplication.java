@@ -14,22 +14,23 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.List;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_CTSC;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_COURTADMIN_RDU;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASEWORKER_SUPERUSER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateIssue;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorServicePack.SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK;
 
 @Component
 @Slf4j
@@ -39,6 +40,9 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
 
     @Autowired
     private IssueApplicationService issueApplicationService;
+
+    @Autowired
+    private CcdUpdateService ccdUpdateService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -50,13 +54,13 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
             .showSummary()
             .explicitGrants()
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE,
-                CASEWORKER_COURTADMIN_CTSC,
-                CASEWORKER_COURTADMIN_RDU)
+                CASE_WORKER)
             .grant(READ,
                 SOLICITOR,
-                CASEWORKER_SUPERUSER,
-                CASEWORKER_LEGAL_ADVISOR))
+                SUPER_USER,
+                LEGAL_ADVISOR))
             .page("issueApplication")
             .pageLabel("Issue Divorce Application")
             .complex(CaseData::getApplication)
@@ -74,7 +78,7 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
 
         CaseData caseData = details.getData();
 
-        log.info("Caseworker issue application about to submit callback invoked");
+        log.info("Caseworker issue application about to submit callback invoked for case id: {}", details.getId());
 
         final List<String> caseValidationErrors = validateIssue(details.getData());
 
@@ -89,7 +93,22 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(result.getData())
-            .state(caseData.getApplication().isSolicitorApplication() ? AwaitingAos : Holding)
+            .state(result.getState())
             .build();
+    }
+
+    public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,
+                                               final CaseDetails<CaseData, State> beforeDetails) {
+
+        log.info("Caseworker issue application submitted callback invoked for case id: {}", details.getId());
+
+        final Application application = details.getData().getApplication();
+
+        if (application.isSolicitorApplication() && application.isSolicitorServiceMethod()) {
+            log.info("Submitting system-issue-solicitor-service-pack event for case id: {}", details.getId());
+            ccdUpdateService.submitEvent(details, SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK);
+        }
+
+        return SubmittedCallbackResponse.builder().build();
     }
 }

@@ -5,7 +5,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
@@ -50,6 +53,9 @@ class CcdUpdateServiceTest {
 
     @Mock
     private CcdCaseDataContentProvider ccdCaseDataContentProvider;
+
+    @Mock
+    private CaseDetailsConverter caseDetailsConverter;
 
     @InjectMocks
     private CcdUpdateService ccdUpdateService;
@@ -170,6 +176,54 @@ class CcdUpdateServiceTest {
 
         assertThat(exception.getMessage())
             .contains(format("Submit Event Failed for Case ID: %s, Event ID: %s", TEST_CASE_ID, SYSTEM_PROGRESS_HELD_CASE));
+    }
+
+    @Test
+    void shouldSubmitEventForCaseAsTheCaseworkerForCaseDetailsModel() {
+
+        final uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails = new uk.gov.hmcts.ccd.sdk.api.CaseDetails<>();
+        caseDetails.setData(CaseData.builder().build());
+
+        final User caseworkerDetails = getCaseworkerDetails();
+        final Map<String, Object> caseData = new HashMap<>();
+        final CaseDetails reformCaseDetails = getCaseDetails(caseData);
+        final StartEventResponse startEventResponse = getStartEventResponse();
+        final CaseDataContent caseDataContent = mock(CaseDataContent.class);
+
+        when(caseDetailsConverter.convertToReformModel(caseDetails)).thenReturn(reformCaseDetails);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(caseworkerDetails);
+        when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
+
+        when(coreCaseDataApi
+            .startEventForCaseWorker(
+                CASEWORKER_AUTH_TOKEN,
+                SERVICE_AUTHORIZATION,
+                CASEWORKER_USER_ID,
+                JURISDICTION,
+                CASE_TYPE,
+                TEST_CASE_ID.toString(),
+                SYSTEM_PROGRESS_HELD_CASE))
+            .thenReturn(startEventResponse);
+
+        when(ccdCaseDataContentProvider
+            .createCaseDataContent(
+                startEventResponse,
+                DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY,
+                DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION,
+                caseData))
+            .thenReturn(caseDataContent);
+
+        ccdUpdateService.submitEvent(caseDetails, SYSTEM_PROGRESS_HELD_CASE);
+
+        verify(coreCaseDataApi).submitEventForCaseWorker(
+            CASEWORKER_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            CASEWORKER_USER_ID,
+            JURISDICTION,
+            CASE_TYPE,
+            TEST_CASE_ID.toString(),
+            true,
+            caseDataContent);
     }
 
     private CaseDetails getCaseDetails(final Map<String, Object> caseData) {

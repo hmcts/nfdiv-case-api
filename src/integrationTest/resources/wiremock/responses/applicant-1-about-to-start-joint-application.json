@@ -37,9 +37,6 @@
     "jurisdictionDisagreeReason": null,
     "legalProceedingsExist": null,
     "legalProceedingsDescription": null,
-    "agreeToCosts": null,
-    "costsAmount": null,
-    "costsReason": null,
     "dateAosSubmitted": null,
     "applicant1HWFAppliedForFees": null,
     "applicant1HWFReferenceNumber": null,
@@ -56,7 +53,6 @@
     "jurisdictionConnections": [
       "A"
     ],
-    "jurisdictionLegalConnections": null,
     "applicant2FirstName": "test_first_name",
     "applicant2MiddleName": "test_middle_name",
     "applicant2LastName": "test_last_name",
@@ -69,7 +65,7 @@
     "applicant2LastNameChangedWhenMarried": null,
     "applicant2NameChangedHowOtherDetails": null,
     "applicant2PhoneNumber": null,
-    "applicant2ContactDetailsConfidential": "share",
+    "applicant2ContactDetailsConfidential": null,
     "marriageApplicant1Name": "test_first_name test_last_name",
     "marriageApplicant2Name": "test_first_name test_last_name",
     "applicant1FinancialOrder": "No",

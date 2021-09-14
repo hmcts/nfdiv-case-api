@@ -19,7 +19,7 @@ public class JurisdictionApplyForDivorce implements CcdPageConfiguration {
                 "The court has legal power to deal with this application because the following applies:\n\n")
             .complex(CaseData::getApplication)
                 .complex(Application::getJurisdiction)
-                    .mandatory(Jurisdiction::getLegalConnections)
+                    .mandatory(Jurisdiction::getConnections)
                     .done()
                 .done();
     }

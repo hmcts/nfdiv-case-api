@@ -15,7 +15,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 
 @Component
 @Slf4j
-public class SetState implements CaseTask {
+public class SetStateAfterSubmission implements CaseTask {
 
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {

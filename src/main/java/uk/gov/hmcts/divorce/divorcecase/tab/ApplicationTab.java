@@ -20,9 +20,8 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
         addApplicant2(tabBuilder);
         addMarriageAndCertificate(tabBuilder);
         addLegalConnections(tabBuilder);
-        addOtherLegalProceedings(tabBuilder);
-        addFinancialOrderAndSot(tabBuilder);
-        addSolicitorService(tabBuilder);
+        addOtherProceedings(tabBuilder);
+        addService(tabBuilder);
     }
 
     private void addHeaderFields(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
@@ -47,6 +46,8 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1NameChangedHowOtherDetails", "applicant1NameChangedHow=\"other\"")
             .field("applicant1ContactDetailsConfidential", "applicationType=\"NEVER_SHOW\"")
             .field("divorceWho")
+            .field("applicant1ScreenHasMarriageBroken")
+            .field("applicant1PcqId")
             .label("LabelApplicant1DetailsAreConfidential-Heading",
                 "applicant1ContactDetailsConfidential=\"keep\"",
                 "#### The applicant's contact details are confidential")
@@ -80,6 +81,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2LastName")
             .field("applicant2Gender")
             .field("applicant2NameDifferentToMarriageCertificate")
+            .field("applicant2ScreenHasMarriageBroken")
             .field("applicant2NameChangedHow", "applicant2NameDifferentToMarriageCertificate=\"Yes\"")
             .field("applicant2NameChangedHowOtherDetails", "applicant2NameChangedHow=\"other\"")
             .field("applicant2ContactDetailsConfidential", "applicationType=\"NEVER_SHOW\"")
@@ -128,34 +130,30 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
     private void addLegalConnections(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
         tabBuilder
             .label("LabelJurisdiction-Heading", null, "### Jurisdiction")
-            .field("jurisdictionLegalConnections");
+            .field("jurisdictionConnections");
     }
 
-    private void addOtherLegalProceedings(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
+    private void addOtherProceedings(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
         tabBuilder
-            .label("LabelOtherLegalProceedings-Heading", null, "### Other legal proceedings")
+            .label("LabelOtherProceedings-Heading", null, "### Applicant's other proceedings:")
             .field("applicant1LegalProceedings")
             .field("applicant1LegalProceedingsRelated", "applicant1LegalProceedings=\"Yes\"")
-            .field("applicant1LegalProceedingsDetails", "applicant1LegalProceedings=\"Yes\"");
-    }
-
-    private void addFinancialOrderAndSot(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
-        tabBuilder
-            .label("LabelFinancialOrder-Heading", null, "### Financial order")
+            .field("applicant1LegalProceedingsDetails", "applicant1LegalProceedings=\"Yes\"")
             .field("applicant1FinancialOrder")
             .field("applicant1FinancialOrderFor", "applicant1FinancialOrder=\"Yes\"")
-            .field("applicant1StatementOfTruth")
-            .field("solSignStatementOfTruth")
-            .field("solStatementOfReconciliationCertify")
-            .field("solStatementOfReconciliationDiscussed")
-            .field("statementOfReconciliationComments")
             .field("solUrgentCase")
             .field("solUrgentCaseSupportingInformation", "solUrgentCase=\"Yes\"")
+            .field("solStatementOfReconciliationCertify")
+            .field("solStatementOfReconciliationDiscussed")
+            .field("applicant1PrayerHasBeenGiven")
+            .field("applicant1StatementOfTruth")
+            .field("solSignStatementOfTruth")
             .field("solStatementOfReconciliationName")
-            .field("solStatementOfReconciliationFirm");
+            .field("solStatementOfReconciliationFirm")
+            .field("statementOfReconciliationComments");
     }
 
-    private void addSolicitorService(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
+    private void addService(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
         tabBuilder
             .label("Label-SolicitorService", "solServiceMethod=\"solicitorService\"", "### Solicitor Service")
             .field("solServiceMethod", "solServiceMethod=\"*\"");

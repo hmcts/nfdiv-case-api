@@ -30,25 +30,30 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 @Builder
 public class Applicant {
 
-    @CCD(label = "Applicant's first name")
+    @CCD(label = "First name")
     private String firstName;
 
-    @CCD(label = "Applicant's middle name(s)")
+    @CCD(label = "Middle name(s)")
     private String middleName;
 
-    @CCD(label = "Applicant's last name")
+    @CCD(label = "Last name")
     private String lastName;
 
     @CCD(
-        label = "Applicant's email address",
+        label = "Email address",
         typeOverride = Email
     )
     private String email;
 
     @CCD(
-        label = "The applicant has agreed to receive notifications and be served (delivered) court documents by email"
+        label = "They have agreed to receive notifications and be served (delivered) court documents by email"
     )
     private YesOrNo agreedToReceiveEmails;
+
+    @CCD(
+        label = "Has the applicant confirmed the receipt"
+    )
+    private YesOrNo confirmReceipt;
 
     @CCD(
         label = "Is the language preference Welsh?",
@@ -62,13 +67,13 @@ public class Applicant {
     private YesOrNo lastNameChangedWhenMarried;
 
     @CCD(
-        label = "Has the applicant changed their name since they got married?",
-        hint = "Is the applicant’s current name different to their married name or the name shown on their "
+        label = "Have they changed their name since they got married?",
+        hint = "Is their current name different to their married name or the name shown on their "
             + "marriage certificate?"
     )
     private YesOrNo nameDifferentToMarriageCertificate;
 
-    @CCD(label = "How did the applicant change their name?")
+    @CCD(label = "How did they change their name?")
     private Set<ChangedNameHow> nameChangedHow;
 
     @CCD(
@@ -77,34 +82,34 @@ public class Applicant {
     )
     private String nameChangedHowOtherDetails;
 
-    @CCD(label = "Applicant's home address")
+    @CCD(label = "Home address")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private AddressGlobalUK homeAddress;
 
     @CCD(
-        label = "Applicant's phone number",
+        label = "Phone number",
         regex = "^[0-9 +().-]{9,}$"
     )
     private String phoneNumber;
 
     @CCD(
-        label = "Keep Applicant's contact details private?",
+        label = "Keep contact details private?",
         typeOverride = FixedList,
         typeParameterOverride = "ConfidentialAddress"
     )
     private ConfidentialAddress contactDetailsConfidential;
 
     @CCD(
-        label = "Applicant's gender",
-        hint = "Applicant’s gender is collected for statistical purposes only.",
+        label = "Gender",
+        hint = "Gender is collected for statistical purposes only.",
         typeOverride = FixedList,
         typeParameterOverride = "Gender"
     )
     private Gender gender;
 
     @CCD(
-        label = "Applicant's service address",
-        hint = "If applicant is to be served at their home address, enter the home address here and as the service "
+        label = "Service address",
+        hint = "If they are to be served at their home address, enter the home address here and as the service "
             + "address below"
     )
     private AddressGlobalUK correspondenceAddress;
@@ -116,7 +121,7 @@ public class Applicant {
     private Solicitor solicitor;
 
     @CCD(
-        label = "Does the applicant wish to apply for a financial order?",
+        label = "Do they wish to apply for a financial order?",
         hint = "The court will not start processing your request for a financial order until you submit the separate "
             + "application and pay the fee."
     )
@@ -128,7 +133,7 @@ public class Applicant {
     private Set<FinancialOrderFor> financialOrderFor;
 
     @CCD(
-        label = "Are there any existing or previous court proceedings relating to the applicant's marriage?"
+        label = "Are there any existing or previous court proceedings relating to the marriage?"
     )
     private YesOrNo legalProceedings;
 
@@ -145,7 +150,7 @@ public class Applicant {
     private String legalProceedingsDetails;
 
     @CCD(
-        label = "Applicant's PCQ ID"
+        label = "PCQ ID"
     )
     private String pcqId;
 

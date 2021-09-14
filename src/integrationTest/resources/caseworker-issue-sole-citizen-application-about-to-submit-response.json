@@ -6,24 +6,22 @@
     "applicant1LastName": "test_last_name",
     "applicant1Email": "test@test.com",
     "applicant1LanguagePreferenceWelsh": "No",
-    "applicant1ContactDetailsConfidential": "keep",
+    "applicant1ContactDetailsConfidential": "share",
     "applicant1Gender": "female",
     "applicant2FirstName": "test_first_name",
     "applicant2MiddleName": "test_middle_name",
     "applicant2LastName": "test_last_name",
     "applicant2Email": "test@test.com",
     "applicant2LanguagePreferenceWelsh": "No",
-    "applicant2ContactDetailsConfidential": "share",
+    "applicant2ContactDetailsConfidential": null,
     "applicant2Gender": "male",
     "marriageApplicant1Name": "test_first_name test_last_name",
     "marriageApplicant2Name": "test_first_name test_last_name",
-    "marriageMarriedInUk": "Yes",
     "marriageDate": "1990-06-10",
-    "applicant1HWFNeedHelp": "No",
     "jurisdictionApplicant1Residence": "Yes",
     "jurisdictionApplicant2Residence": "Yes",
     "jurisdictionConnections": [
-      "A"
+      "J"
     ]
   },
   "errors": null,
