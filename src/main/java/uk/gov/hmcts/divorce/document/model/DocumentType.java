@@ -9,92 +9,119 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 @AllArgsConstructor
 public enum DocumentType implements HasLabel {
 
-    @JsonProperty("divorceApplication")
-    DIVORCE_APPLICATION("Divorce application"),
+    @JsonProperty("aosOverdueCoverLetter")
+    AOS_OVERDUE_COVER_LETTER("AOS overdue cover letter"),
 
-    @JsonProperty("marriageCertificate")
-    MARRIAGE_CERTIFICATE("Marriage Certificate"),
+    @JsonProperty("acknowledgeOfService")
+    ACKNOWLEDGEMENT_OF_SERVICE("Acknowledgement of service"),
 
-    @JsonProperty("marriageCertificateTranslation")
-    MARRIAGE_CERTIFICATE_TRANSLATION("Marriage Certificate translation"),
+    @JsonProperty("annexA")
+    ANNEX_A("Annex A"),
 
-    @JsonProperty("nameChangeEvidence")
-    NAME_CHANGE_EVIDENCE("Name change evidence"),
+    @JsonProperty("application")
+    APPLICATION("Application"),
+
+    @JsonProperty("bailiffCertificateOfService")
+    BAILIFF_CERTIFICATE_OF_SERVICE("Bailiff certificate of service"),
+
+    @JsonProperty("bailiffService")
+    BAILIFF_SERVICE("Bailiff Service"),
+
+    @JsonProperty("certificateOfEntitlement")
+    CERTIFICATE_OF_ENTITLEMENT("Certificate of entitlement"),
+
+    @JsonProperty("certificateOfService")
+    CERTIFICATE_OF_SERVICE("Certificate of service"),
+
+    @JsonProperty("conditionalOrderAnswers")
+    CONDITIONAL_ORDER_ANSWERS("Conditional order answers"),
+
+    @JsonProperty("conditionalOrderApplication")
+    CONDITIONAL_ORDER_APPLICATION("Conditional order application (D84)"),
+
+    @JsonProperty("conditionalOrderGranted")
+    CONDITIONAL_ORDER_GRANTED("Conditional Order Granted"),
+
+    @JsonProperty("conditionalOrderRefusal")
+    CONDITIONAL_ORDER_REFUSAL("Conditional order refusal - clarification response"),
+
+    @JsonProperty("correspondence")
+    CORRESPONDENCE("Correspondence"),
 
     @JsonProperty("costs")
     COSTS("Costs"),
 
     @JsonProperty("costsOrder")
-    COSTS_ORDER("Costs Order"),
+    COSTS_ORDER("Costs order"),
 
-    @JsonProperty("serviceSolicitor")
-    SERVICE_SOLICITOR("Solicitor service"),
+    @JsonProperty("d84")
+    D84("D84"),
 
-    @JsonProperty("serviceDispensedWith")
-    SERVICE_DISPENSED_WITH("Dispense With service "),
+    @JsonProperty("d9D")
+    D9D("D9D"),
 
-    @JsonProperty("serviceDispensedWithGranted")
-    SERVICE_DISPENSED_WITH_GRANTED("Dispense With service granted"),
+    @JsonProperty("d9H")
+    D9H("D9H"),
 
-    @JsonProperty("serviceDeemed")
-    SERVICE_DEEMED("Deemed service"),
+    @JsonProperty("deemedService")
+    DEEMED_SERVICE("Deemed service"),
 
-    @JsonProperty("serviceDeemedAsGranted")
-    SERVICE_DEEMED_AS_GRANTED("Deemed As service granted"),
+    @JsonProperty("deemedAsServiceGranted")
+    DEEMED_AS_SERVICE_GRANTED("Deemed as service granted"),
 
-    @JsonProperty("serviceBaliff")
-    SERVICE_BALIFF("Bailiff Service"),
+    @JsonProperty("deemedServiceRefused")
+    DEEMED_SERVICE_REFUSED("Deemed service refused"),
 
-    @JsonProperty("aosOfflineInvitationLetterToApplicant2")
-    AOS_OFFLINE_INVITATION_LETTER_TO_APPLICANT_2("AoS Offline Invitation Letter The Respondent"),
+    @JsonProperty("dispenseWithService")
+    DISPENSE_WITH_SERVICE("Dispense with service"),
 
-    @JsonProperty("aos")
-    DOCUMENT_TYPE_RESPONDENT_INVITATION("Respondent Invitation"),
+    @JsonProperty("dispenseWithServiceGranted")
+    DISPENSE_WITH_SERVICE_GRANTED("Dispense with service granted"),
 
-    @JsonProperty("applicant2Answers")
-    APPLICANT_2_ANSWERS("The respondent's answers"),
+    @JsonProperty("dispenseWithServiceRefused")
+    DISPENSE_WITH_SERVICE_REFUSED("Dispense with service refused"),
 
-    @JsonProperty("conditionalOrderApplication")
-    CONDITIONAL_ORDER_APPLICATION("Conditional Order application"),
-
-    @JsonProperty("conditionalOrderRefusal")
-    CONDITIONAL_ORDER_REFUSAL("Conditional Order refusal"),
-
-    @JsonProperty("conditionalOrderRefusalClarificationResponse")
-    CONDITIONAL_ORDER_REFUSAL_CLARIFICATION_RESPONSE("Conditional Order refusal - Clarification Response"),
-
-    @JsonProperty("conditionalOrderAnswers")
-    CONDITIONAL_ORDER_ANSWERS("Conditional Order answers"),
-
-    @JsonProperty("conditionalOrderCertificateOfEntitlement")
-    CONDITIONAL_ORDER_CERTIFICATE_OF_ENTITLEMENT("Certificate of entitlement to Conditional Order"),
-
-    @JsonProperty("conditionalOrderGranted")
-    CONDITIONAL_ORDER_GRANTED("Conditional Order granted"),
+    @JsonProperty("email")
+    EMAIL("Email"),
 
     @JsonProperty("finalOrderApplication")
     FINAL_ORDER_APPLICATION("Final Order application"),
 
     @JsonProperty("finalOrderGranted")
-    FINAL_ORDER_GRANTED("Final Order granted"),
-
-    @JsonProperty("correspondence")
-    CORRESPONDENCE("Correspondence"),
-
-    @JsonProperty("generalApplication")
-    GENERAL_APPLICATION("General Application"),
-
-    @JsonProperty("email")
-    EMAIL("Email"),
+    FINAL_ORDER_GRANTED("Final order granted"),
 
     @JsonProperty("generalOrder")
-    GENERAL_ORDER("General Order"),
+    GENERAL_ORDER("General order"),
 
-    @JsonProperty("respondentAnswers")
-    RESPONDENT_ANSWERS("Respondent Answers"),
+    @JsonProperty("marriageCert")
+    MARRIAGE_CERTIFICATE("Marriage certificate"),
+
+    @JsonProperty("marriageCertTranslation")
+    MARRIAGE_CERTIFICATE_TRANSLATION("Marriage certificate translation"),
+
+    @JsonProperty("nameChange")
+    NAME_CHANGE_EVIDENCE("Name change evidence"),
+
+    @JsonProperty("noticeOfRefusalOfEntitlement")
+    NOTICE_OF_REFUSAL_OF_ENTITLEMENT("Notice of refusal of entitlement to a CO"),
+
+    @JsonProperty("objectionToCosts")
+    OBJECTION_TO_COSTS("Objection to costs"),
 
     @JsonProperty("other")
-    OTHER("Other");
+    OTHER("Other"),
+
+    @JsonProperty("respondentAnswers")
+    RESPONDENT_ANSWERS("Respondent answers"),
+
+    @JsonProperty("aos")
+    RESPONDENT_INVITATION("Respondent Invitation"),
+
+    @JsonProperty("solicitorService")
+    SOLICITOR_SERVICE("Solicitor Service"),
+
+    @JsonProperty("welshTranslation")
+    WELSH_TRANSLATION("Welsh Translation");
 
     private final String label;
 }

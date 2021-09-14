@@ -17,7 +17,7 @@ import java.util.function.Supplier;
 import static uk.gov.hmcts.divorce.divorcecase.util.AccessCodeGenerator.generateAccessCode;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_AOS_INVITATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_SOLICITOR_AOS_INVITATION;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.DOCUMENT_TYPE_RESPONDENT_INVITATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
 
 @Component
 @Slf4j
@@ -47,7 +47,7 @@ public class GenerateRespondentSolicitorAosInvitation implements CaseTask {
 
             caseDataDocumentService.renderDocumentAndUpdateCaseData(
                 caseData,
-                DOCUMENT_TYPE_RESPONDENT_INVITATION,
+                RESPONDENT_INVITATION,
                 templateContentSupplier,
                 caseId,
                 RESP_SOLICITOR_AOS_INVITATION,
