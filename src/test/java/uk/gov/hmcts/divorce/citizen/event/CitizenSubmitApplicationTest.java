@@ -31,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitApplication.CITIZEN_SUBMIT;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -120,11 +121,70 @@ class CitizenSubmitApplicationTest {
     }
 
     @Test
+    public void givenEventStartedWithValidJointCaseThenChangeStateAndSetOrderSummary() {
+        final long caseId = 1L;
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
+        setValidCaseData(caseData);
+
+        caseDetails.setData(caseData);
+        caseDetails.setId(caseId);
+
+        var orderSummary = orderSummary();
+
+        when(paymentService.getOrderSummary())
+            .thenReturn(
+                orderSummary()
+            );
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getState()).isEqualTo(State.AwaitingPayment);
+        assertThat(response.getData().getApplication().getApplicationFeeOrderSummary()).isEqualTo(orderSummary);
+
+        verify(paymentService).getOrderSummary();
+    }
+
+    @Test
     public void givenEventStartedWithValidCaseThenChangeStateAwaitingHwfDecision() {
         final long caseId = 2L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = CaseData.builder().build();
         setValidCaseData(caseData).getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
+
+        caseDetails.setData(caseData);
+        caseDetails.setId(caseId);
+
+        final CaseDetails<CaseData, State> newDetails = new CaseDetails<>();
+        newDetails.setState(State.AwaitingHWFDecision);
+        newDetails.setData(caseData);
+
+        when(submissionService.submitApplication(caseDetails))
+            .thenReturn(newDetails);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getState()).isEqualTo(State.AwaitingHWFDecision);
+        assertThat(response.getData().getApplication().getApplicationPayments()).isNull();
+    }
+
+    @Test
+    public void givenEventStartedWithValidJointCaseThenChangeStateAwaitingHwfDecision() {
+        final long caseId = 2L;
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
+        setValidCaseData(caseData).getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
+        caseData.getApplicant2().setFirstName("App");
+        caseData.getApplicant2().setLastName("Two");
+        caseData.getApplication().setApplicant2HelpWithFees(
+            HelpWithFees
+                .builder()
+                .needHelp(YES)
+                .build()
+        );
+        caseData.getApplication().setApplicant2StatementOfTruth(YES);
+        caseData.getApplication().setApplicant2PrayerHasBeenGiven(YES);
+        caseData.getApplication().getMarriageDetails().setApplicant2Name("App Two");
 
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);

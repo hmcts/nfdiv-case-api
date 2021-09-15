@@ -77,7 +77,7 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
 
         Application application = data.getApplication();
 
-        if (application.isHelpWithFeesApplication()) {
+        if (data.isJointHelpWithFeesApplication() || application.isHelpWithFeesApplication()) {
             var submittedDetails = submissionService.submitApplication(details);
             data = submittedDetails.getData();
             state = submittedDetails.getState();
