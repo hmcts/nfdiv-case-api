@@ -100,7 +100,7 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
     private List<String> validateConfirmService(Application application) {
         List<String> errors = new ArrayList<>();
 
-        if (!application.getSolServiceMethod().equals(ServiceMethod.SOLICITOR_SERVICE)) {
+        if (!application.isSolicitorServiceMethod()) {
             errors.add("This event can only be used for a case with Solicitor Service as the service method");
         }
         return errors;
