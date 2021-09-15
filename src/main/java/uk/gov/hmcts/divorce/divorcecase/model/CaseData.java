@@ -203,6 +203,15 @@ public class CaseData {
     }
 
     @JsonIgnore
+    public boolean isSoleApplicationOrApplicant2HasAgreedHwf() {
+        return null != applicationType
+            && applicationType.isSole()
+            || null != application.getApplicant2HelpWithFees()
+            && null != application.getApplicant2HelpWithFees().getNeedHelp()
+            && application.getApplicant2HelpWithFees().getNeedHelp().toBoolean();
+    }
+
+    @JsonIgnore
     public void addToDocumentsGenerated(final ListValue<DivorceDocument> listValue) {
 
         final List<ListValue<DivorceDocument>> documents = getDocumentsGenerated();

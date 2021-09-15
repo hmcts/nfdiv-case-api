@@ -20,6 +20,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -34,7 +35,7 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
     @Autowired
     private HttpServletRequest httpServletRequest;
 
-    public static final String CITIZEN_SWITCH_TO_SOLE = "citizen-switch-to-sole";
+    public static final String SWITCH_TO_SOLE = "switch-to-sole";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -43,9 +44,10 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
         stateSet.add(AwaitingApplicant1Response);
         stateSet.add(AwaitingApplicant2Response);
         stateSet.add(Applicant2Approved);
+        stateSet.add(AwaitingPayment);
 
         configBuilder
-            .event(CITIZEN_SWITCH_TO_SOLE)
+            .event(SWITCH_TO_SOLE)
             .forStateTransition(stateSet, Draft)
             .name("Application switched to sole")
             .description("Application type switched to sole")
