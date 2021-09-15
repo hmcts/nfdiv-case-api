@@ -10,7 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
@@ -24,7 +24,7 @@ public class SystemRemindApplicant1ApplicationReviewed implements CCDConfig<Case
 
         configBuilder
             .event(SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED)
-            .forState(AwaitingApplicant1Response)
+            .forState(Applicant2Approved)
             .name("Remind Applicant 1")
             .description("Remind Applicant 1 that Application has been reviewed by Applicant 2")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
@@ -40,7 +40,6 @@ public class SystemRemindApplicant1ApplicationReviewed implements CCDConfig<Case
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
-            .state(AwaitingApplicant1Response)
             .build();
     }
 }
