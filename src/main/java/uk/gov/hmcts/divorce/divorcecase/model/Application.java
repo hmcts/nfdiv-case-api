@@ -29,6 +29,7 @@ import static java.lang.Integer.parseInt;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
@@ -295,6 +296,13 @@ public class Application {
     private LocalDate issueDate;
 
     @CCD(
+        label = "Date when the application was reissued",
+        access = {CaseworkerAccess.class}
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate reissueDate;
+
+    @CCD(
         label = "Date when the application was created",
         access = {DefaultAccess.class}
     )
@@ -344,6 +352,14 @@ public class Application {
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant1NotifiedCanApplyForConditionalOrder;
+
+    @CCD(
+        label = "What would you like to reissue?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "ReissueOption"
+    )
+    private ReissueOption reissueOption;
+
 
     @JsonIgnore
     public boolean hasBeenPaidFor() {
