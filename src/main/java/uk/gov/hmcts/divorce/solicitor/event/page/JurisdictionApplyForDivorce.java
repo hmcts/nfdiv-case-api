@@ -14,9 +14,6 @@ public class JurisdictionApplyForDivorce implements CcdPageConfiguration {
         pageBuilder
             .page("JurisdictionApplyForDivorce")
             .pageLabel("Jurisdiction - Apply for a divorce")
-            .label(
-                "LabelSolJurisdictionPara-1",
-                "The court has legal power to deal with this application because the following applies:\n\n")
             .complex(CaseData::getApplication)
                 .complex(Application::getJurisdiction)
                     .mandatory(Jurisdiction::getConnections)
