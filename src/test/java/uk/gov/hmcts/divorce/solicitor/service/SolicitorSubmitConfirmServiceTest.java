@@ -7,11 +7,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedBeingThe;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.solicitor.service.task.SetConfirmServiceDueDate;
-
-import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -28,11 +25,6 @@ public class SolicitorSubmitConfirmServiceTest {
 
     @InjectMocks
     private SolicitorSubmitConfirmService solicitorSubmitConfirmService;
-
-    private LocalDate testDate;
-
-    private static final String DOCUMENTS_SERVED = "testDocs";
-    private static final DocumentsServedBeingThe BEING_THE = DocumentsServedBeingThe.APPLICANT;
 
     @Test
     void shouldOnlyUpdateConfirmServiceDueDate() {
