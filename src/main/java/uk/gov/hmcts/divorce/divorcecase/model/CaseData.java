@@ -203,11 +203,10 @@ public class CaseData {
     }
 
     @JsonIgnore
-    public boolean isJointHelpWithFeesApplication() {
+    public boolean isSoleApplicationOrApplicant2HasAgreedHwf() {
         return null != applicationType
-            && !applicationType.isSole()
-            && application.isHelpWithFeesApplication()
-            && null != application.getApplicant2HelpWithFees()
+            && applicationType.isSole()
+            || null != application.getApplicant2HelpWithFees()
             && null != application.getApplicant2HelpWithFees().getNeedHelp()
             && application.getApplicant2HelpWithFees().getNeedHelp().toBoolean();
     }

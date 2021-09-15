@@ -124,8 +124,15 @@ class CitizenSubmitApplicationTest {
     public void givenEventStartedWithValidJointCaseThenChangeStateAndSetOrderSummary() {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
+        CaseData caseData = CaseData.builder().build();
         setValidCaseData(caseData);
+
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.getApplicant2().setFirstName("App");
+        caseData.getApplicant2().setLastName("Two");
+        caseData.getApplication().setApplicant2StatementOfTruth(YES);
+        caseData.getApplication().setApplicant2PrayerHasBeenGiven(YES);
+        caseData.getApplication().getMarriageDetails().setApplicant2Name("App Two");
 
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
@@ -172,8 +179,9 @@ class CitizenSubmitApplicationTest {
     public void givenEventStartedWithValidJointCaseThenChangeStateAwaitingHwfDecision() {
         final long caseId = 2L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
+        CaseData caseData = CaseData.builder().build();
         setValidCaseData(caseData).getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.getApplicant2().setFirstName("App");
         caseData.getApplicant2().setLastName("Two");
         caseData.getApplication().setApplicant2HelpWithFees(
