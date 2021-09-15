@@ -23,6 +23,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
+import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedBeingThe;
+import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedHow;
+import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedWhere;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderDivorceParties;
@@ -32,6 +35,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Jurisdiction;
 import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.divorcecase.model.SolicitorService;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
@@ -325,6 +329,20 @@ public class TestDataHelper {
         jurisdiction.setApplicant2Residence(YES);
 
         return jurisdiction;
+    }
+
+    public static SolicitorService getSolicitorService() {
+        final SolicitorService solicitorService = new SolicitorService();
+        solicitorService.setDateOfService(LocalDate.now());
+        solicitorService.setDocumentsServed("docsServed");
+        solicitorService.setAddressServed("addressServed");
+        solicitorService.setHowServed(DocumentsServedHow.COURT_PERMITTED);
+        solicitorService.setLocationServed(DocumentsServedWhere.PLACE_BUSINESS);
+        solicitorService.setBeingThe(DocumentsServedBeingThe.APPLICANT);
+        solicitorService.setOnWhomServed("servedTo");
+        solicitorService.setServiceSotName("solicitor name");
+        solicitorService.setServiceSotFirm("solicitor firm");
+        return solicitorService;
     }
 
     public static CaseData validCaseDataForIssueApplication() {
