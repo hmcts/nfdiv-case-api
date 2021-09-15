@@ -93,13 +93,13 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("generalOrder")
     GENERAL_ORDER("General order"),
 
-    @JsonProperty("marriageCert")
-    MARRIAGE_CERTIFICATE("Marriage certificate"),
+    @JsonProperty("marriageCertificate")
+    MARRIAGE_CERTIFICATE("Marriage Certificate"),
 
-    @JsonProperty("marriageCertTranslation")
-    MARRIAGE_CERTIFICATE_TRANSLATION("Marriage certificate translation"),
+    @JsonProperty("marriageCertificateTranslation")
+    MARRIAGE_CERTIFICATE_TRANSLATION("Marriage Certificate translation"),
 
-    @JsonProperty("nameChange")
+    @JsonProperty("nameChangeEvidence")
     NAME_CHANGE_EVIDENCE("Name change evidence"),
 
     @JsonProperty("noticeOfRefusalOfEntitlement")
