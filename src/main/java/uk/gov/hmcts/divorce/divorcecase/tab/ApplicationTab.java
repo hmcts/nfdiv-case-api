@@ -161,6 +161,8 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("solServiceDocumentsServed", "solServiceMethod=\"solicitorService\"")
             .field("solServiceOnWhomServed", "solServiceMethod=\"solicitorService\"")
             .field("solServiceHowServed", "solServiceMethod=\"solicitorService\"")
+            .field("solServiceServiceDetails",
+                "solServiceHowServed=\"deliveredTo\" OR solServiceHowServed=\"postedTo\"")
             .field("solServiceAddressServed", "solServiceMethod=\"solicitorService\"")
             .field("solServiceBeingThe", "solServiceMethod=\"solicitorService\"")
             .field("solServiceLocationServed", "solServiceMethod=\"solicitorService\"")
