@@ -25,10 +25,10 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.CIVIL_PART
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_ACCOUNT;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_PROCESS;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.ENDING_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PROCESS;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.REVIEW_DEADLINE_DATE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.YOUR_DIVORCE;
 
 @Component
@@ -121,7 +121,7 @@ public class ApplicationIssuedNotification {
 
             templateVars.put(PROCESS, CIVIL_PARTNERSHIP_PROCESS);
             templateVars.put(ACCOUNT, CIVIL_PARTNERSHIP_ACCOUNT);
-            templateVars.put(APPLICATION_TYPE, ENDING_CIVIL_PARTNERSHIP);
+            templateVars.put(APPLICATION_TYPE, YOUR_CIVIL_PARTNERSHIP);
 
         }
 
