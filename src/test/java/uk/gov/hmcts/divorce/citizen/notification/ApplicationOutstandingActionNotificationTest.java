@@ -63,7 +63,7 @@ class ApplicationOutstandingActionNotificationTest {
         Set<DocumentType> docs = new HashSet<>();
         docs.add(DocumentType.MARRIAGE_CERTIFICATE);
         docs.add(DocumentType.MARRIAGE_CERTIFICATE_TRANSLATION);
-        docs.add(DocumentType.NAME_CHANGE_EVIDENCE);
+        docs.add(NAME_CHANGE_EVIDENCE);
         data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
 
         final HashMap<String, String> templateVars = new HashMap<>();
