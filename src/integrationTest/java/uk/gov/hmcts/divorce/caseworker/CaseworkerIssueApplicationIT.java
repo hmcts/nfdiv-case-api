@@ -60,8 +60,8 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.CASEWORKER_ISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.DOCUMENT_TYPE_RESPONDENT_INVITATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
@@ -593,10 +593,10 @@ public class CaseworkerIssueApplicationIT {
     private void stubAosPackSendLetter() throws IOException {
 
         final var documentListValue1 = documentWithType(
-            DIVORCE_APPLICATION,
+            APPLICATION,
             MINI_APPLICATION_ID);
         final var documentListValue2 = documentWithType(
-            DOCUMENT_TYPE_RESPONDENT_INVITATION,
+            RESPONDENT_INVITATION,
             AOS_COVER_LETTER_ID);
 
         final List<String> documentIds = asList(
@@ -632,7 +632,7 @@ public class CaseworkerIssueApplicationIT {
     }
 
     private String setupAuthorizationAndApplicationDocument(CaseData caseData) {
-        final var documentListValue = documentWithType(DIVORCE_APPLICATION);
+        final var documentListValue = documentWithType(APPLICATION);
         final var generatedDocuments = singletonList(documentListValue);
 
         caseData.setDocumentsGenerated(generatedDocuments);
