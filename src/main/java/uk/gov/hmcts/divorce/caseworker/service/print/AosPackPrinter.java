@@ -14,8 +14,8 @@ import java.util.UUID;
 
 import static java.util.Arrays.asList;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersOfDocumentTypes;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.DOCUMENT_TYPE_RESPONDENT_INVITATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
 
 @Component
 @Slf4j
@@ -23,8 +23,8 @@ public class AosPackPrinter {
 
     private static final String LETTER_TYPE_RESPONDENT_PACK = "respondent-aos-pack";
     private static final List<DocumentType> AOS_DOCUMENT_TYPES = asList(
-        DIVORCE_APPLICATION,
-        DOCUMENT_TYPE_RESPONDENT_INVITATION);
+        APPLICATION,
+        RESPONDENT_INVITATION);
 
     @Autowired
     private BulkPrintService bulkPrintService;

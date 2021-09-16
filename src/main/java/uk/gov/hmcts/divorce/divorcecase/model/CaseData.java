@@ -18,7 +18,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessBetaOnlyAcc
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAndSuperUserAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerCourtAdminWithSolicitorAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
-import uk.gov.hmcts.divorce.document.model.CaseworkerUploadedDocument;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
@@ -149,10 +148,10 @@ public class CaseData {
     @CCD(
         label = "Documents uploaded",
         typeOverride = Collection,
-        typeParameterOverride = "CaseworkerUploadedDocument",
+        typeParameterOverride = "DivorceDocument",
         access = {DefaultAccess.class}
     )
-    private List<ListValue<CaseworkerUploadedDocument>> documentsUploaded;
+    private List<ListValue<DivorceDocument>> documentsUploaded;
 
     @CCD(
         label = "Confidential documents uploaded",
@@ -203,6 +202,15 @@ public class CaseData {
     }
 
     @JsonIgnore
+    public boolean isSoleApplicationOrApplicant2HasAgreedHwf() {
+        return null != applicationType
+            && applicationType.isSole()
+            || null != application.getApplicant2HelpWithFees()
+            && null != application.getApplicant2HelpWithFees().getNeedHelp()
+            && application.getApplicant2HelpWithFees().getNeedHelp().toBoolean();
+    }
+
+    @JsonIgnore
     public void addToDocumentsGenerated(final ListValue<DivorceDocument> listValue) {
 
         final List<ListValue<DivorceDocument>> documents = getDocumentsGenerated();
@@ -216,7 +224,7 @@ public class CaseData {
         }
     }
 
-    public void sortUploadedDocuments(List<ListValue<CaseworkerUploadedDocument>> previousDocuments) {
+    public void sortUploadedDocuments(List<ListValue<DivorceDocument>> previousDocuments) {
         if (isEmpty(previousDocuments)) {
             return;
         }
@@ -227,20 +235,12 @@ public class CaseData {
             .collect(toCollection(HashSet::new));
 
         //Split the collection into two lists one without id's(newly added documents) and other with id's(existing documents)
-        Map<Boolean, List<ListValue<CaseworkerUploadedDocument>>> documentsWithoutIds =
+        Map<Boolean, List<ListValue<DivorceDocument>>> documentsWithoutIds =
             this.getDocumentsUploaded()
                 .stream()
                 .collect(groupingBy(listValue -> !previousListValueIds.contains(listValue.getId())));
 
-        List<ListValue<CaseworkerUploadedDocument>> sortedDocuments = new ArrayList<>();
-        sortedDocuments.addAll(0, documentsWithoutIds.get(true)); // add new documents to start of the list
-        sortedDocuments.addAll(1, documentsWithoutIds.get(false));
-
-        sortedDocuments.forEach(
-            uploadedDocumentListValue -> uploadedDocumentListValue.setId(String.valueOf(UUID.randomUUID()))
-        );
-
-        this.setDocumentsUploaded(sortedDocuments);
+        this.setDocumentsUploaded(sortDocuments(documentsWithoutIds));
     }
 
     public void sortConfidentialDocuments(List<ListValue<ConfidentialDivorceDocument>> previousDocuments) {
@@ -286,7 +286,12 @@ public class CaseData {
                 .stream()
                 .collect(groupingBy(listValue -> !previousListValueIds.contains(listValue.getId())));
 
-        List<ListValue<DivorceDocument>> sortedDocuments = new ArrayList<>();
+        this.setApplicant1DocumentsUploaded(sortDocuments(documentsWithoutIds));
+    }
+
+    private List<ListValue<DivorceDocument>> sortDocuments(final Map<Boolean, List<ListValue<DivorceDocument>>> documentsWithoutIds) {
+
+        final List<ListValue<DivorceDocument>> sortedDocuments = new ArrayList<>();
         sortedDocuments.addAll(0, documentsWithoutIds.get(true)); // add new documents to start of the list
         sortedDocuments.addAll(1, documentsWithoutIds.get(false));
 
@@ -294,6 +299,6 @@ public class CaseData {
             uploadedDocumentListValue -> uploadedDocumentListValue.setId(String.valueOf(UUID.randomUUID()))
         );
 
-        this.setApplicant1DocumentsUploaded(sortedDocuments);
+        return sortedDocuments;
     }
 }

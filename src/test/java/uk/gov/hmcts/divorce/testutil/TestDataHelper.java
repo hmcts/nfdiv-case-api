@@ -23,6 +23,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
+import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedBeingThe;
+import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedHow;
+import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedWhere;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderDivorceParties;
@@ -32,6 +35,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Jurisdiction;
 import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.divorcecase.model.SolicitorService;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
@@ -65,7 +69,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORC
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_JOINT;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_2_SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_2_SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
@@ -123,6 +127,7 @@ public class TestDataHelper {
             .middleName(TEST_MIDDLE_NAME)
             .lastName(TEST_LAST_NAME)
             .email(TEST_USER_EMAIL)
+            .gender(MALE)
             .languagePreferenceWelsh(NO)
             .homeAddress(AddressGlobalUK.builder()
                 .addressLine1("line 1")
@@ -232,6 +237,7 @@ public class TestDataHelper {
         var applicant1 = getApplicant();
         applicant1.setContactDetailsConfidential(ConfidentialAddress.KEEP);
         applicant1.setFinancialOrder(NO);
+        applicant1.setLegalProceedings(NO);
 
         var application = Application.builder()
             .marriageDetails(marriageDetails)
@@ -264,7 +270,7 @@ public class TestDataHelper {
     public static CaseData validApplicant2CaseData() {
         CaseData caseData = validApplicant1CaseData();
         caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.setApplicant2(getApplicant(MALE));
+        caseData.setApplicant2(getApplicantWithAddress());
         caseData.getApplication().setApplicant2HelpWithFees(HelpWithFees.builder()
             .needHelp(NO)
             .build());
@@ -325,6 +331,20 @@ public class TestDataHelper {
         return jurisdiction;
     }
 
+    public static SolicitorService getSolicitorService() {
+        final SolicitorService solicitorService = new SolicitorService();
+        solicitorService.setDateOfService(LocalDate.now());
+        solicitorService.setDocumentsServed("docsServed");
+        solicitorService.setAddressServed("addressServed");
+        solicitorService.setHowServed(DocumentsServedHow.COURT_PERMITTED);
+        solicitorService.setLocationServed(DocumentsServedWhere.PLACE_BUSINESS);
+        solicitorService.setBeingThe(DocumentsServedBeingThe.APPLICANT);
+        solicitorService.setOnWhomServed("servedTo");
+        solicitorService.setServiceSotName("solicitor name");
+        solicitorService.setServiceSotFirm("solicitor firm");
+        return solicitorService;
+    }
+
     public static CaseData validCaseDataForIssueApplication() {
         final MarriageDetails marriageDetails = new MarriageDetails();
         marriageDetails.setApplicant1Name(format("%s %s", TEST_FIRST_NAME, TEST_LAST_NAME));
@@ -334,7 +354,7 @@ public class TestDataHelper {
 
         final CaseData caseData = caseDataWithStatementOfTruth();
         caseData.getApplicant1().setFinancialOrder(NO);
-        caseData.setApplicant2(getApplicant());
+        caseData.setApplicant2(getApplicantWithAddress());
 
         final Application application = caseData.getApplication();
         application.setDocumentUploadComplete(YES);
@@ -457,7 +477,7 @@ public class TestDataHelper {
 
         return ListValue
             .<DivorceDocument>builder()
-            .id(DIVORCE_APPLICATION.getLabel())
+            .id(APPLICATION.getLabel())
             .value(divorceDocument)
             .build();
     }

@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -10,20 +11,31 @@ import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.util.EnumSet;
+import javax.servlet.http.HttpServletRequest;
 
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Slf4j
 @Component
 public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String CITIZEN_SWITCH_TO_SOLE = "citizen-switch-to-sole";
+    @Autowired
+    private CcdAccessService ccdAccessService;
+
+    @Autowired
+    private HttpServletRequest httpServletRequest;
+
+    public static final String SWITCH_TO_SOLE = "switch-to-sole";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -31,13 +43,15 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
         EnumSet<State> stateSet = EnumSet.noneOf(State.class);
         stateSet.add(AwaitingApplicant1Response);
         stateSet.add(AwaitingApplicant2Response);
+        stateSet.add(Applicant2Approved);
+        stateSet.add(AwaitingPayment);
 
         configBuilder
-            .event(CITIZEN_SWITCH_TO_SOLE)
+            .event(SWITCH_TO_SOLE)
             .forStateTransition(stateSet, Draft)
-            .name("Applicant 1 switched to sole")
+            .name("Application switched to sole")
             .description("Application type switched to sole")
-            .grant(CREATE_READ_UPDATE, CITIZEN)
+            .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
@@ -45,13 +59,21 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
         log.info("Applicant 1 switched to sole about to submit callback invoked");
-
         CaseData data = details.getData();
 
+        log.info("Unlinking Applicant 2 from Case");
+        ccdAccessService.unlinkUserFromApplication(
+            httpServletRequest.getHeader(AUTHORIZATION),
+            details.getId(),
+            data.getCaseInvite().getApplicant2UserId()
+        );
+
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        data.setCaseInvite(null);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
+            .state(Draft)
             .build();
     }
 }

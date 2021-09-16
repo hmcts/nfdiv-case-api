@@ -14,6 +14,7 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseUser;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
+import java.util.Collections;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -221,6 +222,45 @@ public class CcdAccessServiceTest {
                 String.valueOf(TEST_CASE_ID),
                 APP_2_CITIZEN_USER_ID,
                 new CaseUser(APP_2_CITIZEN_USER_ID, Set.of(APPLICANT_2.getRole()))
+            );
+
+        verifyNoMoreInteractions(idamService, authTokenGenerator, caseUserApi);
+    }
+
+    @Test
+    public void shouldNotThrowAnyExceptionWhenUnLinkUserFromApplicationIsInvoked() {
+        User systemUpdateUser = getIdamUser(SYSTEM_UPDATE_AUTH_TOKEN, CASEWORKER_USER_ID, TEST_CASEWORKER_USER_EMAIL);
+
+        when(idamService.retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN))
+            .thenReturn(systemUpdateUser);
+
+        when(authTokenGenerator.generate())
+            .thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        doNothing()
+            .when(
+                caseUserApi
+            )
+            .updateCaseRolesForUser(
+                SYSTEM_UPDATE_AUTH_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN,
+                String.valueOf(TEST_CASE_ID),
+                APP_2_CITIZEN_USER_ID,
+                new CaseUser(APP_2_CITIZEN_USER_ID, Collections.emptySet())
+            );
+
+        assertThatCode(() -> ccdAccessService.unlinkUserFromApplication(SYSTEM_UPDATE_AUTH_TOKEN, TEST_CASE_ID, APP_2_CITIZEN_USER_ID))
+            .doesNotThrowAnyException();
+
+        verify(idamService).retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN);
+        verify(authTokenGenerator).generate();
+        verify(caseUserApi)
+            .updateCaseRolesForUser(
+                SYSTEM_UPDATE_AUTH_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN,
+                String.valueOf(TEST_CASE_ID),
+                APP_2_CITIZEN_USER_ID,
+                new CaseUser(APP_2_CITIZEN_USER_ID, Collections.emptySet())
             );
 
         verifyNoMoreInteractions(idamService, authTokenGenerator, caseUserApi);

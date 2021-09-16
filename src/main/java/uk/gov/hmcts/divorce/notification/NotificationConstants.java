@@ -37,7 +37,6 @@ public final class NotificationConstants {
     public static final String CREATE_ACCOUNT_LINK = "create account link";
     public static final String SIGN_IN_URL_NOTIFY_KEY = "signin url";
     public static final String RELATIONSHIP_COURT_HEADER = "relationship court header";
-    public static final String END_JOINT_APPLICATION_LINK = "end joint application link";
 
     public static final String SIGN_IN_DIVORCE_URL = "signInDivorceUrl";
     public static final String APPLICANT_2_SIGN_IN_DIVORCE_URL = "applicant2SignInDivorceUrl";

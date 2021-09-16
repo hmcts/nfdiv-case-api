@@ -36,7 +36,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.OTHER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -62,7 +62,7 @@ public class DraftApplicationRemovalServiceTest {
     public void shouldRemoveDraftApplicationDocumentFromCaseDataAndDeleteApplicationDocumentFromDocManagement() {
         final List<String> systemRoles = List.of("caseworker-divorce");
         final String systemRolesCsv = String.join(",", systemRoles);
-        final ListValue<DivorceDocument> divorceDocumentListValue = documentWithType(DIVORCE_APPLICATION);
+        final ListValue<DivorceDocument> divorceDocumentListValue = documentWithType(APPLICATION);
         final String userId = UUID.randomUUID().toString();
         final User systemUser = systemUser(systemRoles, userId);
 
@@ -133,7 +133,7 @@ public class DraftApplicationRemovalServiceTest {
             );
 
         assertThatThrownBy(() -> draftApplicationRemovalService.removeDraftApplicationDocument(
-            singletonList(documentWithType(DIVORCE_APPLICATION)),
+            singletonList(documentWithType(APPLICATION)),
             TEST_CASE_ID
         ))
             .hasMessageContaining("403 User role is not authorised to delete document")
@@ -168,7 +168,7 @@ public class DraftApplicationRemovalServiceTest {
         doThrow(feignException).when(authTokenGenerator).generate();
 
         assertThatThrownBy(() -> draftApplicationRemovalService.removeDraftApplicationDocument(
-            singletonList(documentWithType(DIVORCE_APPLICATION)),
+            singletonList(documentWithType(APPLICATION)),
             TEST_CASE_ID
         ))
             .hasMessageContaining("401 Invalid s2s secret")

@@ -3,8 +3,12 @@ buildscript {
     mavenLocal()
     mavenCentral()
     maven {
-      url 'https://jitpack.io'
+      url "https://jitpack.io"
+      content {
+        excludeGroup "com.github.ben-manes.versions"
+      }
     }
+
   }
   dependencies {
     classpath group: 'cz.habarta.typescript-generator', name: 'typescript-generator-gradle-plugin', version: '2.32.889'
@@ -199,7 +203,7 @@ repositories {
 def versions = [
   awaitility        : '1.7.0',
   jackson           : '2.12.4',
-  junit             : '5.7.2',
+  junit             : '5.8.0',
   junitPlatform     : '1.8.0',
   lombok            : '1.18.20',
   reformsJavaLogging: '5.1.7',

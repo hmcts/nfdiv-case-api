@@ -65,7 +65,7 @@
     "applicant2LastNameChangedWhenMarried": null,
     "applicant2NameChangedHowOtherDetails": null,
     "applicant2PhoneNumber": null,
-    "applicant2ContactDetailsConfidential": "share",
+    "applicant2ContactDetailsConfidential": null,
     "marriageApplicant1Name": "test_first_name test_last_name",
     "marriageApplicant2Name": "test_first_name test_last_name",
     "applicant1FinancialOrder": "No",

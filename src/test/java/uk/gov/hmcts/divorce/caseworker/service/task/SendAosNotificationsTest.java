@@ -35,7 +35,7 @@ class SendAosNotificationsTest {
     private SendAosNotifications sendAosNotifications;
 
     @Test
-    void shouldSendPersonalServiceNotificationIfPersonalServiceApplication() {
+    void shouldSendSolicitorServiceNotificationIfSolicitorServiceApplication() {
 
         final var caseData = caseData();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
@@ -54,7 +54,7 @@ class SendAosNotificationsTest {
     }
 
     @Test
-    void shouldSendNoticeOfProceedingsIfNotPersonalServiceApplication() {
+    void shouldSendNoticeOfProceedingsIfNotSolicitorServiceApplication() {
 
         final var caseData = caseData();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
