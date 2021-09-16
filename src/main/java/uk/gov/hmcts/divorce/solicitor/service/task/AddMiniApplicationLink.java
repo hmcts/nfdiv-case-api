@@ -11,7 +11,7 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import java.util.Collection;
 import java.util.stream.Stream;
 
-import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 
 @Component
 public class AddMiniApplicationLink implements CaseTask {
@@ -24,7 +24,7 @@ public class AddMiniApplicationLink implements CaseTask {
             .flatMap(Collection::stream)
             .map(ListValue::getValue)
             .filter(divorceDocument ->
-                DIVORCE_APPLICATION.equals(divorceDocument.getDocumentType()))
+                APPLICATION.equals(divorceDocument.getDocumentType()))
             .map(DivorceDocument::getDocumentLink)
             .findFirst()
             .ifPresent(file -> caseData.getApplication().setMiniApplicationLink(file));

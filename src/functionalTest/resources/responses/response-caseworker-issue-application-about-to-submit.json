@@ -87,7 +87,7 @@
           "documentDateAdded": null,
           "documentComment": null,
           "documentFileName": "mini-application-1234567890123456.pdf",
-          "documentType": "divorceApplication",
+          "documentType": "application",
           "documentEmailContent": null,
           "documentLink": {
             "document_url": "${json-unit.any-string}",

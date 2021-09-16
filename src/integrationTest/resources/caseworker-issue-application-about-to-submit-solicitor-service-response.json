@@ -64,7 +64,7 @@
         "id": "Divorce application",
         "value": {
           "documentFileName": "mini-application-1616591401473378.pdf",
-          "documentType": "divorceApplication",
+          "documentType": "application",
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
             "document_filename": "mini-application-1616591401473378.pdf",

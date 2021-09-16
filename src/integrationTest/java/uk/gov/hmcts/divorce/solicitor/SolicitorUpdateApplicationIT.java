@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorUpdateApplication.SOLICITOR_UPDATE;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssembly;
 import static uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock.stubDeleteFromDocumentManagementForSystem;
@@ -188,12 +188,12 @@ public class SolicitorUpdateApplicationIT {
             .builder()
             .documentLink(ccdDocument)
             .documentFileName("draft-mini-application-1616591401473378.pdf")
-            .documentType(DIVORCE_APPLICATION)
+            .documentType(APPLICATION)
             .build();
 
         ListValue<DivorceDocument> divorceDocumentListValue = ListValue
             .<DivorceDocument>builder()
-            .id(DIVORCE_APPLICATION.getLabel())
+            .id(APPLICATION.getLabel())
             .value(divorceDocument)
             .build();
 

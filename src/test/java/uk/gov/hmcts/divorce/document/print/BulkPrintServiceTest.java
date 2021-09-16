@@ -42,7 +42,7 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_1_SOL_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
@@ -114,7 +114,7 @@ class BulkPrintServiceTest {
             .willReturn(new ByteArrayInputStream(firstFile))
             .willReturn(new ByteArrayInputStream(firstFile));
 
-        ListValue<DivorceDocument> divorceDocumentListValue = documentWithType(DIVORCE_APPLICATION);
+        ListValue<DivorceDocument> divorceDocumentListValue = documentWithType(APPLICATION);
 
         final String documentUuid = FilenameUtils.getName(
             divorceDocumentListValue.getValue().getDocumentLink().getUrl());
@@ -127,7 +127,7 @@ class BulkPrintServiceTest {
         ))
             .willReturn(ResponseEntity.ok(resource));
 
-        ListValue<DivorceDocument> divorceDocumentListValue2 = documentWithType(DIVORCE_APPLICATION);
+        ListValue<DivorceDocument> divorceDocumentListValue2 = documentWithType(APPLICATION);
 
         final String documentUuid2 = FilenameUtils.getName(
             divorceDocumentListValue2.getValue().getDocumentLink().getUrl());
@@ -307,7 +307,7 @@ class BulkPrintServiceTest {
 
         given(authTokenGenerator.generate())
             .willReturn(TEST_SERVICE_AUTH_TOKEN);
-        ListValue<DivorceDocument> divorceDocumentListValue = documentWithType(DIVORCE_APPLICATION);
+        ListValue<DivorceDocument> divorceDocumentListValue = documentWithType(APPLICATION);
 
         final String documentUuid = FilenameUtils.getName(
             divorceDocumentListValue.getValue().getDocumentLink().getUrl());
