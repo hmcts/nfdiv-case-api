@@ -196,6 +196,8 @@ public class CaseData {
     )
     private String note;
 
+    private RetiredFields retiredFields;
+
     @JsonIgnore
     public boolean isAmendedCase() {
         return null != previousCaseId;
