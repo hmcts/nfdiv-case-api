@@ -55,6 +55,12 @@ public class SolicitorService {
     private DocumentsServedHow howServed;
 
     @CCD(
+        label = "Details of Service",
+        access = {DefaultAccess.class}
+    )
+    private String serviceDetails;
+
+    @CCD(
         label = "Give the address where you served the documents?",
         hint = "Include the fax or DX number, e-mail address or other electronic identification",
         typeOverride = TextArea,
