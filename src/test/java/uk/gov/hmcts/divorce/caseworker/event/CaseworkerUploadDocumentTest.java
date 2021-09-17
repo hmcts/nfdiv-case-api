@@ -14,17 +14,17 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.document.model.CaseworkerUploadedDocument;
-import uk.gov.hmcts.divorce.document.model.CaseworkerUploadedDocumentType;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerUploadDocument.CASEWORKER_UPLOAD_DOCUMENT;
-import static uk.gov.hmcts.divorce.document.model.CaseworkerUploadedDocumentType.ACKNOWLEDGEMENT_OF_SERVICE;
-import static uk.gov.hmcts.divorce.document.model.CaseworkerUploadedDocumentType.BAILIFF_SERVICE;
-import static uk.gov.hmcts.divorce.document.model.CaseworkerUploadedDocumentType.D9D;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.ACKNOWLEDGEMENT_OF_SERVICE;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.BAILIFF_SERVICE;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.D9D;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -51,10 +51,10 @@ public class CaseworkerUploadDocumentTest {
         final CaseDetails<CaseData, State> previousCaseDetails = new CaseDetails<>();
         previousCaseDetails.setData(caseData());
 
-        final ListValue<CaseworkerUploadedDocument> doc1 =
+        final ListValue<DivorceDocument> doc1 =
             getDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003", "d9d.pdf", D9D);
 
-        final ListValue<CaseworkerUploadedDocument> doc2 =
+        final ListValue<DivorceDocument> doc2 =
             getDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130004", "aos.pdf", ACKNOWLEDGEMENT_OF_SERVICE);
 
         final CaseData caseData = caseData();
@@ -66,7 +66,7 @@ public class CaseworkerUploadDocumentTest {
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerUploadDocument.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
 
-        List<ListValue<CaseworkerUploadedDocument>> actualDocuments = response.getData().getDocumentsUploaded();
+        List<ListValue<DivorceDocument>> actualDocuments = response.getData().getDocumentsUploaded();
         assertThat(actualDocuments.size()).isEqualTo(2);
         assertThat(actualDocuments.get(0).getValue()).isSameAs(doc1.getValue());
         assertThat(actualDocuments.get(1).getValue()).isSameAs(doc2.getValue());
@@ -76,10 +76,10 @@ public class CaseworkerUploadDocumentTest {
     void shouldSortDocumentsInDescendingOrderAndAddNewDocumentsToTopOfList() {
         final CaseDetails<CaseData, State> previousCaseDetails = new CaseDetails<>();
 
-        final ListValue<CaseworkerUploadedDocument> doc1 =
+        final ListValue<DivorceDocument> doc1 =
             getDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003", "d9d.pdf", D9D);
 
-        final ListValue<CaseworkerUploadedDocument> doc2 =
+        final ListValue<DivorceDocument> doc2 =
             getDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130004", "bailiff.pdf", BAILIFF_SERVICE);
 
         final CaseData previousCaseData = caseData();
@@ -87,7 +87,7 @@ public class CaseworkerUploadDocumentTest {
 
         previousCaseDetails.setData(previousCaseData);
 
-        final ListValue<CaseworkerUploadedDocument> doc3 =
+        final ListValue<DivorceDocument> doc3 =
             getDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130005", "aos.pdf", ACKNOWLEDGEMENT_OF_SERVICE);
 
         final CaseData caseData = caseData();
@@ -99,21 +99,21 @@ public class CaseworkerUploadDocumentTest {
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerUploadDocument.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
 
-        List<ListValue<CaseworkerUploadedDocument>> actualDocuments = response.getData().getDocumentsUploaded();
+        List<ListValue<DivorceDocument>> actualDocuments = response.getData().getDocumentsUploaded();
         assertThat(actualDocuments.size()).isEqualTo(3);
         assertThat(actualDocuments.get(0).getValue()).isSameAs(doc3.getValue());
         assertThat(actualDocuments.get(1).getValue()).isSameAs(doc1.getValue());
         assertThat(actualDocuments.get(2).getValue()).isSameAs(doc2.getValue());
     }
 
-    private ListValue<CaseworkerUploadedDocument> getDocumentListValue(
+    private ListValue<DivorceDocument> getDocumentListValue(
         String url,
         String filename,
-        CaseworkerUploadedDocumentType documentType
+        DocumentType documentType
     ) {
-        return ListValue.<CaseworkerUploadedDocument>builder()
+        return ListValue.<DivorceDocument>builder()
             .id(UUID.randomUUID().toString())
-            .value(CaseworkerUploadedDocument.builder()
+            .value(DivorceDocument.builder()
                 .documentType(documentType)
                 .documentLink(Document
                     .builder()

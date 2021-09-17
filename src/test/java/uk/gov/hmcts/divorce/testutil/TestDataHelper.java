@@ -69,7 +69,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORC
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_JOINT;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_2_SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_2_SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
@@ -477,7 +477,7 @@ public class TestDataHelper {
 
         return ListValue
             .<DivorceDocument>builder()
-            .id(DIVORCE_APPLICATION.getLabel())
+            .id(APPLICATION.getLabel())
             .value(divorceDocument)
             .build();
     }

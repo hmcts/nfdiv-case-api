@@ -26,7 +26,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CITIZEN_RESP_AOS_INVITATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_AOS_INVITATION_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.DOCUMENT_TYPE_RESPONDENT_INVITATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
@@ -71,7 +71,7 @@ class GenerateCitizenRespondentAosInvitationTest {
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
                 caseData,
-                DOCUMENT_TYPE_RESPONDENT_INVITATION,
+                RESPONDENT_INVITATION,
                 templateContentSupplier,
                 TEST_CASE_ID,
                 CITIZEN_RESP_AOS_INVITATION,

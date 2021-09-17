@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.divorceDocumentFrom;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.documentFrom;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersOfDocumentTypes;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.OTHER;
@@ -67,7 +67,7 @@ class DocumentUtilTest {
 
         final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
-                .documentType(DIVORCE_APPLICATION)
+                .documentType(APPLICATION)
                 .build())
             .build();
 
@@ -90,7 +90,7 @@ class DocumentUtilTest {
 
         final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
-                .documentType(DIVORCE_APPLICATION)
+                .documentType(APPLICATION)
                 .build())
             .build();
 
@@ -124,7 +124,7 @@ class DocumentUtilTest {
 
         final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
-                .documentType(DIVORCE_APPLICATION)
+                .documentType(APPLICATION)
                 .build())
             .build();
 

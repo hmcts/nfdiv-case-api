@@ -16,7 +16,7 @@ import java.util.List;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.CollectionUtils.isEmpty;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 
 @Service
 @Slf4j
@@ -87,6 +87,6 @@ public class DraftApplicationRemovalService {
     }
 
     private boolean isApplicationDocument(ListValue<DivorceDocument> document) {
-        return document.getValue().getDocumentType().equals(DIVORCE_APPLICATION);
+        return document.getValue().getDocumentType().equals(APPLICATION);
     }
 }
