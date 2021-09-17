@@ -196,6 +196,10 @@ public class CaseData {
     )
     private String note;
 
+    @CCD(access = {DefaultAccess.class})
+    @JsonUnwrapped
+    private RetiredFields retiredFields;
+
     @JsonIgnore
     public boolean isAmendedCase() {
         return null != previousCaseId;
