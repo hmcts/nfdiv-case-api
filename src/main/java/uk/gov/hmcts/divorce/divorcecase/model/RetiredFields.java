@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 @NoArgsConstructor
 public class RetiredFields {
 
-    @CCD(access = {DefaultAccess.class}, label = "retired")
+    @CCD(label = "retired")
     private String exampleRetiredField;
 
     @JsonIgnore
