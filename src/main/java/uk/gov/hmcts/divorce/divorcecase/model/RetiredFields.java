@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
-import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 
 import java.util.Map;
 import java.util.function.Consumer;
