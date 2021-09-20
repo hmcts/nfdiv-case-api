@@ -14,6 +14,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.RESPONDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 
 class AosAccessTest {
@@ -24,7 +25,7 @@ class AosAccessTest {
         final SetMultimap<HasRole, Permission> grants = new AosAccess().getGrants();
 
         assertThat(grants)
-            .hasSize(11)
+            .hasSize(14)
             .contains(
                 entry(SYSTEMUPDATE, C),
                 entry(SYSTEMUPDATE, R),
@@ -36,7 +37,10 @@ class AosAccessTest {
                 entry(APPLICANT_2_SOLICITOR, U),
                 entry(APPLICANT_2, C),
                 entry(APPLICANT_2, R),
-                entry(APPLICANT_2, U)
+                entry(APPLICANT_2, U),
+                entry(RESPONDENT, C),
+                entry(RESPONDENT, R),
+                entry(RESPONDENT, U)
             );
     }
 }
