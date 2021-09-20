@@ -30,6 +30,9 @@ public class SystemMigrateCase implements CCDConfig<CaseData, State, UserRole> {
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
+
+        // the RetiredFields::migrate method runs as a pre-event hook to all events so all we need to do is return the migrated data.
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
             .build();
