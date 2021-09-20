@@ -84,6 +84,8 @@ public final class NotificationConstants {
 
     public static final String REVIEW_DEADLINE_DATE = "review deadline date";
 
+    public static final String APPLY_FOR_CONDITIONAL_ORDER_LINK = "apply for conditional order link";
+
     private NotificationConstants() {
     }
 }
