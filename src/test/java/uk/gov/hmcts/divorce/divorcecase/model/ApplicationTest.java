@@ -18,7 +18,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEES_HELP_WITH;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.DECLINED;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
@@ -174,7 +174,7 @@ class ApplicationTest {
 
         final var application = Application.builder()
             .applicant1WantsToHavePapersServedAnotherWay(NO)
-            .applicant1CannotUploadSupportingDocument(Set.of(DIVORCE_APPLICATION))
+            .applicant1CannotUploadSupportingDocument(Set.of(APPLICATION))
             .build();
 
         assertThat(application.hasAwaitingApplicant1Documents()).isTrue();

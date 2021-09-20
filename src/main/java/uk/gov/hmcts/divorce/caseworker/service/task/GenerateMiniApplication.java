@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_APPLICATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_APPLICATION_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 
 @Component
 @Slf4j
@@ -41,7 +41,7 @@ public class GenerateMiniApplication implements CaseTask {
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
-            DIVORCE_APPLICATION,
+            APPLICATION,
             templateContentSupplier,
             caseId,
             DIVORCE_MINI_APPLICATION,

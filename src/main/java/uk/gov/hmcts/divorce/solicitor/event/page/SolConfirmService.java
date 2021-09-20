@@ -24,13 +24,14 @@ public class SolConfirmService implements CcdPageConfiguration {
                 .mandatory(SolicitorService::getDocumentsServed)
                 .mandatory(SolicitorService::getOnWhomServed)
                 .mandatory(SolicitorService::getHowServed)
+                .mandatory(SolicitorService::getServiceDetails, "solServiceHowServed=\"deliveredTo\" OR solServiceHowServed=\"postedTo\"")
                 .mandatory(SolicitorService::getAddressServed)
                 .mandatory(SolicitorService::getBeingThe)
                 .mandatory(SolicitorService::getLocationServed)
                 .mandatory(SolicitorService::getSpecifyLocationServed, "solServiceLocationServed=\"otherSpecify\"")
                 .mandatory(SolicitorService::getServiceSotName)
+                .label("solConfirmStatement","I believe that the facts stated in the application are true.")
                 .mandatory(SolicitorService::getServiceSotFirm)
-                .done()
-            .label("solConfirmStatement","I believe that the facts stated in the application are true");
+                .done();
     }
 }

@@ -75,11 +75,13 @@ To generate the CCD JSON files from the Java Model run the following from the ro
 You can manually run a cron task from the cli:
 
 ```
-java -jar nfdiv-case-api.jar run [taskName]
+TASK_NAME=[task] java -jar nfdiv-case-api.jar run
 
 # E.g.
-java -jar nfdiv-case-api.jar run SystemProgressHeldCasesTask
+TASK_NAME=SystemProgressHeldCasesTask java -jar nfdiv-case-api.jar
 
+# or
+TASK_NAME=SystemProgressHeldCasesTask ./gradlew bootRun
 ```
 
 To configure a new cron in AAT please checkout the [cnp-flux-config](https://github.com/hmcts/cnp-flux-config/) repository and run:

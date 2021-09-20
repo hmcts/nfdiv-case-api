@@ -13,7 +13,7 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,7 +28,7 @@ class AddMiniApplicationLinkTest {
         final Document documentLink = new Document("url", "filename", "binary url");
         final ListValue<DivorceDocument> miniApplicationListValue = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
-                .documentType(DIVORCE_APPLICATION)
+                .documentType(APPLICATION)
                 .documentLink(documentLink)
                 .build())
             .build();

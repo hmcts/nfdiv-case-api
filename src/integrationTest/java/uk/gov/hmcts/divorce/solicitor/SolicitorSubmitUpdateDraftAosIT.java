@@ -35,8 +35,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.DOCUMENT_TYPE_RESPONDENT_INVITATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorDraftAos.SOLICITOR_DRAFT_AOS;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorUpdateAos.SOLICITOR_UPDATE_AOS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
@@ -94,7 +94,7 @@ public class SolicitorSubmitUpdateDraftAosIT {
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
             .content(
                 objectMapper.writeValueAsString(
-                    callbackRequest(caseDataWithDocument(DIVORCE_APPLICATION),
+                    callbackRequest(caseDataWithDocument(APPLICATION),
                         eventId)))
             .accept(APPLICATION_JSON))
             .andDo(print())
@@ -120,7 +120,7 @@ public class SolicitorSubmitUpdateDraftAosIT {
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
             .content(
                 objectMapper.writeValueAsString(
-                    callbackRequest(caseDataWithDocument(DOCUMENT_TYPE_RESPONDENT_INVITATION),
+                    callbackRequest(caseDataWithDocument(RESPONDENT_INVITATION),
                         eventId)))
             .accept(APPLICATION_JSON))
             .andExpect(

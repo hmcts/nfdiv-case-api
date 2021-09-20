@@ -26,7 +26,7 @@ plugins {
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'org.springframework.boot' version '2.5.3'
   id 'com.github.ben-manes.versions' version '0.38.0'
-  id 'hmcts.ccd.sdk' version '0.23.9'
+  id 'hmcts.ccd.sdk' version '0.24.0'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -111,7 +111,7 @@ task smoke(type: Test) {
 }
 
 task highLevelDataSetup(type: JavaExec) {
-  main = "uk.gov.hmcts.divorce.common.ccd.HighLevelDataSetupApp"
+  mainClass.set("uk.gov.hmcts.divorce.common.ccd.HighLevelDataSetupApp")
   classpath += sourceSets.main.runtimeClasspath
   jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
 }
@@ -134,8 +134,8 @@ pmd {
 jacocoTestReport {
   executionData(test, integration)
   reports {
-    xml.enabled = true
-    csv.enabled = false
+    xml.getRequired().set(true)
+    csv.getRequired().set(false)
     xml.destination file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
   }
 }
@@ -281,7 +281,7 @@ dependencies {
 
   testImplementation group: 'io.rest-assured', name: 'rest-assured'
 
-  testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.20.2'
+  testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.21.0'
   testImplementation group: 'org.assertj', name: 'assertj-guava', version: '3.4.0'
   testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '3.0.3'
 
