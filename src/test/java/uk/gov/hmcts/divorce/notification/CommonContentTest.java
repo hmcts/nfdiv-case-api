@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import static java.lang.String.join;
@@ -20,14 +21,17 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOL
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_NAME;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TO_END_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TYPE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DISSOLUTION_COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FIRST_NAME;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PARTNER;
@@ -37,6 +41,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.RESPONDENT
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_URL_NOTIFY_KEY;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.TO_END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.UNION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -80,7 +85,7 @@ class CommonContentTest {
         final Map<String, String> templateVars = commonContent.templateVarsForApplicant(
             caseData, caseData.getApplicant1(), caseData.getApplicant2());
 
-        assertThat(templateVars).isNotEmpty().hasSize(8)
+        assertThat(templateVars).isNotEmpty().hasSize(10)
             .contains(
                 entry(FIRST_NAME, firstName),
                 entry(LAST_NAME, lastName),
@@ -89,7 +94,9 @@ class CommonContentTest {
                 entry(RELATIONSHIP_COURT_HEADER, "Divorce service"),
                 entry(COURT_EMAIL, courtEmail),
                 entry(SIGN_IN_URL_NOTIFY_KEY, SIGN_IN_DIVORCE_URL),
-                entry(UNION, MARRIAGE));
+                entry(UNION, MARRIAGE),
+                entry(APPLICATION.toLowerCase(Locale.ROOT), FOR_DIVORCE),
+                entry(APPLICATION_TYPE.toLowerCase(Locale.ROOT), DIVORCE_APPLICATION));
     }
 
     @Test
@@ -116,7 +123,7 @@ class CommonContentTest {
         final Map<String, String> templateVars = commonContent.templateVarsForApplicant(
             caseData, caseData.getApplicant1(), caseData.getApplicant2());
 
-        assertThat(templateVars).isNotEmpty().hasSize(8)
+        assertThat(templateVars).isNotEmpty().hasSize(10)
             .contains(
                 entry(FIRST_NAME, firstName),
                 entry(LAST_NAME, lastName),
@@ -125,7 +132,9 @@ class CommonContentTest {
                 entry(RELATIONSHIP_COURT_HEADER, "End a civil partnership service"),
                 entry(COURT_EMAIL, courtEmail),
                 entry(SIGN_IN_URL_NOTIFY_KEY, SIGN_IN_DISSOLUTION_URL),
-                entry(UNION, CIVIL_PARTNERSHIP));
+                entry(UNION, CIVIL_PARTNERSHIP),
+                entry(APPLICATION.toLowerCase(Locale.ROOT), TO_END_CIVIL_PARTNERSHIP),
+                entry(APPLICATION_TYPE.toLowerCase(Locale.ROOT), APPLICATION_TO_END_CIVIL_PARTNERSHIP));
     }
 
     @Test

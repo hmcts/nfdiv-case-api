@@ -60,9 +60,6 @@ public class SystemRemindApplicant1ApplicationApprovedTask implements Runnable {
                             && !caseData.getApplication().isApplicant1ReminderSent()
                         ) {
                             notifyApplicant1(caseDetails, caseData, dueDate);
-                            log.info(
-                                "~~~~~~~~~~~~~SystemRemindApplicant1ApplicationApprovedTask "
-                                    + "notifyApplicant1 completed for case with ID {}", caseDetails.getId());
                         }
                     }
                 } catch (final CcdManagementException e) {

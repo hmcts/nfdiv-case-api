@@ -339,6 +339,12 @@ public class Application {
     )
     private YesOrNo applicant2ReminderSent;
 
+    @CCD(
+        label = "Notification sent to Applicant 1 indicating they can apply for a Conditional Order",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo applicant1NotifiedCanApplyForConditionalOrder;
+
     @JsonIgnore
     public boolean hasBeenPaidFor() {
         return null != applicationFeeOrderSummary
@@ -408,6 +414,11 @@ public class Application {
     @JsonIgnore
     public boolean isApplicant1ReminderSent() {
         return YES.equals(applicant1ReminderSent);
+    }
+
+    @JsonIgnore
+    public boolean hasApplicant1BeenNotifiedCanApplyForConditionalOrder() {
+        return YES.equals(applicant1NotifiedCanApplyForConditionalOrder);
     }
 
     @JsonIgnore
