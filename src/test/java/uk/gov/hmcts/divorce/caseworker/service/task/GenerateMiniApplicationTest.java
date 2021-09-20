@@ -13,8 +13,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.MiniApplicationTemplateContent;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,7 +28,13 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_APPLICATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_APPLICATION_DOCUMENT_NAME;
+<<<<<<< HEAD
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
+=======
+import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.FILE_NAME_DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
+>>>>>>> Updated reissue application service and added unit tests
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
@@ -39,11 +48,15 @@ class GenerateMiniApplicationTest {
     @Mock
     private MiniApplicationTemplateContent templateContent;
 
+    @Mock
+    private Clock clock;
+
     @InjectMocks
     private GenerateMiniApplication generateMiniApplication;
 
     @Test
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithMiniApplicationDocument() {
+        setMockClock(clock);
 
         final var caseData = CaseData.builder()
             .applicant1(Applicant.builder()
@@ -65,6 +78,12 @@ class GenerateMiniApplicationTest {
 
         final var result = generateMiniApplication.apply(caseDetails);
 
+        final var filename = new StringJoiner("-")
+            .add(DIVORCE_MINI_APPLICATION_DOCUMENT_NAME)
+            .add(String.valueOf(TEST_CASE_ID))
+            .add(LocalDateTime.now(clock).format(FILE_NAME_DATE_TIME_FORMATTER))
+            .toString();
+
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
                 caseData,
@@ -73,7 +92,7 @@ class GenerateMiniApplicationTest {
                 TEST_CASE_ID,
                 DIVORCE_MINI_APPLICATION,
                 ENGLISH,
-                DIVORCE_MINI_APPLICATION_DOCUMENT_NAME + TEST_CASE_ID);
+                filename);
 
         assertThat(result.getData()).isEqualTo(caseData);
     }

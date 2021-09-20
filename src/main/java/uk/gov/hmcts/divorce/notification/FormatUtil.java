@@ -9,6 +9,10 @@ public final class FormatUtil {
 
     public static final DateTimeFormatter DATE_TIME_FORMATTER = ofPattern("d MMMM yyyy");
 
+    public static final DateTimeFormatter FILE_NAME_DATE_TIME_FORMATTER = ofPattern("yyyy-MM-dd:HH:mm");
+
+    public static final DateTimeFormatter FILE_NAME_DATE_FORMATTER = ofPattern("yyyy-MM-dd");
+
     private FormatUtil() {
     }
 

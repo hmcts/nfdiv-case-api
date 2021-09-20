@@ -10,14 +10,22 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.CitizenRespondentAosInvitationTemplateContent;
 
+import java.time.Clock;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.function.Supplier;
 
 import static uk.gov.hmcts.divorce.divorcecase.util.AccessCodeGenerator.generateAccessCode;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CITIZEN_RESP_AOS_INVITATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_AOS_INVITATION_DOCUMENT_NAME;
+<<<<<<< HEAD
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
+=======
+import static uk.gov.hmcts.divorce.document.model.DocumentType.DOCUMENT_TYPE_RESPONDENT_INVITATION;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.FILE_NAME_DATE_TIME_FORMATTER;
+>>>>>>> Updated reissue application service and added unit tests
 
 @Component
 @Slf4j
@@ -29,6 +37,9 @@ public class GenerateCitizenRespondentAosInvitation implements CaseTask {
     //TODO: Use correct template content when application template requirements are known.
     @Autowired
     private CitizenRespondentAosInvitationTemplateContent templateContent;
+
+    @Autowired
+    private Clock clock;
 
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
@@ -45,6 +56,12 @@ public class GenerateCitizenRespondentAosInvitation implements CaseTask {
             log.info("Generating citizen respondent AoS invitation for case id {} ", caseId);
             final Supplier<Map<String, Object>> templateContentSupplier = templateContent.apply(caseData, caseId, createdDate);
 
+            String filename = new StringJoiner("-")
+                .add(RESP_AOS_INVITATION_DOCUMENT_NAME)
+                .add(String.valueOf(caseId))
+                .add(LocalDateTime.now(clock).format(FILE_NAME_DATE_TIME_FORMATTER))
+                .toString();
+
             caseDataDocumentService.renderDocumentAndUpdateCaseData(
                 caseData,
                 RESPONDENT_INVITATION,
@@ -52,7 +69,7 @@ public class GenerateCitizenRespondentAosInvitation implements CaseTask {
                 caseId,
                 CITIZEN_RESP_AOS_INVITATION,
                 caseData.getApplicant1().getLanguagePreference(),
-                RESP_AOS_INVITATION_DOCUMENT_NAME + caseId
+                filename
             );
         }
 

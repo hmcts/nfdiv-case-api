@@ -11,15 +11,15 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissue.CASEWORKER_REISSUE;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissueApplication.CASEWORKER_REISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-class CaseworkerReissueTest {
+class CaseworkerReissueApplicationTest {
 
     @InjectMocks
-    private CaseworkerReissue caseworkerReissue;
+    private CaseworkerReissueApplication caseworkerReissue;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
@@ -29,6 +29,6 @@ class CaseworkerReissueTest {
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(CASEWORKER_REISSUE);
+            .contains(CASEWORKER_REISSUE_APPLICATION);
     }
 }

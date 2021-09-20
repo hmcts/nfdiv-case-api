@@ -13,7 +13,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 
 import java.util.List;
 
@@ -22,6 +21,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderRefused;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Disputed;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
@@ -37,24 +37,20 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.
 
 @Component
 @Slf4j
-public class CaseworkerReIssueApplication implements CCDConfig<CaseData, State, UserRole> {
-
+public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_REISSUE_APPLICATION = "caseworker-reissue-application";
 
     @Autowired
     private ReIssueApplicationService reIssueApplicationService;
-
-    @Autowired
-    private CcdUpdateService ccdUpdateService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_REISSUE_APPLICATION)
             .forStates(
-                AwaitingAos, AosDrafted, AosOverdue,
+                AwaitingAos,AosDrafted, AosOverdue,
                 Rejected, ConditionalOrderRefused, Withdrawn,
-                AwaitingAos, Disputed, Holding, AwaitingDocuments)
+                Disputed, Holding, AwaitingDocuments, AwaitingService)
             .name("Reissue case")
             .description("Application Reissued")
             .showSummary()

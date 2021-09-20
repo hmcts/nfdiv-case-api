@@ -13,8 +13,11 @@ import uk.gov.hmcts.divorce.divorcecase.util.AccessCodeGenerator;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.RespondentSolicitorAosInvitationTemplateContent;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,7 +29,13 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_AOS_INVITATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_SOLICITOR_AOS_INVITATION;
+<<<<<<< HEAD
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
+=======
+import static uk.gov.hmcts.divorce.document.model.DocumentType.DOCUMENT_TYPE_RESPONDENT_INVITATION;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.FILE_NAME_DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
+>>>>>>> Updated reissue application service and added unit tests
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
@@ -43,11 +52,15 @@ public class GenerateRespondentSolicitorAosInvitationTest {
     @Mock
     private RespondentSolicitorAosInvitationTemplateContent templateContent;
 
+    @Mock
+    private Clock clock;
+
     @InjectMocks
     private GenerateRespondentSolicitorAosInvitation generateRespondentSolicitorAosInvitation;
 
     @Test
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithAosInvitationDocumentIfRespondentIsRepresented() {
+        setMockClock(clock);
 
         final var caseData = caseData();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
@@ -69,6 +82,12 @@ public class GenerateRespondentSolicitorAosInvitationTest {
 
         assertThat(result.getData().getCaseInvite().getAccessCode()).isEqualTo(ACCESS_CODE);
 
+        final var filename = new StringJoiner("-")
+            .add(RESP_AOS_INVITATION_DOCUMENT_NAME)
+            .add(String.valueOf(TEST_CASE_ID))
+            .add(LocalDateTime.now(clock).format(FILE_NAME_DATE_TIME_FORMATTER))
+            .toString();
+
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
                 caseData,
@@ -77,7 +96,7 @@ public class GenerateRespondentSolicitorAosInvitationTest {
                 TEST_CASE_ID,
                 RESP_SOLICITOR_AOS_INVITATION,
                 ENGLISH,
-                RESP_AOS_INVITATION_DOCUMENT_NAME + TEST_CASE_ID);
+                filename);
 
         classMock.close();
     }
