@@ -109,6 +109,8 @@ public class CaseworkerReIssueApplicationIT {
 
     private static final String CASEWORKER_REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_SOL_REP =
         "classpath:caseworker-reissue-application-about-to-submit-app2-sol-rep-response.json";
+    private static final String CASEWORKER_REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_SOL_REP_REISSUE_CASE_TYPE =
+        "classpath:caseworker-reissue-application-about-to-submit-app2-sol-rep-reissue-response.json";
     private static final String CASEWORKER_REISSUE_APPLICATION_ABOUT_TO_SUBMIT_SOLICITOR_SERVICE =
         "classpath:caseworker-issue-application-about-to-submit-solicitor-service-response.json";
     private static final String REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_NOT_SOL_REP =
@@ -356,6 +358,65 @@ public class CaseworkerReIssueApplicationIT {
                 content().json(expectedResponse(CASEWORKER_REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_SOL_REP))
             );
 
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    void shouldGenerateRespondentAosAndSetReIssueDateAndNotSendEmailNotificationsWhenRespondentIsRepresentedAndTypeIsReissueCase()
+        throws Exception {
+        final CaseData caseData = validCaseDataForIssueApplication();
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+        caseData.getApplicant2().setSolicitor(
+            Solicitor
+                .builder()
+                .name("testsol")
+                .email(TEST_SOLICITOR_EMAIL)
+                .address("223b\nBaker Street\nLondon\nGreater London\nNW1 5FG\nUnited Kingdom")
+                .organisationPolicy(organisationPolicy())
+                .build()
+        );
+        caseData.getApplication().setReissueOption(REISSUE_CASE);
+        caseData.getApplication().setIssueDate(LocalDate.now());
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
+
+        stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "Divorce_CP_Dummy_Template.docx");
+        stubForDocAssemblyWith(MINI_APPLICATION_ID, "Divorce_CP_Mini_Application_Sole_Joint.docx");
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubAosPackSendLetter();
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_REISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk())
+            .andExpect(
+                content().json(expectedResponse(CASEWORKER_REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_SOL_REP_REISSUE_CASE_TYPE))
+            );
+
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_SOLICITOR_EMAIL),
+                eq(APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
+                anyMap(),
+                eq(ENGLISH));
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_SOLICITOR_EMAIL),
+                eq(RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
+                anyMap(),
+                eq(ENGLISH));
         verifyNoMoreInteractions(notificationService);
     }
 
