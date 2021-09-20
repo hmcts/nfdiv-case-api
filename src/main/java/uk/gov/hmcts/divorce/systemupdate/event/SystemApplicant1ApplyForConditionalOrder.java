@@ -40,7 +40,6 @@ public class SystemApplicant1ApplyForConditionalOrder implements CCDConfig<CaseD
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
-            .state(AwaitingConditionalOrder)
             .build();
     }
 }
