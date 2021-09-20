@@ -10,7 +10,6 @@ import static org.assertj.guava.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.C;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.R;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.U;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -25,7 +24,7 @@ class AosAccessTest {
         final SetMultimap<HasRole, Permission> grants = new AosAccess().getGrants();
 
         assertThat(grants)
-            .hasSize(14)
+            .hasSize(11)
             .contains(
                 entry(SYSTEMUPDATE, C),
                 entry(SYSTEMUPDATE, R),
@@ -35,9 +34,6 @@ class AosAccessTest {
                 entry(APPLICANT_2_SOLICITOR, C),
                 entry(APPLICANT_2_SOLICITOR, R),
                 entry(APPLICANT_2_SOLICITOR, U),
-                entry(APPLICANT_2, C),
-                entry(APPLICANT_2, R),
-                entry(APPLICANT_2, U),
                 entry(RESPONDENT, C),
                 entry(RESPONDENT, R),
                 entry(RESPONDENT, U)

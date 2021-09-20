@@ -6,7 +6,6 @@ import uk.gov.hmcts.ccd.sdk.api.HasAccessControl;
 import uk.gov.hmcts.ccd.sdk.api.HasRole;
 import uk.gov.hmcts.ccd.sdk.api.Permission;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -21,7 +20,6 @@ public class AosAccess implements HasAccessControl {
         grants.putAll(CASE_WORKER, Permissions.READ);
         grants.putAll(LEGAL_ADVISOR, Permissions.READ);
         grants.putAll(APPLICANT_2_SOLICITOR, Permissions.CREATE_READ_UPDATE);
-        grants.putAll(APPLICANT_2, Permissions.CREATE_READ_UPDATE);
         grants.putAll(RESPONDENT, Permissions.CREATE_READ_UPDATE);
 
         return grants;
