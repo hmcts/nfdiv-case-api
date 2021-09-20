@@ -12,6 +12,9 @@ import java.util.function.Consumer;
 @NoArgsConstructor
 public class RetiredFields {
 
+    @CCD(label = "Case data version")
+    private int dataVersion;
+
     @CCD(label = "retired")
     private String exampleRetiredField;
 
@@ -29,6 +32,12 @@ public class RetiredFields {
             }
         }
 
+        data.put("dataVersion", getVersion());
+
         return data;
+    }
+
+    public static int getVersion() {
+        return migrations.size();
     }
 }
