@@ -7,6 +7,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -32,49 +36,40 @@ import uk.gov.hmcts.reform.sendletter.api.SendLetterResponse;
 import java.io.IOException;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
-import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
-import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
-import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
-import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.CASEWORKER_ISSUE_APPLICATION;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissueApplication.CASEWORKER_REISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
+import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
+import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.REISSUE_CASE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssembly;
-import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyUnauthorized;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
-import static uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock.stubDeleteFromDocumentManagementForSystem;
 import static uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock.stubDownloadBinaryFromDocumentManagement;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.CASEWORKER_ROLE;
-import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SOLICITOR_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SYSTEM_USER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamDetails;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamToken;
@@ -84,7 +79,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
@@ -111,15 +105,17 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.resourceAsBytes;
     IdamWireMock.PropertiesInitializer.class,
     DocManagementStoreWireMock.PropertiesInitializer.class,
     SendLetterWireMock.PropertiesInitializer.class})
-public class CaseworkerIssueApplicationIT {
+public class CaseworkerReIssueApplicationIT {
 
-    private static final String CASEWORKER_ISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_SOL_REP =
-        "classpath:caseworker-issue-application-about-to-submit-app2-sol-rep-response.json";
-    private static final String CASEWORKER_ISSUE_APPLICATION_ABOUT_TO_SUBMIT_SOLICITOR_SERVICE =
+    private static final String CASEWORKER_REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_SOL_REP =
+        "classpath:caseworker-reissue-application-about-to-submit-app2-sol-rep-response.json";
+    private static final String CASEWORKER_REISSUE_APPLICATION_ABOUT_TO_SUBMIT_SOLICITOR_SERVICE =
         "classpath:caseworker-issue-application-about-to-submit-solicitor-service-response.json";
-    private static final String ISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_NOT_SOL_REP =
-        "classpath:caseworker-issue-application-about-to-submit-app2-not-sol-rep-response.json";
-    private static final String CASEWORKER_ISSUE_APPLICATION_ABOUT_TO_SUBMIT_ERROR =
+    private static final String REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_NOT_SOL_REP =
+        "classpath:caseworker-reissue-application-about-to-submit-app2-not-sol-rep-response.json";
+    private static final String REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_NOT_SOL_REP_REISSUE_CASE_TYPE =
+        "classpath:caseworker-reissue-application-about-to-submit-app2-not-sol-rep-reissue-case-response.json";
+    private static final String CASEWORKER_REISSUE_APPLICATION_ABOUT_TO_SUBMIT_ERROR =
         "classpath:caseworker-issue-application-about-to-submit-error-response.json";
     private static final String SOLE_CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT =
         "classpath:caseworker-issue-sole-citizen-application-about-to-submit-response.json";
@@ -171,10 +167,13 @@ public class CaseworkerIssueApplicationIT {
         when(clock.getZone()).thenReturn(ZoneId.of("Europe/London"));
     }
 
-    @Test
-    void shouldSendApplicationIssueNotificationsForSoleCitizenApplication() throws Exception {
+    @ParameterizedTest
+    @MethodSource("reissueOptions")
+    void shouldSetReIssueDateAndSendApplicationIssueNotificationsForSoleCitizenApplication(ReissueOption reissueOption) throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplication().setSolSignStatementOfTruth(null);
+        caseData.getApplication().setReissueOption(reissueOption);
+        caseData.getApplication().setIssueDate(LocalDate.now());
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
@@ -186,14 +185,14 @@ public class CaseworkerIssueApplicationIT {
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    CASEWORKER_ISSUE_APPLICATION)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_REISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk())
             .andExpect(
@@ -210,10 +209,13 @@ public class CaseworkerIssueApplicationIT {
         verifyNoMoreInteractions(notificationService);
     }
 
-    @Test
-    void shouldSendApplicationIssueNotificationsForJointCitizenApplication() throws Exception {
+    @ParameterizedTest
+    @MethodSource("reissueOptions")
+    void shouldSetReIssueDateAndSendApplicationIssueNotificationsForJointCitizenApplication(ReissueOption reissueOption) throws Exception {
         final CaseData caseData = validApplicant2CaseData();
         caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("London");
+        caseData.getApplication().setReissueOption(reissueOption);
+        caseData.getApplication().setIssueDate(LocalDate.now());
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
@@ -225,14 +227,14 @@ public class CaseworkerIssueApplicationIT {
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    CASEWORKER_ISSUE_APPLICATION)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_REISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk())
             .andExpect(
@@ -256,7 +258,8 @@ public class CaseworkerIssueApplicationIT {
     }
 
     @Test
-    void shouldGenerateAosPackAndPostAosPackAndSendEmailsWhenRespondentIsRepresented() throws Exception {
+    void shouldGenerateRespondentInvitationAndSetReIssueDateAndSendEmailNotificationsWhenRespondentIsRepresentedAndReissueTypeIsDigitalAos()
+        throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitor(
@@ -268,31 +271,31 @@ public class CaseworkerIssueApplicationIT {
                 .organisationPolicy(organisationPolicy())
                 .build()
         );
+        caseData.getApplication().setReissueOption(DIGITAL_AOS);
+        caseData.getApplication().setIssueDate(LocalDate.now());
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
+        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation");
 
         stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "Divorce_CP_Dummy_Template.docx");
-        stubForDocAssemblyWith(MINI_APPLICATION_ID, "Divorce_CP_Mini_Application_Sole_Joint.docx");
-        stubAosPackSendLetter();
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    CASEWORKER_ISSUE_APPLICATION)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_REISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk())
             .andExpect(
-                content().json(expectedResponse(CASEWORKER_ISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_SOL_REP))
+                content().json(expectedResponse(CASEWORKER_REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_SOL_REP))
             );
 
         verify(notificationService)
@@ -312,35 +315,81 @@ public class CaseworkerIssueApplicationIT {
     }
 
     @Test
-    void shouldGenerateOnlyMiniApplicationAndSetIssueDateAndSendEmailWhenRespondentIsNotSolicitorRepresented() throws Exception {
+    void shouldGenerateRespondentAosAndSetReIssueDateAndNotSendEmailNotificationsWhenRespondentIsRepresentedAndReissueTypeOfflineAos()
+        throws Exception {
+        final CaseData caseData = validCaseDataForIssueApplication();
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+        caseData.getApplicant2().setSolicitor(
+            Solicitor
+                .builder()
+                .name("testsol")
+                .email(TEST_SOLICITOR_EMAIL)
+                .address("223b\nBaker Street\nLondon\nGreater London\nNW1 5FG\nUnited Kingdom")
+                .organisationPolicy(organisationPolicy())
+                .build()
+        );
+        caseData.getApplication().setReissueOption(OFFLINE_AOS);
+        caseData.getApplication().setIssueDate(LocalDate.now());
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation");
+
+        stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "Divorce_CP_Dummy_Template.docx");
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubAosPackSendLetter();
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_REISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk())
+            .andExpect(
+                content().json(expectedResponse(CASEWORKER_REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_SOL_REP))
+            );
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    void shouldGenerateOnlyRespondentAosAndSetReIssueDateAndSendEmailWhenRespondentIsNotSolicitorRepresentedAndReissueTypeIsDigitalAos()
+        throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplicant2().setSolicitorRepresented(NO);
         caseData.getApplicant2().setCorrespondenceAddress(correspondenceAddress());
+        caseData.getApplication().setReissueOption(DIGITAL_AOS);
+        caseData.getApplication().setIssueDate(LocalDate.now());
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
+        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation");
 
         stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "Divorce_CP_Dummy_Template.docx");
-        stubForDocAssemblyWith(MINI_APPLICATION_ID, "Divorce_CP_Mini_Application_Sole_Joint.docx");
-        stubAosPackSendLetter();
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    CASEWORKER_ISSUE_APPLICATION)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_REISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk())
             .andExpect(
-                content().json(expectedResponse(ISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_NOT_SOL_REP))
+                content().json(expectedResponse(REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_NOT_SOL_REP))
             );
 
         verify(notificationService)
@@ -354,62 +403,87 @@ public class CaseworkerIssueApplicationIT {
     }
 
     @Test
-    void shouldGenerateOnlyMiniApplicationAndSetIssueDateAndSendEmailWhenSolicitorServiceMethod() throws Exception {
+    void shouldGenerateOnlyRespondentAosAndSetReIssueDateAndSendEmailWhenRespondentIsNotSolicitorRepresentedAndReissueTypeIsOfflineAos()
+        throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
-        caseData.getApplication().setSolSignStatementOfTruth(YES);
-        caseData.getApplication().setSolServiceMethod(SOLICITOR_SERVICE);
-        caseData.getApplicant2().setSolicitorRepresented(YES);
-        caseData.getApplicant2().setHomeAddress(null);
-        caseData.getApplicant2().setSolicitor(
-            Solicitor
-                .builder()
-                .name("testsol")
-                .email(TEST_SOLICITOR_EMAIL)
-                .address("223b\nBaker Street\nLondon\nGreater London\nNW1 5FG\nUnited Kingdom")
-                .organisationPolicy(organisationPolicy())
-                .build()
-        );
+        caseData.getApplicant2().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setCorrespondenceAddress(correspondenceAddress());
+        caseData.getApplication().setReissueOption(OFFLINE_AOS);
+        caseData.getApplication().setIssueDate(LocalDate.now());
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
+        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation");
 
         stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "Divorce_CP_Dummy_Template.docx");
-        stubForDocAssemblyWith(MINI_APPLICATION_ID, "Divorce_CP_Mini_Application_Sole_Joint.docx");
-        stubAosPackSendLetter();
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubAosPackSendLetter();
 
-        final String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .content(objectMapper.writeValueAsString(
                     callbackRequest(
                         caseData,
-                        CASEWORKER_ISSUE_APPLICATION)))
+                        CASEWORKER_REISSUE_APPLICATION)))
                 .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk())
-            .andReturn()
-            .getResponse()
-            .getContentAsString();
+            .andExpect(
+                content().json(expectedResponse(REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_NOT_SOL_REP))
+            );
 
-        assertThatJson(actualResponse)
-            .when(TREATING_NULL_AS_ABSENT)
-            .when(IGNORING_ARRAY_ORDER)
-            .isEqualTo(json(expectedResponse(CASEWORKER_ISSUE_APPLICATION_ABOUT_TO_SUBMIT_SOLICITOR_SERVICE)));
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    void shouldGenerateOnlyRespondentAosAndSetReIssueDateAndSendEmailWhenRespondentIsNotSolicitorRepresentedAndReissueTypeIsReissueCase()
+        throws Exception {
+        final CaseData caseData = validCaseDataForIssueApplication();
+        caseData.getApplicant2().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setCorrespondenceAddress(correspondenceAddress());
+        caseData.getApplication().setReissueOption(REISSUE_CASE);
+        caseData.getApplication().setIssueDate(LocalDate.now());
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
+
+        stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "Divorce_CP_Dummy_Template.docx");
+        stubForDocAssemblyWith(MINI_APPLICATION_ID, "Divorce_CP_Mini_Application_Sole_Joint.docx");
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubAosPackSendLetter();
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_REISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk())
+            .andExpect(
+                content().json(expectedResponse(REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_NOT_SOL_REP_REISSUE_CASE_TYPE))
+            );
 
         verify(notificationService)
             .sendEmail(
                 eq(TEST_SOLICITOR_EMAIL),
-                eq(APPLICANT_SOLICITOR_SERVICE),
+                eq(APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
                 anyMap(),
                 eq(ENGLISH));
 
         verifyNoMoreInteractions(notificationService);
     }
+
 
     @Test
     void givenInvalidCaseDataWhenAboutToSubmitCallbackIsInvokedThenResponseContainsErrors() throws Exception {
@@ -422,163 +496,19 @@ public class CaseworkerIssueApplicationIT {
         stubForDocAssembly();
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    CASEWORKER_ISSUE_APPLICATION)))
-            .accept(APPLICATION_JSON))
-            .andExpect(
-                status().isOk())
-            .andExpect(
-                content().json(expectedResponse(CASEWORKER_ISSUE_APPLICATION_ABOUT_TO_SUBMIT_ERROR))
-            );
-    }
-
-    @Test
-    void givenValidCaseDataWhenAuthorizationFailsForDocAssemblyThenStatusIsUnauthorized() throws Exception {
-
-        final CaseData caseData = validCaseDataForIssueApplication();
-        caseData.getApplicant2().setSolicitorRepresented(NO);
-        caseData.getApplicant2().setCorrespondenceAddress(correspondenceAddress());
-
-        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
-
-        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
-        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-
-        stubForDocAssemblyUnauthorized();
-
-        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    CASEWORKER_ISSUE_APPLICATION)))
-            .accept(APPLICATION_JSON))
-            .andExpect(
-                status().isUnauthorized()
-            );
-    }
-
-    @Test
-    void shouldRemoveDraftApplicationDocumentIfCaseDataContainsDraftApplicationDocument() throws Exception {
-
-        final CaseData caseData = validCaseDataForIssueApplication();
-        caseData.getApplicant2().setSolicitorRepresented(NO);
-        caseData.getApplicant2().setCorrespondenceAddress(correspondenceAddress());
-
-        final var documentUuid = setupAuthorizationAndApplicationDocument(caseData);
-        stubDeleteFromDocumentManagementForSystem(documentUuid, OK);
-
-        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
-
-        stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "Divorce_CP_Dummy_Template.docx");
-        stubForDocAssemblyWith(MINI_APPLICATION_ID, "Divorce_CP_Mini_Application_Sole_Joint.docx");
-        stubAosPackSendLetter();
-        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
-        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
-        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
-        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-
-        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .content(objectMapper.writeValueAsString(
                     callbackRequest(
                         caseData,
-                        CASEWORKER_ISSUE_APPLICATION)))
+                        CASEWORKER_REISSUE_APPLICATION)))
                 .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk())
             .andExpect(
-                content().json(expectedResponse(ISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_NOT_SOL_REP))
+                content().json(expectedResponse(CASEWORKER_REISSUE_APPLICATION_ABOUT_TO_SUBMIT_ERROR))
             );
-
-        verify(notificationService)
-            .sendEmail(
-                eq(TEST_SOLICITOR_EMAIL),
-                eq(APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
-                anyMap(),
-                eq(ENGLISH));
-
-        verifyNoMoreInteractions(notificationService);
-    }
-
-    @Test
-    void shouldRespondWithForbiddenStatusIfCaseDataHasDraftApplicationAndServiceNotWhiteListedWithDocStore()
-        throws Exception {
-
-        final CaseData caseData = validCaseDataForIssueApplication();
-        caseData.getApplicant2().setSolicitorRepresented(NO);
-        caseData.getApplicant2().setCorrespondenceAddress(correspondenceAddress());
-
-        final var documentUuid = setupAuthorizationAndApplicationDocument(caseData);
-        stubDeleteFromDocumentManagementForSystem(documentUuid, FORBIDDEN);
-
-        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
-
-        stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "Divorce_CP_Dummy_Template.docx");
-        stubForDocAssemblyWith(MINI_APPLICATION_ID, "Divorce_CP_Mini_Application_Sole_Joint.docx");
-        stubAosPackSendLetter();
-        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
-        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-
-        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-                .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .content(objectMapper.writeValueAsString(
-                    callbackRequest(
-                        caseData,
-                        CASEWORKER_ISSUE_APPLICATION)))
-                .accept(APPLICATION_JSON))
-            .andExpect(
-                status().isForbidden());
-
-        verifyNoInteractions(notificationService);
-    }
-
-    @Test
-    void shouldRespondWithUnauthorizedStatusIfCaseDataHasDraftApplicationAndServiceAuthorizationFails() throws Exception {
-
-        final CaseData caseData = validCaseDataForIssueApplication();
-        caseData.getApplicant2().setSolicitorRepresented(NO);
-        caseData.getApplicant2().setCorrespondenceAddress(correspondenceAddress());
-
-        final var documentUuid = setupAuthorizationAndApplicationDocument(caseData);
-        stubDeleteFromDocumentManagementForSystem(documentUuid, UNAUTHORIZED);
-
-        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
-
-        stubForDocAssemblyWith(AOS_COVER_LETTER_ID, "Divorce_CP_Dummy_Template.docx");
-        stubForDocAssemblyWith(MINI_APPLICATION_ID, "Divorce_CP_Mini_Application_Sole_Joint.docx");
-        stubAosPackSendLetter();
-        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
-        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-
-        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-                .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .content(objectMapper.writeValueAsString(
-                    callbackRequest(
-                        caseData,
-                        CASEWORKER_ISSUE_APPLICATION)))
-                .accept(APPLICATION_JSON))
-            .andExpect(
-                status().isUnauthorized());
-
-        verifyNoInteractions(notificationService);
     }
 
     private AddressGlobalUK correspondenceAddress() {
@@ -633,14 +563,12 @@ public class CaseworkerIssueApplicationIT {
         return resourceAsBytes("classpath:Test.pdf");
     }
 
-    private String setupAuthorizationAndApplicationDocument(CaseData caseData) {
-        final var documentListValue = documentWithType(APPLICATION);
-        final var generatedDocuments = singletonList(documentListValue);
-
-        caseData.setDocumentsGenerated(generatedDocuments);
-        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, SOLICITOR_USER_ID, SOLICITOR_ROLE);
-        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-
-        return FilenameUtils.getName(documentListValue.getValue().getDocumentLink().getUrl());
+    private static Stream<Arguments> reissueOptions() {
+        return Stream.of(
+            Arguments.of(DIGITAL_AOS),
+            Arguments.of(OFFLINE_AOS),
+            Arguments.of(REISSUE_CASE)
+        );
     }
+
 }

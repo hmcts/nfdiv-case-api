@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.caseworker.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCitizenRespondentAosInvitation;
@@ -48,6 +49,9 @@ public class ReIssueApplicationService {
     @Autowired
     private Clock clock;
 
+    @Value("${resissue.days-until-overdue}")
+    private Integer daysUntilOverdue;
+
     public CaseDetails<CaseData, State> process(final CaseDetails<CaseData, State> caseDetails) {
         ReissueOption reissueOption = caseDetails.getData().getApplication().getReissueOption();
 
@@ -66,7 +70,7 @@ public class ReIssueApplicationService {
                     sendAosNotifications,
                     details -> {
                         details.getData().getApplication().setReissueDate(now(clock));
-                        details.getData().setDueDate(now(clock).plusDays(14));
+                        details.getData().setDueDate(now(clock).plusDays(daysUntilOverdue));
                         return details;
                     },
                     setPostIssueState,
@@ -82,7 +86,7 @@ public class ReIssueApplicationService {
                     sendAosPack,
                     details -> {
                         details.getData().getApplication().setReissueDate(now(clock));
-                        details.getData().setDueDate(now(clock).plusDays(14));
+                        details.getData().setDueDate(now(clock).plusDays(daysUntilOverdue));
                         return details;
                     },
                     setPostIssueState,
@@ -100,7 +104,7 @@ public class ReIssueApplicationService {
                     sendAosPack,
                     details -> {
                         details.getData().getApplication().setReissueDate(now(clock));
-                        details.getData().setDueDate(now(clock).plusDays(14));
+                        details.getData().setDueDate(now(clock).plusDays(daysUntilOverdue));
                         return details;
                     },
                     setPostIssueState,

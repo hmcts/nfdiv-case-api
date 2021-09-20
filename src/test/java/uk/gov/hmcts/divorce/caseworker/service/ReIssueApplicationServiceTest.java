@@ -1,10 +1,12 @@
 package uk.gov.hmcts.divorce.caseworker.service;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCitizenRespondentAosInvitation;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateMiniApplication;
@@ -68,6 +70,11 @@ class ReIssueApplicationServiceTest {
 
     @InjectMocks
     private ReIssueApplicationService reIssueApplicationService;
+
+    @BeforeEach
+    void setPageSize() {
+        ReflectionTestUtils.setField(reIssueApplicationService, "daysUntilOverdue", 14);
+    }
 
     @Test
     void shouldRunReIssueApplicationTasksForCitizenApplicationWhenReissueTypeIsDigitalAos() {

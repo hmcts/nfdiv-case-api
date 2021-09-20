@@ -15,6 +15,7 @@ import java.util.UUID;
 
 import static java.util.Arrays.asList;
 import static org.springframework.util.CollectionUtils.firstElement;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
@@ -57,7 +58,7 @@ public class AosPackPrinter {
             currentAosLetters.add(respondentInvitationLetter);
         }
 
-        if (currentAosLetters.size() == AOS_DOCUMENT_TYPES.size()) {
+        if (!isEmpty(currentAosLetters)) {
 
             final String caseIdString = caseId.toString();
             final Print print = new Print(currentAosLetters, caseIdString, caseIdString, LETTER_TYPE_RESPONDENT_PACK);
@@ -66,8 +67,8 @@ public class AosPackPrinter {
             log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
         } else {
             log.warn(
-                "AoS Pack print has missing or incorrect documents. Expected 2 but has {} documents, for Case ID: {}",
-                currentAosLetters.size(),
+                "AoS Pack print has missing documents. Expected documents with type {} , for Case ID: {}",
+                AOS_DOCUMENT_TYPES,
                 caseId);
         }
     }
