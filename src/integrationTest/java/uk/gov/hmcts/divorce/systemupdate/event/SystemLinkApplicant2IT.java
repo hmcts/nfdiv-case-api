@@ -14,6 +14,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.testutil.CaseDataWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
@@ -93,6 +94,7 @@ public class SystemLinkApplicant2IT {
     @Test
     public void givenValidAccessCodeWhenCallbackIsInvokedThenAccessCodeIsRemovedAndSolicitorRolesAreSet() throws Exception {
         CaseData data = caseData();
+        data.setApplicationType(ApplicationType.JOINT_APPLICATION);
         data.getCaseInvite().setAccessCode("D8BC9AQR");
         data.getCaseInvite().setApplicant2UserId("3");
         data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
@@ -141,6 +143,7 @@ public class SystemLinkApplicant2IT {
     @Test
     public void givenNoApplicant2UserIdPassedWhenCallbackIsInvokedThen404ErrorIsReturned() throws Exception {
         CaseData data = caseData();
+        data.setApplicationType(ApplicationType.JOINT_APPLICATION);
         data.getCaseInvite().setAccessCode("D8BC9AQR");
         data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
 
@@ -167,6 +170,7 @@ public class SystemLinkApplicant2IT {
     @Test
     public void givenNoCaseIdPassedWhenCallbackIsInvokedThen404ErrorIsReturned() throws Exception {
         CaseData data = caseData();
+        data.setApplicationType(ApplicationType.JOINT_APPLICATION);
         data.getCaseInvite().setAccessCode("D8BC9AQR");
         data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
 

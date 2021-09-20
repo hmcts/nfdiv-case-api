@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.solicitor.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CaseUserApi;
@@ -15,6 +16,7 @@ import java.util.Set;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.RESPONDENT;
 
 @Service
 @Slf4j
@@ -53,9 +55,11 @@ public class CcdAccessService {
         log.info("Successfully added the applicant's solicitor roles to case Id {} ", caseId);
     }
 
-    public void linkRespondentToApplication(String caseworkerUserToken, Long caseId, String applicant2UserId) {
+    public void linkRespondentToApplication(String caseworkerUserToken, Long caseId,
+                                            String applicant2UserId, ApplicationType applicationType) {
         User caseworkerUser = idamService.retrieveUser(caseworkerUserToken);
-        Set<String> caseRoles = Set.of(APPLICANT_2.getRole());
+        String assignedRole = applicationType.isSole() ? RESPONDENT.getRole() : APPLICANT_2.getRole();
+        Set<String> caseRoles = Set.of(assignedRole);
 
         caseUserApi.updateCaseRolesForUser(
             caseworkerUser.getAuthToken(),

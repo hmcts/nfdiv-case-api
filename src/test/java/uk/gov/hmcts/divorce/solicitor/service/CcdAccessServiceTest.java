@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.authorisation.exceptions.InvalidTokenException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -27,6 +28,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.RESPONDENT;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_1_SOL_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_2_CITIZEN_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
@@ -210,11 +212,88 @@ public class CcdAccessServiceTest {
                 new CaseUser(APP_2_CITIZEN_USER_ID, Set.of(APPLICANT_2.getRole()))
             );
 
-        assertThatCode(() -> ccdAccessService.linkRespondentToApplication(SYSTEM_UPDATE_AUTH_TOKEN, TEST_CASE_ID, APP_2_CITIZEN_USER_ID))
+        assertThatCode(() -> ccdAccessService
+            .linkRespondentToApplication(SYSTEM_UPDATE_AUTH_TOKEN, TEST_CASE_ID, APP_2_CITIZEN_USER_ID, ApplicationType.JOINT_APPLICATION))
             .doesNotThrowAnyException();
 
         verify(idamService).retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN);
         verify(authTokenGenerator).generate();
+        verify(caseUserApi)
+            .updateCaseRolesForUser(
+                SYSTEM_UPDATE_AUTH_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN,
+                String.valueOf(TEST_CASE_ID),
+                APP_2_CITIZEN_USER_ID,
+                new CaseUser(APP_2_CITIZEN_USER_ID, Set.of(APPLICANT_2.getRole()))
+            );
+
+        verifyNoMoreInteractions(idamService, authTokenGenerator, caseUserApi);
+    }
+
+    @Test
+    public void shouldAssignRespondentRole() {
+        User systemUpdateUser = getIdamUser(SYSTEM_UPDATE_AUTH_TOKEN, CASEWORKER_USER_ID, TEST_CASEWORKER_USER_EMAIL);
+
+        when(idamService.retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN))
+            .thenReturn(systemUpdateUser);
+
+        when(authTokenGenerator.generate())
+            .thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        doNothing()
+            .when(
+                caseUserApi
+            )
+            .updateCaseRolesForUser(
+                SYSTEM_UPDATE_AUTH_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN,
+                String.valueOf(TEST_CASE_ID),
+                APP_2_CITIZEN_USER_ID,
+                new CaseUser(APP_2_CITIZEN_USER_ID, Set.of(RESPONDENT.getRole()))
+            );
+
+        assertThatCode(() -> ccdAccessService
+            .linkRespondentToApplication(SYSTEM_UPDATE_AUTH_TOKEN, TEST_CASE_ID, APP_2_CITIZEN_USER_ID, ApplicationType.SOLE_APPLICATION))
+            .doesNotThrowAnyException();
+
+        verify(caseUserApi)
+            .updateCaseRolesForUser(
+                SYSTEM_UPDATE_AUTH_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN,
+                String.valueOf(TEST_CASE_ID),
+                APP_2_CITIZEN_USER_ID,
+                new CaseUser(APP_2_CITIZEN_USER_ID, Set.of(RESPONDENT.getRole()))
+            );
+
+        verifyNoMoreInteractions(idamService, authTokenGenerator, caseUserApi);
+    }
+
+    @Test
+    public void shouldAssignApplicant2Role() {
+        User systemUpdateUser = getIdamUser(SYSTEM_UPDATE_AUTH_TOKEN, CASEWORKER_USER_ID, TEST_CASEWORKER_USER_EMAIL);
+
+        when(idamService.retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN))
+            .thenReturn(systemUpdateUser);
+
+        when(authTokenGenerator.generate())
+            .thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        doNothing()
+            .when(
+                caseUserApi
+            )
+            .updateCaseRolesForUser(
+                SYSTEM_UPDATE_AUTH_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN,
+                String.valueOf(TEST_CASE_ID),
+                APP_2_CITIZEN_USER_ID,
+                new CaseUser(APP_2_CITIZEN_USER_ID, Set.of(APPLICANT_2.getRole()))
+            );
+
+        assertThatCode(() -> ccdAccessService
+            .linkRespondentToApplication(SYSTEM_UPDATE_AUTH_TOKEN, TEST_CASE_ID, APP_2_CITIZEN_USER_ID, ApplicationType.JOINT_APPLICATION))
+            .doesNotThrowAnyException();
+
         verify(caseUserApi)
             .updateCaseRolesForUser(
                 SYSTEM_UPDATE_AUTH_TOKEN,
