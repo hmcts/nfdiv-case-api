@@ -14,16 +14,11 @@ import java.util.List;
 import java.util.UUID;
 
 import static java.util.Arrays.asList;
-<<<<<<< HEAD
-import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersOfDocumentTypes;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
-=======
 import static org.springframework.util.CollectionUtils.firstElement;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.DIVORCE_APPLICATION;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.DOCUMENT_TYPE_RESPONDENT_INVITATION;
->>>>>>> Updated reissue application service and added unit tests
+import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
+
 
 @Component
 @Slf4j
@@ -41,11 +36,11 @@ public class AosPackPrinter {
 
         final List<Letter> divorceApplicationLetters = lettersWithDocumentType(
             caseData.getDocumentsGenerated(),
-            DIVORCE_APPLICATION);
+            APPLICATION);
 
         final List<Letter> respondentInvitationLetters = lettersWithDocumentType(
             caseData.getDocumentsGenerated(),
-            DOCUMENT_TYPE_RESPONDENT_INVITATION);
+            RESPONDENT_INVITATION);
 
         //Always get document on top of list as new document is added to top after generation
         final Letter divorceApplicationLetter = firstElement(divorceApplicationLetters);

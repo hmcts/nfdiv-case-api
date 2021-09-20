@@ -17,7 +17,6 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.StringJoiner;
 import java.util.function.Supplier;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -26,16 +25,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CITIZEN_RESP_AOS_INVITATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_AOS_INVITATION_DOCUMENT_NAME;
-<<<<<<< HEAD
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
-=======
-import static uk.gov.hmcts.divorce.document.model.DocumentType.DOCUMENT_TYPE_RESPONDENT_INVITATION;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.FILE_NAME_DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
->>>>>>> Updated reissue application service and added unit tests
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
@@ -81,12 +76,6 @@ class GenerateCitizenRespondentAosInvitationTest {
 
         assertThat(result.getData().getCaseInvite().getAccessCode()).isEqualTo(ACCESS_CODE);
 
-        final var filename = new StringJoiner("-")
-            .add(RESP_AOS_INVITATION_DOCUMENT_NAME)
-            .add(String.valueOf(TEST_CASE_ID))
-            .add(LocalDateTime.now(clock).format(FILE_NAME_DATE_TIME_FORMATTER))
-            .toString();
-
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
                 caseData,
@@ -95,7 +84,8 @@ class GenerateCitizenRespondentAosInvitationTest {
                 TEST_CASE_ID,
                 CITIZEN_RESP_AOS_INVITATION,
                 ENGLISH,
-                filename);
+                formatDocumentName(TEST_CASE_ID, RESP_AOS_INVITATION_DOCUMENT_NAME, LocalDateTime.now(clock))
+            );
 
         classMock.close();
     }
