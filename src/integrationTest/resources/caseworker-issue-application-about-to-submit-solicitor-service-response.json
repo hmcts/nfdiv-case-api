@@ -86,7 +86,8 @@
       }
     ],
     "documentUploadComplete": "Yes",
-    "issueDate": "2021-06-17"
+    "issueDate": "2021-06-17",
+    "dataVersion": "${json-unit.any-number}"
   },
   "state": "AwaitingService"
 }
