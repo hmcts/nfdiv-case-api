@@ -20,10 +20,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.task.MiniApplicationRemover;
+import uk.gov.hmcts.divorce.systemupdate.service.ReissueProcessingException;
 
 import java.time.Clock;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
@@ -282,5 +284,40 @@ class ReIssueApplicationServiceTest {
         expectedCaseData.getApplication().setSolSignStatementOfTruth(YES);
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
+    }
+
+    @Test
+    void shouldThrowReissueProcessingExceptionWhenReissueOptionIsNotSet() {
+
+        final CaseData caseData = caseData();
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
+        caseData.getApplication().setReissueOption(OFFLINE_AOS);
+
+        final Solicitor solicitor = Solicitor.builder()
+            .name("testsol")
+            .email(TEST_SOLICITOR_EMAIL)
+            .build();
+
+
+        caseData.getApplicant2().setSolicitor(solicitor);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(1L);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+
+        setMockClock(clock);
+
+        when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateRespondentSolicitorAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateCitizenRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
+        when(sendAosPack.apply(caseDetails)).thenReturn(caseDetails);
+        when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(null);
+
+        assertThatThrownBy(() -> reIssueApplicationService.process(caseDetails))
+            .isExactlyInstanceOf(ReissueProcessingException.class)
+            .hasMessage("Exception occurred while processing reissue application for case id 1");
+
     }
 }

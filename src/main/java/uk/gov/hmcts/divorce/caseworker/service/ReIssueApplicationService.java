@@ -15,10 +15,12 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.systemupdate.service.ReissueProcessingException;
 
 import java.time.Clock;
 
 import static java.time.LocalDate.now;
+import static java.util.Objects.isNull;
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
 @Service
@@ -55,11 +57,15 @@ public class ReIssueApplicationService {
     public CaseDetails<CaseData, State> process(final CaseDetails<CaseData, State> caseDetails) {
         ReissueOption reissueOption = caseDetails.getData().getApplication().getReissueOption();
 
-        log.info("For case id {} reissue option selected is {} ", caseDetails.getId(), reissueOption.getLabel());
-
-        caseDetails.getData().getApplication().setReissueDate(now(clock));
+        log.info("For case id {} reissue option selected is {} ", caseDetails.getId(), reissueOption);
 
         var updatedCaseDetails = updateCase(caseDetails, reissueOption);
+
+        if (isNull(updatedCaseDetails)) {
+            throw new ReissueProcessingException(
+                "Exception occurred while processing reissue application for case id " + caseDetails.getId()
+            );
+        }
 
         //Reset reissue option
         updatedCaseDetails.getData().getApplication().setReissueOption(null);
