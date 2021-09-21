@@ -1,0 +1,119 @@
+{
+  "data": {
+    "applicationType": "soleApplication",
+    "divorceOrDissolution": "divorce",
+    "applicant1FirstName": "test_first_name",
+    "applicant1MiddleName": "test_middle_name",
+    "applicant1LastName": "test_last_name",
+    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+    "applicant1LanguagePreferenceWelsh": "No",
+    "applicant1ContactDetailsConfidential": "share",
+    "applicant1Gender": "female",
+    "applicant1SolicitorRepresented": "Yes",
+    "applicant1SolicitorName": "Applicant 1 Solicitor",
+    "applicant1SolicitorEmail": "applicant1.solicitor@example.com",
+    "applicant1SolicitorAddress": "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom",
+    "applicant1SolicitorOrganisationPolicy": {
+      "Organisation": {
+        "OrganisationName": "Test 1 Organisation",
+        "OrganisationID": "ABC456"
+      }
+    },
+    "applicant1FinancialOrder": "No",
+    "applicant1LegalProceedings": "Yes",
+    "applicant2FirstName": "test_first_name",
+    "applicant2MiddleName": "test_middle_name",
+    "applicant2LastName": "test_last_name",
+    "applicant2Email": "applicant2@example.com",
+    "applicant2LanguagePreferenceWelsh": "No",
+    "applicant2ContactDetailsConfidential": "share",
+    "applicant2Gender": "female",
+    "applicant2SolicitorRepresented": "Yes",
+    "applicant2SolicitorName": "Applicant 2 Solicitor",
+    "applicant2SolicitorEmail": "applicant2.solicitor@example.com",
+    "applicant2SolicitorAddress": "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom",
+    "applicant2SolicitorOrganisationPolicy": {
+      "Organisation": {
+        "OrganisationName": "Test 2 Organisation",
+        "OrganisationID": "ABC123"
+      }
+    },
+    "applicant2FinancialOrder": "No",
+    "marriageApplicant1Name": "test_first_name test_last_name",
+    "marriageApplicant2Name": "test_first_name test_last_name",
+    "marriagePlaceOfMarriage": "Somewhere",
+    "marriageDate": "1990-06-10",
+    "jurisdictionApplicant1Residence": "Yes",
+    "jurisdictionApplicant2Residence": "Yes",
+    "jurisdictionConnections": [
+      "J"
+    ],
+    "applicant1PrayerHasBeenGiven": "Yes",
+    "applicant1StatementOfTruth": "Yes",
+    "solSignStatementOfTruth": "Yes",
+    "applicationFeeOrderSummary": {
+      "PaymentReference": null,
+      "Fees": null,
+      "PaymentTotal": "55000"
+    },
+    "documentUploadComplete": "Yes",
+    "reissueDate": "${json-unit.any-string}",
+    "applicationPayments": [
+      {
+        "id": null,
+        "value": {
+          "created": null,
+          "updated": null,
+          "feeCode": "FEE0001",
+          "amount": 55000,
+          "status": "success",
+          "channel": "online",
+          "reference": "paymentRef",
+          "transactionId": "ge7po9h5bhbtbd466424src9tk"
+        }
+      }
+    ],
+    "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
+    "accessCode": "${json-unit.any-string}",
+    "digitalNoticeOfProceedings": "Yes",
+    "noticeOfProceedingsEmail": "applicant2.solicitor@example.com",
+    "noticeOfProceedingsSolicitorFirm": "Test 2 Organisation",
+    "documentsGenerated": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentDateAdded": null,
+          "documentComment": null,
+          "documentFileName": "${json-unit.any-string}",
+          "documentType": "aos",
+          "documentEmailContent": null,
+          "documentLink": {
+            "document_url": "${json-unit.any-string}",
+            "document_filename": "${json-unit.any-string}",
+            "document_binary_url": "${json-unit.any-string}"
+          }
+        }
+      },
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentDateAdded": null,
+          "documentComment": null,
+          "documentFileName": "${json-unit.any-string}",
+          "documentType": "application",
+          "documentEmailContent": null,
+          "documentLink": {
+            "document_url": "${json-unit.any-string}",
+            "document_filename": "${json-unit.any-string}",
+            "document_binary_url": "${json-unit.any-string}"
+          }
+        }
+      }
+    ],
+    "dueDate": "${json-unit.any-string}",
+    "dataVersion": 1
+  },
+  "errors": null,
+  "warnings": null,
+  "state": "AwaitingAos"
+}

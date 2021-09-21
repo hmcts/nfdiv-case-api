@@ -13,6 +13,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.MiniApplicationTemplateContent;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -22,10 +24,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_APPLICATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_APPLICATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
@@ -39,11 +43,15 @@ class GenerateMiniApplicationTest {
     @Mock
     private MiniApplicationTemplateContent templateContent;
 
+    @Mock
+    private Clock clock;
+
     @InjectMocks
     private GenerateMiniApplication generateMiniApplication;
 
     @Test
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithMiniApplicationDocument() {
+        setMockClock(clock);
 
         final var caseData = CaseData.builder()
             .applicant1(Applicant.builder()
@@ -73,7 +81,8 @@ class GenerateMiniApplicationTest {
                 TEST_CASE_ID,
                 DIVORCE_MINI_APPLICATION,
                 ENGLISH,
-                DIVORCE_MINI_APPLICATION_DOCUMENT_NAME + TEST_CASE_ID);
+                formatDocumentName(TEST_CASE_ID, DIVORCE_MINI_APPLICATION_DOCUMENT_NAME, LocalDateTime.now(clock))
+            );
 
         assertThat(result.getData()).isEqualTo(caseData);
     }

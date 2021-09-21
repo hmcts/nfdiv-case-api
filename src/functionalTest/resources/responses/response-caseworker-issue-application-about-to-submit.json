@@ -71,12 +71,12 @@
         "value": {
           "documentDateAdded": null,
           "documentComment": null,
-          "documentFileName": "aosinvitation-1234567890123456.pdf",
+          "documentFileName": "${json-unit.any-string}",
           "documentType": "aos",
           "documentEmailContent": null,
           "documentLink": {
             "document_url": "${json-unit.any-string}",
-            "document_filename": "aosinvitation-1234567890123456.pdf",
+            "document_filename": "${json-unit.any-string}",
             "document_binary_url": "${json-unit.any-string}"
           }
         }
@@ -86,12 +86,12 @@
         "value": {
           "documentDateAdded": null,
           "documentComment": null,
-          "documentFileName": "mini-application-1234567890123456.pdf",
+          "documentFileName": "${json-unit.any-string}",
           "documentType": "application",
           "documentEmailContent": null,
           "documentLink": {
             "document_url": "${json-unit.any-string}",
-            "document_filename": "mini-application-1234567890123456.pdf",
+            "document_filename": "${json-unit.any-string}",
             "document_binary_url": "${json-unit.any-string}"
           }
         }

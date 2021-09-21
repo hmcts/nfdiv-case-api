@@ -10,7 +10,6 @@ import uk.gov.hmcts.divorce.document.print.model.Letter;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Stream.ofNullable;
@@ -36,17 +35,15 @@ public final class DocumentUtil {
             .build();
     }
 
-    public static List<Letter> lettersOfDocumentTypes(final List<ListValue<DivorceDocument>> documents,
-                                                      final List<DocumentType> documentTypes) {
+    public static List<Letter> lettersWithDocumentType(final List<ListValue<DivorceDocument>> documents,
+                                                      final DocumentType documentType) {
 
         final AtomicInteger letterIndex = new AtomicInteger();
-        final Predicate<DivorceDocument> documentTypeFilter =
-            document -> documentTypes.contains(document.getDocumentType());
 
         return ofNullable(documents)
             .flatMap(Collection::stream)
             .map(ListValue::getValue)
-            .filter(documentTypeFilter)
+            .filter(document -> documentType.equals(document.getDocumentType()))
             .map(divorceDocument -> new Letter(divorceDocument, letterIndex.incrementAndGet()))
             .collect(Collectors.toList());
     }

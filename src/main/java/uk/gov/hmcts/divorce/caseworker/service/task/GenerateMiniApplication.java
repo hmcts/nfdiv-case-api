@@ -10,13 +10,17 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.MiniApplicationTemplateContent;
 
+import java.time.Clock;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_APPLICATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_APPLICATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
+
 
 @Component
 @Slf4j
@@ -27,6 +31,9 @@ public class GenerateMiniApplication implements CaseTask {
 
     @Autowired
     private MiniApplicationTemplateContent templateContent;
+
+    @Autowired
+    private Clock clock;
 
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
@@ -46,7 +53,7 @@ public class GenerateMiniApplication implements CaseTask {
             caseId,
             DIVORCE_MINI_APPLICATION,
             caseData.getApplicant1().getLanguagePreference(),
-            DIVORCE_MINI_APPLICATION_DOCUMENT_NAME + caseId
+            formatDocumentName(caseId, DIVORCE_MINI_APPLICATION_DOCUMENT_NAME, LocalDateTime.now(clock))
         );
 
         return caseDetails;

@@ -9,13 +9,17 @@ import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import static java.util.Arrays.asList;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersOfDocumentTypes;
+import static org.springframework.util.CollectionUtils.firstElement;
+import static org.springframework.util.CollectionUtils.isEmpty;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
+
 
 @Component
 @Slf4j
@@ -31,21 +35,40 @@ public class AosPackPrinter {
 
     public void print(final CaseData caseData, final Long caseId) {
 
-        final List<Letter> aosLetters = lettersOfDocumentTypes(
+        final List<Letter> divorceApplicationLetters = lettersWithDocumentType(
             caseData.getDocumentsGenerated(),
-            AOS_DOCUMENT_TYPES);
+            APPLICATION);
 
-        if (aosLetters.size() == AOS_DOCUMENT_TYPES.size()) {
+        final List<Letter> respondentInvitationLetters = lettersWithDocumentType(
+            caseData.getDocumentsGenerated(),
+            RESPONDENT_INVITATION);
+
+        //Always get document on top of list as new document is added to top after generation
+        final Letter divorceApplicationLetter = firstElement(divorceApplicationLetters);
+
+        //Always get document on top of list as new document is added to top after generation
+        final Letter respondentInvitationLetter = firstElement(respondentInvitationLetters);
+
+        final List<Letter> currentAosLetters = new ArrayList<>();
+
+        if (null != divorceApplicationLetter) {
+            currentAosLetters.add(divorceApplicationLetter);
+        }
+        if (null != respondentInvitationLetter) {
+            currentAosLetters.add(respondentInvitationLetter);
+        }
+
+        if (!isEmpty(currentAosLetters)) {
 
             final String caseIdString = caseId.toString();
-            final Print print = new Print(aosLetters, caseIdString, caseIdString, LETTER_TYPE_RESPONDENT_PACK);
+            final Print print = new Print(currentAosLetters, caseIdString, caseIdString, LETTER_TYPE_RESPONDENT_PACK);
             final UUID letterId = bulkPrintService.print(print);
 
             log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
         } else {
             log.warn(
-                "AoS Pack print has missing or incorrect documents. Expected 2 but has {} documents, for Case ID: {}",
-                aosLetters.size(),
+                "AoS Pack print has missing documents. Expected documents with type {} , for Case ID: {}",
+                AOS_DOCUMENT_TYPES,
                 caseId);
         }
     }
