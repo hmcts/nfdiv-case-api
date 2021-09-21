@@ -20,7 +20,9 @@ import uk.gov.hmcts.divorce.systemupdate.service.ReissueProcessingException;
 import java.time.Clock;
 
 import static java.time.LocalDate.now;
-import static java.util.Objects.isNull;
+import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
+import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
+import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.REISSUE_CASE;
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
 @Service
@@ -61,12 +63,6 @@ public class ReIssueApplicationService {
 
         var updatedCaseDetails = updateCase(caseDetails, reissueOption);
 
-        if (isNull(updatedCaseDetails)) {
-            throw new ReissueProcessingException(
-                "Exception occurred while processing reissue application for case id " + caseDetails.getId()
-            );
-        }
-
         //Reset reissue option
         updatedCaseDetails.getData().getApplication().setReissueOption(null);
 
@@ -74,64 +70,56 @@ public class ReIssueApplicationService {
     }
 
     private CaseDetails<CaseData, State> updateCase(CaseDetails<CaseData, State> caseDetails, ReissueOption reissueOption) {
-        CaseDetails<CaseData, State> updatedCaseDetails = null;
-
-        switch (reissueOption) {
-            case DIGITAL_AOS:
-                log.info("For case id {} processing reissue for digital aos ", caseDetails.getId());
-                updatedCaseDetails = caseTasks(
-                    generateRespondentSolicitorAosInvitation,
-                    generateCitizenRespondentAosInvitation,
-                    sendAosNotifications,
-                    details -> {
-                        details.getData().getApplication().setReissueDate(now(clock));
-                        details.getData().setDueDate(now(clock).plusDays(daysUntilOverdue));
-                        return details;
-                    },
-                    setPostIssueState,
-                    sendApplicationIssueNotifications
-                ).run(caseDetails);
-                break;
-
-            case OFFLINE_AOS:
-                log.info("For case id {} processing reissue for offline aos ", caseDetails.getId());
-                updatedCaseDetails = caseTasks(
-                    generateRespondentSolicitorAosInvitation,
-                    generateCitizenRespondentAosInvitation,
-                    sendAosPack,
-                    details -> {
-                        details.getData().getApplication().setReissueDate(now(clock));
-                        details.getData().setDueDate(now(clock).plusDays(daysUntilOverdue));
-                        return details;
-                    },
-                    setPostIssueState,
-                    sendApplicationIssueNotifications
-                ).run(caseDetails);
-                break;
-
-            case REISSUE_CASE:
-                log.info("For case id {} processing complete reissue ", caseDetails.getId());
-                updatedCaseDetails = caseTasks(
-                    generateMiniApplication,
-                    generateRespondentSolicitorAosInvitation,
-                    generateCitizenRespondentAosInvitation,
-                    sendAosNotifications,
-                    sendAosPack,
-                    details -> {
-                        details.getData().getApplication().setReissueDate(now(clock));
-                        details.getData().setDueDate(now(clock).plusDays(daysUntilOverdue));
-                        return details;
-                    },
-                    setPostIssueState,
-                    sendApplicationIssueNotifications
-                ).run(caseDetails);
-                break;
-
-            default:
-                log.info("For case id {} invalid reissue option hence not processing reissue application ", caseDetails.getId());
-                break;
-
+        if (DIGITAL_AOS.equals(reissueOption)) {
+            log.info("For case id {} processing reissue for digital aos ", caseDetails.getId());
+            return caseTasks(
+                generateRespondentSolicitorAosInvitation,
+                generateCitizenRespondentAosInvitation,
+                sendAosNotifications,
+                details -> {
+                    details.getData().getApplication().setReissueDate(now(clock));
+                    details.getData().setDueDate(now(clock).plusDays(daysUntilOverdue));
+                    return details;
+                },
+                setPostIssueState,
+                sendApplicationIssueNotifications
+            ).run(caseDetails);
+        } else if (OFFLINE_AOS.equals(reissueOption)) {
+            log.info("For case id {} processing reissue for offline aos ", caseDetails.getId());
+            return caseTasks(
+                generateRespondentSolicitorAosInvitation,
+                generateCitizenRespondentAosInvitation,
+                sendAosPack,
+                details -> {
+                    details.getData().getApplication().setReissueDate(now(clock));
+                    details.getData().setDueDate(now(clock).plusDays(daysUntilOverdue));
+                    return details;
+                },
+                setPostIssueState,
+                sendApplicationIssueNotifications
+            ).run(caseDetails);
+        } else if (REISSUE_CASE.equals(reissueOption)) {
+            log.info("For case id {} processing complete reissue ", caseDetails.getId());
+            return caseTasks(
+                generateMiniApplication,
+                generateRespondentSolicitorAosInvitation,
+                generateCitizenRespondentAosInvitation,
+                sendAosNotifications,
+                sendAosPack,
+                details -> {
+                    details.getData().getApplication().setReissueDate(now(clock));
+                    details.getData().setDueDate(now(clock).plusDays(daysUntilOverdue));
+                    return details;
+                },
+                setPostIssueState,
+                sendApplicationIssueNotifications
+            ).run(caseDetails);
+        } else {
+            log.info("For case id {} invalid reissue option hence not processing reissue application ", caseDetails.getId());
+            throw new ReissueProcessingException(
+                "Exception occurred while processing reissue application for case id " + caseDetails.getId()
+            );
         }
-        return updatedCaseDetails;
+
     }
 }

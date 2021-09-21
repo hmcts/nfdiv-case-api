@@ -292,7 +292,7 @@ class ReIssueApplicationServiceTest {
         final CaseData caseData = caseData();
         caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplication().setSolSignStatementOfTruth(YES);
-        caseData.getApplication().setReissueOption(OFFLINE_AOS);
+        caseData.getApplication().setReissueOption(null);
 
         final Solicitor solicitor = Solicitor.builder()
             .name("testsol")
@@ -306,14 +306,6 @@ class ReIssueApplicationServiceTest {
         caseDetails.setData(caseData);
         caseDetails.setId(1L);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
-
-        setMockClock(clock);
-
-        when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateRespondentSolicitorAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
-        when(generateCitizenRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendAosPack.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(null);
 
         assertThatThrownBy(() -> reIssueApplicationService.process(caseDetails))
             .isExactlyInstanceOf(ReissueProcessingException.class)
