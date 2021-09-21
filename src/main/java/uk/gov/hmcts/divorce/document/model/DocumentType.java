@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.document.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,13 +13,15 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("aosOverdueCoverLetter")
     AOS_OVERDUE_COVER_LETTER("AOS overdue cover letter"),
 
-    @JsonProperty("acknowledgeOfService")
+    @JsonProperty("acknowledgementOfService")
+    @JsonAlias({"acknowledgeOfService", "aos"})
     ACKNOWLEDGEMENT_OF_SERVICE("Acknowledgement of service"),
 
     @JsonProperty("annexA")
     ANNEX_A("Annex A"),
 
     @JsonProperty("application")
+    @JsonAlias("divorceApplication")
     APPLICATION("Application"),
 
     @JsonProperty("bailiffCertificateOfService")
