@@ -116,8 +116,8 @@ class CcdSearchServiceTest {
             .sort("data.issueDate", ASC)
             .query(
                 boolQuery()
-                    .should(boolQuery().mustNot(existsQuery("dataVersion")))
-                    .should(boolQuery().must(rangeQuery("dataVersion").lt(1)))
+                    .should(boolQuery().mustNot(existsQuery("data.dataVersion")))
+                    .should(boolQuery().must(rangeQuery("data.dataVersion").lt(1)))
             )
             .from(0)
             .size(100);
