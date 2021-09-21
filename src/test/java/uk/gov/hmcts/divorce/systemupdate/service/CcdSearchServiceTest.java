@@ -20,6 +20,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
+import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.elasticsearch.search.sort.SortOrder.ASC;
@@ -113,7 +114,11 @@ class CcdSearchServiceTest {
         SearchSourceBuilder sourceBuilder = SearchSourceBuilder
             .searchSource()
             .sort("data.issueDate", ASC)
-            .query(boolQuery().must(rangeQuery("dataVersion").lt(1)))
+            .query(
+                boolQuery()
+                    .should(boolQuery().mustNot(existsQuery("dataVersion")))
+                    .should(boolQuery().must(rangeQuery("dataVersion").lt(1)))
+            )
             .from(0)
             .size(100);
 
