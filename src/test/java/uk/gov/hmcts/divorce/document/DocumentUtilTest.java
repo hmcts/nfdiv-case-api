@@ -13,11 +13,10 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.divorceDocumentFrom;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.documentFrom;
-import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersOfDocumentTypes;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.lettersWithDocumentType;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
@@ -77,9 +76,9 @@ class DocumentUtilTest {
                 .build())
             .build();
 
-        final List<Letter> letters = lettersOfDocumentTypes(
+        final List<Letter> letters = lettersWithDocumentType(
             asList(doc1, doc2),
-            singletonList(MARRIAGE_CERTIFICATE));
+            MARRIAGE_CERTIFICATE);
 
         assertThat(letters.size()).isEqualTo(1);
         assertThat(letters.get(0).getDivorceDocument()).isSameAs(doc2.getValue());
@@ -100,22 +99,22 @@ class DocumentUtilTest {
                 .build())
             .build();
 
-        final List<Letter> letters = lettersOfDocumentTypes(
+        final List<Letter> letters = lettersWithDocumentType(
             asList(doc1, doc2),
-            singletonList(NAME_CHANGE_EVIDENCE));
+            NAME_CHANGE_EVIDENCE);
 
         assertThat(letters.size()).isZero();
     }
 
     @Test
     void shouldReturnEmptyListIfNullDocumentList() {
-        final List<Letter> letters = lettersOfDocumentTypes(null, singletonList(NAME_CHANGE_EVIDENCE));
+        final List<Letter> letters = lettersWithDocumentType(null, NAME_CHANGE_EVIDENCE);
         assertThat(letters.size()).isZero();
     }
 
     @Test
     void shouldReturnEmptyListIfEmptyDocumentList() {
-        final List<Letter> letters = lettersOfDocumentTypes(emptyList(), singletonList(NAME_CHANGE_EVIDENCE));
+        final List<Letter> letters = lettersWithDocumentType(emptyList(), NAME_CHANGE_EVIDENCE);
         assertThat(letters.size()).isZero();
     }
 
@@ -140,13 +139,12 @@ class DocumentUtilTest {
                 .build())
             .build();
 
-        final List<Letter> letters = lettersOfDocumentTypes(
+        final List<Letter> letters = lettersWithDocumentType(
             asList(doc1, doc2, doc3),
-            asList(NAME_CHANGE_EVIDENCE, MARRIAGE_CERTIFICATE));
+            NAME_CHANGE_EVIDENCE);
 
-        assertThat(letters.size()).isEqualTo(2);
-        assertThat(letters.get(0).getDivorceDocument()).isSameAs(doc2.getValue());
-        assertThat(letters.get(1).getDivorceDocument()).isSameAs(doc3.getValue());
+        assertThat(letters.size()).isEqualTo(1);
+        assertThat(letters.get(0).getDivorceDocument()).isSameAs(doc3.getValue());
     }
 
     private DocumentInfo documentInfo() {

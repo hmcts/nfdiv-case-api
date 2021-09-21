@@ -10,14 +10,18 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.CitizenRespondentAosInvitationTemplateContent;
 
+import java.time.Clock;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.divorcecase.util.AccessCodeGenerator.generateAccessCode;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CITIZEN_RESP_AOS_INVITATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_AOS_INVITATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
+
 
 @Component
 @Slf4j
@@ -29,6 +33,9 @@ public class GenerateCitizenRespondentAosInvitation implements CaseTask {
     //TODO: Use correct template content when application template requirements are known.
     @Autowired
     private CitizenRespondentAosInvitationTemplateContent templateContent;
+
+    @Autowired
+    private Clock clock;
 
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
@@ -52,7 +59,7 @@ public class GenerateCitizenRespondentAosInvitation implements CaseTask {
                 caseId,
                 CITIZEN_RESP_AOS_INVITATION,
                 caseData.getApplicant1().getLanguagePreference(),
-                RESP_AOS_INVITATION_DOCUMENT_NAME + caseId
+                formatDocumentName(caseId, RESP_AOS_INVITATION_DOCUMENT_NAME, LocalDateTime.now(clock))
             );
         }
 

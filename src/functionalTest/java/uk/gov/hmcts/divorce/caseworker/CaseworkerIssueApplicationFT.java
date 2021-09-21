@@ -9,6 +9,7 @@ import java.util.Map;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
+import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,6 +46,7 @@ public class CaseworkerIssueApplicationFT extends FunctionalTestSuite {
         // assertion will fail if the above elements are missing actual value
         assertThatJson(response.asString())
             .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(
                 SOLICITOR_RESPONSE
             )));

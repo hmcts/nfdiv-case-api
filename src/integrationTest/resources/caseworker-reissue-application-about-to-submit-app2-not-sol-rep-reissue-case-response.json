@@ -1,34 +1,32 @@
 {
   "data": {
+    "applicationType": "soleApplication",
     "divorceOrDissolution": "divorce",
+    "labelContentUnionType": "dissolution",
     "applicant1FirstName": "test_first_name",
     "applicant1MiddleName": "test_middle_name",
     "applicant1LastName": "test_last_name",
     "applicant1Email": "test@test.com",
-    "applicant1AgreedToReceiveEmails": null,
     "applicant1LanguagePreferenceWelsh": "No",
-    "applicant1NameDifferentToMarriageCertificate": null,
-    "applicant1NameChangedHow": null,
-    "applicant1NameChangedHowOtherDetails": null,
-    "applicant1LastNameChangedWhenMarried": null,
-    "applicant1PhoneNumber": null,
     "applicant1ContactDetailsConfidential": "share",
     "applicant1Gender": "female",
-    "applicant1CorrespondenceAddress": null,
-    "applicant1SolicitorRepresented": null,
     "applicant1SolicitorEmail": "solicitor@test.com",
+    "applicant1FinancialOrder": "No",
+    "applicant1LegalProceedings": "No",
     "applicant2FirstName": "test_first_name",
     "applicant2MiddleName": "test_middle_name",
     "applicant2LastName": "test_last_name",
     "applicant2Email": "test@test.com",
-    "applicant2AgreedToReceiveEmails": null,
     "applicant2LanguagePreferenceWelsh": "No",
-    "applicant2NameDifferentToMarriageCertificate": null,
-    "applicant2LastNameChangedWhenMarried": null,
-    "applicant2NameChangedHow": null,
-    "applicant2NameChangedHowOtherDetails": null,
-    "applicant2PhoneNumber": null,
-    "applicant2ContactDetailsConfidential": null,
+    "applicant2HomeAddress": {
+      "AddressLine1": "line 1",
+      "AddressLine2": null,
+      "AddressLine3": null,
+      "PostTown": "town",
+      "County": null,
+      "PostCode": "postcode",
+      "Country": null
+    },
     "applicant2Gender": "male",
     "applicant2CorrespondenceAddress": {
       "AddressLine1": "223b",
@@ -40,33 +38,16 @@
       "Country": "United Kingdom"
     },
     "applicant2SolicitorRepresented": "No",
+    "applicant2FinancialOrder": "No",
     "marriageApplicant1Name": "test_first_name test_last_name",
     "marriageApplicant2Name": "test_first_name test_last_name",
-    "marriageMarriedInUk": null,
-    "marriageCertificateInEnglish": null,
-    "marriageCertifiedTranslation": null,
-    "marriageCountryOfMarriage": null,
     "marriagePlaceOfMarriage": "Somewhere",
     "marriageDate": "1990-06-10",
-    "marriageIsSameSexCouple": null,
-    "marriageCertifyMarriageCertificateIsCorrect": null,
-    "marriageMarriageCertificateIsIncorrectDetails": null,
-    "marriageIssueApplicationWithoutMarriageCertificate": null,
-    "applicant1HWFAppliedForFees": null,
-    "applicant1HWFReferenceNumber": null,
-    "applicant1HWFNeedHelp": null,
     "jurisdictionApplicant1Residence": "Yes",
     "jurisdictionApplicant2Residence": "Yes",
-    "jurisdictionApplicant1Domicile": null,
-    "jurisdictionApplicant2Domicile": null,
-    "jurisdictionApp1HabituallyResLastTwelveMonths": null,
-    "jurisdictionApp1HabituallyResLastSixMonths": null,
-    "jurisdictionResidualEligible": null,
-    "jurisdictionBothLastHabituallyResident": null,
     "jurisdictionConnections": [
       "J"
     ],
-    "applicant1FinancialOrder": "No",
     "applicant1PrayerHasBeenGiven": "Yes",
     "applicant1StatementOfTruth": "Yes",
     "solSignStatementOfTruth": "Yes",
@@ -75,9 +56,26 @@
       "Fees": null,
       "PaymentTotal": "55000"
     },
+    "documentUploadComplete": "Yes",
+    "reissueDate": "2021-06-17",
+    "applicationPayments": [
+      {
+        "id": null,
+        "value": {
+          "created": null,
+          "updated": null,
+          "feeCode": "FEE0001",
+          "amount": 55000,
+          "status": "success",
+          "channel": "online",
+          "reference": "paymentRef",
+          "transactionId": "ge7po9h5bhbtbd466424src9tk"
+        }
+      }
+    ],
     "documentsGenerated": [
       {
-        "id": "Respondent Invitation",
+        "id": "Divorce application",
         "value": {
           "documentDateAdded": null,
           "documentComment": null,
@@ -92,7 +90,7 @@
         }
       },
       {
-        "id": "Divorce application",
+        "id": "Respondent Invitation",
         "value": {
           "documentDateAdded": null,
           "documentComment": null,
@@ -107,26 +105,7 @@
         }
       }
     ],
-    "applicationPayments": [
-      {
-        "id": null,
-        "value": {
-          "created": null,
-          "feeCode": "FEE0001",
-          "amount": 55000,
-          "status": "success",
-          "channel": "online",
-          "reference": "paymentRef",
-          "transactionId": "ge7po9h5bhbtbd466424src9tk"
-        }
-      }
-    ],
-    "documentUploadComplete": "Yes",
-    "issueDate": "2021-06-17",
-    "dueDate": "2021-07-17",
-    "digitalNoticeOfProceedings": null,
-    "noticeOfProceedingsEmail": null,
-    "noticeOfProceedingsSolicitorFirm": null
+    "dueDate": "2021-07-01"
   },
   "errors": null,
   "warnings": null,
