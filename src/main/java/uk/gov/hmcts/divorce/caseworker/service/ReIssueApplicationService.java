@@ -59,6 +59,15 @@ public class ReIssueApplicationService {
 
         caseDetails.getData().getApplication().setReissueDate(now(clock));
 
+        var updatedCaseDetails = updateCase(caseDetails, reissueOption);
+
+        //Reset reissue option
+        updatedCaseDetails.getData().getApplication().setReissueOption(null);
+
+        return updatedCaseDetails;
+    }
+
+    private CaseDetails<CaseData, State> updateCase(CaseDetails<CaseData, State> caseDetails, ReissueOption reissueOption) {
         CaseDetails<CaseData, State> updatedCaseDetails = null;
 
         switch (reissueOption) {
@@ -117,10 +126,6 @@ public class ReIssueApplicationService {
                 break;
 
         }
-
-        //Reset reissue option
-        updatedCaseDetails.getData().getApplication().setReissueOption(null);
-
         return updatedCaseDetails;
     }
 }

@@ -64,8 +64,8 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
             .page("reissueApplication")
             .pageLabel("Reissue Divorce Application")
             .complex(CaseData::getApplication)
-            .mandatory(Application::getReissueOption)
-            .done()
+                .mandatory(Application::getReissueOption)
+                .done()
             .done();
     }
 
