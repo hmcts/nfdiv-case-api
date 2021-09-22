@@ -20,8 +20,8 @@ import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataClientAutoConfiguration;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
 
-import javax.annotation.PostConstruct;
 import java.util.TimeZone;
+import javax.annotation.PostConstruct;
 
 @SpringBootApplication(
     exclude = {CoreCaseDataClientAutoConfiguration.class},
@@ -66,8 +66,7 @@ public class CaseApiApplication implements CommandLineRunner {
     }
 
     @PostConstruct
-    public void init(){
-        // Setting Spring Boot SetTimeZone
+    public void init() {
         TimeZone.setDefault(TimeZone.getTimeZone("Europe/London"));
     }
 }
