@@ -27,7 +27,8 @@
           ]
         }
       }
-    ]
+    ],
+    "solServiceTruthStatement": "${json-unit.any-string}"
   },
   "errors": null,
   "warnings": null,
