@@ -25,14 +25,13 @@ kind: HelmRelease
 metadata:
   name: ${cronName}
 spec:
+  releaseName: ${cronName}
   values:
-    job:
-      args:
-        - run
-        - ${taskName}
-      schedule: ${schedule}
     global:
       jobKind: CronJob
+      enableKeyVaults: true
+      tenantId: "531ff96d-0ae9-462a-8d2d-bec7c0b42082"
+      environment: aat
 `
 }
 
@@ -45,14 +44,28 @@ spec:
   releaseName: ${cronName}
   chart:
     git: git@github.com:hmcts/nfdiv-cron
-    ref: 0.0.7
+    ref: 0.0.8
     path: nfdiv-cron
   values:
     job:
-      image: hmctspublic.azurecr.io/nfdiv/case-api:prod-00fe383-20210826060439  #{"$imagepolicy": "flux-system:nfdiv-case-api"}
-      args:
-        - run
-        - ${taskName}
+      image: hmctspublic.azurecr.io/nfdiv/case-api:prod-d25e51a-20210922052840 #{"$imagepolicy": "flux-system:nfdiv-case-api"}
+      keyVaults:
+        nfdiv:
+          secrets:
+            - name: AppInsightsInstrumentationKey
+              alias: APP_INSIGHTS_KEY
+            - name: uk-gov-notify-api-key
+              alias: UK_GOV_NOTIFY_API_KEY
+            - name: s2s-case-api-secret
+              alias: S2S_SECRET
+            - name: idam-secret
+              alias: IDAM_CLIENT_SECRET
+            - name: idam-systemupdate-username
+              alias: IDAM_SYSTEM_UPDATE_USERNAME
+            - name: idam-systemupdate-password
+              alias: IDAM_SYSTEM_UPDATE_PASSWORD
+      environment:
+        TASK_NAME: ${taskName}
       schedule: ${schedule}
 `
 }
