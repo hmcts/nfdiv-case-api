@@ -20,6 +20,9 @@ import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataClientAutoConfiguration;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
 
+import java.util.TimeZone;
+import javax.annotation.PostConstruct;
+
 @SpringBootApplication(
     exclude = {CoreCaseDataClientAutoConfiguration.class},
     scanBasePackages = {"uk.gov.hmcts.ccd.sdk", "uk.gov.hmcts.divorce"}
@@ -60,5 +63,10 @@ public class CaseApiApplication implements CommandLineRunner {
         if (System.getenv("TASK_NAME") != null) {
             taskRunner.run(System.getenv("TASK_NAME"));
         }
+    }
+
+    @PostConstruct
+    public void init() {
+        TimeZone.setDefault(TimeZone.getTimeZone("Europe/London"));
     }
 }
