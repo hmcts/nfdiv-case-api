@@ -102,4 +102,13 @@ public class SolicitorService {
     )
     private String serviceSotFirm;
 
+    @CCD(
+        label = " ",
+        access = {DefaultAccess.class}
+    )
+    private String truthStatement;
+
+    public String getTruthStatement() {
+        return "I believe that the facts stated in the application are true.";
+    }
 }

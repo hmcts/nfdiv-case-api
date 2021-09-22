@@ -87,7 +87,8 @@
     ],
     "documentUploadComplete": "Yes",
     "issueDate": "2021-06-17",
-    "dataVersion": "${json-unit.any-number}"
+    "dataVersion": "${json-unit.any-number}",
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true."
   },
   "state": "AwaitingService"
 }
