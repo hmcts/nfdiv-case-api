@@ -36,7 +36,8 @@
       }
     ],
     "dueDate": "${json-unit.any-string}",
-    "dataVersion": "${json-unit.any-number}"
+    "dataVersion": "${json-unit.any-number}",
+    "solServiceTruthStatement": "${json-unit.any-string}"
   },
   "errors": null,
   "warnings": null,
