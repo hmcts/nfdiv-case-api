@@ -10,10 +10,10 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 public enum ConfidentialAddress implements HasLabel {
 
     @JsonProperty("share")
-    SHARE("-"),
+    SHARE("No"),
 
     @JsonProperty("keep")
-    KEEP("Confidential Address");
+    KEEP("Yes");
 
     private final String label;
 }
