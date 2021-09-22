@@ -28,6 +28,7 @@ public enum DocumentType implements HasLabel {
     BAILIFF_CERTIFICATE_OF_SERVICE("Bailiff certificate of service"),
 
     @JsonProperty("bailiffService")
+    @JsonAlias({"serviceBaliff"})
     BAILIFF_SERVICE("Bailiff Service"),
 
     @JsonProperty("certificateOfEntitlement")
