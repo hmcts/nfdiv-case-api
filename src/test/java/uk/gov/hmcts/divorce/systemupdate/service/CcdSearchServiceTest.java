@@ -20,7 +20,9 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
+import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.elasticsearch.search.sort.SortOrder.ASC;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doThrow;
@@ -101,6 +103,37 @@ class CcdSearchServiceTest {
         final List<CaseDetails> searchResult = ccdSearchService.searchForAllCasesWithStateOf(Submitted);
 
         assertThat(searchResult.size()).isEqualTo(101);
+    }
+
+    @Test
+    void shouldReturnCasesWithVersionOlderThan() {
+
+        final User systemUpdateUser = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final SearchResult expected1 = SearchResult.builder().total(PAGE_SIZE).cases(createCaseDetailsList(PAGE_SIZE)).build();
+
+        SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+            .searchSource()
+            .sort("data.issueDate", ASC)
+            .query(
+                boolQuery()
+                    .should(boolQuery().mustNot(existsQuery("data.dataVersion")))
+                    .should(boolQuery().must(rangeQuery("data.dataVersion").lt(1)))
+            )
+            .from(0)
+            .size(100);
+
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUpdateUser);
+        when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            CASE_TYPE,
+            sourceBuilder.toString()))
+            .thenReturn(expected1);
+
+        final List<CaseDetails> searchResult = ccdSearchService.searchForCasesWithVersionLessThan(1);
+
+        assertThat(searchResult.size()).isEqualTo(100);
     }
 
     @Test

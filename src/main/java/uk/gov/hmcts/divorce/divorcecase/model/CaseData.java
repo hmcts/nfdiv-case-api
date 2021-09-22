@@ -196,6 +196,10 @@ public class CaseData {
     )
     private String note;
 
+    @CCD(access = {DefaultAccess.class})
+    @JsonUnwrapped
+    private RetiredFields retiredFields;
+
     @JsonIgnore
     public boolean isAmendedCase() {
         return null != previousCaseId;
@@ -220,7 +224,7 @@ public class CaseData {
             documentList.add(listValue);
             setDocumentsGenerated(documentList);
         } else {
-            documents.add(listValue);
+            documents.add(0, listValue); // always add to start top of list
         }
     }
 

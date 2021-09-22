@@ -99,7 +99,8 @@
       }
     ],
     "selectedDivorceCentreSiteId": "AA04",
-    "dueDate": "${json-unit.any-string}"
+    "dueDate": "${json-unit.any-string}",
+    "dataVersion": "${json-unit.any-number}"
   },
   "errors": null,
   "warnings": null,

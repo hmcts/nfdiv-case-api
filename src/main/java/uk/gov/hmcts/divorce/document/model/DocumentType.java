@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.document.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,19 +13,22 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("aosOverdueCoverLetter")
     AOS_OVERDUE_COVER_LETTER("AOS overdue cover letter"),
 
-    @JsonProperty("acknowledgeOfService")
+    @JsonProperty("acknowledgementOfService")
+    @JsonAlias({"acknowledgeOfService", "aos"})
     ACKNOWLEDGEMENT_OF_SERVICE("Acknowledgement of service"),
 
     @JsonProperty("annexA")
     ANNEX_A("Annex A"),
 
     @JsonProperty("application")
+    @JsonAlias("divorceApplication")
     APPLICATION("Application"),
 
     @JsonProperty("bailiffCertificateOfService")
     BAILIFF_CERTIFICATE_OF_SERVICE("Bailiff certificate of service"),
 
     @JsonProperty("bailiffService")
+    @JsonAlias({"serviceBaliff"})
     BAILIFF_SERVICE("Bailiff Service"),
 
     @JsonProperty("certificateOfEntitlement")
@@ -64,6 +68,7 @@ public enum DocumentType implements HasLabel {
     D9H("D9H"),
 
     @JsonProperty("deemedService")
+    @JsonAlias({"serviceDeemed"})
     DEEMED_SERVICE("Deemed service"),
 
     @JsonProperty("deemedAsServiceGranted")
@@ -73,9 +78,11 @@ public enum DocumentType implements HasLabel {
     DEEMED_SERVICE_REFUSED("Deemed service refused"),
 
     @JsonProperty("dispenseWithService")
+    @JsonAlias({"serviceDispensedWith"})
     DISPENSE_WITH_SERVICE("Dispense with service"),
 
     @JsonProperty("dispenseWithServiceGranted")
+    @JsonAlias({"serviceDispensedWithGranted"})
     DISPENSE_WITH_SERVICE_GRANTED("Dispense with service granted"),
 
     @JsonProperty("dispenseWithServiceRefused")
@@ -109,15 +116,18 @@ public enum DocumentType implements HasLabel {
     OBJECTION_TO_COSTS("Objection to costs"),
 
     @JsonProperty("other")
+    @JsonAlias({"aosOfflineInvitationLetterToApplicant2"})
     OTHER("Other"),
 
     @JsonProperty("respondentAnswers")
+    @JsonAlias("applicant2Answers")
     RESPONDENT_ANSWERS("Respondent answers"),
 
     @JsonProperty("aos")
     RESPONDENT_INVITATION("Respondent Invitation"),
 
     @JsonProperty("solicitorService")
+    @JsonAlias({"serviceSolicitor"})
     SOLICITOR_SERVICE("Solicitor Service"),
 
     @JsonProperty("welshTranslation")

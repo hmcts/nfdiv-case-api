@@ -41,6 +41,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
+import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
@@ -167,7 +168,7 @@ public class CaseworkerIssueApplicationIT {
     @BeforeEach
     void setClock() {
         when(clock.instant()).thenReturn(Instant.parse("2021-06-17T12:00:00.000Z"));
-        when(clock.getZone()).thenReturn(ZoneId.systemDefault());
+        when(clock.getZone()).thenReturn(ZoneId.of("Europe/London"));
     }
 
     @Test
@@ -397,6 +398,7 @@ public class CaseworkerIssueApplicationIT {
 
         assertThatJson(actualResponse)
             .when(TREATING_NULL_AS_ABSENT)
+            .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(CASEWORKER_ISSUE_APPLICATION_ABOUT_TO_SUBMIT_SOLICITOR_SERVICE)));
 
         verify(notificationService)

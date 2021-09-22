@@ -18,7 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
+import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.elasticsearch.search.sort.SortOrder.ASC;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 
@@ -79,5 +81,26 @@ public class CcdSearchService {
         }
 
         return allCaseDetails;
+    }
+
+    public List<CaseDetails> searchForCasesWithVersionLessThan(int latestVersion) {
+        final User systemUpdateUser = idamService.retrieveSystemUpdateUserDetails();
+
+        final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+            .searchSource()
+            .sort("data.issueDate", ASC)
+            .query(
+                boolQuery()
+                    .should(boolQuery().mustNot(existsQuery("data.dataVersion")))
+                    .should(boolQuery().must(rangeQuery("data.dataVersion").lt(latestVersion)))
+            )
+            .from(0)
+            .size(pageSize);
+
+        return coreCaseDataApi.searchCases(
+            systemUpdateUser.getAuthToken(),
+            authTokenGenerator.generate(),
+            CASE_TYPE,
+            sourceBuilder.toString()).getCases();
     }
 }
