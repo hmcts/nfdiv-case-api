@@ -1,5 +1,5 @@
 {
   "data": {
-    "dataVersion": 1
+    "dataVersion": "${json-unit.any-number}"
   }
 }

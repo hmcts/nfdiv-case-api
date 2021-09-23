@@ -43,7 +43,7 @@
     "applicant2LastNameChangedWhenMarried": null,
     "applicant2NameChangedHowOtherDetails": null,
     "applicant2PhoneNumber": null,
-    "applicant2ContactDetailsConfidential": null,
+    "applicant2KeepContactDetailsConfidential": null,
     "applicant1HWFAppliedForFees": null,
     "applicant1HWFReferenceNumber": null,
     "jurisdictionApplicant1Residence": "Yes",
@@ -57,7 +57,7 @@
     "jurisdictionConnections": [
       "A"
     ],
-    "applicant1ContactDetailsConfidential": "keep",
+    "applicant1KeepContactDetailsConfidential": "Yes",
     "applicant2FirstName": "test_first_name",
     "applicant2LastName": "test_last_name",
     "marriageApplicant1Name": "test_first_name test_last_name",

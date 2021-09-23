@@ -82,14 +82,14 @@ public class UpdateContactDetails  implements CcdPageConfiguration {
                 .label("LabelApp-GenderChangeWarning",
                     "WARNING: Changing the applicant gender here means you need to Re-Issue the case to update all case documents")
                 .optional(Applicant::getGender)
-                .mandatory(Applicant::getContactDetailsConfidential)
+                .mandatory(Applicant::getKeepContactDetailsConfidential)
                 .label("LabelApp-AddressIsSharable",
                     "### The applicant's contact details may be shared with the respondent",
-                    "applicant1ContactDetailsConfidential=\"share\"")
+                    "applicant1KeepContactDetailsConfidential=\"No\"")
                 .label("LabelApp-AddressIsConfidential",
                     "### Confidential Address - Take extra care to ensure the applicant's "
                         + "contact details below are not shared with the respondent",
-                    "applicant1ContactDetailsConfidential=\"keep\"")
+                    "applicant1KeepContactDetailsConfidential=\"Yes\"")
                 .mandatory(Applicant::getHomeAddress)
                 .optional(Applicant::getCorrespondenceAddress)
                 .optional(Applicant::getEmail)
@@ -110,15 +110,15 @@ public class UpdateContactDetails  implements CcdPageConfiguration {
                     "WARNING: Changing the respondent gender here means you need to Re-Issue the case to update all case documents")
                 .optionalWithLabel(Applicant::getGender,
                     "Respondent's gender")
-                .mandatoryWithLabel(Applicant::getContactDetailsConfidential,
+                .mandatoryWithLabel(Applicant::getKeepContactDetailsConfidential,
                     "Keep Respondent's contact details private?")
                 .label("LabelResp-AddressIsSharable",
                     "### The respondent's contact details may be shared with the applicant",
-                    "applicant2ContactDetailsConfidential=\"share\"")
+                    "applicant2KeepContactDetailsConfidential=\"No\"")
                 .label("LabelApp-AddressIsConfidential",
                     "### Confidential Address - Take extra care to ensure the respondent's contact "
                         + "details below are not shared with the applicant",
-                    "applicant2ContactDetailsConfidential=\"keep\"")
+                    "applicant2KeepContactDetailsConfidential=\"Yes\"")
                 .mandatoryWithLabel(Applicant::getHomeAddress,
                     "Respondent's home address")
                 .optionalWithLabel(Applicant::getCorrespondenceAddress,

@@ -1,7 +1,7 @@
 {
   "data": {
     "applicant1AgreedToReceiveEmails": null,
-    "applicant1ContactDetailsConfidential": "share",
+    "applicant1KeepContactDetailsConfidential": "No",
     "applicant1CorrespondenceAddress": null,
     "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
     "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
@@ -25,7 +25,7 @@
       }
     },
     "applicant2AgreedToReceiveEmails": null,
-    "applicant2ContactDetailsConfidential": "share",
+    "applicant2KeepContactDetailsConfidential": "No",
     "applicant2CorrespondenceAddress": null,
     "applicant2Email": "applicant2@example.com",
     "applicant2FirstName": "test_first_name",

@@ -12,7 +12,6 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.IssueApplicationService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -176,7 +175,7 @@ class CaseworkerIssueApplicationTest {
             .firstName("app1FirstName")
             .lastName("app1LastName")
             .gender(Gender.MALE)
-            .contactDetailsConfidential(ConfidentialAddress.KEEP)
+            .keepContactDetailsConfidential(YES)
             .build()
         );
 
