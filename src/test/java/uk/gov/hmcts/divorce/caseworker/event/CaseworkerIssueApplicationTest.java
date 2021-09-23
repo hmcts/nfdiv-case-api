@@ -107,7 +107,7 @@ class CaseworkerIssueApplicationTest {
                 "Applicant1FinancialOrder cannot be empty or null",
                 "Applicant2Gender cannot be empty or null",
                 "MarriageApplicant1Name cannot be empty or null",
-                "Applicant1ContactDetailsConfidential cannot be empty or null",
+                "Applicant1KeepContactDetailsConfidential cannot be empty or null",
                 "Applicant1PrayerHasBeenGiven cannot be empty or null",
                 "MarriageDate cannot be empty or null",
                 "JurisdictionConnections cannot be empty or null",
