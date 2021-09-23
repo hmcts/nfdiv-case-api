@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.document.content.part.ApplicantTemplateDataProvider;
+import uk.gov.hmcts.divorce.document.content.part.ApplicationTemplateDataProvider;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -68,6 +69,9 @@ class ApplicationJointTemplateContentTest {
 
     @Mock
     private ApplicantTemplateDataProvider applicantTemplateDataProvider;
+
+    @Mock
+    private ApplicationTemplateDataProvider applicationTemplateDataProvider;
 
     @InjectMocks
     private ApplicationJointTemplateContent applicationJointTemplateContent;
@@ -144,6 +148,7 @@ class ApplicationJointTemplateContentTest {
 
         verify(applicantTemplateDataProvider, times(2)).deriveFinancialOrder(any(Applicant.class));
         verify(applicantTemplateDataProvider, times(2)).deriveApplicantPostalAddress(any(Applicant.class));
+        verify(applicationTemplateDataProvider).deriveJointJurisdictionList(any(Application.class));
     }
 
     @Test
@@ -218,5 +223,6 @@ class ApplicationJointTemplateContentTest {
 
         verify(applicantTemplateDataProvider, times(2)).deriveFinancialOrder(any(Applicant.class));
         verify(applicantTemplateDataProvider, times(2)).deriveApplicantPostalAddress(any(Applicant.class));
+        verify(applicationTemplateDataProvider).deriveJointJurisdictionList(any(Application.class));
     }
 }

@@ -7,6 +7,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.content.part.ApplicantTemplateDataProvider;
+import uk.gov.hmcts.divorce.document.content.part.ApplicationTemplateDataProvider;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -56,6 +57,9 @@ public class ApplicationJointTemplateContent {
 
     @Autowired
     private ApplicantTemplateDataProvider applicantTemplateDataProvider;
+
+    @Autowired
+    private ApplicationTemplateDataProvider applicationTemplateDataProvider;
 
     public Supplier<Map<String, Object>> apply(final CaseData caseData,
                                                final Long ccdCaseReference,
@@ -126,6 +130,8 @@ public class ApplicationJointTemplateContent {
                 ofNullable(application.getMarriageDetails().getDate())
                     .map(marriageDate -> marriageDate.format(TEMPLATE_DATE_FORMAT))
                     .orElse(null));
+
+            templateData.put("jurisdictions", applicationTemplateDataProvider.deriveJointJurisdictionList(application));
 
             return templateData;
         };
