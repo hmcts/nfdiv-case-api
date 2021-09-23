@@ -16,6 +16,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import java.time.Clock;
 import java.time.LocalDate;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -36,7 +41,7 @@ public class CaseworkerServiceApplicationReceived implements CCDConfig<CaseData,
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_SERVICE_RECEIVED)
-            .forAllStates()
+            .forStates(AosOverdue, AwaitingAos, AosDrafted, Submitted, AwaitingDocuments)
             .name("Service application received")
             .description("Service application received")
             .explicitGrants()
