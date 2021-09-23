@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -42,6 +43,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.YOUR_CIVIL
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.YOUR_DIVORCE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConfigTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssueApplication;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
@@ -53,6 +55,9 @@ public class ApplicationIssuedNotificationTest {
 
     @Mock
     private CommonContent commonContent;
+
+    @Mock
+    private EmailTemplatesConfig emailTemplatesConfig;
 
     @InjectMocks
     private ApplicationIssuedNotification notification;
@@ -125,6 +130,7 @@ public class ApplicationIssuedNotificationTest {
         final HashMap<String, String> templateVars = new HashMap<>();
 
         when(commonContent.templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
         notification.sendToSoleRespondent(data, 1234567890123456L);
 
@@ -155,6 +161,7 @@ public class ApplicationIssuedNotificationTest {
         final HashMap<String, String> templateVars = new HashMap<>();
 
         when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
         notification.sendToSoleRespondent(data, 1234567890123456L);
 
