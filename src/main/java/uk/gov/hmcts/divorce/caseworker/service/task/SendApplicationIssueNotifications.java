@@ -24,6 +24,7 @@ public class SendApplicationIssueNotifications implements CaseTask {
 
             if (caseData.getApplicationType().isSole()) {
                 applicationIssuedNotification.sendToSoleApplicant1(caseData, caseId);
+                applicationIssuedNotification.sendToSoleRespondent(caseData, caseId);
             } else {
                 applicationIssuedNotification.sendToJointApplicant1(caseData, caseId);
                 applicationIssuedNotification.sendToJointApplicant2(caseData, caseId);

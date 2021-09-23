@@ -44,10 +44,10 @@ public class GenerateCitizenRespondentAosInvitation implements CaseTask {
         final CaseData caseData = caseDetails.getData();
         final LocalDate createdDate = caseDetails.getCreatedDate().toLocalDate();
 
-        if (caseDetails.getData().getApplication().isSolicitorApplication() && !caseData.getApplicant2().isRepresented()) {
+        log.info("Generating access code to allow the respondent to access the application");
+        caseData.getCaseInvite().setAccessCode(generateAccessCode());
 
-            log.info("Generating access code to allow the respondent to access the application");
-            caseData.getCaseInvite().setAccessCode(generateAccessCode());
+        if (caseDetails.getData().getApplication().isSolicitorApplication() && !caseData.getApplicant2().isRepresented()) {
 
             log.info("Generating citizen respondent AoS invitation for case id {} ", caseId);
             final Supplier<Map<String, Object>> templateContentSupplier = templateContent.apply(caseData, caseId, createdDate);

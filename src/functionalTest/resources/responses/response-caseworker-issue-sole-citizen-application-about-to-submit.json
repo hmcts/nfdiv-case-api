@@ -54,5 +54,6 @@
   },
   "errors": null,
   "state": "Holding",
-  "warnings": null
+  "warnings": null,
+  "accessCode": "${json-unit.any-string}"
 }

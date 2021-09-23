@@ -13,8 +13,10 @@ import java.util.Map;
 
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_APPLICATION_ACCEPTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_RESPONDENT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.ACCOUNT;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
@@ -25,9 +27,13 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.CIVIL_PART
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_ACCOUNT;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_PROCESS;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_A_APPLICATION;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_YOUR_APPLICATION;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_YOUR_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PROCESS;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.REVIEW_DEADLINE_DATE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.TO_END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.YOUR_DIVORCE;
 
@@ -44,6 +50,8 @@ public class ApplicationIssuedNotification {
     private static final String CITIZENS_ADVICE_LINK = "citizens advice link";
     private static final String DIVORCE_CITIZENS_ADVICE_LINK = "https://www.citizensadvice.org.uk/family/how-to-separate1/getting-a-divorce/";
     private static final String CIVIL_PARTNERSHIP_CITIZENS_ADVICE_LINK = "https://www.citizensadvice.org.uk/family/how-to-separate1/ending-a-civil-partnership/";
+    private static final String APPLICATION_TYPE_PROGRESS = "application type progress";
+    private static final String THE_DIVORCE_APPLICATION = "the divorce application";
 
     @Autowired
     private NotificationService notificationService;
@@ -71,6 +79,38 @@ public class ApplicationIssuedNotification {
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
             SOL_APPLICANT_APPLICATION_ACCEPTED,
+            templateVars,
+            caseData.getApplicant1().getLanguagePreference()
+        );
+    }
+
+    public void sendToSoleRespondent(CaseData caseData, Long id) {
+        Map<String, String> templateVars = setTemplateVariables(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
+
+        log.info("Sending sole application issued notification to respondent for case : {}", id);
+
+        if (caseData.getDivorceOrDissolution().isDivorce()) {
+            templateVars.put(FOR_YOUR_APPLICATION, FOR_YOUR_DIVORCE);
+            templateVars.put(FOR_A_APPLICATION, "for a divorce");
+            templateVars.put(SERVICE, DIVORCE_SERVICE);
+            templateVars.put(GOV_UK_LINK, DIVORCE_GOV_UK_LINK);
+            templateVars.put(CITIZENS_ADVICE_LINK, DIVORCE_CITIZENS_ADVICE_LINK);
+            templateVars.put(APPLICATION_TYPE_PROGRESS, THE_DIVORCE_APPLICATION);
+        } else {
+            templateVars.put(FOR_YOUR_APPLICATION, TO_END_CIVIL_PARTNERSHIP);
+            templateVars.put(FOR_A_APPLICATION, TO_END_CIVIL_PARTNERSHIP);
+            templateVars.put(SERVICE, CIVIL_PARTNERSHIP_SERVICE);
+            templateVars.put(GOV_UK_LINK, CIVIL_PARTNERSHIP_GOV_UK_LINK);
+            templateVars.put(CITIZENS_ADVICE_LINK, CIVIL_PARTNERSHIP_CITIZENS_ADVICE_LINK);
+            templateVars.put(APPLICATION_TYPE_PROGRESS, APPLICATION_TO_END_CIVIL_PARTNERSHIP);
+        }
+
+        templateVars.put(ACCESS_CODE, caseData.getCaseInvite().getAccessCode());
+        templateVars.put(REVIEW_DEADLINE_DATE, caseData.getApplication().getIssueDate().plusDays(16).format(DATE_TIME_FORMATTER));
+
+        notificationService.sendEmail(
+            caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
+            SOL_RESPONDENT_APPLICATION_ACCEPTED,
             templateVars,
             caseData.getApplicant1().getLanguagePreference()
         );
