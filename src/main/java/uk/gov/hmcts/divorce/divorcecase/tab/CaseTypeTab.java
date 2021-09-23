@@ -34,6 +34,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildNotesTab(configBuilder);
         buildGeneralReferralTab(configBuilder);
         buildConfidentialDocumentsTab(configBuilder);
+        buildServiceApplicationTab(configBuilder);
     }
 
     private void buildStateTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -130,6 +131,12 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void buildConfidentialDocumentsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("confidentialDocuments", "Confidential Document")
+            .forRoles(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER)
+            .field(CaseData::getServiceApplication);
+    }
+
+    private void buildServiceApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("confidentialDocuments", "Service Application")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER)
             .field(CaseData::getConfidentialDocumentsUploaded);
     }
