@@ -78,6 +78,10 @@ public class Application {
     @Builder.Default
     private SolicitorService solicitorService = new SolicitorService();
 
+    @JsonUnwrapped(prefix = "conOrder")
+    @Builder.Default
+    private ConditionalOrder conditionalOrder = new ConditionalOrder();
+
     @JsonUnwrapped(prefix = "applicant1HWF")
     @CCD(access = {DefaultAccess.class})
     private HelpWithFees applicant1HelpWithFees;
