@@ -107,6 +107,11 @@ public class CaseData {
     @Builder.Default
     private GeneralReferral generalReferral = new GeneralReferral();
 
+    @JsonUnwrapped
+    @Builder.Default
+    @CCD(access = {CaseworkerAccessBetaOnlyAccess.class})
+    private ServiceApplication serviceApplication = new ServiceApplication();
+
     @CCD(
         label = "Applicant 1 Documents uploaded",
         typeOverride = Collection,
