@@ -128,7 +128,7 @@ if (taskName && cnpFluxPath && schedule) {
 } else {
   console.log(`
 Usage: ./bin/add-cron.sh [taskName] [cnpFluxPath] [schedule]
-Example: ./bin/add-cron.sh SystemProgressHeldCases ~/cnp-flux-config "010 * * * *"
+Example: ./bin/add-cron.sh SystemProgressHeldCases ~/cnp-flux-config "*/10 * * * *"
 
 Please note the quotes around the schedule.
 `);
