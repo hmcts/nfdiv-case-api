@@ -27,7 +27,8 @@
           ]
         }
       }
-    ]
+    ],
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true."
   },
   "errors": null,
   "warnings": null,

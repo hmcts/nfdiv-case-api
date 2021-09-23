@@ -30,7 +30,7 @@ public class SolConfirmService implements CcdPageConfiguration {
                 .mandatory(SolicitorService::getLocationServed)
                 .mandatory(SolicitorService::getSpecifyLocationServed, "solServiceLocationServed=\"otherSpecify\"")
                 .mandatory(SolicitorService::getServiceSotName)
-                .label("solConfirmStatement","I believe that the facts stated in the application are true.")
+                .readonly(SolicitorService::getTruthStatement)
                 .mandatory(SolicitorService::getServiceSotFirm)
                 .done();
     }
