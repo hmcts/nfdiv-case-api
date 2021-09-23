@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCitizenRespondentAosInvitation;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateMiniApplication;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentSolicitorAosInvitation;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPack;
@@ -33,7 +33,7 @@ public class ReIssueApplicationService {
     private SetPostIssueState setPostIssueState;
 
     @Autowired
-    private GenerateMiniApplication generateMiniApplication;
+    private GenerateDivorceApplication generateMiniApplication;
 
     @Autowired
     private GenerateRespondentSolicitorAosInvitation generateRespondentSolicitorAosInvitation;

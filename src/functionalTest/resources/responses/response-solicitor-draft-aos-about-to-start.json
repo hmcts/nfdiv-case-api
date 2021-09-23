@@ -70,12 +70,12 @@
         "value": {
           "documentDateAdded": null,
           "documentComment": null,
-          "documentFileName": "draft-mini-application-1234567890123456.pdf",
+          "documentFileName": "draft-divorce-application-1234567890123456.pdf",
           "documentType": "application",
           "documentEmailContent": null,
           "documentLink": {
             "document_url": "${json-unit.ignore}",
-            "document_filename": "draft-mini-application-1234567890123456.pdf",
+            "document_filename": "draft-divorce-application-1234567890123456.pdf",
             "document_binary_url": "${json-unit.ignore}"
           }
         }
@@ -83,7 +83,7 @@
     ],
     "miniApplicationLink": {
       "document_url": "${json-unit.ignore}",
-      "document_filename": "draft-mini-application-1234567890123456.pdf",
+      "document_filename": "draft-divorce-application-1234567890123456.pdf",
       "document_binary_url": "${json-unit.ignore}"
     }
   },

@@ -9,7 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCitizenRespondentAosInvitation;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateMiniApplication;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentSolicitorAosInvitation;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPack;
@@ -19,7 +19,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.document.task.MiniApplicationRemover;
+import uk.gov.hmcts.divorce.document.task.DivorceApplicationRemover;
 import uk.gov.hmcts.divorce.systemupdate.service.ReissueProcessingException;
 
 import java.time.Clock;
@@ -44,10 +44,10 @@ class ReIssueApplicationServiceTest {
     private SetPostIssueState setPostIssueState;
 
     @Mock
-    private MiniApplicationRemover miniApplicationRemover;
+    private DivorceApplicationRemover divorceApplicationRemover;
 
     @Mock
-    private GenerateMiniApplication generateMiniApplication;
+    private GenerateDivorceApplication generateMiniApplication;
 
     @Mock
     private GenerateRespondentSolicitorAosInvitation generateRespondentSolicitorAosInvitation;

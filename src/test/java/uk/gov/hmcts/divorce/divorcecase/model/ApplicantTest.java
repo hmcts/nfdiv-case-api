@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.ConfidentialAddress.KEEP;
+import static uk.gov.hmcts.divorce.divorcecase.model.ConfidentialAddress.SHARE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 
@@ -53,5 +55,25 @@ class ApplicantTest {
 
         assertThat(applicantNoSolicitor.isRepresented()).isFalse();
         assertThat(applicantNoSolicitorEmail.isRepresented()).isFalse();
+    }
+
+    @Test
+    void shouldReturnFalseIfContactDetailsAreConfidential() {
+
+        final Applicant applicant = Applicant.builder()
+            .contactDetailsConfidential(KEEP)
+            .build();
+
+        assertThat(applicant.hasShareableContactDetails()).isFalse();
+    }
+
+    @Test
+    void shouldReturnTrueIfContactDetailsAreShareable() {
+
+        final Applicant applicant = Applicant.builder()
+            .contactDetailsConfidential(SHARE)
+            .build();
+
+        assertThat(applicant.hasShareableContactDetails()).isTrue();
     }
 }

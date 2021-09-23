@@ -20,6 +20,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.divorce.divorcecase.model.ConfidentialAddress.SHARE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 
@@ -161,5 +162,10 @@ public class Applicant {
     @JsonIgnore
     public boolean isRepresented() {
         return null != solicitor && isNotEmpty(solicitor.getEmail());
+    }
+
+    @JsonIgnore
+    public boolean hasShareableContactDetails() {
+        return SHARE.equals(contactDetailsConfidential);
     }
 }
