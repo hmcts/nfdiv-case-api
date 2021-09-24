@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.document.content.part;
+package uk.gov.hmcts.divorce.document.content.provider;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

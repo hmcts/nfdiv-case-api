@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.document.content.part;
+package uk.gov.hmcts.divorce.document.content.provider;
 
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;

@@ -1,11 +1,11 @@
-package uk.gov.hmcts.divorce.document.content.part;
+package uk.gov.hmcts.divorce.document.content.provider;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
-import uk.gov.hmcts.divorce.document.content.part.ApplicationTemplateDataProvider.Connection;
+import uk.gov.hmcts.divorce.document.content.provider.ApplicationTemplateDataProvider.Connection;
 
 import java.util.Set;
 
@@ -37,7 +37,7 @@ class ApplicationTemplateDataProviderTest {
             RESIDUAL_JURISDICTION));
 
         final var result = applicationTemplateDataProvider.deriveJointJurisdictionList(application);
-        
+
         assertThat(result).containsExactly(
             new Connection("the applicants are habitually resident in England and Wales"),
             new Connection("the applicants were last habitually resident in England and Wales and one of them still resides there"),

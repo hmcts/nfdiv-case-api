@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.document.content.part;
+package uk.gov.hmcts.divorce.document.content.provider;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
