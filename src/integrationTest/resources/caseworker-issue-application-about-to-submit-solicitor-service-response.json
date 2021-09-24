@@ -18,6 +18,7 @@
     "applicant2MiddleName": "test_middle_name",
     "applicant2LastName": "test_last_name",
     "applicant2Email": "test@test.com",
+    "applicant2InviteEmailAddress": "applicant2@test.com",
     "applicant2LanguagePreferenceWelsh": "No",
     "applicant2Gender": "male",
     "applicant2FinancialOrder":"No",
