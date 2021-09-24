@@ -50,10 +50,10 @@
     "applicant1PrayerHasBeenGiven": "Yes",
     "applicant1StatementOfTruth": "Yes",
     "applicant2PrayerHasBeenGiven": "Yes",
-    "applicant2StatementOfTruth": "Yes"
+    "applicant2StatementOfTruth": "Yes",
+    "accessCode": "${json-unit.any-string}"
   },
   "errors": null,
   "state": "Holding",
-  "warnings": null,
-  "accessCode": "${json-unit.any-string}"
+  "warnings": null
 }
