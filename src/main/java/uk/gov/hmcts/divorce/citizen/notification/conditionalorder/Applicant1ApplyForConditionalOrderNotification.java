@@ -16,6 +16,8 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATIO
 @Slf4j
 public class Applicant1ApplyForConditionalOrderNotification {
 
+    public static final String YOUR_APPLICATION = "get a divorce / end your civil partnership";
+
     @Autowired
     private NotificationService notificationService;
 
@@ -27,6 +29,8 @@ public class Applicant1ApplyForConditionalOrderNotification {
             caseData, caseData.getApplicant1(), caseData.getApplicant2());
 
         templateVars.put(APPLICATION_REFERENCE, String.valueOf(id));
+        templateVars.put(YOUR_APPLICATION,
+            caseData.getDivorceOrDissolution().isDivorce() ? "get a divorce" : "end your civil partnership");
 
         log.info("Sending notification to applicant 1 to notify them that they can apply for a conditional order: {}", id);
 
