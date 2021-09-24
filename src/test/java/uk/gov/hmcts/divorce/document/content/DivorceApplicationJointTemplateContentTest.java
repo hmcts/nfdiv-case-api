@@ -64,7 +64,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 
 @ExtendWith(MockitoExtension.class)
-class ApplicationJointTemplateContentTest {
+class DivorceApplicationJointTemplateContentTest {
 
     @Mock
     private ApplicantTemplateDataProvider applicantTemplateDataProvider;
@@ -73,7 +73,7 @@ class ApplicationJointTemplateContentTest {
     private ApplicationTemplateDataProvider applicationTemplateDataProvider;
 
     @InjectMocks
-    private ApplicationJointTemplateContent applicationJointTemplateContent;
+    private DivorceApplicationJointTemplateContent divorceApplicationJointTemplateContent;
 
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForJointApplicationWithTypeDivorce() {
@@ -110,7 +110,7 @@ class ApplicationJointTemplateContentTest {
         caseData.getApplication().getMarriageDetails().setApplicant1Name(TEST_LAST_NAME);
         caseData.getApplication().getMarriageDetails().setApplicant2Name(TEST_LAST_NAME);
 
-        final Map<String, Object> result = applicationJointTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE).get();
+        final Map<String, Object> result = divorceApplicationJointTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE).get();
 
         assertThat(result).contains(
             entry(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, "for a final order of divorce."),
@@ -184,7 +184,7 @@ class ApplicationJointTemplateContentTest {
         caseData.getApplication().getMarriageDetails().setApplicant1Name(TEST_LAST_NAME);
         caseData.getApplication().getMarriageDetails().setApplicant2Name(TEST_LAST_NAME);
 
-        final Map<String, Object> result = applicationJointTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE).get();
+        final Map<String, Object> result = divorceApplicationJointTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE).get();
 
         assertThat(result).contains(
             entry(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, "for the dissolution of their civil partnership."),

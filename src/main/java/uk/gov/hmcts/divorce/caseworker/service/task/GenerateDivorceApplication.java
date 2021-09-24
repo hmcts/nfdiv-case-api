@@ -8,7 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.ApplicationJointTemplateContent;
+import uk.gov.hmcts.divorce.document.content.DivorceApplicationJointTemplateContent;
 import uk.gov.hmcts.divorce.document.content.DivorceApplicationSoleTemplateContent;
 
 import java.time.Clock;
@@ -32,7 +32,7 @@ public class GenerateDivorceApplication implements CaseTask {
     private DivorceApplicationSoleTemplateContent divorceApplicationSoleTemplateContent;
 
     @Autowired
-    private ApplicationJointTemplateContent applicationJointTemplateContent;
+    private DivorceApplicationJointTemplateContent divorceApplicationJointTemplateContent;
 
     @Autowired
     private Clock clock;
@@ -60,7 +60,7 @@ public class GenerateDivorceApplication implements CaseTask {
             caseDataDocumentService.renderDocumentAndUpdateCaseData(
                 caseData,
                 APPLICATION,
-                applicationJointTemplateContent.apply(caseData, caseId, createdDate),
+                divorceApplicationJointTemplateContent.apply(caseData, caseId, createdDate),
                 caseId,
                 DIVORCE_APPLICATION_JOINT,
                 caseData.getApplicant1().getLanguagePreference(),

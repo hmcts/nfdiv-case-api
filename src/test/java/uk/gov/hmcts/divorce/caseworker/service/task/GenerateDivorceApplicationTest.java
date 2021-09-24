@@ -11,7 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.ApplicationJointTemplateContent;
+import uk.gov.hmcts.divorce.document.content.DivorceApplicationJointTemplateContent;
 import uk.gov.hmcts.divorce.document.content.DivorceApplicationSoleTemplateContent;
 
 import java.time.Clock;
@@ -48,7 +48,7 @@ class GenerateDivorceApplicationTest {
     private DivorceApplicationSoleTemplateContent divorceApplicationSoleTemplateContent;
 
     @Mock
-    private ApplicationJointTemplateContent applicationJointTemplateContent;
+    private DivorceApplicationJointTemplateContent divorceApplicationJointTemplateContent;
 
     @Mock
     private Clock clock;
@@ -118,7 +118,7 @@ class GenerateDivorceApplicationTest {
 
         final Supplier<Map<String, Object>> templateContentSupplier = HashMap::new;
 
-        when(applicationJointTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(templateContentSupplier);
+        when(divorceApplicationJointTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(templateContentSupplier);
 
         final var result = generateDivorceApplication.apply(caseDetails);
 
