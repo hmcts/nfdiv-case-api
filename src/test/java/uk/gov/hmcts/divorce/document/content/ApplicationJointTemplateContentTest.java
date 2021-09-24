@@ -8,7 +8,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.document.content.part.ApplicantTemplateDataProvider;
 import uk.gov.hmcts.divorce.document.content.part.ApplicationTemplateDataProvider;
 
@@ -103,14 +102,13 @@ class ApplicationJointTemplateContentTest {
             .divorceOrDissolution(DIVORCE)
             .application(Application.builder()
                 .issueDate(LocalDate.of(2021, 4, 28))
-                .marriageDetails(MarriageDetails.builder()
-                    .applicant1Name(TEST_LAST_NAME)
-                    .applicant2Name(TEST_LAST_NAME)
-                    .build())
                 .build())
             .applicant1(applicant1)
             .applicant2(applicant2)
             .build();
+
+        caseData.getApplication().getMarriageDetails().setApplicant1Name(TEST_LAST_NAME);
+        caseData.getApplication().getMarriageDetails().setApplicant2Name(TEST_LAST_NAME);
 
         final Map<String, Object> result = applicationJointTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE).get();
 
@@ -178,14 +176,13 @@ class ApplicationJointTemplateContentTest {
             .divorceOrDissolution(DISSOLUTION)
             .application(Application.builder()
                 .issueDate(LocalDate.of(2021, 4, 28))
-                .marriageDetails(MarriageDetails.builder()
-                    .applicant1Name(TEST_LAST_NAME)
-                    .applicant2Name(TEST_LAST_NAME)
-                    .build())
                 .build())
             .applicant1(applicant1)
             .applicant2(applicant2)
             .build();
+
+        caseData.getApplication().getMarriageDetails().setApplicant1Name(TEST_LAST_NAME);
+        caseData.getApplication().getMarriageDetails().setApplicant2Name(TEST_LAST_NAME);
 
         final Map<String, Object> result = applicationJointTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE).get();
 

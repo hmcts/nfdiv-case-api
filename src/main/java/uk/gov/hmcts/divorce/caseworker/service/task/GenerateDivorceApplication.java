@@ -44,7 +44,7 @@ public class GenerateDivorceApplication implements CaseTask {
         final CaseData caseData = caseDetails.getData();
         final LocalDate createdDate = caseDetails.getCreatedDate().toLocalDate();
 
-        log.info("Executing handler for generating mini application for case id {} ", caseId);
+        log.info("Executing handler for generating divorce application for case id {} ", caseId);
 
         if (caseData.getApplicationType().isSole()) {
             caseDataDocumentService.renderDocumentAndUpdateCaseData(

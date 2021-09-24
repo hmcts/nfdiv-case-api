@@ -33,7 +33,7 @@ public class DivorceApplicationDraft implements CaseTask {
         final CaseData caseData = caseDetails.getData();
         final Long caseId = caseDetails.getId();
 
-        log.info("Executing handler for generating mini draft for case id {} ", caseId);
+        log.info("Executing handler for generating draft divorce application for case id {} ", caseId);
 
         final Supplier<Map<String, Object>> templateContentSupplier = templateContent
             .apply(caseData, caseId, caseDetails.getCreatedDate().toLocalDate());
