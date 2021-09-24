@@ -18,6 +18,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
+import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1ApplyForConditionalOrderNotification.YOUR_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLY_FOR_CONDITIONAL_ORDER;
@@ -51,7 +52,8 @@ public class Applicant1ApplyForConditionalOrderNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_APPLY_FOR_CONDITIONAL_ORDER),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, String.valueOf(1234567890123456L))
+                hasEntry(APPLICATION_REFERENCE, String.valueOf(1234567890123456L)),
+                hasEntry(YOUR_APPLICATION, "get a divorce")
                 )),
             eq(ENGLISH)
         );
@@ -74,7 +76,8 @@ public class Applicant1ApplyForConditionalOrderNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_APPLY_FOR_CONDITIONAL_ORDER),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, String.valueOf(1234567890123456L))
+                hasEntry(APPLICATION_REFERENCE, String.valueOf(1234567890123456L)),
+                hasEntry(YOUR_APPLICATION, "end your civil partnership")
             )),
             eq(ENGLISH)
         );
