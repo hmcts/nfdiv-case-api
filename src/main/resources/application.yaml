@@ -156,8 +156,14 @@ send-letter:
 aos_pack:
   due_date_offset_days: ${AOS_PACK_DUE_DATE_OFFSET_DAYS:14}
 
-resissue:
-  days-until-overdue: 14
+reissue:
+  days_until_overdue:
+    digital_aos: 14
+    offline_aos: 16
+    complete_reissue: 16
+
+
+
 case_progression:
   holding_period_in_weeks: ${CASE_HOLDING_WEEKS:20}
 

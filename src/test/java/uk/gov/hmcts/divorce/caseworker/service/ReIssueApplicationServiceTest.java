@@ -75,7 +75,9 @@ class ReIssueApplicationServiceTest {
 
     @BeforeEach
     void setPageSize() {
-        ReflectionTestUtils.setField(reIssueApplicationService, "daysUntilOverdue", 14);
+        ReflectionTestUtils.setField(reIssueApplicationService, "daysUntilOverdueForDigitalAos", 14);
+        ReflectionTestUtils.setField(reIssueApplicationService, "daysUntilOverdueForOfflineAos", 16);
+        ReflectionTestUtils.setField(reIssueApplicationService, "daysUntilOverdueForCompleteReissue", 16);
     }
 
     @Test
@@ -129,7 +131,7 @@ class ReIssueApplicationServiceTest {
 
         var expectedCaseData = caseData();
         expectedCaseData.getApplication().setReissueDate(getExpectedLocalDate());
-        expectedCaseData.setDueDate(getExpectedLocalDate().plusDays(14));
+        expectedCaseData.setDueDate(getExpectedLocalDate().plusDays(16));
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
     }
@@ -159,7 +161,7 @@ class ReIssueApplicationServiceTest {
 
         var expectedCaseData = caseData();
         expectedCaseData.getApplication().setReissueDate(getExpectedLocalDate());
-        expectedCaseData.setDueDate(getExpectedLocalDate().plusDays(14));
+        expectedCaseData.setDueDate(getExpectedLocalDate().plusDays(16));
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
     }
@@ -236,7 +238,7 @@ class ReIssueApplicationServiceTest {
 
         var expectedCaseData = caseData();
         expectedCaseData.getApplication().setReissueDate(getExpectedLocalDate());
-        expectedCaseData.setDueDate(getExpectedLocalDate().plusDays(14));
+        expectedCaseData.setDueDate(getExpectedLocalDate().plusDays(16));
         expectedCaseData.getApplicant2().setSolicitorRepresented(YES);
         expectedCaseData.getApplicant2().setSolicitor(solicitor);
         expectedCaseData.getApplication().setSolSignStatementOfTruth(YES);
@@ -278,7 +280,7 @@ class ReIssueApplicationServiceTest {
 
         var expectedCaseData = caseData();
         expectedCaseData.getApplication().setReissueDate(getExpectedLocalDate());
-        expectedCaseData.setDueDate(getExpectedLocalDate().plusDays(14));
+        expectedCaseData.setDueDate(getExpectedLocalDate().plusDays(16));
         expectedCaseData.getApplicant2().setSolicitorRepresented(YES);
         expectedCaseData.getApplicant2().setSolicitor(solicitor);
         expectedCaseData.getApplication().setSolSignStatementOfTruth(YES);
