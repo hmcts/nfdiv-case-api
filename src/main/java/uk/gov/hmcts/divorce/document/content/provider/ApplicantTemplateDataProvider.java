@@ -92,12 +92,12 @@ public class ApplicantTemplateDataProvider {
 
         if (applicant.isRepresented()) {
             return applicant.getSolicitor().getAddress();
-        } else if (applicant.hasShareableContactDetails()) {
+        } else if (!applicant.isConfidentialContactDetails()) {
 
             final AddressGlobalUK applicantHomeAddress =
                 application.isSolicitorApplication() ? applicant.getCorrespondenceAddress() : applicant.getHomeAddress();
 
-            if (null != applicantHomeAddress && applicant.hasShareableContactDetails()) {
+            if (null != applicantHomeAddress) {
                 return Stream.of(
                         applicantHomeAddress.getAddressLine1(),
                         applicantHomeAddress.getAddressLine2(),
