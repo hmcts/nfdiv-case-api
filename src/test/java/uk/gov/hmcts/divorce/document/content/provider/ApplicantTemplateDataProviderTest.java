@@ -204,7 +204,7 @@ class ApplicantTemplateDataProviderTest {
 
         final Applicant applicant = Applicant.builder()
             .solicitorRepresented(YES)
-            .contactDetailsConfidential(SHARE)
+            .keepContactDetailsConfidential(NO)
             .homeAddress(AddressGlobalUK.builder()
                 .addressLine1("Home Address")
                 .addressLine2("Line 2")
@@ -242,7 +242,7 @@ class ApplicantTemplateDataProviderTest {
 
         final Applicant applicant = Applicant.builder()
             .solicitorRepresented(NO)
-            .contactDetailsConfidential(SHARE)
+            .keepContactDetailsConfidential(NO)
             .correspondenceAddress(AddressGlobalUK.builder()
                 .addressLine1("Correspondence Address")
                 .addressLine2("Line 2")
@@ -267,7 +267,7 @@ class ApplicantTemplateDataProviderTest {
 
         final Applicant applicant = Applicant.builder()
             .solicitorRepresented(NO)
-            .contactDetailsConfidential(SHARE)
+            .keepContactDetailsConfidential(NO)
             .homeAddress(AddressGlobalUK.builder()
                 .addressLine1("Home Address")
                 .addressLine2("Line 2")
@@ -291,7 +291,7 @@ class ApplicantTemplateDataProviderTest {
 
         final Applicant applicant = Applicant.builder()
             .solicitorRepresented(NO)
-            .contactDetailsConfidential(KEEP)
+            .keepContactDetailsConfidential(YES)
             .correspondenceAddress(AddressGlobalUK.builder()
                 .addressLine1("Correspondence Address")
                 .addressLine2("Line 2")
