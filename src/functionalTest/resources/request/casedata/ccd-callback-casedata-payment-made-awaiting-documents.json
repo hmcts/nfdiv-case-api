@@ -6,7 +6,7 @@
   "applicant1FirstName": "Billy",
   "applicant1MiddleName": "B",
   "applicant1LastName": "Bob",
-  "applicant1ContactDetailsConfidential": "keep",
+  "applicant1KeepContactDetailsConfidential": "Yes",
   "applicant1Email": "test@mailinator.com",
   "applicant2FirstName": "test_first_name",
   "applicant2LastName": "test_last_name",

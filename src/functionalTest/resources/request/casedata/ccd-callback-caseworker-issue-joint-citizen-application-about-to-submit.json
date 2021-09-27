@@ -6,7 +6,7 @@
   "applicant1LastName": "test_last_name",
   "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
   "applicant1LanguagePreferenceWelsh": "No",
-  "applicant1ContactDetailsConfidential": "share",
+  "applicant1KeepContactDetailsConfidential": "Yes",
   "applicant1Gender": "female",
   "applicant2FirstName": "test_first_name",
   "applicant2MiddleName": "test_middle_name",
@@ -28,7 +28,7 @@
     "country": "United Kingdom"
   },
   "applicant2LanguagePreferenceWelsh": "No",
-  "applicant2ContactDetailsConfidential": "share",
+  "applicant2KeepContactDetailsConfidential": "No",
   "applicant2Gender": "female",
   "marriageApplicant1Name": "test_first_name test_last_name",
   "marriageApplicant2Name": "test_first_name test_last_name",

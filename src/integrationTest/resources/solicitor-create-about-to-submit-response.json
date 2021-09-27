@@ -21,7 +21,7 @@
       "Country": null
     },
     "applicant1PhoneNumber": null,
-    "applicant1ContactDetailsConfidential": null,
+    "applicant1KeepContactDetailsConfidential": null,
     "applicant1Gender": "male",
     "applicant1CorrespondenceAddress": null,
     "applicant1SolicitorRepresented": "Yes",
@@ -42,7 +42,7 @@
     "applicant2NameChangedHow": null,
     "applicant2NameChangedHowOtherDetails": null,
     "applicant2PhoneNumber": null,
-    "applicant2ContactDetailsConfidential": null,
+    "applicant2KeepContactDetailsConfidential": null,
     "applicant2Gender": null,
     "applicant2CorrespondenceAddress": null,
     "applicant2SolicitorRepresented": null,

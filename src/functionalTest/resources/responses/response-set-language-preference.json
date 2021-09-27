@@ -42,7 +42,7 @@
     "applicant2LastNameChangedWhenMarried": null,
     "applicant2NameChangedHowOtherDetails": null,
     "applicant2PhoneNumber": null,
-    "applicant2ContactDetailsConfidential": null,
+    "applicant2KeepContactDetailsConfidential": null,
     "applicant1HWFAppliedForFees": null,
     "applicant1HWFReferenceNumber": null,
     "applicant1HWFNeedHelp": null,

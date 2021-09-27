@@ -7,7 +7,7 @@
     "applicant1LastName": "test_last_name",
     "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
     "applicant1LanguagePreferenceWelsh": "No",
-    "applicant1ContactDetailsConfidential": "share",
+    "applicant1KeepContactDetailsConfidential": "No",
     "applicant1Gender": "female",
     "applicant1SolicitorRepresented": "Yes",
     "applicant1SolicitorName": "Applicant 1 Solicitor",
@@ -26,7 +26,7 @@
     "applicant2LastName": "test_last_name",
     "applicant2Email": "applicant2@example.com",
     "applicant2LanguagePreferenceWelsh": "No",
-    "applicant2ContactDetailsConfidential": "share",
+    "applicant2KeepContactDetailsConfidential": "No",
     "applicant2Gender": "female",
     "applicant2SolicitorRepresented": "Yes",
     "applicant2SolicitorName": "Applicant 2 Solicitor",
@@ -111,7 +111,7 @@
       }
     ],
     "dueDate": "${json-unit.any-string}",
-    "dataVersion": 1
+    "dataVersion": "${json-unit.any-number}"
   },
   "errors": null,
   "warnings": null,
