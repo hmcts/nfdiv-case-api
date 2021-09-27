@@ -13,8 +13,6 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.divorcecase.model.ConfidentialAddress.KEEP;
-import static uk.gov.hmcts.divorce.divorcecase.model.ConfidentialAddress.SHARE;
 import static uk.gov.hmcts.divorce.divorcecase.model.FinancialOrderFor.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.FinancialOrderFor.CHILDREN;
 
@@ -106,7 +104,7 @@ class ApplicantTemplateDataProviderTest {
                 .county("County")
                 .postCode("Post Code")
                 .build())
-            .contactDetailsConfidential(SHARE)
+            .keepContactDetailsConfidential(NO)
             .build();
 
         assertThat(applicantTemplateDataProvider.deriveApplicantPostalAddress(applicant))
@@ -126,7 +124,7 @@ class ApplicantTemplateDataProviderTest {
                 .county("County")
                 .postCode("Post Code")
                 .build())
-            .contactDetailsConfidential(KEEP)
+            .keepContactDetailsConfidential(YES)
             .build();
 
         assertThat(applicantTemplateDataProvider.deriveApplicantPostalAddress(applicant))
@@ -138,7 +136,7 @@ class ApplicantTemplateDataProviderTest {
 
         final Applicant applicant = Applicant.builder()
             .solicitorRepresented(NO)
-            .contactDetailsConfidential(SHARE)
+            .keepContactDetailsConfidential(NO)
             .build();
 
         assertThat(applicantTemplateDataProvider.deriveApplicantPostalAddress(applicant))

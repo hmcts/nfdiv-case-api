@@ -46,7 +46,7 @@ public class ApplicantTemplateDataProvider {
 
         if (applicant.isRepresented()) {
             return applicant.getSolicitor().getAddress();
-        } else if (null != applicantHomeAddress && applicant.hasShareableContactDetails()) {
+        } else if (null != applicantHomeAddress && !applicant.isConfidentialContactDetails()) {
 
             return Stream.of(
                     applicantHomeAddress.getAddressLine1(),

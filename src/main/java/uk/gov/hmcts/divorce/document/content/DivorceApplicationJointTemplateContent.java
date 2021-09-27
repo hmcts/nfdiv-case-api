@@ -96,7 +96,7 @@ public class DivorceApplicationJointTemplateContent {
             templateData.put(APPLICANT_1_LAST_NAME, applicant1.getLastName());
             templateData.put(APPLICANT_1_FULL_NAME, application.getMarriageDetails().getApplicant1Name());
             templateData.put(APPLICANT_1_POSTAL_ADDRESS, applicantTemplateDataProvider.deriveApplicantPostalAddress(applicant1));
-            if (applicant1.hasShareableContactDetails()) {
+            if (!applicant1.isConfidentialContactDetails()) {
                 templateData.put(APPLICANT_1_EMAIL, applicant1.getEmail());
             }
             if (null != applicant1.getFinancialOrder()) {
@@ -113,7 +113,7 @@ public class DivorceApplicationJointTemplateContent {
             templateData.put(APPLICANT_2_LAST_NAME, applicant2.getLastName());
             templateData.put(APPLICANT_2_FULL_NAME, application.getMarriageDetails().getApplicant2Name());
             templateData.put(APPLICANT_2_POSTAL_ADDRESS, applicantTemplateDataProvider.deriveApplicantPostalAddress(applicant2));
-            if (applicant2.hasShareableContactDetails()) {
+            if (!applicant2.isConfidentialContactDetails()) {
                 templateData.put(APPLICANT_2_EMAIL, applicant2.getEmail());
             }
             if (null != applicant2.getFinancialOrder()) {

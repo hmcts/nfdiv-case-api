@@ -5,8 +5,6 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.divorcecase.model.ConfidentialAddress.KEEP;
-import static uk.gov.hmcts.divorce.divorcecase.model.ConfidentialAddress.SHARE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 
@@ -58,22 +56,22 @@ class ApplicantTest {
     }
 
     @Test
-    void shouldReturnFalseIfContactDetailsAreConfidential() {
+    void shouldReturnTrueIfContactDetailsAreConfidential() {
 
         final Applicant applicant = Applicant.builder()
-            .contactDetailsConfidential(KEEP)
+            .keepContactDetailsConfidential(YES)
             .build();
 
-        assertThat(applicant.hasShareableContactDetails()).isFalse();
+        assertThat(applicant.isConfidentialContactDetails()).isTrue();
     }
 
     @Test
-    void shouldReturnTrueIfContactDetailsAreShareable() {
+    void shouldReturnFalseIfContactDetailsAreNoConfidential() {
 
         final Applicant applicant = Applicant.builder()
-            .contactDetailsConfidential(SHARE)
+            .keepContactDetailsConfidential(NO)
             .build();
 
-        assertThat(applicant.hasShareableContactDetails()).isTrue();
+        assertThat(applicant.isConfidentialContactDetails()).isFalse();
     }
 }

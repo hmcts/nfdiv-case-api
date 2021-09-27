@@ -21,7 +21,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
-import static uk.gov.hmcts.divorce.divorcecase.model.ConfidentialAddress.SHARE;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_COURT_CASE_DETAILS;
@@ -85,7 +84,7 @@ class DivorceApplicationJointTemplateContentTest {
             .financialOrder(NO)
             .legalProceedings(NO)
             .email(TEST_USER_EMAIL)
-            .contactDetailsConfidential(SHARE)
+            .keepContactDetailsConfidential(NO)
             .build();
         final Applicant applicant2 = Applicant.builder()
             .firstName(TEST_FIRST_NAME)
@@ -94,7 +93,7 @@ class DivorceApplicationJointTemplateContentTest {
             .financialOrder(NO)
             .legalProceedings(NO)
             .email(TEST_USER_EMAIL)
-            .contactDetailsConfidential(SHARE)
+            .keepContactDetailsConfidential(NO)
             .build();
 
         final CaseData caseData = CaseData.builder()
@@ -159,7 +158,7 @@ class DivorceApplicationJointTemplateContentTest {
             .financialOrder(NO)
             .legalProceedings(NO)
             .email(TEST_USER_EMAIL)
-            .contactDetailsConfidential(SHARE)
+            .keepContactDetailsConfidential(NO)
             .build();
         final Applicant applicant2 = Applicant.builder()
             .firstName(TEST_FIRST_NAME)
@@ -168,7 +167,7 @@ class DivorceApplicationJointTemplateContentTest {
             .financialOrder(NO)
             .legalProceedings(NO)
             .email(TEST_USER_EMAIL)
-            .contactDetailsConfidential(SHARE)
+            .keepContactDetailsConfidential(NO)
             .build();
 
         final CaseData caseData = CaseData.builder()
