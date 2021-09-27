@@ -101,7 +101,7 @@ public class DivorceApplicationJointTemplateContent {
             }
             if (null != applicant1.getFinancialOrder()) {
                 templateData.put(HAS_FINANCIAL_ORDER_APPLICANT_1, applicant1.getFinancialOrder().toBoolean());
-                templateData.put(APPLICANT_1_FINANCIAL_ORDER, applicantTemplateDataProvider.deriveFinancialOrder(applicant1));
+                templateData.put(APPLICANT_1_FINANCIAL_ORDER, applicantTemplateDataProvider.deriveJointFinancialOrder(applicant1));
             }
             if (null != applicant1.getLegalProceedings()) {
                 templateData.put(HAS_OTHER_COURT_CASES_APPLICANT_1, applicant1.getLegalProceedings().toBoolean());
@@ -118,7 +118,7 @@ public class DivorceApplicationJointTemplateContent {
             }
             if (null != applicant2.getFinancialOrder()) {
                 templateData.put(HAS_FINANCIAL_ORDER_APPLICANT_2, applicant2.getFinancialOrder().toBoolean());
-                templateData.put(APPLICANT_2_FINANCIAL_ORDER, applicantTemplateDataProvider.deriveFinancialOrder(applicant2));
+                templateData.put(APPLICANT_2_FINANCIAL_ORDER, applicantTemplateDataProvider.deriveJointFinancialOrder(applicant2));
             }
             if (null != applicant2.getLegalProceedings()) {
                 templateData.put(HAS_OTHER_COURT_CASES_APPLICANT_2, applicant2.getLegalProceedings().toBoolean());
