@@ -143,7 +143,7 @@ class DivorceApplicationJointTemplateContentTest {
             entry(MARRIAGE_DATE, null)
         );
 
-        verify(applicantTemplateDataProvider, times(2)).deriveFinancialOrder(any(Applicant.class));
+        verify(applicantTemplateDataProvider, times(2)).deriveJointFinancialOrder(any(Applicant.class));
         verify(applicantTemplateDataProvider, times(2)).deriveApplicantPostalAddress(any(Applicant.class));
         verify(applicationTemplateDataProvider).deriveJointJurisdictionList(any(Application.class));
     }
@@ -217,7 +217,7 @@ class DivorceApplicationJointTemplateContentTest {
             entry(MARRIAGE_DATE, null)
         );
 
-        verify(applicantTemplateDataProvider, times(2)).deriveFinancialOrder(any(Applicant.class));
+        verify(applicantTemplateDataProvider, times(2)).deriveJointFinancialOrder(any(Applicant.class));
         verify(applicantTemplateDataProvider, times(2)).deriveApplicantPostalAddress(any(Applicant.class));
         verify(applicationTemplateDataProvider).deriveJointJurisdictionList(any(Application.class));
     }

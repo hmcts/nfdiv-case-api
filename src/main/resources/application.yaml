@@ -125,7 +125,7 @@ core_case_data:
 docmosis:
   templates:
     english:
-      DIVORCE_APPLICATION_SOLE: Divorce_CP_Mini_Application_Sole_Joint.docx
+      DIVORCE_APPLICATION_SOLE: Divorce_CP_Application_Sole.docx
       DIVORCE_APPLICATION_JOINT: Divorce_CP_Application_Joint.docx
       DIVORCE_DRAFT_APPLICATION: Divorce_CP_Mini_Draft_Application_Template.docx
       RESP_SOLICITOR_AOS_INVITATION: Divorce_CP_Dummy_Template.docx #TODO: Set correct template when available
