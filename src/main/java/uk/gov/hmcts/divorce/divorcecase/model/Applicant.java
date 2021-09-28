@@ -92,12 +92,9 @@ public class Applicant {
     )
     private String phoneNumber;
 
-    @CCD(
-        label = "Keep contact details private?",
-        typeOverride = FixedList,
-        typeParameterOverride = "ConfidentialAddress"
-    )
-    private ConfidentialAddress contactDetailsConfidential;
+
+    @CCD(label = "Keep contact details private?")
+    private YesOrNo keepContactDetailsConfidential;
 
     @CCD(
         label = "Gender",

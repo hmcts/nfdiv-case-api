@@ -13,7 +13,7 @@
     "Applicant1Gender cannot be empty or null",
     "Applicant2Gender cannot be empty or null",
     "MarriageApplicant1Name cannot be empty or null",
-    "Applicant1ContactDetailsConfidential cannot be empty or null",
+    "Applicant1KeepContactDetailsConfidential cannot be empty or null",
     "Applicant1PrayerHasBeenGiven cannot be empty or null",
     "Statement of truth must be accepted by the person making the application",
     "MarriageDate cannot be empty or null",

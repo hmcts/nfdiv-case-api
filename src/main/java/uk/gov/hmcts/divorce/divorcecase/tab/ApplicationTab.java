@@ -44,20 +44,20 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1NameDifferentToMarriageCertificate")
             .field("applicant1NameChangedHow", "applicant1NameDifferentToMarriageCertificate=\"Yes\"")
             .field("applicant1NameChangedHowOtherDetails", "applicant1NameChangedHow=\"other\"")
-            .field("applicant1ContactDetailsConfidential", "applicationType=\"NEVER_SHOW\"")
+            .field("applicant1KeepContactDetailsConfidential", "applicationType=\"NEVER_SHOW\"")
             .field("divorceWho")
             .field("applicant1ScreenHasMarriageBroken")
             .field("applicant1PcqId")
             .label("LabelApplicant1DetailsAreConfidential-Heading",
-                "applicant1ContactDetailsConfidential=\"keep\"",
+                "applicant1KeepContactDetailsConfidential=\"Yes\"",
                 "#### The applicant's contact details are confidential")
             .label("LabelApplicant1DetailsAreShareable-Heading",
-                "applicant1ContactDetailsConfidential=\"share\"",
+                "applicant1KeepContactDetailsConfidential=\"No\"",
                 "#### The applicant's contact details may be shared")
-            .field("applicant1PhoneNumber", "applicant1ContactDetailsConfidential=\"share\"")
-            .field("applicant1Email", "applicant1ContactDetailsConfidential=\"share\"")
-            .field("applicant1HomeAddress", "applicant1ContactDetailsConfidential=\"share\"")
-            .field("applicant1CorrespondenceAddress", "applicant1ContactDetailsConfidential=\"share\"")
+            .field("applicant1PhoneNumber", "applicant1KeepContactDetailsConfidential=\"No\"")
+            .field("applicant1Email", "applicant1KeepContactDetailsConfidential=\"No\"")
+            .field("applicant1HomeAddress", "applicant1KeepContactDetailsConfidential=\"No\"")
+            .field("applicant1CorrespondenceAddress", "applicant1KeepContactDetailsConfidential=\"No\"")
 
             //Applicant 1 Solicitor
             .field("applicant1SolicitorRepresented", "applicationType=\"NEVER_SHOW\"")
@@ -84,17 +84,17 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2ScreenHasMarriageBroken")
             .field("applicant2NameChangedHow", "applicant2NameDifferentToMarriageCertificate=\"Yes\"")
             .field("applicant2NameChangedHowOtherDetails", "applicant2NameChangedHow=\"other\"")
-            .field("applicant2ContactDetailsConfidential", "applicationType=\"NEVER_SHOW\"")
+            .field("applicant2KeepContactDetailsConfidential", "applicationType=\"NEVER_SHOW\"")
             .label("LabelApplicant2DetailsAreConfidential-Heading",
-                "applicant2ContactDetailsConfidential=\"keep\"",
+                "applicant2KeepContactDetailsConfidential=\"Yes\"",
                 "#### ${labelContentTheApplicant2UC}'s contact details are confidential")
             .label("LabelApplicant2DetailsAreShareable-Heading",
-                "applicant2ContactDetailsConfidential=\"share\"",
+                "applicant2KeepContactDetailsConfidential=\"No\"",
                 "#### ${labelContentTheApplicant2UC}'s contact details may be shared")
-            .field("applicant2PhoneNumber", "applicant2ContactDetailsConfidential=\"share\"")
-            .field("applicant2Email", "applicant2ContactDetailsConfidential=\"share\"")
-            .field("applicant2HomeAddress", "applicant2ContactDetailsConfidential=\"share\"")
-            .field("applicant2CorrespondenceAddress", "applicant2ContactDetailsConfidential=\"share\"")
+            .field("applicant2PhoneNumber", "applicant2KeepContactDetailsConfidential=\"No\"")
+            .field("applicant2Email", "applicant2KeepContactDetailsConfidential=\"No\"")
+            .field("applicant2HomeAddress", "applicant2KeepContactDetailsConfidential=\"No\"")
+            .field("applicant2CorrespondenceAddress", "applicant2KeepContactDetailsConfidential=\"No\"")
             .field("applicant2AgreedToReceiveEmails")
 
             //Applicant 2 Solicitor

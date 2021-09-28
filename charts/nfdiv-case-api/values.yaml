@@ -37,6 +37,8 @@ java:
     NOTIFY_TEMPLATE_SIGN_IN_DISSOLUTION_URL: https://nfdiv-end-civil-partnership.{{ .Values.global.environment }}.platform.hmcts.net/
     NOTIFY_TEMPLATE_APPLICANT2_SIGN_IN_DIVORCE_URL: https://nfdiv-apply-for-divorce.{{ .Values.global.environment }}.platform.hmcts.net/applicant2
     NOTIFY_TEMPLATE_APPLICANT2_SIGN_IN_DISSOLUTION_URL: https://nfdiv-end-civil-partnership.{{ .Values.global.environment }}.platform.hmcts.net/applicant2
+    NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DIVORCE_URL: https://nfdiv-apply-for-divorce.{{ .Values.global.environment }}.platform.hmcts.net/respondent
+    NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DISSOLUTION_URL: https://nfdiv-end-civil-partnership.{{ .Values.global.environment }}.platform.hmcts.net/respondent
     S2S_URL: http://rpe-service-auth-provider-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
     FEE_API_URL: http://fees-register-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
     IDAM_API_REDIRECT_URL: https://div-pfe-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal/authenticated

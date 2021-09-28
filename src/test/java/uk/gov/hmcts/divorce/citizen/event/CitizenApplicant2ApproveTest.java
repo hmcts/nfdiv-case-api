@@ -12,7 +12,6 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.Applicant2ApprovedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.Jurisdiction;
 import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
@@ -129,7 +128,7 @@ class CitizenApplicant2ApproveTest {
     private CaseData setValidCaseData(CaseData caseData) {
         caseData.setApplicant1(getApplicant());
         caseData.setApplicant2(getApplicant(MALE));
-        caseData.getApplicant1().setContactDetailsConfidential(ConfidentialAddress.SHARE);
+        caseData.getApplicant1().setKeepContactDetailsConfidential(NO);
         caseData.getApplication().setApplicant1HelpWithFees(
             HelpWithFees.builder()
                 .needHelp(NO)

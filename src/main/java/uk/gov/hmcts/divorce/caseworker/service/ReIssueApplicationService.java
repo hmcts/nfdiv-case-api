@@ -53,8 +53,14 @@ public class ReIssueApplicationService {
     @Autowired
     private Clock clock;
 
-    @Value("${resissue.days-until-overdue}")
-    private Integer daysUntilOverdue;
+    @Value("${reissue.days_until_overdue.digital_aos}")
+    private Integer daysUntilOverdueForDigitalAos;
+
+    @Value("${reissue.days_until_overdue.offline_aos}")
+    private Integer daysUntilOverdueForOfflineAos;
+
+    @Value("${reissue.days_until_overdue.complete_reissue}")
+    private Integer daysUntilOverdueForCompleteReissue;
 
     public CaseDetails<CaseData, State> process(final CaseDetails<CaseData, State> caseDetails) {
         ReissueOption reissueOption = caseDetails.getData().getApplication().getReissueOption();
@@ -78,7 +84,7 @@ public class ReIssueApplicationService {
                 sendAosNotifications,
                 details -> {
                     details.getData().getApplication().setReissueDate(now(clock));
-                    details.getData().setDueDate(now(clock).plusDays(daysUntilOverdue));
+                    details.getData().setDueDate(now(clock).plusDays(daysUntilOverdueForDigitalAos));
                     return details;
                 },
                 setPostIssueState,
@@ -92,7 +98,7 @@ public class ReIssueApplicationService {
                 sendAosPack,
                 details -> {
                     details.getData().getApplication().setReissueDate(now(clock));
-                    details.getData().setDueDate(now(clock).plusDays(daysUntilOverdue));
+                    details.getData().setDueDate(now(clock).plusDays(daysUntilOverdueForOfflineAos));
                     return details;
                 },
                 setPostIssueState,
@@ -108,7 +114,7 @@ public class ReIssueApplicationService {
                 sendAosPack,
                 details -> {
                     details.getData().getApplication().setReissueDate(now(clock));
-                    details.getData().setDueDate(now(clock).plusDays(daysUntilOverdue));
+                    details.getData().setDueDate(now(clock).plusDays(daysUntilOverdueForCompleteReissue));
                     return details;
                 },
                 setPostIssueState,

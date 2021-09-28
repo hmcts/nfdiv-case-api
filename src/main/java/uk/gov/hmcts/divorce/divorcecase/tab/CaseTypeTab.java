@@ -34,6 +34,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildNotesTab(configBuilder);
         buildGeneralReferralTab(configBuilder);
         buildConfidentialDocumentsTab(configBuilder);
+        buildServiceApplicationTab(configBuilder);
     }
 
     private void buildStateTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -88,7 +89,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private void buildConfidentialTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("Confidential", "Confidential Address")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR)
-            .showCondition("applicant1ContactDetailsConfidential=\"keep\"")
+            .showCondition("applicant1KeepContactDetailsConfidential=\"keep\"")
             .field("applicant1CorrespondenceAddress")
             .field("applicant1PhoneNumber")
             .field("applicant1Email")
@@ -132,5 +133,13 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("confidentialDocuments", "Confidential Document")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER)
             .field(CaseData::getConfidentialDocumentsUploaded);
+    }
+
+    private void buildServiceApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("serviceApplication", "Service Application")
+            .forRoles(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER)
+            .field("receivedServiceApplicationDate")
+            .field("serviceApplicationType")
+            .field("receivedServiceAddedDate");
     }
 }

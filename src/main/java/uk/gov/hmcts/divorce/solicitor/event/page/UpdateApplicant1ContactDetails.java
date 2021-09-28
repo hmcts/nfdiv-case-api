@@ -17,7 +17,7 @@ public class UpdateApplicant1ContactDetails implements CcdPageConfiguration {
                 .mandatory(Applicant::getPhoneNumber)
                 .mandatory(Applicant::getHomeAddress)
                 .label("LabelHorizontalLine1", "<hr>")
-                .mandatory(Applicant::getContactDetailsConfidential)
+                .mandatory(Applicant::getKeepContactDetailsConfidential)
                 .done();
     }
 }
