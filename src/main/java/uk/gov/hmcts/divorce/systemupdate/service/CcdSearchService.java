@@ -95,7 +95,7 @@ public class CcdSearchService {
                     .should(boolQuery().must(rangeQuery("data.dataVersion").lt(latestVersion)))
             )
             .from(0)
-            .size(pageSize);
+            .size(2000);
 
         return coreCaseDataApi.searchCases(
             systemUpdateUser.getAuthToken(),

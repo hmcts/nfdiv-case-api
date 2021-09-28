@@ -120,7 +120,7 @@ class CcdSearchServiceTest {
                     .should(boolQuery().must(rangeQuery("data.dataVersion").lt(1)))
             )
             .from(0)
-            .size(100);
+            .size(2000);
 
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUpdateUser);
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);

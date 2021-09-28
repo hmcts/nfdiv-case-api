@@ -40,7 +40,9 @@ public class RetiredFields {
         data -> data.put(
             "applicant2KeepContactDetailsConfidential",
             transformContactDetailsConfidentialField("applicant2ContactDetailsConfidential", data)
-        )
+        ),
+        "applicant1FinancialOrderFor", emptyStringToNull("applicant1FinancialOrderFor"),
+        "applicant2FinancialOrderFor", emptyStringToNull("applicant2FinancialOrderFor")
     );
 
     public static Map<String, Object> migrate(Map<String, Object> data) {
@@ -64,5 +66,13 @@ public class RetiredFields {
     private static YesOrNo transformContactDetailsConfidentialField(String confidentialFieldName, Map<String, Object> data) {
         String confidentialFieldValue = (String) data.get(confidentialFieldName);
         return ConfidentialAddress.KEEP.getLabel().equalsIgnoreCase(confidentialFieldValue) ? YES : NO;
+    }
+
+    private static Consumer<Map<String, Object>> emptyStringToNull(String fieldName) {
+        return data -> {
+            if ("".equals(data.get(fieldName))) {
+                data.put(fieldName, null);
+            }
+        };
     }
 }
