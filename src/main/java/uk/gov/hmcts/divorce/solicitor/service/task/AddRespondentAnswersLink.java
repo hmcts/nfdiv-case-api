@@ -15,6 +15,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWER
 
 @Component
 public class AddRespondentAnswersLink implements CaseTask {
+
     @Override
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> caseDetails) {
         final CaseData caseData = caseDetails.getData();
@@ -26,7 +27,7 @@ public class AddRespondentAnswersLink implements CaseTask {
                 RESPONDENT_ANSWERS.equals(divorceDocument.getDocumentType()))
             .map(DivorceDocument::getDocumentLink)
             .findFirst()
-            .ifPresent(file -> caseData.getApplication().getConditionalOrder().setRespondentAnswersLink(file));
+            .ifPresent(file -> caseData.getConditionalOrder().setRespondentAnswersLink(file));
         return caseDetails;
     }
 }

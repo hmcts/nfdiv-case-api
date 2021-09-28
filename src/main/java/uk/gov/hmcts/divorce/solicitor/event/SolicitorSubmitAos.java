@@ -21,9 +21,9 @@ import java.util.List;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
@@ -96,7 +96,7 @@ public class SolicitorSubmitAos implements CCDConfig<CaseData, State, UserRole> 
             .showSummary()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .explicitGrants()
-            .grant(CREATE_READ_UPDATE, SOLICITOR)
+            .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
             .grant(READ,
                 CASE_WORKER,
                 LEGAL_ADVISOR,

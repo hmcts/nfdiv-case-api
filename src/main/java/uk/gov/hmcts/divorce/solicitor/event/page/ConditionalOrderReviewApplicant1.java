@@ -16,10 +16,11 @@ public class ConditionalOrderReviewApplicant1 implements CcdPageConfiguration {
             .pageLabel("Review the applicant's application - Draft Conditional Order Application")
             .complex(CaseData::getApplication)
                 .readonly(Application::getMiniApplicationLink)
-                .complex(Application::getConditionalOrder)
-                    .mandatory(ConditionalOrder::getChangeOrAddToApplication)
-                    .mandatory(ConditionalOrder::getIsEverythingInPetitionTrue)
-                .done();
+                .done()
+            .complex(CaseData::getConditionalOrder)
+                .mandatory(ConditionalOrder::getChangeOrAddToApplication)
+                .mandatory(ConditionalOrder::getIsEverythingInPetitionTrue)
+            .done();
 
     }
 }

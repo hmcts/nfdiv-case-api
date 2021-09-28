@@ -20,6 +20,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
@@ -344,6 +345,21 @@ public class TestDataHelper {
         solicitorService.setServiceSotFirm("solicitor firm");
         return solicitorService;
     }
+
+    public static ConditionalOrder getConditionalOrder() {
+        final ConditionalOrder conditionalOrder = new ConditionalOrder();
+        conditionalOrder.setDateConditionalOrderSubmitted(LocalDateTime.now());
+        conditionalOrder.setApplyForDecreeNisi(YES);
+        conditionalOrder.setChangeOrAddToApplication(NO);
+        conditionalOrder.setIsEverythingInPetitionTrue(YES);
+        conditionalOrder.setDoesApplicantFindItIntolerable(YES);
+        conditionalOrder.setDateOfAdulteryKnowledge(LocalDate.of(2000, 1, 1));
+        conditionalOrder.setLivedApartFrom(YES);
+        conditionalOrder.setAdulteryAdditionalDetails("adultery extra details");
+        conditionalOrder.setAddNewDocuments(NO);
+        return conditionalOrder;
+    }
+
 
     public static CaseData validCaseDataForIssueApplication() {
         final MarriageDetails marriageDetails = new MarriageDetails();
