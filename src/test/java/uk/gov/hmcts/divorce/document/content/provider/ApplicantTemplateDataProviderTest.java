@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 
 import java.util.Set;
 
+import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -28,6 +29,17 @@ class ApplicantTemplateDataProviderTest {
     void shouldReturnNullForJointIfNoFinancialOrder() {
 
         final Applicant applicant = Applicant.builder().build();
+
+        assertThat(applicantTemplateDataProvider.deriveJointFinancialOrder(applicant)).isNull();
+    }
+
+    @Test
+    void shouldReturnNullForJointIfEmptyFinancialOrder() {
+
+        final Applicant applicant = Applicant.builder()
+            .financialOrder(YES)
+            .financialOrderFor(emptySet())
+            .build();
 
         assertThat(applicantTemplateDataProvider.deriveJointFinancialOrder(applicant)).isNull();
     }
@@ -82,6 +94,17 @@ class ApplicantTemplateDataProviderTest {
     void shouldReturnNullForSoleIfNoFinancialOrder() {
 
         final Applicant applicant = Applicant.builder().build();
+
+        assertThat(applicantTemplateDataProvider.deriveSoleFinancialOrder(applicant)).isNull();
+    }
+
+    @Test
+    void shouldReturnNullForSoleIfEmptyFinancialOrder() {
+
+        final Applicant applicant = Applicant.builder()
+            .financialOrder(YES)
+            .financialOrderFor(emptySet())
+            .build();
 
         assertThat(applicantTemplateDataProvider.deriveSoleFinancialOrder(applicant)).isNull();
     }
@@ -155,16 +178,15 @@ class ApplicantTemplateDataProviderTest {
             .homeAddress(AddressGlobalUK.builder()
                 .addressLine1("Line 1")
                 .addressLine2("Line 2")
-                .addressLine3("Line 3")
+                .addressLine3("")
                 .postTown("Post Town")
-                .county("County")
                 .postCode("Post Code")
                 .build())
             .keepContactDetailsConfidential(NO)
             .build();
 
         assertThat(applicantTemplateDataProvider.deriveApplicantPostalAddress(applicant))
-            .isEqualTo("Line 1\nLine 2\nLine 3\nPost Town\nCounty\nPost Code");
+            .isEqualTo("Line 1\nLine 2\nPost Town\nPost Code");
     }
 
     @Test
@@ -246,9 +268,8 @@ class ApplicantTemplateDataProviderTest {
             .correspondenceAddress(AddressGlobalUK.builder()
                 .addressLine1("Correspondence Address")
                 .addressLine2("Line 2")
-                .addressLine3("Line 3")
+                .addressLine3("")
                 .postTown("Post Town")
-                .county("County")
                 .postCode("Post Code")
                 .build())
             .build();
@@ -259,7 +280,7 @@ class ApplicantTemplateDataProviderTest {
 
         final String result = applicantTemplateDataProvider.deriveApplicant2PostalAddress(applicant, application);
 
-        assertThat(result).isEqualTo("Correspondence Address\nLine 2\nLine 3\nPost Town\nCounty\nPost Code");
+        assertThat(result).isEqualTo("Correspondence Address\nLine 2\nPost Town\nPost Code");
     }
 
     @Test
@@ -271,9 +292,8 @@ class ApplicantTemplateDataProviderTest {
             .homeAddress(AddressGlobalUK.builder()
                 .addressLine1("Home Address")
                 .addressLine2("Line 2")
-                .addressLine3("Line 3")
+                .addressLine3("")
                 .postTown("Post Town")
-                .county("County")
                 .postCode("Post Code")
                 .build())
             .build();
@@ -283,7 +303,7 @@ class ApplicantTemplateDataProviderTest {
 
         final String result = applicantTemplateDataProvider.deriveApplicant2PostalAddress(applicant, application);
 
-        assertThat(result).isEqualTo("Home Address\nLine 2\nLine 3\nPost Town\nCounty\nPost Code");
+        assertThat(result).isEqualTo("Home Address\nLine 2\nPost Town\nPost Code");
     }
 
     @Test
@@ -300,6 +320,23 @@ class ApplicantTemplateDataProviderTest {
                 .county("County")
                 .postCode("Post Code")
                 .build())
+            .build();
+
+        final Application application = Application.builder()
+            .solSignStatementOfTruth(YES)
+            .build();
+
+        final String result = applicantTemplateDataProvider.deriveApplicant2PostalAddress(applicant, application);
+
+        assertThat(result).isNull();
+    }
+
+    @Test
+    public void shouldReturnNullIfApplicant2IsNotSolicitorRepresentedAndNoAddressSet() {
+
+        final Applicant applicant = Applicant.builder()
+            .solicitorRepresented(NO)
+            .keepContactDetailsConfidential(YES)
             .build();
 
         final Application application = Application.builder()
