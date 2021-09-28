@@ -74,7 +74,7 @@ class ApplicantTest {
 
         assertThat(applicant.isConfidentialContactDetails()).isFalse();
     }
-    
+
     @Test
     void shouldReturnFalseIfContactDetailsAreSetToNull() {
 

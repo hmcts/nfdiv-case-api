@@ -37,13 +37,11 @@ public class ApplicationTemplateDataProvider {
                     + "and one of them still resides there"));
             }
 
-            //TODO: check this is the correct connection for joint
             if (connections.contains(APP_1_RESIDENT_TWELVE_MONTHS)) {
                 jurisdictionList.add(new Connection("one of the applicants resides in England and Wales and has resided "
                     + "there for at least a year immediately prior to the presentation of the application"));
             }
 
-            //TODO: check this is the correct connection for joint
             if (connections.contains(APP_1_RESIDENT_SIX_MONTHS)) {
                 jurisdictionList.add(new Connection("the applicants are domiciled and habitually resident in England and "
                     + "Wales and have resided there for at least six months immediately prior to the application"));
