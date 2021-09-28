@@ -12,7 +12,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.ConditionalOrderNewDocuments;
-import uk.gov.hmcts.divorce.solicitor.event.page.ConditionalOrderReviewAdultery;
 import uk.gov.hmcts.divorce.solicitor.event.page.ConditionalOrderReviewAoS;
 import uk.gov.hmcts.divorce.solicitor.event.page.ConditionalOrderReviewApplicant1;
 
@@ -37,7 +36,6 @@ public class SolicitorDraftConditionalOrder implements CCDConfig<CaseData, State
     private final List<CcdPageConfiguration> pages = asList(
         new ConditionalOrderReviewAoS(),
         new ConditionalOrderReviewApplicant1(),
-        new ConditionalOrderReviewAdultery(),
         new ConditionalOrderNewDocuments()
     );
 

@@ -15,7 +15,7 @@ public class ConditionalOrderReviewAoS implements CcdPageConfiguration {
             .pageLabel("Review Acknowledgement of Service - Draft Conditional Order Application")
             .complex(CaseData::getConditionalOrder)
                 .readonly(ConditionalOrder::getRespondentAnswersLink)
-                .mandatory(ConditionalOrder::getApplyForDecreeNisi)
+                .mandatory(ConditionalOrder::getApplyForConditionalOrder)
             .done();
     }
 }

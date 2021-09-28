@@ -15,7 +15,7 @@ public class ConditionalOrderNewDocuments implements CcdPageConfiguration {
             .pageLabel("Documents - Draft Conditional Order Application")
             .complex(CaseData::getConditionalOrder)
                 .mandatory(ConditionalOrder::getAddNewDocuments)
-                .mandatory(ConditionalOrder::getDnDocumentsUploaded, "conOrderAddNewDocuments=\"Yes\"")
+                .mandatory(ConditionalOrder::getDocumentsUploaded, "coAddNewDocuments=\"Yes\"")
             .done();
     }
 }

@@ -11,7 +11,6 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
@@ -30,83 +29,71 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 public class ConditionalOrder {
 
     @CCD(
-        label = "Date Conditional Order submitted to HMCTS",
-        access = {DefaultAccess.class}
+        label = "Date Conditional Order submitted to HMCTS"
     )
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
-    private LocalDateTime dateConditionalOrderSubmitted;
+    private LocalDateTime dateSubmitted;
 
     @CCD(
-        label = "Link to respondent answers",
-        access = {DefaultAccess.class}
+        label = "Link to respondent answers"
     )
     private Document respondentAnswersLink;
 
     @CCD(
-        label = "Does the petitioner want to continue with the divorce and apply for a decree nisi?",
-        access = {DefaultAccess.class}
+        label = "Does the petitioner want to continue with the divorce and apply for a conditional order?"
     )
-    private YesOrNo applyForDecreeNisi;
+    private YesOrNo applyForConditionalOrder;
 
     @CCD(
-        label = "Link to online petition",
-        access = {DefaultAccess.class}
+        label = "Link to online petition"
     )
     private Document onlinePetitionLink;
 
     @CCD(
         label = "Do you need to change your application or add anything?",
         hint = "If you change or add anything which means your application has to be sent to your "
-                + "husband/wife again you may have to pay a £95 fee",
-        access = {DefaultAccess.class}
+                + "husband/wife again you may have to pay a £95 fee"
     )
     private YesOrNo changeOrAddToApplication;
 
     @CCD(
-        label = "Is everything stated in this divorce petition true?",
-        access = {DefaultAccess.class}
+        label = "Is everything stated in this divorce petition true?"
     )
     private YesOrNo isEverythingInPetitionTrue;
 
     @CCD(
-        label = "Does the applicant find it intolerable to live with the respondent?",
-        access = {DefaultAccess.class}
+        label = "Does the applicant find it intolerable to live with the respondent?"
     )
     private YesOrNo doesApplicantFindItIntolerable;
 
     @CCD(
         label = "Date the applicant found out about the adultery",
-        typeOverride = Date,
-        access = {DefaultAccess.class}
+        typeOverride = Date
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfAdulteryKnowledge;
 
     @CCD(
-        label = "Has the applicant lived apart from the respondent since finding out about the adultery?",
-        access = {DefaultAccess.class}
+        label = "Has the applicant lived apart from the respondent since finding out about the adultery?"
     )
     private YesOrNo livedApartFrom;
 
     @CCD(
         label = "Additional details of the living arrangements since finding out about the adultery",
-        typeOverride = TextArea,
-        access = {DefaultAccess.class}
+        typeOverride = TextArea
     )
     private String adulteryAdditionalDetails;
 
     @CCD(
-        label = "Do you need to upload any other documents?",
-        access = {DefaultAccess.class}
+        label = "Do you need to upload any other documents?"
     )
     private YesOrNo addNewDocuments;
 
     @CCD(
         label = "Documents uploaded at DN stage",
         typeOverride = Collection,
-        typeParameterOverride = "DivorceDocument",
-        access = {DefaultAccess.class}
+        typeParameterOverride = "DivorceDocument"
     )
-    private List<ListValue<DivorceDocument>> dnDocumentsUploaded;
+    private List<ListValue<DivorceDocument>> documentsUploaded;
 
 }

@@ -346,8 +346,8 @@ public class TestDataHelper {
 
     public static ConditionalOrder getConditionalOrder() {
         final ConditionalOrder conditionalOrder = new ConditionalOrder();
-        conditionalOrder.setDateConditionalOrderSubmitted(LocalDateTime.now());
-        conditionalOrder.setApplyForDecreeNisi(YES);
+        conditionalOrder.setDateSubmitted(LocalDateTime.now());
+        conditionalOrder.setApplyForConditionalOrder(YES);
         conditionalOrder.setChangeOrAddToApplication(NO);
         conditionalOrder.setIsEverythingInPetitionTrue(YES);
         conditionalOrder.setDoesApplicantFindItIntolerable(YES);
