@@ -51,7 +51,7 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
                 AwaitingAos,AosDrafted, AosOverdue,
                 Rejected, ConditionalOrderRefused, Withdrawn,
                 Disputed, Holding, AwaitingDocuments, AwaitingService)
-            .name("Reissue case")
+            .name("Reissued")
             .description("Application Reissued")
             .showSummary()
             .explicitGrants()
