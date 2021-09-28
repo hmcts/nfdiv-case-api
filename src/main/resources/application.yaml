@@ -133,10 +133,9 @@ docmosis:
       DIVORCE_GENERAL_ORDER: Divorce_General_Order_Eng.docx #TODO: update template once available
       RESPONDENT_ANSWERS: Divorce_Respondent_Answers_Eng.docx #TODO: update content
     welsh:
-      #TODO: Set correct DIVORCE_MINI_APPLICATION template when available
-      DIVORCE_APPLICATION_SOLE: Divorce_CP_Dummy_Template.docx
-      DIVORCE_APPLICATION_JOINT: Divorce_CP_Dummy_Template.docx
-      DIVORCE_DRAFT_APPLICATION: Divorce_CP_Dummy_Template.docx
+      DIVORCE_APPLICATION_SOLE: Divorce_CP_Dummy_Template.docx #TODO: Set correct template when available
+      DIVORCE_APPLICATION_JOINT: Divorce_CP_Dummy_Template.docx #TODO: Set correct template when available
+      DIVORCE_DRAFT_APPLICATION: Divorce_CP_Dummy_Template.docx #TODO: Set correct template when available
       RESP_SOLICITOR_AOS_INVITATION: Divorce_CP_Dummy_Template.docx #TODO: Set correct template when available
       CITIZEN_RESP_AOS_INVITATION: Divorce_CP_Dummy_Template.docx #TODO: Set correct template when available
       DIVORCE_GENERAL_ORDER: Divorce_General_Order_Eng.docx #TODO: update template once available

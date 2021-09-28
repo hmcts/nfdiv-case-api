@@ -13,6 +13,8 @@ import uk.gov.hmcts.divorce.document.content.DivorceApplicationSoleTemplateConte
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import static java.time.LocalDateTime.now;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
@@ -46,27 +48,26 @@ public class GenerateDivorceApplication implements CaseTask {
 
         log.info("Executing handler for generating divorce application for case id {} ", caseId);
 
+        final Supplier<Map<String, Object>> contentSupplier;
+        final String templateId;
+
         if (caseData.getApplicationType().isSole()) {
-            caseDataDocumentService.renderDocumentAndUpdateCaseData(
-                caseData,
-                APPLICATION,
-                divorceApplicationSoleTemplateContent.apply(caseData, caseId, createdDate),
-                caseId,
-                DIVORCE_APPLICATION_SOLE,
-                caseData.getApplicant1().getLanguagePreference(),
-                formatDocumentName(caseId, DIVORCE_APPLICATION_DOCUMENT_NAME, now(clock))
-            );
+            contentSupplier = divorceApplicationSoleTemplateContent.apply(caseData, caseId, createdDate);
+            templateId = DIVORCE_APPLICATION_SOLE;
         } else {
-            caseDataDocumentService.renderDocumentAndUpdateCaseData(
-                caseData,
-                APPLICATION,
-                divorceApplicationJointTemplateContent.apply(caseData, caseId, createdDate),
-                caseId,
-                DIVORCE_APPLICATION_JOINT,
-                caseData.getApplicant1().getLanguagePreference(),
-                formatDocumentName(caseId, DIVORCE_APPLICATION_DOCUMENT_NAME, now(clock))
-            );
+            contentSupplier = divorceApplicationJointTemplateContent.apply(caseData, caseId, createdDate);
+            templateId = DIVORCE_APPLICATION_JOINT;
         }
+
+        caseDataDocumentService.renderDocumentAndUpdateCaseData(
+            caseData,
+            APPLICATION,
+            contentSupplier,
+            caseId,
+            templateId,
+            caseData.getApplicant1().getLanguagePreference(),
+            formatDocumentName(caseId, DIVORCE_APPLICATION_DOCUMENT_NAME, now(clock))
+        );
 
         return caseDetails;
     }
