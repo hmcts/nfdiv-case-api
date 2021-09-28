@@ -46,8 +46,7 @@ public class RetiredFields {
             transformContactDetailsConfidentialField("applicant2ContactDetailsConfidential", data)
         ),
         "applicant1FinancialOrderFor", emptyStringToNull("applicant1FinancialOrderFor"),
-        "applicant2FinancialOrderFor", emptyStringToNull("applicant2FinancialOrderFor")
-        ),
+        "applicant2FinancialOrderFor", emptyStringToNull("applicant2FinancialOrderFor"),
         "dateConditionalOrderSubmitted", data -> data.put("coDateSubmitted", data.get("dateConditionalOrderSubmitted"))
     );
 
