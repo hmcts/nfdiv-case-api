@@ -35,6 +35,11 @@
         }
       }
     ],
+    "conOrderRespondentAnswersLink": {
+      "document_binary_url":"http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100/binary",
+      "document_filename":"respondentAnswers.pdf",
+      "document_url":"http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100"
+    },
     "dueDate": "${json-unit.any-string}",
     "dataVersion": "${json-unit.any-number}",
     "solServiceTruthStatement": "I believe that the facts stated in the application are true."
