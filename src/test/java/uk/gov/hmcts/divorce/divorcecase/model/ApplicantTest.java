@@ -54,4 +54,33 @@ class ApplicantTest {
         assertThat(applicantNoSolicitor.isRepresented()).isFalse();
         assertThat(applicantNoSolicitorEmail.isRepresented()).isFalse();
     }
+
+    @Test
+    void shouldReturnTrueIfContactDetailsAreConfidential() {
+
+        final Applicant applicant = Applicant.builder()
+            .keepContactDetailsConfidential(YES)
+            .build();
+
+        assertThat(applicant.isConfidentialContactDetails()).isTrue();
+    }
+
+    @Test
+    void shouldReturnFalseIfContactDetailsAreNotConfidential() {
+
+        final Applicant applicant = Applicant.builder()
+            .keepContactDetailsConfidential(NO)
+            .build();
+
+        assertThat(applicant.isConfidentialContactDetails()).isFalse();
+    }
+
+    @Test
+    void shouldReturnFalseIfContactDetailsAreSetToNull() {
+
+        final Applicant applicant = Applicant.builder()
+            .build();
+
+        assertThat(applicant.isConfidentialContactDetails()).isFalse();
+    }
 }

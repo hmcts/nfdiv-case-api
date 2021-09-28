@@ -70,7 +70,7 @@ public class SolicitorSubmitUpdateDraftAosIT {
     private Clock clock;
 
     private final String docUrl = "http://dm-store-aat.service.core-compute-aat.internal/documents/8d2bd0f2-80e9-4b0f-b38d-2c138b243e27";
-    private final String docName = "draft-mini-application-1616591401473378.pdf";
+    private final String docName = "draft-divorce-application-1616591401473378.pdf";
     private final String docBinaryUrl = "http://dm-store-aat.service.core-compute-aat.internal/documents/8d2bd0f2-80e9-4b0f-b38d-2c138b243e27/binary";
 
     @BeforeAll

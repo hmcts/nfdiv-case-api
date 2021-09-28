@@ -64,11 +64,11 @@
       {
         "id": "Divorce application",
         "value": {
-          "documentFileName": "mini-application-1616591401473378-2021-06-17:13:00.pdf",
+          "documentFileName": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
           "documentType": "application",
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            "document_filename": "mini-application-1616591401473378-2021-06-17:13:00.pdf",
+            "document_filename": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
             "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
           }
         }

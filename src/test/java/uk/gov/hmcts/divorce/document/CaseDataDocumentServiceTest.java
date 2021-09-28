@@ -22,9 +22,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_DRAFT_APPLICATION;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_GENERAL_ORDER;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_DRAFT_APPLICATION;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -35,8 +35,8 @@ class CaseDataDocumentServiceTest {
 
     private static final String DOC_URL = "http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003";
     private static final String DOC_BINARY_URL = "http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003/binary";
-    private static final String PDF_FILENAME = "draft-mini-application-1616591401473378.pdf";
-    private static final String GENERAL_ORDER_PDF_FILENAME = "draft-mini-application-1616591401473378.pdf";
+    private static final String PDF_FILENAME = "draft-divorce-application-1616591401473378.pdf";
+    private static final String GENERAL_ORDER_PDF_FILENAME = "draft-divorce-application-1616591401473378.pdf";
     private static final String URL = "url";
     private static final String FILENAME = "filename";
     private static final String BINARY_URL = "binaryUrl";
@@ -60,7 +60,7 @@ class CaseDataDocumentServiceTest {
         final CaseData caseData = caseData();
         final Supplier<Map<String, Object>> templateContentSupplier = HashMap::new;
         final User systemUser = mock(User.class);
-        final String filename = DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME + TEST_CASE_ID;
+        final String filename = DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME + TEST_CASE_ID;
 
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
         when(systemUser.getAuthToken()).thenReturn(TEST_AUTHORIZATION_TOKEN);
@@ -69,7 +69,7 @@ class CaseDataDocumentServiceTest {
                 templateContentSupplier,
                 TEST_CASE_ID,
                 TEST_AUTHORIZATION_TOKEN,
-                DIVORCE_MINI_DRAFT_APPLICATION,
+                DIVORCE_DRAFT_APPLICATION,
                 ENGLISH,
                 filename))
             .thenReturn(new DocumentInfo(DOC_URL, PDF_FILENAME, DOC_BINARY_URL));
@@ -81,7 +81,7 @@ class CaseDataDocumentServiceTest {
             EMAIL,
             templateContentSupplier,
             TEST_CASE_ID,
-            DIVORCE_MINI_DRAFT_APPLICATION,
+            DIVORCE_DRAFT_APPLICATION,
             ENGLISH,
             filename);
 

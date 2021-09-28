@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCitizenRespondentAosInvitation;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateMiniApplication;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentSolicitorAosInvitation;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPack;
@@ -14,7 +14,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDate;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.document.task.MiniApplicationRemover;
+import uk.gov.hmcts.divorce.document.task.DivorceApplicationRemover;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -29,10 +29,10 @@ public class IssueApplicationService {
     private SetPostIssueState setPostIssueState;
 
     @Autowired
-    private MiniApplicationRemover miniApplicationRemover;
+    private DivorceApplicationRemover divorceApplicationRemover;
 
     @Autowired
-    private GenerateMiniApplication generateMiniApplication;
+    private GenerateDivorceApplication generateDivorceApplication;
 
     @Autowired
     private GenerateRespondentSolicitorAosInvitation generateRespondentSolicitorAosInvitation;
@@ -60,8 +60,8 @@ public class IssueApplicationService {
             setPostIssueState,
             generateRespondentSolicitorAosInvitation,
             generateCitizenRespondentAosInvitation,
-            miniApplicationRemover,
-            generateMiniApplication,
+            divorceApplicationRemover,
+            generateDivorceApplication,
             sendAosPack,
             sendAosNotifications,
             setDueDate,

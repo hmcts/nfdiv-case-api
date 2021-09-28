@@ -162,4 +162,9 @@ public class Applicant {
     public boolean isRepresented() {
         return null != solicitor && isNotEmpty(solicitor.getEmail());
     }
+
+    @JsonIgnore
+    public boolean isConfidentialContactDetails() {
+        return null != keepContactDetailsConfidential && keepContactDetailsConfidential.toBoolean();
+    }
 }
