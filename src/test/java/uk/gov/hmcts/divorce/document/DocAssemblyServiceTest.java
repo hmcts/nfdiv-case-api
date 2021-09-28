@@ -32,8 +32,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_DRAFT_APPLICATION;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_DRAFT_APPLICATION;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ENGLISH_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -48,7 +48,7 @@ public class DocAssemblyServiceTest {
 
     private static final String DOC_STORE_BASE_URL_PATH = "http://localhost:4200/assets/";
     private static final String BINARY = "/binary";
-    private static final String DRAFT_MINI_APPLICATION_FILENAME = "draft-mini-application-1616591401473378.pdf";
+    private static final String DRAFT_APPLICATION_FILENAME = "draft-divorce-application-1616591401473378.pdf";
 
     @Mock
     private AuthTokenGenerator authTokenGenerator;
@@ -71,7 +71,7 @@ public class DocAssemblyServiceTest {
         Supplier<Map<String, Object>> templateContentSupplier = HashMap::new;
         Map<String, Object> caseDataMap = expectedCaseData();
 
-        when(docmosisTemplateProvider.templateNameFor(DIVORCE_MINI_DRAFT_APPLICATION, ENGLISH)).thenReturn(ENGLISH_TEMPLATE_ID);
+        when(docmosisTemplateProvider.templateNameFor(DIVORCE_DRAFT_APPLICATION, ENGLISH)).thenReturn(ENGLISH_TEMPLATE_ID);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         DocAssemblyRequest docAssemblyRequest =
@@ -98,14 +98,14 @@ public class DocAssemblyServiceTest {
             templateContentSupplier,
             TEST_CASE_ID,
             TEST_AUTHORIZATION_TOKEN,
-            DIVORCE_MINI_DRAFT_APPLICATION,
+            DIVORCE_DRAFT_APPLICATION,
             ENGLISH,
-            DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME + TEST_CASE_ID
+            DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME + TEST_CASE_ID
         );
 
         assertThat(documentInfo.getUrl()).isEqualTo(DOC_STORE_BASE_URL_PATH + documentUuid);
         assertThat(documentInfo.getBinaryUrl()).isEqualTo(DOC_STORE_BASE_URL_PATH + documentUuid + BINARY);
-        assertThat(documentInfo.getFilename()).isEqualTo(DRAFT_MINI_APPLICATION_FILENAME);
+        assertThat(documentInfo.getFilename()).isEqualTo(DRAFT_APPLICATION_FILENAME);
 
         verify(authTokenGenerator).generate();
         verify(docAssemblyClient).generateAndStoreDraftApplication(
@@ -125,7 +125,7 @@ public class DocAssemblyServiceTest {
         byte[] emptyBody = {};
         Request request = Request.create(POST, EMPTY, Map.of(), emptyBody, UTF_8, null);
 
-        when(docmosisTemplateProvider.templateNameFor(DIVORCE_MINI_DRAFT_APPLICATION, ENGLISH)).thenReturn(ENGLISH_TEMPLATE_ID);
+        when(docmosisTemplateProvider.templateNameFor(DIVORCE_DRAFT_APPLICATION, ENGLISH)).thenReturn(ENGLISH_TEMPLATE_ID);
 
         FeignException feignException = FeignException.errorStatus(
             "s2sServiceNotWhitelisted",
@@ -160,9 +160,9 @@ public class DocAssemblyServiceTest {
                 templateContentSupplier,
                 TEST_CASE_ID,
                 TEST_AUTHORIZATION_TOKEN,
-                DIVORCE_MINI_DRAFT_APPLICATION,
+                DIVORCE_DRAFT_APPLICATION,
                 ENGLISH,
-                DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME + TEST_CASE_ID
+                DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME + TEST_CASE_ID
             ))
             .isExactlyInstanceOf(FeignException.Unauthorized.class)
             .hasMessageContaining("s2s service not whitelisted");

@@ -63,7 +63,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 
 @ExtendWith(MockitoExtension.class)
-public class DraftApplicationTemplateContentTest {
+public class DraftDivorceApplicationSoleTemplateContentTest {
 
     @Mock
     private AuthTokenGenerator authTokenGenerator;

@@ -11,7 +11,7 @@ import uk.gov.hmcts.divorce.document.DraftApplicationRemovalService;
 
 @Component
 @Slf4j
-public class MiniApplicationRemover implements CaseTask {
+public class DivorceApplicationRemover implements CaseTask {
 
     @Autowired
     private DraftApplicationRemovalService draftApplicationRemovalService;
