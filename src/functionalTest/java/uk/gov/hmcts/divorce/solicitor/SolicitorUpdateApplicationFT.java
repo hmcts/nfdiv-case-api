@@ -39,7 +39,7 @@ public class SolicitorUpdateApplicationFT extends FunctionalTestSuite {
         final Map<String, Object> caseData = caseData(REQUEST);
         caseData.put("applicant2OrgContactInformation", organisationContactInformation());
 
-        Document document = documentManagementStore.upload("", "draft-mini-application-1234567890123456.pdf", "classpath:Test.pdf");
+        Document document = documentManagementStore.upload("", "draft-divorce-application-1234567890123456.pdf", "classpath:Test.pdf");
 
         final ListValue<DivorceDocument> miniApplicationListValue = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()

@@ -8,8 +8,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.document.task.MiniApplicationRemover;
-import uk.gov.hmcts.divorce.solicitor.service.task.MiniApplicationDraft;
+import uk.gov.hmcts.divorce.document.task.DivorceApplicationRemover;
+import uk.gov.hmcts.divorce.solicitor.service.task.DivorceApplicationDraft;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -22,10 +22,10 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 class SolicitorUpdateApplicationApplicationServiceTest {
 
     @Mock
-    private MiniApplicationRemover miniApplicationRemover;
+    private DivorceApplicationRemover divorceApplicationRemover;
 
     @Mock
-    private MiniApplicationDraft miniApplicationDraft;
+    private DivorceApplicationDraft divorceApplicationDraft;
 
     @InjectMocks
     private SolicitorUpdateApplicationService solicitorUpdateApplicationService;
@@ -39,8 +39,8 @@ class SolicitorUpdateApplicationApplicationServiceTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
-        when(miniApplicationRemover.apply(caseDetails)).thenReturn(caseDetails);
-        when(miniApplicationDraft.apply(caseDetails)).thenReturn(caseDetails);
+        when(divorceApplicationRemover.apply(caseDetails)).thenReturn(caseDetails);
+        when(divorceApplicationDraft.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> result = solicitorUpdateApplicationService.aboutToSubmit(caseDetails);
 

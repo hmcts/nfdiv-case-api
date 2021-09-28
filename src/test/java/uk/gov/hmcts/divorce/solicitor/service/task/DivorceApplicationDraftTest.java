@@ -21,15 +21,15 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_DRAFT_APPLICATION;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_DRAFT_APPLICATION;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 
 @ExtendWith(MockitoExtension.class)
-public class MiniApplicationDraftTest {
+public class DivorceApplicationDraftTest {
 
     @Mock
     private CaseDataDocumentService caseDataDocumentService;
@@ -38,7 +38,7 @@ public class MiniApplicationDraftTest {
     private DraftApplicationTemplateContent templateContent;
 
     @InjectMocks
-    private MiniApplicationDraft miniApplicationDraft;
+    private DivorceApplicationDraft divorceApplicationDraft;
 
     @Test
     void shouldCallDocAssemblyServiceAndReturnCaseDataWithMiniDraftApplicationDocument() {
@@ -58,7 +58,7 @@ public class MiniApplicationDraftTest {
 
         when(templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(templateContentSupplier);
 
-        final var result = miniApplicationDraft.apply(caseDetails);
+        final var result = divorceApplicationDraft.apply(caseDetails);
 
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
@@ -66,9 +66,9 @@ public class MiniApplicationDraftTest {
                 APPLICATION,
                 templateContentSupplier,
                 TEST_CASE_ID,
-                DIVORCE_MINI_DRAFT_APPLICATION,
+                DIVORCE_DRAFT_APPLICATION,
                 ENGLISH,
-                DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME + TEST_CASE_ID
+                DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME + TEST_CASE_ID
             );
 
         assertThat(result.getData()).isEqualTo(caseData);

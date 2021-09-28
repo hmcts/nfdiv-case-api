@@ -13,13 +13,13 @@ import uk.gov.hmcts.divorce.document.content.DraftApplicationTemplateContent;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_DRAFT_APPLICATION;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_DRAFT_APPLICATION;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 
 @Component
 @Slf4j
-public class MiniApplicationDraft implements CaseTask {
+public class DivorceApplicationDraft implements CaseTask {
 
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
@@ -33,7 +33,7 @@ public class MiniApplicationDraft implements CaseTask {
         final CaseData caseData = caseDetails.getData();
         final Long caseId = caseDetails.getId();
 
-        log.info("Executing handler for generating mini draft for case id {} ", caseId);
+        log.info("Executing handler for generating draft divorce application for case id {} ", caseId);
 
         final Supplier<Map<String, Object>> templateContentSupplier = templateContent
             .apply(caseData, caseId, caseDetails.getCreatedDate().toLocalDate());
@@ -43,9 +43,9 @@ public class MiniApplicationDraft implements CaseTask {
             APPLICATION,
             templateContentSupplier,
             caseId,
-            DIVORCE_MINI_DRAFT_APPLICATION,
+            DIVORCE_DRAFT_APPLICATION,
             caseData.getApplicant1().getLanguagePreference(),
-            DIVORCE_MINI_DRAFT_APPLICATION_DOCUMENT_NAME + caseId
+            DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME + caseId
         );
 
         return caseDetails;

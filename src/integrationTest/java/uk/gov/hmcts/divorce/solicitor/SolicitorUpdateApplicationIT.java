@@ -180,14 +180,14 @@ public class SolicitorUpdateApplicationIT {
 
         Document ccdDocument = new Document(
             "http://dm-store-aat.service.core-compute-aat.internal/documents/8d2bd0f2-80e9-4b0f-b38d-2c138b243e27",
-            "draft-mini-application-1616591401473378.pdf",
+            "draft-divorce-application-1616591401473378.pdf",
             "http://dm-store-aat.service.core-compute-aat.internal/documents/8d2bd0f2-80e9-4b0f-b38d-2c138b243e27/binary"
         );
 
         DivorceDocument divorceDocument = DivorceDocument
             .builder()
             .documentLink(ccdDocument)
-            .documentFileName("draft-mini-application-1616591401473378.pdf")
+            .documentFileName("draft-divorce-application-1616591401473378.pdf")
             .documentType(APPLICATION)
             .build();
 

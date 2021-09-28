@@ -3,20 +3,17 @@ package uk.gov.hmcts.divorce.document.content;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
-import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.util.Map;
 import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -68,13 +65,10 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 
 @ExtendWith(MockitoExtension.class)
-public class MiniApplicationTemplateContentTest {
-
-    @Mock
-    private AuthTokenGenerator authTokenGenerator;
+public class DivorceApplicationSoleTemplateContentTest {
 
     @InjectMocks
-    private MiniApplicationTemplateContent templateContent;
+    private DivorceApplicationSoleTemplateContent templateContent;
 
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForSoleApplicationWithTypeDivorce() {
@@ -110,8 +104,6 @@ public class MiniApplicationTemplateContentTest {
             entry(HAS_FINANCIAL_ORDER_APPLICANT_2, false),
             entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
             entry(FINANCIAL_ORDER_CHILD_JOINT, CHILDREN_OF_THE_APPLICANT_1_AND_APPLICANT_2));
-
-        verifyNoMoreInteractions(authTokenGenerator);
     }
 
     @Test
@@ -149,8 +141,6 @@ public class MiniApplicationTemplateContentTest {
             entry(HAS_FINANCIAL_ORDER_APPLICANT_2, false),
             entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
             entry(FINANCIAL_ORDER_CHILD_JOINT, CHILDREN_OF_THE_APPLICANT_1_AND_APPLICANT_2));
-
-        verifyNoMoreInteractions(authTokenGenerator);
     }
 
     @Test
@@ -187,8 +177,6 @@ public class MiniApplicationTemplateContentTest {
             entry(HAS_FINANCIAL_ORDER_APPLICANT_2, false),
             entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
             entry(FINANCIAL_ORDER_CHILD_JOINT, CHILDREN_OF_THE_APPLICANT_1_AND_APPLICANT_2));
-
-        verifyNoMoreInteractions(authTokenGenerator);
     }
 
     @Test

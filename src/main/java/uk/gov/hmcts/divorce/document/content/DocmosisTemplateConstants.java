@@ -19,6 +19,7 @@ public final class DocmosisTemplateConstants {
     public static final String APPLICANT_1_FULL_NAME = "applicant1FullName";
     public static final String APPLICANT_2_FULL_NAME = "applicant2FullName";
     public static final String MARRIAGE_DATE = "marriageDate";
+    public static final String PLACE_OF_MARRIAGE = "placeOfMarriage";
     public static final String COURT_CASE_DETAILS = "courtCaseDetails";
     public static final String HAS_FINANCIAL_ORDERS = "hasFinancialOrders";
     public static final String HAS_FINANCIAL_ORDERS_FOR_CHILD = "hasFinancialOrdersForChild";
@@ -50,7 +51,9 @@ public final class DocmosisTemplateConstants {
     public static final String FINANCIAL_ORDER_CHILD_JOINT = "financialOrderChildJoint";
     public static final String JOINT_APPLICATION = "Joint application";
     public static final String HAS_FINANCIAL_ORDER_APPLICANT_1 = "hasFinancialOrderApplicant1";
+    public static final String APPLICANT_1_FINANCIAL_ORDER = "applicant1FinancialOrder";
     public static final String HAS_FINANCIAL_ORDER_APPLICANT_2 = "hasFinancialOrderApplicant2";
+    public static final String APPLICANT_2_FINANCIAL_ORDER = "applicant2FinancialOrder";
     public static final String IS_SOLE = "isSole";
     public static final String GENERAL_ORDER_DATE = "generalOrderDate";
     public static final String GENERAL_ORDER_DETAILS = "generalOrderDetails";
@@ -59,6 +62,12 @@ public final class DocmosisTemplateConstants {
     public static final String JUDGE_TYPE = "judgeType";
     public static final String PETITIONER_FULL_NAME = "petitionerFullName";
     public static final String RESPONDENT_FULL_NAME = "respondentFullName";
+    public static final String APPLICANT_1_EMAIL = "applicant1Email";
+    public static final String APPLICANT_2_EMAIL = "applicant2Email";
+    public static final String HAS_OTHER_COURT_CASES_APPLICANT_1 = "hasOtherCourtCasesApplicant1";
+    public static final String HAS_OTHER_COURT_CASES_APPLICANT_2 = "hasOtherCourtCasesApplicant2";
+    public static final String APPLICANT_1_COURT_CASE_DETAILS = "applicant1CourtCaseDetails";
+    public static final String APPLICANT_2_COURT_CASE_DETAILS = "applicant2CourtCaseDetails";
 
     private DocmosisTemplateConstants() {
     }

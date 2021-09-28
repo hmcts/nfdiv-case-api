@@ -58,7 +58,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TO
 
 @Component
 @Slf4j
-public class MiniApplicationTemplateContent {
+public class DivorceApplicationSoleTemplateContent {
 
     private static final DateTimeFormatter TEMPLATE_DATE_FORMAT = DateTimeFormatter.ofPattern("d MMMM yyyy");
 

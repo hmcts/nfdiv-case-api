@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.document.task.MiniApplicationRemover;
-import uk.gov.hmcts.divorce.solicitor.service.task.MiniApplicationDraft;
+import uk.gov.hmcts.divorce.document.task.DivorceApplicationRemover;
+import uk.gov.hmcts.divorce.solicitor.service.task.DivorceApplicationDraft;
 
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
@@ -16,16 +16,16 @@ import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 public class SolicitorUpdateApplicationService {
 
     @Autowired
-    private MiniApplicationRemover miniApplicationRemover;
+    private DivorceApplicationRemover divorceApplicationRemover;
 
     @Autowired
-    private MiniApplicationDraft miniApplicationDraft;
+    private DivorceApplicationDraft divorceApplicationDraft;
 
     public CaseDetails<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> caseDetails) {
 
         return caseTasks(
-            miniApplicationRemover,
-            miniApplicationDraft
+            divorceApplicationRemover,
+            divorceApplicationDraft
         ).run(caseDetails);
     }
 }

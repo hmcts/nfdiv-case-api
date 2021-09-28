@@ -24,13 +24,13 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
 
 @ExtendWith(MockitoExtension.class)
-class MiniApplicationRemoverTest {
+class DivorceApplicationRemoverTest {
 
     @Mock
     private DraftApplicationRemovalService draftApplicationRemovalService;
 
     @InjectMocks
-    private MiniApplicationRemover miniApplicationRemover;
+    private DivorceApplicationRemover divorceApplicationRemover;
 
     @Test
     void shouldRemoveDraftApplication() {
@@ -48,7 +48,7 @@ class MiniApplicationRemoverTest {
         when(draftApplicationRemovalService.removeDraftApplicationDocument(generatedDocuments, TEST_CASE_ID))
             .thenReturn(emptyList());
 
-        final var result = miniApplicationRemover.apply(caseDetails);
+        final var result = divorceApplicationRemover.apply(caseDetails);
         assertThat(result.getData().getDocumentsGenerated(), empty());
         verify(draftApplicationRemovalService)
             .removeDraftApplicationDocument(
