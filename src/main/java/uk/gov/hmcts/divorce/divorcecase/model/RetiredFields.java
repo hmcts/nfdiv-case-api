@@ -4,9 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 
 import java.util.Map;
 import java.util.function.Consumer;
+
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 
 @Data
 @NoArgsConstructor
@@ -18,9 +22,25 @@ public class RetiredFields {
     @CCD(label = "retired")
     private String exampleRetiredField;
 
+    @CCD(label = "retiredApp1ContactDetailsConfidential")
+    private ConfidentialAddress applicant1ContactDetailsConfidential;
+
+    @CCD(label = "retiredApp2ContactDetailsConfidential")
+    private ConfidentialAddress applicant2ContactDetailsConfidential;
+
     @JsonIgnore
     private static final Map<String, Consumer<Map<String, Object>>> migrations = Map.of(
-        "exampleRetiredField", data -> data.put("applicant1FirstName", data.get("exampleRetiredField"))
+        "exampleRetiredField", data -> data.put("applicant1FirstName", data.get("exampleRetiredField")),
+        "applicant1ContactDetailsConfidential",
+        data -> data.put(
+            "applicant1KeepContactDetailsConfidential",
+            transformContactDetailsConfidentialField("applicant1ContactDetailsConfidential", data)
+        ),
+        "applicant2ContactDetailsConfidential",
+        data -> data.put(
+            "applicant2KeepContactDetailsConfidential",
+            transformContactDetailsConfidentialField("applicant2ContactDetailsConfidential", data)
+        )
     );
 
     public static Map<String, Object> migrate(Map<String, Object> data) {
@@ -39,5 +59,10 @@ public class RetiredFields {
 
     public static int getVersion() {
         return migrations.size();
+    }
+
+    private static YesOrNo transformContactDetailsConfidentialField(String confidentialFieldName, Map<String, Object> data) {
+        String confidentialFieldValue = (String) data.get(confidentialFieldName);
+        return ConfidentialAddress.KEEP.getLabel().equalsIgnoreCase(confidentialFieldValue) ? YES : NO;
     }
 }

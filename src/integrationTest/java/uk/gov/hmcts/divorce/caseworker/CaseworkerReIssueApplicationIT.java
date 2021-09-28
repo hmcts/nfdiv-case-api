@@ -66,6 +66,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLI
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_APPLICATION_ACCEPTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_RESPONDENT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssembly;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
 import static uk.gov.hmcts.divorce.testutil.DocManagementStoreWireMock.stubDownloadBinaryFromDocumentManagement;
@@ -109,12 +110,16 @@ public class CaseworkerReIssueApplicationIT {
 
     private static final String CASEWORKER_REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_SOL_REP =
         "classpath:caseworker-reissue-application-about-to-submit-app2-sol-rep-response.json";
+    private static final String CASEWORKER_REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_SOL_REP_OFFLINE_AOS =
+        "classpath:caseworker-reissue-application-about-to-submit-app2-sol-rep-offline-aos-response.json";
     private static final String CASEWORKER_REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_SOL_REP_REISSUE_CASE_TYPE =
         "classpath:caseworker-reissue-application-about-to-submit-app2-sol-rep-reissue-response.json";
     private static final String CASEWORKER_REISSUE_APPLICATION_ABOUT_TO_SUBMIT_SOLICITOR_SERVICE =
         "classpath:caseworker-issue-application-about-to-submit-solicitor-service-response.json";
     private static final String REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_NOT_SOL_REP =
         "classpath:caseworker-reissue-application-about-to-submit-app2-not-sol-rep-response.json";
+    private static final String REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_NOT_SOL_REP_OFFLINE_AOS =
+        "classpath:caseworker-reissue-application-about-to-submit-app2-not-sol-rep-offline-aos-response.json";
     private static final String REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_NOT_SOL_REP_REISSUE_CASE_TYPE =
         "classpath:caseworker-reissue-application-about-to-submit-app2-not-sol-rep-reissue-case-response.json";
     private static final String CASEWORKER_REISSUE_APPLICATION_ABOUT_TO_SUBMIT_ERROR =
@@ -205,6 +210,13 @@ public class CaseworkerReIssueApplicationIT {
             .sendEmail(
                 eq(TEST_USER_EMAIL),
                 eq(SOL_APPLICANT_APPLICATION_ACCEPTED),
+                anyMap(),
+                eq(ENGLISH));
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_APPLICANT_2_USER_EMAIL),
+                eq(SOL_RESPONDENT_APPLICATION_ACCEPTED),
                 anyMap(),
                 eq(ENGLISH));
 
@@ -355,7 +367,7 @@ public class CaseworkerReIssueApplicationIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                content().json(expectedResponse(CASEWORKER_REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_SOL_REP))
+                content().json(expectedResponse(CASEWORKER_REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_SOL_REP_OFFLINE_AOS))
             );
 
         verifyNoMoreInteractions(notificationService);
@@ -494,7 +506,7 @@ public class CaseworkerReIssueApplicationIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                content().json(expectedResponse(REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_NOT_SOL_REP))
+                content().json(expectedResponse(REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_NOT_SOL_REP_OFFLINE_AOS))
             );
 
         verifyNoMoreInteractions(notificationService);

@@ -8,7 +8,7 @@
     "applicant1LastName": "test_last_name",
     "applicant1Email": "test@test.com",
     "applicant1LanguagePreferenceWelsh": "No",
-    "applicant1ContactDetailsConfidential": "share",
+    "applicant1KeepContactDetailsConfidential": "No",
     "applicant1Gender": "female",
     "applicant1SolicitorEmail": "solicitor@test.com",
     "applicant1FinancialOrder": "No",
@@ -105,7 +105,7 @@
         }
       }
     ],
-    "dueDate": "2021-07-01"
+    "dueDate": "2021-07-03"
   },
   "errors": null,
   "warnings": null,

@@ -14,7 +14,6 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.service.SubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.Jurisdiction;
 import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
@@ -220,7 +219,7 @@ class CitizenSubmitApplicationTest {
     private CaseData setValidCaseData(CaseData caseData) {
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         caseData.setApplicant1(getApplicant());
-        caseData.getApplicant1().setContactDetailsConfidential(ConfidentialAddress.KEEP);
+        caseData.getApplicant1().setKeepContactDetailsConfidential(YES);
         caseData.getApplicant1().setFinancialOrder(YesOrNo.NO);
         caseData.setApplicant2(getApplicant(MALE));
         caseData.getApplication().setApplicant1HelpWithFees(

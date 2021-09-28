@@ -55,11 +55,7 @@
     <exclude name="DataClass"/>
     <exclude name="TooManyFields"/>
     <exclude name="UseObjectForClearerAPI"/>
-  </rule>
-  <rule ref="category/java/design.xml/LawOfDemeter">
-    <properties>
-      <property name="violationSuppressRegex" value="(.*method chain calls.*|.*object not created locally.*)"/>
-    </properties>
+    <exclude name="LawOfDemeter"/>
   </rule>
   <rule ref="category/java/design.xml/SignatureDeclareThrowsException">
     <properties>

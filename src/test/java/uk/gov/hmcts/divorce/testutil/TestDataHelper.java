@@ -20,7 +20,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
-import uk.gov.hmcts.divorce.divorcecase.model.ConfidentialAddress;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedBeingThe;
@@ -64,7 +63,6 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
-import static uk.gov.hmcts.divorce.divorcecase.model.ConfidentialAddress.SHARE;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
@@ -116,7 +114,7 @@ public class TestDataHelper {
             .email(TEST_USER_EMAIL)
             .gender(gender)
             .languagePreferenceWelsh(NO)
-            .contactDetailsConfidential(SHARE)
+            .keepContactDetailsConfidential(NO)
             .financialOrder(NO)
             .build();
     }
@@ -235,7 +233,7 @@ public class TestDataHelper {
         jurisdiction.setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
 
         var applicant1 = getApplicant();
-        applicant1.setContactDetailsConfidential(ConfidentialAddress.KEEP);
+        applicant1.setKeepContactDetailsConfidential(YES);
         applicant1.setFinancialOrder(NO);
         applicant1.setLegalProceedings(NO);
 
@@ -365,6 +363,8 @@ public class TestDataHelper {
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplicant2().setFinancialOrder(NO);
         caseData.getApplicant1().setLegalProceedings(NO);
+        caseData.setCaseInvite(new CaseInvite());
+        caseData.getCaseInvite().setApplicant2InviteEmailAddress(TEST_APPLICANT_2_USER_EMAIL);
 
         return caseData;
     }
