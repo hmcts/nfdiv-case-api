@@ -57,7 +57,7 @@ class GenerateDivorceApplicationTest {
     private GenerateDivorceApplication generateDivorceApplication;
 
     @Test
-    void shouldCallDocAssemblyServiceAndReturnCaseDataWithMiniApplicationDocument() {
+    void shouldCallDocAssemblyServiceAndReturnCaseDataWithSoleDivorceApplicationDocumentForSoleApplication() {
 
         setMockClock(clock);
 
