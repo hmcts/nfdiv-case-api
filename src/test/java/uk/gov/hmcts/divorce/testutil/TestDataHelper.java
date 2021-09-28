@@ -344,6 +344,21 @@ public class TestDataHelper {
         return solicitorService;
     }
 
+    public static ConditionalOrder getConditionalOrder() {
+        final ConditionalOrder conditionalOrder = new ConditionalOrder();
+        conditionalOrder.setDateConditionalOrderSubmitted(LocalDateTime.now());
+        conditionalOrder.setApplyForDecreeNisi(YES);
+        conditionalOrder.setChangeOrAddToApplication(NO);
+        conditionalOrder.setIsEverythingInPetitionTrue(YES);
+        conditionalOrder.setDoesApplicantFindItIntolerable(YES);
+        conditionalOrder.setDateOfAdulteryKnowledge(LocalDate.of(2000, 1, 1));
+        conditionalOrder.setLivedApartFrom(YES);
+        conditionalOrder.setAdulteryAdditionalDetails("adultery extra details");
+        conditionalOrder.setAddNewDocuments(NO);
+        return conditionalOrder;
+    }
+
+
     public static CaseData validCaseDataForIssueApplication() {
         final MarriageDetails marriageDetails = new MarriageDetails();
         marriageDetails.setApplicant1Name(format("%s %s", TEST_FIRST_NAME, TEST_LAST_NAME));
