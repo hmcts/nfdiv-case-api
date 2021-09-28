@@ -36,9 +36,9 @@
       }
     ],
     "coRespondentAnswersLink": {
-      "document_binary_url":"http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100/binary",
-      "document_filename":"respondentAnswers.pdf",
-      "document_url":"http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100"
+      "document_url": "${json-unit.any-string}",
+      "document_filename": "${json-unit.any-string}",
+      "document_binary_url": "${json-unit.any-string}"
     },
     "dueDate": "${json-unit.any-string}",
     "dataVersion": "${json-unit.any-number}",
