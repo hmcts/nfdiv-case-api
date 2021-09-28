@@ -66,10 +66,19 @@ class ApplicantTest {
     }
 
     @Test
-    void shouldReturnFalseIfContactDetailsAreNoConfidential() {
+    void shouldReturnFalseIfContactDetailsAreNotConfidential() {
 
         final Applicant applicant = Applicant.builder()
             .keepContactDetailsConfidential(NO)
+            .build();
+
+        assertThat(applicant.isConfidentialContactDetails()).isFalse();
+    }
+    
+    @Test
+    void shouldReturnFalseIfContactDetailsAreSetToNull() {
+
+        final Applicant applicant = Applicant.builder()
             .build();
 
         assertThat(applicant.isConfidentialContactDetails()).isFalse();
