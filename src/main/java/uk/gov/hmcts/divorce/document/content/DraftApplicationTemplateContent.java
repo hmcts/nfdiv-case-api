@@ -7,7 +7,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinancialOrderFor;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -49,12 +48,11 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.OF
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATIONSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TO_END_A_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TO_END_THE_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
 public class DraftApplicationTemplateContent {
-
-    private static final DateTimeFormatter TEMPLATE_DATE_FORMAT = DateTimeFormatter.ofPattern("d MMMM yyyy");
 
     public Supplier<Map<String, Object>> apply(final CaseData caseData,
                                                final Long ccdCaseReference,
@@ -86,7 +84,7 @@ public class DraftApplicationTemplateContent {
             }
 
             templateData.put(CCD_CASE_REFERENCE, ccdCaseReference);
-            templateData.put(ISSUE_DATE, createdDate.format(TEMPLATE_DATE_FORMAT));
+            templateData.put(ISSUE_DATE, createdDate.format(DATE_TIME_FORMATTER));
 
             templateData.put(APPLICANT_1_FIRST_NAME, applicant1.getFirstName());
             templateData.put(APPLICANT_1_MIDDLE_NAME, applicant1.getMiddleName());
@@ -101,7 +99,7 @@ public class DraftApplicationTemplateContent {
 
             templateData.put(MARRIAGE_DATE,
                 ofNullable(application.getMarriageDetails().getDate())
-                    .map(marriageDate -> marriageDate.format(TEMPLATE_DATE_FORMAT))
+                    .map(marriageDate -> marriageDate.format(DATE_TIME_FORMATTER))
                     .orElse(null));
             templateData.put(COURT_CASE_DETAILS, applicant1.getLegalProceedingsDetails());
 

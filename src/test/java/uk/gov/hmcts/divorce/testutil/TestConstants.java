@@ -49,6 +49,7 @@ public final class TestConstants {
     public static final String TEST_SYSTEM_USER_PASSWORD = "testpassword";
 
     public static final Long TEST_CASE_ID = 1616591401473378L;
+    public static final String FORMATTED_TEST_CASE_ID = "1616-5914-0147-3378";
     public static final String TEST_SERVICE_AUTH_TOKEN = "Bearer TestServiceAuth";
 
     public static final String ENGLISH_TEMPLATE_ID = "divorceminiapplication";
