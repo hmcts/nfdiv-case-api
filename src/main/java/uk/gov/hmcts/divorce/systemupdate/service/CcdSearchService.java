@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
@@ -34,15 +32,11 @@ public class CcdSearchService {
     @Autowired
     private CoreCaseDataApi coreCaseDataApi;
 
-    @Autowired
-    private IdamService idamService;
-
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
-
-    public SearchResult searchForCaseWithStateOf(final State state, final int from, final int size) {
-
-        final User systemUpdateUser = idamService.retrieveSystemUpdateUserDetails();
+    public SearchResult searchForCaseWithStateOf(final State state,
+                                                 final int from,
+                                                 final int size,
+                                                 final User user,
+                                                 final String serviceAuth) {
 
         final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
             .searchSource()
@@ -52,13 +46,13 @@ public class CcdSearchService {
             .size(size);
 
         return coreCaseDataApi.searchCases(
-            systemUpdateUser.getAuthToken(),
-            authTokenGenerator.generate(),
+            user.getAuthToken(),
+            serviceAuth,
             CASE_TYPE,
             sourceBuilder.toString());
     }
 
-    public List<CaseDetails> searchForAllCasesWithStateOf(final State state) {
+    public List<CaseDetails> searchForAllCasesWithStateOf(final State state, User user, String serviceAuth) {
 
         final List<CaseDetails> allCaseDetails = new ArrayList<>();
         int from = 0;
@@ -66,7 +60,7 @@ public class CcdSearchService {
 
         try {
             while (totalResults == pageSize) {
-                final SearchResult searchResult = searchForCaseWithStateOf(state, from, pageSize);
+                final SearchResult searchResult = searchForCaseWithStateOf(state, from, pageSize, user, serviceAuth);
 
                 allCaseDetails.addAll(searchResult.getCases());
 
@@ -83,8 +77,7 @@ public class CcdSearchService {
         return allCaseDetails;
     }
 
-    public List<CaseDetails> searchForCasesWithVersionLessThan(int latestVersion) {
-        final User systemUpdateUser = idamService.retrieveSystemUpdateUserDetails();
+    public List<CaseDetails> searchForCasesWithVersionLessThan(int latestVersion, User user, String serviceAuth) {
 
         final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
             .searchSource()
@@ -98,9 +91,10 @@ public class CcdSearchService {
             .size(2000);
 
         return coreCaseDataApi.searchCases(
-            systemUpdateUser.getAuthToken(),
-            authTokenGenerator.generate(),
+            user.getAuthToken(),
+            serviceAuth,
             CASE_TYPE,
-            sourceBuilder.toString()).getCases();
+            sourceBuilder.toString()
+        ).getCases();
     }
 }

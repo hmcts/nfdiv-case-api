@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.systemupdate.schedule.conditionalorder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -10,12 +11,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1ApplyForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
+import uk.gov.hmcts.reform.idam.client.models.User;
+import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -32,6 +37,8 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemApplicant1ApplyForConditionalOrder.SYSTEM_NOTIFY_APPLICANT1_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 
 @ExtendWith(MockitoExtension.class)
 public class SystemNotifyApplicant1ApplyForConditionalOrderTest {
@@ -50,6 +57,21 @@ public class SystemNotifyApplicant1ApplyForConditionalOrderTest {
 
     @InjectMocks
     private SystemNotifyApplicant1ApplyForConditionalOrder systemNotifyApplicant1ApplyForConditionalOrder;
+
+    @Mock
+    private IdamService idamService;
+
+    @Mock
+    private AuthTokenGenerator authTokenGenerator;
+
+    private User user;
+
+    @BeforeEach
+    void setUp() {
+        user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
+        when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
+    }
 
     @Test
     void shouldSendEmailForConditionalOrder() {
@@ -77,13 +99,14 @@ public class SystemNotifyApplicant1ApplyForConditionalOrderTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingConditionalOrder)).thenReturn(caseDetailsList);
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingConditionalOrder, user, SERVICE_AUTHORIZATION))
+            .thenReturn(caseDetailsList);
 
         systemNotifyApplicant1ApplyForConditionalOrder.run();
 
         verify(applicant1ApplyForConditionalOrderNotification).sendToApplicant1(caseData1, caseDetails1.getId());
         verify(applicant1ApplyForConditionalOrderNotification, times(0)).sendToApplicant1(caseData2, caseDetails2.getId());
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_NOTIFY_APPLICANT1_CONDITIONAL_ORDER);
+        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_NOTIFY_APPLICANT1_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -110,7 +133,8 @@ public class SystemNotifyApplicant1ApplyForConditionalOrderTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingConditionalOrder)).thenReturn(caseDetailsList);
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingConditionalOrder, user, SERVICE_AUTHORIZATION))
+            .thenReturn(caseDetailsList);
 
         systemNotifyApplicant1ApplyForConditionalOrder.run();
 
@@ -119,7 +143,7 @@ public class SystemNotifyApplicant1ApplyForConditionalOrderTest {
 
     @Test
     void shouldNotSubmitEventIfSearchFails() {
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingConditionalOrder))
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingConditionalOrder, user, SERVICE_AUTHORIZATION))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
         systemNotifyApplicant1ApplyForConditionalOrder.run();
@@ -141,15 +165,17 @@ public class SystemNotifyApplicant1ApplyForConditionalOrderTest {
         when(caseDetails1.getId()).thenReturn(1L);
 
         when(mapper.convertValue(anyMap(), eq(CaseData.class))).thenReturn(caseData1);
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingConditionalOrder)).thenReturn(caseDetailsList);
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingConditionalOrder, user, SERVICE_AUTHORIZATION))
+            .thenReturn(caseDetailsList);
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_NOTIFY_APPLICANT1_CONDITIONAL_ORDER);
+            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_NOTIFY_APPLICANT1_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
 
         systemNotifyApplicant1ApplyForConditionalOrder.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_NOTIFY_APPLICANT1_CONDITIONAL_ORDER);
-        verify(ccdUpdateService, never()).submitEvent(caseDetails2, SYSTEM_NOTIFY_APPLICANT1_CONDITIONAL_ORDER);
+        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_NOTIFY_APPLICANT1_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService, never())
+            .submitEvent(caseDetails2, SYSTEM_NOTIFY_APPLICANT1_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -178,15 +204,16 @@ public class SystemNotifyApplicant1ApplyForConditionalOrderTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingConditionalOrder)).thenReturn(caseDetailsList);
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingConditionalOrder, user, SERVICE_AUTHORIZATION))
+            .thenReturn(caseDetailsList);
 
         doThrow(new CcdManagementException("Failed processing of case", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_NOTIFY_APPLICANT1_CONDITIONAL_ORDER);
+            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_NOTIFY_APPLICANT1_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
 
         systemNotifyApplicant1ApplyForConditionalOrder.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_NOTIFY_APPLICANT1_CONDITIONAL_ORDER);
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_NOTIFY_APPLICANT1_CONDITIONAL_ORDER);
+        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_NOTIFY_APPLICANT1_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_NOTIFY_APPLICANT1_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
 
     }
 }

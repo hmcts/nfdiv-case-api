@@ -6,12 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.citizen.notification.JointApplicationOverdueNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
+import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -35,14 +38,22 @@ public class SystemAlertApplicationNotReviewedTask implements Runnable {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private IdamService idamService;
+
+    @Autowired
+    private AuthTokenGenerator authTokenGenerator;
+
     @Override
     public void run() {
-
         log.info("Joint application overdue scheduled task started");
+
+        final User user = idamService.retrieveSystemUpdateUserDetails();
+        final String serviceAuthorization = authTokenGenerator.generate();
 
         try {
             final List<CaseDetails> casesInAwaitingApplicant2Response =
-                ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response);
+                ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, user, serviceAuthorization);
 
             for (final CaseDetails caseDetails : casesInAwaitingApplicant2Response) {
                 try {
@@ -59,7 +70,7 @@ public class SystemAlertApplicationNotReviewedTask implements Runnable {
                         if (!dueDate.isAfter(LocalDate.now())
                             && !caseData.getApplication().isOverdueNotificationSent()
                         ) {
-                            notifyApplicant1(caseDetails, caseData, dueDate);
+                            notifyApplicant1(caseDetails, caseData, dueDate, user, serviceAuthorization);
                         }
                     }
                 } catch (final CcdManagementException e) {
@@ -79,13 +90,13 @@ public class SystemAlertApplicationNotReviewedTask implements Runnable {
         }
     }
 
-    private void notifyApplicant1(CaseDetails caseDetails, CaseData caseData, LocalDate dueDate) {
+    private void notifyApplicant1(CaseDetails caseDetails, CaseData caseData, LocalDate dueDate, User user, String serviceAuth) {
         log.info("Due date {} for Case id {} is on/before current date - sending notification to Applicant 1",
             dueDate,
             caseDetails.getId()
         );
 
         jointApplicationOverdueNotification.sendApplicationNotReviewedEmail(caseData, caseDetails.getId());
-        ccdUpdateService.submitEvent(caseDetails, SYSTEM_APPLICATION_NOT_REVIEWED);
+        ccdUpdateService.submitEvent(caseDetails, SYSTEM_APPLICATION_NOT_REVIEWED, user, serviceAuth);
     }
 }
