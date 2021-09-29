@@ -13,13 +13,10 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
-import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
-import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 
 @Data
 @AllArgsConstructor
@@ -60,29 +57,6 @@ public class ConditionalOrder {
         label = "Is everything stated in this divorce petition true?"
     )
     private YesOrNo isEverythingInPetitionTrue;
-
-    @CCD(
-        label = "Does the applicant find it intolerable to live with the respondent?"
-    )
-    private YesOrNo doesApplicantFindItIntolerable;
-
-    @CCD(
-        label = "Date the applicant found out about the adultery",
-        typeOverride = Date
-    )
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate dateOfAdulteryKnowledge;
-
-    @CCD(
-        label = "Has the applicant lived apart from the respondent since finding out about the adultery?"
-    )
-    private YesOrNo livedApartFrom;
-
-    @CCD(
-        label = "Additional details of the living arrangements since finding out about the adultery",
-        typeOverride = TextArea
-    )
-    private String adulteryAdditionalDetails;
 
     @CCD(
         label = "Do you need to upload any other documents?"

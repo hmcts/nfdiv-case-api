@@ -350,10 +350,6 @@ public class TestDataHelper {
         conditionalOrder.setApplyForConditionalOrder(YES);
         conditionalOrder.setChangeOrAddToApplication(NO);
         conditionalOrder.setIsEverythingInPetitionTrue(YES);
-        conditionalOrder.setDoesApplicantFindItIntolerable(YES);
-        conditionalOrder.setDateOfAdulteryKnowledge(LocalDate.of(2000, 1, 1));
-        conditionalOrder.setLivedApartFrom(YES);
-        conditionalOrder.setAdulteryAdditionalDetails("adultery extra details");
         conditionalOrder.setAddNewDocuments(NO);
         return conditionalOrder;
     }
