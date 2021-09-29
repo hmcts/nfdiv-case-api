@@ -60,11 +60,11 @@ public class CaseDataDocumentService {
                 .build());
     }
 
-    public Document renderGeneralOrderDocument(final Supplier<Map<String, Object>> templateContentSupplier,
-                                               final Long caseId,
-                                               final String templateId,
-                                               final LanguagePreference languagePreference,
-                                               final String filename) {
+    public Document renderDocument(final Supplier<Map<String, Object>> templateContentSupplier,
+                                   final Long caseId,
+                                   final String templateId,
+                                   final LanguagePreference languagePreference,
+                                   final String filename) {
 
         log.info("Rendering document request for templateId : {} ", templateId);
 
