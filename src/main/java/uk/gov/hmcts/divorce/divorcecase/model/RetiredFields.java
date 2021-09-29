@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -28,6 +29,9 @@ public class RetiredFields {
     @CCD(label = "retiredApp2ContactDetailsConfidential")
     private ConfidentialAddress applicant2ContactDetailsConfidential;
 
+    @CCD(label = "retiredDateConditionalOrderSubmitted")
+    private LocalDateTime dateConditionalOrderSubmitted;
+
     @JsonIgnore
     private static final Map<String, Consumer<Map<String, Object>>> migrations = Map.of(
         "exampleRetiredField", data -> data.put("applicant1FirstName", data.get("exampleRetiredField")),
@@ -42,7 +46,8 @@ public class RetiredFields {
             transformContactDetailsConfidentialField("applicant2ContactDetailsConfidential", data)
         ),
         "applicant1FinancialOrderFor", emptyStringToNull("applicant1FinancialOrderFor"),
-        "applicant2FinancialOrderFor", emptyStringToNull("applicant2FinancialOrderFor")
+        "applicant2FinancialOrderFor", emptyStringToNull("applicant2FinancialOrderFor"),
+        "dateConditionalOrderSubmitted", data -> data.put("coDateSubmitted", data.get("dateConditionalOrderSubmitted"))
     );
 
     public static Map<String, Object> migrate(Map<String, Object> data) {

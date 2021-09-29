@@ -87,8 +87,9 @@ public class CaseData {
     @Builder.Default
     private AcknowledgementOfService acknowledgementOfService = new AcknowledgementOfService();
 
-    @JsonUnwrapped()
+    @JsonUnwrapped(prefix = "co")
     @Builder.Default
+    @CCD(access = {DefaultAccess.class})
     private ConditionalOrder conditionalOrder = new ConditionalOrder();
 
     @JsonUnwrapped()

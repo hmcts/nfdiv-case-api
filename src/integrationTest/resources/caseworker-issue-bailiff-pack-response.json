@@ -21,8 +21,7 @@
         "document_filename": "certificateOfService.pdf",
         "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
       }
-    },
-    "dataVersion": 5
+    }
   },
   "errors": null,
   "warnings": null,
