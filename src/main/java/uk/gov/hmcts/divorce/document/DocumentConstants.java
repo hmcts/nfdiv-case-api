@@ -15,8 +15,12 @@ public final class DocumentConstants {
     public static final String CITIZEN_RESP_AOS_INVITATION = "CITIZEN_RESP_AOS_INVITATION";
     public static final String RESP_AOS_INVITATION_DOCUMENT_NAME = "aosinvitation";
 
+    public static final String CERTIFICATE_OF_SERVICE_DOCUMENT_NAME = "certificateOfService";
+
     public static final String GENERAL_ORDER = "generalOrder";
     public static final String DIVORCE_GENERAL_ORDER = "DIVORCE_GENERAL_ORDER";
+
+    public static final String CERTIFICATE_OF_SERVICE_TEMPLATE_ID = "CERTIFICATE_OF_SERVICE";
 
     public static final String USER_ROLES = "user-roles";
     public static final String USER_ID = "user-id";

@@ -76,7 +76,7 @@ public class CreateGeneralOrderTest {
         );
 
         when(
-            caseDataDocumentService.renderGeneralOrderDocument(
+            caseDataDocumentService.renderDocument(
                 templateContentSupplier,
                 TEST_CASE_ID,
                 DIVORCE_GENERAL_ORDER,
@@ -97,7 +97,7 @@ public class CreateGeneralOrderTest {
         assertThat(actualGeneralOrder.getGeneralOrderDraft()).isEqualTo(generalOrderDocument);
 
         verify(generalOrderTemplateContent).apply(caseData, TEST_CASE_ID);
-        verify(caseDataDocumentService).renderGeneralOrderDocument(
+        verify(caseDataDocumentService).renderDocument(
             templateContentSupplier,
             TEST_CASE_ID,
             DIVORCE_GENERAL_ORDER,
