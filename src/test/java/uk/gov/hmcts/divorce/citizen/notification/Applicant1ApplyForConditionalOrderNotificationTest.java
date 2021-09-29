@@ -110,7 +110,8 @@ public class Applicant1ApplyForConditionalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, String.valueOf(1234567890123456L)),
                 hasEntry(YOUR_APPLICATION, "get a divorce"),
-                hasEntry(JOINT_CONDITIONAL_ORDER, "Your husband has also received this notification. They need to apply for a conditional order too because this is a joint application.")
+                hasEntry(JOINT_CONDITIONAL_ORDER, "Your husband has also received this notification. "
+                    + "They need to apply for a conditional order too because this is a joint application.")
             )),
             eq(ENGLISH)
         );
@@ -137,7 +138,8 @@ public class Applicant1ApplyForConditionalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, String.valueOf(1234567890123456L)),
                 hasEntry(YOUR_APPLICATION, "get a divorce"),
-                hasEntry(JOINT_CONDITIONAL_ORDER, "Your wife has also received this notification. They need to apply for a conditional order too because this is a joint application.")
+                hasEntry(JOINT_CONDITIONAL_ORDER, "Your wife has also received this notification. "
+                    + "They need to apply for a conditional order too because this is a joint application.")
             )),
             eq(ENGLISH)
         );
@@ -164,7 +166,8 @@ public class Applicant1ApplyForConditionalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, String.valueOf(1234567890123456L)),
                 hasEntry(YOUR_APPLICATION, "end your civil partnership"),
-                hasEntry(JOINT_CONDITIONAL_ORDER, "Your civil partner has also received this notification. They need to apply for a conditional order too because this is a joint application.")
+                hasEntry(JOINT_CONDITIONAL_ORDER, "Your civil partner has also received this notification. "
+                    + "They need to apply for a conditional order too because this is a joint application.")
             )),
             eq(ENGLISH)
         );
