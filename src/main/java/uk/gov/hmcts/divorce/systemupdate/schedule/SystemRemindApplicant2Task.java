@@ -6,12 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewApplicant2Notification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
+import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -37,13 +40,22 @@ public class SystemRemindApplicant2Task implements Runnable {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private IdamService idamService;
+
+    @Autowired
+    private AuthTokenGenerator authTokenGenerator;
+
     @Override
     public void run() {
         log.info("Remind applicant 2 scheduled task started");
 
+        final User user = idamService.retrieveSystemUpdateUserDetails();
+        final String serviceAuthorization = authTokenGenerator.generate();
+
         try {
             final List<CaseDetails> casesInAwaitingApplicant2Response =
-                ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response);
+                ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, user, serviceAuthorization);
 
             for (final CaseDetails caseDetails : casesInAwaitingApplicant2Response) {
                 try {
@@ -53,7 +65,7 @@ public class SystemRemindApplicant2Task implements Runnable {
                     if (!reminderDate.isAfter(LocalDate.now()) && caseData.getCaseInvite().getAccessCode() != null
                         && !caseData.getApplication().isApplicant2ReminderSent()
                     ) {
-                        notifyApplicant2(caseDetails, caseData, reminderDate);
+                        notifyApplicant2(caseDetails, caseData, reminderDate, user, serviceAuthorization);
                     }
                 } catch (final CcdManagementException e) {
                     log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
@@ -72,13 +84,13 @@ public class SystemRemindApplicant2Task implements Runnable {
         }
     }
 
-    private void notifyApplicant2(CaseDetails caseDetails, CaseData caseData, LocalDate reminderDate) {
+    private void notifyApplicant2(CaseDetails caseDetails, CaseData caseData, LocalDate reminderDate, User user, String serviceAuth) {
         log.info("Reminder date {} for Case id {} is on/before current date - sending reminder to Applicant 2",
             reminderDate,
             caseDetails.getId()
         );
 
         applicationSentForReviewApplicant2Notification.sendReminder(caseData, caseDetails.getId());
-        ccdUpdateService.submitEvent(caseDetails, SYSTEM_REMIND_APPLICANT2);
+        ccdUpdateService.submitEvent(caseDetails, SYSTEM_REMIND_APPLICANT2, user, serviceAuth);
     }
 }
