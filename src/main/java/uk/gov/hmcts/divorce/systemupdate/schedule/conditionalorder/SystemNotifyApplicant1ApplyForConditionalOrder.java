@@ -6,12 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1ApplyForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
+import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -37,13 +40,22 @@ public class SystemNotifyApplicant1ApplyForConditionalOrder implements Runnable 
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private IdamService idamService;
+
+    @Autowired
+    private AuthTokenGenerator authTokenGenerator;
+
     @Override
     public void run() {
         log.info("Notify Applicant 1 that they can apply for a Conditional Order");
 
+        final User user = idamService.retrieveSystemUpdateUserDetails();
+        final String serviceAuthorization = authTokenGenerator.generate();
+
         try {
             final List<CaseDetails> casesInAwaitingApplicant2Response =
-                ccdSearchService.searchForAllCasesWithStateOf(AwaitingConditionalOrder);
+                ccdSearchService.searchForAllCasesWithStateOf(AwaitingConditionalOrder, user, serviceAuthorization);
 
             for (final CaseDetails caseDetails : casesInAwaitingApplicant2Response) {
                 try {
@@ -53,7 +65,7 @@ public class SystemNotifyApplicant1ApplyForConditionalOrder implements Runnable 
                     if (!canApplyForConditionalOrderFrom.isAfter(LocalDate.now())
                         && !caseData.getApplication().hasApplicant1BeenNotifiedCanApplyForConditionalOrder()
                     ) {
-                        notifyApplicant1(caseDetails, caseData);
+                        notifyApplicant1(caseDetails, caseData, user, serviceAuthorization);
                     }
                 } catch (final CcdManagementException e) {
                     log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
@@ -72,12 +84,12 @@ public class SystemNotifyApplicant1ApplyForConditionalOrder implements Runnable 
         }
     }
 
-    private void notifyApplicant1(CaseDetails caseDetails, CaseData caseData) {
+    private void notifyApplicant1(CaseDetails caseDetails, CaseData caseData, User user, String serviceAuth) {
         log.info(
             "20 weeks has passed since issue date for Case id {} - notifying Applicant 1 that they can apply for a Conditional Order",
             caseDetails.getId());
 
         applicant1ApplyForConditionalOrderNotification.sendToApplicant1(caseData, caseDetails.getId());
-        ccdUpdateService.submitEvent(caseDetails, SYSTEM_NOTIFY_APPLICANT1_CONDITIONAL_ORDER);
+        ccdUpdateService.submitEvent(caseDetails, SYSTEM_NOTIFY_APPLICANT1_CONDITIONAL_ORDER, user, serviceAuth);
     }
 }

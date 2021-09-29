@@ -16,7 +16,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.idam.client.models.User;
+import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -34,6 +38,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorServicePack.SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.invalidCaseData;
@@ -49,6 +55,12 @@ class CaseworkerIssueApplicationTest {
 
     @InjectMocks
     private CaseworkerIssueApplication caseworkerIssueApplication;
+
+    @Mock
+    private IdamService idamService;
+
+    @Mock
+    private AuthTokenGenerator authTokenGenerator;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
@@ -119,6 +131,9 @@ class CaseworkerIssueApplicationTest {
 
     @Test
     void shouldSubmitCcdSystemIssueSolicitorServicePackEventOnSubmittedCallbackIfSolicitorService() {
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
+        when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
 
         final var caseData = caseData();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
@@ -129,7 +144,7 @@ class CaseworkerIssueApplicationTest {
 
         caseworkerIssueApplication.submitted(caseDetails, null);
 
-        verify(ccdUpdateService).submitEvent(caseDetails, SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK);
+        verify(ccdUpdateService).submitEvent(caseDetails, SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK, user, SERVICE_AUTHORIZATION);
     }
 
     @Test

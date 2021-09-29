@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.systemupdate.schedule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,12 +12,16 @@ import uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewApplica
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
+import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
+import uk.gov.hmcts.reform.idam.client.models.User;
+import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -36,6 +41,8 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicant2.SYSTEM_REMIND_APPLICANT2;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 
 @ExtendWith(MockitoExtension.class)
 public class SystemRemindApplicant2TaskTest {
@@ -54,6 +61,21 @@ public class SystemRemindApplicant2TaskTest {
 
     @InjectMocks
     private SystemRemindApplicant2Task systemRemindApplicant2Task;
+
+    @Mock
+    private IdamService idamService;
+
+    @Mock
+    private AuthTokenGenerator authTokenGenerator;
+
+    private User user;
+
+    @BeforeEach
+    void setUp() {
+        user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
+        when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
+    }
 
     @Test
     void shouldSendReminderEmailToApplicant2IfTenDaysSinceOriginalInviteSent() {
@@ -84,13 +106,14 @@ public class SystemRemindApplicant2TaskTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response)).thenReturn(caseDetailsList);
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, user, SERVICE_AUTHORIZATION))
+            .thenReturn(caseDetailsList);
 
         systemRemindApplicant2Task.run();
 
         verify(applicationSentForReviewApplicant2Notification).sendReminder(caseData1, caseDetails1.getId());
         verify(applicationSentForReviewApplicant2Notification, times(0)).sendReminder(caseData2, caseDetails2.getId());
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT2);
+        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT2, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -114,7 +137,8 @@ public class SystemRemindApplicant2TaskTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
 
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response)).thenReturn(caseDetailsList);
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, user, SERVICE_AUTHORIZATION))
+            .thenReturn(caseDetailsList);
 
         systemRemindApplicant2Task.run();
 
@@ -130,7 +154,8 @@ public class SystemRemindApplicant2TaskTest {
 
         when(caseDetails.getData()).thenReturn(Map.of("dueDate", LocalDateTime.now().plusDays(10)));
         when(mapper.convertValue(anyMap(), eq(CaseData.class))).thenReturn(caseData);
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response)).thenReturn(singletonList(caseDetails));
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, user, SERVICE_AUTHORIZATION))
+            .thenReturn(singletonList(caseDetails));
 
         systemRemindApplicant2Task.run();
 
@@ -140,7 +165,7 @@ public class SystemRemindApplicant2TaskTest {
 
     @Test
     void shouldNotSubmitEventIfSearchFails() {
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response))
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, user, SERVICE_AUTHORIZATION))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
         systemRemindApplicant2Task.run();
@@ -166,15 +191,16 @@ public class SystemRemindApplicant2TaskTest {
 
         when(caseDetails1.getData()).thenReturn(Map.of("dueDate", LocalDate.now().plusDays(4)));
         when(mapper.convertValue(anyMap(), eq(CaseData.class))).thenReturn(caseData1);
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response)).thenReturn(caseDetailsList);
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, user, SERVICE_AUTHORIZATION))
+            .thenReturn(caseDetailsList);
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT2);
+            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT2, user, SERVICE_AUTHORIZATION);
 
         systemRemindApplicant2Task.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT2);
-        verify(ccdUpdateService, never()).submitEvent(caseDetails2, SYSTEM_REMIND_APPLICANT2);
+        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT2, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService, never()).submitEvent(caseDetails2, SYSTEM_REMIND_APPLICANT2, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -203,14 +229,15 @@ public class SystemRemindApplicant2TaskTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response)).thenReturn(caseDetailsList);
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, user, SERVICE_AUTHORIZATION))
+            .thenReturn(caseDetailsList);
 
         doThrow(new CcdManagementException("Failed processing of case", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT2);
+            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT2, user, SERVICE_AUTHORIZATION);
 
         systemRemindApplicant2Task.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT2);
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_REMIND_APPLICANT2);
+        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT2, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_REMIND_APPLICANT2, user, SERVICE_AUTHORIZATION);
     }
 }
