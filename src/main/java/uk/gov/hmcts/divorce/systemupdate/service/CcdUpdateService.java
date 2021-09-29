@@ -6,9 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
-import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
@@ -31,31 +29,26 @@ public class CcdUpdateService {
     private CoreCaseDataApi coreCaseDataApi;
 
     @Autowired
-    private IdamService idamService;
-
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
-
-    @Autowired
     private CcdCaseDataContentProvider ccdCaseDataContentProvider;
 
     @Autowired
     private CaseDetailsConverter caseDetailsConverter;
 
-    public void submitEvent(final CaseDetails caseDetails, final String eventId) {
+    public void submitEvent(final CaseDetails caseDetails,
+                            final String eventId,
+                            final User user,
+                            final String serviceAuth) {
 
-        final User caseWorkerDetails = idamService.retrieveSystemUpdateUserDetails();
-        final String serviceAuthorization = authTokenGenerator.generate();
         final String caseId = caseDetails.getId().toString();
-        final String userId = caseWorkerDetails.getUserDetails().getId();
-        final String authorization = caseWorkerDetails.getAuthToken();
+        final String userId = user.getUserDetails().getId();
+        final String authorization = user.getAuthToken();
 
         log.info("Submit event for Case ID: {}, Event ID: {}", caseId, eventId);
 
         try {
             final StartEventResponse startEventResponse = coreCaseDataApi.startEventForCaseWorker(
                 authorization,
-                serviceAuthorization,
+                serviceAuth,
                 userId,
                 JURISDICTION,
                 CASE_TYPE,
@@ -70,7 +63,7 @@ public class CcdUpdateService {
 
             coreCaseDataApi.submitEventForCaseWorker(
                 authorization,
-                serviceAuthorization,
+                serviceAuth,
                 userId,
                 JURISDICTION,
                 CASE_TYPE,
@@ -91,8 +84,10 @@ public class CcdUpdateService {
     }
 
     public void submitEvent(final uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails,
-                            final String eventId) {
+                            final String eventId,
+                            final User user,
+                            final String serviceAuth) {
 
-        submitEvent(caseDetailsConverter.convertToReformModel(caseDetails), eventId);
+        submitEvent(caseDetailsConverter.convertToReformModel(caseDetails), eventId, user, serviceAuth);
     }
 }

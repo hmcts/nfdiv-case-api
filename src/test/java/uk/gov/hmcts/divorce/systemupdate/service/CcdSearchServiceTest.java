@@ -7,8 +7,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
@@ -42,12 +40,6 @@ class CcdSearchServiceTest {
     @Mock
     private CoreCaseDataApi coreCaseDataApi;
 
-    @Mock
-    private IdamService idamService;
-
-    @Mock
-    private AuthTokenGenerator authTokenGenerator;
-
     @InjectMocks
     private CcdSearchService ccdSearchService;
 
@@ -59,13 +51,11 @@ class CcdSearchServiceTest {
     @Test
     void shouldReturnCasesWithGivenStateFromZeroToPageSizeOfFifty() {
 
-        final User systemUpdateUser = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
         final SearchResult expected = SearchResult.builder().build();
         final int from = 0;
         final int pageSize = 50;
 
-        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUpdateUser);
-        when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
@@ -73,7 +63,7 @@ class CcdSearchServiceTest {
             getSourceBuilder(from, pageSize).toString()))
             .thenReturn(expected);
 
-        final SearchResult result = ccdSearchService.searchForCaseWithStateOf(Submitted, from, pageSize);
+        final SearchResult result = ccdSearchService.searchForCaseWithStateOf(Submitted, from, pageSize, user, SERVICE_AUTHORIZATION);
 
         assertThat(result).isEqualTo(expected);
     }
@@ -81,12 +71,10 @@ class CcdSearchServiceTest {
     @Test
     void shouldReturnAllCasesWithGivenState() {
 
-        final User systemUpdateUser = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
         final SearchResult expected1 = SearchResult.builder().total(PAGE_SIZE).cases(createCaseDetailsList(PAGE_SIZE)).build();
         final SearchResult expected2 = SearchResult.builder().total(1).cases(createCaseDetailsList(1)).build();
 
-        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUpdateUser);
-        when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
@@ -100,7 +88,7 @@ class CcdSearchServiceTest {
             getSourceBuilder(PAGE_SIZE, PAGE_SIZE).toString()))
             .thenReturn(expected2);
 
-        final List<CaseDetails> searchResult = ccdSearchService.searchForAllCasesWithStateOf(Submitted);
+        final List<CaseDetails> searchResult = ccdSearchService.searchForAllCasesWithStateOf(Submitted, user, SERVICE_AUTHORIZATION);
 
         assertThat(searchResult.size()).isEqualTo(101);
     }
@@ -108,7 +96,7 @@ class CcdSearchServiceTest {
     @Test
     void shouldReturnCasesWithVersionOlderThan() {
 
-        final User systemUpdateUser = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
         final SearchResult expected1 = SearchResult.builder().total(PAGE_SIZE).cases(createCaseDetailsList(PAGE_SIZE)).build();
 
         SearchSourceBuilder sourceBuilder = SearchSourceBuilder
@@ -122,8 +110,6 @@ class CcdSearchServiceTest {
             .from(0)
             .size(2000);
 
-        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUpdateUser);
-        when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
@@ -131,7 +117,7 @@ class CcdSearchServiceTest {
             sourceBuilder.toString()))
             .thenReturn(expected1);
 
-        final List<CaseDetails> searchResult = ccdSearchService.searchForCasesWithVersionLessThan(1);
+        final List<CaseDetails> searchResult = ccdSearchService.searchForCasesWithVersionLessThan(1, user, SERVICE_AUTHORIZATION);
 
         assertThat(searchResult.size()).isEqualTo(100);
     }
@@ -139,10 +125,8 @@ class CcdSearchServiceTest {
     @Test
     void shouldThrowCcdSearchFailedExceptionIfSearchFails() {
 
-        final User systemUpdateUser = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
 
-        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUpdateUser);
-        when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         doThrow(feignException(422, "A reason")).when(coreCaseDataApi)
             .searchCases(
                 SYSTEM_UPDATE_AUTH_TOKEN,
@@ -152,7 +136,7 @@ class CcdSearchServiceTest {
 
         final CcdSearchCaseException exception = assertThrows(
             CcdSearchCaseException.class,
-            () -> ccdSearchService.searchForAllCasesWithStateOf(Submitted));
+            () -> ccdSearchService.searchForAllCasesWithStateOf(Submitted, user, SERVICE_AUTHORIZATION));
 
         assertThat(exception.getMessage()).contains("Failed to complete search for Cases with state of Submitted");
     }

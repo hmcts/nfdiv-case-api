@@ -14,8 +14,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
+import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.List;
 
@@ -43,6 +46,12 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
 
     @Autowired
     private CcdUpdateService ccdUpdateService;
+
+    @Autowired
+    private IdamService idamService;
+
+    @Autowired
+    private AuthTokenGenerator authTokenGenerator;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -105,8 +114,11 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
         final Application application = details.getData().getApplication();
 
         if (application.isSolicitorApplication() && application.isSolicitorServiceMethod()) {
+            final User user = idamService.retrieveSystemUpdateUserDetails();
+            final String serviceAuthorization = authTokenGenerator.generate();
+
             log.info("Submitting system-issue-solicitor-service-pack event for case id: {}", details.getId());
-            ccdUpdateService.submitEvent(details, SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK);
+            ccdUpdateService.submitEvent(details, SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK, user, serviceAuthorization);
         }
 
         return SubmittedCallbackResponse.builder().build();
