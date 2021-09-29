@@ -71,7 +71,7 @@
         {
           "id": null,
           "value": {
-            "FeeAmount": "55000",
+            "FeeAmount": "${json-unit.any-string}",
             "FeeCode": "FEE0002",
             "FeeDescription": "Filing an application for a divorce, nullity or civil partnership dissolution",
             "FeeVersion": "5"
