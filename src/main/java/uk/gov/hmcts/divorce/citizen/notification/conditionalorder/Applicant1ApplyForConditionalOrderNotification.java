@@ -16,8 +16,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATIO
 @Slf4j
 public class Applicant1ApplyForConditionalOrderNotification {
 
-    public static final String JOINT_CONDITIONAL_ORDER = "Your partner has also received this notification."
-        + " They need to apply for a conditional order too because this is a joint application.";
+    public static final String JOINT_CONDITIONAL_ORDER = "joint conditional order";
     public static final String PARTNER_JOINT = "Your %s has also received this notification."
         + " They need to apply for a conditional order too because this is a joint application.";
     public static final String YOUR_APPLICATION = "get a divorce / end your civil partnership";
