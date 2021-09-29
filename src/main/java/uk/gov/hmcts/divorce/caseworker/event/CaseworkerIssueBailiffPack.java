@@ -7,7 +7,6 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Bailiff;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -16,12 +15,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.CertificateOfServiceContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
-import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.util.Map;
 import java.util.function.Supplier;
 
-import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.IssuedToBailiff;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -33,7 +30,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_SERVICE_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_SERVICE_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_GENERAL_ORDER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_SERVICE;
 
 @Component
@@ -65,7 +61,7 @@ public class CaseworkerIssueBailiffPack implements CCDConfig<CaseData, State, Us
                 "Caseworker will send the Bailiff application together with the divorce application, "
                     + "invitation letter for the respondent and a certificate of service to the local court."
             )
-            .label("localCourtDetailsLabel","### Local court details")
+            .label("localCourtDetailsLabel", "### Local court details")
             .complex(CaseData::getBailiff)
                 .mandatory(Bailiff::getLocalCourtName)
                 .mandatory(Bailiff::getLocalCourtEmail)
@@ -75,15 +71,17 @@ public class CaseworkerIssueBailiffPack implements CCDConfig<CaseData, State, Us
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
-        CaseData caseData = details.getData();
-
         var caseDataCopy = details.getData().toBuilder().build();
 
         final Long caseId = details.getId();
 
         final Supplier<Map<String, Object>> templateContentSupplier = certificateOfServiceContent.apply(caseDataCopy, caseId);
 
-        log.info("Generating certificate of service document for templateId : {} case and caseId: {}", CERTIFICATE_OF_SERVICE_TEMPLATE_ID, caseId);
+        log.info(
+            "Generating certificate of service document for templateId : {} case and caseId: {}",
+            CERTIFICATE_OF_SERVICE_TEMPLATE_ID,
+            caseId
+        );
 
         var certificateOfServiceDoc = caseDataDocumentService.renderDocument(
             templateContentSupplier,
@@ -93,7 +91,7 @@ public class CaseworkerIssueBailiffPack implements CCDConfig<CaseData, State, Us
             CERTIFICATE_OF_SERVICE_DOCUMENT_NAME
         );
 
-       var cosDivorceDocument = DivorceDocument
+        var cosDivorceDocument = DivorceDocument
             .builder()
             .documentLink(certificateOfServiceDoc)
             .documentFileName(certificateOfServiceDoc.getFilename())
