@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -19,6 +18,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.JU
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.JUDGE_TYPE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PETITIONER_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_FULL_NAME;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
@@ -45,8 +45,6 @@ public class GeneralOrderTemplateContent {
     @Value("${court.locations.serviceCentre.phoneNumber}")
     private String phoneNumber;
 
-    private static final DateTimeFormatter TEMPLATE_DATE_FORMAT = DateTimeFormatter.ofPattern("d MMMM yyyy");
-
     public Supplier<Map<String, Object>> apply(final CaseData caseData,
                                                final Long ccdCaseReference) {
 
@@ -56,7 +54,7 @@ public class GeneralOrderTemplateContent {
             log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
 
             var generalOrder = caseData.getGeneralOrder();
-            templateData.put(GENERAL_ORDER_DATE, generalOrder.getGeneralOrderDate().format(TEMPLATE_DATE_FORMAT));
+            templateData.put(GENERAL_ORDER_DATE, generalOrder.getGeneralOrderDate().format(DATE_TIME_FORMATTER));
             templateData.put(CASE_REFERENCE, ccdCaseReference);
             templateData.put(PETITIONER_FULL_NAME, caseData.getApplication().getMarriageDetails().getApplicant1Name());
             templateData.put(RESPONDENT_FULL_NAME, caseData.getApplication().getMarriageDetails().getApplicant2Name());

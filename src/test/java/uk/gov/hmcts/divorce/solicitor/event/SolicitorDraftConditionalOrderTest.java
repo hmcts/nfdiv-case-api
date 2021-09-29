@@ -17,6 +17,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
 class SolicitorDraftConditionalOrderTest {
+
     @InjectMocks
     private SolicitorDraftConditionalOrder solicitorDraftConditionalOrder;
 
@@ -30,5 +31,4 @@ class SolicitorDraftConditionalOrderTest {
             .extracting(Event::getId)
             .contains(SOLICITOR_DRAFT_CONDITIONAL_ORDER);
     }
-
 }

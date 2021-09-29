@@ -20,6 +20,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedBeingThe;
@@ -342,6 +343,17 @@ public class TestDataHelper {
         solicitorService.setServiceSotFirm("solicitor firm");
         return solicitorService;
     }
+
+    public static ConditionalOrder getConditionalOrder() {
+        final ConditionalOrder conditionalOrder = new ConditionalOrder();
+        conditionalOrder.setDateSubmitted(LocalDateTime.now());
+        conditionalOrder.setApplyForConditionalOrder(YES);
+        conditionalOrder.setChangeOrAddToApplication(NO);
+        conditionalOrder.setIsEverythingInPetitionTrue(YES);
+        conditionalOrder.setAddNewDocuments(NO);
+        return conditionalOrder;
+    }
+
 
     public static CaseData validCaseDataForIssueApplication() {
         final MarriageDetails marriageDetails = new MarriageDetails();

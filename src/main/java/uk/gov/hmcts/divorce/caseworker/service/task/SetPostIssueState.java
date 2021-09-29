@@ -21,14 +21,12 @@ public class SetPostIssueState implements CaseTask {
 
         final Application application = caseDetails.getData().getApplication();
 
-        if (application.isSolicitorApplication()) {
-            if (application.isSolicitorServiceMethod()) {
-                caseDetails.setState(AwaitingService);
-            } else {
-                caseDetails.setState(AwaitingAos);
-            }
-        } else {
+        if (!caseDetails.getData().getApplicationType().isSole()) {
             caseDetails.setState(Holding);
+        } else if (application.isSolicitorApplication() && application.isSolicitorServiceMethod()) {
+            caseDetails.setState(AwaitingService);
+        } else {
+            caseDetails.setState(AwaitingAos);
         }
 
         log.info("Setting state to {}.  Case ID: {}", caseDetails.getState(), caseDetails.getId());

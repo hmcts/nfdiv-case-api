@@ -105,7 +105,7 @@
     "digitalNoticeOfProceedings": null,
     "noticeOfProceedingsEmail": null,
     "noticeOfProceedingsSolicitorFirm": null,
-    "dateConditionalOrderSubmitted": null,
+    "coDateSubmitted": null,
     "dateFinalOrderSubmitted": null,
     "generalOrderDate": "2021-01-01",
     "generalOrderDivorceParties": [

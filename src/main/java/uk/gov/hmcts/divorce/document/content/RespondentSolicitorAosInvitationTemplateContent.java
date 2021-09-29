@@ -6,7 +6,6 @@ import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -27,12 +26,11 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_DATE;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
 public class RespondentSolicitorAosInvitationTemplateContent {
-
-    private static final DateTimeFormatter TEMPLATE_DATE_FORMAT = DateTimeFormatter.ofPattern("d MMMM yyyy");
 
     public Supplier<Map<String, Object>> apply(final CaseData caseData,
                                                final Long ccdCaseReference,
@@ -44,7 +42,7 @@ public class RespondentSolicitorAosInvitationTemplateContent {
             log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
 
             templateData.put(CCD_CASE_REFERENCE, ccdCaseReference);
-            templateData.put(ISSUE_DATE, createdDate.format(TEMPLATE_DATE_FORMAT));
+            templateData.put(ISSUE_DATE, createdDate.format(DATE_TIME_FORMATTER));
 
             templateData.put(APPLICANT_1_FIRST_NAME, caseData.getApplicant1().getFirstName());
             templateData.put(APPLICANT_1_MIDDLE_NAME, caseData.getApplicant1().getMiddleName());
@@ -59,7 +57,7 @@ public class RespondentSolicitorAosInvitationTemplateContent {
 
             templateData.put(MARRIAGE_DATE,
                 ofNullable(caseData.getApplication().getMarriageDetails().getDate())
-                    .map(marriageDate -> marriageDate.format(TEMPLATE_DATE_FORMAT))
+                    .map(marriageDate -> marriageDate.format(DATE_TIME_FORMATTER))
                     .orElse(null));
 
 
