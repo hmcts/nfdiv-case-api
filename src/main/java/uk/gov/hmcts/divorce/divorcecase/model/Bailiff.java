@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Document;
@@ -25,10 +26,6 @@ public class Bailiff {
     )
     private String localCourtEmail;
 
-    @CCD(
-        label = "Certificate of Service",
-        typeOverride = Document,
-        typeParameterOverride = "DivorceDocument"
-    )
+    @CCD(label = "Certificate of Service")
     private DivorceDocument certificateOfServiceDocument;
 }
