@@ -69,7 +69,7 @@ public class CreateGeneralOrder implements CcdPageConfiguration {
 
         log.info("Generating general order document for templateId : {} case caseId: {}", DIVORCE_GENERAL_ORDER, caseId);
 
-        Document generalOrderDocument = caseDataDocumentService.renderGeneralOrderDocument(
+        Document generalOrderDocument = caseDataDocumentService.renderDocument(
             templateContentSupplier,
             caseId,
             DIVORCE_GENERAL_ORDER,
