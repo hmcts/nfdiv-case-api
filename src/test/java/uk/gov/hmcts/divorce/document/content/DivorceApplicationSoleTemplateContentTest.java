@@ -17,6 +17,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -50,6 +51,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_RELATIONSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PLACE_OF_MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATIONSHIP;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
@@ -110,7 +112,7 @@ public class DivorceApplicationSoleTemplateContentTest {
             entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE),
             entry(MARRIAGE_OR_RELATIONSHIP, MARRIAGE),
             entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, "the divorce"),
-            entry(CCD_CASE_REFERENCE, TEST_CASE_ID),
+            entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
             entry(ISSUE_DATE, "28 April 2021"),
             entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
             entry(APPLICANT_1_MIDDLE_NAME, TEST_MIDDLE_NAME),
@@ -135,7 +137,7 @@ public class DivorceApplicationSoleTemplateContentTest {
         verify(applicantTemplateDataProvider).deriveSoleFinancialOrder(any(Applicant.class));
         verify(applicantTemplateDataProvider).deriveApplicantPostalAddress(any(Applicant.class));
         verify(applicantTemplateDataProvider).deriveApplicant2PostalAddress(any(Applicant.class), any(Application.class));
-        verify(applicationTemplateDataProvider).deriveSoleJurisdictionList(any(Application.class));
+        verify(applicationTemplateDataProvider).deriveSoleJurisdictionList(any(Application.class), eq(TEST_CASE_ID));
     }
 
     @Test
@@ -179,7 +181,7 @@ public class DivorceApplicationSoleTemplateContentTest {
             entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP),
             entry(MARRIAGE_OR_RELATIONSHIP, RELATIONSHIP),
             entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, "ending the civil partnership"),
-            entry(CCD_CASE_REFERENCE, TEST_CASE_ID),
+            entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
             entry(ISSUE_DATE, "28 April 2021"),
             entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
             entry(APPLICANT_1_MIDDLE_NAME, TEST_MIDDLE_NAME),
@@ -204,6 +206,6 @@ public class DivorceApplicationSoleTemplateContentTest {
         verify(applicantTemplateDataProvider).deriveSoleFinancialOrder(any(Applicant.class));
         verify(applicantTemplateDataProvider).deriveApplicantPostalAddress(any(Applicant.class));
         verify(applicantTemplateDataProvider).deriveApplicant2PostalAddress(any(Applicant.class), any(Application.class));
-        verify(applicationTemplateDataProvider).deriveSoleJurisdictionList(any(Application.class));
+        verify(applicationTemplateDataProvider).deriveSoleJurisdictionList(any(Application.class), eq(TEST_CASE_ID));
     }
 }

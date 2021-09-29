@@ -10,7 +10,6 @@ import uk.gov.hmcts.divorce.document.content.provider.ApplicantTemplateDataProvi
 import uk.gov.hmcts.divorce.document.content.provider.ApplicationTemplateDataProvider;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -44,12 +43,12 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_RELATIONSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PLACE_OF_MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATIONSHIP;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
 public class DivorceApplicationSoleTemplateContent {
-
-    private static final DateTimeFormatter TEMPLATE_DATE_FORMAT = DateTimeFormatter.ofPattern("d MMMM yyyy");
 
     @Autowired
     private ApplicantTemplateDataProvider applicantTemplateDataProvider;
@@ -58,13 +57,13 @@ public class DivorceApplicationSoleTemplateContent {
     private ApplicationTemplateDataProvider applicationTemplateDataProvider;
 
     public Supplier<Map<String, Object>> apply(final CaseData caseData,
-                                               final Long ccdCaseReference,
+                                               final Long caseId,
                                                final LocalDate createdDate) {
 
         return () -> {
             final Map<String, Object> templateData = new HashMap<>();
 
-            log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
+            log.info("For ccd case reference {} and type(divorce/dissolution) {} ", caseId, caseData.getDivorceOrDissolution());
 
             final Application application = caseData.getApplication();
             final Applicant applicant1 = caseData.getApplicant1();
@@ -84,8 +83,8 @@ public class DivorceApplicationSoleTemplateContent {
                 templateData.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, "ending the civil partnership");
             }
 
-            templateData.put(CCD_CASE_REFERENCE, ccdCaseReference);
-            templateData.put(ISSUE_DATE, createdDate.format(TEMPLATE_DATE_FORMAT));
+            templateData.put(CCD_CASE_REFERENCE, formatId(caseId));
+            templateData.put(ISSUE_DATE, createdDate.format(DATE_TIME_FORMATTER));
 
             templateData.put(APPLICANT_1_FIRST_NAME, applicant1.getFirstName());
             templateData.put(APPLICANT_1_MIDDLE_NAME, applicant1.getMiddleName());
@@ -118,10 +117,10 @@ public class DivorceApplicationSoleTemplateContent {
             templateData.put(PLACE_OF_MARRIAGE, application.getMarriageDetails().getPlaceOfMarriage());
             templateData.put(MARRIAGE_DATE,
                 ofNullable(application.getMarriageDetails().getDate())
-                    .map(marriageDate -> marriageDate.format(TEMPLATE_DATE_FORMAT))
+                    .map(marriageDate -> marriageDate.format(DATE_TIME_FORMATTER))
                     .orElse(null));
 
-            templateData.put("jurisdictions", applicationTemplateDataProvider.deriveSoleJurisdictionList(application));
+            templateData.put("jurisdictions", applicationTemplateDataProvider.deriveSoleJurisdictionList(application, caseId));
 
             return templateData;
         };

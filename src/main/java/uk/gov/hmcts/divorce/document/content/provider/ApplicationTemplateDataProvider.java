@@ -3,7 +3,9 @@ package uk.gov.hmcts.divorce.document.content.provider;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.common.exception.InvalidCcdCaseDataException;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
 
@@ -13,16 +15,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static java.util.Collections.emptyList;
 import static java.util.Map.entry;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_DOMICILED;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_LAST_RESIDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_RESIDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_SIX_MONTHS;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_TWELVE_MONTHS;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.RESIDUAL_JURISDICTION;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.EMPTY;
 
 @Component
+@Slf4j
 public class ApplicationTemplateDataProvider {
 
     private static final List<JurisdictionConnections> JURISDICTION_ORDER = Arrays.asList(
@@ -65,21 +69,24 @@ public class ApplicationTemplateDataProvider {
             + "jurisdiction in this case")
     );
 
-    public List<Connection> deriveJointJurisdictionList(final Application application) {
-        return deriveJurisdictionList(application, JOINT_DESCRIPTIONS);
+    public List<Connection> deriveJointJurisdictionList(final Application application, final Long caseId) {
+        return deriveJurisdictionList(application, caseId, JOINT_DESCRIPTIONS);
     }
 
-    public List<Connection> deriveSoleJurisdictionList(final Application application) {
-        return deriveJurisdictionList(application, SOLE_DESCRIPTIONS);
+    public List<Connection> deriveSoleJurisdictionList(final Application application, final Long caseId) {
+        return deriveJurisdictionList(application, caseId, SOLE_DESCRIPTIONS);
     }
 
     private List<Connection> deriveJurisdictionList(final Application application,
+                                                    final Long caseId,
                                                     final Map<JurisdictionConnections, String> descriptionMapping) {
 
         final Set<JurisdictionConnections> connections = application.getJurisdiction().getConnections();
 
-        if (null == connections) {
-            return emptyList();
+        if (isEmpty(connections)) {
+            final String errorMessage = "JurisdictionConnections" + EMPTY;
+            log.info("{}, for case id {} ", errorMessage, caseId);
+            throw new InvalidCcdCaseDataException(errorMessage);
         }
 
         return JURISDICTION_ORDER.stream()

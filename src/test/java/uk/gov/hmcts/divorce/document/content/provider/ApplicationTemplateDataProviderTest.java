@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.divorce.common.exception.InvalidCcdCaseDataException;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.document.content.provider.ApplicationTemplateDataProvider.Connection;
 
@@ -11,12 +12,14 @@ import java.util.Set;
 
 import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_DOMICILED;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_LAST_RESIDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_RESIDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_SIX_MONTHS;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_TWELVE_MONTHS;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.RESIDUAL_JURISDICTION;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.EMPTY;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationTemplateDataProviderTest {
@@ -25,8 +28,9 @@ class ApplicationTemplateDataProviderTest {
     private ApplicationTemplateDataProvider applicationTemplateDataProvider;
 
     @Test
-    void shouldReturnListOfJurisdictionsForJointIfAllSelected() throws Exception {
+    void shouldReturnListOfJurisdictionsForJointIfAllSelected() {
 
+        final var caseId = 124872587L;
         final var application = Application.builder().build();
         application.getJurisdiction().setConnections(Set.of(
             APP_1_APP_2_RESIDENT,
@@ -36,7 +40,7 @@ class ApplicationTemplateDataProviderTest {
             APP_1_APP_2_DOMICILED,
             RESIDUAL_JURISDICTION));
 
-        final var result = applicationTemplateDataProvider.deriveJointJurisdictionList(application);
+        final var result = applicationTemplateDataProvider.deriveJointJurisdictionList(application, caseId);
 
         assertThat(result).containsExactly(
             new Connection("the applicants are habitually resident in England and Wales"),
@@ -53,29 +57,32 @@ class ApplicationTemplateDataProviderTest {
     }
 
     @Test
-    void shouldReturnEmptyListOfJurisdictionsForJointIfNoJurisdictionConnectsSelected() {
+    void shouldThrowExceptionForJointIfNoJurisdictionConnectsSelected() {
 
+        final var caseId = 124872587L;
         final var application = Application.builder().build();
         application.getJurisdiction().setConnections(emptySet());
 
-        final var result = applicationTemplateDataProvider.deriveJointJurisdictionList(application);
-
-        assertThat(result).isEmpty();
+        assertThatThrownBy(() -> applicationTemplateDataProvider.deriveJointJurisdictionList(application, caseId))
+            .isInstanceOf(InvalidCcdCaseDataException.class)
+            .hasMessage("JurisdictionConnections" + EMPTY);
     }
 
     @Test
-    void shouldReturnEmptyListOfJurisdictionsForJointIfJurisdictionConnectionsIsNull() {
+    void shouldThrowExceptionForJointIfJurisdictionConnectionsIsNull() {
 
+        final var caseId = 124872587L;
         final var application = Application.builder().build();
 
-        final var result = applicationTemplateDataProvider.deriveJointJurisdictionList(application);
-
-        assertThat(result).isEmpty();
+        assertThatThrownBy(() -> applicationTemplateDataProvider.deriveJointJurisdictionList(application, caseId))
+            .isInstanceOf(InvalidCcdCaseDataException.class)
+            .hasMessage("JurisdictionConnections" + EMPTY);
     }
 
     @Test
     void shouldReturnListOfJurisdictionsForSoleIfAllSelected() throws Exception {
 
+        final var caseId = 124872587L;
         final var application = Application.builder().build();
         application.getJurisdiction().setConnections(Set.of(
             APP_1_APP_2_RESIDENT,
@@ -85,7 +92,7 @@ class ApplicationTemplateDataProviderTest {
             APP_1_APP_2_DOMICILED,
             RESIDUAL_JURISDICTION));
 
-        final var result = applicationTemplateDataProvider.deriveSoleJurisdictionList(application);
+        final var result = applicationTemplateDataProvider.deriveSoleJurisdictionList(application, caseId);
 
         assertThat(result).containsExactly(
             new Connection("the applicant and respondent are habitually resident in England and Wales"),
@@ -103,23 +110,25 @@ class ApplicationTemplateDataProviderTest {
     }
 
     @Test
-    void shouldReturnEmptyListOfJurisdictionsForSoleIfNoJurisdictionConnectsSelected() {
+    void shouldThrowExceptionForSoleIfNoJurisdictionConnectsSelected() {
 
+        final var caseId = 124872587L;
         final var application = Application.builder().build();
         application.getJurisdiction().setConnections(emptySet());
 
-        final var result = applicationTemplateDataProvider.deriveSoleJurisdictionList(application);
-
-        assertThat(result).isEmpty();
+        assertThatThrownBy(() -> applicationTemplateDataProvider.deriveSoleJurisdictionList(application, caseId))
+            .isInstanceOf(InvalidCcdCaseDataException.class)
+            .hasMessage("JurisdictionConnections" + EMPTY);
     }
 
     @Test
-    void shouldReturnEmptyListOfJurisdictionsForSoleIfJurisdictionConnectionsIsNull() {
+    void shouldThrowExceptionForSoleIfJurisdictionConnectionsIsNull() {
 
+        final var caseId = 124872587L;
         final var application = Application.builder().build();
 
-        final var result = applicationTemplateDataProvider.deriveSoleJurisdictionList(application);
-
-        assertThat(result).isEmpty();
+        assertThatThrownBy(() -> applicationTemplateDataProvider.deriveSoleJurisdictionList(application, caseId))
+            .isInstanceOf(InvalidCcdCaseDataException.class)
+            .hasMessage("JurisdictionConnections" + EMPTY);
     }
 }
