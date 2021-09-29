@@ -122,7 +122,7 @@ class CaseDataDocumentServiceTest {
                 filename))
             .thenReturn(new DocumentInfo(DOC_URL, PDF_FILENAME, DOC_BINARY_URL));
 
-        final Document result = caseDataDocumentService.renderGeneralOrderDocument(
+        final Document result = caseDataDocumentService.renderDocument(
             templateContentSupplier,
             TEST_CASE_ID,
             DIVORCE_GENERAL_ORDER,
