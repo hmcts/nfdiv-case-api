@@ -7,9 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
-import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
@@ -46,12 +44,6 @@ class CcdUpdateServiceTest {
     private CoreCaseDataApi coreCaseDataApi;
 
     @Mock
-    private IdamService idamService;
-
-    @Mock
-    private AuthTokenGenerator authTokenGenerator;
-
-    @Mock
     private CcdCaseDataContentProvider ccdCaseDataContentProvider;
 
     @Mock
@@ -63,14 +55,11 @@ class CcdUpdateServiceTest {
     @Test
     void shouldSubmitEventForCaseAsTheCaseworker() {
 
-        final User caseworkerDetails = getCaseworkerDetails();
+        final User user = getCaseworkerDetails();
         final Map<String, Object> caseData = new HashMap<>();
         final CaseDetails caseDetails = getCaseDetails(caseData);
         final StartEventResponse startEventResponse = getStartEventResponse();
         final CaseDataContent caseDataContent = mock(CaseDataContent.class);
-
-        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(caseworkerDetails);
-        when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
 
         when(coreCaseDataApi
             .startEventForCaseWorker(
@@ -91,7 +80,7 @@ class CcdUpdateServiceTest {
                 caseData))
             .thenReturn(caseDataContent);
 
-        ccdUpdateService.submitEvent(caseDetails, SYSTEM_PROGRESS_HELD_CASE);
+        ccdUpdateService.submitEvent(caseDetails, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
 
         verify(coreCaseDataApi).submitEventForCaseWorker(
             CASEWORKER_AUTH_TOKEN,
@@ -107,13 +96,10 @@ class CcdUpdateServiceTest {
     @Test
     void shouldThrowCcdManagementExceptionIfSubmitEventFails() {
 
-        final User caseworkerDetails = getCaseworkerDetails();
+        final User user = getCaseworkerDetails();
         final Map<String, Object> caseData = new HashMap<>();
         final CaseDetails caseDetails = getCaseDetails(caseData);
         final StartEventResponse startEventResponse = getStartEventResponse();
-
-        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(caseworkerDetails);
-        when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
 
         when(coreCaseDataApi
             .startEventForCaseWorker(
@@ -135,7 +121,7 @@ class CcdUpdateServiceTest {
 
         final CcdManagementException exception = assertThrows(
             CcdManagementException.class,
-            () -> ccdUpdateService.submitEvent(caseDetails, SYSTEM_PROGRESS_HELD_CASE));
+            () -> ccdUpdateService.submitEvent(caseDetails, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION));
 
         assertThat(exception.getMessage())
             .contains(format("Submit Event Failed for Case ID: %s, Event ID: %s", TEST_CASE_ID, SYSTEM_PROGRESS_HELD_CASE));
@@ -144,13 +130,10 @@ class CcdUpdateServiceTest {
     @Test
     void shouldThrowCcdConflictExceptionIfSubmitEventFailsWithStatusConflict() {
 
-        final User caseworkerDetails = getCaseworkerDetails();
+        final User user = getCaseworkerDetails();
         final Map<String, Object> caseData = new HashMap<>();
         final CaseDetails caseDetails = getCaseDetails(caseData);
         final StartEventResponse startEventResponse = getStartEventResponse();
-
-        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(caseworkerDetails);
-        when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
 
         when(coreCaseDataApi
             .startEventForCaseWorker(
@@ -172,7 +155,7 @@ class CcdUpdateServiceTest {
 
         final CcdConflictException exception = assertThrows(
             CcdConflictException.class,
-            () -> ccdUpdateService.submitEvent(caseDetails, SYSTEM_PROGRESS_HELD_CASE));
+            () -> ccdUpdateService.submitEvent(caseDetails, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION));
 
         assertThat(exception.getMessage())
             .contains(format("Submit Event Failed for Case ID: %s, Event ID: %s", TEST_CASE_ID, SYSTEM_PROGRESS_HELD_CASE));
@@ -184,16 +167,13 @@ class CcdUpdateServiceTest {
         final uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails = new uk.gov.hmcts.ccd.sdk.api.CaseDetails<>();
         caseDetails.setData(CaseData.builder().build());
 
-        final User caseworkerDetails = getCaseworkerDetails();
+        final User user = getCaseworkerDetails();
         final Map<String, Object> caseData = new HashMap<>();
         final CaseDetails reformCaseDetails = getCaseDetails(caseData);
         final StartEventResponse startEventResponse = getStartEventResponse();
         final CaseDataContent caseDataContent = mock(CaseDataContent.class);
 
         when(caseDetailsConverter.convertToReformModel(caseDetails)).thenReturn(reformCaseDetails);
-        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(caseworkerDetails);
-        when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
-
         when(coreCaseDataApi
             .startEventForCaseWorker(
                 CASEWORKER_AUTH_TOKEN,
@@ -213,7 +193,7 @@ class CcdUpdateServiceTest {
                 caseData))
             .thenReturn(caseDataContent);
 
-        ccdUpdateService.submitEvent(caseDetails, SYSTEM_PROGRESS_HELD_CASE);
+        ccdUpdateService.submitEvent(caseDetails, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
 
         verify(coreCaseDataApi).submitEventForCaseWorker(
             CASEWORKER_AUTH_TOKEN,
