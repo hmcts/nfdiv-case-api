@@ -30,7 +30,7 @@
           "id": null,
           "value": {
             "FeeDescription": "Filing an application for a divorce, nullity or civil partnership dissolution",
-            "FeeVersion": "5",
+            "FeeVersion": "${json-unit.any-string}",
             "FeeCode": "FEE0002",
             "FeeAmount": "${json-unit.any-string}"
           }
