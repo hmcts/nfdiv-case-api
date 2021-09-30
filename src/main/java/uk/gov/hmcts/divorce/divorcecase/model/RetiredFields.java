@@ -45,8 +45,8 @@ public class RetiredFields {
             "applicant2KeepContactDetailsConfidential",
             transformContactDetailsConfidentialField("applicant2ContactDetailsConfidential", data)
         ),
-        "applicant1FinancialOrderFor", emptyStringToNull("applicant1FinancialOrderFor"),
-        "applicant2FinancialOrderFor", emptyStringToNull("applicant2FinancialOrderFor"),
+        "applicant1FinancialOrderForRemoved", data -> { },
+        "applicant2FinancialOrderForRemoved", data -> { },
         "dateConditionalOrderSubmitted", data -> data.put("coDateSubmitted", data.get("dateConditionalOrderSubmitted"))
     );
 
@@ -71,13 +71,5 @@ public class RetiredFields {
     private static YesOrNo transformContactDetailsConfidentialField(String confidentialFieldName, Map<String, Object> data) {
         String confidentialFieldValue = (String) data.get(confidentialFieldName);
         return ConfidentialAddress.KEEP.getLabel().equalsIgnoreCase(confidentialFieldValue) ? YES : NO;
-    }
-
-    private static Consumer<Map<String, Object>> emptyStringToNull(String fieldName) {
-        return data -> {
-            if ("".equals(data.get(fieldName))) {
-                data.put(fieldName, null);
-            }
-        };
     }
 }
