@@ -23,7 +23,7 @@
     "applicant1CannotUploadSupportingDocument": ["marriageCertificate", "nameChangeEvidence"],
     "applicant2CannotUploadSupportingDocument": ["nameChangeEvidence"],
     "applicationFeeOrderSummary": {
-      "PaymentTotal": "59300",
+      "PaymentTotal": "55000",
       "PaymentReference": null,
       "Fees": [
         {
