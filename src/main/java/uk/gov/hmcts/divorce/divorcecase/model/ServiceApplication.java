@@ -6,10 +6,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 
 import java.time.LocalDate;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 
 @Data
 @AllArgsConstructor
@@ -37,4 +39,14 @@ public class ServiceApplication {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate receivedServiceAddedDate;
 
+    @CCD(
+        label = "Service Application Granted"
+    )
+    private YesOrNo serviceApplicationGranted;
+
+    @CCD(
+        label = "Reason for refusal",
+        typeOverride = TextArea
+    )
+    private String serviceApplicationRefusalReason;
 }

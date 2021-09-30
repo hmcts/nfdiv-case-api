@@ -88,6 +88,13 @@ public enum State {
     AwaitingApplicant2Response("AwaitingApplicant2Response"),
 
     @CCD(
+        name = "Awaiting Bailiff Referral",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    AwaitingBailiffReferral("AwaitingBailiffReferral"),
+
+    @CCD(
         name = "Awaiting Bailiff Service",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
@@ -217,6 +224,14 @@ public enum State {
         access = {CaseAccessAdministrator.class}
     )
     PendingRejection("PendingRejection"),
+
+
+    @CCD(
+        name = "Service Application Not Approved",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    ServiceApplicationNotApproved("ServiceApplicationNotApproved"),
 
     @CCD(
         name = "Submitted",
