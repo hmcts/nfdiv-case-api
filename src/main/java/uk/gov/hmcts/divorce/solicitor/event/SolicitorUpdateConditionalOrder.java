@@ -8,10 +8,13 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.solicitor.event.page.ConditionalOrderNewDocuments;
+import uk.gov.hmcts.divorce.solicitor.event.page.ConditionalOrderReviewAoS;
+import uk.gov.hmcts.divorce.solicitor.event.page.ConditionalOrderReviewApplicant1;
 
 import java.util.List;
 
-import static java.util.Collections.emptyList;
+import static java.util.Arrays.asList;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -24,7 +27,11 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 public class SolicitorUpdateConditionalOrder implements CCDConfig<CaseData, State, UserRole> {
     public static final String SOLICITOR_UPDATE_CONDITIONAL_ORDER = "solicitor-update-conditional-order";
 
-    private final List<CcdPageConfiguration> pages = emptyList();
+    private final List<CcdPageConfiguration> pages = asList(
+        new ConditionalOrderReviewAoS(),
+        new ConditionalOrderReviewApplicant1(),
+        new ConditionalOrderNewDocuments()
+    );
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {

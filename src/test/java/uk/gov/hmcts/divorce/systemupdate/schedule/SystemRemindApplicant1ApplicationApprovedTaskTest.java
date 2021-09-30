@@ -75,20 +75,20 @@ public class SystemRemindApplicant1ApplicationApprovedTaskTest {
     }
 
     @Test
-    void shouldSendReminderEmailIfJointApplicationPastDueDate() {
+    void shouldSendReminderEmailIf7DaysPastSinceJointApplicationApprovedByApplicant2() {
         final CaseDetails caseDetails1 = mock(CaseDetails.class);
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
 
         final CaseData caseData1 = CaseData.builder().dueDate(LocalDate.now()).build();
-        final CaseData caseData2 = CaseData.builder().dueDate(LocalDate.now().plusDays(5)).build();
+        final CaseData caseData2 = CaseData.builder().dueDate(LocalDate.now().plusDays(15)).build();
 
         when(caseDetails1.getData()).thenReturn(Map.of("dueDate", LocalDate.now()));
         when(caseDetails1.getId()).thenReturn(1L);
-        when(caseDetails2.getData()).thenReturn(Map.of("dueDate", LocalDate.now().plusDays(5)));
+        when(caseDetails2.getData()).thenReturn(Map.of("dueDate", LocalDate.now().plusDays(15)));
         when(caseDetails2.getId()).thenReturn(2L);
 
         when(mapper.convertValue(Map.of("dueDate", LocalDate.now()), CaseData.class)).thenReturn(caseData1);
-        when(mapper.convertValue(Map.of("dueDate", LocalDate.now().plusDays(5)), CaseData.class)).thenReturn(caseData2);
+        when(mapper.convertValue(Map.of("dueDate", LocalDate.now().plusDays(15)), CaseData.class)).thenReturn(caseData2);
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
@@ -124,35 +124,14 @@ public class SystemRemindApplicant1ApplicationApprovedTaskTest {
     }
 
     @Test
-    void shouldIgnoreCaseWhenDueDateIsNull() {
+    void shouldNotTriggerSystemRemindApplicant1ApplicationApprovedTaskOnEachCaseWhenReminderDateIsAfterCurrentDate() {
         final CaseDetails caseDetails = mock(CaseDetails.class);
-        final CaseData caseData = CaseData.builder().dueDate(null).build();
+        final CaseData caseData = CaseData.builder().dueDate(LocalDate.now().plusDays(15)).build();
 
         Map<String, Object> caseDataMap = new HashMap<>();
-        caseDataMap.put("dueDate", null);
+        caseDataMap.put("dueDate", LocalDate.now().plusDays(15));
 
-        when(caseDetails.getId()).thenReturn(1L);
-        when(caseDetails.getData()).thenReturn(caseDataMap);
-        when(mapper.convertValue(caseDataMap, CaseData.class)).thenReturn(caseData);
-        when(ccdSearchService.searchForAllCasesWithStateOf(Applicant2Approved, user, SERVICE_AUTHORIZATION))
-            .thenReturn(List.of(caseDetails));
-
-        systemRemindApplicant1ApplicationApprovedTask.run();
-
-        verify(jointApplicationOverdueNotification, never()).sendApplicationApprovedReminderToApplicant1(caseData, caseDetails.getId());
-        verify(ccdUpdateService, never())
-            .submitEvent(caseDetails, SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED, user, SERVICE_AUTHORIZATION);
-    }
-
-    @Test
-    void shouldNotTriggerSystemRemindApplicant1ApplicationApprovedTaskOnEachCaseWhenCaseDueDateIsAfterCurrentDate() {
-        final CaseDetails caseDetails = mock(CaseDetails.class);
-        final CaseData caseData = CaseData.builder().dueDate(LocalDate.now().plusDays(5)).build();
-
-        Map<String, Object> caseDataMap = new HashMap<>();
-        caseDataMap.put("dueDate", LocalDate.now().plusDays(5));
-
-        when(caseDetails.getData()).thenReturn(Map.of("dueDate", LocalDate.now().plusDays(5)));
+        when(caseDetails.getData()).thenReturn(Map.of("dueDate", LocalDate.now().plusDays(15)));
         when(mapper.convertValue(caseDataMap, CaseData.class)).thenReturn(caseData);
         when(ccdSearchService.searchForAllCasesWithStateOf(Applicant2Approved, user, SERVICE_AUTHORIZATION))
             .thenReturn(singletonList(caseDetails));

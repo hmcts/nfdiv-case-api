@@ -332,6 +332,12 @@ bootRun {
       systemProperty 'IDAM_SOLICITOR_USERNAME', getVaultSecret('idam-solicitor-username')
       systemProperty 'IDAM_SOLICITOR_PASSWORD', getVaultSecret('idam-solicitor-password')
       systemProperty 'IDAM_CLIENT_SECRET', getVaultSecret('idam-secret')
+
+      if (System.getenv("BOOT_RUN_DOCKER")) {
+        systemProperty 'IDAM_API_BASEURL', 'http://localhost:5000'
+        systemProperty 'CASE_DATA_STORE_BASEURL', 'http://localhost:4452'
+      }
+
     }
   }
 }
