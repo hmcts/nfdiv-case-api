@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
@@ -84,12 +85,15 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
             .firstName(applicant2Existing.getFirstName())
             .middleName(applicant2Existing.getMiddleName())
             .lastName(applicant2Existing.getLastName())
-            .email(applicant2Existing.getEmail())
             .gender(applicant2Existing.getGender())
             .homeAddress(applicant2Existing.isConfidentialContactDetails() ? null : applicant2Existing.getHomeAddress())
             .build();
-
         caseData.setApplicant2(applicant2);
+
+        CaseInvite caseInvite = caseData.getCaseInvite();
+        caseData.setCaseInvite(CaseInvite.builder()
+            .applicant2InviteEmailAddress(caseInvite.getApplicant2InviteEmailAddress())
+            .build());
 
         caseData.setApplicant2DocumentsUploaded(null);
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(null);
@@ -101,7 +105,6 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
         caseData.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation(null);
         caseData.getApplication().setApplicant2ReminderSent(null);
 
-        caseData.setCaseInvite(null);
         return caseData;
     }
 }

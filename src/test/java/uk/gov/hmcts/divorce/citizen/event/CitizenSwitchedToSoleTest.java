@@ -145,6 +145,8 @@ class CitizenSwitchedToSoleTest {
         caseData.setCaseInvite(
             CaseInvite.builder()
                 .accessCode("QA34TR89")
+                .applicant2InviteEmailAddress("bob@buildings.com")
+                .applicant2UserId("1234")
                 .build()
         );
         caseData.setApplicant2(
@@ -188,10 +190,14 @@ class CitizenSwitchedToSoleTest {
                     .firstName("Bob")
                     .middleName("The")
                     .lastName("Build")
-                    .email("bob@buildings.com")
                     .gender(MALE)
                     .build());
-        assertThat(response.getData().getCaseInvite()).isNull();
+        
+        assertThat(response.getData().getCaseInvite())
+            .isEqualTo(CaseInvite.builder()
+                .applicant2InviteEmailAddress("bob@buildings.com")
+                .build());
+
         assertThat(response.getData().getApplicant2DocumentsUploaded()).isNull();
         assertThat(response.getData().getApplication().getApplicant2ScreenHasMarriageBroken()).isNull();
         assertThat(response.getData().getApplication().getApplicant2HelpWithFees()).isNull();
