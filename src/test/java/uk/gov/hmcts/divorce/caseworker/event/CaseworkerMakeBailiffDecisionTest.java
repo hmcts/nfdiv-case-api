@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.caseworker.event;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -11,6 +12,8 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+
+import java.time.Clock;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -21,6 +24,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ServiceApplicationType.DEEM
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ServiceApplicationNotApproved;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -28,6 +33,9 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerMakeBailiffDecisionTest {
+
+    @Mock
+    private Clock clock;
 
     @InjectMocks
     private CaseworkerMakeBailiffDecision makeBailiffDecision;
@@ -44,7 +52,9 @@ class CaseworkerMakeBailiffDecisionTest {
     }
 
     @Test
-    void shouldChangeCaseStateToAwaitingBailiffServiceWhenServiceApplicationIsGrantedAndServiceTypeIsBailiff() {
+    void shouldChangeCaseStateToAwaitingBailiffServiceAndSetDecisionDateWhenServiceApplicationIsGrantedAndServiceTypeIsBailiff() {
+        setMockClock(clock);
+
         final CaseData caseData = caseData();
         caseData.getServiceApplication().setServiceApplicationGranted(YES);
         caseData.getServiceApplication().setServiceApplicationType(BAILIFF);
@@ -57,10 +67,14 @@ class CaseworkerMakeBailiffDecisionTest {
             makeBailiffDecision.aboutToSubmit(details, details);
 
         assertThat(aboutToStartOrSubmitResponse.getState()).isEqualTo(AwaitingBailiffService);
+        assertThat(aboutToStartOrSubmitResponse.getData().getServiceApplication().getServiceApplicationDecisionDate())
+            .isEqualTo(getExpectedLocalDate());
     }
 
     @Test
-    void shouldChangeCaseStateToAwaitingConditionalOrderWhenServiceApplicationIsGrantedAndServiceTypeIsNotBailiff() {
+    void shouldChangeCaseStateToAwaitingConditionalOrderAndSetDecisionDateWhenServiceApplicationIsGrantedAndServiceTypeIsNotBailiff() {
+        setMockClock(clock);
+
         final CaseData caseData = caseData();
         caseData.getServiceApplication().setServiceApplicationGranted(YES);
         caseData.getServiceApplication().setServiceApplicationType(DEEMED);
@@ -73,6 +87,8 @@ class CaseworkerMakeBailiffDecisionTest {
             makeBailiffDecision.aboutToSubmit(details, details);
 
         assertThat(aboutToStartOrSubmitResponse.getState()).isEqualTo(AwaitingConditionalOrder);
+        assertThat(aboutToStartOrSubmitResponse.getData().getServiceApplication().getServiceApplicationDecisionDate())
+            .isEqualTo(getExpectedLocalDate());
     }
 
     @Test
@@ -88,5 +104,7 @@ class CaseworkerMakeBailiffDecisionTest {
             makeBailiffDecision.aboutToSubmit(details, details);
 
         assertThat(aboutToStartOrSubmitResponse.getState()).isEqualTo(ServiceApplicationNotApproved);
+        assertThat(aboutToStartOrSubmitResponse.getData().getServiceApplication().getServiceApplicationDecisionDate())
+            .isNull();
     }
 }

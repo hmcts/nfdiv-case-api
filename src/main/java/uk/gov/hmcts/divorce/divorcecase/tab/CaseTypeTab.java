@@ -141,6 +141,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER)
             .field("receivedServiceApplicationDate")
             .field("serviceApplicationType")
-            .field("receivedServiceAddedDate");
+            .field("receivedServiceAddedDate")
+            .field("serviceApplicationDecisionDate");
     }
 }

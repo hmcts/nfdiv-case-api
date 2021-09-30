@@ -14,6 +14,8 @@ import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
+import java.time.Clock;
+
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -27,6 +29,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ServiceApplicationType.DEEM
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ServiceApplicationNotApproved;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
@@ -46,6 +50,9 @@ public class CaseworkerMakeBailiffDecisionIT {
     private ObjectMapper objectMapper;
 
     @MockBean
+    private Clock clock;
+
+    @MockBean
     private AuthTokenGenerator serviceTokenGenerator;
 
     @MockBean
@@ -53,6 +60,8 @@ public class CaseworkerMakeBailiffDecisionIT {
 
     @Test
     public void shouldChangeCaseStateToAwaitingBailiffServiceWhenServiceApplicationIsGrantedAndServiceTypeIsBailiff() throws Exception {
+        setMockClock(clock);
+
         final CaseData caseData = caseData();
         caseData.getServiceApplication().setServiceApplicationGranted(YES);
         caseData.getServiceApplication().setServiceApplicationType(BAILIFF);
@@ -72,13 +81,17 @@ public class CaseworkerMakeBailiffDecisionIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                jsonPath("$.state").value(AwaitingBailiffService.getName())
+                jsonPath("$.state").value(AwaitingBailiffService.getName()))
+            .andExpect(
+                jsonPath("$.data.serviceApplicationDecisionDate").value(getExpectedLocalDate().toString())
             );
     }
 
     @Test
     public void shouldChangeCaseStateToAwaitingConditionalOrderWhenServiceApplicationIsGrantedAndServiceTypeIsNotBailiff()
         throws Exception {
+        setMockClock(clock);
+
         final CaseData caseData = caseData();
         caseData.getServiceApplication().setServiceApplicationGranted(YES);
         caseData.getServiceApplication().setServiceApplicationType(DEEMED);
@@ -98,7 +111,9 @@ public class CaseworkerMakeBailiffDecisionIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                jsonPath("$.state").value(AwaitingConditionalOrder.getName())
+                jsonPath("$.state").value(AwaitingConditionalOrder.getName()))
+            .andExpect(
+                jsonPath("$.data.serviceApplicationDecisionDate").value(getExpectedLocalDate().toString())
             );
     }
 

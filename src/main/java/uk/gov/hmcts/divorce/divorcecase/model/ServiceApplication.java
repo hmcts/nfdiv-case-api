@@ -49,4 +49,10 @@ public class ServiceApplication {
         typeOverride = TextArea
     )
     private String serviceApplicationRefusalReason;
+
+    @CCD(
+        label = "Application decision date"
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate serviceApplicationDecisionDate;
 }
