@@ -137,10 +137,11 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     }
 
     private void buildServiceApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        configBuilder.tab("serviceApplication", "Service Application")
+        configBuilder.tab("alternativeService", "Service Application")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER)
             .field("receivedServiceApplicationDate")
             .field("serviceApplicationType")
-            .field("receivedServiceAddedDate");
+            .field("receivedServiceAddedDate")
+            .field("serviceApplicationDecisionDate");
     }
 }

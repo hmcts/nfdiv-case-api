@@ -88,6 +88,13 @@ public enum State {
     AwaitingApplicant2Response("AwaitingApplicant2Response"),
 
     @CCD(
+        name = "Awaiting bailiff referral",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    AwaitingBailiffReferral("AwaitingBailiffReferral"),
+
+    @CCD(
         name = "Awaiting bailiff service",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
