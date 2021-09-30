@@ -60,7 +60,6 @@ public class SystemLinkApplicant2 implements CCDConfig<CaseData, State, UserRole
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
-            .state(AwaitingApplicant2Response)
             .build();
     }
 }

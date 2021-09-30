@@ -1,0 +1,27 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "applicant1FirstName": "John",
+    "applicant1LastName": "Smith",
+    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+    "applicant2Gender": "female",
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "solPaymentHowToPay": "feePayByAccount",
+    "certificateOfServiceDocument": {
+      "documentDateAdded": null,
+      "documentComment": null,
+      "documentFileName": "certificateOfService.pdf",
+      "documentType": "certificateOfService",
+      "documentEmailContent": null,
+      "documentLink": {
+        "document_url": "${json-unit.any-string}",
+        "document_filename": "certificateOfService.pdf",
+        "document_binary_url": "${json-unit.any-string}"
+      }
+    },
+    "dataVersion": "${json-unit.any-number}"
+  },
+  "errors": null,
+  "warnings": null,
+  "state": null
+}

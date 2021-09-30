@@ -24,7 +24,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
-class CaseworkerServiceApplicationReceivedTest {
+class CaseworkerAlternativeServiceReceivedTest {
 
     @Mock
     private Clock clock;
@@ -58,6 +58,6 @@ class CaseworkerServiceApplicationReceivedTest {
         assertThat(response.getErrors()).isNull();
         assertThat(response.getWarnings()).isNull();
 
-        assertThat(response.getData().getServiceApplication().getReceivedServiceAddedDate()).isEqualTo(getExpectedLocalDate());
+        assertThat(response.getData().getAlternativeService().getReceivedServiceAddedDate()).isEqualTo(getExpectedLocalDate());
     }
 }

@@ -8,8 +8,8 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.ServiceApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
@@ -20,6 +20,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
@@ -51,9 +52,9 @@ public class CaseworkerServiceApplicationReceived implements CCDConfig<CaseData,
             .grant(READ, SUPER_USER, LEGAL_ADVISOR, SOLICITOR, CITIZEN))
             .page("serviceApplicationReceived")
             .pageLabel("Service application received")
-            .complex(CaseData::getServiceApplication)
-                .mandatory(ServiceApplication::getReceivedServiceApplicationDate)
-                .mandatory(ServiceApplication::getServiceApplicationType)
+            .complex(CaseData::getAlternativeService)
+                .mandatory(AlternativeService::getReceivedServiceApplicationDate)
+                .mandatory(AlternativeService::getServiceApplicationType)
                 .done();
     }
 
@@ -65,10 +66,11 @@ public class CaseworkerServiceApplicationReceived implements CCDConfig<CaseData,
 
         var caseData = details.getData();
 
-        caseData.getServiceApplication().setReceivedServiceAddedDate(LocalDate.now(clock));
+        caseData.getAlternativeService().setReceivedServiceAddedDate(LocalDate.now(clock));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
+            .state(AwaitingServicePayment)
             .build();
     }
 }

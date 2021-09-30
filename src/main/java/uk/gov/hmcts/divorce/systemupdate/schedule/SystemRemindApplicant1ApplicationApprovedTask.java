@@ -58,20 +58,16 @@ public class SystemRemindApplicant1ApplicationApprovedTask implements Runnable {
             for (final CaseDetails caseDetails : casesInAwaitingApplicant1Response) {
                 try {
                     final CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
-                    LocalDate dueDate = caseData.getDueDate();
+                    LocalDate reminderDate = caseData.getDueDate().minusWeeks(1);
+                    log.info("Reminder Date for case id: {} is {}", caseDetails.getId(), reminderDate);
 
-                    if (dueDate == null) {
-                        log.error("Ignoring case id {} with created on {} and modified on {}, as due date is null",
-                            caseDetails.getId(),
-                            caseDetails.getCreatedDate(),
-                            caseDetails.getLastModified()
-                        );
+                    if (!reminderDate.isAfter(LocalDate.now())
+                        && !caseData.getApplication().isApplicant1ReminderSent()
+                    ) {
+                        notifyApplicant1(caseDetails, caseData, reminderDate, user, serviceAuthorization);
                     } else {
-                        if (!dueDate.isAfter(LocalDate.now())
-                            && !caseData.getApplication().isApplicant1ReminderSent()
-                        ) {
-                            notifyApplicant1(caseDetails, caseData, dueDate, user, serviceAuthorization);
-                        }
+                        log.info("Case id {} not eligible for SystemRemindApplicant1ApplicationApprovedTask as Reminder Date is: {}",
+                            caseDetails.getId(), reminderDate);
                     }
                 } catch (final CcdManagementException e) {
                     log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
@@ -90,9 +86,9 @@ public class SystemRemindApplicant1ApplicationApprovedTask implements Runnable {
         }
     }
 
-    private void notifyApplicant1(CaseDetails caseDetails, CaseData caseData, LocalDate dueDate, User user, String serviceAuth) {
-        log.info("Due date {} for Case id {} is on/before current date - sending reminder to Applicant 1",
-            dueDate,
+    private void notifyApplicant1(CaseDetails caseDetails, CaseData caseData, LocalDate reminderDate, User user, String serviceAuth) {
+        log.info("Reminder date {} for Case id {} is on/before current date - sending reminder to Applicant 1",
+            reminderDate,
             caseDetails.getId()
         );
 

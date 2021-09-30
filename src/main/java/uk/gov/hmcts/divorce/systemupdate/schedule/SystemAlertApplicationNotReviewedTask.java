@@ -59,6 +59,7 @@ public class SystemAlertApplicationNotReviewedTask implements Runnable {
                 try {
                     final CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
                     LocalDate dueDate = caseData.getDueDate();
+                    log.info("Due Date for case id: {} is {}", caseDetails.getId(), caseData.getDueDate());
 
                     if (dueDate == null) {
                         log.error("Ignoring case id {} with created on {} and modified on {}, as due date is null",

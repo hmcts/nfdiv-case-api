@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
@@ -24,13 +25,14 @@ class SetPostIssueStateTest {
     private SetPostIssueState setPostIssueState;
 
     @Test
-    void shouldSetStateToAwaitingServiceWhenApplicationIsSolicitorApplicationAndServiceMethodIsSolicitorService() {
+    void shouldSetStateToAwaitingServiceWhenApplicationTypeIsJointAndServiceMethodIsSolicitorService() {
 
         final CaseData caseData = CaseData.builder()
             .application(Application.builder()
                 .solSignStatementOfTruth(YES)
                 .solServiceMethod(SOLICITOR_SERVICE)
                 .build())
+            .applicationType(ApplicationType.SOLE_APPLICATION)
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -42,13 +44,14 @@ class SetPostIssueStateTest {
     }
 
     @Test
-    void shouldSetStateToAwaitingAosWhenApplicationIsSolicitorApplicationAndServiceMethodIsCourtService() {
+    void shouldSetStateToAwaitingAosWhenApplicationTypeIsJointAndServiceMethodIsCourtService() {
 
         final CaseData caseData = CaseData.builder()
             .application(Application.builder()
                 .solSignStatementOfTruth(YES)
                 .solServiceMethod(COURT_SERVICE)
                 .build())
+            .applicationType(ApplicationType.SOLE_APPLICATION)
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -60,10 +63,11 @@ class SetPostIssueStateTest {
     }
 
     @Test
-    void shouldSetStateToHoldingWhenApplicationIsNotSolicitorApplication() {
+    void shouldSetStateToHoldingWhenApplicationTypeIsNotSole() {
 
         final CaseData caseData = CaseData.builder()
             .application(Application.builder().build())
+            .applicationType(ApplicationType.JOINT_APPLICATION)
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
