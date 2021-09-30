@@ -95,7 +95,7 @@ public enum State {
     AwaitingBailiffReferral("AwaitingBailiffReferral"),
 
     @CCD(
-        name = "Awaiting Bailiff Service",
+        name = "Awaiting bailiff service",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
     )
@@ -116,14 +116,14 @@ public enum State {
     AwaitingConditionalOrder("AwaitingConditionalOrder"),
 
     @CCD(
-        name = "Awaiting General Consideration",
+        name = "Awaiting general consideration",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
     )
     AwaitingGeneralConsideration("AwaitingGeneralConsideration"),
 
     @CCD(
-        name = "Awaiting General Referral Payment",
+        name = "Awaiting general referral payment",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
     )
@@ -150,7 +150,7 @@ public enum State {
     AwaitingReissue("AwaitingReissue"),
 
     @CCD(
-        name = "Awaiting Service Payment",
+        name = "Awaiting service payment",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
     )
@@ -198,7 +198,7 @@ public enum State {
     FinalOrderComplete("FinalOrderComplete"),
 
     @CCD(
-        name = "Issued To Bailiff",
+        name = "Issued To bailiff",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
     )
