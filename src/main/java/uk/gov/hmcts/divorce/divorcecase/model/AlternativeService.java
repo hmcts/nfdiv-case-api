@@ -17,7 +17,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ServiceApplication {
+public class AlternativeService {
 
     @CCD(
         label = "Application date"

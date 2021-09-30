@@ -18,12 +18,12 @@ import java.time.Clock;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerMakeBailiffDecision.CASEWORKER_MAKE_BAILIFF_DECISION;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerMakeBailiffDecision.CASEWORKER_BAILIFF_DECISION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceApplicationType.BAILIFF;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceApplicationType.DEEMED;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.ServiceApplicationNotApproved;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -48,7 +48,7 @@ class CaseworkerMakeBailiffDecisionTest {
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(CASEWORKER_MAKE_BAILIFF_DECISION);
+            .contains(CASEWORKER_BAILIFF_DECISION);
     }
 
     @Test
@@ -56,8 +56,8 @@ class CaseworkerMakeBailiffDecisionTest {
         setMockClock(clock);
 
         final CaseData caseData = caseData();
-        caseData.getServiceApplication().setServiceApplicationGranted(YES);
-        caseData.getServiceApplication().setServiceApplicationType(BAILIFF);
+        caseData.getAlternativeService().setServiceApplicationGranted(YES);
+        caseData.getAlternativeService().setServiceApplicationType(BAILIFF);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -67,7 +67,7 @@ class CaseworkerMakeBailiffDecisionTest {
             makeBailiffDecision.aboutToSubmit(details, details);
 
         assertThat(aboutToStartOrSubmitResponse.getState()).isEqualTo(AwaitingBailiffService);
-        assertThat(aboutToStartOrSubmitResponse.getData().getServiceApplication().getServiceApplicationDecisionDate())
+        assertThat(aboutToStartOrSubmitResponse.getData().getAlternativeService().getServiceApplicationDecisionDate())
             .isEqualTo(getExpectedLocalDate());
     }
 
@@ -76,8 +76,8 @@ class CaseworkerMakeBailiffDecisionTest {
         setMockClock(clock);
 
         final CaseData caseData = caseData();
-        caseData.getServiceApplication().setServiceApplicationGranted(YES);
-        caseData.getServiceApplication().setServiceApplicationType(DEEMED);
+        caseData.getAlternativeService().setServiceApplicationGranted(YES);
+        caseData.getAlternativeService().setServiceApplicationType(DEEMED);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -87,14 +87,14 @@ class CaseworkerMakeBailiffDecisionTest {
             makeBailiffDecision.aboutToSubmit(details, details);
 
         assertThat(aboutToStartOrSubmitResponse.getState()).isEqualTo(AwaitingConditionalOrder);
-        assertThat(aboutToStartOrSubmitResponse.getData().getServiceApplication().getServiceApplicationDecisionDate())
+        assertThat(aboutToStartOrSubmitResponse.getData().getAlternativeService().getServiceApplicationDecisionDate())
             .isEqualTo(getExpectedLocalDate());
     }
 
     @Test
-    void shouldChangeCaseStateToServiceApplicationNotApprovedWhenServiceApplicationIsNotGranted() {
+    void shouldChangeCaseStateToAwaitingAosWhenServiceApplicationIsNotGranted() {
         final CaseData caseData = caseData();
-        caseData.getServiceApplication().setServiceApplicationGranted(NO);
+        caseData.getAlternativeService().setServiceApplicationGranted(NO);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -103,8 +103,8 @@ class CaseworkerMakeBailiffDecisionTest {
         AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
             makeBailiffDecision.aboutToSubmit(details, details);
 
-        assertThat(aboutToStartOrSubmitResponse.getState()).isEqualTo(ServiceApplicationNotApproved);
-        assertThat(aboutToStartOrSubmitResponse.getData().getServiceApplication().getServiceApplicationDecisionDate())
+        assertThat(aboutToStartOrSubmitResponse.getState()).isEqualTo(AwaitingAos);
+        assertThat(aboutToStartOrSubmitResponse.getData().getAlternativeService().getServiceApplicationDecisionDate())
             .isNull();
     }
 }

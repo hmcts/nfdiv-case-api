@@ -23,12 +23,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerMakeBailiffDecision.CASEWORKER_MAKE_BAILIFF_DECISION;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerMakeBailiffDecision.CASEWORKER_BAILIFF_DECISION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceApplicationType.BAILIFF;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceApplicationType.DEEMED;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.ServiceApplicationNotApproved;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
@@ -59,12 +59,13 @@ public class CaseworkerMakeBailiffDecisionIT {
     private WebMvcConfig webMvcConfig;
 
     @Test
-    public void shouldChangeCaseStateToAwaitingBailiffServiceWhenServiceApplicationIsGrantedAndServiceTypeIsBailiff() throws Exception {
+    public void shouldChangeCaseStateToAwaitingBailiffServiceAndSetDecisionDateWhenServiceApplicationIsGrantedAndServiceTypeIsBailiff()
+        throws Exception {
         setMockClock(clock);
 
         final CaseData caseData = caseData();
-        caseData.getServiceApplication().setServiceApplicationGranted(YES);
-        caseData.getServiceApplication().setServiceApplicationType(BAILIFF);
+        caseData.getAlternativeService().setServiceApplicationGranted(YES);
+        caseData.getAlternativeService().setServiceApplicationType(BAILIFF);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -73,7 +74,7 @@ public class CaseworkerMakeBailiffDecisionIT {
                 .content(objectMapper.writeValueAsString(
                         callbackRequest(
                             caseData,
-                            CASEWORKER_MAKE_BAILIFF_DECISION)
+                            CASEWORKER_BAILIFF_DECISION)
                     )
                 )
                 .accept(APPLICATION_JSON))
@@ -88,13 +89,13 @@ public class CaseworkerMakeBailiffDecisionIT {
     }
 
     @Test
-    public void shouldChangeCaseStateToAwaitingConditionalOrderWhenServiceApplicationIsGrantedAndServiceTypeIsNotBailiff()
+    public void shouldChangeCaseStateToAwaitingConditionalOrderAndSetDecisionDateWhenServiceApplicationIsGrantedAndServiceTypeIsNotBailiff()
         throws Exception {
         setMockClock(clock);
 
         final CaseData caseData = caseData();
-        caseData.getServiceApplication().setServiceApplicationGranted(YES);
-        caseData.getServiceApplication().setServiceApplicationType(DEEMED);
+        caseData.getAlternativeService().setServiceApplicationGranted(YES);
+        caseData.getAlternativeService().setServiceApplicationType(DEEMED);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -103,7 +104,7 @@ public class CaseworkerMakeBailiffDecisionIT {
                 .content(objectMapper.writeValueAsString(
                         callbackRequest(
                             caseData,
-                            CASEWORKER_MAKE_BAILIFF_DECISION)
+                            CASEWORKER_BAILIFF_DECISION)
                     )
                 )
                 .accept(APPLICATION_JSON))
@@ -118,9 +119,9 @@ public class CaseworkerMakeBailiffDecisionIT {
     }
 
     @Test
-    public void shouldChangeCaseStateToServiceApplicationNotApprovedWhenServiceApplicationIsNotGranted() throws Exception {
+    public void shouldChangeCaseStateToAwaitingAosWhenServiceApplicationIsNotGranted() throws Exception {
         final CaseData caseData = caseData();
-        caseData.getServiceApplication().setServiceApplicationGranted(NO);
+        caseData.getAlternativeService().setServiceApplicationGranted(NO);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -129,7 +130,7 @@ public class CaseworkerMakeBailiffDecisionIT {
                 .content(objectMapper.writeValueAsString(
                         callbackRequest(
                             caseData,
-                            CASEWORKER_MAKE_BAILIFF_DECISION)
+                            CASEWORKER_BAILIFF_DECISION)
                     )
                 )
                 .accept(APPLICATION_JSON))
@@ -137,7 +138,7 @@ public class CaseworkerMakeBailiffDecisionIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                jsonPath("$.state").value(ServiceApplicationNotApproved.getName())
+                jsonPath("$.state").value(AwaitingAos.getName())
             );
     }
 }
