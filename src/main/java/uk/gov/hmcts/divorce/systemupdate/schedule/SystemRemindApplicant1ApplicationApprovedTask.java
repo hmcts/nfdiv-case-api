@@ -59,12 +59,15 @@ public class SystemRemindApplicant1ApplicationApprovedTask implements Runnable {
                 try {
                     final CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
                     LocalDate reminderDate = caseData.getDueDate().minusWeeks(1);
-                    log.info("Reminder Date for case id: {} is {}", caseDetails.getId(), caseData.getDueDate());
+                    log.info("Reminder Date for case id: {} is {}", caseDetails.getId(), reminderDate);
 
                     if (!reminderDate.isAfter(LocalDate.now())
                         && !caseData.getApplication().isApplicant1ReminderSent()
                     ) {
                         notifyApplicant1(caseDetails, caseData, reminderDate, user, serviceAuthorization);
+                    } else {
+                        log.info("Case id {} not eligible for SystemRemindApplicant1ApplicationApprovedTask as Reminder Date is: {}",
+                            caseDetails.getId(), reminderDate);
                     }
                 } catch (final CcdManagementException e) {
                     log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
