@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.Applicant1ResubmitNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -46,8 +47,10 @@ public class CitizenApplicant1ResubmitTest {
     }
 
     @Test
-    void shouldNotifyApplicant1AndUpdateCaseState() {
+    void shouldNotifyApplicant1AndUpdateCaseStateAndSetApplicant2ConfirmationFieldsToNull() {
         CaseData caseData = validApplicant2CaseData();
+        caseData.getApplication().setApplicant2ConfirmApplicant1Information(YesOrNo.NO);
+        caseData.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation("This information is incorrect.");
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -56,7 +59,10 @@ public class CitizenApplicant1ResubmitTest {
 
         verify(applicant1ResubmitNotification).sendToApplicant1(caseData, details.getId());
         verify(applicant1ResubmitNotification).sendToApplicant2(caseData, details.getId());
+
         assertThat(response.getState()).isEqualTo(AwaitingApplicant2Response);
+        assertThat(response.getData().getApplication().getApplicant2ConfirmApplicant1Information()).isEqualTo(null);
+        assertThat(response.getData().getApplication().getApplicant2ExplainsApplicant1IncorrectInformation()).isEqualTo(null);
     }
 
     @Test
