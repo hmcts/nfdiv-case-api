@@ -60,7 +60,7 @@ public class SystemNotifyApplicant1ApplyForConditionalOrder implements Runnable 
             for (final CaseDetails caseDetails : casesInAwaitingApplicant2Response) {
                 try {
                     final CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
-                    final LocalDate canApplyForConditionalOrderFrom = caseData.getApplication().getIssueDate().plusWeeks(TWENTY_WEEKS);
+                    final LocalDate canApplyForConditionalOrderFrom = caseData.getDueDate().plusWeeks(TWENTY_WEEKS);
 
                     if (!canApplyForConditionalOrderFrom.isAfter(LocalDate.now())
                         && !caseData.getApplication().hasApplicant1BeenNotifiedCanApplyForConditionalOrder()
