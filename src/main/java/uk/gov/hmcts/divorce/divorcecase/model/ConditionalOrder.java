@@ -70,4 +70,18 @@ public class ConditionalOrder {
     )
     private List<ListValue<DivorceDocument>> documentsUploaded;
 
+    @CCD(
+        label = "Solicitor’s name"
+    )
+    private String sotName;
+
+    @CCD(
+        label = "Solicitor’s firm"
+    )
+    private String sotFirm;
+
+    @CCD(
+        label = "Additional comments"
+    )
+    private String sotAdditionalComments;
 }
