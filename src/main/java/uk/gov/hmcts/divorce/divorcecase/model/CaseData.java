@@ -111,7 +111,7 @@ public class CaseData {
     @JsonUnwrapped
     @Builder.Default
     @CCD(access = {CaseworkerAccessBetaOnlyAccess.class})
-    private ServiceApplication serviceApplication = new ServiceApplication();
+    private AlternativeService alternativeService = new AlternativeService();
 
     @JsonUnwrapped
     @Builder.Default

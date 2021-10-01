@@ -25,6 +25,7 @@ import java.util.function.Supplier;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueBailiffPack.CASEWORKER_ISSUE_BAILIFF_PACK;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_SERVICE_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_SERVICE;
@@ -53,7 +54,7 @@ class CaseworkerIssueBailiffPackTest {
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(CaseworkerIssueBailiffPack.CASEWORKER_ISSUE_BAILIFF_PACK);
+            .contains(CASEWORKER_ISSUE_BAILIFF_PACK);
     }
 
     @Test
