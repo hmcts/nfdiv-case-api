@@ -12,7 +12,6 @@ import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.idam.IdamService;
 
 import java.util.Map;
-import java.util.function.Supplier;
 
 import static uk.gov.hmcts.divorce.document.DocumentUtil.divorceDocumentFrom;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.documentFrom;
@@ -32,7 +31,7 @@ public class CaseDataDocumentService {
 
     public void renderDocumentAndUpdateCaseData(final CaseData caseData,
                                                 final DocumentType documentType,
-                                                final Supplier<Map<String, Object>> templateContentSupplier,
+                                                final Map<String, Object> templateContent,
                                                 final Long caseId,
                                                 final String templateId,
                                                 final LanguagePreference languagePreference,
@@ -43,7 +42,7 @@ public class CaseDataDocumentService {
         final String authorisation = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
 
         final var documentInfo = docAssemblyService.renderDocument(
-            templateContentSupplier,
+            templateContent,
             caseId,
             authorisation,
             templateId,
@@ -60,7 +59,7 @@ public class CaseDataDocumentService {
                 .build());
     }
 
-    public Document renderDocument(final Supplier<Map<String, Object>> templateContentSupplier,
+    public Document renderDocument(final Map<String, Object> templateContent,
                                    final Long caseId,
                                    final String templateId,
                                    final LanguagePreference languagePreference,
@@ -71,7 +70,7 @@ public class CaseDataDocumentService {
         final String authorisation = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
 
         final var documentInfo = docAssemblyService.renderDocument(
-            templateContentSupplier,
+            templateContent,
             caseId,
             authorisation,
             templateId,

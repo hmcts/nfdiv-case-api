@@ -8,7 +8,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.GENERAL_ORDER_DATE;
@@ -45,38 +44,36 @@ public class GeneralOrderTemplateContent {
     @Value("${court.locations.serviceCentre.phoneNumber}")
     private String phoneNumber;
 
-    public Supplier<Map<String, Object>> apply(final CaseData caseData,
-                                               final Long ccdCaseReference) {
+    public Map<String, Object> apply(final CaseData caseData,
+                                     final Long ccdCaseReference) {
 
-        return () -> {
-            Map<String, Object> templateData = new HashMap<>();
+        Map<String, Object> templateContent = new HashMap<>();
 
-            log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
+        log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
 
-            var generalOrder = caseData.getGeneralOrder();
-            templateData.put(GENERAL_ORDER_DATE, generalOrder.getGeneralOrderDate().format(DATE_TIME_FORMATTER));
-            templateData.put(CASE_REFERENCE, ccdCaseReference);
-            templateData.put(PETITIONER_FULL_NAME, caseData.getApplication().getMarriageDetails().getApplicant1Name());
-            templateData.put(RESPONDENT_FULL_NAME, caseData.getApplication().getMarriageDetails().getApplicant2Name());
-            templateData.put(GENERAL_ORDER_RECITALS, generalOrder.getGeneralOrderRecitals());
-            templateData.put(JUDGE_TYPE, generalOrder.getGeneralOrderJudgeType().getLabel());
-            templateData.put(JUDGE_NAME, generalOrder.getGeneralOrderJudgeName());
-            templateData.put(GENERAL_ORDER_DETAILS, generalOrder.getGeneralOrderDetails());
+        var generalOrder = caseData.getGeneralOrder();
+        templateContent.put(GENERAL_ORDER_DATE, generalOrder.getGeneralOrderDate().format(DATE_TIME_FORMATTER));
+        templateContent.put(CASE_REFERENCE, ccdCaseReference);
+        templateContent.put(PETITIONER_FULL_NAME, caseData.getApplication().getMarriageDetails().getApplicant1Name());
+        templateContent.put(RESPONDENT_FULL_NAME, caseData.getApplication().getMarriageDetails().getApplicant2Name());
+        templateContent.put(GENERAL_ORDER_RECITALS, generalOrder.getGeneralOrderRecitals());
+        templateContent.put(JUDGE_TYPE, generalOrder.getGeneralOrderJudgeType().getLabel());
+        templateContent.put(JUDGE_NAME, generalOrder.getGeneralOrderJudgeName());
+        templateContent.put(GENERAL_ORDER_DETAILS, generalOrder.getGeneralOrderDetails());
 
-            var ctscContactDetails = CtscContactDetails
-                .builder()
-                .centreName(centreName)
-                .emailAddress(email)
-                .serviceCentre(serviceCentre)
-                .poBox(poBox)
-                .town(town)
-                .postcode(postcode)
-                .phoneNumber(phoneNumber)
-                .build();
+        var ctscContactDetails = CtscContactDetails
+            .builder()
+            .centreName(centreName)
+            .emailAddress(email)
+            .serviceCentre(serviceCentre)
+            .poBox(poBox)
+            .town(town)
+            .postcode(postcode)
+            .phoneNumber(phoneNumber)
+            .build();
 
-            templateData.put("ctscContactDetails", ctscContactDetails);
+        templateContent.put("ctscContactDetails", ctscContactDetails);
 
-            return templateData;
-        };
+        return templateContent;
     }
 }

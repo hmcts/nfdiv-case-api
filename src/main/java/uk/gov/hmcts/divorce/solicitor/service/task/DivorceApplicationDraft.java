@@ -10,8 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.DraftApplicationTemplateContent;
 
-import java.util.Map;
-import java.util.function.Supplier;
+import java.time.LocalDate;
 
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_DRAFT_APPLICATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME;
@@ -25,23 +24,21 @@ public class DivorceApplicationDraft implements CaseTask {
     private CaseDataDocumentService caseDataDocumentService;
 
     @Autowired
-    private DraftApplicationTemplateContent templateContent;
+    private DraftApplicationTemplateContent draftApplicationTemplateContent;
 
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
 
         final CaseData caseData = caseDetails.getData();
         final Long caseId = caseDetails.getId();
+        final LocalDate createdDate = caseDetails.getCreatedDate().toLocalDate();
 
         log.info("Executing handler for generating draft divorce application for case id {} ", caseId);
-
-        final Supplier<Map<String, Object>> templateContentSupplier = templateContent
-            .apply(caseData, caseId, caseDetails.getCreatedDate().toLocalDate());
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
             APPLICATION,
-            templateContentSupplier,
+            draftApplicationTemplateContent.apply(caseData, caseId, createdDate),
             caseId,
             DIVORCE_DRAFT_APPLICATION,
             caseData.getApplicant1().getLanguagePreference(),

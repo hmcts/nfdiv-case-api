@@ -20,7 +20,6 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -61,9 +60,9 @@ class CaseworkerIssueBailiffPackTest {
     void shouldUpdateCaseWithCertificateOfServiceDocumentWhenAboutToSubmitCallbackIsTriggered() {
         final CaseData caseData = caseData();
 
-        final Supplier<Map<String, Object>> templateContentSupplier = HashMap::new;
+        final Map<String, Object> templateContent = new HashMap<>();
 
-        when(certificateOfServiceContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContentSupplier);
+        when(certificateOfServiceContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
         String documentUrl = "http://localhost:8080/4567";
         Document certificateOfServiceDocument = new Document(
@@ -74,7 +73,7 @@ class CaseworkerIssueBailiffPackTest {
 
         when(
             caseDataDocumentService.renderDocument(
-                templateContentSupplier,
+                templateContent,
                 TEST_CASE_ID,
                 CERTIFICATE_OF_SERVICE_TEMPLATE_ID,
                 ENGLISH,
@@ -102,7 +101,7 @@ class CaseworkerIssueBailiffPackTest {
 
         verify(certificateOfServiceContent).apply(caseData, TEST_CASE_ID);
         verify(caseDataDocumentService).renderDocument(
-            templateContentSupplier,
+            templateContent,
             TEST_CASE_ID,
             CERTIFICATE_OF_SERVICE_TEMPLATE_ID,
             ENGLISH,
