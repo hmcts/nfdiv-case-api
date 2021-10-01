@@ -20,6 +20,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_AP
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PAID_FOR;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PAY_FOR;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.REMINDER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.REMINDER_ACTION_REQUIRED;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.REVIEW_DEADLINE_DATE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.TO_END_CIVIL_PARTNERSHIP;
@@ -68,7 +69,7 @@ public class JointApplicationOverdueNotification {
             templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), TO_END_CIVIL_PARTNERSHIP);
         }
 
-        templateVars.put(REMINDER_ACTION_REQUIRED, REMINDER_ACTION_REQUIRED);
+        templateVars.put(REMINDER_ACTION_REQUIRED, REMINDER);
 
         if (caseData.getApplication().isHelpWithFeesApplication()) {
             templateVars.put(PAY_FOR, "");
