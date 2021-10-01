@@ -9,7 +9,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1ApplyForConditionalOrderNotification;
-import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
@@ -26,9 +25,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-import static org.mockito.Mockito.anyMap;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -79,23 +76,19 @@ public class SystemNotifyApplicant1ApplyForConditionalOrderTest {
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
 
         final CaseData caseData1 = CaseData.builder()
-            .application(Application.builder().issueDate(LocalDate.now().minusWeeks(21)).build()).build();
+            .dueDate(LocalDate.now().minusWeeks(21))
+            .build();
         final CaseData caseData2 = CaseData.builder()
-            .application(Application.builder().issueDate(LocalDate.now().plusDays(5)).build()).build();
+            .dueDate(LocalDate.now().plusDays(5))
+            .build();
 
-        when(caseDetails1.getData())
-            .thenReturn(Map.of("application", Application.builder().issueDate(LocalDate.now().minusWeeks(21)).build()));
+        when(caseDetails1.getData()).thenReturn(Map.of("dueDate", LocalDate.now().minusWeeks(21)));
         when(caseDetails1.getId()).thenReturn(1L);
-        when(caseDetails2.getData())
-            .thenReturn(Map.of("application", Application.builder().issueDate(LocalDate.now().plusDays(5)).build()));
+        when(caseDetails2.getData()).thenReturn(Map.of("dueDate", LocalDate.now().plusDays(5)));
         when(caseDetails2.getId()).thenReturn(2L);
 
-        when(mapper.convertValue(
-            Map.of("application",
-                Application.builder().issueDate(LocalDate.now().minusWeeks(21)).build()), CaseData.class)).thenReturn(caseData1);
-        when(mapper.convertValue(
-            Map.of("application",
-                Application.builder().issueDate(LocalDate.now().plusDays(5)).build()), CaseData.class)).thenReturn(caseData2);
+        when(mapper.convertValue(Map.of("dueDate", LocalDate.now().minusWeeks(21)), CaseData.class)).thenReturn(caseData1);
+        when(mapper.convertValue(Map.of("dueDate", LocalDate.now().plusDays(5)), CaseData.class)).thenReturn(caseData2);
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
@@ -115,21 +108,17 @@ public class SystemNotifyApplicant1ApplyForConditionalOrderTest {
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
 
         final CaseData caseData1 = CaseData.builder()
-            .application(Application.builder().issueDate(LocalDate.now()).build()).build();
+            .dueDate(LocalDate.now())
+            .build();
         final CaseData caseData2 = CaseData.builder()
-            .application(Application.builder().issueDate(LocalDate.now().plusDays(5)).build()).build();
+            .dueDate(LocalDate.now().plusDays(5))
+            .build();
 
-        when(caseDetails1.getData())
-            .thenReturn(Map.of("application", Application.builder().issueDate(LocalDate.now()).build()));
-        when(caseDetails2.getData())
-            .thenReturn(Map.of("application", Application.builder().issueDate(LocalDate.now().plusDays(5)).build()));
+        when(caseDetails1.getData()).thenReturn(Map.of("dueDate", LocalDate.now()));
+        when(caseDetails2.getData()).thenReturn(Map.of("dueDate", LocalDate.now().plusDays(5)));
 
-        when(mapper.convertValue(
-            Map.of("application",
-                Application.builder().issueDate(LocalDate.now()).build()), CaseData.class)).thenReturn(caseData1);
-        when(mapper.convertValue(
-            Map.of("application",
-                Application.builder().issueDate(LocalDate.now().plusDays(5)).build()), CaseData.class)).thenReturn(caseData2);
+        when(mapper.convertValue(Map.of("dueDate", LocalDate.now()), CaseData.class)).thenReturn(caseData1);
+        when(mapper.convertValue(Map.of("dueDate", LocalDate.now().plusDays(5)), CaseData.class)).thenReturn(caseData2);
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
@@ -158,13 +147,13 @@ public class SystemNotifyApplicant1ApplyForConditionalOrderTest {
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
         final CaseData caseData1 = CaseData.builder()
-            .application(Application.builder().issueDate(LocalDate.now().minusWeeks(21)).build()).build();
+            .dueDate(LocalDate.now().minusWeeks(21))
+            .build();
 
-        when(caseDetails1.getData())
-            .thenReturn(Map.of("application", Application.builder().issueDate(LocalDate.now().minusWeeks(21)).build()));
+        when(caseDetails1.getData()).thenReturn(Map.of("dueDate", LocalDate.now().minusWeeks(21)));
         when(caseDetails1.getId()).thenReturn(1L);
 
-        when(mapper.convertValue(anyMap(), eq(CaseData.class))).thenReturn(caseData1);
+        when(mapper.convertValue(Map.of("dueDate", LocalDate.now().minusWeeks(21)), CaseData.class)).thenReturn(caseData1);
         when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingConditionalOrder, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
@@ -184,23 +173,19 @@ public class SystemNotifyApplicant1ApplyForConditionalOrderTest {
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
 
         final CaseData caseData1 = CaseData.builder()
-            .application(Application.builder().issueDate(LocalDate.now().minusWeeks(21)).build()).build();
+            .dueDate(LocalDate.now().minusWeeks(21))
+            .build();
         final CaseData caseData2 = CaseData.builder()
-            .application(Application.builder().issueDate(LocalDate.now().minusWeeks(21)).build()).build();
+            .dueDate(LocalDate.now().minusWeeks(21))
+            .build();
 
-        when(caseDetails1.getData())
-            .thenReturn(Map.of("application", Application.builder().issueDate(LocalDate.now().minusWeeks(21)).build()));
+        when(caseDetails1.getData()).thenReturn(Map.of("dueDate", LocalDate.now().minusWeeks(21)));
         when(caseDetails1.getId()).thenReturn(1L);
-        when(caseDetails2.getData())
-            .thenReturn(Map.of("application", Application.builder().issueDate(LocalDate.now().minusWeeks(21)).build()));
+        when(caseDetails2.getData()).thenReturn(Map.of("dueDate", LocalDate.now().minusWeeks(21)));
         when(caseDetails2.getId()).thenReturn(2L);
 
-        when(mapper.convertValue(
-            Map.of("application",
-                Application.builder().issueDate(LocalDate.now().minusWeeks(21)).build()), CaseData.class)).thenReturn(caseData1);
-        when(mapper.convertValue(
-            Map.of("application",
-                Application.builder().issueDate(LocalDate.now().minusWeeks(21)).build()), CaseData.class)).thenReturn(caseData2);
+        when(mapper.convertValue(Map.of("dueDate", LocalDate.now().minusWeeks(21)), CaseData.class)).thenReturn(caseData1);
+        when(mapper.convertValue(Map.of("dueDate", LocalDate.now().minusWeeks(21)), CaseData.class)).thenReturn(caseData2);
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
