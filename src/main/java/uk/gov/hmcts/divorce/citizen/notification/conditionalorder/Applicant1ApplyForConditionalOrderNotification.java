@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLY_FOR_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
 
 @Component
@@ -31,7 +32,7 @@ public class Applicant1ApplyForConditionalOrderNotification {
         Map<String, String> templateVars = commonContent.templateVarsForApplicant(
             caseData, caseData.getApplicant1(), caseData.getApplicant2());
 
-        templateVars.put(APPLICATION_REFERENCE, String.valueOf(id));
+        templateVars.put(APPLICATION_REFERENCE, formatId(id));
         templateVars.put(YOUR_APPLICATION,
             caseData.getDivorceOrDissolution().isDivorce() ? "get a divorce" : "end your civil partnership");
 
