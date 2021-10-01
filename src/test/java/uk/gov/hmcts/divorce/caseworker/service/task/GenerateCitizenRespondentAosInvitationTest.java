@@ -17,7 +17,6 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.mockStatic;
@@ -45,7 +44,7 @@ class GenerateCitizenRespondentAosInvitationTest {
     private CaseDataDocumentService caseDataDocumentService;
 
     @Mock
-    private CitizenRespondentAosInvitationTemplateContent templateContent;
+    private CitizenRespondentAosInvitationTemplateContent citizenRespondentAosInvitationTemplateContent;
 
     @Mock
     private Clock clock;
@@ -65,12 +64,12 @@ class GenerateCitizenRespondentAosInvitationTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
-        final Supplier<Map<String, Object>> templateContentSupplier = HashMap::new;
+        final Map<String, Object> templateContent = new HashMap<>();
 
         final MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
         classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
-        when(templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(templateContentSupplier);
+        when(citizenRespondentAosInvitationTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(templateContent);
 
         final var result = generateCitizenRespondentAosInvitation.apply(caseDetails);
 
@@ -80,7 +79,7 @@ class GenerateCitizenRespondentAosInvitationTest {
             .renderDocumentAndUpdateCaseData(
                 caseData,
                 RESPONDENT_INVITATION,
-                templateContentSupplier,
+                templateContent,
                 TEST_CASE_ID,
                 CITIZEN_RESP_AOS_INVITATION,
                 ENGLISH,
@@ -104,6 +103,6 @@ class GenerateCitizenRespondentAosInvitationTest {
         final var result = generateCitizenRespondentAosInvitation.apply(caseDetails);
 
         assertThat(result.getData()).isEqualTo(caseData);
-        verifyNoInteractions(templateContent, caseDataDocumentService);
+        verifyNoInteractions(citizenRespondentAosInvitationTemplateContent, caseDataDocumentService);
     }
 }

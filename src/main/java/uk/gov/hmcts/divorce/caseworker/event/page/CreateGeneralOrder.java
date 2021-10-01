@@ -17,8 +17,6 @@ import uk.gov.hmcts.divorce.document.content.GeneralOrderTemplateContent;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
-import java.util.function.Supplier;
 
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_GENERAL_ORDER;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_ORDER;
@@ -63,14 +61,12 @@ public class CreateGeneralOrder implements CcdPageConfiguration {
 
         final Long caseId = details.getId();
 
-        final Supplier<Map<String, Object>> templateContentSupplier = generalOrderTemplateContent
-            .apply(caseDataCopy, caseId);
         final String filename = GENERAL_ORDER + LocalDateTime.now(clock).format(formatter);
 
         log.info("Generating general order document for templateId : {} case caseId: {}", DIVORCE_GENERAL_ORDER, caseId);
 
         Document generalOrderDocument = caseDataDocumentService.renderDocument(
-            templateContentSupplier,
+            generalOrderTemplateContent.apply(caseDataCopy, caseId),
             caseId,
             DIVORCE_GENERAL_ORDER,
             caseDataCopy.getApplicant1().getLanguagePreference(),

@@ -17,7 +17,6 @@ import uk.gov.hmcts.divorce.document.content.DivorceApplicationSoleTemplateConte
 import java.time.Clock;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -76,9 +75,9 @@ class GenerateDivorceApplicationTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
-        final Supplier<Map<String, Object>> templateContentSupplier = HashMap::new;
+        final Map<String, Object> templateContent = new HashMap<>();
 
-        when(divorceApplicationSoleTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(templateContentSupplier);
+        when(divorceApplicationSoleTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(templateContent);
 
         final var result = generateDivorceApplication.apply(caseDetails);
 
@@ -86,7 +85,7 @@ class GenerateDivorceApplicationTest {
             .renderDocumentAndUpdateCaseData(
                 caseData,
                 APPLICATION,
-                templateContentSupplier,
+                templateContent,
                 TEST_CASE_ID,
                 DIVORCE_APPLICATION_SOLE,
                 ENGLISH,
@@ -116,9 +115,9 @@ class GenerateDivorceApplicationTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
-        final Supplier<Map<String, Object>> templateContentSupplier = HashMap::new;
+        final Map<String, Object> templateContent = new HashMap<>();
 
-        when(divorceApplicationJointTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(templateContentSupplier);
+        when(divorceApplicationJointTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(templateContent);
 
         final var result = generateDivorceApplication.apply(caseDetails);
 
@@ -126,7 +125,7 @@ class GenerateDivorceApplicationTest {
             .renderDocumentAndUpdateCaseData(
                 caseData,
                 APPLICATION,
-                templateContentSupplier,
+                templateContent,
                 TEST_CASE_ID,
                 DIVORCE_APPLICATION_JOINT,
                 ENGLISH,

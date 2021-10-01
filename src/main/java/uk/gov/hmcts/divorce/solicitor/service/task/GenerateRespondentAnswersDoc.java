@@ -11,8 +11,6 @@ import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.RespondentAnswersTemplateContent;
 
 import java.time.LocalDate;
-import java.util.Map;
-import java.util.function.Supplier;
 
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_ANSWERS_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_ANSWERS_TEMPLATE_ID;
@@ -35,14 +33,12 @@ public class GenerateRespondentAnswersDoc implements CaseTask {
         final CaseData caseData = caseDetails.getData();
         final LocalDate createdDate = caseDetails.getCreatedDate().toLocalDate();
 
-        final Supplier<Map<String, Object>> templateContentSupplier = templateContent.apply(caseData, caseId, createdDate);
-
         log.info("Generating respondent answers pdf for CaseID: {}", caseDetails.getId());
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
             RESPONDENT_ANSWERS,
-            templateContentSupplier,
+            templateContent.apply(caseData, caseId, createdDate),
             caseId,
             RESPONDENT_ANSWERS_TEMPLATE_ID,
             caseData.getApplicant1().getLanguagePreference(),

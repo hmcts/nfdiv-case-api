@@ -13,7 +13,6 @@ import uk.gov.hmcts.divorce.document.content.RespondentAnswersTemplateContent;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doNothing;
@@ -32,7 +31,7 @@ class GenerateRespondentAnswersDocTest {
     private CaseDataDocumentService caseDataDocumentService;
 
     @Mock
-    private RespondentAnswersTemplateContent templateContent;
+    private RespondentAnswersTemplateContent respondentAnswersTemplateContent;
 
     @InjectMocks
     private GenerateRespondentAnswersDoc generateRespondentAnswersDoc;
@@ -47,16 +46,16 @@ class GenerateRespondentAnswersDocTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE.atStartOfDay());
 
-        final Supplier<Map<String, Object>> templateContentSupplier = HashMap::new;
+        final Map<String, Object> templateContent = new HashMap<>();
 
-        when(templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE))
-            .thenReturn(templateContentSupplier);
+        when(respondentAnswersTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE))
+            .thenReturn(templateContent);
 
         doNothing()
             .when(caseDataDocumentService).renderDocumentAndUpdateCaseData(
                 caseData,
                 RESPONDENT_ANSWERS,
-                templateContentSupplier,
+                templateContent,
                 TEST_CASE_ID,
                 RESPONDENT_ANSWERS_TEMPLATE_ID,
                 caseData.getApplicant1().getLanguagePreference(),
@@ -69,7 +68,7 @@ class GenerateRespondentAnswersDocTest {
             .renderDocumentAndUpdateCaseData(
                 caseData,
                 RESPONDENT_ANSWERS,
-                templateContentSupplier,
+                templateContent,
                 TEST_CASE_ID,
                 RESPONDENT_ANSWERS_TEMPLATE_ID,
                 caseData.getApplicant1().getLanguagePreference(),

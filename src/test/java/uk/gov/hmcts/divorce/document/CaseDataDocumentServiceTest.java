@@ -16,7 +16,6 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -58,7 +57,7 @@ class CaseDataDocumentServiceTest {
 
         final var documentId = "123456";
         final CaseData caseData = caseData();
-        final Supplier<Map<String, Object>> templateContentSupplier = HashMap::new;
+        final Map<String, Object> templateContent = new HashMap<>();
         final User systemUser = mock(User.class);
         final String filename = DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME + TEST_CASE_ID;
 
@@ -66,7 +65,7 @@ class CaseDataDocumentServiceTest {
         when(systemUser.getAuthToken()).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(docAssemblyService
             .renderDocument(
-                templateContentSupplier,
+                templateContent,
                 TEST_CASE_ID,
                 TEST_AUTHORIZATION_TOKEN,
                 DIVORCE_DRAFT_APPLICATION,
@@ -79,7 +78,7 @@ class CaseDataDocumentServiceTest {
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
             EMAIL,
-            templateContentSupplier,
+            templateContent,
             TEST_CASE_ID,
             DIVORCE_DRAFT_APPLICATION,
             ENGLISH,
@@ -106,7 +105,7 @@ class CaseDataDocumentServiceTest {
     @Test
     void shouldGenerateAndReturnGeneralOrderDocument() {
 
-        final Supplier<Map<String, Object>> templateContentSupplier = HashMap::new;
+        final Map<String, Object> templateContent = new HashMap<>();
         final User systemUser = mock(User.class);
         final String filename = GENERAL_ORDER_PDF_FILENAME + TEST_CASE_ID;
 
@@ -114,7 +113,7 @@ class CaseDataDocumentServiceTest {
         when(systemUser.getAuthToken()).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(docAssemblyService
             .renderDocument(
-                templateContentSupplier,
+                templateContent,
                 TEST_CASE_ID,
                 TEST_AUTHORIZATION_TOKEN,
                 DIVORCE_GENERAL_ORDER,
@@ -123,7 +122,7 @@ class CaseDataDocumentServiceTest {
             .thenReturn(new DocumentInfo(DOC_URL, PDF_FILENAME, DOC_BINARY_URL));
 
         final Document result = caseDataDocumentService.renderDocument(
-            templateContentSupplier,
+            templateContent,
             TEST_CASE_ID,
             DIVORCE_GENERAL_ORDER,
             ENGLISH,

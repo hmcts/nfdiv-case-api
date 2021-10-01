@@ -17,7 +17,6 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mockStatic;
@@ -45,7 +44,7 @@ public class GenerateRespondentSolicitorAosInvitationTest {
     private CaseDataDocumentService caseDataDocumentService;
 
     @Mock
-    private RespondentSolicitorAosInvitationTemplateContent templateContent;
+    private RespondentSolicitorAosInvitationTemplateContent respondentSolicitorAosInvitationTemplateContent;
 
     @Mock
     private Clock clock;
@@ -66,12 +65,12 @@ public class GenerateRespondentSolicitorAosInvitationTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
-        final Supplier<Map<String, Object>> templateContentSupplier = HashMap::new;
+        final Map<String, Object> templateContent = new HashMap<>();
 
         MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
         classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
-        when(templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(templateContentSupplier);
+        when(respondentSolicitorAosInvitationTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(templateContent);
 
         final var result = generateRespondentSolicitorAosInvitation.apply(caseDetails);
 
@@ -81,7 +80,7 @@ public class GenerateRespondentSolicitorAosInvitationTest {
             .renderDocumentAndUpdateCaseData(
                 caseData,
                 RESPONDENT_INVITATION,
-                templateContentSupplier,
+                templateContent,
                 TEST_CASE_ID,
                 RESP_SOLICITOR_AOS_INVITATION,
                 ENGLISH,
@@ -104,6 +103,6 @@ public class GenerateRespondentSolicitorAosInvitationTest {
         final var result = generateRespondentSolicitorAosInvitation.apply(caseDetails);
 
         assertThat(result.getData()).isEqualTo(caseData);
-        verifyNoInteractions(templateContent, caseDataDocumentService);
+        verifyNoInteractions(respondentSolicitorAosInvitationTemplateContent, caseDataDocumentService);
     }
 }
