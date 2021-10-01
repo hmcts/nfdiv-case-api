@@ -59,6 +59,16 @@ public class SolicitorSubmitApplicationFT extends FunctionalTestSuite {
         );
     }
 
+    /**
+     * If this test fails please rerun the test as it will be most likely due to payments being made by
+     * other PR's/master build with same PBA number
+     * You will see an error message like below in your jenkins console
+     * Different value found in node "errors",
+     * expected: null
+     * but was: <["Payment request failed. Please try again after 2 minutes with a different Payment Account,
+     * or alternatively use a different payment method.
+     * For Payment Account support call 01633 652125 (Option 3) or email MiddleOffice.DDServices@liberata.com."]>.
+     **/
     @Test
     public void shouldChangeStateToSubmittedIfPaymentProcessed() throws Exception {
         CallbackRequest request = CallbackRequest
