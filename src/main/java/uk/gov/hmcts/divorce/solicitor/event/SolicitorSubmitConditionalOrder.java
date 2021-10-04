@@ -42,9 +42,9 @@ public class SolicitorSubmitConditionalOrder implements CCDConfig<CaseData, Stat
             .label("LabelConditionalOrderSoT-SoTStatement",
                 "The applicant believes that the facts stated in the application for a conditional order are true")
             .complex(CaseData::getConditionalOrder)
-                .mandatory(ConditionalOrder::getSotName)
-                .mandatory(ConditionalOrder::getSotFirm)
-                .optional(ConditionalOrder::getSotAdditionalComments)
+                .mandatory(ConditionalOrder::getSolicitorName)
+                .mandatory(ConditionalOrder::getSolicitorFirm)
+                .optional(ConditionalOrder::getSolicitorAdditionalComments)
                 .done();
     }
 }

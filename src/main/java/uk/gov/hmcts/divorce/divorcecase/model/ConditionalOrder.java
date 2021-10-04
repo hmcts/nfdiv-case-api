@@ -73,15 +73,15 @@ public class ConditionalOrder {
     @CCD(
         label = "Solicitor’s name"
     )
-    private String sotName;
+    private String solicitorName;
 
     @CCD(
         label = "Solicitor’s firm"
     )
-    private String sotFirm;
+    private String solicitorFirm;
 
     @CCD(
         label = "Additional comments"
     )
-    private String sotAdditionalComments;
+    private String solicitorAdditionalComments;
 }
