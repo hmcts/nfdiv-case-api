@@ -20,12 +20,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
+import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInformation;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
+import static java.util.Collections.singletonList;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -103,6 +105,7 @@ class SolicitorCreateApplicationIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Divorce application");
 
+        stubGetOrganisationEndpoint(getOrganisationResponseWith(TEST_ORG_ID));
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssembly();
@@ -197,6 +200,12 @@ class SolicitorCreateApplicationIT {
         return objectMapper.writeValueAsString(
             OrganisationsResponse.builder()
                 .organisationIdentifier(organisationId)
+                .contactInformation(singletonList(OrganisationContactInformation.builder()
+                    .addressLine1("Line 1")
+                    .addressLine2("Line 2")
+                    .townCity("Town")
+                    .postCode("WC1 2TG")
+                    .build()))
                 .build());
     }
 
@@ -208,7 +217,10 @@ class SolicitorCreateApplicationIT {
 
     private static CaseData caseDataWithApplicant1AndApplicant2Org() {
         CaseData caseData = caseData();
-        caseData.getApplicant1().setSolicitor(Solicitor.builder().organisationPolicy(organisationPolicy()).build());
+        caseData.getApplicant1().setSolicitor(Solicitor.builder()
+            .organisationPolicy(organisationPolicy())
+            .email("sol1@example.com")
+            .build());
         caseData.getApplicant2().setSolicitor(Solicitor.builder().organisationPolicy(organisationPolicy()).build());
         return caseData;
     }
