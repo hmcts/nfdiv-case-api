@@ -9,7 +9,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 
 import java.util.Map;
-import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
@@ -26,7 +25,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 @ExtendWith(MockitoExtension.class)
 public class RespondentAnswersTemplateContentTest {
     @InjectMocks
-    private RespondentAnswersTemplateContent templateContent;
+    private RespondentAnswersTemplateContent respondentAnswersTemplateContent;
 
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForRespondentAnswers() {
@@ -44,9 +43,9 @@ public class RespondentAnswersTemplateContentTest {
 
         caseData.getApplication().setMarriageDetails(marriageDetails);
 
-        Supplier<Map<String, Object>> templateContentSupplier = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
+        Map<String, Object> templateContent = respondentAnswersTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
 
-        assertThat(templateContentSupplier.get()).contains(
+        assertThat(templateContent).contains(
             entry(ISSUE_DATE, "28 April 2021"),
             entry(CCD_CASE_REFERENCE, TEST_CASE_ID),
             entry(APPLICANT_1_FULL_NAME, "app1fname app1lname"),

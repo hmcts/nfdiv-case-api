@@ -16,9 +16,6 @@ import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.CertificateOfServiceContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
-import java.util.Map;
-import java.util.function.Supplier;
-
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.IssuedToBailiff;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -75,8 +72,6 @@ public class CaseworkerIssueBailiffPack implements CCDConfig<CaseData, State, Us
 
         final Long caseId = details.getId();
 
-        final Supplier<Map<String, Object>> templateContentSupplier = certificateOfServiceContent.apply(caseDataCopy, caseId);
-
         log.info(
             "Generating certificate of service document for templateId : {} case and caseId: {}",
             CERTIFICATE_OF_SERVICE_TEMPLATE_ID,
@@ -84,7 +79,7 @@ public class CaseworkerIssueBailiffPack implements CCDConfig<CaseData, State, Us
         );
 
         var certificateOfServiceDoc = caseDataDocumentService.renderDocument(
-            templateContentSupplier,
+            certificateOfServiceContent.apply(caseDataCopy, caseId),
             caseId,
             CERTIFICATE_OF_SERVICE_TEMPLATE_ID,
             caseDataCopy.getApplicant1().getLanguagePreference(),

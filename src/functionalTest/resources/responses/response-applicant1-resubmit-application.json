@@ -66,6 +66,8 @@
     "marriageApplicant2Name":"Sarah Smith",
     "marriageApplicant1Name":"John Smith",
     "applicant1FinancialOrder": "No",
+    "applicant2ConfirmApplicant1Information": null,
+    "applicant2ExplainsApplicant1IncorrectInformation": null,
     "notes": [
       {
         "id": "1",

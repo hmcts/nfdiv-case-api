@@ -8,7 +8,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PETITIONER_FULL_NAME;
@@ -39,32 +38,29 @@ public class CertificateOfServiceContent {
     @Value("${court.locations.serviceCentre.phoneNumber}")
     private String phoneNumber;
 
-    public Supplier<Map<String, Object>> apply(final CaseData caseData,
-                                               final Long ccdCaseReference) {
+    public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
 
-        return () -> {
-            Map<String, Object> templateData = new HashMap<>();
+        final Map<String, Object> templateContent = new HashMap<>();
 
-            log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
+        log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
 
-            templateData.put(CASE_REFERENCE, ccdCaseReference);
-            templateData.put(PETITIONER_FULL_NAME, caseData.getApplication().getMarriageDetails().getApplicant1Name());
-            templateData.put(RESPONDENT_FULL_NAME, caseData.getApplication().getMarriageDetails().getApplicant2Name());
+        templateContent.put(CASE_REFERENCE, ccdCaseReference);
+        templateContent.put(PETITIONER_FULL_NAME, caseData.getApplication().getMarriageDetails().getApplicant1Name());
+        templateContent.put(RESPONDENT_FULL_NAME, caseData.getApplication().getMarriageDetails().getApplicant2Name());
 
-            var ctscContactDetails = CtscContactDetails
-                .builder()
-                .centreName(centreName)
-                .emailAddress(email)
-                .serviceCentre(serviceCentre)
-                .poBox(poBox)
-                .town(town)
-                .postcode(postcode)
-                .phoneNumber(phoneNumber)
-                .build();
+        final var ctscContactDetails = CtscContactDetails
+            .builder()
+            .centreName(centreName)
+            .emailAddress(email)
+            .serviceCentre(serviceCentre)
+            .poBox(poBox)
+            .town(town)
+            .postcode(postcode)
+            .phoneNumber(phoneNumber)
+            .build();
 
-            templateData.put("ctscContactDetails", ctscContactDetails);
+        templateContent.put("ctscContactDetails", ctscContactDetails);
 
-            return templateData;
-        };
+        return templateContent;
     }
 }

@@ -27,6 +27,7 @@ public final class NotificationConstants {
     public static final String THE_DIVORCE = "for the divorce";
     public static final String TO_END_CIVIL_PARTNERSHIP = "to end your civil partnership";
     public static final String FOR_DIVORCE = "for divorce";
+    public static final String REMINDER = "Reminder:";
     public static final String REMINDER_ACTION_REQUIRED = "Reminder/Action required";
     public static final String REMINDER_APPLICATION = "Reminder: application / Application ";
     public static final String REMINDER_APPLICATION_VALUE = "Reminder: application";

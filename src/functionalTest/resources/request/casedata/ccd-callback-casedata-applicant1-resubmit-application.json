@@ -21,6 +21,8 @@
   "applicant2StatementOfTruth": "YES",
   "applicant1HWFNeedHelp": "Yes",
   "applicant2HWFNeedHelp": "Yes",
+  "applicant2ConfirmApplicant1Information": "No",
+  "applicant2ExplainsApplicant1IncorrectInformation": "This information is incorrect.",
   "notes": [
     {
       "id": "1",

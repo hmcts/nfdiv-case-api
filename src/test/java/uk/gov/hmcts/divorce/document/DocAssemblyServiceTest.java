@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Supplier;
 
 import static feign.Request.HttpMethod.POST;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -68,7 +67,7 @@ public class DocAssemblyServiceTest {
     @Test
     public void shouldGenerateAndStoreDraftApplicationAndReturnDocumentUrl() {
 
-        Supplier<Map<String, Object>> templateContentSupplier = HashMap::new;
+        final Map<String, Object> templateContent = new HashMap<>();
         Map<String, Object> caseDataMap = expectedCaseData();
 
         when(docmosisTemplateProvider.templateNameFor(DIVORCE_DRAFT_APPLICATION, ENGLISH)).thenReturn(ENGLISH_TEMPLATE_ID);
@@ -95,7 +94,7 @@ public class DocAssemblyServiceTest {
         )).thenReturn(docAssemblyResponse);
 
         DocumentInfo documentInfo = docAssemblyService.renderDocument(
-            templateContentSupplier,
+            templateContent,
             TEST_CASE_ID,
             TEST_AUTHORIZATION_TOKEN,
             DIVORCE_DRAFT_APPLICATION,
@@ -119,7 +118,7 @@ public class DocAssemblyServiceTest {
     @Test
     public void shouldReturn401UnauthorizedExceptionWhenServiceIsNotWhitelistedInDocAssemblyService() {
 
-        Supplier<Map<String, Object>> templateContentSupplier = HashMap::new;
+        final Map<String, Object> templateContent = new HashMap<>();
         Map<String, Object> caseDataMap = expectedCaseData();
 
         byte[] emptyBody = {};
@@ -157,7 +156,7 @@ public class DocAssemblyServiceTest {
 
         assertThatThrownBy(() -> docAssemblyService
             .renderDocument(
-                templateContentSupplier,
+                templateContent,
                 TEST_CASE_ID,
                 TEST_AUTHORIZATION_TOKEN,
                 DIVORCE_DRAFT_APPLICATION,

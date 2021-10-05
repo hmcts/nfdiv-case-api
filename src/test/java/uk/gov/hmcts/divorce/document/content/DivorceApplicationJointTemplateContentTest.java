@@ -111,7 +111,7 @@ class DivorceApplicationJointTemplateContentTest {
         caseData.getApplication().getMarriageDetails().setApplicant1Name(TEST_LAST_NAME);
         caseData.getApplication().getMarriageDetails().setApplicant2Name(TEST_LAST_NAME);
 
-        final Map<String, Object> result = divorceApplicationJointTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE).get();
+        final Map<String, Object> result = divorceApplicationJointTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
 
         assertThat(result).contains(
             entry(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, "for a final order of divorce."),
@@ -185,7 +185,7 @@ class DivorceApplicationJointTemplateContentTest {
         caseData.getApplication().getMarriageDetails().setApplicant1Name(TEST_LAST_NAME);
         caseData.getApplication().getMarriageDetails().setApplicant2Name(TEST_LAST_NAME);
 
-        final Map<String, Object> result = divorceApplicationJointTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE).get();
+        final Map<String, Object> result = divorceApplicationJointTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
 
         assertThat(result).contains(
             entry(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, "for the dissolution of their civil partnership."),

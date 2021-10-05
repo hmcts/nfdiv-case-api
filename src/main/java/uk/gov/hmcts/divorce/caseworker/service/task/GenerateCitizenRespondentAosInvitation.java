@@ -13,8 +13,6 @@ import uk.gov.hmcts.divorce.document.content.CitizenRespondentAosInvitationTempl
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.function.Supplier;
 
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.divorcecase.util.AccessCodeGenerator.generateAccessCode;
@@ -50,12 +48,11 @@ public class GenerateCitizenRespondentAosInvitation implements CaseTask {
         if (caseDetails.getData().getApplication().isSolicitorApplication() && !caseData.getApplicant2().isRepresented()) {
 
             log.info("Generating citizen respondent AoS invitation for case id {} ", caseId);
-            final Supplier<Map<String, Object>> templateContentSupplier = templateContent.apply(caseData, caseId, createdDate);
 
             caseDataDocumentService.renderDocumentAndUpdateCaseData(
                 caseData,
                 RESPONDENT_INVITATION,
-                templateContentSupplier,
+                templateContent.apply(caseData, caseId, createdDate),
                 caseId,
                 CITIZEN_RESP_AOS_INVITATION,
                 caseData.getApplicant1().getLanguagePreference(),
