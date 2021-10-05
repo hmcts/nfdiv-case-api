@@ -19,6 +19,9 @@ public class SetDueDate implements CaseTask {
     @Value("${aos_pack.due_date_offset_days}")
     private long dueDateOffsetDays;
 
+    @Value("${case_progression.sole_issued_due_date}")
+    private long soleIssuedDueDate;
+
     @Value("${case_progression.holding_period_in_weeks}")
     private long holdingPeriodInWeeks;
 
@@ -31,7 +34,7 @@ public class SetDueDate implements CaseTask {
         log.info("Setting due date.  Case ID: {}", caseDetails.getId());
         if (!caseDetails.getData().getApplication().isSolicitorApplication()) {
             if (caseDetails.getData().getApplicationType().isSole()) {
-                caseDetails.getData().setDueDate(LocalDate.now(clock).plusDays(14));
+                caseDetails.getData().setDueDate(LocalDate.now(clock).plusDays(soleIssuedDueDate));
             } else {
                 caseDetails.getData().setDueDate(LocalDate.now(clock).plusWeeks(holdingPeriodInWeeks).plusDays(1));
             }

@@ -169,6 +169,7 @@ reissue:
 
 case_progression:
   holding_period_in_weeks: ${CASE_HOLDING_WEEKS:20}
+  sole_issued_due_date: ${SOLE_ISSUED_DUE_DATE_DAYS:14}
 
 court:
   locations:
