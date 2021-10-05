@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 
 @Data
 @AllArgsConstructor
@@ -81,7 +82,8 @@ public class ConditionalOrder {
     private String solicitorFirm;
 
     @CCD(
-        label = "Additional comments"
+        label = "Additional comments",
+        typeOverride = TextArea
     )
     private String solicitorAdditionalComments;
 }
