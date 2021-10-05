@@ -32,7 +32,7 @@ class SetDueDateTest {
 
     private static final long DUE_DATE_OFFSET_DAYS = 14L;
     private static final long HOLDING_PERIOD_IN_WEEKS = 20L;
-    private static final long SOLE_DUE_DATE = 14L;
+    private static final long SOLE_DUE_DATE_OFFSET_DAYS = 14L;
 
     @Mock
     private Clock clock;
@@ -44,7 +44,7 @@ class SetDueDateTest {
     void setPageSize() {
         ReflectionTestUtils.setField(setDueDate, "dueDateOffsetDays", DUE_DATE_OFFSET_DAYS);
         ReflectionTestUtils.setField(setDueDate, "holdingPeriodInWeeks", HOLDING_PERIOD_IN_WEEKS);
-        ReflectionTestUtils.setField(setDueDate, "soleIssuedDueDate", SOLE_DUE_DATE);
+        ReflectionTestUtils.setField(setDueDate, "soleDueDateOffsetDays", SOLE_DUE_DATE_OFFSET_DAYS);
     }
 
     @Test
