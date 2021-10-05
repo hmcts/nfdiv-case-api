@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 import uk.gov.hmcts.divorce.solicitor.service.task.DivorceApplicationDraft;
 import uk.gov.hmcts.divorce.solicitor.service.task.InitialiseSolicitorCreatedApplication;
+import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicant1SolicitorAddress;
 import uk.gov.hmcts.divorce.solicitor.service.task.SolicitorCourtDetails;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
@@ -55,6 +56,9 @@ class SolicitorCreateApplicationApplicationServiceTest {
     private DivorceApplicationDraft divorceApplicationDraft;
 
     @Mock
+    private SetApplicant1SolicitorAddress setApplicant1SolicitorAddress;
+
+    @Mock
     private OrganisationClient organisationClient;
 
     @Mock
@@ -74,6 +78,7 @@ class SolicitorCreateApplicationApplicationServiceTest {
 
         when(initialiseSolicitorCreatedApplication.apply(caseDetails)).thenReturn(caseDetails);
         when(solicitorCourtDetails.apply(caseDetails)).thenReturn(caseDetails);
+        when(setApplicant1SolicitorAddress.apply(caseDetails)).thenReturn(caseDetails);
         when(divorceApplicationDraft.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> result = solicitorCreateApplicationService.aboutToSubmit(caseDetails);
