@@ -21,6 +21,8 @@ import uk.gov.hmcts.divorce.payment.model.StatusHistoriesItem;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -277,7 +279,7 @@ public class PaymentService {
         var paymentItem = PaymentItem
             .builder()
             .ccdCaseNumber(String.valueOf(caseId))
-            .calculatedAmount(paymentTotal)
+            .calculatedAmount(penceToPounds(paymentTotal))
             .code(fee.getCode())
             .reference(reference)
             .version(fee.getVersion())
@@ -291,5 +293,11 @@ public class PaymentService {
         // We are always interested in the first fee. There may be a change in the future
         ListValue<Fee> feeItem = orderSummary.getFees().get(0);
         return feeItem.getValue();
+    }
+
+    private static String penceToPounds(final String pence) {
+        return NumberFormat.getNumberInstance().format(
+            new BigDecimal(pence).movePointLeft(2)
+        );
     }
 }
