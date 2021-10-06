@@ -150,7 +150,7 @@ public class PaymentService {
             .value(
                 Fee
                     .builder()
-                    .amount(getValueInPence(feeResponse.getAmount()))
+                    .amount(feeResponse.getAmount().toString())
                     .code(feeResponse.getFeeCode())
                     .description(feeResponse.getDescription())
                     .version(String.valueOf(feeResponse.getVersion()))
@@ -254,8 +254,7 @@ public class PaymentService {
         creditAccountPaymentRequest.setCcdCaseNumber(String.valueOf(caseId));
         creditAccountPaymentRequest.setSiteId(caseData.getSelectedDivorceCentreSiteId());
 
-        List<PaymentItem> paymentItemList =
-            populateFeesPaymentItems(caseData, caseId, orderSummary.getPaymentTotal(), fee, solicitor.getReference());
+        List<PaymentItem> paymentItemList = populateFeesPaymentItems(caseId, fee, solicitor.getReference());
 
         creditAccountPaymentRequest.setFees(paymentItemList);
 
@@ -266,22 +265,15 @@ public class PaymentService {
         return caseData.getApplication().getPbaNumbers().getValue().getLabel();
     }
 
-    private List<PaymentItem> populateFeesPaymentItems(
-        CaseData caseData,
-        Long caseId,
-        String paymentTotal,
-        Fee fee,
-        String reference
-    ) {
+    private List<PaymentItem> populateFeesPaymentItems(Long caseId, Fee fee, String reference) {
         var paymentItem = PaymentItem
             .builder()
             .ccdCaseNumber(String.valueOf(caseId))
-            .calculatedAmount(paymentTotal)
+            .calculatedAmount(fee.getAmount())
             .code(fee.getCode())
             .reference(reference)
             .version(fee.getVersion())
             .build();
-
 
         return singletonList(paymentItem);
     }

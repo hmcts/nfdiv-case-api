@@ -105,7 +105,7 @@ public class PaymentServiceTest {
         assertThat(orderSummary.getFees())
             .extracting("value", Fee.class)
             .extracting("description", "version", "code", "amount")
-            .contains(tuple(ISSUE_FEE, "1", FEE_CODE, "1000")
+            .contains(tuple(ISSUE_FEE, "1", FEE_CODE, "10.0")
             );
 
         verify(feesAndPaymentsClient)

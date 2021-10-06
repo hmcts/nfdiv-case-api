@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.ToString;
 
 import java.util.List;
-import java.util.Optional;
 
 @Data
 @ToString
@@ -45,11 +44,5 @@ public class CreditAccountPaymentRequest {
 
     @JsonProperty("organisation_name")
     private String organisationName;
-
-    public void setAmount(String amount) {
-        this.amount = Optional.ofNullable(amount)
-                .map(Double::parseDouble).map(i -> i / 100)
-                .map(String::valueOf).orElse(amount);
-    }
 
 }
