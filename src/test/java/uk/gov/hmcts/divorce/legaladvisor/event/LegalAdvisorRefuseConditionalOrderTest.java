@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.caseworker.event;
+package uk.gov.hmcts.divorce.legaladvisor.event;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,26 +9,27 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorGrantConditionalOrder;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.caseworker.event.LegalAdvisorRefuseConditionalOrder.LEGAL_ADVISOR_REFUSE_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorGrantConditionalOrder.LEGAL_ADVISOR_GRANT_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-class LegalAdvisorGrantConditionalOrderTest {
+class LegalAdvisorRefuseConditionalOrderTest {
     @InjectMocks
-    private LegalAdvisorRefuseConditionalOrder legalAdvisorRefuseConditionalOrder;
+    private LegalAdvisorGrantConditionalOrder legalAdvisorGrantConditionalOrder;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        legalAdvisorRefuseConditionalOrder.configure(configBuilder);
+        legalAdvisorGrantConditionalOrder.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(LEGAL_ADVISOR_REFUSE_CONDITIONAL_ORDER);
+            .contains(LEGAL_ADVISOR_GRANT_CONDITIONAL_ORDER);
     }
 
 }
