@@ -250,7 +250,7 @@ public class PaymentService {
         final Fee fee = getFeeValue(orderSummary);
         creditAccountPaymentRequest.setDescription(fee.getDescription());
 
-        creditAccountPaymentRequest.setAmount(orderSummary.getPaymentTotal());
+        creditAccountPaymentRequest.setAmount(fee.getAmount());
         creditAccountPaymentRequest.setCcdCaseNumber(String.valueOf(caseId));
         creditAccountPaymentRequest.setSiteId(caseData.getSelectedDivorceCentreSiteId());
 
