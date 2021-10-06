@@ -78,6 +78,11 @@ public class Application {
     @Builder.Default
     private SolicitorService solicitorService = new SolicitorService();
 
+    @CCD(access = {DefaultAccess.class})
+    @JsonUnwrapped(prefix = "altService")
+    @Builder.Default
+    private AlternativeService alternativeService = new AlternativeService();
+
     @JsonUnwrapped(prefix = "applicant1HWF")
     @CCD(access = {DefaultAccess.class})
     private HelpWithFees applicant1HelpWithFees;

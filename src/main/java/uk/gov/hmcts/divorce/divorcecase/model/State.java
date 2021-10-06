@@ -143,6 +143,13 @@ public enum State {
     AwaitingReissue("AwaitingReissue"),
 
     @CCD(
+        name = "Awaiting Service Consideration",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    AwaitingServiceConsideration("AwaitingServiceConsideration"),
+
+    @CCD(
         name = "Awaiting Service Payment",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
