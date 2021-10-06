@@ -65,7 +65,7 @@ public class ConditionalOrder {
     private YesOrNo addNewDocuments;
 
     @CCD(
-        label = "Documents uploaded at DN stage",
+        label = "Documents uploaded at CO stage",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument"
     )
