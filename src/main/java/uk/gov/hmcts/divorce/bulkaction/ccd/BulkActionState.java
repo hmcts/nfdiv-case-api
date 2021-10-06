@@ -3,17 +3,15 @@ package uk.gov.hmcts.divorce.bulkaction.ccd;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
-import uk.gov.hmcts.divorce.divorcecase.model.access.CaseAccessAdministrator;
 
 @RequiredArgsConstructor
 @Getter
 public enum BulkActionState {
 
     @CCD(
-        name = "BulkCase scheduled for create",
-        access = {CaseAccessAdministrator.class}
+        name = "Bulk case list created"
     )
-    ScheduledForCreate("ScheduledForCreate");
+    Created("Created");
 
     private final String name;
 }

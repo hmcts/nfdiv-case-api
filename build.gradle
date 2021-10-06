@@ -266,6 +266,9 @@ dependencies {
 
   implementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.5.0-prerelease'
 
+  implementation group: 'org.springframework.retry', name: 'spring-retry', version: '1.3.1'
+  implementation group: 'org.springframework', name: 'spring-aspects', version: '5.3.10'
+
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
   testImplementation libraries.junit5
@@ -321,7 +324,7 @@ bootRun {
     if (System.getenv("IDAM_API_BASEURL") == null) {
       println("Loading secrets from vault")
 
-      systemProperty 'IDAM_API_BASEURL', 'https://idam-api.aat.platform.hmcts.net'
+      systemProperty 'IDAM_API_BASEURL', 'http://localhost:5000'
 
       systemProperty 'UK_GOV_NOTIFY_API_KEY', getVaultSecret('uk-gov-notify-api-key')
       systemProperty 'S2S_SECRET', getVaultSecret('s2s-case-api-secret')

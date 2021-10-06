@@ -3,7 +3,10 @@ package uk.gov.hmcts.divorce.systemupdate.service;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
+import uk.gov.hmcts.divorce.bulkaction.ccd.event.CreateBulkList;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
@@ -46,30 +49,7 @@ public class CcdUpdateService {
         log.info("Submit event for Case ID: {}, Event ID: {}", caseId, eventId);
 
         try {
-            final StartEventResponse startEventResponse = coreCaseDataApi.startEventForCaseWorker(
-                authorization,
-                serviceAuth,
-                userId,
-                JURISDICTION,
-                CASE_TYPE,
-                caseId,
-                eventId);
-
-            final CaseDataContent caseDataContent = ccdCaseDataContentProvider.createCaseDataContent(
-                startEventResponse,
-                DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY,
-                DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION,
-                caseDetails.getData());
-
-            coreCaseDataApi.submitEventForCaseWorker(
-                authorization,
-                serviceAuth,
-                userId,
-                JURISDICTION,
-                CASE_TYPE,
-                caseId,
-                true,
-                caseDataContent);
+            startAndSubmitEventForCaseworkers(caseDetails, eventId, serviceAuth, caseId, userId, authorization);
         } catch (final FeignException e) {
 
             final String message = format("Submit Event Failed for Case ID: %s, Event ID: %s", caseId, eventId);
@@ -83,6 +63,72 @@ public class CcdUpdateService {
         }
     }
 
+    @Retryable(value = {FeignException.class, RuntimeException.class})
+    public void submitEventWithRetry(final CaseDetails caseDetails,
+                                     final String eventId,
+                                     final User user,
+                                     final String serviceAuth) {
+
+        final String caseId = caseDetails.getId().toString();
+        final String userId = user.getUserDetails().getId();
+        final String authorization = user.getAuthToken();
+
+        log.info("Submit event for Case ID: {}, Event ID: {}", caseId, eventId);
+
+        try {
+            startAndSubmitEventForCaseworkers(caseDetails, eventId, serviceAuth, caseId, userId, authorization);
+        } catch (final FeignException e) {
+
+            final String message = format("Submit Event Failed for Case ID: %s, Event ID: %s", caseId, eventId);
+            log.info(message, e);
+
+            if (e.status() == CONFLICT.value()) {
+                throw new CcdConflictException(message, e);
+            }
+            throw new CcdManagementException(message, e);
+        }
+    }
+
+    public CaseDetails createBulkCase(final CaseDetails caseDetails,
+                                      final User user,
+                                      final String serviceAuth) {
+
+        final String userId = user.getUserDetails().getId();
+        final String authorization = user.getAuthToken();
+
+        CaseDetails bulkListCaseDetails = null;
+        try {
+
+            final StartEventResponse startEventResponse = coreCaseDataApi.startForCaseworker(
+                authorization,
+                serviceAuth,
+                userId,
+                JURISDICTION,
+                BulkActionCaseTypeConfig.CASE_TYPE,
+                CreateBulkList.CREATE_BULK_LIST
+            );
+
+            final CaseDataContent caseDataContent = ccdCaseDataContentProvider.createCaseDataContent(
+                startEventResponse,
+                DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY,
+                DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION,
+                caseDetails.getData());
+
+            bulkListCaseDetails = coreCaseDataApi.submitForCaseworker(
+                authorization,
+                serviceAuth,
+                userId,
+                JURISDICTION,
+                BulkActionCaseTypeConfig.CASE_TYPE,
+                true,
+                caseDataContent
+            );
+        } catch (final FeignException e) {
+            throw new CcdManagementException("Bulk case creation failed", e);
+        }
+        return bulkListCaseDetails;
+    }
+
     public void submitEvent(final uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails,
                             final String eventId,
                             final User user,
@@ -90,4 +136,37 @@ public class CcdUpdateService {
 
         submitEvent(caseDetailsConverter.convertToReformModel(caseDetails), eventId, user, serviceAuth);
     }
+
+    private void startAndSubmitEventForCaseworkers(final CaseDetails caseDetails,
+                                                   final String eventId,
+                                                   final String serviceAuth,
+                                                   final String caseId,
+                                                   final String userId,
+                                                   final String authorization) {
+        final StartEventResponse startEventResponse = coreCaseDataApi.startEventForCaseWorker(
+            authorization,
+            serviceAuth,
+            userId,
+            JURISDICTION,
+            CASE_TYPE,
+            caseId,
+            eventId);
+
+        final CaseDataContent caseDataContent = ccdCaseDataContentProvider.createCaseDataContent(
+            startEventResponse,
+            DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY,
+            DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION,
+            caseDetails.getData());
+
+        coreCaseDataApi.submitEventForCaseWorker(
+            authorization,
+            serviceAuth,
+            userId,
+            JURISDICTION,
+            CASE_TYPE,
+            caseId,
+            true,
+            caseDataContent);
+    }
+
 }
