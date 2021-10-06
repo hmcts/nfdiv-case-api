@@ -65,7 +65,7 @@ public class ConditionalOrder {
     private YesOrNo addNewDocuments;
 
     @CCD(
-        label = "Documents uploaded at DN stage",
+        label = "Documents uploaded at CO stage",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument"
     )
@@ -86,4 +86,20 @@ public class ConditionalOrder {
         typeOverride = TextArea
     )
     private String solicitorAdditionalComments;
+
+    @CCD(
+        label = "Grant Conditional Order?"
+    )
+    private YesOrNo granted;
+
+    @CCD(
+        label = "Grant Cost Order?"
+    )
+    private YesOrNo claimsGranted;
+
+    @CCD(
+        label = "Make costs order information",
+        typeOverride = TextArea
+    )
+    private String claimsCostsOrderInformation;
 }
