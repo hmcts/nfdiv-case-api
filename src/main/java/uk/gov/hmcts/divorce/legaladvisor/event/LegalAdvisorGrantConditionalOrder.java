@@ -39,13 +39,13 @@ public class LegalAdvisorGrantConditionalOrder implements CCDConfig<CaseData, St
                 CASE_WORKER,
                 SUPER_USER,
                 APPLICANT_1_SOLICITOR))
-            .page("GrantConditionalOrder")
+            .page("grantConditionalOrder")
             .pageLabel("Grant Conditional Order")
             .complex(CaseData::getConditionalOrder)
                 .mandatory(ConditionalOrder::getGranted)
                 .mandatory(ConditionalOrder::getClaimsGranted, "coGranted=\"Yes\"")
                 .done()
-            .page("ConditionalOrderMakeCostsOrder")
+            .page("conditionalOrderMakeCostsOrder")
             .pageLabel("Make a costs order")
             .showCondition("coClaimsGranted=\"Yes\"")
             .complex(CaseData::getConditionalOrder)
