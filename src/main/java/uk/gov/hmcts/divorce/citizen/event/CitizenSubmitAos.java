@@ -16,8 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.*;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.*;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingDispute;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Slf4j
@@ -63,7 +65,7 @@ public class CitizenSubmitAos implements CCDConfig<CaseData, State, UserRole> {
                 .build();
         }
 
-        state = data.getAcknowledgementOfService().getPrayerHasBeenGiven() == YesOrNo.YES ? PendingDispute : Holding;
+        state = data.getAcknowledgementOfService().getDisputeApplication() == YesOrNo.YES ? PendingDispute : Holding;
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)

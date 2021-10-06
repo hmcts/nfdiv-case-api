@@ -68,7 +68,7 @@ class CitizenSubmitAosTest {
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .statementOfTruth(YES)
-            .prayerHasBeenGiven(YES)
+            .disputeApplication(YES)
             .confirmReadPetition(YES)
             .build();
 
@@ -89,7 +89,7 @@ class CitizenSubmitAosTest {
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .statementOfTruth(YES)
-            .prayerHasBeenGiven(NO)
+            .disputeApplication(NO)
             .confirmReadPetition(YES)
             .build();
 
