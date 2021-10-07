@@ -22,6 +22,7 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateBulkCaseReference.SYSTEM_UPDATE_BULK_CASE_REFERENCE;
 
@@ -29,7 +30,7 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateBulkCaseRefere
 @Slf4j
 public class SystemCreateBulkCaseListTask implements Runnable {
 
-    @Value("${bulk-action.min-cases:1}")
+    @Value("${bulk-action.min-cases}")
     private int minimumCasesToProcess;
 
     @Autowired
@@ -70,9 +71,13 @@ public class SystemCreateBulkCaseListTask implements Runnable {
 
                 CaseDetails caseDetailsBulkCase = ccdUpdateService.createBulkCase(bulkActionCaseDetails, user, serviceAuth);
 
-                Long bulkListCaseId = caseDetailsBulkCase.getId();
-
-                updateCasesWithBulkListingCaseId(casesAwaitingPronouncement, bulkListCaseId, user, serviceAuth);
+                updateCasesWithBulkListingCaseId(
+                    casesAwaitingPronouncement,
+                    retrieveCaseIds(bulkListCaseDetails),
+                    caseDetailsBulkCase.getId(),
+                    user,
+                    serviceAuth
+                );
 
             } else {
                 log.info("Number of cases do not reach the minimum for awaiting pronouncement processing,"
@@ -87,14 +92,30 @@ public class SystemCreateBulkCaseListTask implements Runnable {
         }
     }
 
+    private List<Long> retrieveCaseIds(List<ListValue<BulkListCaseDetails>> bulkListCaseDetails) {
+        return bulkListCaseDetails
+            .stream()
+            .map(lv -> {
+                CaseLink caseLink = lv.getValue().getCaseReference();
+                return Long.valueOf(caseLink.getCaseReference());
+            })
+            .collect(Collectors.toList());
+    }
+
     private void updateCasesWithBulkListingCaseId(final List<CaseDetails> casesAwaitingPronouncement,
+                                                  final List<Long> bulkListCaseIds,
                                                   final Long bulkListCaseId,
                                                   final User user,
                                                   final String serviceAuth) {
         for (CaseDetails caseDetails : casesAwaitingPronouncement) {
             try {
-                caseDetails.getData().put("bulkListCaseReference", String.valueOf(bulkListCaseId));
-                ccdUpdateService.submitEventWithRetry(caseDetails, SYSTEM_UPDATE_BULK_CASE_REFERENCE, user, serviceAuth);
+                if (bulkListCaseIds.contains(caseDetails.getId())) {
+                    caseDetails.getData().put("bulkListCaseReference", String.valueOf(bulkListCaseId));
+                    ccdUpdateService.submitEventWithRetry(caseDetails, SYSTEM_UPDATE_BULK_CASE_REFERENCE, user, serviceAuth);
+                    log.info("Successfully updated case id {} with bulk case id {} ", caseDetails.getId(), bulkListCaseId);
+                } else {
+                    log.info("Case id {} was not added to bulk list due to some failure hence skipping update ", caseDetails.getId());
+                }
             } catch (final CcdManagementException e) {
                 log.error("Updating case with bulk action case reference {} failed for case id {} ", bulkListCaseId, caseDetails.getId());
             }

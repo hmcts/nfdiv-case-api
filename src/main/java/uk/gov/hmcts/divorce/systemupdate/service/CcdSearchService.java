@@ -4,7 +4,6 @@ import feign.FeignException;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,7 +34,7 @@ public class CcdSearchService {
     @Value("${core_case_data.search.page_size}")
     private int pageSize;
 
-    @Value("${bulk-action.page-size:50}")
+    @Value("${bulk-action.page-size}")
     @Setter
     private int bulkActionPageSize;
 
@@ -112,17 +111,15 @@ public class CcdSearchService {
 
         final List<CaseDetails> allCaseDetails = new ArrayList<>();
         Set<Long> processedCaseIds = new HashSet<>();
-        List<SearchResult> searchResultList = new ArrayList<>();
 
         try {
             int from = 0;
             int totalSearch;
             do {
-                QueryBuilder stateQuery = QueryBuilders.matchQuery("state", "AwaitingPronouncement");
-                QueryBuilder bulkListingCaseId = QueryBuilders.existsQuery("data.bulkListingCaseId");
+                QueryBuilder stateQuery = matchQuery("state", "AwaitingPronouncement");
+                QueryBuilder bulkListingCaseId = existsQuery("data.bulkListingCaseId");
 
-                QueryBuilder query = QueryBuilders
-                    .boolQuery()
+                QueryBuilder query = boolQuery()
                     .must(stateQuery)
                     .mustNot(bulkListingCaseId);
 
@@ -154,8 +151,7 @@ public class CcdSearchService {
                 if (!result.getCases().isEmpty()) {
                     allCaseDetails.addAll(result.getCases());
                 }
-            }
-            while (from < totalSearch);
+            } while (from < totalSearch);
         } catch (final FeignException e) {
             final String message = "Failed to complete search for Cases with state of AwaitingPronouncement";
             log.info(message, e);

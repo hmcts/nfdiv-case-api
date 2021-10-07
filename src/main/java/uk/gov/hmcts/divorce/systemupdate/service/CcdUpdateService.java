@@ -63,6 +63,14 @@ public class CcdUpdateService {
         }
     }
 
+    public void submitEvent(final uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails,
+                            final String eventId,
+                            final User user,
+                            final String serviceAuth) {
+
+        submitEvent(caseDetailsConverter.convertToReformModel(caseDetails), eventId, user, serviceAuth);
+    }
+
     @Retryable(value = {FeignException.class, RuntimeException.class})
     public void submitEventWithRetry(final CaseDetails caseDetails,
                                      final String eventId,
@@ -127,14 +135,6 @@ public class CcdUpdateService {
             throw new CcdManagementException("Bulk case creation failed", e);
         }
         return bulkListCaseDetails;
-    }
-
-    public void submitEvent(final uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails,
-                            final String eventId,
-                            final User user,
-                            final String serviceAuth) {
-
-        submitEvent(caseDetailsConverter.convertToReformModel(caseDetails), eventId, user, serviceAuth);
     }
 
     private void startAndSubmitEventForCaseworkers(final CaseDetails caseDetails,
