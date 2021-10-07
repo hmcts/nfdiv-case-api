@@ -13,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -50,7 +51,7 @@ public class ConditionalOrder {
     @CCD(
         label = "Do you need to change your application or add anything?",
         hint = "If you change or add anything which means your application has to be sent to your "
-                + "husband/wife again you may have to pay a £95 fee"
+            + "husband/wife again you may have to pay a £95 fee"
     )
     private YesOrNo changeOrAddToApplication;
 
@@ -102,4 +103,10 @@ public class ConditionalOrder {
         typeOverride = TextArea
     )
     private String claimsCostsOrderInformation;
+
+    @CCD(
+        label = "Legal advisor decision date"
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate decisionDate;
 }
