@@ -207,6 +207,12 @@ public class CaseData {
     )
     private String note;
 
+    @CCD(
+        label = "Bulk list case reference",
+        access = {CaseworkerAndSuperUserAccess.class}
+    )
+    private String bulkListCaseReference;
+
     @CCD(access = {DefaultAccess.class})
     @JsonUnwrapped
     private RetiredFields retiredFields;

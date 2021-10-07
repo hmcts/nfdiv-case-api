@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdCreateService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
@@ -48,6 +49,9 @@ public class SystemCreateBulkCaseListTaskTest {
 
     @Mock
     private CcdUpdateService ccdUpdateService;
+
+    @Mock
+    private CcdCreateService ccdCreateService;
 
     @Mock
     private ObjectMapper mapper;
@@ -121,7 +125,7 @@ public class SystemCreateBulkCaseListTaskTest {
 
         CaseDetails caseDetailsBulkCase = CaseDetails.builder().id(3L).build();
 
-        when(ccdUpdateService.createBulkCase(bulkActionCaseDetails, user, SERVICE_AUTHORIZATION))
+        when(ccdCreateService.createBulkCase(bulkActionCaseDetails, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsBulkCase);
 
         doNothing().when(ccdUpdateService)
@@ -133,7 +137,7 @@ public class SystemCreateBulkCaseListTaskTest {
         systemCreateBulkCaseListTask.run();
 
         verify(ccdSearchService).searchAwaitingPronouncementCases(user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).createBulkCase(bulkActionCaseDetails, user, SERVICE_AUTHORIZATION);
+        verify(ccdCreateService).createBulkCase(bulkActionCaseDetails, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService)
             .submitEventWithRetry(caseDetails1, SYSTEM_UPDATE_BULK_CASE_REFERENCE, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService)
@@ -209,7 +213,7 @@ public class SystemCreateBulkCaseListTaskTest {
 
         CaseDetails caseDetailsBulkCase = CaseDetails.builder().id(3L).build();
 
-        when(ccdUpdateService.createBulkCase(bulkActionCaseDetails, user, SERVICE_AUTHORIZATION))
+        when(ccdCreateService.createBulkCase(bulkActionCaseDetails, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsBulkCase);
 
         doThrow(new CcdManagementException("some exception", mock(FeignException.class))).when(ccdUpdateService)
@@ -221,7 +225,7 @@ public class SystemCreateBulkCaseListTaskTest {
         systemCreateBulkCaseListTask.run();
 
         verify(ccdSearchService).searchAwaitingPronouncementCases(user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).createBulkCase(bulkActionCaseDetails, user, SERVICE_AUTHORIZATION);
+        verify(ccdCreateService).createBulkCase(bulkActionCaseDetails, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService)
             .submitEventWithRetry(caseDetails2, SYSTEM_UPDATE_BULK_CASE_REFERENCE, user, SERVICE_AUTHORIZATION);
 
@@ -276,7 +280,7 @@ public class SystemCreateBulkCaseListTaskTest {
 
         CaseDetails caseDetailsBulkCase = CaseDetails.builder().id(3L).build();
 
-        when(ccdUpdateService.createBulkCase(bulkActionCaseDetails, user, SERVICE_AUTHORIZATION))
+        when(ccdCreateService.createBulkCase(bulkActionCaseDetails, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsBulkCase);
 
         doNothing().when(ccdUpdateService)
@@ -285,7 +289,7 @@ public class SystemCreateBulkCaseListTaskTest {
         systemCreateBulkCaseListTask.run();
 
         verify(ccdSearchService).searchAwaitingPronouncementCases(user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).createBulkCase(bulkActionCaseDetails, user, SERVICE_AUTHORIZATION);
+        verify(ccdCreateService).createBulkCase(bulkActionCaseDetails, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService)
             .submitEventWithRetry(caseDetails2, SYSTEM_UPDATE_BULK_CASE_REFERENCE, user, SERVICE_AUTHORIZATION);
 
@@ -339,7 +343,7 @@ public class SystemCreateBulkCaseListTaskTest {
         CaseDetails caseDetailsBulkCase = CaseDetails.builder().id(3L).build();
 
         doThrow(new CcdManagementException("some exception", mock(FeignException.class)))
-            .when(ccdUpdateService).createBulkCase(bulkActionCaseDetails, user, SERVICE_AUTHORIZATION);
+            .when(ccdCreateService).createBulkCase(bulkActionCaseDetails, user, SERVICE_AUTHORIZATION);
 
         systemCreateBulkCaseListTask.run();
 

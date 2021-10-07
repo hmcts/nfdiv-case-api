@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdCreateService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
@@ -35,6 +36,9 @@ public class SystemCreateBulkCaseListTask implements Runnable {
 
     @Autowired
     private CcdUpdateService ccdUpdateService;
+
+    @Autowired
+    private CcdCreateService ccdCreateService;
 
     @Autowired
     private CcdSearchService ccdSearchService;
@@ -69,7 +73,7 @@ public class SystemCreateBulkCaseListTask implements Runnable {
                         .data(Map.of("bulkListCaseDetails", bulkListCaseDetails))
                         .build();
 
-                CaseDetails caseDetailsBulkCase = ccdUpdateService.createBulkCase(bulkActionCaseDetails, user, serviceAuth);
+                CaseDetails caseDetailsBulkCase = ccdCreateService.createBulkCase(bulkActionCaseDetails, user, serviceAuth);
 
                 updateCasesWithBulkListingCaseId(
                     casesAwaitingPronouncement,
@@ -122,7 +126,7 @@ public class SystemCreateBulkCaseListTask implements Runnable {
         }
     }
 
-    private List<ListValue<BulkListCaseDetails>> createBulkCaseListDetails(List<CaseDetails> casesAwaitingPronouncement) {
+    private List<ListValue<BulkListCaseDetails>> createBulkCaseListDetails(final List<CaseDetails> casesAwaitingPronouncement) {
         List<ListValue<BulkListCaseDetails>> bulkListCaseDetails = new ArrayList<>();
 
         for (final CaseDetails caseDetails : casesAwaitingPronouncement) {
