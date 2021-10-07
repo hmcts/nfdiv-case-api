@@ -142,6 +142,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("receivedServiceApplicationDate")
             .field("alternativeServiceType")
             .field("receivedServiceAddedDate")
+            .field("serviceApplicationDecisionDate")
             .field("dateOfPayment")
             .field("paymentMethod")
             .field("feeAccountNumber", "paymentMethod=\"feePayByAccount\"")

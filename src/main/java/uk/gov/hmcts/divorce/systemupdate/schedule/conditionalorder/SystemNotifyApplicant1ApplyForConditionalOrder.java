@@ -60,7 +60,7 @@ public class SystemNotifyApplicant1ApplyForConditionalOrder implements Runnable 
             for (final CaseDetails caseDetails : casesInAwaitingApplicant2Response) {
                 try {
                     final CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
-                    final LocalDate canApplyForConditionalOrderFrom = caseData.getApplication().getIssueDate().plusWeeks(TWENTY_WEEKS);
+                    final LocalDate canApplyForConditionalOrderFrom = caseData.getDueDate().plusWeeks(TWENTY_WEEKS);
 
                     if (!canApplyForConditionalOrderFrom.isAfter(LocalDate.now())
                         && !caseData.getApplication().hasApplicant1BeenNotifiedCanApplyForConditionalOrder()
@@ -86,7 +86,7 @@ public class SystemNotifyApplicant1ApplyForConditionalOrder implements Runnable 
 
     private void notifyApplicant1(CaseDetails caseDetails, CaseData caseData, User user, String serviceAuth) {
         log.info(
-            "20 weeks has passed since issue date for Case id {} - notifying Applicant 1 that they can apply for a Conditional Order",
+            "20 weeks has passed since due date for Case id {} - notifying Applicant 1 that they can apply for a Conditional Order",
             caseDetails.getId());
 
         applicant1ApplyForConditionalOrderNotification.sendToApplicant1(caseData, caseDetails.getId());

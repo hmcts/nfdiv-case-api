@@ -7,8 +7,10 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
@@ -69,11 +71,40 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
         );
 
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
-        data.setCaseInvite(null);
+        removeApplicant2AnswersFromCase(data);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
             .state(Draft)
             .build();
+    }
+
+    private CaseData removeApplicant2AnswersFromCase(CaseData caseData) {
+        Applicant applicant2Existing = caseData.getApplicant2();
+        Applicant applicant2 = Applicant.builder()
+            .firstName(applicant2Existing.getFirstName())
+            .middleName(applicant2Existing.getMiddleName())
+            .lastName(applicant2Existing.getLastName())
+            .gender(applicant2Existing.getGender())
+            .homeAddress(applicant2Existing.isConfidentialContactDetails() ? null : applicant2Existing.getHomeAddress())
+            .build();
+        caseData.setApplicant2(applicant2);
+
+        CaseInvite caseInvite = caseData.getCaseInvite();
+        caseData.setCaseInvite(CaseInvite.builder()
+            .applicant2InviteEmailAddress(caseInvite.getApplicant2InviteEmailAddress())
+            .build());
+
+        caseData.setApplicant2DocumentsUploaded(null);
+        caseData.getApplication().setApplicant2ScreenHasMarriageBroken(null);
+        caseData.getApplication().setApplicant2HelpWithFees(null);
+        caseData.getApplication().setApplicant2StatementOfTruth(null);
+        caseData.getApplication().setApplicant2AgreeToReceiveEmails(null);
+        caseData.getApplication().setApplicant2CannotUploadSupportingDocument(null);
+        caseData.getApplication().setApplicant2ConfirmApplicant1Information(null);
+        caseData.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation(null);
+        caseData.getApplication().setApplicant2ReminderSent(null);
+
+        return caseData;
     }
 }

@@ -23,7 +23,6 @@ import java.time.Month;
 import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -64,9 +63,9 @@ public class CreateGeneralOrderTest {
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.NO);
         caseData.setGeneralOrder(getGeneralOrder());
 
-        final Supplier<Map<String, Object>> templateContentSupplier = HashMap::new;
+        final Map<String, Object> templateContent = new HashMap<>();
 
-        when(generalOrderTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContentSupplier);
+        when(generalOrderTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
         String documentUrl = "http://localhost:8080/4567";
         Document generalOrderDocument = new Document(
@@ -77,7 +76,7 @@ public class CreateGeneralOrderTest {
 
         when(
             caseDataDocumentService.renderDocument(
-                templateContentSupplier,
+                templateContent,
                 TEST_CASE_ID,
                 DIVORCE_GENERAL_ORDER,
                 ENGLISH,
@@ -98,7 +97,7 @@ public class CreateGeneralOrderTest {
 
         verify(generalOrderTemplateContent).apply(caseData, TEST_CASE_ID);
         verify(caseDataDocumentService).renderDocument(
-            templateContentSupplier,
+            templateContent,
             TEST_CASE_ID,
             DIVORCE_GENERAL_ORDER,
             ENGLISH,

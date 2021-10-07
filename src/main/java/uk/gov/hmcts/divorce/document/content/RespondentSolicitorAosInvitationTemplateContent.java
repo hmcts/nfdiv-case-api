@@ -8,7 +8,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -32,43 +31,42 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 @Slf4j
 public class RespondentSolicitorAosInvitationTemplateContent {
 
-    public Supplier<Map<String, Object>> apply(final CaseData caseData,
-                                               final Long ccdCaseReference,
-                                               final LocalDate createdDate) {
+    public Map<String, Object> apply(final CaseData caseData,
+                                     final Long ccdCaseReference,
+                                     final LocalDate createdDate) {
 
-        return () -> {
-            Map<String, Object> templateData = new HashMap<>();
+        Map<String, Object> templateContent = new HashMap<>();
 
-            log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
+        log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
 
-            templateData.put(CCD_CASE_REFERENCE, ccdCaseReference);
-            templateData.put(ISSUE_DATE, createdDate.format(DATE_TIME_FORMATTER));
+        templateContent.put(CCD_CASE_REFERENCE, ccdCaseReference);
+        templateContent.put(ISSUE_DATE, createdDate.format(DATE_TIME_FORMATTER));
 
-            templateData.put(APPLICANT_1_FIRST_NAME, caseData.getApplicant1().getFirstName());
-            templateData.put(APPLICANT_1_MIDDLE_NAME, caseData.getApplicant1().getMiddleName());
-            templateData.put(APPLICANT_1_LAST_NAME, caseData.getApplicant1().getLastName());
+        templateContent.put(APPLICANT_1_FIRST_NAME, caseData.getApplicant1().getFirstName());
+        templateContent.put(APPLICANT_1_MIDDLE_NAME, caseData.getApplicant1().getMiddleName());
+        templateContent.put(APPLICANT_1_LAST_NAME, caseData.getApplicant1().getLastName());
 
-            templateData.put(APPLICANT_2_FIRST_NAME, caseData.getApplicant2().getFirstName());
-            templateData.put(APPLICANT_2_MIDDLE_NAME, caseData.getApplicant2().getMiddleName());
-            templateData.put(APPLICANT_2_LAST_NAME, caseData.getApplicant2().getLastName());
+        templateContent.put(APPLICANT_2_FIRST_NAME, caseData.getApplicant2().getFirstName());
+        templateContent.put(APPLICANT_2_MIDDLE_NAME, caseData.getApplicant2().getMiddleName());
+        templateContent.put(APPLICANT_2_LAST_NAME, caseData.getApplicant2().getLastName());
 
-            templateData.put(APPLICANT_1_FULL_NAME, caseData.getApplication().getMarriageDetails().getApplicant1Name());
-            templateData.put(APPLICANT_2_FULL_NAME, caseData.getApplication().getMarriageDetails().getApplicant2Name());
+        templateContent.put(APPLICANT_1_FULL_NAME, caseData.getApplication().getMarriageDetails().getApplicant1Name());
+        templateContent.put(APPLICANT_2_FULL_NAME, caseData.getApplication().getMarriageDetails().getApplicant2Name());
 
-            templateData.put(MARRIAGE_DATE,
-                ofNullable(caseData.getApplication().getMarriageDetails().getDate())
-                    .map(marriageDate -> marriageDate.format(DATE_TIME_FORMATTER))
-                    .orElse(null));
+        templateContent.put(MARRIAGE_DATE,
+            ofNullable(caseData.getApplication().getMarriageDetails().getDate())
+                .map(marriageDate -> marriageDate.format(DATE_TIME_FORMATTER))
+                .orElse(null));
 
 
-            String applicant2PostalAddress;
-            AddressGlobalUK applicant2HomeAddress = caseData.getApplicant2().getHomeAddress();
+        String applicant2PostalAddress;
+        AddressGlobalUK applicant2HomeAddress = caseData.getApplicant2().getHomeAddress();
 
-            if (applicant2HomeAddress == null) {
-                applicant2PostalAddress = caseData.getApplicant2().getSolicitor().getAddress();
-            } else {
-                applicant2PostalAddress =
-                    Stream.of(
+        if (applicant2HomeAddress == null) {
+            applicant2PostalAddress = caseData.getApplicant2().getSolicitor().getAddress();
+        } else {
+            applicant2PostalAddress =
+                Stream.of(
                         applicant2HomeAddress.getAddressLine1(),
                         applicant2HomeAddress.getAddressLine2(),
                         applicant2HomeAddress.getAddressLine3(),
@@ -77,13 +75,12 @@ public class RespondentSolicitorAosInvitationTemplateContent {
                         applicant2HomeAddress.getPostCode(),
                         applicant2HomeAddress.getCountry()
                     )
-                        .filter(value -> value != null && !value.isEmpty())
-                        .collect(Collectors.joining("\n"));
-            }
-            templateData.put(APPLICANT_2_POSTAL_ADDRESS, applicant2PostalAddress);
+                    .filter(value -> value != null && !value.isEmpty())
+                    .collect(Collectors.joining("\n"));
+        }
+        templateContent.put(APPLICANT_2_POSTAL_ADDRESS, applicant2PostalAddress);
 
-            templateData.put(ACCESS_CODE, caseData.getCaseInvite().getAccessCode());
-            return templateData;
-        };
+        templateContent.put(ACCESS_CODE, caseData.getCaseInvite().getAccessCode());
+        return templateContent;
     }
 }

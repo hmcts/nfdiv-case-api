@@ -9,7 +9,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.FinancialOrderFor;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -54,72 +53,71 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 @Slf4j
 public class DraftApplicationTemplateContent {
 
-    public Supplier<Map<String, Object>> apply(final CaseData caseData,
-                                               final Long ccdCaseReference,
-                                               final LocalDate createdDate) {
+    public Map<String, Object> apply(final CaseData caseData,
+                                     final Long ccdCaseReference,
+                                     final LocalDate createdDate) {
 
-        return () -> {
-            final var application = caseData.getApplication();
-            final var applicant1 = caseData.getApplicant1();
-            final var applicant2 = caseData.getApplicant2();
-            final Map<String, Object> templateData = new HashMap<>();
+        final var application = caseData.getApplication();
+        final var applicant1 = caseData.getApplicant1();
+        final var applicant2 = caseData.getApplicant2();
+        final Map<String, Object> templateContent = new HashMap<>();
 
-            log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
+        log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
 
-            if (caseData.getDivorceOrDissolution().isDivorce()) {
-                templateData.put(DIVORCE_OR_DISSOLUTION, FOR_A_DIVORCE);
-                templateData.put(MARRIAGE_OR_RELATIONSHIP, MARRIAGE);
-                templateData.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE);
-                templateData.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, OF_THE_DIVORCE);
-                templateData.put(FINANCIAL_ORDER_OR_DISSOLUTION, CONDITIONAL_ORDER_OF_DIVORCE_FROM);
-                templateData.put(DIVORCE_OR_DISSOLUTION_COST, DIVORCE_COSTS);
+        if (caseData.getDivorceOrDissolution().isDivorce()) {
+            templateContent.put(DIVORCE_OR_DISSOLUTION, FOR_A_DIVORCE);
+            templateContent.put(MARRIAGE_OR_RELATIONSHIP, MARRIAGE);
+            templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE);
+            templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, OF_THE_DIVORCE);
+            templateContent.put(FINANCIAL_ORDER_OR_DISSOLUTION, CONDITIONAL_ORDER_OF_DIVORCE_FROM);
+            templateContent.put(DIVORCE_OR_DISSOLUTION_COST, DIVORCE_COSTS);
 
-            } else {
-                templateData.put(DIVORCE_OR_DISSOLUTION, TO_END_A_CIVIL_PARTNERSHIP);
-                templateData.put(MARRIAGE_OR_RELATIONSHIP, RELATIONSHIP);
-                templateData.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP);
-                templateData.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, TO_END_THE_CIVIL_PARTNERSHIP);
-                templateData.put(FINANCIAL_ORDER_OR_DISSOLUTION, DISSOLUTION_OF_THE_CIVIL_PARTNERSHIP_WITH);
-                templateData.put(DIVORCE_OR_DISSOLUTION_COST, COSTS_RELATED_TO_ENDING_THE_CIVIL_PARTNERSHIP);
-            }
+        } else {
+            templateContent.put(DIVORCE_OR_DISSOLUTION, TO_END_A_CIVIL_PARTNERSHIP);
+            templateContent.put(MARRIAGE_OR_RELATIONSHIP, RELATIONSHIP);
+            templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP);
+            templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, TO_END_THE_CIVIL_PARTNERSHIP);
+            templateContent.put(FINANCIAL_ORDER_OR_DISSOLUTION, DISSOLUTION_OF_THE_CIVIL_PARTNERSHIP_WITH);
+            templateContent.put(DIVORCE_OR_DISSOLUTION_COST, COSTS_RELATED_TO_ENDING_THE_CIVIL_PARTNERSHIP);
+        }
 
-            templateData.put(CCD_CASE_REFERENCE, ccdCaseReference);
-            templateData.put(ISSUE_DATE, createdDate.format(DATE_TIME_FORMATTER));
+        templateContent.put(CCD_CASE_REFERENCE, ccdCaseReference);
+        templateContent.put(ISSUE_DATE, createdDate.format(DATE_TIME_FORMATTER));
 
-            templateData.put(APPLICANT_1_FIRST_NAME, applicant1.getFirstName());
-            templateData.put(APPLICANT_1_MIDDLE_NAME, applicant1.getMiddleName());
-            templateData.put(APPLICANT_1_LAST_NAME, applicant1.getLastName());
+        templateContent.put(APPLICANT_1_FIRST_NAME, applicant1.getFirstName());
+        templateContent.put(APPLICANT_1_MIDDLE_NAME, applicant1.getMiddleName());
+        templateContent.put(APPLICANT_1_LAST_NAME, applicant1.getLastName());
 
-            templateData.put(APPLICANT_2_FIRST_NAME, applicant2.getFirstName());
-            templateData.put(APPLICANT_2_MIDDLE_NAME, applicant2.getMiddleName());
-            templateData.put(APPLICANT_2_LAST_NAME, applicant2.getLastName());
+        templateContent.put(APPLICANT_2_FIRST_NAME, applicant2.getFirstName());
+        templateContent.put(APPLICANT_2_MIDDLE_NAME, applicant2.getMiddleName());
+        templateContent.put(APPLICANT_2_LAST_NAME, applicant2.getLastName());
 
-            templateData.put(APPLICANT_1_FULL_NAME, application.getMarriageDetails().getApplicant1Name());
-            templateData.put(APPLICANT_2_FULL_NAME, application.getMarriageDetails().getApplicant2Name());
+        templateContent.put(APPLICANT_1_FULL_NAME, application.getMarriageDetails().getApplicant1Name());
+        templateContent.put(APPLICANT_2_FULL_NAME, application.getMarriageDetails().getApplicant2Name());
 
-            templateData.put(MARRIAGE_DATE,
-                ofNullable(application.getMarriageDetails().getDate())
-                    .map(marriageDate -> marriageDate.format(DATE_TIME_FORMATTER))
-                    .orElse(null));
-            templateData.put(COURT_CASE_DETAILS, applicant1.getLegalProceedingsDetails());
+        templateContent.put(MARRIAGE_DATE,
+            ofNullable(application.getMarriageDetails().getDate())
+                .map(marriageDate -> marriageDate.format(DATE_TIME_FORMATTER))
+                .orElse(null));
+        templateContent.put(COURT_CASE_DETAILS, applicant1.getLegalProceedingsDetails());
 
-            templateData.put(HAS_FINANCIAL_ORDERS, applicant1.getFinancialOrder().toBoolean());
+        templateContent.put(HAS_FINANCIAL_ORDERS, applicant1.getFinancialOrder().toBoolean());
 
-            boolean hasFinancialOrdersForChild =
-                null != applicant1.getFinancialOrderFor()
-                    && applicant1.getFinancialOrderFor().contains(FinancialOrderFor.CHILDREN);
+        boolean hasFinancialOrdersForChild =
+            null != applicant1.getFinancialOrderFor()
+                && applicant1.getFinancialOrderFor().contains(FinancialOrderFor.CHILDREN);
 
-            templateData.put(HAS_FINANCIAL_ORDERS_FOR_CHILD, hasFinancialOrdersForChild);
-            templateData.put(FINANCIAL_ORDER_CHILD, CHILDREN_OF_THE_APPLICANT_1_AND_APPLICANT_2);
+        templateContent.put(HAS_FINANCIAL_ORDERS_FOR_CHILD, hasFinancialOrdersForChild);
+        templateContent.put(FINANCIAL_ORDER_CHILD, CHILDREN_OF_THE_APPLICANT_1_AND_APPLICANT_2);
 
-            String applicant2PostalAddress;
-            AddressGlobalUK applicant2HomeAddress = applicant2.getHomeAddress();
+        String applicant2PostalAddress;
+        AddressGlobalUK applicant2HomeAddress = applicant2.getHomeAddress();
 
-            if (applicant2HomeAddress == null) {
-                applicant2PostalAddress = applicant2.getSolicitor().getAddress();
-            } else {
-                applicant2PostalAddress =
-                    Stream.of(
+        if (applicant2HomeAddress == null) {
+            applicant2PostalAddress = applicant2.getSolicitor().getAddress();
+        } else {
+            applicant2PostalAddress =
+                Stream.of(
                         applicant2HomeAddress.getAddressLine1(),
                         applicant2HomeAddress.getAddressLine2(),
                         applicant2HomeAddress.getAddressLine3(),
@@ -128,12 +126,11 @@ public class DraftApplicationTemplateContent {
                         applicant2HomeAddress.getPostCode(),
                         applicant2HomeAddress.getCountry()
                     )
-                        .filter(value -> value != null && !value.isEmpty())
-                        .collect(Collectors.joining("\n"));
-            }
-            templateData.put(APPLICANT_2_POSTAL_ADDRESS, applicant2PostalAddress);
+                    .filter(value -> value != null && !value.isEmpty())
+                    .collect(Collectors.joining("\n"));
+        }
+        templateContent.put(APPLICANT_2_POSTAL_ADDRESS, applicant2PostalAddress);
 
-            return templateData;
-        };
+        return templateContent;
     }
 }

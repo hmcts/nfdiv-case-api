@@ -26,4 +26,5 @@ public class Bailiff {
 
     @CCD(label = "Certificate of Service")
     private DivorceDocument certificateOfServiceDocument;
+
 }

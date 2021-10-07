@@ -12,7 +12,6 @@ import uk.gov.hmcts.divorce.document.model.DocumentInfo;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.util.Map;
-import java.util.function.Supplier;
 
 @Service
 @Slf4j
@@ -30,7 +29,7 @@ public class DocAssemblyService {
     @Autowired
     private DocmosisTemplateProvider docmosisTemplateProvider;
 
-    public DocumentInfo renderDocument(final Supplier<Map<String, Object>> templateContentSupplier,
+    public DocumentInfo renderDocument(final Map<String, Object> templateContent,
                                        final Long caseId,
                                        final String authorisation,
                                        final String templateId,
@@ -44,7 +43,7 @@ public class DocAssemblyService {
                 .builder()
                 .templateId(templateName)
                 .outputType("PDF")
-                .formPayload(objectMapper.valueToTree(templateContentSupplier.get()))
+                .formPayload(objectMapper.valueToTree(templateContent))
                 .build();
 
         log.info("Sending document request for template : {} case id: {}", templateName, caseId);

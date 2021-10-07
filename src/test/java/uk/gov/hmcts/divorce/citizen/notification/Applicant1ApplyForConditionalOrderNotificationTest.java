@@ -25,6 +25,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOL
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLY_FOR_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
@@ -56,7 +57,7 @@ public class Applicant1ApplyForConditionalOrderNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_APPLY_FOR_CONDITIONAL_ORDER),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, String.valueOf(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(YOUR_APPLICATION, "get a divorce"),
                 hasEntry(JOINT_CONDITIONAL_ORDER, "")
                 )),
@@ -82,7 +83,7 @@ public class Applicant1ApplyForConditionalOrderNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_APPLY_FOR_CONDITIONAL_ORDER),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, String.valueOf(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(YOUR_APPLICATION, "end your civil partnership"),
                 hasEntry(JOINT_CONDITIONAL_ORDER, "")
             )),
@@ -108,7 +109,7 @@ public class Applicant1ApplyForConditionalOrderNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_APPLY_FOR_CONDITIONAL_ORDER),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, String.valueOf(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(YOUR_APPLICATION, "get a divorce"),
                 hasEntry(JOINT_CONDITIONAL_ORDER, "Your husband has also received this notification. "
                     + "They need to apply for a conditional order too because this is a joint application.")
@@ -136,7 +137,7 @@ public class Applicant1ApplyForConditionalOrderNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_APPLY_FOR_CONDITIONAL_ORDER),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, String.valueOf(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(YOUR_APPLICATION, "get a divorce"),
                 hasEntry(JOINT_CONDITIONAL_ORDER, "Your wife has also received this notification. "
                     + "They need to apply for a conditional order too because this is a joint application.")
@@ -164,7 +165,7 @@ public class Applicant1ApplyForConditionalOrderNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_APPLY_FOR_CONDITIONAL_ORDER),
             argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, String.valueOf(1234567890123456L)),
+                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(YOUR_APPLICATION, "end your civil partnership"),
                 hasEntry(JOINT_CONDITIONAL_ORDER, "Your civil partner has also received this notification. "
                     + "They need to apply for a conditional order too because this is a joint application.")

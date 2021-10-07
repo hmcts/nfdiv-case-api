@@ -14,7 +14,6 @@ import uk.gov.hmcts.divorce.document.content.DraftApplicationTemplateContent;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -35,7 +34,7 @@ public class DivorceApplicationDraftTest {
     private CaseDataDocumentService caseDataDocumentService;
 
     @Mock
-    private DraftApplicationTemplateContent templateContent;
+    private DraftApplicationTemplateContent draftApplicationTemplateContent;
 
     @InjectMocks
     private DivorceApplicationDraft divorceApplicationDraft;
@@ -54,9 +53,9 @@ public class DivorceApplicationDraftTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
-        final Supplier<Map<String, Object>> templateContentSupplier = HashMap::new;
+        final Map<String, Object> templateContent = new HashMap<>();
 
-        when(templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(templateContentSupplier);
+        when(draftApplicationTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(templateContent);
 
         final var result = divorceApplicationDraft.apply(caseDetails);
 
@@ -64,7 +63,7 @@ public class DivorceApplicationDraftTest {
             .renderDocumentAndUpdateCaseData(
                 caseData,
                 APPLICATION,
-                templateContentSupplier,
+                templateContent,
                 TEST_CASE_ID,
                 DIVORCE_DRAFT_APPLICATION,
                 ENGLISH,

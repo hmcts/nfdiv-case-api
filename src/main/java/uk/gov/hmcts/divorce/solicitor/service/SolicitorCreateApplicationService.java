@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.service.task.DivorceApplicationDraft;
 import uk.gov.hmcts.divorce.solicitor.service.task.InitialiseSolicitorCreatedApplication;
+import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicant1SolicitorAddress;
 import uk.gov.hmcts.divorce.solicitor.service.task.SolicitorCourtDetails;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
@@ -30,6 +31,9 @@ public class SolicitorCreateApplicationService {
     private DivorceApplicationDraft divorceApplicationDraft;
 
     @Autowired
+    private SetApplicant1SolicitorAddress setApplicant1SolicitorAddress;
+
+    @Autowired
     private OrganisationClient organisationClient;
 
     @Autowired
@@ -40,6 +44,7 @@ public class SolicitorCreateApplicationService {
         return caseTasks(
             initialiseSolicitorCreatedApplication,
             solicitorCourtDetails,
+            setApplicant1SolicitorAddress,
             divorceApplicationDraft
         ).run(caseDetails);
     }

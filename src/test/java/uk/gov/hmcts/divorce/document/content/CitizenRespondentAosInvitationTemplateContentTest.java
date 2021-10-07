@@ -10,7 +10,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -27,7 +26,7 @@ class CitizenRespondentAosInvitationTemplateContentTest {
     private RespondentSolicitorAosInvitationTemplateContent respondentSolicitorAosInvitationTemplateContent;
 
     @InjectMocks
-    private CitizenRespondentAosInvitationTemplateContent templateContent;
+    private CitizenRespondentAosInvitationTemplateContent citizenRespondentAosInvitationTemplateContent;
 
     @Test
     void shouldReturnRespondentSolicitorAosInvitationTemplateContent() {
@@ -37,12 +36,12 @@ class CitizenRespondentAosInvitationTemplateContentTest {
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
         );
-        final Supplier<Map<String, Object>> template = HashMap::new;
+        final Map<String, Object> templateContent = new HashMap<>();
 
-        when(respondentSolicitorAosInvitationTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(template);
+        when(respondentSolicitorAosInvitationTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(templateContent);
 
-        final Supplier<Map<String, Object>> result = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
+        final Map<String, Object> result = citizenRespondentAosInvitationTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
 
-        assertThat(result).isSameAs(template);
+        assertThat(result).isSameAs(templateContent);
     }
 }

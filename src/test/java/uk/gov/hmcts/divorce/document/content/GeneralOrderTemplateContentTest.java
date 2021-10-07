@@ -9,7 +9,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 
 import java.util.Map;
-import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
@@ -31,7 +30,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getGeneralOrder;
 public class GeneralOrderTemplateContentTest {
 
     @Autowired
-    private GeneralOrderTemplateContent templateContent;
+    private GeneralOrderTemplateContent generalOrderTemplateContent;
 
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForGeneratingGeneralOrderDocument() {
@@ -40,7 +39,7 @@ public class GeneralOrderTemplateContentTest {
         caseData.getApplication().getMarriageDetails().setApplicant1Name("pet full name");
         caseData.getApplication().getMarriageDetails().setApplicant2Name("resp full name");
 
-        Supplier<Map<String, Object>> templateContentSupplier = templateContent.apply(caseData, TEST_CASE_ID);
+        Map<String, Object> templateContent = generalOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
         var ctscContactDetails = CtscContactDetails
             .builder()
@@ -53,7 +52,7 @@ public class GeneralOrderTemplateContentTest {
             .phoneNumber("0300 303 0642")
             .build();
 
-        assertThat(templateContentSupplier.get()).contains(
+        assertThat(templateContent).contains(
             entry(CASE_REFERENCE, 1616591401473378L),
             entry(GENERAL_ORDER_DATE, "1 January 2021"),
             entry(GENERAL_ORDER_DETAILS, "some details"),
