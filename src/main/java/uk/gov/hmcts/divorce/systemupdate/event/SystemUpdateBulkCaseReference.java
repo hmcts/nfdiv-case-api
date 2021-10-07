@@ -26,8 +26,8 @@ public class SystemUpdateBulkCaseReference implements CCDConfig<CaseData, State,
         new PageBuilder(configBuilder
             .event(SYSTEM_UPDATE_BULK_CASE_REFERENCE)
             .forAllStates()
-            .name("Update case with bulk case reference")
-            .description("Updated case with bulk case reference")
+            .name("Update bulk case reference")
+            .description("Updated bulk case reference")
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .grant(READ, SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR));
