@@ -8,8 +8,8 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.ServiceApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
@@ -32,7 +32,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 @Slf4j
-public class CaseworkerServiceApplicationReceived implements CCDConfig<CaseData, State, UserRole> {
+public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_SERVICE_RECEIVED = "caseworker-service-received";
 
     @Autowired
@@ -52,9 +52,9 @@ public class CaseworkerServiceApplicationReceived implements CCDConfig<CaseData,
             .grant(READ, SUPER_USER, LEGAL_ADVISOR, SOLICITOR, CITIZEN))
             .page("serviceApplicationReceived")
             .pageLabel("Service application received")
-            .complex(CaseData::getServiceApplication)
-                .mandatory(ServiceApplication::getReceivedServiceApplicationDate)
-                .mandatory(ServiceApplication::getServiceApplicationType)
+            .complex(CaseData::getAlternativeService)
+                .mandatory(AlternativeService::getReceivedServiceApplicationDate)
+                .mandatory(AlternativeService::getAlternativeServiceType)
                 .done();
     }
 
@@ -66,7 +66,7 @@ public class CaseworkerServiceApplicationReceived implements CCDConfig<CaseData,
 
         var caseData = details.getData();
 
-        caseData.getServiceApplication().setReceivedServiceAddedDate(LocalDate.now(clock));
+        caseData.getAlternativeService().setReceivedServiceAddedDate(LocalDate.now(clock));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

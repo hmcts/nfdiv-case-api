@@ -47,7 +47,6 @@ public class PaymentService {
     private static final String FAMILY_COURT = "family court";
     private static final String DIVORCE = "divorce";
     private static final String DIVORCE_SERVICE = "DIVORCE";
-    private static final String OTHER = "other";
     private static final String GBP = "GBP";
     public static final String CA_E0001 = "CA-E0001";
     public static final String CA_E0004 = "CA-E0004";
@@ -69,7 +68,7 @@ public class PaymentService {
     private ObjectMapper objectMapper;
 
     public OrderSummary getOrderSummary() {
-        final var feeResponse = feesAndPaymentsClient.getApplicationIssueFee(
+        final var feeResponse = feesAndPaymentsClient.getPaymentServiceFee(
             DEFAULT_CHANNEL,
             ISSUE_EVENT,
             FAMILY,
@@ -85,13 +84,13 @@ public class PaymentService {
             .build();
     }
 
-    public OrderSummary getOrderSummaryByOtherEventKeyword(String event, String keyword) {
-        final var feeResponse = feesAndPaymentsClient.getApplicationIssueFee(
+    public OrderSummary getOrderSummaryByServiceEvent(String service, String event, String keyword) {
+        final var feeResponse = feesAndPaymentsClient.getPaymentServiceFee(
             DEFAULT_CHANNEL,
             event,
             FAMILY,
             FAMILY_COURT,
-            OTHER,
+            service,
             keyword
         );
 

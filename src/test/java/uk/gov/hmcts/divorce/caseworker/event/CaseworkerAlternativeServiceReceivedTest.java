@@ -16,7 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import java.time.Clock;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerServiceApplicationReceived.CASEWORKER_SERVICE_RECEIVED;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAlternativeServiceApplication.CASEWORKER_SERVICE_RECEIVED;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -24,13 +24,13 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
-class CaseworkerServiceApplicationReceivedTest {
+class CaseworkerAlternativeServiceReceivedTest {
 
     @Mock
     private Clock clock;
 
     @InjectMocks
-    private CaseworkerServiceApplicationReceived serviceApplicationReceived;
+    private CaseworkerAlternativeServiceApplication serviceApplicationReceived;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
@@ -58,6 +58,6 @@ class CaseworkerServiceApplicationReceivedTest {
         assertThat(response.getErrors()).isNull();
         assertThat(response.getWarnings()).isNull();
 
-        assertThat(response.getData().getServiceApplication().getReceivedServiceAddedDate()).isEqualTo(getExpectedLocalDate());
+        assertThat(response.getData().getAlternativeService().getReceivedServiceAddedDate()).isEqualTo(getExpectedLocalDate());
     }
 }

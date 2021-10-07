@@ -90,7 +90,7 @@ public class PaymentServiceTest {
     public void shouldReturnOrderSummaryWhenFeeEventIsAvailable() {
         doReturn(getFeeResponse())
             .when(feesAndPaymentsClient)
-            .getApplicationIssueFee(
+            .getPaymentServiceFee(
                 anyString(),
                 anyString(),
                 anyString(),
@@ -109,7 +109,7 @@ public class PaymentServiceTest {
             );
 
         verify(feesAndPaymentsClient)
-            .getApplicationIssueFee(
+            .getPaymentServiceFee(
                 anyString(),
                 anyString(),
                 anyString(),
@@ -138,7 +138,7 @@ public class PaymentServiceTest {
 
         doThrow(feignException)
             .when(feesAndPaymentsClient)
-            .getApplicationIssueFee(
+            .getPaymentServiceFee(
                 anyString(),
                 anyString(),
                 anyString(),

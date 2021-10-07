@@ -7,16 +7,18 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 
 @Getter
 @AllArgsConstructor
-public enum ServiceApplicationType implements HasLabel {
+public enum AlternativeServiceMediumType implements HasLabel {
+    @JsonProperty("text")
+    TEXT("Text"),
 
-    @JsonProperty("deemed")
-    DEEMED("Deemed as served"),
+    @JsonProperty("email")
+    EMAIL("Email"),
 
-    @JsonProperty("dispensed")
-    DISPENSED("Dispensed with service"),
+    @JsonProperty("socialMedia")
+    SOCIAL_MEDIA("Social media"),
 
-    @JsonProperty("bailiff")
-    BAILIFF("Bailiff application");
+    @JsonProperty("other")
+    OTHER("Other");
 
     private final String label;
 }

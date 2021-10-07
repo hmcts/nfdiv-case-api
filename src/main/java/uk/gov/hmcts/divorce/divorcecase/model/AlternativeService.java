@@ -1,13 +1,13 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 
 import java.time.LocalDate;
 
@@ -18,8 +18,27 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 public class AlternativeService {
+
+    @CCD(
+        label = "Application date"
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate receivedServiceApplicationDate;
+
+    @CCD(
+        label = "Service application type",
+        hint = "What type of service application has been received?",
+        typeOverride = FixedList,
+        typeParameterOverride = "AlternativeServiceType"
+    )
+    private AlternativeServiceType alternativeServiceType;
+
+    @CCD(
+        label = "Added date"
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate receivedServiceAddedDate;
 
     @CCD(
         label = "Date of Payment",
@@ -52,4 +71,11 @@ public class AlternativeService {
         label = "Help with Fees reference"
     )
     private String helpWithFeesReferenceNumber;
+
+    @CCD(
+        label = "Here are your order details",
+        access = {DefaultAccess.class}
+    )
+    private OrderSummary servicePaymentFeeOrderSummary;
+
 }

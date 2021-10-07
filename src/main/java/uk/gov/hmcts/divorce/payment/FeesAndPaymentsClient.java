@@ -22,7 +22,7 @@ public interface FeesAndPaymentsClient {
     @ApiOperation("Returns Application Issue Fee")
     @GetMapping(value = "/fees-register/fees/lookup",
         headers = CONTENT_TYPE + "=" + APPLICATION_JSON_VALUE)
-    FeeResponse getApplicationIssueFee(
+    FeeResponse getPaymentServiceFee(
         @RequestParam(CHANNEL) final String channel,
         @RequestParam(EVENT) final String event,
         @RequestParam(JURISDICTION_1) final String jurisdiction1,
@@ -31,12 +31,3 @@ public interface FeesAndPaymentsClient {
         @RequestParam(KEYWORD) final String keyword
     );
 }
-
-// FEE0392 - Bailiff (45)
-//    private static final String FINANCIALORDER_FEE = "channel=default&event=miscellaneous&jurisdiction1=family&"
-//            + "jurisdiction2=family%20court&keyword=financial-order&service=other";
-
-
-// FEE0228 - (50)
-//    private static final String APPLICATION_NO_NOTICE = "channel=default&event=general%20application&jurisdiction1=family&"
-//            + "jurisdiction2=family%20court&keyword=GeneralAppWithoutNotice&service=other";
