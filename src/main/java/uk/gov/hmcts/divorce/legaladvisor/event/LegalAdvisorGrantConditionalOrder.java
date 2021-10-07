@@ -39,7 +39,7 @@ public class LegalAdvisorGrantConditionalOrder implements CCDConfig<CaseData, St
         new PageBuilder(configBuilder
             .event(LEGAL_ADVISOR_GRANT_CONDITIONAL_ORDER)
             .forStateTransition(AwaitingLegalAdvisorReferral, AwaitingPronouncement)
-            .name("Make Decision")
+            .name("Make a decision")
             .description("Grant Conditional Order")
             .endButtonLabel("Submit")
             .showSummary()
