@@ -117,18 +117,18 @@ public final class PaymentWireMock {
         ListValue<Fee> feeItem = orderSummary.getFees().get(0);
         Fee fee = feeItem.getValue();
 
-        PaymentItem paymentItem = getPaymentItem(orderSummary, fee);
+        PaymentItem paymentItem = getPaymentItem(fee);
 
         request.setFees(singletonList(paymentItem));
 
         return request;
     }
 
-    private static PaymentItem getPaymentItem(OrderSummary orderSummary, Fee fee) {
+    private static PaymentItem getPaymentItem(Fee fee) {
         return PaymentItem
             .builder()
             .ccdCaseNumber(String.valueOf(TEST_CASE_ID))
-            .calculatedAmount(orderSummary.getPaymentTotal())
+            .calculatedAmount(fee.getAmount())
             .code(fee.getCode())
             .version(fee.getVersion())
             .build();
