@@ -49,6 +49,9 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAlternativeServicePayment.EVENT_MISC;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAlternativeServicePayment.KEYWORD_BAILIFF;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAlternativeServicePayment.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.payment.PaymentService.CA_E0001;
 import static uk.gov.hmcts.divorce.payment.PaymentService.CA_E0003;
 import static uk.gov.hmcts.divorce.payment.PaymentService.CA_E0004;
@@ -64,6 +67,10 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
 
 @ExtendWith(MockitoExtension.class)
 public class PaymentServiceTest {
+
+    private static final String DEFAULT_CHANNEL = "default";
+    private static final String FAMILY = "family";
+    private static final String FAMILY_COURT = "family court";
 
     @Mock
     private FeesAndPaymentsClient feesAndPaymentsClient;
@@ -116,6 +123,41 @@ public class PaymentServiceTest {
                 anyString(),
                 anyString(),
                 isNull()
+            );
+
+        verifyNoMoreInteractions(feesAndPaymentsClient);
+    }
+
+    @Test
+    public void shouldReturnOrderSummaryForServiceEventKeyword() {
+        doReturn(getFeeResponse())
+            .when(feesAndPaymentsClient)
+            .getPaymentServiceFee(
+                DEFAULT_CHANNEL,
+                EVENT_MISC,
+                FAMILY,
+                FAMILY_COURT,
+                SERVICE_OTHER,
+                KEYWORD_BAILIFF
+            );
+
+        OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_MISC, KEYWORD_BAILIFF);
+        assertThat(orderSummary.getPaymentReference()).isNull();
+        assertThat(orderSummary.getPaymentTotal()).isEqualTo(String.valueOf(1000));// in pence
+        assertThat(orderSummary.getFees())
+            .extracting("value", Fee.class)
+            .extracting("description", "version", "code", "amount")
+            .contains(tuple(ISSUE_FEE, "1", FEE_CODE, "1000")
+            );
+
+        verify(feesAndPaymentsClient)
+            .getPaymentServiceFee(
+                DEFAULT_CHANNEL,
+                EVENT_MISC,
+                FAMILY,
+                FAMILY_COURT,
+                SERVICE_OTHER,
+                KEYWORD_BAILIFF
             );
 
         verifyNoMoreInteractions(feesAndPaymentsClient);
