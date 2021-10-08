@@ -1,0 +1,21 @@
+{
+  "applicationType": "soleApplication",
+  "applicant1Gender": "female",
+  "applicant2Gender": "male",
+  "marriageDate": "2020-04-28",
+  "applicant1FirstName": "test_first_name",
+  "applicant1MiddleName": "test_middle_name",
+  "applicant1LastName": "test_last_name",
+  "applicant1KeepContactDetailsConfidential": "Yes",
+  "applicant2FirstName": "test_first_name",
+  "applicant2LastName": "test_last_name",
+  "marriageApplicant1Name": "test_first_name test_last_name",
+  "applicant1FinancialOrder": "NO",
+  "applicant1HWFNeedHelp": "NO",
+  "applicant1PrayerHasBeenGiven": "YES",
+  "applicant1StatementOfTruth": "YES",
+  "solSignStatementOfTruth": "YES",
+  "jurisdictionApplicant1Residence": "YES",
+  "jurisdictionApplicant2Residence": "YES",
+  "jurisdictionConnections": ["A"]
+}
