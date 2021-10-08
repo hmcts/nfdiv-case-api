@@ -107,7 +107,7 @@ public class CaseworkerCreateGeneralOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "Divorce_General_Order_Eng.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "NFD_General_Order_Eng.docx");
 
         mockMvc.perform(post(CREATE_GENERAL_ORDER_MID_EVENT_URL)
                 .contentType(APPLICATION_JSON)
