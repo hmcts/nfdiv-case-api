@@ -35,11 +35,11 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 @Component
 public class CaseworkerAlternativeServicePayment implements CCDConfig<CaseData, State, UserRole> {
 
-    private static final String SERVICE_OTHER = "other";
-    private static final String EVENT_GENERAL = "general%20application";
-    private static final String EVENT_MISC = "miscellaneous";
-    private static final String KEYWORD_BAILIFF = "financial-order";
-    private static final String KEYWORD_DEEMED = "GeneralAppWithoutNotice";
+    public static final String SERVICE_OTHER = "other";
+    public static final String EVENT_GENERAL = "general%20application";
+    public static final String EVENT_MISC = "miscellaneous";
+    public static final String KEYWORD_BAILIFF = "financial-order";
+    public static final String KEYWORD_DEEMED = "GeneralAppWithoutNotice";
 
     @Autowired
     private PaymentService paymentService;

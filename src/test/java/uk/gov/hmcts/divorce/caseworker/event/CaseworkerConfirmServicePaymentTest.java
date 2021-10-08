@@ -93,11 +93,11 @@ public class CaseworkerConfirmServicePaymentTest {
         AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
             alternativeServicePayment.aboutToStart(details);
 
-        assertThat(aboutToStartOrSubmitResponse.getData().getAlternativeService().getServicePaymentFeeOrderSummary()).
-            isEqualTo(orderSummaryBailiff);
+        assertThat(aboutToStartOrSubmitResponse.getData().getAlternativeService().getServicePaymentFeeOrderSummary())
+            .isEqualTo(orderSummaryBailiff);
 
-        assertThat(aboutToStartOrSubmitResponse.getData().getAlternativeService().getServicePaymentFeeOrderSummary().getFees()).
-            isEqualTo(orderSummaryFees);
+        assertThat(aboutToStartOrSubmitResponse.getData().getAlternativeService().getServicePaymentFeeOrderSummary().getFees())
+            .isEqualTo(orderSummaryFees);
 
     }
 
@@ -117,7 +117,8 @@ public class CaseworkerConfirmServicePaymentTest {
         final List<ListValue<Fee>> orderSummaryFees = new ArrayList<>();
         orderSummaryFees.add(listValue);
 
-        when(paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_DEEMED)).thenReturn(orderSummaryDeemedDispensed);
+        when(paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_DEEMED))
+            .thenReturn(orderSummaryDeemedDispensed);
         when(orderSummaryDeemedDispensed.getFees()).thenReturn(orderSummaryFees);
 
         final CaseData caseData = caseData();
@@ -131,10 +132,10 @@ public class CaseworkerConfirmServicePaymentTest {
         AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
             alternativeServicePayment.aboutToStart(details);
 
-        assertThat(aboutToStartOrSubmitResponse.getData().getAlternativeService().getServicePaymentFeeOrderSummary()).
-            isEqualTo(orderSummaryDeemedDispensed);
+        assertThat(aboutToStartOrSubmitResponse.getData().getAlternativeService().getServicePaymentFeeOrderSummary())
+            .isEqualTo(orderSummaryDeemedDispensed);
 
-        assertThat(aboutToStartOrSubmitResponse.getData().getAlternativeService().getServicePaymentFeeOrderSummary().getFees()).
-            isEqualTo(orderSummaryFees);
+        assertThat(aboutToStartOrSubmitResponse.getData().getAlternativeService().getServicePaymentFeeOrderSummary().getFees())
+            .isEqualTo(orderSummaryFees);
     }
 }
