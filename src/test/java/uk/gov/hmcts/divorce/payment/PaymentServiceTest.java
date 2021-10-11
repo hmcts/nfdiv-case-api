@@ -49,12 +49,14 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAlternativeServicePayment.EVENT_MISC;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAlternativeServicePayment.KEYWORD_BAILIFF;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAlternativeServicePayment.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.payment.PaymentService.CA_E0001;
 import static uk.gov.hmcts.divorce.payment.PaymentService.CA_E0003;
 import static uk.gov.hmcts.divorce.payment.PaymentService.CA_E0004;
+import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ISSUE;
+import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_MISC;
+import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_BAILIFF;
+import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_DIVORCE;
+import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
@@ -106,7 +108,7 @@ public class PaymentServiceTest {
                 isNull()
             );
 
-        OrderSummary orderSummary = paymentService.getOrderSummary();
+        OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, null);
         assertThat(orderSummary.getPaymentReference()).isNull();
         assertThat(orderSummary.getPaymentTotal()).isEqualTo(String.valueOf(1000));// in pence
         assertThat(orderSummary.getFees())
@@ -189,7 +191,7 @@ public class PaymentServiceTest {
                 isNull()
             );
 
-        assertThatThrownBy(() -> paymentService.getOrderSummary())
+        assertThatThrownBy(() -> paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, null))
             .hasMessageContaining("404 Fee Not found")
             .isExactlyInstanceOf(FeignException.NotFound.class);
     }
