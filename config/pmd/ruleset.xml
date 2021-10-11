@@ -90,7 +90,7 @@
   </rule>
   <rule ref="category/java/design.xml/TooManyMethods">
     <properties>
-      <property name="maxmethods" value="13" />
+      <property name="maxmethods" value="20" />
     </properties>
   </rule>
 
