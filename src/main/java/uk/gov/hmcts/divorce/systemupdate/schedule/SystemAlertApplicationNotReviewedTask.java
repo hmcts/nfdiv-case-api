@@ -70,11 +70,7 @@ public class SystemAlertApplicationNotReviewedTask implements Runnable {
                             caseDetails.getLastModified()
                         );
                     } else {
-                        if (!dueDate.isAfter(LocalDate.now())
-                            && !caseData.getApplication().isOverdueNotificationSent()
-                        ) {
-                            notifyApplicant1(caseDetails, caseData, dueDate, user, serviceAuthorization);
-                        }
+                        notifyApplicant1(caseDetails, caseData, dueDate, user, serviceAuthorization);
                     }
                 } catch (final CcdManagementException e) {
                     log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());

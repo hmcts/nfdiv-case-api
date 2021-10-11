@@ -55,20 +55,22 @@ public class CcdSearchService {
             sourceBuilder.toString());
     }
 
-    public SearchResult searchForCasesWithStateOfDueDateBeforeWithFlag(final State state,
-                                                                       final int from,
-                                                                       final int size,
-                                                                       final String flag,
-                                                                       final User user,
-                                                                       final String serviceAuth) {
+    public SearchResult searchForCasesWithStateOfDueDateBeforeWithoutFlagSet(final State state,
+                                                                             final int from,
+                                                                             final int size,
+                                                                             final String flag,
+                                                                             final User user,
+                                                                             final String serviceAuth) {
 
         final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
             .searchSource()
             .sort("data.dueDate", DESC)
-            .query(boolQuery()
-                .must(matchQuery("state", state))
-                .filter(rangeQuery("data.dueDate").lte(LocalDate.now()))
-                .mustNot(matchQuery(String.format("data.%s", flag), YesOrNo.YES)))
+            .query(
+                boolQuery()
+                    .must(matchQuery("state", state))
+                    .filter(rangeQuery("data.dueDate").lte(LocalDate.now()))
+                    .mustNot(matchQuery(String.format("data.%s", flag), YesOrNo.YES))
+            )
             .from(from)
             .size(size);
 
@@ -89,7 +91,7 @@ public class CcdSearchService {
             while (totalResults == pageSize) {
                 final SearchResult searchResult =
                     flag != null
-                        ? searchForCasesWithStateOfDueDateBeforeWithFlag(state, from, pageSize, flag, user, serviceAuth)
+                        ? searchForCasesWithStateOfDueDateBeforeWithoutFlagSet(state, from, pageSize, flag, user, serviceAuth)
                         : searchForCaseWithStateOf(state, from, pageSize, user, serviceAuth);
 
                 allCaseDetails.addAll(searchResult.getCases());
