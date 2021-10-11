@@ -104,10 +104,6 @@ public class CaseworkerAlternativeServicePayment implements CCDConfig<CaseData, 
         CaseData data = details.getData();
         State state = details.getState();
 
-        log.info("beforeDetails state {}", beforeDetails.getState());
-
-        log.info("afterDetails state {}", details.getState());
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
             .state(state)

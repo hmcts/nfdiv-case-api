@@ -33,8 +33,6 @@ public class CaseWorkerAlternativeServicePaymentFT extends FunctionalTestSuite {
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
-        System.out.println(response.asString());
-
         assertThatJson(response.asString())
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
@@ -54,8 +52,6 @@ public class CaseWorkerAlternativeServicePaymentFT extends FunctionalTestSuite {
             "/callbacks/about-to-start?page=alternativeServicePayment");
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
-
-        System.out.println(response.asString());
 
         assertThatJson(response.asString())
             .when(IGNORING_EXTRA_FIELDS)
