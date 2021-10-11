@@ -140,8 +140,14 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("alternativeService", "Service Application")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER)
             .field("receivedServiceApplicationDate")
-            .field("serviceApplicationType")
+            .field("alternativeServiceType")
             .field("receivedServiceAddedDate")
-            .field("serviceApplicationDecisionDate");
+            .field("serviceApplicationDecisionDate")
+            .field("dateOfPayment")
+            .field("paymentMethod")
+            .field("feeAccountNumber", "paymentMethod=\"feePayByAccount\"")
+            .field("feeAccountReferenceNumber", "paymentMethod=\"feePayByAccount\"")
+            .field("helpWithFeesReferenceNumber", "paymentMethod=\"feePayByHelp\"")
+            .field("servicePaymentFeeOrderSummary");
     }
 }

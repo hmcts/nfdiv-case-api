@@ -19,8 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerMakeBailiffDecision.CASEWORKER_BAILIFF_DECISION;
-import static uk.gov.hmcts.divorce.divorcecase.model.ServiceApplicationType.BAILIFF;
-import static uk.gov.hmcts.divorce.divorcecase.model.ServiceApplicationType.DEEMED;
+import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.BAILIFF;
+import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
@@ -57,7 +57,7 @@ class CaseworkerMakeBailiffDecisionTest {
 
         final CaseData caseData = caseData();
         caseData.getAlternativeService().setServiceApplicationGranted(YES);
-        caseData.getAlternativeService().setServiceApplicationType(BAILIFF);
+        caseData.getAlternativeService().setAlternativeServiceType(BAILIFF);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -77,7 +77,7 @@ class CaseworkerMakeBailiffDecisionTest {
 
         final CaseData caseData = caseData();
         caseData.getAlternativeService().setServiceApplicationGranted(YES);
-        caseData.getAlternativeService().setServiceApplicationType(DEEMED);
+        caseData.getAlternativeService().setAlternativeServiceType(DEEMED);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);

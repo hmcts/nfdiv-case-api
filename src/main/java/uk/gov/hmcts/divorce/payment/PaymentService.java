@@ -70,13 +70,30 @@ public class PaymentService {
     private ObjectMapper objectMapper;
 
     public OrderSummary getOrderSummary() {
-        final var feeResponse = feesAndPaymentsClient.getApplicationIssueFee(
+        final var feeResponse = feesAndPaymentsClient.getPaymentServiceFee(
             DEFAULT_CHANNEL,
             ISSUE_EVENT,
             FAMILY,
             FAMILY_COURT,
             DIVORCE,
             null
+        );
+
+        return OrderSummary
+            .builder()
+            .fees(singletonList(getFee(feeResponse)))
+            .paymentTotal(getValueInPence(feeResponse.getAmount()))
+            .build();
+    }
+
+    public OrderSummary getOrderSummaryByServiceEvent(String service, String event, String keyword) {
+        final var feeResponse = feesAndPaymentsClient.getPaymentServiceFee(
+            DEFAULT_CHANNEL,
+            event,
+            FAMILY,
+            FAMILY_COURT,
+            service,
+            keyword
         );
 
         return OrderSummary
