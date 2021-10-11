@@ -65,33 +65,12 @@ public class CcdSearchService {
             sourceBuilder.toString());
     }
 
-    public SearchResult searchForCasesWithStateOfDueDateBeforeWithoutFlagSet(final State state,
-                                                                             final int from,
-                                                                             final int size,
-                                                                             final String flag,
-                                                                             final User user,
-                                                                             final String serviceAuth) {
-
-        final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
-            .searchSource()
-            .sort("data.dueDate", DESC)
-            .query(
-                boolQuery()
-                    .must(matchQuery("state", state))
-                    .filter(rangeQuery("data.dueDate").lte(LocalDate.now()))
-                    .mustNot(matchQuery(String.format("data.%s", flag), YesOrNo.YES))
-            )
-            .from(from)
-            .size(size);
-
-        return coreCaseDataApi.searchCases(
-            user.getAuthToken(),
-            serviceAuth,
-            CASE_TYPE,
-            sourceBuilder.toString());
+    public List<CaseDetails> searchForAllCasesWithStateOf(final State state, User user, String serviceAuth) {
+        return searchForAllCasesWithStateOf(state, null, user, serviceAuth);
     }
 
-    public List<CaseDetails> searchForAllCasesWithStateOf(final State state, final String flag, User user, String serviceAuth) {
+    public List<CaseDetails> searchForAllCasesWithStateOf(final State state, final String notificationFlag,
+                                                          User user, String serviceAuth) {
 
         final List<CaseDetails> allCaseDetails = new ArrayList<>();
         int from = 0;
@@ -100,8 +79,8 @@ public class CcdSearchService {
         try {
             while (totalResults == pageSize) {
                 final SearchResult searchResult =
-                    flag != null
-                        ? searchForCasesWithStateOfDueDateBeforeWithoutFlagSet(state, from, pageSize, flag, user, serviceAuth)
+                    notificationFlag != null
+                        ? searchForCasesWithStateOfDueDateBeforeWithoutFlagSet(state, from, pageSize, notificationFlag, user, serviceAuth)
                         : searchForCaseWithStateOf(state, from, pageSize, user, serviceAuth);
 
                 allCaseDetails.addAll(searchResult.getCases());
@@ -117,6 +96,32 @@ public class CcdSearchService {
         }
 
         return allCaseDetails;
+    }
+
+    public SearchResult searchForCasesWithStateOfDueDateBeforeWithoutFlagSet(final State state,
+                                                                             final int from,
+                                                                             final int size,
+                                                                             final String notificationFlag,
+                                                                             final User user,
+                                                                             final String serviceAuth) {
+
+        final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+            .searchSource()
+            .sort("data.dueDate", DESC)
+            .query(
+                boolQuery()
+                    .must(matchQuery("state", state))
+                    .filter(rangeQuery("data.dueDate").lte(LocalDate.now()))
+                    .mustNot(matchQuery(String.format("data.%s", notificationFlag), YesOrNo.YES))
+            )
+            .from(from)
+            .size(size);
+
+        return coreCaseDataApi.searchCases(
+            user.getAuthToken(),
+            serviceAuth,
+            CASE_TYPE,
+            sourceBuilder.toString());
     }
 
     public List<CaseDetails> searchForCasesWithVersionLessThan(int latestVersion, User user, String serviceAuth) {

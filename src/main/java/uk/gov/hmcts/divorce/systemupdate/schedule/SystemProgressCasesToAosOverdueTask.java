@@ -50,7 +50,7 @@ public class SystemProgressCasesToAosOverdueTask implements Runnable {
 
         try {
             final List<CaseDetails> casesInAwaitingAosState =
-                ccdSearchService.searchForAllCasesWithStateOf(AwaitingAos, null, user, serviceAuth);
+                ccdSearchService.searchForAllCasesWithStateOf(AwaitingAos, user, serviceAuth);
 
             for (final CaseDetails caseDetails : casesInAwaitingAosState) {
                 try {

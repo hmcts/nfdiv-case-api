@@ -72,7 +72,7 @@ class SystemProgressCasesToAosOverdueTaskTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingAos, null, user, SERVICE_AUTHORIZATION)).thenReturn(caseDetailsList);
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingAos, user, SERVICE_AUTHORIZATION)).thenReturn(caseDetailsList);
 
         progressCasesToAosOverdueTask.run();
 
@@ -89,7 +89,7 @@ class SystemProgressCasesToAosOverdueTaskTest {
 
         when(caseDetails.getData()).thenReturn(caseDataMap);
 
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingAos, null, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingAos, user, SERVICE_AUTHORIZATION))
             .thenReturn(List.of(caseDetails));
 
         progressCasesToAosOverdueTask.run();
@@ -103,7 +103,7 @@ class SystemProgressCasesToAosOverdueTaskTest {
 
         when(caseDetails.getData()).thenReturn(Map.of("dueDate", LocalDate.now().plusDays(5).toString()));
 
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingAos, null, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingAos, user, SERVICE_AUTHORIZATION))
             .thenReturn(singletonList(caseDetails));
 
         progressCasesToAosOverdueTask.run();
@@ -113,7 +113,7 @@ class SystemProgressCasesToAosOverdueTaskTest {
 
     @Test
     void shouldNotSubmitEventIfSearchFails() {
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingAos, null, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingAos, user, SERVICE_AUTHORIZATION))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
         progressCasesToAosOverdueTask.run();
@@ -129,7 +129,7 @@ class SystemProgressCasesToAosOverdueTaskTest {
 
         when(caseDetails1.getData()).thenReturn(Map.of("dueDate", LocalDate.now().toString()));
 
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingAos, null, user, SERVICE_AUTHORIZATION)).thenReturn(caseDetailsList);
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingAos, user, SERVICE_AUTHORIZATION)).thenReturn(caseDetailsList);
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_TO_AOS_OVERDUE, user, SERVICE_AUTHORIZATION);
@@ -150,7 +150,7 @@ class SystemProgressCasesToAosOverdueTaskTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingAos, null, user, SERVICE_AUTHORIZATION)).thenReturn(caseDetailsList);
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingAos, user, SERVICE_AUTHORIZATION)).thenReturn(caseDetailsList);
 
         doThrow(new CcdManagementException("Failed processing of case", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_TO_AOS_OVERDUE, user, SERVICE_AUTHORIZATION);
