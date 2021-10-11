@@ -19,10 +19,12 @@ import java.time.LocalDate;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ;
+import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
@@ -43,8 +45,8 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
             .explicitGrants()
             .showSummary()
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .grant(CREATE_READ, LEGAL_ADVISOR)
-            .grant(READ, CASE_WORKER, SOLICITOR, SYSTEMUPDATE))
+            .grant(CREATE_READ_UPDATE, LEGAL_ADVISOR)
+            .grant(READ, CASE_WORKER, SUPER_USER, SOLICITOR, CITIZEN, SYSTEMUPDATE))
             .page("makeServiceDecision")
             .pageLabel("Approve service application")
             .complex(CaseData::getAlternativeService)
