@@ -27,6 +27,7 @@ import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.elasticsearch.search.sort.SortOrder.ASC;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 
 @Service
 @Slf4j
@@ -117,7 +118,7 @@ public class CcdSearchService {
             int from = 0;
             int totalSearch;
             do {
-                QueryBuilder stateQuery = matchQuery("state", AwaitingPronouncement);
+                QueryBuilder stateQuery = matchQuery("state", Draft);
                 QueryBuilder bulkListingCaseId = existsQuery("data.bulkListCaseReference");
 
                 QueryBuilder query = boolQuery()

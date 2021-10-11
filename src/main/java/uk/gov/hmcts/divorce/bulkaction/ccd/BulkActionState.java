@@ -11,7 +11,17 @@ public enum BulkActionState {
     @CCD(
         name = "Bulk case list created"
     )
-    Created("Created");
+    Created("Created"),
+
+    @CCD(
+        name = "Bulk case listed"
+    )
+    Listed("Listed"),
+
+    @CCD(
+        name = "Bulk case pronounced"
+    )
+    Pronounced("Pronounced");
 
     private final String name;
 }

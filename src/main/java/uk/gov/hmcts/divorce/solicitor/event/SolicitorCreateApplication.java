@@ -103,7 +103,7 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
             .description("Apply for a divorce")
             .showSummary()
             .endButtonLabel("Save Application")
-            .aboutToSubmitCallback(this::aboutToSubmit)
+            //.aboutToSubmitCallback(this::aboutToSubmit)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, updatedRoles.toArray(UserRole[]::new))
             .grant(READ_UPDATE, SUPER_USER)
