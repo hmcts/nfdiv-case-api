@@ -6,12 +6,14 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +22,7 @@ import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.elasticsearch.search.sort.SortOrder.ASC;
+import static org.elasticsearch.search.sort.SortOrder.DESC;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 
 @Service
@@ -52,7 +55,31 @@ public class CcdSearchService {
             sourceBuilder.toString());
     }
 
-    public List<CaseDetails> searchForAllCasesWithStateOf(final State state, User user, String serviceAuth) {
+    public SearchResult searchForCasesWithStateOfDueDateBeforeWithFlag(final State state,
+                                                                       final int from,
+                                                                       final int size,
+                                                                       final String flag,
+                                                                       final User user,
+                                                                       final String serviceAuth) {
+
+        final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+            .searchSource()
+            .sort("data.dueDate", DESC)
+            .query(boolQuery()
+                .must(matchQuery("state", state))
+                .filter(rangeQuery("data.dueDate").lte(LocalDate.now()))
+                .mustNot(matchQuery(String.format("data.%s", flag), YesOrNo.YES)))
+            .from(from)
+            .size(size);
+
+        return coreCaseDataApi.searchCases(
+            user.getAuthToken(),
+            serviceAuth,
+            CASE_TYPE,
+            sourceBuilder.toString());
+    }
+
+    public List<CaseDetails> searchForAllCasesWithStateOf(final State state, final String flag, User user, String serviceAuth) {
 
         final List<CaseDetails> allCaseDetails = new ArrayList<>();
         int from = 0;
@@ -60,7 +87,10 @@ public class CcdSearchService {
 
         try {
             while (totalResults == pageSize) {
-                final SearchResult searchResult = searchForCaseWithStateOf(state, from, pageSize, user, serviceAuth);
+                final SearchResult searchResult =
+                    flag != null
+                        ? searchForCasesWithStateOfDueDateBeforeWithFlag(state, from, pageSize, flag, user, serviceAuth)
+                        : searchForCaseWithStateOf(state, from, pageSize, user, serviceAuth);
 
                 allCaseDetails.addAll(searchResult.getCases());
 

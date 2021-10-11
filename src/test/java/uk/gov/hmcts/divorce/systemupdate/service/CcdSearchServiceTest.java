@@ -88,7 +88,7 @@ class CcdSearchServiceTest {
             getSourceBuilder(PAGE_SIZE, PAGE_SIZE).toString()))
             .thenReturn(expected2);
 
-        final List<CaseDetails> searchResult = ccdSearchService.searchForAllCasesWithStateOf(Submitted, user, SERVICE_AUTHORIZATION);
+        final List<CaseDetails> searchResult = ccdSearchService.searchForAllCasesWithStateOf(Submitted, null, user, SERVICE_AUTHORIZATION);
 
         assertThat(searchResult.size()).isEqualTo(101);
     }
@@ -136,7 +136,7 @@ class CcdSearchServiceTest {
 
         final CcdSearchCaseException exception = assertThrows(
             CcdSearchCaseException.class,
-            () -> ccdSearchService.searchForAllCasesWithStateOf(Submitted, user, SERVICE_AUTHORIZATION));
+            () -> ccdSearchService.searchForAllCasesWithStateOf(Submitted, null, user, SERVICE_AUTHORIZATION));
 
         assertThat(exception.getMessage()).contains("Failed to complete search for Cases with state of Submitted");
     }

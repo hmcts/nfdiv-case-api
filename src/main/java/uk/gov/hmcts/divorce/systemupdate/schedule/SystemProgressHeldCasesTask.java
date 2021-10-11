@@ -61,7 +61,7 @@ public class SystemProgressHeldCasesTask implements Runnable {
         final String serviceAuth = authTokenGenerator.generate();
 
         try {
-            final List<CaseDetails> casesInHoldingState = ccdSearchService.searchForAllCasesWithStateOf(Holding, user, serviceAuth);
+            final List<CaseDetails> casesInHoldingState = ccdSearchService.searchForAllCasesWithStateOf(Holding, null, user, serviceAuth);
 
             for (final CaseDetails caseDetails : casesInHoldingState) {
                 try {

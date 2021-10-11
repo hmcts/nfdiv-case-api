@@ -49,7 +49,8 @@ public class SystemProgressCasesToAosOverdueTask implements Runnable {
         final String serviceAuth = authTokenGenerator.generate();
 
         try {
-            final List<CaseDetails> casesInAwaitingAosState = ccdSearchService.searchForAllCasesWithStateOf(AwaitingAos, user, serviceAuth);
+            final List<CaseDetails> casesInAwaitingAosState =
+                ccdSearchService.searchForAllCasesWithStateOf(AwaitingAos, null, user, serviceAuth);
 
             for (final CaseDetails caseDetails : casesInAwaitingAosState) {
                 try {

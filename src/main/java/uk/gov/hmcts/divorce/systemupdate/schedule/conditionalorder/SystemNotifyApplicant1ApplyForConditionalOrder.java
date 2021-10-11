@@ -27,6 +27,7 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemApplicant1ApplyForCo
 public class SystemNotifyApplicant1ApplyForConditionalOrder implements Runnable {
 
     private static final int TWENTY_WEEKS = 20;
+    private static final String FLAG = "applicant1NotifiedCanApplyForConditionalOrder";
 
     @Autowired
     private CcdSearchService ccdSearchService;
@@ -55,7 +56,7 @@ public class SystemNotifyApplicant1ApplyForConditionalOrder implements Runnable 
 
         try {
             final List<CaseDetails> casesInAwaitingApplicant2Response =
-                ccdSearchService.searchForAllCasesWithStateOf(AwaitingConditionalOrder, user, serviceAuthorization);
+                ccdSearchService.searchForAllCasesWithStateOf(AwaitingConditionalOrder, FLAG, user, serviceAuthorization);
 
             for (final CaseDetails caseDetails : casesInAwaitingApplicant2Response) {
                 try {

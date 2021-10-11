@@ -27,6 +27,7 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicant2.SYS
 public class SystemRemindApplicant2Task implements Runnable {
 
     private static final int FOUR_DAYS = 4;
+    private static final String FLAG = "applicant2ReminderSent";
 
     @Autowired
     private CcdSearchService ccdSearchService;
@@ -55,7 +56,7 @@ public class SystemRemindApplicant2Task implements Runnable {
 
         try {
             final List<CaseDetails> casesInAwaitingApplicant2Response =
-                ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, user, serviceAuthorization);
+                ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, FLAG, user, serviceAuthorization);
 
             for (final CaseDetails caseDetails : casesInAwaitingApplicant2Response) {
                 try {

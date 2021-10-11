@@ -26,6 +26,8 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicant1Appl
 @Slf4j
 public class SystemRemindApplicant1ApplicationApprovedTask implements Runnable {
 
+    private static final String FLAG = "applicant1ReminderSent";
+
     @Autowired
     private CcdSearchService ccdSearchService;
 
@@ -53,7 +55,7 @@ public class SystemRemindApplicant1ApplicationApprovedTask implements Runnable {
 
         try {
             final List<CaseDetails> casesInAwaitingApplicant1Response =
-                ccdSearchService.searchForAllCasesWithStateOf(Applicant2Approved, user, serviceAuthorization);
+                ccdSearchService.searchForAllCasesWithStateOf(Applicant2Approved, FLAG, user, serviceAuthorization);
 
             for (final CaseDetails caseDetails : casesInAwaitingApplicant1Response) {
                 try {
