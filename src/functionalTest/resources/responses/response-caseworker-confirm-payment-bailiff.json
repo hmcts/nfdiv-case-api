@@ -1,0 +1,26 @@
+{
+  "data":{
+    "divorceOrDissolution":"divorce",
+    "applicant1FirstName":"John",
+    "applicant1LastName":"Smith",
+    "applicant1Email":"simulate-delivered@notifications.service.gov.uk",
+    "applicant2Gender":"female",
+    "solServiceTruthStatement":"I believe that the facts stated in the application are true.",
+    "solPaymentHowToPay":"feePayByAccount",
+    "alternativeServiceType":"bailiff",
+    "servicePaymentFeeOrderSummary": {
+      "PaymentReference":null,
+      "PaymentTotal":"27500",
+      "Fees":[{
+        "id":null,
+        "value":{
+          "FeeAmount":"27500",
+          "FeeCode":"FEE0229",
+          "FeeDescription":"Application for a financial order",
+      "FeeVersion": "${json-unit.any-string}"
+        }}
+      ]
+    },
+    "dataVersion": "${json-unit.any-number}"
+  }
+}

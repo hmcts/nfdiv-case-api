@@ -31,7 +31,8 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("issueDate")
             .field(CaseData::getApplicationType)
             .field(CaseData::getDivorceOrDissolution)
-            .field(CaseData::getDivorceUnit);
+            .field(CaseData::getDivorceUnit)
+            .field(CaseData::getBulkListCaseReference);
     }
 
     private void addApplicant1(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {

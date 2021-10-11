@@ -30,16 +30,15 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
+import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
+import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_MISC;
+import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_BAILIFF;
+import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DEEMED;
+import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 
 @Slf4j
 @Component
 public class CaseworkerAlternativeServicePayment implements CCDConfig<CaseData, State, UserRole> {
-
-    public static final String SERVICE_OTHER = "other";
-    public static final String EVENT_GENERAL = "general%20application";
-    public static final String EVENT_MISC = "miscellaneous";
-    public static final String KEYWORD_BAILIFF = "financial-order";
-    public static final String KEYWORD_DEEMED = "GeneralAppWithoutNotice";
 
     @Autowired
     private PaymentService paymentService;
@@ -59,6 +58,7 @@ public class CaseworkerAlternativeServicePayment implements CCDConfig<CaseData, 
             .description("Service Payment made")
             .showSummary()
             .aboutToStartCallback(this::aboutToStart)
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, CITIZEN)
             .grant(READ, SUPER_USER, LEGAL_ADVISOR));
@@ -93,6 +93,20 @@ public class CaseworkerAlternativeServicePayment implements CCDConfig<CaseData, 
             .data(caseData)
             .errors(null)
             .warnings(null)
+            .build();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
+                                                                       CaseDetails<CaseData, State> beforeDetails) {
+
+        log.info("Submit application about to submit callback invoked");
+
+        CaseData data = details.getData();
+        State state = details.getState();
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(data)
+            .state(state)
             .build();
     }
 }
