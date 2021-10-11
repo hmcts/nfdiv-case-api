@@ -117,8 +117,11 @@ pba:
       service:
         url: ${PRD_API_BASEURL:http://rd-professional-api-aat.service.core-compute-aat.internal}
 
-
 payment:
   service:
     api:
       baseurl: http://localhost:4015
+
+bulk-action:
+  min-cases: 30
+  page-size: 50

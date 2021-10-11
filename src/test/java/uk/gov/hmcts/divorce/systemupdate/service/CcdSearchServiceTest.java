@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.systemupdate.service;
 
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
@@ -37,6 +39,8 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.feignException;
 class CcdSearchServiceTest {
 
     public static final int PAGE_SIZE = 100;
+    public static final int BULK_LIST_MAX_PAGE_SIZE = 50;
+
     @Mock
     private CoreCaseDataApi coreCaseDataApi;
 
@@ -46,6 +50,7 @@ class CcdSearchServiceTest {
     @BeforeEach
     void setPageSize() {
         setField(ccdSearchService, "pageSize", 100);
+        setField(ccdSearchService, "bulkActionPageSize", 50);
     }
 
     @Test
@@ -141,6 +146,44 @@ class CcdSearchServiceTest {
         assertThat(exception.getMessage()).contains("Failed to complete search for Cases with state of Submitted");
     }
 
+    @Test
+    void shouldReturnAllCasesInStateAwaitingPronouncement() {
+
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final SearchResult expected1 = SearchResult.builder().total(BULK_LIST_MAX_PAGE_SIZE)
+            .cases(createCaseDetailsList(BULK_LIST_MAX_PAGE_SIZE)).build();
+
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            CASE_TYPE,
+            searchSourceBuilderForAwaitingPronouncementCases().toString()))
+            .thenReturn(expected1);
+
+        final List<CaseDetails> searchResult = ccdSearchService.searchAwaitingPronouncementCases(user, SERVICE_AUTHORIZATION);
+
+        assertThat(searchResult.size()).isEqualTo(50);
+    }
+
+    @Test
+    void shouldThrowCcdSearchFailedExceptionIfSearchingCasesInAwaitingPronouncementFails() {
+
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+
+        doThrow(feignException(422, "some error")).when(coreCaseDataApi)
+            .searchCases(
+                SYSTEM_UPDATE_AUTH_TOKEN,
+                SERVICE_AUTHORIZATION,
+                CASE_TYPE,
+                searchSourceBuilderForAwaitingPronouncementCases().toString());
+
+        final CcdSearchCaseException exception = assertThrows(
+            CcdSearchCaseException.class,
+            () -> ccdSearchService.searchAwaitingPronouncementCases(user, SERVICE_AUTHORIZATION));
+
+        assertThat(exception.getMessage()).contains("Failed to complete search for Cases with state of AwaitingPronouncement");
+    }
+
     private List<CaseDetails> createCaseDetailsList(final int size) {
 
         final List<CaseDetails> caseDetails = new ArrayList<>();
@@ -159,5 +202,21 @@ class CcdSearchServiceTest {
             .query(boolQuery().must(matchQuery("state", Submitted)))
             .from(from)
             .size(pageSize);
+    }
+
+    private SearchSourceBuilder searchSourceBuilderForAwaitingPronouncementCases() {
+        QueryBuilder stateQuery = matchQuery("state", AwaitingPronouncement);
+        QueryBuilder bulkListingCaseId = existsQuery("data.bulkListCaseReference");
+
+        QueryBuilder query = boolQuery()
+            .must(stateQuery)
+            .mustNot(bulkListingCaseId);
+
+        return SearchSourceBuilder
+            .searchSource()
+            .query(query)
+            .from(0)
+            .size(BULK_LIST_MAX_PAGE_SIZE);
+
     }
 }
