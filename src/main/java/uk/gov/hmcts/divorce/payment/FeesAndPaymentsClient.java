@@ -22,7 +22,7 @@ public interface FeesAndPaymentsClient {
     @ApiOperation("Returns Application Issue Fee")
     @GetMapping(value = "/fees-register/fees/lookup",
         headers = CONTENT_TYPE + "=" + APPLICATION_JSON_VALUE)
-    FeeResponse getApplicationIssueFee(
+    FeeResponse getPaymentServiceFee(
         @RequestParam(CHANNEL) final String channel,
         @RequestParam(EVENT) final String event,
         @RequestParam(JURISDICTION_1) final String jurisdiction1,

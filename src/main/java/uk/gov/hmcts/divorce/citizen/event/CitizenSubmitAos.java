@@ -9,12 +9,19 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.SoleAosSubmittedNotification;
+import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
@@ -34,21 +41,38 @@ public class CitizenSubmitAos implements CCDConfig<CaseData, State, UserRole> {
         configBuilder
             .event(CITIZEN_SUBMIT_AOS)
             .forState(AosDrafted)
-            .name("Citizen draft AoS")
-            .description("Citizen submit Acknowledgement of Service")
-            .grant(CREATE_READ_UPDATE, APPLICANT_2)
-            .grant(READ, SUPER_USER)
+            .name("Respondent Statement of Truth")
+            .description("The respondent confirms SOT")
             .retries(120, 120)
+            .grant(CREATE_READ_UPDATE, APPLICANT_2)
+            .grant(READ, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Citizen respondent submit Aos about to submit callback invoked");
+
+        log.info("Submit AOS application about to submit callback invoked");
+
         CaseData data = details.getData();
+        AcknowledgementOfService acknowledgementOfService = data.getAcknowledgementOfService();
+        State state = details.getState();
 
-        State state;
+        log.info("Validating case data");
+        final List<String> validationErrors = validateAos(acknowledgementOfService);
 
+        if (!validationErrors.isEmpty()) {
+            log.info("Validation errors: ");
+            for (String error : validationErrors) {
+                log.info(error);
+            }
+
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(data)
+                .errors(validationErrors)
+                .state(state)
+                .build();
+        }
 
         if (data.getAcknowledgementOfService().getDisputeApplication() == YesOrNo.YES) {
             //soleAosSubmittedNotification.sendApplicationDisputedToApplicant(data, details.getId());
@@ -65,4 +89,20 @@ public class CitizenSubmitAos implements CCDConfig<CaseData, State, UserRole> {
             .state(state)
             .build();
     }
+
+    private List<String> validateAos(final AcknowledgementOfService acknowledgementOfService) {
+
+        final List<String> errors = new ArrayList<>();
+
+        if (NO.equals(acknowledgementOfService.getStatementOfTruth())) {
+            errors.add("You must be authorised by the respondent to sign this statement.");
+        }
+
+        if (NO.equals(acknowledgementOfService.getConfirmReadPetition())) {
+            errors.add("The respondent must have read the application for divorce.");
+        }
+
+        return errors;
+    }
+
 }

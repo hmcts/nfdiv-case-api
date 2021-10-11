@@ -129,23 +129,23 @@ core_case_data:
 docmosis:
   templates:
     english:
-      DIVORCE_APPLICATION_SOLE: Divorce_CP_Application_Sole.docx
-      DIVORCE_APPLICATION_JOINT: Divorce_CP_Application_Joint.docx
-      DIVORCE_DRAFT_APPLICATION: Divorce_CP_Mini_Draft_Application_Template.docx
-      RESP_SOLICITOR_AOS_INVITATION: Divorce_CP_Dummy_Template.docx #TODO: Set correct template when available
-      CITIZEN_RESP_AOS_INVITATION: Divorce_CP_Dummy_Template.docx #TODO: Set correct template when available
-      DIVORCE_GENERAL_ORDER: Divorce_General_Order_Eng.docx #TODO: update template once available
-      RESPONDENT_ANSWERS: Divorce_Respondent_Answers_Eng.docx #TODO: update content
-      CERTIFICATE_OF_SERVICE: Divorce_Certificate_Of_Service.docx #TODO: update content
+      DIVORCE_APPLICATION_SOLE: NFD_CP_Application_Sole.docx
+      DIVORCE_APPLICATION_JOINT: NFD_CP_Application_Joint.docx
+      DIVORCE_DRAFT_APPLICATION: NFD_CP_Mini_Draft_Application_Template.docx
+      RESP_SOLICITOR_AOS_INVITATION: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
+      CITIZEN_RESP_AOS_INVITATION: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
+      DIVORCE_GENERAL_ORDER: NFD_General_Order_Eng.docx #TODO: update template once available
+      RESPONDENT_ANSWERS: NFD_Respondent_Answers_Eng.docx #TODO: update content
+      CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx #TODO: update content
     welsh:
-      DIVORCE_APPLICATION_SOLE: Divorce_CP_Dummy_Template.docx #TODO: Set correct template when available
-      DIVORCE_APPLICATION_JOINT: Divorce_CP_Dummy_Template.docx #TODO: Set correct template when available
-      DIVORCE_DRAFT_APPLICATION: Divorce_CP_Dummy_Template.docx #TODO: Set correct template when available
-      RESP_SOLICITOR_AOS_INVITATION: Divorce_CP_Dummy_Template.docx #TODO: Set correct template when available
-      CITIZEN_RESP_AOS_INVITATION: Divorce_CP_Dummy_Template.docx #TODO: Set correct template when available
-      DIVORCE_GENERAL_ORDER: Divorce_General_Order_Eng.docx #TODO: update template once available
-      RESPONDENT_ANSWERS: Divorce_Respondent_Answers_Eng.docx #TODO: replace template once available
-      CERTIFICATE_OF_SERVICE: Divorce_Certificate_Of_Service.docx #TODO: update content
+      DIVORCE_APPLICATION_SOLE: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
+      DIVORCE_APPLICATION_JOINT: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
+      DIVORCE_DRAFT_APPLICATION: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
+      RESP_SOLICITOR_AOS_INVITATION: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
+      CITIZEN_RESP_AOS_INVITATION: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
+      DIVORCE_GENERAL_ORDER: NFD_General_Order_Eng.docx #TODO: update template once available
+      RESPONDENT_ANSWERS: NFD_Respondent_Answers_Eng.docx #TODO: replace template once available
+      CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx #TODO: update content
 
 doc_assembly:
   url: ${DOC_ASSEMBLY_URL:http://dg-docassembly-aat.service.core-compute-aat.internal}
@@ -196,3 +196,7 @@ payment:
   service:
     api:
       baseurl: ${PAYMENT_API_BASEURL:http://payment-api-aat.service.core-compute-aat.internal}
+
+bulk-action:
+  min-cases: 30
+  page-size: 50

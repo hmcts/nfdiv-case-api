@@ -150,6 +150,13 @@ public enum State {
     AwaitingService("AwaitingService"),
 
     @CCD(
+        name = "Awaiting Service Consideration",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    AwaitingServiceConsideration("AwaitingServiceConsideration"),
+
+    @CCD(
         name = "Awaiting service payment",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
