@@ -139,8 +139,7 @@ class SystemProgressHeldCasesTaskTest {
         final LocalDate issueDate = LocalDate.now();
         mockInteractions(caseDetails1, issueDate, caseDataMap(caseDetails1, issueDate));
 
-        when(ccdSearchService.searchForAllCasesWithStateOf(Holding, user, SERVICE_AUTHORIZATION))
-            .thenReturn(singletonList(caseDetails1));
+        when(ccdSearchService.searchForAllCasesWithStateOf(Holding, user, SERVICE_AUTHORIZATION)).thenReturn(singletonList(caseDetails1));
 
         awaitingConditionalOrderTask.run();
 
