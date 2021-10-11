@@ -15,14 +15,9 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_RESPONDENT_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TO_END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.CIVIL_PARTNERSHIP_PROCESS;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_PROCESS;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.FIRST_NAME;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PROCESS;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.YOUR_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.YOUR_UNION;
@@ -60,10 +55,7 @@ public class SoleAosSubmittedNotification {
     }
 
     public void sendApplicationNotDisputedToRespondent(CaseData caseData, Long id) {
-        Map<String, String> templateVars = commonContent.templateVarsForApplicant(
-            caseData, caseData.getApplicant2(), caseData.getApplicant1());
-        templateVars.put(FIRST_NAME, caseData.getApplicant2().getFirstName());
-        templateVars.put(LAST_NAME, caseData.getApplicant2().getLastName());
+        Map<String, String> templateVars = setTemplateVariables(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateVars.put(YOUR_UNION, YOUR_DIVORCE.toLowerCase(Locale.ROOT));
@@ -81,66 +73,18 @@ public class SoleAosSubmittedNotification {
         );
     }
 
-//    public void sendApplicationDisputedToApplicant(CaseData caseData, Long id) {
-//        Map<String, String> templateVars = commonContent.templateVarsForApplicant(
-//            caseData, caseData.getApplicant1(), caseData.getApplicant2());
-//
-//        templateVars.put(APPLICANT_2_COMMENTS, caseData.getApplication().getApplicant2ExplainsApplicant1IncorrectInformation());
-//
-//        if (caseData.getDivorceOrDissolution().isDivorce()) {
-//            templateVars.put(FOR_THE_APPLICATION, THE_DIVORCE);
-//        } else {
-//            templateVars.put(FOR_THE_APPLICATION, TO_END_CIVIL_PARTNERSHIP);
-//        }
-//
-//        log.info("Sending Aos disputed notification to applicant");
-//
-//        notificationService.sendEmail(
-//            caseData.getApplicant1().getEmail(),
-//            SOL_APPLICANT_DISPUTED_AOS_SUBMITTED,
-//            templateVars,
-//            caseData.getApplicant1().getLanguagePreference()
-//        );
-//    }
-//
-//    public void sendApplicationDisputedToRespondent(CaseData caseData, Long id) {
-//        Map<String, String> templateVars = commonContent.templateVarsForApplicant(
-//            caseData, caseData.getApplicant2(), caseData.getApplicant1());
-//        templateVars.put(FIRST_NAME, caseData.getApplicant2().getFirstName());
-//        templateVars.put(LAST_NAME, caseData.getApplicant2().getLastName());
-//
-//        if (caseData.getDivorceOrDissolution().isDivorce()) {
-//            templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), FOR_DIVORCE);
-//        } else {
-//            templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), TO_END_CIVIL_PARTNERSHIP);
-//        }
-//
-//        log.info("Sending Aos submitted disputed notification to respondent");
-//
-//        notificationService.sendEmail(
-//            caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
-//            SOL_RESPONDENT_DISPUTED_AOS_SUBMITTED,
-//            templateVars,
-//            caseData.getApplicant2().getLanguagePreference()
-//        );
-//    }
-
-    private Map<String, String> setTemplateVariables(CaseData caseData, Long id, Applicant applicant, Applicant respondent) {
+    private Map<String, String> setTemplateVariables(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
         Map<String, String> templateVars = commonContent.templateVarsForApplicant(
-            caseData, applicant, respondent);
+            caseData, applicant, partner);
 
         templateVars.put(APPLICATION_REFERENCE, formatId(id));
         templateVars.put(APPLY_FOR_CO_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
 
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
-
-            templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), DIVORCE_APPLICATION);
             templateVars.put(PROCESS, DIVORCE_PROCESS);
 
         } else {
-
-            templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), APPLICATION_TO_END_CIVIL_PARTNERSHIP);
             templateVars.put(PROCESS, CIVIL_PARTNERSHIP_PROCESS);
 
         }

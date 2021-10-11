@@ -37,7 +37,9 @@ public class CitizenSubmitAos implements CCDConfig<CaseData, State, UserRole> {
             .name("Citizen draft AoS")
             .description("Citizen submit Acknowledgement of Service")
             .grant(CREATE_READ_UPDATE, APPLICANT_2)
-            .grant(READ, SUPER_USER);
+            .grant(READ, SUPER_USER)
+            .retries(120, 120)
+            .aboutToSubmitCallback(this::aboutToSubmit);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
@@ -49,8 +51,8 @@ public class CitizenSubmitAos implements CCDConfig<CaseData, State, UserRole> {
 
 
         if (data.getAcknowledgementOfService().getDisputeApplication() == YesOrNo.YES) {
-//            soleAosSubmittedNotification.sendApplicationDisputedToApplicant(data, details.getId());
-//            soleAosSubmittedNotification.sendApplicationDisputedToRespondent(data, details.getId());
+            //soleAosSubmittedNotification.sendApplicationDisputedToApplicant(data, details.getId());
+            //soleAosSubmittedNotification.sendApplicationDisputedToRespondent(data, details.getId());
             state = State.PendingDispute;
         } else {
             soleAosSubmittedNotification.sendApplicationNotDisputedToApplicant(data, details.getId());

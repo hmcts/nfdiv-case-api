@@ -1,4 +1,5 @@
 {
+  "divorceOrDissolution": "divorce",
   "applicationType": "soleApplication",
   "applicant1Gender": "female",
   "applicant2Gender": "male",
@@ -10,12 +11,14 @@
   "applicant2FirstName": "test_first_name",
   "applicant2LastName": "test_last_name",
   "marriageApplicant1Name": "test_first_name test_last_name",
-  "applicant1FinancialOrder": "NO",
-  "applicant1HWFNeedHelp": "NO",
-  "applicant1PrayerHasBeenGiven": "YES",
-  "applicant1StatementOfTruth": "YES",
-  "solSignStatementOfTruth": "YES",
-  "jurisdictionApplicant1Residence": "YES",
-  "jurisdictionApplicant2Residence": "YES",
-  "jurisdictionConnections": ["A"]
+  "applicant1FinancialOrder": "No",
+  "applicant1PrayerHasBeenGiven": "Yes",
+  "applicant1StatementOfTruth": "Yes",
+  "solSignStatementOfTruth": "Yes",
+  "jurisdictionApplicant1Residence": "Yes",
+  "jurisdictionApplicant2Residence": "Yes",
+  "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+  "applicant2Email": "simulate-delivered@notifications.service.gov.uk",
+  "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
+  "dueDate": "2020-04-28"
 }
