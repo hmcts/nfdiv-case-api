@@ -52,6 +52,11 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static uk.gov.hmcts.divorce.payment.PaymentService.CA_E0001;
 import static uk.gov.hmcts.divorce.payment.PaymentService.CA_E0003;
 import static uk.gov.hmcts.divorce.payment.PaymentService.CA_E0004;
+import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ISSUE;
+import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_MISC;
+import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_BAILIFF;
+import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_DIVORCE;
+import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
@@ -64,6 +69,10 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
 
 @ExtendWith(MockitoExtension.class)
 public class PaymentServiceTest {
+
+    private static final String DEFAULT_CHANNEL = "default";
+    private static final String FAMILY = "family";
+    private static final String FAMILY_COURT = "family court";
 
     @Mock
     private FeesAndPaymentsClient feesAndPaymentsClient;
@@ -90,7 +99,7 @@ public class PaymentServiceTest {
     public void shouldReturnOrderSummaryWhenFeeEventIsAvailable() {
         doReturn(getFeeResponse())
             .when(feesAndPaymentsClient)
-            .getApplicationIssueFee(
+            .getPaymentServiceFee(
                 anyString(),
                 anyString(),
                 anyString(),
@@ -99,7 +108,7 @@ public class PaymentServiceTest {
                 isNull()
             );
 
-        OrderSummary orderSummary = paymentService.getOrderSummary();
+        OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, null);
         assertThat(orderSummary.getPaymentReference()).isNull();
         assertThat(orderSummary.getPaymentTotal()).isEqualTo(String.valueOf(1000));// in pence
         assertThat(orderSummary.getFees())
@@ -109,13 +118,48 @@ public class PaymentServiceTest {
             );
 
         verify(feesAndPaymentsClient)
-            .getApplicationIssueFee(
+            .getPaymentServiceFee(
                 anyString(),
                 anyString(),
                 anyString(),
                 anyString(),
                 anyString(),
                 isNull()
+            );
+
+        verifyNoMoreInteractions(feesAndPaymentsClient);
+    }
+
+    @Test
+    public void shouldReturnOrderSummaryForServiceEventKeyword() {
+        doReturn(getFeeResponse())
+            .when(feesAndPaymentsClient)
+            .getPaymentServiceFee(
+                DEFAULT_CHANNEL,
+                EVENT_MISC,
+                FAMILY,
+                FAMILY_COURT,
+                SERVICE_OTHER,
+                KEYWORD_BAILIFF
+            );
+
+        OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_MISC, KEYWORD_BAILIFF);
+        assertThat(orderSummary.getPaymentReference()).isNull();
+        assertThat(orderSummary.getPaymentTotal()).isEqualTo(String.valueOf(1000));// in pence
+        assertThat(orderSummary.getFees())
+            .extracting("value", Fee.class)
+            .extracting("description", "version", "code", "amount")
+            .contains(tuple(ISSUE_FEE, "1", FEE_CODE, "1000")
+            );
+
+        verify(feesAndPaymentsClient)
+            .getPaymentServiceFee(
+                DEFAULT_CHANNEL,
+                EVENT_MISC,
+                FAMILY,
+                FAMILY_COURT,
+                SERVICE_OTHER,
+                KEYWORD_BAILIFF
             );
 
         verifyNoMoreInteractions(feesAndPaymentsClient);
@@ -138,7 +182,7 @@ public class PaymentServiceTest {
 
         doThrow(feignException)
             .when(feesAndPaymentsClient)
-            .getApplicationIssueFee(
+            .getPaymentServiceFee(
                 anyString(),
                 anyString(),
                 anyString(),
@@ -147,7 +191,7 @@ public class PaymentServiceTest {
                 isNull()
             );
 
-        assertThatThrownBy(() -> paymentService.getOrderSummary())
+        assertThatThrownBy(() -> paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, null))
             .hasMessageContaining("404 Fee Not found")
             .isExactlyInstanceOf(FeignException.NotFound.class);
     }

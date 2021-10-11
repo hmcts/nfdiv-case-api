@@ -32,7 +32,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 @Slf4j
-public class CaseworkerServiceApplicationReceived implements CCDConfig<CaseData, State, UserRole> {
+public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_SERVICE_RECEIVED = "caseworker-service-received";
 
     @Autowired
@@ -54,7 +54,7 @@ public class CaseworkerServiceApplicationReceived implements CCDConfig<CaseData,
             .pageLabel("Service application received")
             .complex(CaseData::getAlternativeService)
                 .mandatory(AlternativeService::getReceivedServiceApplicationDate)
-                .mandatory(AlternativeService::getServiceApplicationType)
+                .mandatory(AlternativeService::getAlternativeServiceType)
                 .done();
     }
 
