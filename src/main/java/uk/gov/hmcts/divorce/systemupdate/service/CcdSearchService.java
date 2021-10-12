@@ -79,9 +79,9 @@ public class CcdSearchService {
         try {
             while (totalResults == pageSize) {
                 final SearchResult searchResult =
-                    notificationFlag != null
-                        ? searchForCasesWithStateOfDueDateBeforeWithoutFlagSet(state, from, pageSize, notificationFlag, user, serviceAuth)
-                        : searchForCaseWithStateOf(state, from, pageSize, user, serviceAuth);
+                    notificationFlag == null
+                        ? searchForCaseWithStateOf(state, from, pageSize, user, serviceAuth)
+                        : searchForCasesWithStateOfDueDateBeforeWithoutFlagSet(state, from, pageSize, notificationFlag, user, serviceAuth);
 
                 allCaseDetails.addAll(searchResult.getCases());
 
