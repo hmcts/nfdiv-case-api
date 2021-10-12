@@ -89,7 +89,8 @@ class SystemProgressCasesToAosOverdueTaskTest {
 
         when(caseDetails.getData()).thenReturn(caseDataMap);
 
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingAos, user, SERVICE_AUTHORIZATION)).thenReturn(List.of(caseDetails));
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingAos, user, SERVICE_AUTHORIZATION))
+            .thenReturn(List.of(caseDetails));
 
         progressCasesToAosOverdueTask.run();
 

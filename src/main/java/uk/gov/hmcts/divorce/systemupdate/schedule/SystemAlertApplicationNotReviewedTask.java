@@ -26,6 +26,8 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemAlertApplicationNotR
 @Slf4j
 public class SystemAlertApplicationNotReviewedTask implements Runnable {
 
+    private static final String FLAG = "overdueNotificationSent";
+
     @Autowired
     private CcdSearchService ccdSearchService;
 
@@ -53,7 +55,7 @@ public class SystemAlertApplicationNotReviewedTask implements Runnable {
 
         try {
             final List<CaseDetails> casesInAwaitingApplicant2Response =
-                ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, user, serviceAuthorization);
+                ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, FLAG, user, serviceAuthorization);
 
             for (final CaseDetails caseDetails : casesInAwaitingApplicant2Response) {
                 try {
