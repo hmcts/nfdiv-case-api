@@ -23,12 +23,14 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 public class CitizenSubmitAosFT extends FunctionalTestSuite {
 
     private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata-citizen-submit-aos.json";
-    private static final String RESPONSE = "classpath:responses/response-citizen-submit-aos.json";
+    private static final String NOT_DISPUTED_RESPONSE = "classpath:responses/response-citizen-submit-aos-not-disputed.json";
+    private static final String DISPUTED_RESPONSE = "classpath:responses/response-citizen-submit-aos-disputed.json";
 
 
     @Test
     public void shouldPassValidationAndSendNotDisputedEmailsToApplicantAndRespondent() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
+        request.put("disputeApplication", "No");
 
         Response response = triggerCallback(request, CITIZEN_SUBMIT_AOS, ABOUT_TO_SUBMIT_URL);
 
@@ -37,6 +39,21 @@ public class CitizenSubmitAosFT extends FunctionalTestSuite {
         assertThatJson(response.asString())
             .when(IGNORING_EXTRA_FIELDS)
             .when(IGNORING_ARRAY_ORDER)
-            .isEqualTo(json(expectedResponse(RESPONSE)));
+            .isEqualTo(json(expectedResponse(NOT_DISPUTED_RESPONSE)));
+    }
+
+    @Test
+    public void shouldPassValidationAndSendDisputedEmailsToApplicantAndRespondent() throws IOException {
+        Map<String, Object> request = caseData(REQUEST);
+        request.put("disputeApplication", "Yes");
+
+        Response response = triggerCallback(request, CITIZEN_SUBMIT_AOS, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(DISPUTED_RESPONSE)));
     }
 }
