@@ -16,7 +16,6 @@
         "OrganisationID": "ABC123"
       }
     },
-    "applicant2SolicitorRepresented": "Yes",
     "solSignStatementOfTruth": "Yes",
     "solPaymentHowToPay": "feePayByAccount",
     "pbaNumbers": {
@@ -43,7 +42,6 @@
       ],
       "PaymentTotal": "55000"
     },
-    "app2ContactMethodIsDigital": "Yes",
     "dateSubmitted": "${json-unit.any-string}",
     "applicationPayments": [
       {
