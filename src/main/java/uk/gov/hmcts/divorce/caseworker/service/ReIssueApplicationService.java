@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.caseworker.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCitizenRespondentAosInvitation;
@@ -12,14 +11,12 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SendAosNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPack;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
+import uk.gov.hmcts.divorce.caseworker.service.task.SetReIssueAndDueDate;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.systemupdate.service.ReissueProcessingException;
 
-import java.time.Clock;
-
-import static java.time.LocalDate.now;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.REISSUE_CASE;
@@ -51,16 +48,7 @@ public class ReIssueApplicationService {
     private SendAosNotifications sendAosNotifications;
 
     @Autowired
-    private Clock clock;
-
-    @Value("${reissue.days_until_overdue.digital_aos}")
-    private Integer daysUntilOverdueForDigitalAos;
-
-    @Value("${reissue.days_until_overdue.offline_aos}")
-    private Integer daysUntilOverdueForOfflineAos;
-
-    @Value("${reissue.days_until_overdue.complete_reissue}")
-    private Integer daysUntilOverdueForCompleteReissue;
+    private SetReIssueAndDueDate setReIssueAndDueDate;
 
     public CaseDetails<CaseData, State> process(final CaseDetails<CaseData, State> caseDetails) {
         ReissueOption reissueOption = caseDetails.getData().getApplication().getReissueOption();
@@ -82,11 +70,7 @@ public class ReIssueApplicationService {
                 generateRespondentSolicitorAosInvitation,
                 generateCitizenRespondentAosInvitation,
                 sendAosNotifications,
-                details -> {
-                    details.getData().getApplication().setReissueDate(now(clock));
-                    details.getData().setDueDate(now(clock).plusDays(daysUntilOverdueForDigitalAos));
-                    return details;
-                },
+                setReIssueAndDueDate,
                 setPostIssueState,
                 sendApplicationIssueNotifications
             ).run(caseDetails);
@@ -96,11 +80,7 @@ public class ReIssueApplicationService {
                 generateRespondentSolicitorAosInvitation,
                 generateCitizenRespondentAosInvitation,
                 sendAosPack,
-                details -> {
-                    details.getData().getApplication().setReissueDate(now(clock));
-                    details.getData().setDueDate(now(clock).plusDays(daysUntilOverdueForOfflineAos));
-                    return details;
-                },
+                setReIssueAndDueDate,
                 setPostIssueState,
                 sendApplicationIssueNotifications
             ).run(caseDetails);
@@ -112,11 +92,7 @@ public class ReIssueApplicationService {
                 generateCitizenRespondentAosInvitation,
                 sendAosNotifications,
                 sendAosPack,
-                details -> {
-                    details.getData().getApplication().setReissueDate(now(clock));
-                    details.getData().setDueDate(now(clock).plusDays(daysUntilOverdueForCompleteReissue));
-                    return details;
-                },
+                setReIssueAndDueDate,
                 setPostIssueState,
                 sendApplicationIssueNotifications
             ).run(caseDetails);
