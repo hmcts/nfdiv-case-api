@@ -15,8 +15,11 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_RESPONDENT_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.ACCOUNT;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.CIVIL_PARTNERSHIP_ACCOUNT;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.CIVIL_PARTNERSHIP_PROCESS;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_ACCOUNT;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_PROCESS;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PROCESS;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.YOUR_DIVORCE;
@@ -40,8 +43,10 @@ public class SoleAosSubmittedNotification {
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateVars.put(YOUR_UNION, YOUR_DIVORCE);
+            templateVars.put(ACCOUNT, DIVORCE_ACCOUNT);
         } else {
             templateVars.put(YOUR_UNION, ENDING_YOUR_CIVIL_PARTNERSHIP);
+            templateVars.put(ACCOUNT, CIVIL_PARTNERSHIP_ACCOUNT);
         }
 
         log.info("Sending Aos submitted without dispute notification to applicant");
