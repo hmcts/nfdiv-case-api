@@ -16,9 +16,7 @@ import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
@@ -30,7 +28,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.util.ResourceUtils.getFile;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitAos.CITIZEN_SUBMIT_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -44,6 +41,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForAosSubmitted;
+import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 
 @ExtendWith(SpringExtension.class)
@@ -102,12 +100,7 @@ public class CitizenSubmitAosIT {
         verifyNoMoreInteractions(notificationService);
     }
 
-
     private String expectedCcdAboutToStartCallbackSuccessfulResponse() throws IOException {
-        File validCaseDataJsonFile = getFile(
-            "classpath:wiremock/responses/about-to-submit-citizen-submit-aos.json");
-
-        return new String(Files.readAllBytes(validCaseDataJsonFile.toPath()));
+        return expectedResponse("classpath:wiremock/responses/about-to-submit-citizen-submit-aos.json");
     }
-
 }
