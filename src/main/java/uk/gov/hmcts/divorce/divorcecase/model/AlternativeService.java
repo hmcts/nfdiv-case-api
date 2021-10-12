@@ -59,6 +59,12 @@ public class AlternativeService {
     private LocalDate serviceApplicationDecisionDate;
 
     @CCD(
+        label = "Deemed service date"
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate deemedServiceDate;
+
+    @CCD(
         label = "Date of Payment",
         typeOverride = Date
     )
