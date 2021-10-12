@@ -30,31 +30,22 @@ public final class DocmosisTemplateConstants {
     public static final String MARRIAGE = "marriage";
     public static final String OF_THE_DIVORCE = "of the divorce";
     public static final String CONDITIONAL_ORDER_OF_DIVORCE_FROM = "for a final conditional order of divorce from";
-    public static final String CONDITIONAL_ORDER_OF_DIVORCE = "for a final conditional order of divorce";
     public static final String DIVORCE_COSTS = "divorce costs";
     public static final String TO_END_A_CIVIL_PARTNERSHIP = "to end a civil partnership";
     public static final String RELATIONSHIP = "relationship";
     public static final String CIVIL_PARTNERSHIP = "civil partnership";
     public static final String TO_END_THE_CIVIL_PARTNERSHIP = "to end the civil partnership";
     public static final String DISSOLUTION_OF_THE_CIVIL_PARTNERSHIP_WITH = "for the dissolution of the civil partnership with";
-    public static final String DISSOLUTION_OF_A_CIVIL_PARTNERSHIP = "for the dissolution of a civil partnership";
     public static final String COSTS_RELATED_TO_ENDING_THE_CIVIL_PARTNERSHIP = "costs related to ending the civil partnership";
-    public static final String AND_FOR_THE_CHILDREN_OF_THE_APPLICANT_AND_THE_RESPONDENT
-        = ", and for the children of the applicant and the respondent";
     public static final String CHILDREN_OF_THE_APPLICANT_1_AND_APPLICANT_2 = ", and for the children of applicant 1 and applicant 2";
     public static final String ACCESS_CODE = "accessCode";
     public static final String SOLE_APPLICATION = "Application";
-    public static final String JOINT_OR_SOLE = "jointOrSole";
     public static final String CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP = "conditionalOrderDivorceOrCivilPartnership";
-    public static final String HAS_OTHER_COURT_CASES = "hasOtherCourtCases";
-    public static final String FINANCIAL_ORDER_CHILD_SOLE = "financialOrderChildSole";
-    public static final String FINANCIAL_ORDER_CHILD_JOINT = "financialOrderChildJoint";
     public static final String JOINT_APPLICATION = "Joint application";
     public static final String HAS_FINANCIAL_ORDER_APPLICANT_1 = "hasFinancialOrderApplicant1";
     public static final String APPLICANT_1_FINANCIAL_ORDER = "applicant1FinancialOrder";
     public static final String HAS_FINANCIAL_ORDER_APPLICANT_2 = "hasFinancialOrderApplicant2";
     public static final String APPLICANT_2_FINANCIAL_ORDER = "applicant2FinancialOrder";
-    public static final String IS_SOLE = "isSole";
     public static final String GENERAL_ORDER_DATE = "generalOrderDate";
     public static final String GENERAL_ORDER_DETAILS = "generalOrderDetails";
     public static final String GENERAL_ORDER_RECITALS = "generalOrderRecitals";
@@ -68,7 +59,9 @@ public final class DocmosisTemplateConstants {
     public static final String HAS_OTHER_COURT_CASES_APPLICANT_2 = "hasOtherCourtCasesApplicant2";
     public static final String APPLICANT_1_COURT_CASE_DETAILS = "applicant1CourtCaseDetails";
     public static final String APPLICANT_2_COURT_CASE_DETAILS = "applicant2CourtCaseDetails";
-
+    public static final String SERVICE_APPLICATION_RECEIVED_DATE = "serviceApplicationReceivedDate";
+    public static final String SERVICE_APPLICATION_DECISION_DATE = "serviceApplicationDecisionDate";
+    public static final String DOCUMENTS_ISSUED_ON =  "documentIssuedOn";
     private DocmosisTemplateConstants() {
     }
 }
