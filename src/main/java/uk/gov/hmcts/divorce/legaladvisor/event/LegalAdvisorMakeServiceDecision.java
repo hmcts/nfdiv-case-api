@@ -42,6 +42,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
             .forState(AwaitingServiceConsideration)
             .name("Make service decision")
             .description("Make service decision")
+            .showSummary()
             .explicitGrants()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, LEGAL_ADVISOR)
