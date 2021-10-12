@@ -88,7 +88,7 @@ send-letter:
   url: ${SEND_LETTER_SERVICE_BASEURL:http://rpe-send-letter-service-aat.service.core-compute-aat.internal}
 
 aos_pack:
-  due_date_offset_days: 30
+  due_date_offset_days: 16
 
 reissue:
   days_until_overdue:
@@ -98,7 +98,6 @@ reissue:
 
 case_progression:
   holding_period_in_weeks: ${CASE_HOLDING_WEEKS:20}
-  sole_due_date_offset_days: 14
 
 court:
   locations:

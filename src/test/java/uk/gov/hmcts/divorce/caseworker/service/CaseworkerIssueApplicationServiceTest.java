@@ -12,7 +12,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentSolicitorA
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPack;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
-import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDate;
+import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDateAfterIssue;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
@@ -58,7 +58,7 @@ class CaseworkerIssueApplicationServiceTest {
     private SendAosNotifications sendAosNotifications;
 
     @Mock
-    private SetDueDate setDueDate;
+    private SetDueDateAfterIssue setDueDateAfterIssue;
 
     @Mock
     private Clock clock;
@@ -85,7 +85,7 @@ class CaseworkerIssueApplicationServiceTest {
         when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosPack.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosNotifications.apply(caseDetails)).thenReturn(caseDetails);
-        when(setDueDate.apply(caseDetails)).thenReturn(caseDetails);
+        when(setDueDateAfterIssue.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply((caseDetails))).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = issueApplicationService.issueApplication(caseDetails);
@@ -124,7 +124,7 @@ class CaseworkerIssueApplicationServiceTest {
         when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosPack.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosNotifications.apply(caseDetails)).thenReturn(caseDetails);
-        when(setDueDate.apply(caseDetails)).thenReturn(caseDetails);
+        when(setDueDateAfterIssue.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply((caseDetails))).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = issueApplicationService.issueApplication(caseDetails);
