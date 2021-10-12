@@ -19,6 +19,8 @@ import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingDispute;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -77,11 +79,11 @@ public class CitizenSubmitAos implements CCDConfig<CaseData, State, UserRole> {
         if (data.getAcknowledgementOfService().getDisputeApplication() == YesOrNo.YES) {
             //soleAosSubmittedNotification.sendApplicationDisputedToApplicant(data, details.getId());
             //soleAosSubmittedNotification.sendApplicationDisputedToRespondent(data, details.getId());
-            state = State.PendingDispute;
+            state = PendingDispute;
         } else {
             soleAosSubmittedNotification.sendApplicationNotDisputedToApplicant(data, details.getId());
             soleAosSubmittedNotification.sendApplicationNotDisputedToRespondent(data, details.getId());
-            state = State.Holding;
+            state = Holding;
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

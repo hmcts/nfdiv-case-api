@@ -74,7 +74,7 @@ public class CitizenSubmitAosIT {
     }
 
     @Test
-    public void givenValidCaseDataWithoutDisputeWhenCallbackIsInvokedThenSendEmailToApplicant1AndApplicant2() throws Exception {
+    public void givenValidCaseDataWithoutDisputeWhenCallbackIsInvokedThenSendEmailToApplicantAndRespondent() throws Exception {
         CaseData data = validCaseDataForAosSubmitted();
         data.setDueDate(LOCAL_DATE);
         data.getAcknowledgementOfService().setDisputeApplication(NO);

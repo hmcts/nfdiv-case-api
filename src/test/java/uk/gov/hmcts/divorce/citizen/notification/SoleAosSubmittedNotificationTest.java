@@ -51,7 +51,7 @@ public class SoleAosSubmittedNotificationTest {
     private SoleAosSubmittedNotification notification;
 
     @Test
-    void shouldSendAosNotDisputedEmailToSoleApplicant1WithDivorceContent() {
+    void shouldSendAosNotDisputedEmailToSoleApplicantWithDivorceContent() {
         CaseData data = validCaseDataForAosSubmitted();
         data.setDueDate(LocalDate.now().plusDays(141));
 
@@ -76,7 +76,7 @@ public class SoleAosSubmittedNotificationTest {
     }
 
     @Test
-    void shouldSendAosNotDisputedEmailToSoleApplicant1WithDissolutionContent() {
+    void shouldSendAosNotDisputedEmailToSoleApplicantWithDissolutionContent() {
         CaseData data = validCaseDataForAosSubmitted();
         data.setDivorceOrDissolution(DISSOLUTION);
         data.setDueDate(LocalDate.now().plusDays(141));
