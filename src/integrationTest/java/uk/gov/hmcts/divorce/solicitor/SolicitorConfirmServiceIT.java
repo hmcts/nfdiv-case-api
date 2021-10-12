@@ -98,7 +98,7 @@ public class SolicitorConfirmServiceIT {
             .andExpect(
                 status().isOk()
             )
-            .andExpect(jsonPath("$.data.dueDate").value(serviceDate.plusDays(14).toString()));
+            .andExpect(jsonPath("$.data.dueDate").value(serviceDate.plusDays(16).toString()));
     }
 
     @Test

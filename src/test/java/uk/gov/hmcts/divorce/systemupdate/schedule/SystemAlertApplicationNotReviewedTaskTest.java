@@ -67,6 +67,8 @@ public class SystemAlertApplicationNotReviewedTaskTest {
 
     private User user;
 
+    private static final String FLAG = "overdueNotificationSent";
+
     @BeforeEach
     void setUp() {
         user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
@@ -92,7 +94,7 @@ public class SystemAlertApplicationNotReviewedTaskTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, FLAG, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
         systemAlertApplicationNotReviewedTask.run();
@@ -117,7 +119,7 @@ public class SystemAlertApplicationNotReviewedTaskTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
 
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, FLAG, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
         systemAlertApplicationNotReviewedTask.run();
@@ -136,7 +138,7 @@ public class SystemAlertApplicationNotReviewedTaskTest {
         when(caseDetails.getId()).thenReturn(1L);
         when(caseDetails.getData()).thenReturn(caseDataMap);
         when(mapper.convertValue(caseDataMap, CaseData.class)).thenReturn(caseData);
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, FLAG, user, SERVICE_AUTHORIZATION))
             .thenReturn(List.of(caseDetails));
 
         systemAlertApplicationNotReviewedTask.run();
@@ -155,7 +157,7 @@ public class SystemAlertApplicationNotReviewedTaskTest {
 
         when(caseDetails.getData()).thenReturn(Map.of("dueDate", LocalDate.now().plusDays(5)));
         when(mapper.convertValue(caseDataMap, CaseData.class)).thenReturn(caseData);
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, FLAG, user, SERVICE_AUTHORIZATION))
             .thenReturn(singletonList(caseDetails));
 
         systemAlertApplicationNotReviewedTask.run();
@@ -166,7 +168,7 @@ public class SystemAlertApplicationNotReviewedTaskTest {
 
     @Test
     void shouldNotSubmitEventIfSearchFails() {
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, FLAG, user, SERVICE_AUTHORIZATION))
 
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
@@ -185,7 +187,7 @@ public class SystemAlertApplicationNotReviewedTaskTest {
 
         when(caseDetails1.getData()).thenReturn(Map.of("dueDate", LocalDate.now()));
         when(mapper.convertValue(Map.of("dueDate", LocalDate.now()), CaseData.class)).thenReturn(caseData1);
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, FLAG, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
@@ -211,7 +213,7 @@ public class SystemAlertApplicationNotReviewedTaskTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, FLAG, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdManagementException("Failed processing of case", mock(FeignException.class)))
