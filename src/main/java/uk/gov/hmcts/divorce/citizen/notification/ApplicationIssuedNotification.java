@@ -28,6 +28,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.CREATE_ACC
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_ACCOUNT;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_PROCESS;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.ENDING_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_A_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_YOUR_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_YOUR_DIVORCE;
@@ -38,7 +39,6 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.RESPONDENT
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.REVIEW_DEADLINE_DATE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.TO_END_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.YOUR_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.YOUR_UNION;
 
@@ -161,7 +161,7 @@ public class ApplicationIssuedNotification {
 
             templateVars.put(PROCESS, CIVIL_PARTNERSHIP_PROCESS);
             templateVars.put(ACCOUNT, CIVIL_PARTNERSHIP_ACCOUNT);
-            templateVars.put(YOUR_UNION, YOUR_CIVIL_PARTNERSHIP);
+            templateVars.put(YOUR_UNION, ENDING_YOUR_CIVIL_PARTNERSHIP);
             templateVars.put(SERVICE, CIVIL_PARTNERSHIP_SERVICE);
             templateVars.put(GOV_UK_LINK, CIVIL_PARTNERSHIP_GOV_UK_LINK);
             templateVars.put(CITIZENS_ADVICE_LINK, CIVIL_PARTNERSHIP_CITIZENS_ADVICE_LINK);
