@@ -24,8 +24,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerMakeBailiffDecision.CASEWORKER_BAILIFF_DECISION;
-import static uk.gov.hmcts.divorce.divorcecase.model.ServiceApplicationType.BAILIFF;
-import static uk.gov.hmcts.divorce.divorcecase.model.ServiceApplicationType.DEEMED;
+import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.BAILIFF;
+import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
@@ -65,7 +65,7 @@ public class CaseworkerMakeBailiffDecisionIT {
 
         final CaseData caseData = caseData();
         caseData.getAlternativeService().setServiceApplicationGranted(YES);
-        caseData.getAlternativeService().setServiceApplicationType(BAILIFF);
+        caseData.getAlternativeService().setAlternativeServiceType(BAILIFF);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -95,7 +95,7 @@ public class CaseworkerMakeBailiffDecisionIT {
 
         final CaseData caseData = caseData();
         caseData.getAlternativeService().setServiceApplicationGranted(YES);
-        caseData.getAlternativeService().setServiceApplicationType(DEEMED);
+        caseData.getAlternativeService().setAlternativeServiceType(DEEMED);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)

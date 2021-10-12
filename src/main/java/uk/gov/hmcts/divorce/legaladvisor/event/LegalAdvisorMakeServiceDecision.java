@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.caseworker.event;
+package uk.gov.hmcts.divorce.legaladvisor.event;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,24 +16,21 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import java.time.Clock;
 import java.time.LocalDate;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 @Slf4j
-public class CaseworkerServiceApplicationReceived implements CCDConfig<CaseData, State, UserRole> {
-    public static final String CASEWORKER_SERVICE_RECEIVED = "caseworker-service-received";
+public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, State, UserRole> {
+    public static final String LEGAL_ADVISOR_SERVICE_DECISION = "legal-advisor-service-decision";
 
     @Autowired
     private Clock clock;
@@ -41,20 +38,21 @@ public class CaseworkerServiceApplicationReceived implements CCDConfig<CaseData,
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(CASEWORKER_SERVICE_RECEIVED)
-            .forStates(AosOverdue, AwaitingAos, AosDrafted, Submitted, AwaitingDocuments)
-            .name("Service application received")
-            .description("Service application received")
+            .event(LEGAL_ADVISOR_SERVICE_DECISION)
+            .forState(AwaitingServiceConsideration)
+            .name("Make service decision")
+            .description("Make service decision")
             .explicitGrants()
-            .showSummary()
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .grant(CREATE_READ_UPDATE, CASE_WORKER)
-            .grant(READ, SUPER_USER, LEGAL_ADVISOR, SOLICITOR, CITIZEN))
-            .page("serviceApplicationReceived")
-            .pageLabel("Service application received")
+            .grant(CREATE_READ_UPDATE, LEGAL_ADVISOR)
+            .grant(READ, CASE_WORKER, SUPER_USER, SOLICITOR, CITIZEN, SYSTEMUPDATE))
+            .page("makeServiceDecision")
+            .pageLabel("Approve service application")
             .complex(CaseData::getAlternativeService)
-                .mandatory(AlternativeService::getReceivedServiceApplicationDate)
-                .mandatory(AlternativeService::getServiceApplicationType)
+                .mandatory(AlternativeService::getServiceApplicationGranted)
+                .readonly(AlternativeService::getAlternativeServiceType,"serviceApplicationGranted=\"NEVER_SHOW\"")
+                .mandatory(AlternativeService::getDeemedServiceDate,
+                    "alternativeServiceType=\"deemed\" AND serviceApplicationGranted=\"Yes\"")
                 .done();
     }
 
@@ -62,15 +60,22 @@ public class CaseworkerServiceApplicationReceived implements CCDConfig<CaseData,
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails
     ) {
-        log.info("Caseworker create service application about to submit callback invoked");
+        log.info("Legal advisor make service decision about to submit callback invoked");
 
-        var caseData = details.getData();
+        var caseDataCopy = details.getData().toBuilder().build();
+        var serviceApplication = caseDataCopy.getAlternativeService();
 
-        caseData.getAlternativeService().setReceivedServiceAddedDate(LocalDate.now(clock));
+        State endState = details.getState();
+
+        if (serviceApplication.getServiceApplicationGranted().toBoolean()) {
+            log.info("Service application granted for case id {}", details.getId());
+            serviceApplication.setServiceApplicationDecisionDate(LocalDate.now(clock));
+            endState = Holding;
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
-            .state(AwaitingServicePayment)
+            .data(caseDataCopy)
+            .state(endState)
             .build();
     }
 }

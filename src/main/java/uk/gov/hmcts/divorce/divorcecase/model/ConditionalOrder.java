@@ -13,10 +13,12 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 
 @Data
 @AllArgsConstructor
@@ -49,7 +51,7 @@ public class ConditionalOrder {
     @CCD(
         label = "Do you need to change your application or add anything?",
         hint = "If you change or add anything which means your application has to be sent to your "
-                + "husband/wife again you may have to pay a £95 fee"
+            + "husband/wife again you may have to pay a £95 fee"
     )
     private YesOrNo changeOrAddToApplication;
 
@@ -64,7 +66,7 @@ public class ConditionalOrder {
     private YesOrNo addNewDocuments;
 
     @CCD(
-        label = "Documents uploaded at DN stage",
+        label = "Documents uploaded at CO stage",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument"
     )
@@ -81,7 +83,30 @@ public class ConditionalOrder {
     private String solicitorFirm;
 
     @CCD(
-        label = "Additional comments"
+        label = "Additional comments",
+        typeOverride = TextArea
     )
     private String solicitorAdditionalComments;
+
+    @CCD(
+        label = "Grant Conditional Order?"
+    )
+    private YesOrNo granted;
+
+    @CCD(
+        label = "Grant Cost Order?"
+    )
+    private YesOrNo claimsGranted;
+
+    @CCD(
+        label = "Make costs order information",
+        typeOverride = TextArea
+    )
+    private String claimsCostsOrderInformation;
+
+    @CCD(
+        label = "Legal advisor decision date"
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate decisionDate;
 }

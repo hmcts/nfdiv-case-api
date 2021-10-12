@@ -21,6 +21,8 @@ import uk.gov.hmcts.divorce.payment.model.StatusHistoriesItem;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -42,10 +44,16 @@ import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.NOT_FOUND;
 public class PaymentService {
 
     private static final String DEFAULT_CHANNEL = "default";
-    private static final String ISSUE_EVENT = "issue";
+    public static final String EVENT_ISSUE = "issue";
+    public static final String SERVICE_DIVORCE = "divorce";
+    public static final String SERVICE_OTHER = "other";
+    public static final String EVENT_GENERAL = "general%20application";
+    public static final String EVENT_MISC = "miscellaneous";
+    public static final String KEYWORD_BAILIFF = "financial-order";
+    public static final String KEYWORD_DEEMED = "GeneralAppWithoutNotice";
+
     private static final String FAMILY = "family";
     private static final String FAMILY_COURT = "family court";
-    private static final String DIVORCE = "divorce";
     private static final String DIVORCE_SERVICE = "DIVORCE";
     private static final String GBP = "GBP";
     public static final String CA_E0001 = "CA-E0001";
@@ -67,14 +75,14 @@ public class PaymentService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public OrderSummary getOrderSummary() {
-        final var feeResponse = feesAndPaymentsClient.getApplicationIssueFee(
+    public OrderSummary getOrderSummaryByServiceEvent(String service, String event, String keyword) {
+        final var feeResponse = feesAndPaymentsClient.getPaymentServiceFee(
             DEFAULT_CHANNEL,
-            ISSUE_EVENT,
+            event,
             FAMILY,
             FAMILY_COURT,
-            DIVORCE,
-            null
+            service,
+            keyword
         );
 
         return OrderSummary
@@ -276,7 +284,7 @@ public class PaymentService {
         var paymentItem = PaymentItem
             .builder()
             .ccdCaseNumber(String.valueOf(caseId))
-            .calculatedAmount(paymentTotal)
+            .calculatedAmount(penceToPounds(paymentTotal))
             .code(fee.getCode())
             .reference(reference)
             .version(fee.getVersion())
@@ -290,5 +298,11 @@ public class PaymentService {
         // We are always interested in the first fee. There may be a change in the future
         ListValue<Fee> feeItem = orderSummary.getFees().get(0);
         return feeItem.getValue();
+    }
+
+    private static String penceToPounds(final String pence) {
+        return NumberFormat.getNumberInstance().format(
+            new BigDecimal(pence).movePointLeft(2)
+        );
     }
 }

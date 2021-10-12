@@ -18,7 +18,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 public class ScheduledForCreateTest {
 
     @InjectMocks
-    private ScheduledForCreate scheduledForCreate;
+    private CreateBulkList scheduledForCreate;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
@@ -28,6 +28,6 @@ public class ScheduledForCreateTest {
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(ScheduledForCreate.SCHEDULE_CREATE);
+            .contains(CreateBulkList.CREATE_BULK_LIST);
     }
 }

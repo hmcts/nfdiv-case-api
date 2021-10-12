@@ -69,7 +69,7 @@ send-letter:
   url: ${SEND_LETTER_SERVICE_BASEURL:http://rpe-send-letter-service-aat.service.core-compute-aat.internal}
 
 aos_pack:
-  due_date_offset_days: 30
+  due_date_offset_days: 16
 
 reissue:
   days_until_overdue:
@@ -97,8 +97,11 @@ pba:
       service:
         url: ${PRD_API_BASEURL:http://rd-professional-api-aat.service.core-compute-aat.internal}
 
-
 payment:
   service:
     api:
       baseurl: ${PAYMENT_API_BASEURL:http://payment-api-aat.service.core-compute-aat.internal}
+
+bulk-action:
+  min-cases: 30
+  page-size: 50

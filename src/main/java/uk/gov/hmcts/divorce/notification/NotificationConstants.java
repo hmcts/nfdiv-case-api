@@ -14,6 +14,7 @@ public final class NotificationConstants {
     public static final String MARRIAGE = "marriage";
     public static final String DIVORCE = "divorce";
     public static final String CIVIL_PARTNERSHIP = "civil partnership";
+    public static final String YOUR_UNION = "Your union";
     public static final String YOUR_DIVORCE = "Your divorce";
     public static final String ENDING_YOUR_CIVIL_PARTNERSHIP = "Ending your civil partnership";
     public static final String DIVORCE_APPLICATION = "divorce application";

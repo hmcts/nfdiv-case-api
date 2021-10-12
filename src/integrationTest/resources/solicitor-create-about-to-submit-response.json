@@ -25,6 +25,8 @@
     "applicant1Gender": "male",
     "applicant1CorrespondenceAddress": null,
     "applicant1SolicitorRepresented": "Yes",
+    "applicant1SolicitorAddress": "Line 1\nLine 2\nTown\nWC1 2TG",
+    "applicant1SolicitorEmail": "sol1@example.com",
     "applicant1SolicitorOrganisationPolicy": {
       "Organisation": {
         "OrganisationName": "Test Organisation",

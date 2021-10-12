@@ -14,7 +14,7 @@ import java.time.LocalDate;
 
 @Component
 @Slf4j
-public class SetDueDate implements CaseTask {
+public class SetDueDateAfterIssue implements CaseTask {
 
     @Value("${aos_pack.due_date_offset_days}")
     private long dueDateOffsetDays;
@@ -25,15 +25,21 @@ public class SetDueDate implements CaseTask {
     @Autowired
     private Clock clock;
 
+    /**
+     *  Joint applications skip AoS and go straight to 40 week holding.
+     *  Sole applications served by the solicitor issue the AoS when they confirm service and the dueDate is not set after issue.
+     *  Sole applications served by the court issue the AoS immediately so the dueDate is 16 days.
+     */
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
 
-        if (!caseDetails.getData().getApplication().isSolicitorApplication()) {
-            log.info("Setting holding due date.  Case ID: {}", caseDetails.getId());
-            caseDetails.getData().setDueDate(LocalDate.now(clock).plusWeeks(holdingPeriodInWeeks).plusDays(1));
+        log.info("Setting due date.  Case ID: {}", caseDetails.getId());
 
-        } else if (!caseDetails.getData().getApplication().isSolicitorServiceMethod()) {
-            log.info("Setting due date.  Case ID: {}", caseDetails.getId());
+        if (!caseDetails.getData().getApplicationType().isSole()) {
+            caseDetails.getData().setDueDate(LocalDate.now(clock).plusWeeks(holdingPeriodInWeeks).plusDays(1));
+        } else if (caseDetails.getData().getApplication().isSolicitorServiceMethod()) {
+            caseDetails.getData().setDueDate(null);
+        } else {
             caseDetails.getData().setDueDate(LocalDate.now(clock).plusDays(dueDateOffsetDays));
         }
 
