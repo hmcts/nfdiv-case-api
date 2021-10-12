@@ -36,6 +36,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.CIVIL_PART
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_ACCOUNT;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_PROCESS;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.ENDING_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PROCESS;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.YOUR_DIVORCE;
@@ -102,7 +103,7 @@ public class SoleAosSubmittedNotificationTest {
             eq(SOL_APPLICANT_AOS_SUBMITTED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(YOUR_UNION, "Ending your civil partnership"),
+                hasEntry(YOUR_UNION, ENDING_YOUR_CIVIL_PARTNERSHIP),
                 hasEntry(PROCESS, CIVIL_PARTNERSHIP_PROCESS),
                 hasEntry(ACCOUNT, CIVIL_PARTNERSHIP_ACCOUNT)
             )),
@@ -210,7 +211,7 @@ public class SoleAosSubmittedNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(37).format(DATE_TIME_FORMATTER)),
-                hasEntry(YOUR_UNION, "ending your civil partnership"),
+                hasEntry(YOUR_UNION, ENDING_YOUR_CIVIL_PARTNERSHIP.toLowerCase(Locale.ROOT)),
                 hasEntry("ending of your union", "ending of your civil partnership"),
                 hasEntry(ACCOUNT, CIVIL_PARTNERSHIP_ACCOUNT)
             )),

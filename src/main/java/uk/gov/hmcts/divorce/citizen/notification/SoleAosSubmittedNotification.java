@@ -25,6 +25,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.DISSOLUTIO
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_ACCOUNT;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_PROCESS;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.ENDING_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PROCESS;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.YOUR_DIVORCE;
@@ -35,7 +36,6 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.YOUR_UNION
 public class SoleAosSubmittedNotification {
 
     private static final String APPLY_FOR_CO_DATE = "apply for CO date";
-    private static final String ENDING_YOUR_CIVIL_PARTNERSHIP = "Ending your civil partnership";
     private static final String ENDING_OF_YOUR_CIVIL_PARTNERSHIP = "ending of your civil partnership";
     private static final String ENDING_OF_YOUR_UNION = "ending of your union";
     private static final String DIVORCE_OR_DISSOLUTION = "divorce / dissolution";
