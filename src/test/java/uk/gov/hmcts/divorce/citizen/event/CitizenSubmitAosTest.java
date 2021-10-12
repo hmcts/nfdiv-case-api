@@ -3,17 +3,21 @@ package uk.gov.hmcts.divorce.citizen.event;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.citizen.notification.SoleAosSubmittedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitAos.CITIZEN_SUBMIT_AOS;
@@ -25,6 +29,9 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
 class CitizenSubmitAosTest {
+
+    @Mock
+    private SoleAosSubmittedNotification soleAosSubmittedNotification;
 
     @InjectMocks
     private CitizenSubmitAos citizenSubmitAos;
@@ -85,7 +92,7 @@ class CitizenSubmitAosTest {
     }
 
     @Test
-    void shouldSetStateToHoldingIfRespondentDoesNotWantToDispute() {
+    void shouldSetStateToHoldingAndSendEmailToApplicantAndRespondentIfRespondentDoesNotWantToDispute() {
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .statementOfTruth(YES)
@@ -100,6 +107,10 @@ class CitizenSubmitAosTest {
         caseDetails.setData(caseData);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitAos.aboutToSubmit(caseDetails, caseDetails);
+
+        verify(soleAosSubmittedNotification).sendApplicationNotDisputedToApplicant(caseData, caseDetails.getId());
+        verify(soleAosSubmittedNotification).sendApplicationNotDisputedToRespondent(caseData, caseDetails.getId());
+        verifyNoMoreInteractions(soleAosSubmittedNotification);
 
         assertThat(response.getState()).isEqualTo(Holding);
         assertThat(response.getErrors()).isNull();
