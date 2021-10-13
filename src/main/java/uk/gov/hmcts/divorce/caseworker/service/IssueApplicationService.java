@@ -10,7 +10,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentSolicitorA
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPack;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
-import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDate;
+import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDateAfterIssue;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -50,7 +50,7 @@ public class IssueApplicationService {
     private SendAosNotifications sendAosNotifications;
 
     @Autowired
-    private SetDueDate setDueDate;
+    private SetDueDateAfterIssue setDueDateAfterIssue;
 
     @Autowired
     private Clock clock;
@@ -64,7 +64,7 @@ public class IssueApplicationService {
             generateDivorceApplication,
             sendAosPack,
             sendAosNotifications,
-            setDueDate,
+            setDueDateAfterIssue,
             details -> {
                 details.getData().getApplication().setIssueDate(LocalDate.now(clock));
                 return details;

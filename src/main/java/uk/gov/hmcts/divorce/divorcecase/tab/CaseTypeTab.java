@@ -35,6 +35,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildGeneralReferralTab(configBuilder);
         buildConfidentialDocumentsTab(configBuilder);
         buildServiceApplicationTab(configBuilder);
+        buildConditionalOrderTab(configBuilder);
+        buildOutcomeOfConditionalOrderTab(configBuilder);
     }
 
     private void buildStateTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -140,8 +142,39 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("alternativeService", "Service Application")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER)
             .field("receivedServiceApplicationDate")
-            .field("serviceApplicationType")
+            .field("alternativeServiceType")
             .field("receivedServiceAddedDate")
-            .field("serviceApplicationDecisionDate");
+            .field("serviceApplicationDecisionDate")
+            .field("deemedServiceDate")
+            .field("serviceApplicationGranted")
+            .field("dateOfPayment")
+            .field("paymentMethod")
+            .field("feeAccountNumber", "paymentMethod=\"feePayByAccount\"")
+            .field("feeAccountReferenceNumber", "paymentMethod=\"feePayByAccount\"")
+            .field("helpWithFeesReferenceNumber", "paymentMethod=\"feePayByHelp\"")
+            .field("servicePaymentFeeOrderSummary");
+    }
+
+    private void buildConditionalOrderTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("conditionalOrder", "Conditional Order")
+            .forRoles(CASE_WORKER, LEGAL_ADVISOR, SOLICITOR, SUPER_USER)
+            .showCondition("coDateSubmitted=\"*\"")
+            .field("coApplyForConditionalOrder")
+            .field("coDateSubmitted")
+            .field("coChangeOrAddToApplication")
+            .field("LabelConditionalOrderSoT-SoTStatement")
+            .field("coSolicitorName")
+            .field("coSolicitorFirm")
+            .field("coSolicitorAdditionalComments");
+    }
+
+    private void buildOutcomeOfConditionalOrderTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("outcomeOfConditionalOrder", "Outcome of Conditional Order")
+            .forRoles(CASE_WORKER, LEGAL_ADVISOR, SOLICITOR, SUPER_USER)
+            .showCondition("coGranted=\"*\"")
+            .field("coGranted")
+            .field("coClaimsGranted")
+            .field("coClaimsCostsOrderInformation")
+            .field("coDecisionDate");
     }
 }

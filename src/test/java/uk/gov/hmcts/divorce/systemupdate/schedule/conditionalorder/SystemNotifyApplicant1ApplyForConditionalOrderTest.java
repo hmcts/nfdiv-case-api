@@ -63,6 +63,8 @@ public class SystemNotifyApplicant1ApplyForConditionalOrderTest {
 
     private User user;
 
+    private static final String FLAG = "applicant1NotifiedCanApplyForConditionalOrder";
+
     @BeforeEach
     void setUp() {
         user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
@@ -92,7 +94,7 @@ public class SystemNotifyApplicant1ApplyForConditionalOrderTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingConditionalOrder, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingConditionalOrder, FLAG, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
         systemNotifyApplicant1ApplyForConditionalOrder.run();
@@ -122,7 +124,7 @@ public class SystemNotifyApplicant1ApplyForConditionalOrderTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingConditionalOrder, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingConditionalOrder, FLAG, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
         systemNotifyApplicant1ApplyForConditionalOrder.run();
@@ -132,7 +134,7 @@ public class SystemNotifyApplicant1ApplyForConditionalOrderTest {
 
     @Test
     void shouldNotSubmitEventIfSearchFails() {
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingConditionalOrder, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingConditionalOrder, FLAG, user, SERVICE_AUTHORIZATION))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
         systemNotifyApplicant1ApplyForConditionalOrder.run();
@@ -154,7 +156,7 @@ public class SystemNotifyApplicant1ApplyForConditionalOrderTest {
         when(caseDetails1.getId()).thenReturn(1L);
 
         when(mapper.convertValue(Map.of("dueDate", LocalDate.now().minusWeeks(21)), CaseData.class)).thenReturn(caseData1);
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingConditionalOrder, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingConditionalOrder, FLAG, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
@@ -189,7 +191,7 @@ public class SystemNotifyApplicant1ApplyForConditionalOrderTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingConditionalOrder, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingConditionalOrder, FLAG, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdManagementException("Failed processing of case", mock(FeignException.class)))

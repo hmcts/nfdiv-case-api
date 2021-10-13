@@ -69,17 +69,10 @@ send-letter:
   url: ${SEND_LETTER_SERVICE_BASEURL:http://rpe-send-letter-service-aat.service.core-compute-aat.internal}
 
 aos_pack:
-  due_date_offset_days: 30
-
-reissue:
-  days_until_overdue:
-    digital_aos: 14
-    offline_aos: 16
-    complete_reissue: 16
+  due_date_offset_days: 16
 
 case_progression:
   holding_period_in_weeks: ${CASE_HOLDING_WEEKS:20}
-  sole_due_date_offset_days: 14
 
 court:
   locations:
@@ -98,8 +91,11 @@ pba:
       service:
         url: ${PRD_API_BASEURL:http://rd-professional-api-aat.service.core-compute-aat.internal}
 
-
 payment:
   service:
     api:
       baseurl: ${PAYMENT_API_BASEURL:http://payment-api-aat.service.core-compute-aat.internal}
+
+bulk-action:
+  min-cases: 30
+  page-size: 50

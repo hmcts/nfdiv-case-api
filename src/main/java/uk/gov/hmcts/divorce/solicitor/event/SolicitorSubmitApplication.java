@@ -51,6 +51,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateReadyForPayment;
+import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ISSUE;
+import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_DIVORCE;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
 @Slf4j
@@ -97,7 +99,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         log.info("Submit application about to start callback invoked");
 
         log.info("Retrieving order summary");
-        final OrderSummary orderSummary = paymentService.getOrderSummary();
+        final OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, null);
         final CaseData caseData = details.getData();
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
@@ -197,11 +199,11 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
     }
 
     private void updateApplicant2DigitalDetails(CaseData caseData) {
-        if (caseData.getApplicant2().getSolicitor() != null) {
+        if (caseData.getApplicant2().getSolicitor() != null
+            && caseData.getApplicant2().getSolicitor().getOrganisationPolicy() != null) {
             log.info("Applicant 2 has a solicitor and is digital");
 
             caseData.getApplication().setApp2ContactMethodIsDigital(YES);
-            caseData.getApplicant2().setSolicitorRepresented(YES);
         }
     }
 

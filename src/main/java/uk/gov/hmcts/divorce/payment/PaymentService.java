@@ -44,10 +44,16 @@ import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.NOT_FOUND;
 public class PaymentService {
 
     private static final String DEFAULT_CHANNEL = "default";
-    private static final String ISSUE_EVENT = "issue";
+    public static final String EVENT_ENFORCEMENT = "enforcement";
+    public static final String EVENT_GENERAL = "general%20application";
+    public static final String EVENT_ISSUE = "issue";
+    public static final String SERVICE_DIVORCE = "divorce";
+    public static final String SERVICE_OTHER = "other";
+    public static final String KEYWORD_BAILIFF = "HIJ";
+    public static final String KEYWORD_DEEMED = "GeneralAppWithoutNotice";
+
     private static final String FAMILY = "family";
     private static final String FAMILY_COURT = "family court";
-    private static final String DIVORCE = "divorce";
     private static final String DIVORCE_SERVICE = "DIVORCE";
     private static final String FEE_LOOKUP_KEYWORD = "DivorceCivPart";
     private static final String GBP = "GBP";
@@ -70,10 +76,10 @@ public class PaymentService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public OrderSummary getOrderSummary() {
-        final var feeResponse = feesAndPaymentsClient.getApplicationIssueFee(
+    public OrderSummary getOrderSummaryByServiceEvent(String service, String event, String keyword) {
+        final var feeResponse = feesAndPaymentsClient.getPaymentServiceFee(
             DEFAULT_CHANNEL,
-            ISSUE_EVENT,
+            event,
             FAMILY,
             FAMILY_COURT,
             DIVORCE,

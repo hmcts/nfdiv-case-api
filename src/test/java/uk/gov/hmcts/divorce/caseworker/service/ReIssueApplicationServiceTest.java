@@ -1,12 +1,10 @@
 package uk.gov.hmcts.divorce.caseworker.service;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCitizenRespondentAosInvitation;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
@@ -14,15 +12,13 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentSolicitorA
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPack;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
-import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDate;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
+import uk.gov.hmcts.divorce.caseworker.service.task.SetReIssueAndDueDate;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.task.DivorceApplicationRemover;
 import uk.gov.hmcts.divorce.systemupdate.service.ReissueProcessingException;
-
-import java.time.Clock;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -31,8 +27,6 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.REISSUE_CASE;
-import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
-import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -65,20 +59,10 @@ class ReIssueApplicationServiceTest {
     private SendAosNotifications sendAosNotifications;
 
     @Mock
-    private SetDueDate setDueDate;
-
-    @Mock
-    private Clock clock;
+    private SetReIssueAndDueDate setReIssueAndDueDate;
 
     @InjectMocks
     private ReIssueApplicationService reIssueApplicationService;
-
-    @BeforeEach
-    void setPageSize() {
-        ReflectionTestUtils.setField(reIssueApplicationService, "daysUntilOverdueForDigitalAos", 14);
-        ReflectionTestUtils.setField(reIssueApplicationService, "daysUntilOverdueForOfflineAos", 16);
-        ReflectionTestUtils.setField(reIssueApplicationService, "daysUntilOverdueForCompleteReissue", 16);
-    }
 
     @Test
     void shouldRunReIssueApplicationTasksForCitizenApplicationWhenReissueTypeIsDigitalAos() {
@@ -91,19 +75,16 @@ class ReIssueApplicationServiceTest {
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
         caseData.getApplication().setReissueOption(DIGITAL_AOS);
 
-        setMockClock(clock);
-
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(generateRespondentSolicitorAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
         when(generateCitizenRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosNotifications.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
+        when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
 
         var expectedCaseData = caseData();
-        expectedCaseData.getApplication().setReissueDate(getExpectedLocalDate());
-        expectedCaseData.setDueDate(getExpectedLocalDate().plusDays(14));
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
     }
@@ -119,19 +100,16 @@ class ReIssueApplicationServiceTest {
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
         caseData.getApplication().setReissueOption(OFFLINE_AOS);
 
-        setMockClock(clock);
-
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(generateRespondentSolicitorAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
         when(generateCitizenRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosPack.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
+        when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
 
         var expectedCaseData = caseData();
-        expectedCaseData.getApplication().setReissueDate(getExpectedLocalDate());
-        expectedCaseData.setDueDate(getExpectedLocalDate().plusDays(16));
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
     }
@@ -147,8 +125,6 @@ class ReIssueApplicationServiceTest {
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
         caseData.getApplication().setReissueOption(REISSUE_CASE);
 
-        setMockClock(clock);
-
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(generateRespondentSolicitorAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
         when(generateCitizenRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
@@ -156,12 +132,11 @@ class ReIssueApplicationServiceTest {
         when(sendAosNotifications.apply(caseDetails)).thenReturn(caseDetails);
         when(generateMiniApplication.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
+        when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
 
         var expectedCaseData = caseData();
-        expectedCaseData.getApplication().setReissueDate(getExpectedLocalDate());
-        expectedCaseData.setDueDate(getExpectedLocalDate().plusDays(16));
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
     }
@@ -186,19 +161,16 @@ class ReIssueApplicationServiceTest {
         caseDetails.setId(1L);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
-        setMockClock(clock);
-
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(generateRespondentSolicitorAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
         when(generateCitizenRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosNotifications.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
+        when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
 
         var expectedCaseData = caseData();
-        expectedCaseData.getApplication().setReissueDate(getExpectedLocalDate());
-        expectedCaseData.setDueDate(getExpectedLocalDate().plusDays(14));
         expectedCaseData.getApplicant2().setSolicitorRepresented(YES);
         expectedCaseData.getApplicant2().setSolicitor(solicitor);
         expectedCaseData.getApplication().setSolSignStatementOfTruth(YES);
@@ -226,19 +198,16 @@ class ReIssueApplicationServiceTest {
         caseDetails.setId(1L);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
-        setMockClock(clock);
-
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(generateRespondentSolicitorAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
         when(generateCitizenRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosPack.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
+        when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
 
         var expectedCaseData = caseData();
-        expectedCaseData.getApplication().setReissueDate(getExpectedLocalDate());
-        expectedCaseData.setDueDate(getExpectedLocalDate().plusDays(16));
         expectedCaseData.getApplicant2().setSolicitorRepresented(YES);
         expectedCaseData.getApplicant2().setSolicitor(solicitor);
         expectedCaseData.getApplication().setSolSignStatementOfTruth(YES);
@@ -266,8 +235,6 @@ class ReIssueApplicationServiceTest {
         caseDetails.setId(1L);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
-        setMockClock(clock);
-
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(generateRespondentSolicitorAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
         when(generateCitizenRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
@@ -275,12 +242,11 @@ class ReIssueApplicationServiceTest {
         when(sendAosNotifications.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosPack.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
+        when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
 
         var expectedCaseData = caseData();
-        expectedCaseData.getApplication().setReissueDate(getExpectedLocalDate());
-        expectedCaseData.setDueDate(getExpectedLocalDate().plusDays(16));
         expectedCaseData.getApplicant2().setSolicitorRepresented(YES);
         expectedCaseData.getApplicant2().setSolicitor(solicitor);
         expectedCaseData.getApplication().setSolSignStatementOfTruth(YES);

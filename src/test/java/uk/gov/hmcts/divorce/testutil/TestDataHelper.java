@@ -381,6 +381,18 @@ public class TestDataHelper {
         return caseData;
     }
 
+    public static CaseData validCaseDataForAosSubmitted() {
+        CaseData caseData = validCaseDataForIssueApplication();
+
+        caseData.getApplicant2().setLegalProceedings(NO);
+        caseData.getAcknowledgementOfService().setConfirmReadPetition(YES);
+        caseData.getAcknowledgementOfService().setJurisdictionAgree(YES);
+        caseData.getAcknowledgementOfService().setPrayerHasBeenGiven(YES);
+        caseData.getAcknowledgementOfService().setStatementOfTruth(YES);
+
+        return caseData;
+    }
+
     public static CallbackRequest callbackRequest() {
         return callbackRequest(caseDataWithOrderSummary());
     }

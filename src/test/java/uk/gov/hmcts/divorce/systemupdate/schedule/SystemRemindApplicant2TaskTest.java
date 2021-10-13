@@ -70,6 +70,8 @@ public class SystemRemindApplicant2TaskTest {
 
     private User user;
 
+    private static final String FLAG = "applicant2ReminderSent";
+
     @BeforeEach
     void setUp() {
         user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
@@ -106,7 +108,7 @@ public class SystemRemindApplicant2TaskTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, FLAG, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
         systemRemindApplicant2Task.run();
@@ -137,7 +139,7 @@ public class SystemRemindApplicant2TaskTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
 
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, FLAG, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
         systemRemindApplicant2Task.run();
@@ -154,7 +156,7 @@ public class SystemRemindApplicant2TaskTest {
 
         when(caseDetails.getData()).thenReturn(Map.of("dueDate", LocalDateTime.now().plusDays(10)));
         when(mapper.convertValue(anyMap(), eq(CaseData.class))).thenReturn(caseData);
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, FLAG, user, SERVICE_AUTHORIZATION))
             .thenReturn(singletonList(caseDetails));
 
         systemRemindApplicant2Task.run();
@@ -165,7 +167,7 @@ public class SystemRemindApplicant2TaskTest {
 
     @Test
     void shouldNotSubmitEventIfSearchFails() {
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, FLAG, user, SERVICE_AUTHORIZATION))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
         systemRemindApplicant2Task.run();
@@ -191,7 +193,7 @@ public class SystemRemindApplicant2TaskTest {
 
         when(caseDetails1.getData()).thenReturn(Map.of("dueDate", LocalDate.now().plusDays(4)));
         when(mapper.convertValue(anyMap(), eq(CaseData.class))).thenReturn(caseData1);
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, FLAG, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
@@ -229,7 +231,7 @@ public class SystemRemindApplicant2TaskTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, FLAG, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdManagementException("Failed processing of case", mock(FeignException.class)))

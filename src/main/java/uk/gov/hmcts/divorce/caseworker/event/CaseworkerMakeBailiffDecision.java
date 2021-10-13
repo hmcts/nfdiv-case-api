@@ -16,7 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import java.time.Clock;
 import java.time.LocalDate;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.ServiceApplicationType.BAILIFF;
+import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.BAILIFF;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffService;
@@ -76,7 +76,7 @@ public class CaseworkerMakeBailiffDecision implements CCDConfig<CaseData, State,
 
             serviceApplication.setServiceApplicationDecisionDate(LocalDate.now(clock));
 
-            if (BAILIFF.equals(serviceApplication.getServiceApplicationType())) {
+            if (BAILIFF.equals(serviceApplication.getAlternativeServiceType())) {
                 endState = AwaitingBailiffService;
             } else {
                 endState = AwaitingConditionalOrder;

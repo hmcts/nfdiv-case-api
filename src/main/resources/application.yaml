@@ -74,6 +74,10 @@ uk:
             GENERAL_EMAIL_OTHER_PARTY: '2c188c63-db80-46b4-a1e2-53fdc510d5b9'
             SOLICITOR_AWAITING_CONDITIONAL_ORDER: '3f2e50a1-b4ae-4466-bb8c-eac55563aa02'
             CITIZEN_APPLY_FOR_CONDITIONAL_ORDER: '39def49e-2d2d-489e-b715-3103e27d5977'
+            SOL_APPLICANT_AOS_SUBMITTED: '28139c85-180d-456c-b40c-36c4e04afa5d'
+            SOL_RESPONDENT_AOS_SUBMITTED: '61a8ec4f-b0cf-45d9-a419-29cae2c811c7'
+            SOL_APPLICANT_DISPUTED_AOS_SUBMITTED: '98960794-a1a9-4761-a495-2eca16f4c81e'
+            SOL_RESPONDENT_DISPUTED_AOS_SUBMITTED: '3f42a757-f635-4f58-be27-d65af450a2ee'
           welsh:
             SAVE_SIGN_OUT: '6e9526c5-9380-4bf1-879a-b8e401e39a6f'
             OUTSTANDING_ACTIONS: '1bc9ce05-557b-4cf6-9e20-87d57d55e89c'
@@ -125,23 +129,23 @@ core_case_data:
 docmosis:
   templates:
     english:
-      DIVORCE_APPLICATION_SOLE: Divorce_CP_Application_Sole.docx
-      DIVORCE_APPLICATION_JOINT: Divorce_CP_Application_Joint.docx
-      DIVORCE_DRAFT_APPLICATION: Divorce_CP_Mini_Draft_Application_Template.docx
-      RESP_SOLICITOR_AOS_INVITATION: Divorce_CP_Dummy_Template.docx #TODO: Set correct template when available
-      CITIZEN_RESP_AOS_INVITATION: Divorce_CP_Dummy_Template.docx #TODO: Set correct template when available
-      DIVORCE_GENERAL_ORDER: Divorce_General_Order_Eng.docx #TODO: update template once available
-      RESPONDENT_ANSWERS: Divorce_Respondent_Answers_Eng.docx #TODO: update content
-      CERTIFICATE_OF_SERVICE: Divorce_Certificate_Of_Service.docx #TODO: update content
+      DIVORCE_APPLICATION_SOLE: NFD_CP_Application_Sole.docx
+      DIVORCE_APPLICATION_JOINT: NFD_CP_Application_Joint.docx
+      DIVORCE_DRAFT_APPLICATION: NFD_CP_Mini_Draft_Application_Template.docx
+      RESP_SOLICITOR_AOS_INVITATION: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
+      CITIZEN_RESP_AOS_INVITATION: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
+      DIVORCE_GENERAL_ORDER: NFD_General_Order_Eng.docx #TODO: update template once available
+      RESPONDENT_ANSWERS: NFD_Respondent_Answers_Eng.docx #TODO: update content
+      CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx #TODO: update content
     welsh:
-      DIVORCE_APPLICATION_SOLE: Divorce_CP_Dummy_Template.docx #TODO: Set correct template when available
-      DIVORCE_APPLICATION_JOINT: Divorce_CP_Dummy_Template.docx #TODO: Set correct template when available
-      DIVORCE_DRAFT_APPLICATION: Divorce_CP_Dummy_Template.docx #TODO: Set correct template when available
-      RESP_SOLICITOR_AOS_INVITATION: Divorce_CP_Dummy_Template.docx #TODO: Set correct template when available
-      CITIZEN_RESP_AOS_INVITATION: Divorce_CP_Dummy_Template.docx #TODO: Set correct template when available
-      DIVORCE_GENERAL_ORDER: Divorce_General_Order_Eng.docx #TODO: update template once available
-      RESPONDENT_ANSWERS: Divorce_Respondent_Answers_Eng.docx #TODO: replace template once available
-      CERTIFICATE_OF_SERVICE: Divorce_Certificate_Of_Service.docx #TODO: update content
+      DIVORCE_APPLICATION_SOLE: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
+      DIVORCE_APPLICATION_JOINT: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
+      DIVORCE_DRAFT_APPLICATION: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
+      RESP_SOLICITOR_AOS_INVITATION: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
+      CITIZEN_RESP_AOS_INVITATION: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
+      DIVORCE_GENERAL_ORDER: NFD_General_Order_Eng.docx #TODO: update template once available
+      RESPONDENT_ANSWERS: NFD_Respondent_Answers_Eng.docx #TODO: replace template once available
+      CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx #TODO: update content
 
 doc_assembly:
   url: ${DOC_ASSEMBLY_URL:http://dg-docassembly-aat.service.core-compute-aat.internal}
@@ -157,19 +161,10 @@ send-letter:
   url: ${SEND_LETTER_SERVICE_BASEURL:http://rpe-send-letter-service-aat.service.core-compute-aat.internal}
 
 aos_pack:
-  due_date_offset_days: ${AOS_PACK_DUE_DATE_OFFSET_DAYS:14}
-
-reissue:
-  days_until_overdue:
-    digital_aos: 14
-    offline_aos: 16
-    complete_reissue: 16
-
-
+  due_date_offset_days: ${AOS_PACK_DUE_DATE_OFFSET_DAYS:16}
 
 case_progression:
   holding_period_in_weeks: ${CASE_HOLDING_WEEKS:20}
-  sole_due_date_offset_days: ${SOLE_DUE_DATE_OFFSET_DAYS:14}
 
 court:
   locations:
@@ -192,3 +187,7 @@ payment:
   service:
     api:
       baseurl: ${PAYMENT_API_BASEURL:http://payment-api-aat.service.core-compute-aat.internal}
+
+bulk-action:
+  min-cases: 30
+  page-size: 50
