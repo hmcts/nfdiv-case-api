@@ -22,6 +22,7 @@ import uk.gov.hmcts.divorce.payment.PaymentService;
 
 import java.util.List;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -30,8 +31,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
+import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ENFORCEMENT;
 import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_MISC;
 import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_BAILIFF;
 import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DEEMED;
 import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
@@ -53,10 +54,11 @@ public class CaseworkerAlternativeServicePayment implements CCDConfig<CaseData, 
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(CASEWORKER_SERVICE_PAYMENT)
-            .forStateTransition(AwaitingServicePayment, AwaitingServiceConsideration)
+            .forState(AwaitingServicePayment)
             .name("Confirm Service Payment")
             .description("Service Payment made")
             .showSummary()
+            .showEventNotes()
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .explicitGrants()
@@ -78,7 +80,7 @@ public class CaseworkerAlternativeServicePayment implements CCDConfig<CaseData, 
 
         final var caseData = details.getData();
         if (caseData.getAlternativeService().getAlternativeServiceType() == AlternativeServiceType.BAILIFF) {
-            orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_MISC, KEYWORD_BAILIFF);
+            orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_ENFORCEMENT, KEYWORD_BAILIFF);
         } else {
             orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_DEEMED);
         }
@@ -99,13 +101,19 @@ public class CaseworkerAlternativeServicePayment implements CCDConfig<CaseData, 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Submit application about to submit callback invoked");
+        log.info("CaseWorkerAlternativeServicePayment aboutToSubmit callback invoked");
 
-        CaseData data = details.getData();
-        State state = details.getState();
+        final var caseData = details.getData();
+        final State state;
+
+        if (caseData.getAlternativeService().getAlternativeServiceType() == AlternativeServiceType.BAILIFF) {
+            state = AwaitingBailiffReferral;
+        } else {
+            state = AwaitingServiceConsideration;
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(data)
+            .data(caseData)
             .state(state)
             .build();
     }
