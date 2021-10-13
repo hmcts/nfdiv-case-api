@@ -29,6 +29,8 @@ public final class DocumentConstants {
     public static final String DOCUMENT_DOWNLOAD_URI = "document_download_uri";
     public static final String PERMANENT = "permanent";
 
+    public static final String DISPENSED_AS_SERVICE_GRANTED = "dispensedAsServedGranted";
+
     private DocumentConstants() {
     }
 }

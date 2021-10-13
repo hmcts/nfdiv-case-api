@@ -11,7 +11,6 @@ import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
-import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -24,6 +23,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -34,6 +34,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DISPENSED_AS_SERVICE_GRANTED;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.ORDER_TO_DISPENSE_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DISPENSE_WITH_SERVICE_GRANTED;
 
@@ -59,6 +60,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
             .name("Make service decision")
             .description("Make service decision")
             .showSummary()
+            .showEventNotes()
             .explicitGrants()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, LEGAL_ADVISOR)
@@ -66,11 +68,11 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
             .page("makeServiceDecision")
             .pageLabel("Approve service application")
             .complex(CaseData::getAlternativeService)
-                .mandatory(AlternativeService::getServiceApplicationGranted)
-                .readonly(AlternativeService::getAlternativeServiceType, "serviceApplicationGranted=\"NEVER_SHOW\"")
-                .mandatory(AlternativeService::getDeemedServiceDate,
-                    "alternativeServiceType=\"deemed\" AND serviceApplicationGranted=\"Yes\"")
-                .done();
+            .mandatory(AlternativeService::getServiceApplicationGranted)
+            .readonly(AlternativeService::getAlternativeServiceType, "serviceApplicationGranted=\"NEVER_SHOW\"")
+            .mandatory(AlternativeService::getDeemedServiceDate,
+                "alternativeServiceType=\"deemed\" AND serviceApplicationGranted=\"Yes\"")
+            .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
@@ -89,11 +91,11 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
             serviceApplication.setServiceApplicationDecisionDate(LocalDate.now(clock));
             endState = Holding;
 
-            if (AlternativeServiceType.DISPENSED.equals(serviceApplication.getAlternativeServiceType())) {
+            if (DISPENSED.equals(serviceApplication.getAlternativeServiceType())) {
                 generateAndSetOrderToDeemedOrDispenseDocument(
                     caseDataCopy,
                     details.getId(),
-                    "dispensedAsServedGranted",
+                    DISPENSED_AS_SERVICE_GRANTED,
                     ORDER_TO_DISPENSE_TEMPLATE_ID,
                     DISPENSE_WITH_SERVICE_GRANTED
                 );
