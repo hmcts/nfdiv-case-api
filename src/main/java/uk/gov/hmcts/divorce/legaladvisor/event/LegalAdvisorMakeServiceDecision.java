@@ -25,6 +25,7 @@ import java.util.UUID;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
@@ -56,7 +57,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(LEGAL_ADVISOR_SERVICE_DECISION)
-            .forState(AwaitingServiceConsideration)
+            .forStates(Draft, AwaitingServiceConsideration)
             .name("Make service decision")
             .description("Make service decision")
             .showSummary()
@@ -68,11 +69,11 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
             .page("makeServiceDecision")
             .pageLabel("Approve service application")
             .complex(CaseData::getAlternativeService)
-            .mandatory(AlternativeService::getServiceApplicationGranted)
-            .readonly(AlternativeService::getAlternativeServiceType, "serviceApplicationGranted=\"NEVER_SHOW\"")
-            .mandatory(AlternativeService::getDeemedServiceDate,
-                "alternativeServiceType=\"deemed\" AND serviceApplicationGranted=\"Yes\"")
-            .done();
+                .mandatory(AlternativeService::getServiceApplicationGranted)
+                .readonly(AlternativeService::getAlternativeServiceType, "serviceApplicationGranted=\"NEVER_SHOW\"")
+                .mandatory(AlternativeService::getDeemedServiceDate,
+                    "alternativeServiceType=\"deemed\" AND serviceApplicationGranted=\"Yes\"")
+                .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
