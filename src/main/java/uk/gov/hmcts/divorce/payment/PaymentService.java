@@ -82,7 +82,7 @@ public class PaymentService {
             event,
             FAMILY,
             FAMILY_COURT,
-            DIVORCE_SERVICE,
+            SERVICE_DIVORCE,
             FEE_LOOKUP_KEYWORD
         );
 
