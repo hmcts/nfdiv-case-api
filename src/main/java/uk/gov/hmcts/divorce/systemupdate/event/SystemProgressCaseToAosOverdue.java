@@ -12,6 +12,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.util.Objects;
+
 import static java.util.EnumSet.of;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
@@ -49,7 +51,7 @@ public class SystemProgressCaseToAosOverdue implements CCDConfig<CaseData, State
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
         CaseData data = details.getData();
-        if (!data.getAcknowledgementOfService().getConfirmReadPetition().toBoolean()) {
+        if (Objects.isNull(data.getAcknowledgementOfService().getConfirmReadPetition())) {
             applicationIssuedNotification.sendReminderToSoleRespondent(data, details.getId());
         }
 
