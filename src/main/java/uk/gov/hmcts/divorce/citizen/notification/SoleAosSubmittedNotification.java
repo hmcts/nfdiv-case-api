@@ -84,9 +84,9 @@ public class SoleAosSubmittedNotification {
         templateVars.put(APPLY_FOR_CO_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
-            templateVars.put(YOUR_UNION, DIVORCE);
+            templateVars.put(YOUR_UNION, YOUR_DIVORCE);
         } else {
-            templateVars.put(YOUR_UNION, APPLICATION_TO_END_CIVIL_PARTNERSHIP);
+            templateVars.put(YOUR_UNION, ENDING_YOUR_CIVIL_PARTNERSHIP.toLowerCase(Locale.ROOT));
         }
 
         log.info("Sending Aos submitted without dispute notification to respondent");

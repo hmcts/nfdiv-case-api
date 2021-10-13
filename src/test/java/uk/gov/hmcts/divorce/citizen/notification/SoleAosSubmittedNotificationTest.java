@@ -131,7 +131,7 @@ public class SoleAosSubmittedNotificationTest {
             eq(SOL_RESPONDENT_AOS_SUBMITTED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(YOUR_UNION, DIVORCE),
+                hasEntry(YOUR_UNION, YOUR_DIVORCE),
                 hasEntry("apply for CO date", data.getDueDate().format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
@@ -157,7 +157,7 @@ public class SoleAosSubmittedNotificationTest {
             eq(SOL_RESPONDENT_AOS_SUBMITTED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(YOUR_UNION, APPLICATION_TO_END_CIVIL_PARTNERSHIP),
+                hasEntry(YOUR_UNION, ENDING_YOUR_CIVIL_PARTNERSHIP.toLowerCase(Locale.ROOT)),
                 hasEntry("apply for CO date", data.getDueDate().format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
