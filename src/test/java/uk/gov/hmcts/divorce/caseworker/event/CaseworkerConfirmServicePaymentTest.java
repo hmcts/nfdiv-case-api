@@ -29,8 +29,8 @@ import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAlternativeService
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.BAILIFF;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
+import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ENFORCEMENT;
 import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_MISC;
 import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_BAILIFF;
 import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DEEMED;
 import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
@@ -67,7 +67,7 @@ public class CaseworkerConfirmServicePaymentTest {
     void shouldSetBailiffFeeWhenAlternativeServiceTypeIsBailiff() {
 
         final Fee fee = Fee.builder()
-            .code("FEE0392")
+            .code("FEE0391")
             .amount("4500")
             .build();
 
@@ -79,7 +79,8 @@ public class CaseworkerConfirmServicePaymentTest {
         final List<ListValue<Fee>> orderSummaryFees = new ArrayList<>();
         orderSummaryFees.add(listValue);
 
-        when(paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_MISC, KEYWORD_BAILIFF)).thenReturn(orderSummaryBailiff);
+        when(paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_ENFORCEMENT, KEYWORD_BAILIFF))
+            .thenReturn(orderSummaryBailiff);
         when(orderSummaryBailiff.getFees()).thenReturn(orderSummaryFees);
 
         final CaseData caseData = caseData();
