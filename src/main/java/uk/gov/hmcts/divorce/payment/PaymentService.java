@@ -44,12 +44,12 @@ import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.NOT_FOUND;
 public class PaymentService {
 
     private static final String DEFAULT_CHANNEL = "default";
+    public static final String EVENT_ENFORCEMENT = "enforcement";
+    public static final String EVENT_GENERAL = "general%20application";
     public static final String EVENT_ISSUE = "issue";
     public static final String SERVICE_DIVORCE = "divorce";
     public static final String SERVICE_OTHER = "other";
-    public static final String EVENT_GENERAL = "general%20application";
-    public static final String EVENT_MISC = "miscellaneous";
-    public static final String KEYWORD_BAILIFF = "financial-order";
+    public static final String KEYWORD_BAILIFF = "HIJ";
     public static final String KEYWORD_DEEMED = "GeneralAppWithoutNotice";
 
     private static final String FAMILY = "family";

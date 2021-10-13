@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAlternativeServicePayment.CASEWORKER_SERVICE_PAYMENT;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
@@ -75,7 +76,7 @@ public class CaseworkerConfirmServicePaymentIT {
     }
 
     @Test
-    void shouldSetDueDateTo14DaysFromToday() throws Exception {
+    void shouldSetStateToAwaitingServiceConsiderationForDeemedAndDispensed() throws Exception {
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
@@ -99,6 +100,36 @@ public class CaseworkerConfirmServicePaymentIT {
             .andDo(print())
             .andExpect(
                 status().isOk()
-            );
+            )
+            .andExpect(jsonPath("$.state").value("AwaitingServiceConsideration"));;
+    }
+
+    @Test
+    void shouldSetStateToAwaitingBailiffReferralForBailiffService() throws Exception {
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        setMockClock(clock);
+        final LocalDate serviceDate = getExpectedLocalDate();
+
+        final CaseData caseData = caseData();
+        caseData.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
+        caseData.getApplication().setSolServiceMethod(ServiceMethod.SOLICITOR_SERVICE);
+        caseData.getApplication().setIssueDate(serviceDate);
+
+        caseData.getAlternativeService().setAlternativeServiceType(AlternativeServiceType.BAILIFF);
+        caseData.getAlternativeService().setPaymentMethod(ServicePaymentMethod.FEE_PAY_BY_PHONE);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=AltPaymentSummary")
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseData, CASEWORKER_SERVICE_PAYMENT)))
+                .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk()
+            )
+            .andExpect(jsonPath("$.state").value("AwaitingBailiffReferral"));;
     }
 }

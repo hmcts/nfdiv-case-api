@@ -14,6 +14,8 @@ import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAlternativeServicePayment.CASEWORKER_SERVICE_PAYMENT;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffReferral;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
@@ -59,5 +61,35 @@ public class CaseWorkerAlternativeServicePaymentFT extends FunctionalTestSuite {
             .isEqualTo(json(expectedResponse(
                 "classpath:responses/response-caseworker-confirm-payment-bailiff.json"
             )));
+    }
+
+    @Test
+    public void shouldSetStateToAwaitingBailiffReferralWhenServiceTypeIsBailiff() throws Exception {
+        Map<String, Object> caseData = caseData(REQUEST);
+
+        caseData.put("alternativeServiceType", "bailiff");
+
+        Response response = triggerCallback(caseData, CASEWORKER_SERVICE_PAYMENT,
+            "/callbacks/about-to-submit?page=AltPaymentSummary");
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+        assertThatJson(response.asString(),
+            json -> json.inPath("state").isEqualTo(AwaitingBailiffReferral.getName())
+        );
+    }
+
+    @Test
+    public void shouldSetStateToAwaitingServiceConsiderationWhenServiceTypeIsNotBailiff() throws Exception {
+        Map<String, Object> caseData = caseData(REQUEST);
+
+        caseData.put("alternativeServiceType", "deemed");
+
+        Response response = triggerCallback(caseData, CASEWORKER_SERVICE_PAYMENT,
+            "/callbacks/about-to-submit?page=AltPaymentSummary");
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+        assertThatJson(response.asString(),
+            json -> json.inPath("state").isEqualTo(AwaitingServiceConsideration.getName())
+        );
     }
 }

@@ -10,13 +10,13 @@
     "alternativeServiceType":"bailiff",
     "servicePaymentFeeOrderSummary": {
       "PaymentReference":null,
-      "PaymentTotal":"27500",
+      "PaymentTotal":"4500",
       "Fees":[{
         "id":null,
         "value":{
-          "FeeAmount":"27500",
-          "FeeCode":"FEE0229",
-          "FeeDescription":"Application for a financial order",
+          "FeeAmount":"4500",
+          "FeeCode":"FEE0391",
+          "FeeDescription":"Request for service by a bailiff of document (see order for exceptions)",
       "FeeVersion": "${json-unit.any-string}"
         }}
       ]
