@@ -17,8 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
-import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.*;
 
 @Data
 @AllArgsConstructor
@@ -109,4 +108,63 @@ public class ConditionalOrder {
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate decisionDate;
+
+    @CCD(
+        label = "Who should pay?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "WhoPaysCostOrder"
+    )
+    private WhoPaysCostOrder whoPaysCosts;
+
+    @CCD(
+        label = "Make a costs order:",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "CostOrderList"
+    )
+    private CostOrderList typeCostsDecision;
+
+    @CCD(
+        label = "Additional info"
+    )
+    private String costsOrderAdditionalInfo;
+
+    @CCD(
+        label = "Refusal decision",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "RefusalOption"
+    )
+    private RefusalOption refusalDecision;
+
+    @CCD(
+        label = "Additional info",
+        typeOverride = TextArea
+    )
+    private String refusalAdminErrorInfo;
+
+    @CCD(
+        label = "Previous refusal rejection reasons",
+        typeOverride = MultiSelectList,
+        typeParameterOverride = "RejectionReason"
+    )
+    private RejectonReason refusalRejectionReason;
+
+    @CCD(
+        label = "Previous refusal rejection information",
+        typeOverride = TextArea
+    )
+    private String refusalRejectionAdditionalInfo;
+
+    @CCD(
+        label = "Provide a refusal reason",
+        hint = "Choose at least one of the following",
+        typeOverride = MultiSelectList,
+        typeParameterOverride = "ClarificationReason"
+    )
+    private ClarificationReason refusalClarificationReason;
+
+    @CCD(
+        label = "Clarification additional information (Translated)",
+        typeOverride = TextArea
+    )
+    private String refusalClarificationAdditionalInfo;
 }
