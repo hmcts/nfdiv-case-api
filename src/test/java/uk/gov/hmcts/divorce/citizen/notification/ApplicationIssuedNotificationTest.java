@@ -27,6 +27,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_RESPONDENT
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.ACCOUNT;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.CIVIL_PARTNERSHIP_ACCOUNT;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.CIVIL_PARTNERSHIP_PROCESS;
@@ -168,7 +169,6 @@ public class ApplicationIssuedNotificationTest {
                 hasEntry(REMINDER_APPLICATION, APPLICATION),
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER)),
-                hasEntry(APPLICATION.toLowerCase(Locale.ROOT), APPLICATION_TO_END_CIVIL_PARTNERSHIP),
                 hasEntry(YOUR_UNION, ENDING_YOUR_CIVIL_PARTNERSHIP),
                 hasEntry(PROCESS, CIVIL_PARTNERSHIP_PROCESS),
                 hasEntry(ACCOUNT, CIVIL_PARTNERSHIP_ACCOUNT)
@@ -199,7 +199,6 @@ public class ApplicationIssuedNotificationTest {
                 hasEntry(REMINDER_APPLICATION, REMINDER_APPLICATION_VALUE),
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER)),
-                hasEntry(APPLICATION.toLowerCase(Locale.ROOT), DIVORCE_APPLICATION),
                 hasEntry(YOUR_UNION, YOUR_DIVORCE),
                 hasEntry(PROCESS, DIVORCE_PROCESS),
                 hasEntry(ACCOUNT, DIVORCE_ACCOUNT)
