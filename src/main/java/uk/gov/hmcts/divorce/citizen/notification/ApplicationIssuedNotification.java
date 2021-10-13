@@ -9,7 +9,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
-import java.util.Locale;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
@@ -26,7 +25,6 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.CIVIL_PART
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.CIVIL_PARTNERSHIP_PROCESS;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.CREATE_ACCOUNT_LINK;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_ACCOUNT;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_PROCESS;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.ENDING_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_A_APPLICATION;
@@ -57,6 +55,7 @@ public class ApplicationIssuedNotification {
     private static final String CIVIL_PARTNERSHIP_CITIZENS_ADVICE_LINK = "https://www.citizensadvice.org.uk/family/how-to-separate1/ending-a-civil-partnership/";
     private static final String APPLICATION_TYPE_PROGRESS = "application type progress";
     private static final String THE_DIVORCE_APPLICATION = "the divorce application";
+    private static final String FOR_A_DIVORCE = "for a divorce";
 
     @Autowired
     private NotificationService notificationService;
@@ -91,7 +90,7 @@ public class ApplicationIssuedNotification {
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateVars.put(FOR_YOUR_APPLICATION, FOR_YOUR_DIVORCE);
-            templateVars.put(FOR_A_APPLICATION, "for a divorce");
+            templateVars.put(FOR_A_APPLICATION, FOR_A_DIVORCE);
             templateVars.put(APPLICATION_TYPE_PROGRESS, THE_DIVORCE_APPLICATION);
             templateVars.put(CREATE_ACCOUNT_LINK, configTemplateVars.get(RESPONDENT_SIGN_IN_DIVORCE_URL));
         } else {
@@ -147,7 +146,6 @@ public class ApplicationIssuedNotification {
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
-            templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), DIVORCE_APPLICATION);
 
             templateVars.put(PROCESS, DIVORCE_PROCESS);
             templateVars.put(ACCOUNT, DIVORCE_ACCOUNT);
@@ -157,7 +155,6 @@ public class ApplicationIssuedNotification {
             templateVars.put(CITIZENS_ADVICE_LINK, DIVORCE_CITIZENS_ADVICE_LINK);
 
         } else {
-            templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), APPLICATION_TO_END_CIVIL_PARTNERSHIP);
 
             templateVars.put(PROCESS, CIVIL_PARTNERSHIP_PROCESS);
             templateVars.put(ACCOUNT, CIVIL_PARTNERSHIP_ACCOUNT);

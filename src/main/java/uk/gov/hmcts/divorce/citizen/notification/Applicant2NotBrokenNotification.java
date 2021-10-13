@@ -13,7 +13,6 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICAN
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT2_REJECTED;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_OR_END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_A_APPLICATION;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_YOUR_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_YOUR_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.TO_DIVORCE;
@@ -22,6 +21,8 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.TO_END_CIV
 @Component
 @Slf4j
 public class Applicant2NotBrokenNotification {
+
+    private static final String FOR_A_DIVORCE = "for a divorce";
 
     @Autowired
     private NotificationService notificationService;
@@ -34,10 +35,8 @@ public class Applicant2NotBrokenNotification {
             caseData, caseData.getApplicant1(), caseData.getApplicant2());
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
-            templateVars.put(FOR_YOUR_APPLICATION, FOR_DIVORCE);
             templateVars.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, TO_DIVORCE);
         } else {
-            templateVars.put(FOR_YOUR_APPLICATION, TO_END_CIVIL_PARTNERSHIP);
             templateVars.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, TO_END_CIVIL_PARTNERSHIP);
         }
 
@@ -57,7 +56,7 @@ public class Applicant2NotBrokenNotification {
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateVars.put(FOR_YOUR_APPLICATION, FOR_YOUR_DIVORCE);
-            templateVars.put(FOR_A_APPLICATION, "for a divorce");
+            templateVars.put(FOR_A_APPLICATION, FOR_A_DIVORCE);
         } else {
             templateVars.put(FOR_YOUR_APPLICATION, TO_END_CIVIL_PARTNERSHIP);
             templateVars.put(FOR_A_APPLICATION, TO_END_CIVIL_PARTNERSHIP);
