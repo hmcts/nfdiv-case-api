@@ -37,6 +37,12 @@ public class AcknowledgementOfService {
     private YesOrNo disputeApplication;
 
     @CCD(
+        label = "Respondent confirms that they want to dispute the application",
+        access = AosAccess.class
+    )
+    private YesOrNo confirmDisputeApplication;
+
+    @CCD(
         label = "Respondent agreed to claimed jurisdiction?",
         access = AosAccess.class
     )
