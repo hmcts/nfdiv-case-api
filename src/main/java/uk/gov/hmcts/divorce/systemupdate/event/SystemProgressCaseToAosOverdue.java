@@ -50,15 +50,12 @@ public class SystemProgressCaseToAosOverdue implements CCDConfig<CaseData, State
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
         CaseData data = details.getData();
-        State state = details.getState();
-
         if (NO.equals(data.getAcknowledgementOfService().getConfirmReadPetition())) {
             applicationIssuedNotification.sendReminderToSoleRespondent(data, details.getId());
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
-            .state(state)
             .build();
     }
 }
