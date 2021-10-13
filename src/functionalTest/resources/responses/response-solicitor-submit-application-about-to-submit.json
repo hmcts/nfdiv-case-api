@@ -36,7 +36,6 @@
     "applicant1StatementOfTruth": "Yes",
     "documentUploadComplete": "Yes",
     "applicant1SolicitorReference": "customerRef1",
-    "applicant2SolicitorRepresented": "Yes",
     "applicant1SolicitorOrganisationPolicy": {
       "Organisation": {
         "OrganisationName": "Test 1 Organisation",
@@ -78,7 +77,6 @@
       ],
       "PaymentTotal": "55000"
     },
-    "app2ContactMethodIsDigital": "Yes",
     "dateSubmitted": "${json-unit.any-string}",
     "applicant2ConfirmApplicant1Information": null,
     "applicant2ExplainsApplicant1IncorrectInformation": null,

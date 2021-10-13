@@ -52,8 +52,8 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static uk.gov.hmcts.divorce.payment.PaymentService.CA_E0001;
 import static uk.gov.hmcts.divorce.payment.PaymentService.CA_E0003;
 import static uk.gov.hmcts.divorce.payment.PaymentService.CA_E0004;
+import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ENFORCEMENT;
 import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ISSUE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_MISC;
 import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_BAILIFF;
 import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_DIVORCE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
@@ -136,14 +136,14 @@ public class PaymentServiceTest {
             .when(feesAndPaymentsClient)
             .getPaymentServiceFee(
                 DEFAULT_CHANNEL,
-                EVENT_MISC,
+                EVENT_ENFORCEMENT,
                 FAMILY,
                 FAMILY_COURT,
                 SERVICE_OTHER,
                 KEYWORD_BAILIFF
             );
 
-        OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_MISC, KEYWORD_BAILIFF);
+        OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_ENFORCEMENT, KEYWORD_BAILIFF);
         assertThat(orderSummary.getPaymentReference()).isNull();
         assertThat(orderSummary.getPaymentTotal()).isEqualTo(String.valueOf(1000));// in pence
         assertThat(orderSummary.getFees())
@@ -155,7 +155,7 @@ public class PaymentServiceTest {
         verify(feesAndPaymentsClient)
             .getPaymentServiceFee(
                 DEFAULT_CHANNEL,
-                EVENT_MISC,
+                EVENT_ENFORCEMENT,
                 FAMILY,
                 FAMILY_COURT,
                 SERVICE_OTHER,

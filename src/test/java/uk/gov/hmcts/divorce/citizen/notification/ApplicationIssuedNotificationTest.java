@@ -31,16 +31,18 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.ACCOUNT;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TO_END_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TYPE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.CIVIL_PARTNERSHIP_ACCOUNT;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.CIVIL_PARTNERSHIP_PROCESS;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_ACCOUNT;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_PROCESS;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.ENDING_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PROCESS;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.REMINDER_APPLICATION;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.REMINDER_APPLICATION_VALUE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.YOUR_DIVORCE;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.YOUR_UNION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConfigTemplateVars;
@@ -81,7 +83,7 @@ public class ApplicationIssuedNotificationTest {
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER)),
                 hasEntry(APPLICATION.toLowerCase(Locale.ROOT), DIVORCE_APPLICATION),
-                hasEntry(APPLICATION_TYPE, YOUR_DIVORCE),
+                hasEntry(YOUR_UNION, YOUR_DIVORCE),
                 hasEntry(PROCESS, DIVORCE_PROCESS),
                 hasEntry(ACCOUNT, DIVORCE_ACCOUNT)
             )),
@@ -111,7 +113,7 @@ public class ApplicationIssuedNotificationTest {
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER)),
                 hasEntry(APPLICATION.toLowerCase(Locale.ROOT), APPLICATION_TO_END_CIVIL_PARTNERSHIP),
-                hasEntry(APPLICATION_TYPE, YOUR_CIVIL_PARTNERSHIP),
+                hasEntry(YOUR_UNION, ENDING_YOUR_CIVIL_PARTNERSHIP),
                 hasEntry(PROCESS, CIVIL_PARTNERSHIP_PROCESS),
                 hasEntry(ACCOUNT, CIVIL_PARTNERSHIP_ACCOUNT)
             )),
@@ -138,10 +140,11 @@ public class ApplicationIssuedNotificationTest {
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(SOL_RESPONDENT_APPLICATION_ACCEPTED),
             argThat(allOf(
+                hasEntry(REMINDER_APPLICATION, APPLICATION),
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER)),
                 hasEntry(APPLICATION.toLowerCase(Locale.ROOT), DIVORCE_APPLICATION),
-                hasEntry(APPLICATION_TYPE, YOUR_DIVORCE),
+                hasEntry(YOUR_UNION, YOUR_DIVORCE),
                 hasEntry(PROCESS, DIVORCE_PROCESS),
                 hasEntry(ACCOUNT, DIVORCE_ACCOUNT)
             )),
@@ -169,10 +172,74 @@ public class ApplicationIssuedNotificationTest {
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(SOL_RESPONDENT_APPLICATION_ACCEPTED),
             argThat(allOf(
+                hasEntry(REMINDER_APPLICATION, APPLICATION),
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER)),
                 hasEntry(APPLICATION.toLowerCase(Locale.ROOT), APPLICATION_TO_END_CIVIL_PARTNERSHIP),
-                hasEntry(APPLICATION_TYPE, YOUR_CIVIL_PARTNERSHIP),
+                hasEntry(YOUR_UNION, ENDING_YOUR_CIVIL_PARTNERSHIP),
+                hasEntry(PROCESS, CIVIL_PARTNERSHIP_PROCESS),
+                hasEntry(ACCOUNT, CIVIL_PARTNERSHIP_ACCOUNT)
+            )),
+            eq(ENGLISH)
+        );
+
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldSendReminderEmailToSoleRespondentWithDivorceContent() {
+        CaseData data = validCaseDataForIssueApplication();
+        data.setDueDate(LocalDate.now().plusDays(141));
+        data.getApplication().setIssueDate(LocalDate.now());
+
+        final HashMap<String, String> templateVars = new HashMap<>();
+
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
+
+        notification.sendReminderToSoleRespondent(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(SOL_RESPONDENT_APPLICATION_ACCEPTED),
+            argThat(allOf(
+                hasEntry(REMINDER_APPLICATION, REMINDER_APPLICATION_VALUE),
+                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER)),
+                hasEntry(APPLICATION.toLowerCase(Locale.ROOT), DIVORCE_APPLICATION),
+                hasEntry(YOUR_UNION, YOUR_DIVORCE),
+                hasEntry(PROCESS, DIVORCE_PROCESS),
+                hasEntry(ACCOUNT, DIVORCE_ACCOUNT)
+            )),
+            eq(ENGLISH)
+        );
+
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldSendReminderEmailToSoleRespondentWithDissolutionContent() {
+        CaseData data = validCaseDataForIssueApplication();
+        data.setDivorceOrDissolution(DISSOLUTION);
+        data.setDueDate(LocalDate.now().plusDays(141));
+        data.getApplication().setIssueDate(LocalDate.now());
+
+        final HashMap<String, String> templateVars = new HashMap<>();
+
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
+
+        notification.sendReminderToSoleRespondent(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(SOL_RESPONDENT_APPLICATION_ACCEPTED),
+            argThat(allOf(
+                hasEntry(REMINDER_APPLICATION, REMINDER_APPLICATION_VALUE),
+                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER)),
+                hasEntry(APPLICATION.toLowerCase(Locale.ROOT), APPLICATION_TO_END_CIVIL_PARTNERSHIP),
+                hasEntry(YOUR_UNION, ENDING_YOUR_CIVIL_PARTNERSHIP),
                 hasEntry(PROCESS, CIVIL_PARTNERSHIP_PROCESS),
                 hasEntry(ACCOUNT, CIVIL_PARTNERSHIP_ACCOUNT)
             )),
@@ -201,7 +268,7 @@ public class ApplicationIssuedNotificationTest {
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER)),
                 hasEntry(APPLICATION.toLowerCase(Locale.ROOT), DIVORCE_APPLICATION),
-                hasEntry(APPLICATION_TYPE, YOUR_DIVORCE),
+                hasEntry(YOUR_UNION, YOUR_DIVORCE),
                 hasEntry(PROCESS, DIVORCE_PROCESS),
                 hasEntry(ACCOUNT, DIVORCE_ACCOUNT)
             )),
@@ -231,7 +298,7 @@ public class ApplicationIssuedNotificationTest {
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER)),
                 hasEntry(APPLICATION.toLowerCase(Locale.ROOT), APPLICATION_TO_END_CIVIL_PARTNERSHIP),
-                hasEntry(APPLICATION_TYPE, YOUR_CIVIL_PARTNERSHIP),
+                hasEntry(YOUR_UNION, ENDING_YOUR_CIVIL_PARTNERSHIP),
                 hasEntry(PROCESS, CIVIL_PARTNERSHIP_PROCESS),
                 hasEntry(ACCOUNT, CIVIL_PARTNERSHIP_ACCOUNT)
             )),
@@ -260,7 +327,7 @@ public class ApplicationIssuedNotificationTest {
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER)),
                 hasEntry(APPLICATION.toLowerCase(Locale.ROOT), DIVORCE_APPLICATION),
-                hasEntry(APPLICATION_TYPE, YOUR_DIVORCE),
+                hasEntry(YOUR_UNION, YOUR_DIVORCE),
                 hasEntry(PROCESS, DIVORCE_PROCESS),
                 hasEntry(ACCOUNT, DIVORCE_ACCOUNT)
             )),
@@ -290,7 +357,7 @@ public class ApplicationIssuedNotificationTest {
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER)),
                 hasEntry(APPLICATION.toLowerCase(Locale.ROOT), APPLICATION_TO_END_CIVIL_PARTNERSHIP),
-                hasEntry(APPLICATION_TYPE, YOUR_CIVIL_PARTNERSHIP),
+                hasEntry(YOUR_UNION, ENDING_YOUR_CIVIL_PARTNERSHIP),
                 hasEntry(PROCESS, CIVIL_PARTNERSHIP_PROCESS),
                 hasEntry(ACCOUNT, CIVIL_PARTNERSHIP_ACCOUNT)
             )),
