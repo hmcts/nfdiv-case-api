@@ -172,13 +172,13 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("outcomeOfConditionalOrder", "Outcome of Conditional Order")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, SOLICITOR, SUPER_USER)
             .showCondition("coGranted=\"*\"")
+            .label("labelLegalAdvisorDecision", null, "## Legal advisor decision")
             .field("coDecisionDate")
             .field("coGranted")
             .field("coClaimsGranted")
-            .field("coClaimsCostsOrderInformation")
             .field("coWhoPaysCosts")
             .field("coTypeCostsDecision")
-            .field("coCostsOrderAdditionalInfo")
+            .field("coClaimsCostsOrderInformation", "coTypeCostsDecision=\"additionalInformation\"")
             .field("coRefusalDecision")
             .field("coRefusalAdminErrorInfo", "coRefusalDecision=\"adminError\"")
             .field("coRefusalRejectionReason")
@@ -186,22 +186,25 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("coRefusalClarificationReason")
             .field("coRefusalClarificationAdditionalInfo", "coRefusalClarificationReason=\"other\"")
             .label("labelCoClarificationResponse", null, "## Clarification Response")
-
-            .field("DnClarificationResponse") // "Label": "List of responses for Decree Nisi clarification", "FieldType": "Collection", "FieldTypeParameter": "TextArea",
-            .field("DnClarificationUploadDocuments") // "Label": "Upload any other documents per Clarification?", "FieldType": "Collection", "FieldTypeParameter": "Text",
+            .field("coClarificationResponse")
+            .field("coClarificationUploadDocuments")
             .label("labelCoPronouncementDetails", null, "## Pronouncement Details")
-            .field("BulkListingCaseId") // "Label": "Bulk case reference", "FieldType": "CaseLink",
-            .field("CourtName") // "Label": "Court name", "FieldType": "FixedList", "FieldTypeParameter": "DnCourtEnum",
-            .field("DateAndTimeOfHearing") // "Label": "Date and time of hearing", "FieldType": "Collection", "FieldTypeParameter": "HearingDateTime",
-            .field("PronouncementJudge") // "Label": "Pronouncement Judge", "FieldType": "Text",
-            .field("DecreeNisiGrantedDate") // "Label": "Decree Nisi granted date", "FieldType": "Date",
-            .field("DAEligibleFromDate") // "Label": "Decree Absolute Eligible From Date", "FieldType": "Date",
-            .field("DnOutcomeCase") // "Label": "Case on digital Decree Nisi Outcome", "FieldType": "YesOrNo",
-            .label("labelLegalAdvisorDecision", null, "## Legal advisor decision")
-            .label("labelJudgeCostsDecision", null, "## Judge costs decision")
-            .field("JudgeCostsClaimGranted") // "Label": "Grant Cost Order?", "FieldType": "FixedRadioList", "FieldTypeParameter": "judgeCostsClaimGrantedEnum",
-            .field("JudgeWhoPaysCosts") // "Label": "Who should pay?", "FieldType": "FixedRadioList", "FieldTypeParameter": "WhoPaysCostOrderList",
-            .field("JudgeTypeCostsDecision") // "Label": "Make a cost order:", "FieldType": "FixedRadioList", "FieldTypeParameter": "CostOrderList",
-            .field("JudgeCostsOrderAdditionalInfo"); // "Label": "Additional info", "FieldType": "TextArea",
+            .field("coBulkListingCaseId")
+            .field("coCourtName")
+            .field("coDateAndTimeOfHearing")
+            .field("coPronouncementJudge")
+            .field("coGrantedDate")
+            .field("dateFinalOrderEligibleFrom")
+            .field("coOutcomeCase")
+            .label("labelJudgeCostsDecision",
+                "JudgeCostsClaimGranted=\"*\""
+                    + "OR JudgeWhoPaysCosts=\"*\""
+                    + "OR JudgeTypeCostsDecision=\"*\""
+                    + "OR JudgeCostsOrderAdditionalInfo=\"*\"",
+                "## Judge costs decision")
+            .field("coJudgeCostsClaimGranted")
+            .field("coJudgeWhoPaysCosts")
+            .field("coJudgeTypeCostsDecision")
+            .field("coJudgeCostsOrderAdditionalInfo", "coJudgeTypeCostsDecision=\"additionalInformation\"");
     }
 }
