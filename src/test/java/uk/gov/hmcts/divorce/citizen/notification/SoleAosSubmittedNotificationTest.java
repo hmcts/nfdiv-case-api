@@ -23,15 +23,22 @@ import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_AOS_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_DISPUTED_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_RESPONDENT_AOS_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_RESPONDENT_DISPUTED_AOS_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.ACCOUNT;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TO_END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.CIVIL_PARTNERSHIP_ACCOUNT;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.CIVIL_PARTNERSHIP_PROCESS;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_ACCOUNT;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_PROCESS;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.ENDING_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PROCESS;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.YOUR_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.YOUR_UNION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
@@ -69,6 +76,7 @@ public class SoleAosSubmittedNotificationTest {
             eq(SOL_APPLICANT_AOS_SUBMITTED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry("apply for CO date", data.getDueDate().format(DATE_TIME_FORMATTER)),
                 hasEntry(YOUR_UNION, YOUR_DIVORCE),
                 hasEntry(PROCESS, DIVORCE_PROCESS),
                 hasEntry(ACCOUNT, DIVORCE_ACCOUNT)
@@ -96,7 +104,8 @@ public class SoleAosSubmittedNotificationTest {
             eq(SOL_APPLICANT_AOS_SUBMITTED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(YOUR_UNION, "Ending your civil partnership"),
+                hasEntry("apply for CO date", data.getDueDate().format(DATE_TIME_FORMATTER)),
+                hasEntry(YOUR_UNION, ENDING_YOUR_CIVIL_PARTNERSHIP),
                 hasEntry(PROCESS, CIVIL_PARTNERSHIP_PROCESS),
                 hasEntry(ACCOUNT, CIVIL_PARTNERSHIP_ACCOUNT)
             )),
@@ -121,7 +130,9 @@ public class SoleAosSubmittedNotificationTest {
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(SOL_RESPONDENT_AOS_SUBMITTED),
             argThat(allOf(
-                hasEntry(YOUR_UNION, YOUR_DIVORCE.toLowerCase(Locale.ROOT))
+                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(YOUR_UNION, YOUR_DIVORCE),
+                hasEntry("apply for CO date", data.getDueDate().format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -145,7 +156,123 @@ public class SoleAosSubmittedNotificationTest {
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(SOL_RESPONDENT_AOS_SUBMITTED),
             argThat(allOf(
-                hasEntry(YOUR_UNION, "ending your civil partnership")
+                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(YOUR_UNION, ENDING_YOUR_CIVIL_PARTNERSHIP.toLowerCase(Locale.ROOT)),
+                hasEntry("apply for CO date", data.getDueDate().format(DATE_TIME_FORMATTER))
+            )),
+            eq(ENGLISH)
+        );
+
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldSendAosDisputedEmailToSoleApplicantWithDivorceContent() {
+        CaseData data = validCaseDataForAosSubmitted();
+        data.setDueDate(LocalDate.now().plusDays(141));
+        data.getApplication().setIssueDate(LocalDate.now());
+
+        final HashMap<String, String> templateVars = new HashMap<>();
+
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+
+        notification.sendApplicationDisputedToApplicant(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(SOL_APPLICANT_DISPUTED_AOS_SUBMITTED),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(37).format(DATE_TIME_FORMATTER)),
+                hasEntry(YOUR_UNION, YOUR_DIVORCE.toLowerCase(Locale.ROOT)),
+                hasEntry("ending of your union", DIVORCE),
+                hasEntry(ACCOUNT, DIVORCE_ACCOUNT)
+            )),
+            eq(ENGLISH)
+        );
+
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2());
+    }
+
+    @Test
+    void shouldSendAosDisputedEmailToSoleApplicantWithDissolutionContent() {
+        CaseData data = validCaseDataForAosSubmitted();
+        data.setDivorceOrDissolution(DISSOLUTION);
+        data.setDueDate(LocalDate.now().plusDays(141));
+        data.getApplication().setIssueDate(LocalDate.now());
+
+        final HashMap<String, String> templateVars = new HashMap<>();
+
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+
+        notification.sendApplicationDisputedToApplicant(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(SOL_APPLICANT_DISPUTED_AOS_SUBMITTED),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(37).format(DATE_TIME_FORMATTER)),
+                hasEntry(YOUR_UNION, ENDING_YOUR_CIVIL_PARTNERSHIP.toLowerCase(Locale.ROOT)),
+                hasEntry("ending of your union", "ending of your civil partnership"),
+                hasEntry(ACCOUNT, CIVIL_PARTNERSHIP_ACCOUNT)
+            )),
+            eq(ENGLISH)
+        );
+
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2());
+    }
+
+    @Test
+    void shouldSendAosDisputedEmailToSoleRespondentWithDivorceContent() {
+        CaseData data = validCaseDataForAosSubmitted();
+        data.setDueDate(LocalDate.now().plusDays(141));
+        data.getApplication().setIssueDate(LocalDate.now());
+
+        final HashMap<String, String> templateVars = new HashMap<>();
+
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
+
+        notification.sendApplicationDisputedToRespondent(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(SOL_RESPONDENT_DISPUTED_AOS_SUBMITTED),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(37).format(DATE_TIME_FORMATTER)),
+                hasEntry("divorce / dissolution", DIVORCE),
+                hasEntry("service", "Divorce Service"),
+                hasEntry("ending of your union", DIVORCE)
+            )),
+            eq(ENGLISH)
+        );
+
+        verify(commonContent).templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldSendAosDisputedEmailToSoleRespondentWithDissolutionContent() {
+        CaseData data = validCaseDataForAosSubmitted();
+        data.setDivorceOrDissolution(DISSOLUTION);
+        data.setDueDate(LocalDate.now().plusDays(141));
+        data.getApplication().setIssueDate(LocalDate.now());
+
+        final HashMap<String, String> templateVars = new HashMap<>();
+
+        when(commonContent.templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
+
+        notification.sendApplicationDisputedToRespondent(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(SOL_RESPONDENT_DISPUTED_AOS_SUBMITTED),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(37).format(DATE_TIME_FORMATTER)),
+                hasEntry("divorce / dissolution", "dissolution"),
+                hasEntry("service", "Ending Civil Partnerships"),
+                hasEntry("ending of your union", APPLICATION_TO_END_CIVIL_PARTNERSHIP)
             )),
             eq(ENGLISH)
         );
