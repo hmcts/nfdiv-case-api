@@ -135,11 +135,6 @@ public class Applicant {
     private YesOrNo legalProceedings;
 
     @CCD(
-        label = "What do the legal proceedings relate to?"
-    )
-    private Set<LegalProceedingsRelated> legalProceedingsRelated;
-
-    @CCD(
         label = "Legal proceeding details",
         hint = "Include the case number(s), if known.",
         typeOverride = TextArea
