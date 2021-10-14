@@ -26,6 +26,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateReadyForPayment;
 import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ISSUE;
+import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DIVORCE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_DIVORCE;
 
 @Slf4j
@@ -85,7 +86,7 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
             state = submittedDetails.getState();
         } else {
             OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE,
-                EVENT_ISSUE,null);
+                EVENT_ISSUE,KEYWORD_DIVORCE);
             application.setApplicationFeeOrderSummary(orderSummary);
 
             state = AwaitingPayment;

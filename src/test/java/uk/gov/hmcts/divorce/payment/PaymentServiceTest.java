@@ -74,6 +74,7 @@ public class PaymentServiceTest {
     private static final String DEFAULT_CHANNEL = "default";
     private static final String FAMILY = "family";
     private static final String FAMILY_COURT = "family court";
+    private static final String KEYWORD_INVALID = "invalid-keyword";
 
     @Mock
     private FeesAndPaymentsClient feesAndPaymentsClient;
@@ -193,7 +194,7 @@ public class PaymentServiceTest {
                 anyString()
             );
 
-        assertThatThrownBy(() -> paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, null))
+        assertThatThrownBy(() -> paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_INVALID))
             .hasMessageContaining("404 Fee Not found")
             .isExactlyInstanceOf(FeignException.NotFound.class);
     }
