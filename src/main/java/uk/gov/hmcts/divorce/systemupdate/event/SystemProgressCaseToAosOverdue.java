@@ -51,7 +51,8 @@ public class SystemProgressCaseToAosOverdue implements CCDConfig<CaseData, State
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
         CaseData data = details.getData();
-        if (Objects.isNull(data.getAcknowledgementOfService().getConfirmReadPetition())) {
+        if (!Objects.isNull(data.getCaseInvite().getApplicant2InviteEmailAddress())
+            && !Objects.isNull(data.getCaseInvite().getAccessCode())) {
             applicationIssuedNotification.sendReminderToSoleRespondent(data, details.getId());
         }
 
