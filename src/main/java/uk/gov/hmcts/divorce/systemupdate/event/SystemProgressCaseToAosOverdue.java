@@ -1,12 +1,18 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.citizen.notification.ApplicationIssuedNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+
+import java.util.Objects;
 
 import static java.util.EnumSet.of;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
@@ -25,6 +31,9 @@ public class SystemProgressCaseToAosOverdue implements CCDConfig<CaseData, State
 
     public static final String SYSTEM_PROGRESS_TO_AOS_OVERDUE = "system-progress-to-aos-overdue";
 
+    @Autowired
+    private ApplicationIssuedNotification applicationIssuedNotification;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
@@ -34,6 +43,20 @@ public class SystemProgressCaseToAosOverdue implements CCDConfig<CaseData, State
             .description("AoS not received within SLA")
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
-            .grant(READ, SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR));
+            .grant(READ, SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR)
+            .aboutToSubmitCallback(this::aboutToSubmit));
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
+                                                                       CaseDetails<CaseData, State> beforeDetails) {
+
+        CaseData data = details.getData();
+        if (Objects.isNull(data.getAcknowledgementOfService().getConfirmReadPetition())) {
+            applicationIssuedNotification.sendReminderToSoleRespondent(data, details.getId());
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(data)
+            .build();
     }
 }

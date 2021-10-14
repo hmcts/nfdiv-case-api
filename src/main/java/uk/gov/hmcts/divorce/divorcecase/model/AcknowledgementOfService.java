@@ -37,6 +37,12 @@ public class AcknowledgementOfService {
     private YesOrNo disputeApplication;
 
     @CCD(
+        label = "Respondent confirms that they want to dispute the application",
+        access = AosAccess.class
+    )
+    private YesOrNo confirmDisputeApplication;
+
+    @CCD(
         label = "Respondent agreed to claimed jurisdiction?",
         access = AosAccess.class
     )
@@ -86,6 +92,24 @@ public class AcknowledgementOfService {
         label = "Notice of Proceedings solicitor's firm"
     )
     private String noticeOfProceedingsSolicitorFirm;
+
+    @CCD(
+        label = "Does court have jurisdiction",
+        access = {AosAccess.class}
+    )
+    private YesOrNo doYouAgreeCourtHasJurisdiction;
+
+    @CCD(
+        label = "No jurisdiction reason",
+        access = {AosAccess.class}
+    )
+    private String reasonCourtsOfEnglandAndWalesHaveNoJurisdiction;
+
+    @CCD(
+        label = "Which country are you mainly based",
+        access = {AosAccess.class}
+    )
+    private String inWhichCountryIsYourLifeMainlyBased;
 
     @CCD(
         label = "I am duly authorised by the respondent to sign this statement.",
