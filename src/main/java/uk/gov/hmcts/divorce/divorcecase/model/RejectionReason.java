@@ -7,7 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 
 @Getter
 @AllArgsConstructor
-public enum RejectonReason implements HasLabel {
+public enum RejectionReason implements HasLabel {
 
     @JsonProperty("noJurisdiction")
     NO_JURISDICTION("Court does not have jurisdiction"),
