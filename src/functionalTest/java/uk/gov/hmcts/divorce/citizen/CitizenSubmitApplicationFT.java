@@ -39,7 +39,6 @@ public class CitizenSubmitApplicationFT extends FunctionalTestSuite {
     private static final String RESPONSE_HWF = "classpath:responses/response-applicant1-help-with-fees.json";
 
     @Test
-    @Disabled("Temporarily as AAT Fees API doesn't has keyword change deployed")
     public void shouldPassValidationAndGiveSuccessWhenCaseDataValid() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
         request.put("marriageDate", LocalDate.now().minus(1, YEARS).minus(1, DAYS));
@@ -73,7 +72,6 @@ public class CitizenSubmitApplicationFT extends FunctionalTestSuite {
     }
 
     @Test
-    @Disabled("Temporarily as AAT Fees API doesn't has keyword change deployed")
     public void shouldPassValidationAndGiveSuccessWhenApplicant1AppliesAsJointApplication() throws IOException {
         Map<String, Object> request = caseData(REQUEST_JOINT);
         request.put("marriageDate", LocalDate.now().minus(1, YEARS).minus(1, DAYS));
