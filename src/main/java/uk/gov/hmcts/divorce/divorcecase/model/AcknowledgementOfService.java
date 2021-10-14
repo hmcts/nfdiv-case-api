@@ -94,6 +94,24 @@ public class AcknowledgementOfService {
     private String noticeOfProceedingsSolicitorFirm;
 
     @CCD(
+        label = "Does court have jurisdiction",
+        access = {AosAccess.class}
+    )
+    private YesOrNo doYouAgreeCourtHasJurisdiction;
+
+    @CCD(
+        label = "No jurisdiction reason",
+        access = {AosAccess.class}
+    )
+    private String reasonCourtsOfEnglandAndWalesHaveNoJurisdiction;
+
+    @CCD(
+        label = "Which country are you mainly based",
+        access = {AosAccess.class}
+    )
+    private String inWhichCountryIsYourLifeMainlyBased;
+
+    @CCD(
         label = "I am duly authorised by the respondent to sign this statement.",
         access = AosAccess.class
     )
