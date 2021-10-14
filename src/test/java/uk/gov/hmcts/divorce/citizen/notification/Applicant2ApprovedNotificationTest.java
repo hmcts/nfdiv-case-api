@@ -11,7 +11,6 @@ import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.HashMap;
-import java.util.Locale;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
@@ -25,9 +24,6 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICAN
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT2_APPROVED_WITHOUT_HWF;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT2_APPROVED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TO_END_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PAID_FOR;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PAY_FOR;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PAY_FOR_IT;
@@ -228,8 +224,7 @@ class Applicant2ApprovedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT1_APPLICANT2_APPROVED_WITHOUT_HWF),
             argThat(allOf(
-                hasEntry(REMINDER_ACTION_REQUIRED, "Action required:"),
-                hasEntry(APPLICATION.toLowerCase(Locale.ROOT), DIVORCE_APPLICATION)
+                hasEntry(REMINDER_ACTION_REQUIRED, "Action required:")
             )),
             eq(ENGLISH)
         );
@@ -254,8 +249,7 @@ class Applicant2ApprovedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT1_APPLICANT2_APPROVED_WITHOUT_HWF),
             argThat(allOf(
-                hasEntry(REMINDER_ACTION_REQUIRED, "Action required:"),
-                hasEntry(APPLICATION.toLowerCase(Locale.ROOT), APPLICATION_TO_END_CIVIL_PARTNERSHIP)
+                hasEntry(REMINDER_ACTION_REQUIRED, "Action required:")
             )),
             eq(ENGLISH)
         );

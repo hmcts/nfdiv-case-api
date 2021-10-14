@@ -67,6 +67,7 @@ docmosis:
       DIVORCE_GENERAL_ORDER: NFD_General_Order_Eng.docx #TODO: update template once available
       RESPONDENT_ANSWERS: NFD_Respondent_Answers_Eng.docx #TODO: update content
       CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx #TODO: update content
+      ORDER_TO_DISPENSE: NFD_ORDER_TO_DISPENSE.docx #TODO: update content
     welsh:
       DIVORCE_APPLICATION_SOLE: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
@@ -76,6 +77,7 @@ docmosis:
       DIVORCE_GENERAL_ORDER: NFD_General_Order_Eng.docx #TODO: update template once available
       RESPONDENT_ANSWERS: NFD_Respondent_Answers_Eng.docx #TODO: update template once available
       CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx #TODO: update content
+      ORDER_TO_DISPENSE: NFD_ORDER_TO_DISPENSE.docx #TODO: update content
 
 document_management:
   url: ${DOCUMENT_MANAGEMENT_URL:http://dm-store-aat.service.core-compute-aat.internal}

@@ -13,17 +13,13 @@ import java.util.Map;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_APPROVED_APPLICANT1_REMINDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_OVERDUE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TO_END_A_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TYPE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_APPLICATION;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PAID_FOR;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PAY_FOR;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.REMINDER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.REMINDER_ACTION_REQUIRED;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.REVIEW_DEADLINE_DATE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.TO_END_CIVIL_PARTNERSHIP;
 
 @Component
 @Slf4j
@@ -39,11 +35,7 @@ public class JointApplicationOverdueNotification {
         Map<String, String> templateVars = commonContent.templateVarsForApplicant(
             caseData, caseData.getApplicant1(), caseData.getApplicant2());
 
-        if (caseData.getDivorceOrDissolution().isDivorce()) {
-            templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), FOR_DIVORCE);
-            templateVars.put(APPLICATION_TYPE.toLowerCase(Locale.ROOT), DIVORCE_APPLICATION);
-        } else {
-            templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), TO_END_CIVIL_PARTNERSHIP);
+        if (!caseData.getDivorceOrDissolution().isDivorce()) {
             templateVars.put(APPLICATION_TYPE.toLowerCase(Locale.ROOT), APPLICATION_TO_END_A_CIVIL_PARTNERSHIP);
         }
 
@@ -62,12 +54,6 @@ public class JointApplicationOverdueNotification {
     public void sendApplicationApprovedReminderToApplicant1(CaseData caseData, Long id) {
         Map<String, String> templateVars = commonContent.templateVarsForApplicant(
             caseData, caseData.getApplicant1(), caseData.getApplicant2());
-
-        if (caseData.getDivorceOrDissolution().isDivorce()) {
-            templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), FOR_DIVORCE);
-        } else {
-            templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), TO_END_CIVIL_PARTNERSHIP);
-        }
 
         templateVars.put(REMINDER_ACTION_REQUIRED, REMINDER);
 
