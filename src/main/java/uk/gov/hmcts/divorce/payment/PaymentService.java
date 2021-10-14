@@ -49,8 +49,9 @@ public class PaymentService {
     public static final String EVENT_ISSUE = "issue";
     public static final String SERVICE_DIVORCE = "divorce";
     public static final String SERVICE_OTHER = "other";
-    public static final String KEYWORD_BAILIFF = "HIJ";
+    public static final String KEYWORD_BAILIFF = "BailiffServeDoc";
     public static final String KEYWORD_DEEMED = "GeneralAppWithoutNotice";
+    public static final String KEYWORD_DIVORCE = "DivorceCivPart";
 
     private static final String FAMILY = "family";
     private static final String FAMILY_COURT = "family court";
