@@ -191,5 +191,5 @@ payment:
       baseurl: ${PAYMENT_API_BASEURL:http://payment-api-aat.service.core-compute-aat.internal}
 
 bulk-action:
-  min-cases: ${BULK_ACTION_BATCH_SIZE_MIN}
-  page-size: ${BULK_ACTION_BATCH_SIZE_MAX}
+  min-cases: ${BULK_ACTION_BATCH_SIZE_MIN:30}
+  page-size: ${BULK_ACTION_BATCH_SIZE_MAX:50}
