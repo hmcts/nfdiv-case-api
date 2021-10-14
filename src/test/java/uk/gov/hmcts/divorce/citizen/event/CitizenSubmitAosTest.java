@@ -71,7 +71,7 @@ class CitizenSubmitAosTest {
     }
 
     @Test
-    void shouldSetStateToPendingDisputeIfRespondentDoesWantToDispute() {
+    void shouldSetStateToPendingDisputeAndSendEmailToApplicantAndRespondentIfRespondentDoesWantToDispute() {
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .statementOfTruth(YES)
@@ -86,6 +86,10 @@ class CitizenSubmitAosTest {
         caseDetails.setData(caseData);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitAos.aboutToSubmit(caseDetails, caseDetails);
+
+        verify(soleAosSubmittedNotification).sendApplicationDisputedToApplicant(caseData, caseDetails.getId());
+        verify(soleAosSubmittedNotification).sendApplicationDisputedToRespondent(caseData, caseDetails.getId());
+        verifyNoMoreInteractions(soleAosSubmittedNotification);
 
         assertThat(response.getState()).isEqualTo(PendingDispute);
         assertThat(response.getErrors()).isNull();
