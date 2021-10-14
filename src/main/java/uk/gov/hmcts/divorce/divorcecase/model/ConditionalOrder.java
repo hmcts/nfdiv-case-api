@@ -204,12 +204,6 @@ public class ConditionalOrder {
     private LocalDateTime dateAndTimeOfHearing;
 
     @CCD(
-        label = "Bulk case reference",
-        typeOverride = CaseLink
-    )
-    private CaseLink bulkListingCaseId;
-
-    @CCD(
         label = "Pronouncement Judge"
     )
     private String pronouncementJudge;

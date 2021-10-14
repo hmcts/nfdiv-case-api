@@ -189,7 +189,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("coClarificationResponse")
             .field("coClarificationUploadDocuments")
             .label("labelCoPronouncementDetails", null, "## Pronouncement Details")
-            .field("coBulkListingCaseId")
+            .field("bulkListCaseReference")
             .field("coCourtName")
             .field("coDateAndTimeOfHearing")
             .field("coPronouncementJudge")
