@@ -52,6 +52,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateReadyForPayment;
 import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ISSUE;
+import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DIVORCE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_DIVORCE;
 import static uk.gov.hmcts.divorce.payment.model.PaymentStatus.SUCCESS;
 
@@ -99,7 +100,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         log.info("Submit application about to start callback invoked");
 
         log.info("Retrieving order summary");
-        final OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, null);
+        final OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE);
         final CaseData caseData = details.getData();
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
