@@ -50,6 +50,7 @@ public class CaseworkerIssueBailiffPack implements CCDConfig<CaseData, State, Us
             .explicitGrants()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .showSummary()
+            .showEventNotes()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grant(READ, SUPER_USER, LEGAL_ADVISOR, SOLICITOR, CITIZEN))
             .page("issueBailiffPack")

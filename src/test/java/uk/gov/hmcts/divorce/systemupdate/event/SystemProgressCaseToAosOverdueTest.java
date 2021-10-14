@@ -16,7 +16,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -41,9 +40,10 @@ public class SystemProgressCaseToAosOverdueTest {
     }
 
     @Test
-    void shouldSendEmailIfPetitionHasNotBeenRead() {
+    void shouldSendEmailIfAccessCodeAndEmailAddressAreNotNull() {
         final CaseData caseData = caseData();
-        caseData.getAcknowledgementOfService().setConfirmReadPetition(null);
+        caseData.getCaseInvite().setApplicant2InviteEmailAddress("app2@email.com");
+        caseData.getCaseInvite().setAccessCode("ACCESS12");
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(1L);
         details.setData(caseData);
@@ -54,9 +54,24 @@ public class SystemProgressCaseToAosOverdueTest {
     }
 
     @Test
-    void shouldNotSendEmailIfPetitionHasBeenRead() {
+    void shouldNotSendEmailIfAccessCodeIsNull() {
         final CaseData caseData = caseData();
-        caseData.getAcknowledgementOfService().setConfirmReadPetition(YES);
+        caseData.getCaseInvite().setApplicant2InviteEmailAddress("app2@email.com");
+        caseData.getCaseInvite().setAccessCode(null);
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(1L);
+        details.setData(caseData);
+
+        systemProgressCaseToAosOverdue.aboutToSubmit(details, details);
+
+        verifyNoInteractions(applicationIssuedNotification);
+    }
+
+    @Test
+    void shouldNotSendEmailIfApplicant2EmailAddressIsNull() {
+        final CaseData caseData = caseData();
+        caseData.getCaseInvite().setApplicant2InviteEmailAddress(null);
+        caseData.getCaseInvite().setAccessCode("ACCESS12");
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(1L);
         details.setData(caseData);
