@@ -19,6 +19,7 @@ public final class DocumentConstants {
 
     public static final String GENERAL_ORDER = "generalOrder";
     public static final String DIVORCE_GENERAL_ORDER = "DIVORCE_GENERAL_ORDER";
+    public static final String ORDER_TO_DISPENSE_TEMPLATE_ID = "ORDER_TO_DISPENSE";
 
     public static final String CERTIFICATE_OF_SERVICE_TEMPLATE_ID = "CERTIFICATE_OF_SERVICE";
 
@@ -27,6 +28,8 @@ public final class DocumentConstants {
     public static final String DOCUMENT_DELETE_URI = "document_delete_uri";
     public static final String DOCUMENT_DOWNLOAD_URI = "document_download_uri";
     public static final String PERMANENT = "permanent";
+
+    public static final String DISPENSED_AS_SERVICE_GRANTED = "dispensedAsServedGranted";
 
     private DocumentConstants() {
     }

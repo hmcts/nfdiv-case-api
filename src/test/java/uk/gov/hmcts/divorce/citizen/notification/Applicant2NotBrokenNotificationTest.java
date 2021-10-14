@@ -23,9 +23,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICAN
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT2_REJECTED;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_OR_END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_A_APPLICATION;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_YOUR_APPLICATION;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_YOUR_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.TO_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.TO_END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
@@ -58,7 +56,6 @@ class Applicant2NotBrokenNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT1_APPLICANT2_REJECTED),
             argThat(allOf(
-                hasEntry(FOR_YOUR_APPLICATION, FOR_DIVORCE),
                 hasEntry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, TO_DIVORCE)
             )),
             eq(ENGLISH)
@@ -81,7 +78,6 @@ class Applicant2NotBrokenNotificationTest {
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_APPLICANT2_APPLICANT2_REJECTED),
             argThat(allOf(
-                hasEntry(FOR_YOUR_APPLICATION, FOR_YOUR_DIVORCE),
                 hasEntry(FOR_A_APPLICATION, "for a divorce")
             )),
             eq(ENGLISH)
@@ -105,7 +101,6 @@ class Applicant2NotBrokenNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT1_APPLICANT2_REJECTED),
             argThat(allOf(
-                hasEntry(FOR_YOUR_APPLICATION, TO_END_CIVIL_PARTNERSHIP),
                 hasEntry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, TO_END_CIVIL_PARTNERSHIP)
             )),
             eq(ENGLISH)

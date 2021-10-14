@@ -9,7 +9,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
-import java.util.Locale;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
@@ -26,7 +25,6 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.CIVIL_PART
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.CIVIL_PARTNERSHIP_PROCESS;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.CREATE_ACCOUNT_LINK;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_ACCOUNT;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_PROCESS;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.ENDING_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_A_APPLICATION;
@@ -150,7 +148,6 @@ public class ApplicationIssuedNotification {
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
-            templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), DIVORCE_APPLICATION);
 
             templateVars.put(PROCESS, DIVORCE_PROCESS);
             templateVars.put(ACCOUNT, DIVORCE_ACCOUNT);
@@ -160,7 +157,6 @@ public class ApplicationIssuedNotification {
             templateVars.put(CITIZENS_ADVICE_LINK, DIVORCE_CITIZENS_ADVICE_LINK);
 
         } else {
-            templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), APPLICATION_TO_END_CIVIL_PARTNERSHIP);
 
             templateVars.put(PROCESS, CIVIL_PARTNERSHIP_PROCESS);
             templateVars.put(ACCOUNT, CIVIL_PARTNERSHIP_ACCOUNT);
