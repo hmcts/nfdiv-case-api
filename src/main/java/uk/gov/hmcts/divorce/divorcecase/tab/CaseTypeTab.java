@@ -197,10 +197,10 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("dateFinalOrderEligibleFrom")
             .field("coOutcomeCase")
             .label("labelJudgeCostsDecision",
-                "JudgeCostsClaimGranted=\"*\" "
-                    + "OR JudgeWhoPaysCosts=\"*\" "
-                    + "OR JudgeTypeCostsDecision=\"*\" "
-                    + "OR JudgeCostsOrderAdditionalInfo=\"*\"",
+                "coJudgeCostsClaimGranted=\"*\" "
+                    + "OR coJudgeWhoPaysCosts=\"*\" "
+                    + "OR coJudgeTypeCostsDecision=\"*\" "
+                    + "OR coJudgeCostsOrderAdditionalInfo=\"*\"",
                 "## Judge costs decision")
             .field("coJudgeCostsClaimGranted")
             .field("coJudgeWhoPaysCosts")
