@@ -15,7 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -40,7 +40,7 @@ public class SystemProgressCaseToAosOverdueTest {
     }
 
     @Test
-    void shouldSendEmailIfAccessCodeAndEmailAddressAreNotNull() {
+    void shouldSendBothEmailsIfAccessCodeAndEmailAddressAreNotNull() {
         final CaseData caseData = caseData();
         caseData.getCaseInvite().setApplicant2InviteEmailAddress("app2@email.com");
         caseData.getCaseInvite().setAccessCode("ACCESS12");
@@ -51,10 +51,12 @@ public class SystemProgressCaseToAosOverdueTest {
         systemProgressCaseToAosOverdue.aboutToSubmit(details, details);
 
         verify(applicationIssuedNotification).sendReminderToSoleRespondent(caseData, 1L);
+        verify(applicationIssuedNotification).sendPartnerNotRespondedToSoleApplicant(caseData, 1L);
+        verifyNoMoreInteractions(applicationIssuedNotification);
     }
 
     @Test
-    void shouldNotSendEmailIfAccessCodeIsNull() {
+    void shouldNotSendEmailToRespondentIfAccessCodeIsNull() {
         final CaseData caseData = caseData();
         caseData.getCaseInvite().setApplicant2InviteEmailAddress("app2@email.com");
         caseData.getCaseInvite().setAccessCode(null);
@@ -64,11 +66,12 @@ public class SystemProgressCaseToAosOverdueTest {
 
         systemProgressCaseToAosOverdue.aboutToSubmit(details, details);
 
-        verifyNoInteractions(applicationIssuedNotification);
+        verify(applicationIssuedNotification).sendPartnerNotRespondedToSoleApplicant(caseData, 1L);
+        verifyNoMoreInteractions(applicationIssuedNotification);
     }
 
     @Test
-    void shouldNotSendEmailIfApplicant2EmailAddressIsNull() {
+    void shouldNotSendEmailToRespondentIfApplicant2EmailAddressIsNull() {
         final CaseData caseData = caseData();
         caseData.getCaseInvite().setApplicant2InviteEmailAddress(null);
         caseData.getCaseInvite().setAccessCode("ACCESS12");
@@ -78,6 +81,7 @@ public class SystemProgressCaseToAosOverdueTest {
 
         systemProgressCaseToAosOverdue.aboutToSubmit(details, details);
 
-        verifyNoInteractions(applicationIssuedNotification);
+        verify(applicationIssuedNotification).sendPartnerNotRespondedToSoleApplicant(caseData, 1L);
+        verifyNoMoreInteractions(applicationIssuedNotification);
     }
 }
