@@ -34,6 +34,7 @@ import static org.springframework.test.util.ReflectionTestUtils.setField;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
@@ -65,14 +66,21 @@ class CcdSearchServiceTest {
         final int from = 0;
         final int pageSize = 50;
 
+        SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+            .searchSource()
+            .sort("data.issueDate", ASC)
+            .query(boolQuery().must(matchQuery("state", Holding)))
+            .from(from)
+            .size(pageSize);
+
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
             CASE_TYPE,
-            getSourceBuilder(from, pageSize).toString()))
+            sourceBuilder.toString()))
             .thenReturn(expected);
 
-        final SearchResult result = ccdSearchService.searchForCaseWithStateOf(Submitted, from, pageSize, user, SERVICE_AUTHORIZATION);
+        final SearchResult result = ccdSearchService.searchForCasesInHolding(from, pageSize, user, SERVICE_AUTHORIZATION);
 
         assertThat(result).isEqualTo(expected);
     }
@@ -287,8 +295,10 @@ class CcdSearchServiceTest {
     private SearchSourceBuilder getSourceBuilder(final int from, final int pageSize) {
         return SearchSourceBuilder
             .searchSource()
-            .sort("data.issueDate", ASC)
-            .query(boolQuery().must(matchQuery("state", Submitted)))
+            .sort("data.dueDate", DESC)
+            .query(boolQuery()
+                .must(matchQuery("state", Submitted))
+                .filter(rangeQuery("data.dueDate").lte(LocalDate.now())))
             .from(from)
             .size(pageSize);
     }

@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.systemupdate.service;
 import feign.FeignException;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -30,6 +32,7 @@ import static org.elasticsearch.search.sort.SortOrder.ASC;
 import static org.elasticsearch.search.sort.SortOrder.DESC;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 
 @Service
 @Slf4j
@@ -45,16 +48,15 @@ public class CcdSearchService {
     @Autowired
     private CoreCaseDataApi coreCaseDataApi;
 
-    public SearchResult searchForCaseWithStateOf(final State state,
-                                                 final int from,
-                                                 final int size,
-                                                 final User user,
-                                                 final String serviceAuth) {
+    public SearchResult searchForCasesInHolding(final int from,
+                                                final int size,
+                                                final User user,
+                                                final String serviceAuth) {
 
         final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
             .searchSource()
             .sort("data.issueDate", ASC)
-            .query(boolQuery().must(matchQuery("state", state)))
+            .query(boolQuery().must(matchQuery("state", Holding)))
             .from(from)
             .size(size);
 
@@ -79,8 +81,8 @@ public class CcdSearchService {
         try {
             while (totalResults == pageSize) {
                 final SearchResult searchResult =
-                    notificationFlag == null
-                        ? searchForCaseWithStateOf(state, from, pageSize, user, serviceAuth)
+                    Holding.equals(state)
+                        ? searchForCasesInHolding(from, pageSize, user, serviceAuth)
                         : searchForCasesWithStateOfDueDateBeforeWithoutFlagSet(state, from, pageSize, notificationFlag, user, serviceAuth);
 
                 allCaseDetails.addAll(searchResult.getCases());
@@ -105,15 +107,19 @@ public class CcdSearchService {
                                                                              final User user,
                                                                              final String serviceAuth) {
 
+        BoolQueryBuilder query = Objects.isNull(notificationFlag)
+            ? boolQuery()
+                .must(matchQuery("state", state))
+                .filter(rangeQuery("data.dueDate").lte(LocalDate.now()))
+            : boolQuery()
+                .must(matchQuery("state", state))
+                .filter(rangeQuery("data.dueDate").lte(LocalDate.now()))
+                .mustNot(matchQuery(String.format("data.%s", notificationFlag), YesOrNo.YES));
+
         final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
             .searchSource()
             .sort("data.dueDate", DESC)
-            .query(
-                boolQuery()
-                    .must(matchQuery("state", state))
-                    .filter(rangeQuery("data.dueDate").lte(LocalDate.now()))
-                    .mustNot(matchQuery(String.format("data.%s", notificationFlag), YesOrNo.YES))
-            )
+            .query(query)
             .from(from)
             .size(size);
 
