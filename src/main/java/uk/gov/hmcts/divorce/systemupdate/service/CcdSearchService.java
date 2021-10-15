@@ -48,6 +48,9 @@ public class CcdSearchService {
     @Autowired
     private CoreCaseDataApi coreCaseDataApi;
 
+    private static final String DUE_DATE = "data.dueDate";
+    private static final String STATE = "state";
+
     public SearchResult searchForCasesInHolding(final int from,
                                                 final int size,
                                                 final User user,
@@ -56,7 +59,7 @@ public class CcdSearchService {
         final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
             .searchSource()
             .sort("data.issueDate", ASC)
-            .query(boolQuery().must(matchQuery("state", Holding)))
+            .query(boolQuery().must(matchQuery(STATE, Holding)))
             .from(from)
             .size(size);
 
@@ -109,16 +112,16 @@ public class CcdSearchService {
 
         BoolQueryBuilder query = Objects.isNull(notificationFlag)
             ? boolQuery()
-                .must(matchQuery("state", state))
-                .filter(rangeQuery("data.dueDate").lte(LocalDate.now()))
+                .must(matchQuery(STATE, state))
+                .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
             : boolQuery()
-                .must(matchQuery("state", state))
-                .filter(rangeQuery("data.dueDate").lte(LocalDate.now()))
+                .must(matchQuery(STATE, state))
+                .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
                 .mustNot(matchQuery(String.format("data.%s", notificationFlag), YesOrNo.YES));
 
         final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
             .searchSource()
-            .sort("data.dueDate", DESC)
+            .sort(DUE_DATE, DESC)
             .query(query)
             .from(from)
             .size(size);
@@ -160,7 +163,7 @@ public class CcdSearchService {
             int from = 0;
             int totalSearch;
             do {
-                QueryBuilder stateQuery = matchQuery("state", AwaitingPronouncement);
+                QueryBuilder stateQuery = matchQuery(STATE, AwaitingPronouncement);
                 QueryBuilder bulkListingCaseId = existsQuery("data.bulkListCaseReference");
 
                 QueryBuilder query = boolQuery()

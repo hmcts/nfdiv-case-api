@@ -144,6 +144,45 @@ class CcdSearchServiceTest {
     }
 
     @Test
+    void shouldReturnAllCasesInHolding() {
+
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final SearchResult expected1 = SearchResult.builder().total(PAGE_SIZE).cases(createCaseDetailsList(PAGE_SIZE)).build();
+        final SearchResult expected2 = SearchResult.builder().total(1).cases(createCaseDetailsList(1)).build();
+
+        SearchSourceBuilder sourceBuilder1 = SearchSourceBuilder
+            .searchSource()
+            .sort("data.issueDate", ASC)
+            .query(boolQuery().must(matchQuery("state", Holding)))
+            .from(0)
+            .size(PAGE_SIZE);
+
+        SearchSourceBuilder sourceBuilder2 = SearchSourceBuilder
+            .searchSource()
+            .sort("data.issueDate", ASC)
+            .query(boolQuery().must(matchQuery("state", Holding)))
+            .from(PAGE_SIZE)
+            .size(PAGE_SIZE);
+
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            CASE_TYPE,
+            sourceBuilder1.toString()))
+            .thenReturn(expected1);
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            CASE_TYPE,
+            sourceBuilder2.toString()))
+            .thenReturn(expected2);
+
+        final List<CaseDetails> searchResult = ccdSearchService.searchForAllCasesWithStateOf(Holding, null, user, SERVICE_AUTHORIZATION);
+
+        assertThat(searchResult.size()).isEqualTo(101);
+    }
+
+    @Test
     void shouldReturnAllCasesWithGivenStateWhenFlagIsPassed() {
 
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
