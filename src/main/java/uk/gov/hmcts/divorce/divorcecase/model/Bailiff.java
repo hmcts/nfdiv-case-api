@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,6 +35,7 @@ public class Bailiff {
     @CCD(
         label = "Certificate of service date"
     )
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate certificateOfServiceDate;
 
     @CCD(
