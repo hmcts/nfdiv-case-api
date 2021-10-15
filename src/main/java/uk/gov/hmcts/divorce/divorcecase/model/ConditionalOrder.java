@@ -18,6 +18,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.MultiSelectList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 
 @Data
@@ -109,4 +111,125 @@ public class ConditionalOrder {
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate decisionDate;
+
+    @CCD(
+        label = "Conditional Order granted date"
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate grantedDate;
+
+    @CCD(
+        label = "Who should pay?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "WhoPaysCostOrder"
+    )
+    private WhoPaysCostOrder whoPaysCosts;
+
+    @CCD(
+        label = "Make a costs order:",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "CostOrderList"
+    )
+    private CostOrderList typeCostsDecision;
+
+    @CCD(
+        label = "Refusal decision",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "RefusalOption"
+    )
+    private RefusalOption refusalDecision;
+
+    @CCD(
+        label = "Additional info",
+        typeOverride = TextArea
+    )
+    private String refusalAdminErrorInfo;
+
+    @CCD(
+        label = "Refusal rejection reasons",
+        typeOverride = MultiSelectList,
+        typeParameterOverride = "RejectionReason"
+    )
+    private RejectionReason refusalRejectionReason;
+
+    @CCD(
+        label = "Rejection additional information",
+        typeOverride = TextArea
+    )
+    private String refusalRejectionAdditionalInfo;
+
+    @CCD(
+        label = "Provide a refusal reason",
+        hint = "Choose at least one of the following",
+        typeOverride = MultiSelectList,
+        typeParameterOverride = "ClarificationReason"
+    )
+    private ClarificationReason refusalClarificationReason;
+
+    @CCD(
+        label = "Clarification additional information (Translated)",
+        typeOverride = TextArea
+    )
+    private String refusalClarificationAdditionalInfo;
+
+    @CCD(
+        label = "List of responses for Conditional Order clarification",
+        typeOverride = TextArea
+    )
+    private String clarificationResponse;
+
+    @CCD(
+        label = "Upload any other documents per Clarification?",
+        typeOverride = Collection,
+        typeParameterOverride = "DivorceDocument"
+    )
+    private List<ListValue<DivorceDocument>> clarificationUploadDocuments;
+
+    @CCD(
+        label = "Case on digital Conditional Order Outcome"
+    )
+    private YesOrNo outcomeCase;
+
+    @CCD(
+        label = "Court name"
+    )
+    private Court courtName;
+
+    @CCD(
+        label = "Date and time of hearing"
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    private LocalDateTime dateAndTimeOfHearing;
+
+    @CCD(
+        label = "Pronouncement Judge"
+    )
+    private String pronouncementJudge;
+
+    @CCD(
+        label = "Grant Cost Order?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "JudgeCostsClaimGranted"
+    )
+    private JudgeCostsClaimGranted judgeCostsClaimGranted;
+
+    @CCD(
+        label = "Who should pay?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "WhoPaysCostOrder"
+    )
+    private WhoPaysCostOrder judgeWhoPaysCosts;
+
+    @CCD(
+        label = "Make a cost order:",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "CostOrderList"
+    )
+    private CostOrderList judgeTypeCostsDecision;
+
+    @CCD(
+        label = "Additional info",
+        typeOverride = TextArea
+    )
+    private String judgeCostsOrderAdditionalInfo;
 }
