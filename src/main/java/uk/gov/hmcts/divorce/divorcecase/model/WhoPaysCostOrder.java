@@ -9,11 +9,8 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 @AllArgsConstructor
 public enum WhoPaysCostOrder implements HasLabel {
 
-    @JsonProperty("respondentAndCoRespondent")
-    RESPONDENT_AND_CO_RESPONDENT("Respondent and co-respondent"),
-
-    @JsonProperty("coRespondent")
-    CO_RESPONDENT("Co-respondent"),
+    @JsonProperty("applicant")
+    APPLICANT("Applicant"),
 
     @JsonProperty("respondent")
     RESPONDENT("Respondent");
