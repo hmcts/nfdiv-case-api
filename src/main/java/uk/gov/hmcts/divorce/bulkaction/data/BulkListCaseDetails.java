@@ -17,16 +17,17 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.CaseLink;
 @AllArgsConstructor
 @Builder
 public class BulkListCaseDetails {
-    @CCD(
-        label = "Case parties"
-    )
-    private String caseParties;
 
     @CCD(
         label = "Case reference",
         typeOverride = CaseLink
     )
     private CaseLink caseReference;
+
+    @CCD(
+        label = "Case parties"
+    )
+    private String caseParties;
 
     @CCD(
         label = "Legal advisor decision date"
