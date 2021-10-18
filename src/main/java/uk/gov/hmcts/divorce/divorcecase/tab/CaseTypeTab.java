@@ -172,9 +172,39 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("outcomeOfConditionalOrder", "Outcome of Conditional Order")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, SOLICITOR, SUPER_USER)
             .showCondition("coGranted=\"*\"")
+            .label("labelLegalAdvisorDecision", null, "## Legal advisor decision")
+            .field("coDecisionDate")
             .field("coGranted")
             .field("coClaimsGranted")
-            .field("coClaimsCostsOrderInformation")
-            .field("coDecisionDate");
+            .field("coWhoPaysCosts")
+            .field("coTypeCostsDecision")
+            .field("coClaimsCostsOrderInformation", "coTypeCostsDecision=\"additionalInformation\"")
+            .field("coRefusalDecision")
+            .field("coRefusalAdminErrorInfo", "coRefusalDecision=\"adminError\"")
+            .field("coRefusalRejectionReason")
+            .field("coRefusalRejectionAdditionalInfo", "coRefusalRejectionReason=\"other\"")
+            .field("coRefusalClarificationReason")
+            .field("coRefusalClarificationAdditionalInfo", "coRefusalClarificationReason=\"other\"")
+            .label("labelCoClarificationResponse", null, "## Clarification Response")
+            .field("coClarificationResponse")
+            .field("coClarificationUploadDocuments")
+            .label("labelCoPronouncementDetails", null, "## Pronouncement Details")
+            .field("bulkListCaseReference")
+            .field("coCourtName")
+            .field("coDateAndTimeOfHearing")
+            .field("coPronouncementJudge")
+            .field("coGrantedDate")
+            .field("dateFinalOrderEligibleFrom")
+            .field("coOutcomeCase")
+            .label("labelJudgeCostsDecision",
+                "coJudgeCostsClaimGranted=\"*\" "
+                    + "OR coJudgeWhoPaysCosts=\"*\" "
+                    + "OR coJudgeTypeCostsDecision=\"*\" "
+                    + "OR coJudgeCostsOrderAdditionalInfo=\"*\"",
+                "## Judge costs decision")
+            .field("coJudgeCostsClaimGranted")
+            .field("coJudgeWhoPaysCosts")
+            .field("coJudgeTypeCostsDecision")
+            .field("coJudgeCostsOrderAdditionalInfo", "coJudgeTypeCostsDecision=\"additionalInformation\"");
     }
 }
