@@ -12,6 +12,13 @@ public class BulkActionCaseTypeTab implements CCDConfig<BulkActionCaseData, Bulk
     @Override
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
         configBuilder.tab("bulkCaseList", "Bulk case list")
+            .field(BulkActionCaseData::getCaseTitle)
+            .field("coCourtName")
+            .field("coDateAndTimeOfHearing")
+            .field("coPronouncementJudge")
+            .field("coHasJudgePronounced")
+            .field("coPronouncedDate")
+            .field("dateFinalOrderEligibleFrom")
             .field(BulkActionCaseData::getBulkListCaseDetails);
     }
 }
