@@ -232,15 +232,4 @@ public class ConditionalOrder {
         typeOverride = TextArea
     )
     private String judgeCostsOrderAdditionalInfo;
-
-    @CCD(
-        label = "Has the judge pronounced?"
-    )
-    private YesOrNo hasJudgePronounced;
-
-    @CCD(
-        label = "Conditional Order pronounced date"
-    )
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate pronouncedDate;
 }
