@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -28,6 +29,12 @@ public class RetiredFields {
 
     @CCD(label = "retiredApp2ContactDetailsConfidential")
     private ConfidentialAddress applicant2ContactDetailsConfidential;
+
+    @CCD(label = "retiredApp1LegalProceedingsRelated")
+    private Set<LegalProceedingsRelated> applicant1LegalProceedingsRelated;
+
+    @CCD(label = "retiredApp2LegalProceedingsRelated")
+    private Set<LegalProceedingsRelated> applicant2LegalProceedingsRelated;
 
     @CCD(label = "retiredDateConditionalOrderSubmitted")
     private LocalDateTime dateConditionalOrderSubmitted;

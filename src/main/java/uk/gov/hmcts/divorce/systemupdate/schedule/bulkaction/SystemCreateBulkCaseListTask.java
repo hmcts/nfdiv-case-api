@@ -148,6 +148,7 @@ public class SystemCreateBulkCaseListTask implements Runnable {
                             .caseReference(String.valueOf(caseDetails.getId()))
                             .build()
                     )
+                    .decisionDate(caseData.getConditionalOrder().getDecisionDate())
                     .build();
 
                 var bulkListCaseDetailsListValue =
