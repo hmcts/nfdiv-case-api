@@ -142,16 +142,27 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("alternativeService", "Service Application")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER)
             .field("receivedServiceApplicationDate")
-            .field("alternativeServiceType")
             .field("receivedServiceAddedDate")
+            .field("alternativeServiceType")
             .field("serviceApplicationDecisionDate")
             .field("deemedServiceDate")
             .field("serviceApplicationGranted")
+            .label("bailiffLocalCourtDetailsLabel",
+                "localCourtName=\"*\" OR localCourtEmail=\"*\"", "### Bailiff local court details")
+            .field("localCourtName")
+            .field("localCourtEmail")
+            .label("bailiffReturnLabel",
+                "certificateOfServiceDate=\"*\" OR successfulServedByBailiff=\"*\" OR reasonFailureToServeByBailiff=\"*\"",
+                "### Bailiff return")
+            .field("certificateOfServiceDate")
+            .field("successfulServedByBailiff")
+            .field("reasonFailureToServeByBailiff")
             .field("dateOfPayment")
             .field("paymentMethod")
             .field("feeAccountNumber", "paymentMethod=\"feePayByAccount\"")
             .field("feeAccountReferenceNumber", "paymentMethod=\"feePayByAccount\"")
             .field("helpWithFeesReferenceNumber", "paymentMethod=\"feePayByHelp\"")
+            .label("servicePaymentFeeLabel", null, "Service Payment Details")
             .field("servicePaymentFeeOrderSummary");
     }
 
