@@ -1,0 +1,33 @@
+{
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "applicant1FirstName": "John",
+    "applicant1LastName": "Smith",
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "receivedServiceApplicationDate": "2021-06-18",
+    "alternativeServiceType": "dispensed",
+    "serviceApplicationGranted": "Yes",
+    "serviceApplicationDecisionDate": "${json-unit.any-string}",
+    "documentsGenerated": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentDateAdded": null,
+          "documentComment": null,
+          "documentFileName": "dispensedAsServedGranted.pdf",
+          "documentType": "dispenseWithServiceGranted",
+          "documentEmailContent": null,
+          "documentLink": {
+            "document_url": "${json-unit.any-string}",
+            "document_filename": "dispensedAsServedGranted.pdf",
+            "document_binary_url": "${json-unit.any-string}"
+          }
+        }
+      }
+    ],
+    "dataVersion": 6
+  },
+  "errors": null,
+  "warnings": null,
+  "state": "Holding"
+}
