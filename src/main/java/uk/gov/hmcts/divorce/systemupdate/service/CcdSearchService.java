@@ -18,11 +18,9 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
@@ -112,12 +110,12 @@ public class CcdSearchService {
 
         BoolQueryBuilder query = Objects.isNull(notificationFlag)
             ? boolQuery()
-                .must(matchQuery(STATE, state))
-                .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
+            .must(matchQuery(STATE, state))
+            .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
             : boolQuery()
-                .must(matchQuery(STATE, state))
-                .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
-                .mustNot(matchQuery(String.format("data.%s", notificationFlag), YesOrNo.YES));
+            .must(matchQuery(STATE, state))
+            .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
+            .mustNot(matchQuery(String.format("data.%s", notificationFlag), YesOrNo.YES));
 
         final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
             .searchSource()
@@ -155,56 +153,37 @@ public class CcdSearchService {
     }
 
     public List<CaseDetails> searchAwaitingPronouncementCases(User user, String serviceAuth) {
-
-        final List<CaseDetails> allCaseDetails = new ArrayList<>();
-        Set<Long> processedCaseIds = new HashSet<>();
-
         try {
             int from = 0;
-            int totalSearch;
-            do {
-                QueryBuilder stateQuery = matchQuery(STATE, AwaitingPronouncement);
-                QueryBuilder bulkListingCaseId = existsQuery("data.bulkListCaseReference");
+            QueryBuilder stateQuery = matchQuery(STATE, AwaitingPronouncement);
+            QueryBuilder bulkListingCaseId = existsQuery("data.bulkListCaseReference");
 
-                QueryBuilder query = boolQuery()
-                    .must(stateQuery)
-                    .mustNot(bulkListingCaseId);
+            QueryBuilder query = boolQuery()
+                .must(stateQuery)
+                .mustNot(bulkListingCaseId);
 
-                SearchSourceBuilder sourceBuilder = SearchSourceBuilder
-                    .searchSource()
-                    .query(query)
-                    .from(from)
-                    .size(bulkActionPageSize);
+            SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+                .searchSource()
+                .query(query)
+                .from(from)
+                .size(bulkActionPageSize);
 
-                SearchResult result = coreCaseDataApi.searchCases(
-                    user.getAuthToken(),
-                    serviceAuth,
-                    CASE_TYPE,
-                    sourceBuilder.toString());
+            SearchResult result = coreCaseDataApi.searchCases(
+                user.getAuthToken(),
+                serviceAuth,
+                CASE_TYPE,
+                sourceBuilder.toString());
 
-                from += bulkActionPageSize;
-                totalSearch = result.getTotal();
-
-                result.setCases(
-                    result.getCases()
-                        .stream()
-                        .filter(caseDetails -> !processedCaseIds.contains(caseDetails.getId()))
-                        .collect(Collectors.toList())
-                );
-
-                result.getCases()
-                    .forEach(caseDetails -> processedCaseIds.add(caseDetails.getId()));
-
-                if (!result.getCases().isEmpty()) {
-                    allCaseDetails.addAll(result.getCases());
-                }
-            } while (from < totalSearch);
+            log.info("Total cases retrieved for bulk case creation {} ", result.getTotal());
+            if (!result.getCases().isEmpty()) {
+                return result.getCases();
+            }
         } catch (final FeignException e) {
             final String message = "Failed to complete search for Cases with state of AwaitingPronouncement";
             log.info(message, e);
             throw new CcdSearchCaseException(message, e);
         }
 
-        return allCaseDetails;
+        return Collections.emptyList();
     }
 }
