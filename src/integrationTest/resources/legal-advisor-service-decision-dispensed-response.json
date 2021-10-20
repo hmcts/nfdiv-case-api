@@ -1,13 +1,12 @@
 {
   "data": {
-    "divorceOrDissolution": "divorce",
-    "applicant1FirstName": "John",
-    "applicant1LastName": "Smith",
+    "labelContentUnionType": "dissolution",
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "receivedServiceApplicationDate": "2021-06-18",
     "alternativeServiceType": "dispensed",
     "serviceApplicationGranted": "Yes",
     "serviceApplicationDecisionDate": "${json-unit.any-string}",
+    "deemedServiceDate": "${json-unit.any-string}",
     "documentsGenerated": [
       {
         "id": "${json-unit.any-string}",
@@ -18,18 +17,14 @@
           "documentType": "dispenseWithServiceGranted",
           "documentEmailContent": null,
           "documentLink": {
-            "document_url": "${json-unit.any-string}",
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
             "document_filename": "dispensedAsServedGranted.pdf",
-            "document_binary_url": "${json-unit.any-string}"
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
           }
         }
       }
     ],
-    "dataVersion": 6,
-    "exampleRetiredField": null,
-    "applicant1ContactDetailsConfidential": null,
-    "applicant2ContactDetailsConfidential": null,
-    "dateConditionalOrderSubmitted": null
+    "dataVersion": 6
   },
   "errors": null,
   "warnings": null,

@@ -15,7 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.ServiceApplicationTemplateContent;
+import uk.gov.hmcts.divorce.document.content.ServiceOrderTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
@@ -23,6 +23,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
@@ -35,8 +36,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DEEMED_AS_SERVICE_GRANTED;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DISPENSED_AS_SERVICE_GRANTED;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.ORDER_TO_DISPENSE_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.SERVICE_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DISPENSE_WITH_SERVICE_GRANTED;
 
 @Component
@@ -51,7 +53,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
     private CaseDataDocumentService caseDataDocumentService;
 
     @Autowired
-    private ServiceApplicationTemplateContent serviceApplicationTemplateContent;
+    private ServiceOrderTemplateContent serviceOrderTemplateContent;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -69,11 +71,11 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
             .page("makeServiceDecision")
             .pageLabel("Approve service application")
             .complex(CaseData::getAlternativeService)
-                .mandatory(AlternativeService::getServiceApplicationGranted)
-                .readonly(AlternativeService::getAlternativeServiceType, "serviceApplicationGranted=\"NEVER_SHOW\"")
-                .mandatory(AlternativeService::getDeemedServiceDate,
-                    "alternativeServiceType=\"deemed\" AND serviceApplicationGranted=\"Yes\"")
-                .done();
+            .mandatory(AlternativeService::getServiceApplicationGranted)
+            .readonly(AlternativeService::getAlternativeServiceType, "serviceApplicationGranted=\"NEVER_SHOW\"")
+            .mandatory(AlternativeService::getDeemedServiceDate,
+                "alternativeServiceType=\"deemed\" AND serviceApplicationGranted=\"Yes\"")
+            .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
@@ -97,8 +99,14 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
                     caseDataCopy,
                     details.getId(),
                     DISPENSED_AS_SERVICE_GRANTED,
-                    ORDER_TO_DISPENSE_TEMPLATE_ID,
                     DISPENSE_WITH_SERVICE_GRANTED
+                );
+            } else if (DEEMED.equals(serviceApplication.getAlternativeServiceType())) {
+                generateAndSetOrderToDeemedOrDispenseDocument(
+                    caseDataCopy,
+                    details.getId(),
+                    DEEMED_AS_SERVICE_GRANTED,
+                    DocumentType.DEEMED_AS_SERVICE_GRANTED
                 );
             }
         }
@@ -112,14 +120,13 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
     private void generateAndSetOrderToDeemedOrDispenseDocument(final CaseData caseDataCopy,
                                                                final Long caseId,
                                                                final String fileName,
-                                                               final String templateId,
                                                                final DocumentType documentType) {
-        log.info("Generating order to dispense document for templateId : {} caseId: {}", templateId, caseId);
+        log.info("Generating order to dispense document for templateId : {} caseId: {}", SERVICE_ORDER_TEMPLATE_ID, caseId);
 
         Document document = caseDataDocumentService.renderDocument(
-            serviceApplicationTemplateContent.apply(caseDataCopy, caseId),
+            serviceOrderTemplateContent.apply(caseDataCopy, caseId),
             caseId,
-            templateId,
+            SERVICE_ORDER_TEMPLATE_ID,
             caseDataCopy.getApplicant1().getLanguagePreference(),
             fileName
         );
