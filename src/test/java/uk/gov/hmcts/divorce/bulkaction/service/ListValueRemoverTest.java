@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ListValueRemoverTest {
 
     @InjectMocks
-    private ListValueRemover listValueRemover;
+    private ListValueUtil listValueRemover;
 
     @Test
     void shouldRemoveListValuesThatMatchFromList() {
