@@ -7,7 +7,7 @@ public final class NotificationConstants {
     public static final String PARTNER = "partner";
     public static final String THEIR_EMAIL_ADDRESS = "their email address";
 
-    public static final String APPLICATION = "Application";
+    public static final String APPLICATION = "application";
     public static final String APPLICATION_TYPE = "Application type";
     public static final String UNION = "union";
     public static final String MARRIAGE = "marriage";
@@ -17,12 +17,15 @@ public final class NotificationConstants {
     public static final String YOUR_UNION = "Your union";
     public static final String ENDING_YOUR_CIVIL_PARTNERSHIP = "Ending your civil partnership";
     public static final String YOUR_DIVORCE = "Your divorce";
+    public static final String YOUR_CIVIL_PARTNERSHIP = "Your civil partnership";
+    public static final String ENDING_YOUR_CIVIL_PARTNERSHIP = "ending your civil partnership";
     public static final String DIVORCE_APPLICATION = "divorce application";
     public static final String APPLICATION_TO_END_A_CIVIL_PARTNERSHIP = "application to end a civil partnership";
     public static final String APPLICATION_TO_END_CIVIL_PARTNERSHIP = "application to end your civil partnership";
     public static final String FOR_YOUR_APPLICATION = " for your divorce/ to end your civil partnership";
     public static final String FOR_THE_APPLICATION = "for the divorce / to end your civil partnership";
     public static final String FOR_A_APPLICATION = "for a divorce / to end your civil partnership";
+    public static final String FOR_A_DIVORCE = "for a divorce";
     public static final String FOR_YOUR_DIVORCE = " for your divorce";
     public static final String DIVORCE_OR_END_CIVIL_PARTNERSHIP = "divorce / end your civil partnership";
     public static final String TO_DIVORCE = " to divorce";
@@ -56,6 +59,10 @@ public final class NotificationConstants {
     public static final String PAPERS_SERVED_ANOTHER_WAY_PARAGRAPH = "papersServedAnotherWayParagraph";
     public static final String PAPERS_SERVED_ANOTHER_WAY_TITLE = "papersServedAnotherWayTitle";
 
+    public static final String PAPERS = "papers";
+    public static final String DIVORCE_PAPERS = "divorce papers";
+    public static final String DISSOLUTION_PAPERS = "papers to end your civil partnership";
+
     public static final String CERTIFICATE = "certificate";
     public static final String FOREIGN_CERTIFICATE = "foreignCertificate";
     public static final String FOREIGN_CERTIFICATE_TRANSLATION = "foreignCertificateTranslation";
@@ -88,6 +95,7 @@ public final class NotificationConstants {
     public static final String PAID = " and paid";
 
     public static final String REVIEW_DEADLINE_DATE = "review deadline date";
+    public static final String TWENTY_EIGHT_DAY_DEADLINE = "28 days after issue";
 
     private NotificationConstants() {
     }

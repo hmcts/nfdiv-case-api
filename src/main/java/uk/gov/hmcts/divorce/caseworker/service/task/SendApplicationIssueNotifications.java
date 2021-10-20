@@ -10,6 +10,8 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import java.util.Objects;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
+
 @Component
 public class SendApplicationIssueNotifications implements CaseTask {
 
@@ -28,6 +30,9 @@ public class SendApplicationIssueNotifications implements CaseTask {
                 applicationIssuedNotification.sendToSoleApplicant1(caseData, caseId);
                 if (!Objects.isNull(caseData.getCaseInvite().getApplicant2InviteEmailAddress())) {
                     applicationIssuedNotification.sendToSoleRespondent(caseData, caseId);
+                }
+                if (caseDetails.getState() == AwaitingAos) {
+                    applicationIssuedNotification.notifyApplicantOfServiceToOverseasRespondent(caseData, caseId);
                 }
             } else {
                 applicationIssuedNotification.sendToJointApplicant1(caseData, caseId);
