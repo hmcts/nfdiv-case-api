@@ -7,6 +7,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
@@ -34,6 +35,9 @@ public class CcdUpdateService {
 
     @Autowired
     private CaseDetailsConverter caseDetailsConverter;
+
+    @Autowired
+    private CaseDetailsUpdater caseDetailsUpdater;
 
     public void submitEvent(final CaseDetails caseDetails,
                             final String eventId,
@@ -78,12 +82,49 @@ public class CcdUpdateService {
         submitEvent(caseDetails, eventId, user, serviceAuth);
     }
 
+    @Retryable(value = {FeignException.class, RuntimeException.class})
+    public void submitEventWithRetry(final String caseId,
+                                     final String eventId,
+                                     final CaseTask caseTask,
+                                     final User user,
+                                     final String serviceAuth) {
+
+        final String userId = user.getUserDetails().getId();
+        final String authorization = user.getAuthToken();
+
+        final StartEventResponse startEventResponse = coreCaseDataApi.startEventForCaseWorker(
+            authorization,
+            serviceAuth,
+            userId,
+            JURISDICTION,
+            CASE_TYPE,
+            caseId,
+            eventId);
+
+        final CaseDataContent caseDataContent = ccdCaseDataContentProvider.createCaseDataContent(
+            startEventResponse,
+            DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY,
+            DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION,
+            caseDetailsUpdater.updateCaseData(caseTask, startEventResponse).getData());
+
+        coreCaseDataApi.submitEventForCaseWorker(
+            authorization,
+            serviceAuth,
+            userId,
+            JURISDICTION,
+            CASE_TYPE,
+            caseId,
+            true,
+            caseDataContent);
+    }
+
     private void startAndSubmitEventForCaseworkers(final CaseDetails caseDetails,
                                                    final String eventId,
                                                    final String serviceAuth,
                                                    final String caseId,
                                                    final String userId,
                                                    final String authorization) {
+
         final StartEventResponse startEventResponse = coreCaseDataApi.startEventForCaseWorker(
             authorization,
             serviceAuth,
