@@ -138,7 +138,6 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
         tabBuilder
             .label("LabelOtherProceedings-Heading", null, "### Applicant's other proceedings:")
             .field("applicant1LegalProceedings")
-            .field("applicant1LegalProceedingsRelated", "applicant1LegalProceedings=\"Yes\"")
             .field("applicant1LegalProceedingsDetails", "applicant1LegalProceedings=\"Yes\"")
             .field("applicant1FinancialOrder")
             .field("applicant1FinancialOrderFor", "applicant1FinancialOrder=\"Yes\"")
