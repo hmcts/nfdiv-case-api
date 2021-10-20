@@ -16,7 +16,8 @@ public class PronounceCase implements CaseTask {
         CaseData data = caseDetails.getData();
 
         data.getConditionalOrder().setGrantedDate(data.getConditionalOrder().getDateAndTimeOfHearing().toLocalDate());
-        data.getFinalOrder().setDateFinalOrderEligibleFrom(data.getConditionalOrder().getDateAndTimeOfHearing().toLocalDate().plusWeeks(6).plusDays(1));
+        data.getFinalOrder().setDateFinalOrderEligibleFrom(
+            data.getConditionalOrder().getDateAndTimeOfHearing().toLocalDate().plusWeeks(6).plusDays(1));
         data.getConditionalOrder().setOutcomeCase(YES);
 
         // generate document

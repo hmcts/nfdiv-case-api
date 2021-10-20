@@ -4,7 +4,6 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -23,7 +22,7 @@ public class ListValueUtil {
     public <T> List<T> fromListValueToList(final List<ListValue<T>> targetList) {
         return targetList.stream()
             .map(ListValue::getValue)
-            .collect(Collectors.toList());
+            .collect(toList());
     }
 
     public <T> List<ListValue<T>> fromListToListValue(final List<T> targetList) {
@@ -33,6 +32,7 @@ public class ListValueUtil {
                     .id(null)
                     .value(i)
                     .build()
-            ).collect(Collectors.toList());
+            )
+            .collect(toList());
     }
 }

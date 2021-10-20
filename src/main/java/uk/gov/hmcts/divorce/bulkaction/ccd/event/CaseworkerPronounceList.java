@@ -63,8 +63,10 @@ public class CaseworkerPronounceList implements CCDConfig<BulkActionCaseData, Bu
             .aboutToSubmitCallback(this::aboutToSubmit));
     }
 
-    public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToSubmit(CaseDetails<BulkActionCaseData, BulkActionState> details,
-                                                                                           CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails) {
+    public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToSubmit(
+        CaseDetails<BulkActionCaseData, BulkActionState> details,
+        CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails
+    ) {
 
         final BulkActionCaseData caseData = details.getData();
 
