@@ -64,7 +64,6 @@ public class BulkTriggerServiceIT {
     @MockBean
     private CaseDetailsUpdater caseDetailsUpdater;
 
-    @SuppressWarnings("unchecked")
     @Test
     void shouldProcessAllBulkCasesAndReturnEmptyErrorsList() {
 
@@ -101,7 +100,6 @@ public class BulkTriggerServiceIT {
         verifySubmitEventForCaseIds(caseDataContent, "1", "2", "3", "4", "5");
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     void shouldInvokeCcdMaximumThreeTimesWhenSubmitEventFails() {
 
@@ -156,7 +154,6 @@ public class BulkTriggerServiceIT {
         );
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     void shouldCompleteAllCasesEvenIfOneFailsAndReturnFailedCases() {
 
