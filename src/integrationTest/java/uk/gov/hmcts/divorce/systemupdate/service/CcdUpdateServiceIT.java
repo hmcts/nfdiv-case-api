@@ -1,11 +1,15 @@
 package uk.gov.hmcts.divorce.systemupdate.service;
 
+import feign.FeignException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
@@ -18,6 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -50,6 +56,9 @@ public class CcdUpdateServiceIT {
 
     @MockBean
     private CaseDetailsConverter caseDetailsConverter;
+
+    @MockBean
+    private CaseDetailsUpdater caseDetailsUpdater;
 
     @Test
     void shouldInvokeCcdMaximumThreeTimesWhenSubmitEventFails() {
@@ -95,6 +104,67 @@ public class CcdUpdateServiceIT {
         final CcdConflictException exception = assertThrows(
             CcdConflictException.class,
             () -> ccdUpdateService.submitEventWithRetry(caseDetails, CREATE_BULK_LIST, user, SERVICE_AUTHORIZATION));
+
+        verify(ccdCaseDataContentProvider, times(3))
+            .createCaseDataContent(
+                startEventResponse,
+                DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY,
+                DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION,
+                caseData);
+    }
+
+    @Test
+    void shouldInvokeCcdMaximumThreeTimesWhenSubmitEventFailsForGivenCaseIdString() {
+
+        final User user = systemUpdateUser();
+        final StartEventResponse startEventResponse = getStartEventResponse();
+        final CaseDataContent caseDataContent = mock(CaseDataContent.class);
+        final uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails = new uk.gov.hmcts.ccd.sdk.api.CaseDetails<>();
+        final CaseData caseData = CaseData.builder().build();
+        caseDetails.setData(caseData);
+
+        when(coreCaseDataApi
+            .startEventForCaseWorker(
+                SYSTEM_UPDATE_AUTH_TOKEN,
+                SERVICE_AUTHORIZATION,
+                SYSTEM_USER_USER_ID,
+                JURISDICTION,
+                CASE_TYPE,
+                "1",
+                CREATE_BULK_LIST
+            )
+        ).thenReturn(startEventResponse);
+
+        when(caseDetailsUpdater.updateCaseData(any(CaseTask.class), eq(startEventResponse))).thenReturn(caseDetails);
+        when(ccdCaseDataContentProvider
+            .createCaseDataContent(
+                startEventResponse,
+                DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY,
+                DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION,
+                caseData
+            )
+        ).thenReturn(caseDataContent);
+
+        doThrow(feignException(409, "some error"))
+            .when(coreCaseDataApi).submitEventForCaseWorker(
+                SYSTEM_UPDATE_AUTH_TOKEN,
+                SERVICE_AUTHORIZATION,
+                SYSTEM_USER_USER_ID,
+                JURISDICTION,
+                CASE_TYPE,
+                "1",
+                true,
+                caseDataContent
+            );
+
+        assertThrows(
+            FeignException.class,
+            () -> ccdUpdateService.submitEventWithRetry(
+                "1",
+                CREATE_BULK_LIST,
+                details -> details,
+                user,
+                SERVICE_AUTHORIZATION));
 
         verify(ccdCaseDataContentProvider, times(3))
             .createCaseDataContent(
