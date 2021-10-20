@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.stream.Collectors.toList;
 
@@ -26,10 +27,11 @@ public class ListValueUtil {
     }
 
     public <T> List<ListValue<T>> fromListToListValue(final List<T> targetList) {
+        final AtomicInteger counter = new AtomicInteger(1);
         return targetList.stream()
             .map(i ->
                 ListValue.<T>builder()
-                    .id(null)
+                    .id(String.valueOf(counter.getAndIncrement()))
                     .value(i)
                     .build()
             )

@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -22,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ListValueRemoverTest {
 
     @InjectMocks
-    private ListValueUtil listValueRemover;
+    private ListValueUtil listValueUtil;
 
     @Test
     void shouldRemoveListValuesThatMatchFromList() {
@@ -37,7 +38,7 @@ public class ListValueRemoverTest {
 
         final List<BulkListCaseDetails> removeListValues = asList(bulkListCaseDetails2, bulkListCaseDetails4);
 
-        final List<ListValue<BulkListCaseDetails>> result = listValueRemover.removeFromList(bulListValues, removeListValues);
+        final List<ListValue<BulkListCaseDetails>> result = listValueUtil.removeFromList(bulListValues, removeListValues);
 
         assertThat(result).hasSize(3);
         assertThat(result.get(0).getId()).isEqualTo("1");
@@ -65,7 +66,7 @@ public class ListValueRemoverTest {
                 .build())
             .build());
 
-        final List<ListValue<BulkListCaseDetails>> result = listValueRemover.removeFromList(bulListValues, removeListValues);
+        final List<ListValue<BulkListCaseDetails>> result = listValueUtil.removeFromList(bulListValues, removeListValues);
 
         assertThat(result).hasSize(5);
         assertThat(result.get(0).getId()).isEqualTo("1");
@@ -93,7 +94,7 @@ public class ListValueRemoverTest {
 
         final List<BulkListCaseDetails> removeListValues = emptyList();
 
-        final List<ListValue<BulkListCaseDetails>> result = listValueRemover.removeFromList(bulListValues, removeListValues);
+        final List<ListValue<BulkListCaseDetails>> result = listValueUtil.removeFromList(bulListValues, removeListValues);
 
         assertThat(result).hasSize(5);
         assertThat(result.get(0).getId()).isEqualTo("1");
@@ -106,6 +107,28 @@ public class ListValueRemoverTest {
         assertThat(result.get(3).getValue()).isEqualTo(bulkListCaseDetails4);
         assertThat(result.get(4).getId()).isEqualTo("5");
         assertThat(result.get(4).getValue()).isEqualTo(bulkListCaseDetails5);
+    }
+
+    @Test
+    void shouldConvertListValueToList() {
+        final List<ListValue<BulkListCaseDetails>> list = createListValues("1", "2", "3", "4", "5");
+        final List<BulkListCaseDetails> expectedList = createList("1", "2", "3", "4", "5");
+
+        List<BulkListCaseDetails> result = listValueUtil.fromListValueToList(list);
+
+        assertThat(result).hasSize(5);
+        assertThat(result).isEqualTo(expectedList);
+    }
+
+    @Test
+    void shouldConvertListToListValue() {
+        final List<BulkListCaseDetails> list = createList("1", "2", "3", "4", "5");
+        final List<ListValue<BulkListCaseDetails>> expectedList = createListValues("1", "2", "3", "4", "5");
+
+        List<ListValue<BulkListCaseDetails>> result = listValueUtil.fromListToListValue(list);
+
+        assertThat(result).hasSize(5);
+        assertThat(result).isEqualTo(expectedList);
     }
 
     private List<ListValue<BulkListCaseDetails>> createListValues(final String... caseIds) {
@@ -124,5 +147,15 @@ public class ListValueRemoverTest {
                 .build())
             .build());
         return listValue;
+    }
+
+    private List<BulkListCaseDetails> createList(final String... caseIds) {
+        return stream(caseIds)
+            .map(caseId -> BulkListCaseDetails.builder()
+                .caseReference(CaseLink.builder()
+                    .caseReference(caseId)
+                    .build())
+                .build())
+            .collect(toList());
     }
 }
