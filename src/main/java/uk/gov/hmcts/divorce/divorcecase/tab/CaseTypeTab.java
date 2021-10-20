@@ -144,6 +144,11 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("receivedServiceApplicationDate")
             .field("receivedServiceAddedDate")
             .field("alternativeServiceType")
+            .field("paymentMethod")
+            .field("dateOfPayment", "paymentMethod=\"*\"")
+            .field("feeAccountNumber", "paymentMethod=\"feePayByAccount\"")
+            .field("feeAccountReferenceNumber", "paymentMethod=\"feePayByAccount\"")
+            .field("helpWithFeesReferenceNumber", "paymentMethod=\"feePayByHelp\"")
             .field("serviceApplicationDecisionDate")
             .field("deemedServiceDate")
             .field("serviceApplicationGranted")
@@ -156,14 +161,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 "### Bailiff return")
             .field("certificateOfServiceDate")
             .field("successfulServedByBailiff")
-            .field("reasonFailureToServeByBailiff")
-            .field("dateOfPayment")
-            .field("paymentMethod")
-            .field("feeAccountNumber", "paymentMethod=\"feePayByAccount\"")
-            .field("feeAccountReferenceNumber", "paymentMethod=\"feePayByAccount\"")
-            .field("helpWithFeesReferenceNumber", "paymentMethod=\"feePayByHelp\"")
-            .label("servicePaymentFeeLabel", null, "Service Payment Details")
-            .field("servicePaymentFeeOrderSummary");
+            .field("reasonFailureToServeByBailiff");
+
     }
 
     private void buildConditionalOrderTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
