@@ -1,0 +1,32 @@
+{
+  "data": {
+    "labelContentUnionType": "dissolution",
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "receivedServiceApplicationDate": "2021-06-18",
+    "alternativeServiceType": "deemed",
+    "serviceApplicationGranted": "Yes",
+    "serviceApplicationDecisionDate": "${json-unit.any-string}",
+    "deemedServiceDate": "${json-unit.any-string}",
+    "documentsGenerated": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentDateAdded": null,
+          "documentComment": null,
+          "documentFileName": "deemedAsServedGranted.pdf",
+          "documentType": "deemedAsServiceGranted",
+          "documentEmailContent": null,
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+            "document_filename": "deemedAsServedGranted.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
+          }
+        }
+      }
+    ],
+    "dataVersion": 6
+  },
+  "errors": null,
+  "warnings": null,
+  "state": "Holding"
+}

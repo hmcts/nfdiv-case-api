@@ -32,6 +32,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
 import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeServiceDecision.LEGAL_ADVISOR_SERVICE_DECISION;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
@@ -95,7 +96,7 @@ public class LegalAdvisorMakeServiceDecisionIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "NFD_ORDER_TO_DISPENSE.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "NFD_Service_Order.docx");
 
         final CaseData caseData = CaseData.builder()
             .alternativeService(
@@ -129,7 +130,55 @@ public class LegalAdvisorMakeServiceDecisionIT {
             .when(TREATING_NULL_AS_ABSENT)
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(
-                "classpath:legal-advisor-service-decision-response.json"
+                "classpath:legal-advisor-service-decision-dispensed-response.json"
+            )));
+    }
+
+    @Test
+    public void shouldUpdateStateToHoldingAndSetDecisionDateAndGenerateDeemedServiceOrderDocIfApplicationIsGrantedAndTypeIsDeemed()
+        throws Exception {
+        setMockClock(clock);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "NFD_Service_Order.docx");
+
+        final CaseData caseData = CaseData.builder()
+            .alternativeService(
+                AlternativeService
+                    .builder()
+                    .deemedServiceDate(LocalDate.now(clock))
+                    .alternativeServiceType(DEEMED)
+                    .serviceApplicationGranted(YES)
+                    .deemedServiceDate(LocalDate.of(2021, 6, 20))
+                    .receivedServiceApplicationDate(LocalDate.of(2021, 6, 18))
+                    .build()
+            )
+            .build();
+
+        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            LEGAL_ADVISOR_SERVICE_DECISION)
+                    )
+                )
+                .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        assertThatJson(response)
+            .when(TREATING_NULL_AS_ABSENT)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(
+                "classpath:legal-advisor-service-decision-deemed-response.json"
             )));
     }
 }

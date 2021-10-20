@@ -19,7 +19,7 @@ public final class DocumentConstants {
 
     public static final String GENERAL_ORDER = "generalOrder";
     public static final String DIVORCE_GENERAL_ORDER = "DIVORCE_GENERAL_ORDER";
-    public static final String ORDER_TO_DISPENSE_TEMPLATE_ID = "ORDER_TO_DISPENSE";
+    public static final String SERVICE_ORDER_TEMPLATE_ID = "SERVICE_ORDER";
 
     public static final String CERTIFICATE_OF_SERVICE_TEMPLATE_ID = "CERTIFICATE_OF_SERVICE";
 
@@ -30,6 +30,7 @@ public final class DocumentConstants {
     public static final String PERMANENT = "permanent";
 
     public static final String DISPENSED_AS_SERVICE_GRANTED = "dispensedAsServedGranted";
+    public static final String DEEMED_AS_SERVICE_GRANTED = "deemedAsServedGranted";
 
     private DocumentConstants() {
     }
