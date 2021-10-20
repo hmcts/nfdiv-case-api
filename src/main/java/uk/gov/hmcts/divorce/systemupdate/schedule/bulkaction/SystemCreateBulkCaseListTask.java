@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateBulkCaseReference.SYSTEM_UPDATE_BULK_CASE_REFERENCE;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYSTEM_LINK_WITH_BULK_CASE;
 
 @Component
 @Slf4j
@@ -115,7 +115,7 @@ public class SystemCreateBulkCaseListTask implements Runnable {
             try {
                 if (bulkListCaseIds.contains(caseDetails.getId())) {
                     caseDetails.getData().put("bulkListCaseReference", String.valueOf(bulkListCaseId));
-                    ccdUpdateService.submitEventWithRetry(caseDetails, SYSTEM_UPDATE_BULK_CASE_REFERENCE, user, serviceAuth);
+                    ccdUpdateService.submitEventWithRetry(caseDetails, SYSTEM_LINK_WITH_BULK_CASE, user, serviceAuth);
                     log.info("Successfully updated case id {} with bulk case id {} ", caseDetails.getId(), bulkListCaseId);
                 } else {
                     log.info("Case id {} was not added to bulk list due to some failure hence skipping update ", caseDetails.getId());

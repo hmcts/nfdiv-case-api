@@ -37,7 +37,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateBulkCaseReference.SYSTEM_UPDATE_BULK_CASE_REFERENCE;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYSTEM_LINK_WITH_BULK_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 
@@ -129,19 +129,19 @@ public class SystemCreateBulkCaseListTaskTest {
             .thenReturn(caseDetailsBulkCase);
 
         doNothing().when(ccdUpdateService)
-            .submitEventWithRetry(caseDetails1, SYSTEM_UPDATE_BULK_CASE_REFERENCE, user, SERVICE_AUTHORIZATION);
+            .submitEventWithRetry(caseDetails1, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
 
         doNothing().when(ccdUpdateService)
-            .submitEventWithRetry(caseDetails2, SYSTEM_UPDATE_BULK_CASE_REFERENCE, user, SERVICE_AUTHORIZATION);
+            .submitEventWithRetry(caseDetails2, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
 
         systemCreateBulkCaseListTask.run();
 
         verify(ccdSearchService).searchAwaitingPronouncementCases(user, SERVICE_AUTHORIZATION);
         verify(ccdCreateService).createBulkCase(bulkActionCaseDetails, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService)
-            .submitEventWithRetry(caseDetails1, SYSTEM_UPDATE_BULK_CASE_REFERENCE, user, SERVICE_AUTHORIZATION);
+            .submitEventWithRetry(caseDetails1, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService)
-            .submitEventWithRetry(caseDetails2, SYSTEM_UPDATE_BULK_CASE_REFERENCE, user, SERVICE_AUTHORIZATION);
+            .submitEventWithRetry(caseDetails2, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
 
         verifyNoMoreInteractions(ccdSearchService, ccdUpdateService);
     }
@@ -217,17 +217,17 @@ public class SystemCreateBulkCaseListTaskTest {
             .thenReturn(caseDetailsBulkCase);
 
         doThrow(new CcdManagementException("some exception", mock(FeignException.class))).when(ccdUpdateService)
-            .submitEventWithRetry(caseDetails1, SYSTEM_UPDATE_BULK_CASE_REFERENCE, user, SERVICE_AUTHORIZATION);
+            .submitEventWithRetry(caseDetails1, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
 
         doNothing().when(ccdUpdateService)
-            .submitEventWithRetry(caseDetails2, SYSTEM_UPDATE_BULK_CASE_REFERENCE, user, SERVICE_AUTHORIZATION);
+            .submitEventWithRetry(caseDetails2, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
 
         systemCreateBulkCaseListTask.run();
 
         verify(ccdSearchService).searchAwaitingPronouncementCases(user, SERVICE_AUTHORIZATION);
         verify(ccdCreateService).createBulkCase(bulkActionCaseDetails, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService)
-            .submitEventWithRetry(caseDetails2, SYSTEM_UPDATE_BULK_CASE_REFERENCE, user, SERVICE_AUTHORIZATION);
+            .submitEventWithRetry(caseDetails2, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
 
         verifyNoMoreInteractions(ccdSearchService, ccdUpdateService);
     }
@@ -284,14 +284,14 @@ public class SystemCreateBulkCaseListTaskTest {
             .thenReturn(caseDetailsBulkCase);
 
         doNothing().when(ccdUpdateService)
-            .submitEventWithRetry(caseDetails2, SYSTEM_UPDATE_BULK_CASE_REFERENCE, user, SERVICE_AUTHORIZATION);
+            .submitEventWithRetry(caseDetails2, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
 
         systemCreateBulkCaseListTask.run();
 
         verify(ccdSearchService).searchAwaitingPronouncementCases(user, SERVICE_AUTHORIZATION);
         verify(ccdCreateService).createBulkCase(bulkActionCaseDetails, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService)
-            .submitEventWithRetry(caseDetails2, SYSTEM_UPDATE_BULK_CASE_REFERENCE, user, SERVICE_AUTHORIZATION);
+            .submitEventWithRetry(caseDetails2, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
 
         verifyNoMoreInteractions(ccdSearchService, ccdUpdateService);
     }
