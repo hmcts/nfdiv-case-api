@@ -109,6 +109,14 @@ public class CaseData {
     @Builder.Default
     private GeneralReferral generalReferral = new GeneralReferral();
 
+    @CCD(
+        label = "Previous Service Applications",
+        typeOverride = Collection,
+        typeParameterOverride = "AlternativeService",
+        access = {CaseworkerAccessBetaOnlyAccess.class}
+    )
+    private List<ListValue<AlternativeService>> alternativeServiceApplications;
+
     @JsonUnwrapped
     @Builder.Default
     @CCD(access = {CaseworkerAccessBetaOnlyAccess.class})
