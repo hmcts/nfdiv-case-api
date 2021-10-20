@@ -25,11 +25,7 @@
         }
       }
     ],
-    "dataVersion": 6,
-    "exampleRetiredField": null,
-    "applicant1ContactDetailsConfidential": null,
-    "applicant2ContactDetailsConfidential": null,
-    "dateConditionalOrderSubmitted": null
+    "dataVersion": 6
   },
   "errors": null,
   "warnings": null,

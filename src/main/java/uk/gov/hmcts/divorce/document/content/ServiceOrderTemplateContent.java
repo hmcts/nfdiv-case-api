@@ -6,11 +6,16 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DOCUMENTS_ISSUED_ON;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_SERVICE_ORDER_TYPE_DEEMED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PETITIONER_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SERVICE_APPLICATION_DECISION_DATE;
@@ -19,7 +24,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
-public class ServiceApplicationTemplateContent {
+public class ServiceOrderTemplateContent {
 
     @Value("${court.locations.serviceCentre.serviceCentreName}")
     private String serviceCentre;
@@ -51,6 +56,16 @@ public class ServiceApplicationTemplateContent {
 
         var alternativeService = caseData.getAlternativeService();
 
+        String isServiceOrderTypeDeemed = null;
+        LocalDate serviceApplicationDecisionDate;
+        if (DEEMED.equals(alternativeService.getAlternativeServiceType())) {
+            isServiceOrderTypeDeemed = YES.getValue();
+            serviceApplicationDecisionDate = alternativeService.getDeemedServiceDate();
+        } else {
+            isServiceOrderTypeDeemed = NO.getValue();
+            serviceApplicationDecisionDate = alternativeService.getServiceApplicationDecisionDate();
+        }
+
         templateContent.put(CASE_REFERENCE, ccdCaseReference);
         templateContent.put(PETITIONER_FULL_NAME, caseData.getApplication().getMarriageDetails().getApplicant1Name());
         templateContent.put(RESPONDENT_FULL_NAME, caseData.getApplication().getMarriageDetails().getApplicant2Name());
@@ -59,7 +74,8 @@ public class ServiceApplicationTemplateContent {
         templateContent.put(SERVICE_APPLICATION_RECEIVED_DATE,
             alternativeService.getReceivedServiceApplicationDate().format(DATE_TIME_FORMATTER));
         templateContent.put(SERVICE_APPLICATION_DECISION_DATE,
-            alternativeService.getServiceApplicationDecisionDate().format(DATE_TIME_FORMATTER));
+            serviceApplicationDecisionDate.format(DATE_TIME_FORMATTER));
+        templateContent.put(IS_SERVICE_ORDER_TYPE_DEEMED, isServiceOrderTypeDeemed);
 
         var ctscContactDetails = CtscContactDetails
             .builder()

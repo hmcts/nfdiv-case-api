@@ -15,7 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.ServiceApplicationTemplateContent;
+import uk.gov.hmcts.divorce.document.content.ServiceOrderTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
@@ -54,7 +54,7 @@ class LegalAdvisorMakeServiceDecisionTest {
     private CaseDataDocumentService caseDataDocumentService;
 
     @Mock
-    private ServiceApplicationTemplateContent serviceApplicationTemplateContent;
+    private ServiceOrderTemplateContent serviceOrderTemplateContent;
 
     @InjectMocks
     private LegalAdvisorMakeServiceDecision makeServiceDecision;
@@ -90,7 +90,7 @@ class LegalAdvisorMakeServiceDecisionTest {
         caseDetails.setId(TEST_CASE_ID);
 
         final Map<String, Object> templateContent = new HashMap<>();
-        when(serviceApplicationTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+        when(serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
         String documentUrl = "http://localhost:8080/4567";
         var orderToDispensedDoc = new Document(
@@ -151,7 +151,7 @@ class LegalAdvisorMakeServiceDecisionTest {
         caseDetails.setId(TEST_CASE_ID);
 
         final Map<String, Object> templateContent = new HashMap<>();
-        when(serviceApplicationTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+        when(serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
         String documentUrl = "http://localhost:8080/4567";
         var orderToDispensedDoc = new Document(

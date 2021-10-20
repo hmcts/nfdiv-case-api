@@ -15,7 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.ServiceApplicationTemplateContent;
+import uk.gov.hmcts.divorce.document.content.ServiceOrderTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
@@ -53,7 +53,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
     private CaseDataDocumentService caseDataDocumentService;
 
     @Autowired
-    private ServiceApplicationTemplateContent serviceApplicationTemplateContent;
+    private ServiceOrderTemplateContent serviceOrderTemplateContent;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -124,7 +124,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
         log.info("Generating order to dispense document for templateId : {} caseId: {}", SERVICE_ORDER_TEMPLATE_ID, caseId);
 
         Document document = caseDataDocumentService.renderDocument(
-            serviceApplicationTemplateContent.apply(caseDataCopy, caseId),
+            serviceOrderTemplateContent.apply(caseDataCopy, caseId),
             caseId,
             SERVICE_ORDER_TEMPLATE_ID,
             caseDataCopy.getApplicant1().getLanguagePreference(),
