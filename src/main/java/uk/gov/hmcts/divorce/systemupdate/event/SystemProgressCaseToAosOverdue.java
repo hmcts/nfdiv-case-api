@@ -56,7 +56,9 @@ public class SystemProgressCaseToAosOverdue implements CCDConfig<CaseData, State
             applicationIssuedNotification.sendReminderToSoleRespondent(data, details.getId());
         }
 
-        applicationIssuedNotification.sendPartnerNotRespondedToSoleApplicant(data, details.getId());
+        if (!data.getApplication().isSolicitorApplication()) {
+            applicationIssuedNotification.sendPartnerNotRespondedToSoleApplicant(data, details.getId());
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)

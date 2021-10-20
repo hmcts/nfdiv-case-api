@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationIssuedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -15,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -40,7 +42,7 @@ public class SystemProgressCaseToAosOverdueTest {
     }
 
     @Test
-    void shouldSendBothEmailsIfAccessCodeAndEmailAddressAreNotNull() {
+    void shouldSendBothEmailsForCitizenApplicationIfAccessCodeAndEmailAddressAreNotNull() {
         final CaseData caseData = caseData();
         caseData.getCaseInvite().setApplicant2InviteEmailAddress("app2@email.com");
         caseData.getCaseInvite().setAccessCode("ACCESS12");
@@ -83,5 +85,18 @@ public class SystemProgressCaseToAosOverdueTest {
 
         verify(applicationIssuedNotification).sendPartnerNotRespondedToSoleApplicant(caseData, 1L);
         verifyNoMoreInteractions(applicationIssuedNotification);
+    }
+
+    @Test
+    void shouldNotSendEmailToApplicantForSolicitorApplication() {
+        final CaseData caseData = caseData();
+        caseData.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(1L);
+        details.setData(caseData);
+
+        systemProgressCaseToAosOverdue.aboutToSubmit(details, details);
+
+        verifyNoInteractions(applicationIssuedNotification);
     }
 }

@@ -97,7 +97,6 @@ public class SystemProgressCaseToAosOverdueIT {
         verify(notificationService)
             .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(SOL_RESPONDENT_APPLICATION_ACCEPTED), anyMap(), eq(ENGLISH));
 
-
         verifyNoMoreInteractions(notificationService);
     }
 
