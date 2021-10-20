@@ -8,6 +8,7 @@
     "alternativeServiceType": "deemed",
     "serviceApplicationGranted": "Yes",
     "serviceApplicationDecisionDate": "${json-unit.any-string}",
+    "deemedServiceDate": "2021-06-20",
     "documentsGenerated": [
       {
         "id": "${json-unit.any-string}",
