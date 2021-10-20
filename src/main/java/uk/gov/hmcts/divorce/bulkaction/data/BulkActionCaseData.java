@@ -79,4 +79,12 @@ public class BulkActionCaseData {
         access = {CaseworkerAccess.class}
     )
     private List<ListValue<BulkListCaseDetails>> bulkListCaseDetails;
+
+    @CCD(
+        label = "Cases that have errored",
+        typeOverride = Collection,
+        typeParameterOverride = "BulkListCaseDetails",
+        access = {CaseworkerAccess.class}
+    )
+    private List<ListValue<BulkListCaseDetails>> erroredCaseDetails;
 }
