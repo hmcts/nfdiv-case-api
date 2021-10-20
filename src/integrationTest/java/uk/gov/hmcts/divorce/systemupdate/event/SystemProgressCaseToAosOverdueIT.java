@@ -71,8 +71,10 @@ public class SystemProgressCaseToAosOverdueIT {
     }
 
     @Test
-    public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmailToApplicantAndRespondent() throws Exception {
+    public void givenValidCitizenCaseDataWhenCallbackIsInvokedThenSendEmailToApplicantAndRespondent() throws Exception {
         CaseData data = validCaseDataForIssueApplication();
+        data.getApplicant1().setSolicitor(null);
+        data.getApplication().setSolSignStatementOfTruth(null);
         data.setDueDate(LOCAL_DATE);
         data.getApplication().setIssueDate(LOCAL_DATE);
         data.getCaseInvite().setAccessCode("1234-1234-1234-1234");
