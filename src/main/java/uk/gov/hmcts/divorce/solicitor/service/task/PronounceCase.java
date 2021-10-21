@@ -20,9 +20,6 @@ public class PronounceCase implements CaseTask {
             data.getConditionalOrder().getDateAndTimeOfHearing().toLocalDate().plusWeeks(6).plusDays(1));
         data.getConditionalOrder().setOutcomeCase(YES);
 
-        // generate document
-        // send notification to applicant
-
         return caseDetails;
     }
 }
