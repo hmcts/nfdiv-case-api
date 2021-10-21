@@ -5,9 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
+import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -23,9 +25,11 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateBulkCaseReference.SYSTEM_UPDATE_BULK_CASE_REFERENCE;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemRemoveFailedCases.SYSTEM_REMOVE_FAILED_CASES;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYSTEM_LINK_WITH_BULK_CASE;
 
 @Component
 @Slf4j
@@ -75,10 +79,17 @@ public class SystemCreateBulkCaseListTask implements Runnable {
 
                 CaseDetails caseDetailsBulkCase = ccdCreateService.createBulkCase(bulkActionCaseDetails, user, serviceAuth);
 
-                updateCasesWithBulkListingCaseId(
+                List<Long> failedAwaitingPronouncementCaseIds = updateCasesWithBulkListingCaseId(
                     casesAwaitingPronouncement,
                     retrieveCaseIds(bulkListCaseDetails),
                     caseDetailsBulkCase.getId(),
+                    user,
+                    serviceAuth
+                );
+
+                removeFailedAwaitingPronouncementCasesFromBulkCase(
+                    failedAwaitingPronouncementCaseIds,
+                    caseDetailsBulkCase,
                     user,
                     serviceAuth
                 );
@@ -96,6 +107,44 @@ public class SystemCreateBulkCaseListTask implements Runnable {
         }
     }
 
+    private void removeFailedAwaitingPronouncementCasesFromBulkCase(final List<Long> failedAwaitingPronouncementCaseIds,
+                                                                    final CaseDetails caseDetailsBulkCase,
+                                                                    final User user,
+                                                                    final String serviceAuth) {
+        if (!CollectionUtils.isEmpty(failedAwaitingPronouncementCaseIds)) {
+            log.info(
+                "There are failed awaiting pronouncement cases with ids {} for bulk list case with id {} ",
+                failedAwaitingPronouncementCaseIds,
+                caseDetailsBulkCase.getId()
+            );
+
+            var bulkCaseData = objectMapper.convertValue(caseDetailsBulkCase.getData(), BulkActionCaseData.class);
+
+            List<ListValue<BulkListCaseDetails>> bulkCaseDetailsListValues = bulkCaseData.getBulkListCaseDetails();
+
+            final Predicate<ListValue<BulkListCaseDetails>> listValuePredicate = lv -> {
+                Long caseId = Long.valueOf(lv.getValue().getCaseReference().getCaseReference());
+                return failedAwaitingPronouncementCaseIds.contains(caseId);
+            };
+
+            bulkCaseDetailsListValues.removeIf(listValuePredicate);
+
+            try {
+                ccdUpdateService.updateBulkCaseWithRetries(
+                    caseDetailsBulkCase,
+                    SYSTEM_REMOVE_FAILED_CASES,
+                    user,
+                    serviceAuth,
+                    caseDetailsBulkCase.getId()
+                );
+            } catch (final CcdManagementException e) {
+                log.error("Removing failed awaiting pronouncement cases failed for bulk case id {} ", caseDetailsBulkCase.getId());
+            }
+        } else {
+            log.info("No failed awaiting pronouncement cases to remove from bulk list case with id {} ", caseDetailsBulkCase.getId());
+        }
+    }
+
     private List<Long> retrieveCaseIds(List<ListValue<BulkListCaseDetails>> bulkListCaseDetails) {
         return bulkListCaseDetails
             .stream()
@@ -106,24 +155,38 @@ public class SystemCreateBulkCaseListTask implements Runnable {
             .collect(Collectors.toList());
     }
 
-    private void updateCasesWithBulkListingCaseId(final List<CaseDetails> casesAwaitingPronouncement,
-                                                  final List<Long> bulkListCaseIds,
-                                                  final Long bulkListCaseId,
-                                                  final User user,
-                                                  final String serviceAuth) {
+    private List<Long> updateCasesWithBulkListingCaseId(final List<CaseDetails> casesAwaitingPronouncement,
+                                                        final List<Long> bulkListCaseIds,
+                                                        final Long bulkListCaseId,
+                                                        final User user,
+                                                        final String serviceAuth) {
+
+        List<Long> failedToUpdateAwaitingPronouncementIds = new ArrayList<>();
+
         for (CaseDetails caseDetails : casesAwaitingPronouncement) {
+            final Long awaitingPronouncementCaseId = caseDetails.getId();
+
             try {
-                if (bulkListCaseIds.contains(caseDetails.getId())) {
+                if (bulkListCaseIds.contains(awaitingPronouncementCaseId)) {
                     caseDetails.getData().put("bulkListCaseReference", String.valueOf(bulkListCaseId));
-                    ccdUpdateService.submitEventWithRetry(caseDetails, SYSTEM_UPDATE_BULK_CASE_REFERENCE, user, serviceAuth);
-                    log.info("Successfully updated case id {} with bulk case id {} ", caseDetails.getId(), bulkListCaseId);
+                    ccdUpdateService.submitEventWithRetry(caseDetails, SYSTEM_LINK_WITH_BULK_CASE, user, serviceAuth);
+                    log.info("Successfully updated case id {} with bulk case id {} ", awaitingPronouncementCaseId, bulkListCaseId);
                 } else {
-                    log.info("Case id {} was not added to bulk list due to some failure hence skipping update ", caseDetails.getId());
+                    log.info(
+                        "Case id {} was not added to bulk list due to some failure hence skipping update ",
+                        awaitingPronouncementCaseId
+                    );
                 }
             } catch (final CcdManagementException e) {
-                log.error("Updating case with bulk action case reference {} failed for case id {} ", bulkListCaseId, caseDetails.getId());
+                log.error(
+                    "Updating case with bulk action case reference {} failed for case id {} ",
+                    bulkListCaseId,
+                    awaitingPronouncementCaseId
+                );
+                failedToUpdateAwaitingPronouncementIds.add(awaitingPronouncementCaseId);
             }
         }
+        return failedToUpdateAwaitingPronouncementIds;
     }
 
     private List<ListValue<BulkListCaseDetails>> createBulkCaseListDetails(final List<CaseDetails> casesAwaitingPronouncement) {

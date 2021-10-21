@@ -13,6 +13,7 @@ import java.util.Map;
 
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_APPLICATION_ACCEPTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_PARTNER_HAS_NOT_RESPONDED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_RESPONDENT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -114,6 +115,21 @@ public class ApplicationIssuedNotification {
         );
     }
 
+    public void sendPartnerNotRespondedToSoleApplicant(CaseData caseData, Long id) {
+        Map<String, String> templateVars = setTemplateVariables(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
+
+        log.info("Sending the respondent has not responded notification to the applicant for case : {}", id);
+
+        templateVars.put(REMINDER_APPLICATION, REMINDER_APPLICATION_VALUE);
+
+        notificationService.sendEmail(
+            caseData.getApplicant1().getEmail(),
+            SOL_APPLICANT_PARTNER_HAS_NOT_RESPONDED,
+            templateVars,
+            caseData.getApplicant1().getLanguagePreference()
+        );
+    }
+
     public void sendToJointApplicant1(CaseData caseData, Long id) {
         Map<String, String> templateVars = setTemplateVariables(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
 
@@ -166,6 +182,8 @@ public class ApplicationIssuedNotification {
             templateVars.put(CITIZENS_ADVICE_LINK, CIVIL_PARTNERSHIP_CITIZENS_ADVICE_LINK);
         }
 
+        templateVars.put(REVIEW_DEADLINE_DATE, caseData.getApplication().getIssueDate().plusDays(16).format(DATE_TIME_FORMATTER));
+
         return templateVars;
     }
 
@@ -185,6 +203,5 @@ public class ApplicationIssuedNotification {
         }
 
         templateVars.put(ACCESS_CODE, caseData.getCaseInvite().getAccessCode());
-        templateVars.put(REVIEW_DEADLINE_DATE, caseData.getApplication().getIssueDate().plusDays(16).format(DATE_TIME_FORMATTER));
     }
 }

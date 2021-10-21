@@ -12,6 +12,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
+import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -26,6 +27,8 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +40,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateBulkCaseReference.SYSTEM_UPDATE_BULK_CASE_REFERENCE;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemRemoveFailedCases.SYSTEM_REMOVE_FAILED_CASES;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYSTEM_LINK_WITH_BULK_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 
@@ -129,19 +133,19 @@ public class SystemCreateBulkCaseListTaskTest {
             .thenReturn(caseDetailsBulkCase);
 
         doNothing().when(ccdUpdateService)
-            .submitEventWithRetry(caseDetails1, SYSTEM_UPDATE_BULK_CASE_REFERENCE, user, SERVICE_AUTHORIZATION);
+            .submitEventWithRetry(caseDetails1, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
 
         doNothing().when(ccdUpdateService)
-            .submitEventWithRetry(caseDetails2, SYSTEM_UPDATE_BULK_CASE_REFERENCE, user, SERVICE_AUTHORIZATION);
+            .submitEventWithRetry(caseDetails2, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
 
         systemCreateBulkCaseListTask.run();
 
         verify(ccdSearchService).searchAwaitingPronouncementCases(user, SERVICE_AUTHORIZATION);
         verify(ccdCreateService).createBulkCase(bulkActionCaseDetails, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService)
-            .submitEventWithRetry(caseDetails1, SYSTEM_UPDATE_BULK_CASE_REFERENCE, user, SERVICE_AUTHORIZATION);
+            .submitEventWithRetry(caseDetails1, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService)
-            .submitEventWithRetry(caseDetails2, SYSTEM_UPDATE_BULK_CASE_REFERENCE, user, SERVICE_AUTHORIZATION);
+            .submitEventWithRetry(caseDetails2, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
 
         verifyNoMoreInteractions(ccdSearchService, ccdUpdateService);
     }
@@ -163,7 +167,7 @@ public class SystemCreateBulkCaseListTaskTest {
     }
 
     @Test
-    void shouldCreateBulkCaseWithOneCaseIfUpdatingBulkListCaseReferenceFailsForOtherCase() {
+    void shouldRemoveAwaitingPronouncementCaseLinkFromBulkCaseWhenUpdatingBulkCaseReferenceFailsForAwaitingPronouncementCase() {
         ReflectionTestUtils.setField(systemCreateBulkCaseListTask, "minimumCasesToProcess", 2);
 
         final CaseDetails caseDetails1 = mock(CaseDetails.class);
@@ -204,32 +208,75 @@ public class SystemCreateBulkCaseListTaskTest {
         var bulkListCaseDetails2 =
             bulkListCaseDetailsListValue("app1fname2 app1lname2 vs app2fname2 app2lname2", 2L);
 
+        // create mutable list as list need to be modified
+        var bulkCaseList = new ArrayList<>(Arrays.asList(bulkListCaseDetails1, bulkListCaseDetails2));
+
         var bulkActionCaseDetails =
+            CaseDetails
+                .builder()
+                .caseTypeId(BulkActionCaseTypeConfig.CASE_TYPE)
+                .data(Map.of("bulkListCaseDetails", bulkCaseList))
+                .build();
+
+        var caseDetailsBulkCase = CaseDetails
+            .builder()
+            .data(Map.of("bulkListCaseDetails", bulkCaseList))
+            .id(3L)
+            .build();
+
+        when(ccdCreateService.createBulkCase(bulkActionCaseDetails, user, SERVICE_AUTHORIZATION))
+            .thenReturn(caseDetailsBulkCase);
+
+        doThrow(new CcdManagementException("some exception", mock(FeignException.class))).when(ccdUpdateService)
+            .submitEventWithRetry(caseDetails1, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
+
+        doNothing().when(ccdUpdateService)
+            .submitEventWithRetry(caseDetails2, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
+
+        var bulkActionCaseData = mock(BulkActionCaseData.class);
+        when(mapper.convertValue(caseDetailsBulkCase.getData(), BulkActionCaseData.class))
+            .thenReturn(bulkActionCaseData);
+
+        when(bulkActionCaseData.getBulkListCaseDetails()).thenReturn(bulkCaseList);
+
+        var bulkCaseWithOnlySuccessfulAwaitingPronouncement = CaseDetails
+            .builder()
+            .data(Map.of("bulkListCaseDetails", List.of(bulkListCaseDetails2)))
+            .id(3L)
+            .build();
+
+        doNothing()
+            .when(ccdUpdateService)
+            .updateBulkCaseWithRetries(
+                bulkCaseWithOnlySuccessfulAwaitingPronouncement,
+                SYSTEM_REMOVE_FAILED_CASES,
+                user,
+                SERVICE_AUTHORIZATION,
+                bulkCaseWithOnlySuccessfulAwaitingPronouncement.getId()
+            );
+
+        systemCreateBulkCaseListTask.run();
+
+        var caseDetailsForBulkCaseCreation =
             CaseDetails
                 .builder()
                 .caseTypeId(BulkActionCaseTypeConfig.CASE_TYPE)
                 .data(Map.of("bulkListCaseDetails", List.of(bulkListCaseDetails1, bulkListCaseDetails2)))
                 .build();
 
-        CaseDetails caseDetailsBulkCase = CaseDetails.builder().id(3L).build();
-
-        when(ccdCreateService.createBulkCase(bulkActionCaseDetails, user, SERVICE_AUTHORIZATION))
-            .thenReturn(caseDetailsBulkCase);
-
-        doThrow(new CcdManagementException("some exception", mock(FeignException.class))).when(ccdUpdateService)
-            .submitEventWithRetry(caseDetails1, SYSTEM_UPDATE_BULK_CASE_REFERENCE, user, SERVICE_AUTHORIZATION);
-
-        doNothing().when(ccdUpdateService)
-            .submitEventWithRetry(caseDetails2, SYSTEM_UPDATE_BULK_CASE_REFERENCE, user, SERVICE_AUTHORIZATION);
-
-        systemCreateBulkCaseListTask.run();
-
         verify(ccdSearchService).searchAwaitingPronouncementCases(user, SERVICE_AUTHORIZATION);
-        verify(ccdCreateService).createBulkCase(bulkActionCaseDetails, user, SERVICE_AUTHORIZATION);
+        verify(ccdCreateService).createBulkCase(caseDetailsForBulkCaseCreation, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService)
-            .submitEventWithRetry(caseDetails2, SYSTEM_UPDATE_BULK_CASE_REFERENCE, user, SERVICE_AUTHORIZATION);
-
-        verifyNoMoreInteractions(ccdSearchService, ccdUpdateService);
+            .submitEventWithRetry(caseDetails2, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService)
+            .updateBulkCaseWithRetries(
+                bulkCaseWithOnlySuccessfulAwaitingPronouncement,
+                SYSTEM_REMOVE_FAILED_CASES,
+                user,
+                SERVICE_AUTHORIZATION,
+                bulkCaseWithOnlySuccessfulAwaitingPronouncement.getId()
+            );
+        verifyNoMoreInteractions(ccdSearchService, ccdCreateService, ccdUpdateService);
     }
 
     @Test
@@ -284,14 +331,14 @@ public class SystemCreateBulkCaseListTaskTest {
             .thenReturn(caseDetailsBulkCase);
 
         doNothing().when(ccdUpdateService)
-            .submitEventWithRetry(caseDetails2, SYSTEM_UPDATE_BULK_CASE_REFERENCE, user, SERVICE_AUTHORIZATION);
+            .submitEventWithRetry(caseDetails2, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
 
         systemCreateBulkCaseListTask.run();
 
         verify(ccdSearchService).searchAwaitingPronouncementCases(user, SERVICE_AUTHORIZATION);
         verify(ccdCreateService).createBulkCase(bulkActionCaseDetails, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService)
-            .submitEventWithRetry(caseDetails2, SYSTEM_UPDATE_BULK_CASE_REFERENCE, user, SERVICE_AUTHORIZATION);
+            .submitEventWithRetry(caseDetails2, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
 
         verifyNoMoreInteractions(ccdSearchService, ccdUpdateService);
     }

@@ -17,17 +17,17 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
-public class SystemUpdateBulkCaseReference implements CCDConfig<CaseData, State, UserRole> {
+public class SystemLinkWithBulkCase implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String SYSTEM_UPDATE_BULK_CASE_REFERENCE = "system-update-bulk-case-reference";
+    public static final String SYSTEM_LINK_WITH_BULK_CASE = "system-link-with-bulk-case";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(SYSTEM_UPDATE_BULK_CASE_REFERENCE)
+            .event(SYSTEM_LINK_WITH_BULK_CASE)
             .forAllStates()
-            .name("Update bulk case reference")
-            .description("Updated bulk case reference")
+            .name("Link with bulk case")
+            .description("Linked with bulk case")
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .grant(READ, SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR));

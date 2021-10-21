@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
@@ -30,6 +31,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CreateBulkList.CREATE_BULK_LIST;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemRemoveFailedCases.SYSTEM_REMOVE_FAILED_CASES;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
@@ -165,6 +167,66 @@ public class CcdUpdateServiceIT {
                 details -> details,
                 user,
                 SERVICE_AUTHORIZATION));
+
+        verify(ccdCaseDataContentProvider, times(3))
+            .createCaseDataContent(
+                startEventResponse,
+                DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY,
+                DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION,
+                caseData);
+    }
+
+    @Test
+    void shouldInvokeCcdMaximumThreeTimesWhenSubmitEventFailsForUpdateBulkCase() {
+        final User user = systemUpdateUser();
+        final Map<String, Object> caseData = new HashMap<>();
+        final CaseDetails caseDetails = getCaseDetails(caseData);
+        final StartEventResponse startEventResponse = getStartEventResponse();
+        final CaseDataContent caseDataContent = mock(CaseDataContent.class);
+
+        when(coreCaseDataApi
+            .startEventForCaseWorker(
+                SYSTEM_UPDATE_AUTH_TOKEN,
+                SERVICE_AUTHORIZATION,
+                SYSTEM_USER_USER_ID,
+                JURISDICTION,
+                BulkActionCaseTypeConfig.CASE_TYPE,
+                TEST_CASE_ID.toString(),
+                SYSTEM_REMOVE_FAILED_CASES
+            )
+        ).thenReturn(startEventResponse);
+
+        when(ccdCaseDataContentProvider
+            .createCaseDataContent(
+                startEventResponse,
+                DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY,
+                DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION,
+                caseData
+            )
+        ).thenReturn(caseDataContent);
+
+        doThrow(feignException(422, "some error"))
+            .when(coreCaseDataApi).submitEventForCaseWorker(
+                SYSTEM_UPDATE_AUTH_TOKEN,
+                SERVICE_AUTHORIZATION,
+                SYSTEM_USER_USER_ID,
+                JURISDICTION,
+                BulkActionCaseTypeConfig.CASE_TYPE,
+                TEST_CASE_ID.toString(),
+                true,
+                caseDataContent
+            );
+
+        final CcdManagementException exception = assertThrows(
+            CcdManagementException.class,
+            () -> ccdUpdateService.updateBulkCaseWithRetries(
+                caseDetails,
+                SYSTEM_REMOVE_FAILED_CASES,
+                user,
+                SERVICE_AUTHORIZATION,
+                TEST_CASE_ID
+            )
+        );
 
         verify(ccdCaseDataContentProvider, times(3))
             .createCaseDataContent(
