@@ -16,13 +16,13 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Component
 @Slf4j
-public class RemoveFailedCaseLinksFromBulkCase implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
-    public static final String REMOVE_FAILED_CASE_LINKS = "remove-failed-case-links";
+public class SystemRemoveFailedCases implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
+    public static final String SYSTEM_REMOVE_FAILED_CASES = "system-remove-failed-cases";
 
     @Override
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
         new BulkActionPageBuilder(configBuilder
-            .event(REMOVE_FAILED_CASE_LINKS)
+            .event(SYSTEM_REMOVE_FAILED_CASES)
             .initialState(Created)
             .name("Remove failed case links")
             .description("Removed failed case links")

@@ -40,7 +40,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.bulkaction.ccd.event.RemoveFailedCaseLinksFromBulkCase.REMOVE_FAILED_CASE_LINKS;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemRemoveFailedCases.SYSTEM_REMOVE_FAILED_CASES;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYSTEM_LINK_WITH_BULK_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
@@ -249,7 +249,7 @@ public class SystemCreateBulkCaseListTaskTest {
             .when(ccdUpdateService)
             .updateBulkCaseWithRetries(
                 bulkCaseWithOnlySuccessfulAwaitingPronouncement,
-                REMOVE_FAILED_CASE_LINKS,
+                SYSTEM_REMOVE_FAILED_CASES,
                 user,
                 SERVICE_AUTHORIZATION,
                 bulkCaseWithOnlySuccessfulAwaitingPronouncement.getId()
@@ -271,7 +271,7 @@ public class SystemCreateBulkCaseListTaskTest {
         verify(ccdUpdateService)
             .updateBulkCaseWithRetries(
                 bulkCaseWithOnlySuccessfulAwaitingPronouncement,
-                REMOVE_FAILED_CASE_LINKS,
+                SYSTEM_REMOVE_FAILED_CASES,
                 user,
                 SERVICE_AUTHORIZATION,
                 bulkCaseWithOnlySuccessfulAwaitingPronouncement.getId()

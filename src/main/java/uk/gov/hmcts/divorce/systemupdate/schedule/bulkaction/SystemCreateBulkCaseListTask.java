@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static uk.gov.hmcts.divorce.bulkaction.ccd.event.RemoveFailedCaseLinksFromBulkCase.REMOVE_FAILED_CASE_LINKS;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemRemoveFailedCases.SYSTEM_REMOVE_FAILED_CASES;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYSTEM_LINK_WITH_BULK_CASE;
 
 @Component
@@ -132,7 +132,7 @@ public class SystemCreateBulkCaseListTask implements Runnable {
             try {
                 ccdUpdateService.updateBulkCaseWithRetries(
                     caseDetailsBulkCase,
-                    REMOVE_FAILED_CASE_LINKS,
+                    SYSTEM_REMOVE_FAILED_CASES,
                     user,
                     serviceAuth,
                     caseDetailsBulkCase.getId()

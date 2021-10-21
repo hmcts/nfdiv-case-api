@@ -31,7 +31,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CreateBulkList.CREATE_BULK_LIST;
-import static uk.gov.hmcts.divorce.bulkaction.ccd.event.RemoveFailedCaseLinksFromBulkCase.REMOVE_FAILED_CASE_LINKS;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemRemoveFailedCases.SYSTEM_REMOVE_FAILED_CASES;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
@@ -192,7 +192,7 @@ public class CcdUpdateServiceIT {
                 JURISDICTION,
                 BulkActionCaseTypeConfig.CASE_TYPE,
                 TEST_CASE_ID.toString(),
-                REMOVE_FAILED_CASE_LINKS
+                SYSTEM_REMOVE_FAILED_CASES
             )
         ).thenReturn(startEventResponse);
 
@@ -221,7 +221,7 @@ public class CcdUpdateServiceIT {
             CcdManagementException.class,
             () -> ccdUpdateService.updateBulkCaseWithRetries(
                 caseDetails,
-                REMOVE_FAILED_CASE_LINKS,
+                SYSTEM_REMOVE_FAILED_CASES,
                 user,
                 SERVICE_AUTHORIZATION,
                 TEST_CASE_ID
