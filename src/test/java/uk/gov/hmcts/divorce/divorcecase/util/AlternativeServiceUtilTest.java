@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.divorcecase.util;
 
 import org.junit.jupiter.api.Test;
-
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
