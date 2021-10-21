@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
@@ -118,6 +119,50 @@ public class CcdUpdateService {
             caseDataContent);
     }
 
+    @Retryable(value = {FeignException.class, RuntimeException.class})
+    public void updateBulkCaseWithRetries(final CaseDetails caseDetails,
+                                          final String eventId,
+                                          final User authorization,
+                                          final String serviceAuth,
+                                          final Long caseId) {
+
+        log.info("Submit event for Case ID: {}, Event ID: {}", caseId, eventId);
+        try {
+            final String userId = authorization.getUserDetails().getId();
+
+            final StartEventResponse startEventResponse = coreCaseDataApi.startEventForCaseWorker(
+                authorization.getAuthToken(),
+                serviceAuth,
+                userId,
+                JURISDICTION,
+                BulkActionCaseTypeConfig.CASE_TYPE,
+                String.valueOf(caseId),
+                eventId
+            );
+
+            final CaseDataContent caseDataContent = ccdCaseDataContentProvider.createCaseDataContent(
+                startEventResponse,
+                DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY,
+                DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION,
+                caseDetails.getData());
+
+            coreCaseDataApi.submitEventForCaseWorker(
+                authorization.getAuthToken(),
+                serviceAuth,
+                userId,
+                JURISDICTION,
+                BulkActionCaseTypeConfig.CASE_TYPE,
+                String.valueOf(caseId),
+                true,
+                caseDataContent);
+        } catch (final FeignException e) {
+            final String message = format("Submit Event Failed for Case ID: %s, Event ID: %s", caseId, eventId);
+            log.info(message, e);
+
+            throw new CcdManagementException(message, e);
+        }
+    }
+
     private void startAndSubmitEventForCaseworkers(final CaseDetails caseDetails,
                                                    final String eventId,
                                                    final String serviceAuth,
@@ -150,5 +195,4 @@ public class CcdUpdateService {
             true,
             caseDataContent);
     }
-
 }

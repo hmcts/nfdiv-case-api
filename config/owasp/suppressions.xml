@@ -20,5 +20,6 @@
       <notes>Tomcat 9.0.45</notes>
       <cve>CVE-2021-30640</cve>
       <cve>CVE-2021-33037</cve>
+      <cve>CVE-2021-42340</cve>
     </suppress>
 </suppressions>

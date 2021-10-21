@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
@@ -25,12 +26,15 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemRemoveFailedCases.SYSTEM_REMOVE_FAILED_CASES;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemProgressHeldCase.SYSTEM_PROGRESS_HELD_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.feignException;
 
@@ -88,6 +92,48 @@ class CcdUpdateServiceTest {
             CASEWORKER_USER_ID,
             JURISDICTION,
             CASE_TYPE,
+            TEST_CASE_ID.toString(),
+            true,
+            caseDataContent);
+    }
+
+    @Test
+    void shouldSubmitEventForUpdateBulkCaseAsSystemUpdateUser() {
+
+        final User user = systemUpdateUser();
+        final Map<String, Object> caseData = new HashMap<>();
+        final CaseDetails caseDetails = getCaseDetails(caseData);
+        final StartEventResponse startEventResponse = getStartEventResponse();
+        final CaseDataContent caseDataContent = mock(CaseDataContent.class);
+
+        when(coreCaseDataApi
+            .startEventForCaseWorker(
+                SYSTEM_UPDATE_AUTH_TOKEN,
+                SERVICE_AUTHORIZATION,
+                SYSTEM_USER_USER_ID,
+                JURISDICTION,
+                BulkActionCaseTypeConfig.CASE_TYPE,
+                TEST_CASE_ID.toString(),
+                SYSTEM_REMOVE_FAILED_CASES)
+        )
+            .thenReturn(startEventResponse);
+
+        when(ccdCaseDataContentProvider
+            .createCaseDataContent(
+                startEventResponse,
+                DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY,
+                DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION,
+                caseData))
+            .thenReturn(caseDataContent);
+
+        ccdUpdateService.updateBulkCaseWithRetries(caseDetails, SYSTEM_REMOVE_FAILED_CASES, user, SERVICE_AUTHORIZATION, TEST_CASE_ID);
+
+        verify(coreCaseDataApi).submitEventForCaseWorker(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            SYSTEM_USER_USER_ID,
+            JURISDICTION,
+            BulkActionCaseTypeConfig.CASE_TYPE,
             TEST_CASE_ID.toString(),
             true,
             caseDataContent);
@@ -225,6 +271,14 @@ class CcdUpdateServiceTest {
             CASEWORKER_AUTH_TOKEN,
             UserDetails.builder()
                 .id(CASEWORKER_USER_ID)
+                .build());
+    }
+
+    private User systemUpdateUser() {
+        return new User(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            UserDetails.builder()
+                .id(SYSTEM_USER_USER_ID)
                 .build());
     }
 }
