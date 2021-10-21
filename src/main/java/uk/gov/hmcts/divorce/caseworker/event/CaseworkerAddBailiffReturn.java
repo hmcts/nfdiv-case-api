@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.Bailiff;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -29,6 +30,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
+import static uk.gov.hmcts.divorce.divorcecase.util.AlternativeServiceUtil.archiveAlternativeServiceApplicationOnCompletion;
 
 @Component
 @Slf4j
@@ -61,10 +63,11 @@ public class CaseworkerAddBailiffReturn implements CCDConfig<CaseData, State, Us
             .grant(READ, SUPER_USER, LEGAL_ADVISOR, SOLICITOR, CITIZEN))
             .page("addBailiffReturn")
             .pageLabel("Add Bailiff Return")
-            .complex(CaseData::getBailiff)
-                .mandatory(Bailiff::getCertificateOfServiceDate)
-                .mandatory(Bailiff::getSuccessfulServedByBailiff)
-                .mandatory(Bailiff::getReasonFailureToServeByBailiff, "successfulServedByBailiff=\"No\"")
+            .complex(CaseData::getAlternativeService)
+                .complex(AlternativeService::getBailiff)
+                    .mandatory(Bailiff::getCertificateOfServiceDate)
+                    .mandatory(Bailiff::getSuccessfulServedByBailiff)
+                    .mandatory(Bailiff::getReasonFailureToServeByBailiff, "successfulServedByBailiff=\"No\"")
                 .done();
     }
 
@@ -77,14 +80,16 @@ public class CaseworkerAddBailiffReturn implements CCDConfig<CaseData, State, Us
 
         log.info("Caseworker add bailiff return about to submit callback invoked for case id: {}", caseId);
 
-        if (YES == caseData.getBailiff().getSuccessfulServedByBailiff()) {
+        if (YES == caseData.getAlternativeService().getBailiff().getSuccessfulServedByBailiff()) {
             log.info("Setting state to Holding and due date for case id: {}", caseId);
-            caseData.setDueDate(caseData.getBailiff().getCertificateOfServiceDate().plusDays(dueDateOffsetDays));
+            caseData.setDueDate(caseData.getAlternativeService().getBailiff().getCertificateOfServiceDate().plusDays(dueDateOffsetDays));
             state = Holding;
         } else {
             log.info("Setting state to AwaitingAos for case id: {}", caseId);
             state = AwaitingAos;
         }
+
+        archiveAlternativeServiceApplicationOnCompletion(caseData);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

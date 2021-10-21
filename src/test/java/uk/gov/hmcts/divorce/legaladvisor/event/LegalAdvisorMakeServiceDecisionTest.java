@@ -195,7 +195,7 @@ class LegalAdvisorMakeServiceDecisionTest {
     }
 
     @Test
-    void shouldNotUpdateStateAndSetServiceApplicationDecisionDateIfServiceApplicationIsNotGranted() {
+    void shouldNotUpdateServiceApplicationDecisionDateIfServiceApplicationIsNotGranted() {
 
         setMockClock(clock);
 
@@ -220,6 +220,5 @@ class LegalAdvisorMakeServiceDecisionTest {
         assertThat(listValue.getValue().getServiceApplicationDecisionDate())
             .isNull();
 
-        assertThat(response.getState()).isEqualTo(AwaitingServiceConsideration);
     }
 }

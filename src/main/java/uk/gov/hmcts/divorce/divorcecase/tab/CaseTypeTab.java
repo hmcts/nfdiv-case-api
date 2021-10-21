@@ -149,9 +149,6 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("feeAccountNumber", "paymentMethod=\"feePayByAccount\"")
             .field("feeAccountReferenceNumber", "paymentMethod=\"feePayByAccount\"")
             .field("helpWithFeesReferenceNumber", "paymentMethod=\"feePayByHelp\"")
-            .field("serviceApplicationDecisionDate")
-            .field("deemedServiceDate")
-            .field("serviceApplicationGranted")
             .label("bailiffLocalCourtDetailsLabel",
                 "localCourtName=\"*\" OR localCourtEmail=\"*\"", "### Bailiff local court details")
             .field("localCourtName")
@@ -160,6 +157,13 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 "certificateOfServiceDate=\"*\" OR successfulServedByBailiff=\"*\" OR reasonFailureToServeByBailiff=\"*\"",
                 "### Bailiff return")
             .field("certificateOfServiceDate")
+            .label("serviceOutcomeLabel",
+                    "serviceApplicationGranted=\"No\" OR serviceApplicationGranted=\"Yes\"",
+                                "Outcome of Service Application")
+            .field("serviceApplicationGranted")
+            .field("serviceApplicationDecisionDate")
+            .field("serviceApplicationRefusalReason", "serviceApplicationGranted=\"No\"")
+            .field("deemedServiceDate")
             .field("successfulServedByBailiff")
             .field("reasonFailureToServeByBailiff")
             .field("alternativeServiceApplications");

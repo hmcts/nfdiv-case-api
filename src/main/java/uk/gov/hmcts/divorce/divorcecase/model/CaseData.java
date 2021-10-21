@@ -122,11 +122,6 @@ public class CaseData {
     @CCD(access = {CaseworkerAccessBetaOnlyAccess.class})
     private AlternativeService alternativeService = new AlternativeService();
 
-    @JsonUnwrapped
-    @Builder.Default
-    @CCD(access = {CaseworkerAccessBetaOnlyAccess.class})
-    private Bailiff bailiff = new Bailiff();
-
     @CCD(
         label = "Applicant 1 Documents uploaded",
         typeOverride = Collection,

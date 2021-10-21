@@ -21,14 +21,11 @@ import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
@@ -40,6 +37,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
+import static uk.gov.hmcts.divorce.divorcecase.util.AlternativeServiceUtil.archiveAlternativeServiceApplicationOnCompletion;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DEEMED_AS_SERVICE_GRANTED;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DISPENSED_AS_SERVICE_GRANTED;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.SERVICE_ORDER_TEMPLATE_ID;
@@ -115,6 +113,10 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
                     DocumentType.DEEMED_AS_SERVICE_GRANTED
                 );
             }
+        } else {
+            // TODO - implement optional state logic under ticket NFDIV-1215
+            log.info("ServiceApplication refused. Due date is {}", caseDataCopy.getDueDate());
+            endState = AwaitingAos;
         }
 
         archiveAlternativeServiceApplicationOnCompletion(caseDataCopy);
@@ -123,42 +125,6 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
             .data(caseDataCopy)
             .state(endState)
             .build();
-    }
-
-    private void archiveAlternativeServiceApplicationOnCompletion(CaseData caseData) {
-
-        AlternativeService alternativeService = caseData.getAlternativeService();
-        alternativeService.setReceivedServiceAddedDate(LocalDate.now(clock));
-
-        if (isEmpty(caseData.getAlternativeServiceApplications())) {
-
-            List<ListValue<AlternativeService>> listValues = new ArrayList<>();
-
-            var listValue =  ListValue
-                .<AlternativeService>builder()
-                .id("1")
-                .value(alternativeService)
-                .build();
-
-            listValues.add(listValue);
-            caseData.setAlternativeServiceApplications(listValues);
-
-        } else {
-
-            AtomicInteger listValueIndex = new AtomicInteger(0);
-            var listValue = ListValue
-                .<AlternativeService>builder()
-                .value(alternativeService)
-                .build();
-
-            caseData.getAlternativeServiceApplications().add(0, listValue);
-            caseData.getAlternativeServiceApplications().forEach(applicationListValue ->
-                applicationListValue.setId(String.valueOf(listValueIndex.incrementAndGet())));
-        }
-
-        // Null the current AlternativeService object instance in the CaseData so that a new one can be created
-        caseData.setAlternativeService(null);
-
     }
 
     private void generateAndSetOrderToDeemedOrDispenseDocument(final CaseData caseDataCopy,
