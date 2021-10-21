@@ -161,7 +161,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 "### Bailiff return")
             .field("certificateOfServiceDate")
             .field("successfulServedByBailiff")
-            .field("reasonFailureToServeByBailiff");
+            .field("reasonFailureToServeByBailiff")
+            .field("alternativeServiceApplications");
 
     }
 

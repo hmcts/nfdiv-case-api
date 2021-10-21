@@ -21,8 +21,12 @@ import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
@@ -89,6 +93,8 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
 
         State endState = details.getState();
 
+        log.info("Application end state is {}", endState);
+
         if (serviceApplication.getServiceApplicationGranted().toBoolean()) {
             log.info("Service application granted for case id {}", details.getId());
             serviceApplication.setServiceApplicationDecisionDate(LocalDate.now(clock));
@@ -111,10 +117,48 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
             }
         }
 
+        archiveAlternativeServiceApplicationOnCompletion(caseDataCopy);
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseDataCopy)
             .state(endState)
             .build();
+    }
+
+    private void archiveAlternativeServiceApplicationOnCompletion(CaseData caseData) {
+
+        AlternativeService alternativeService = caseData.getAlternativeService();
+        alternativeService.setReceivedServiceAddedDate(LocalDate.now(clock));
+
+        if (isEmpty(caseData.getAlternativeServiceApplications())) {
+
+            List<ListValue<AlternativeService>> listValues = new ArrayList<>();
+
+            var listValue =  ListValue
+                .<AlternativeService>builder()
+                .id("1")
+                .value(alternativeService)
+                .build();
+
+            listValues.add(listValue);
+            caseData.setAlternativeServiceApplications(listValues);
+
+        } else {
+
+            AtomicInteger listValueIndex = new AtomicInteger(0);
+            var listValue = ListValue
+                .<AlternativeService>builder()
+                .value(alternativeService)
+                .build();
+
+            caseData.getAlternativeServiceApplications().add(0, listValue);
+            caseData.getAlternativeServiceApplications().forEach(applicationListValue ->
+                applicationListValue.setId(String.valueOf(listValueIndex.incrementAndGet())));
+        }
+
+        // Null the current AlternativeService object instance in the CaseData so that a new one can be created
+        caseData.setAlternativeService(null);
+
     }
 
     private void generateAndSetOrderToDeemedOrDispenseDocument(final CaseData caseDataCopy,
