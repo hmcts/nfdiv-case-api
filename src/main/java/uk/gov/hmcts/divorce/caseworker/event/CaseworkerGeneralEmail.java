@@ -32,7 +32,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        new PageBuilder(configBuilder
+        new PageBuilder<>(configBuilder
             .event(CASEWORKER_CREATE_GENERAL_EMAIL)
             .forAllStates()
             .name("Create general email")

@@ -38,7 +38,7 @@ public class CaseworkerMakeBailiffDecision implements CCDConfig<CaseData, State,
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        new PageBuilder(configBuilder
+        new PageBuilder<>(configBuilder
             .event(CASEWORKER_BAILIFF_DECISION)
             .forState(AwaitingBailiffReferral)
             .name("Make Bailiff Decision")

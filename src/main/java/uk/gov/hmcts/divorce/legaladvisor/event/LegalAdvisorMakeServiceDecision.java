@@ -57,7 +57,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        new PageBuilder(configBuilder
+        new PageBuilder<>(configBuilder
             .event(LEGAL_ADVISOR_SERVICE_DECISION)
             .forStates(Draft, AwaitingServiceConsideration)
             .name("Make service decision")

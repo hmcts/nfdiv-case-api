@@ -24,7 +24,7 @@ public class CaseworkerUploadConfidentialDocument implements CCDConfig<CaseData,
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        new PageBuilder(configBuilder
+        new PageBuilder<>(configBuilder
             .event(CASEWORKER_UPLOAD_CONFIDENTIAL_DOCUMENT)
             .forAllStates()
             .name("Upload confidential document")

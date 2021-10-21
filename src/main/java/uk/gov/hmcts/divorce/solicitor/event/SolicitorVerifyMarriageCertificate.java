@@ -24,7 +24,7 @@ public class SolicitorVerifyMarriageCertificate implements CCDConfig<CaseData, S
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        new PageBuilder(configBuilder
+        new PageBuilder<>(configBuilder
             .event(SOLICITOR_VERIFY_CERTIFICATE)
             .forStates(Submitted)
             .name("Verify marriage certificate")

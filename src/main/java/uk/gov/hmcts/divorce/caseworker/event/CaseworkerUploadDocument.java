@@ -25,7 +25,7 @@ public class CaseworkerUploadDocument implements CCDConfig<CaseData, State, User
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        new PageBuilder(configBuilder
+        new PageBuilder<>(configBuilder
             .event(CASEWORKER_UPLOAD_DOCUMENT)
             .forAllStates()
             .name("Upload document")

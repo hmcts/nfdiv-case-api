@@ -5,11 +5,13 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 public class Applicant2SolReviewApplicant1Application implements CcdPageConfiguration {
 
     @Override
-    public void addTo(PageBuilder pageBuilder) {
+    public void addTo(PageBuilder<CaseData, UserRole, State> pageBuilder) {
         pageBuilder
             .page("Applicant2SolReviewApplicant1Application")
             .pageLabel("Review the applicant 1's application")

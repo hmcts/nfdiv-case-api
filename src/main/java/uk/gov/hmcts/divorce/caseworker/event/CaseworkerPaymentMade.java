@@ -28,7 +28,7 @@ public class CaseworkerPaymentMade implements CCDConfig<CaseData, State, UserRol
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        new PageBuilder(configBuilder
+        new PageBuilder<>(configBuilder
             .event(CASEWORKER_PAYMENT_MADE)
             .forStateTransition(EnumSet.of(AwaitingPayment, AwaitingHWFDecision, AwaitingDocuments),
                 Submitted)

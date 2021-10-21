@@ -40,7 +40,7 @@ public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseDa
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        new PageBuilder(configBuilder
+        new PageBuilder<>(configBuilder
             .event(CASEWORKER_SERVICE_RECEIVED)
             .forStates(AosOverdue, AwaitingAos, AosDrafted, Submitted, AwaitingDocuments)
             .name("Service application received")

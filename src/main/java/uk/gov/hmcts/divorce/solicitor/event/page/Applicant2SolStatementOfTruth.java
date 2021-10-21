@@ -5,12 +5,14 @@ import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 @Component
 public class Applicant2SolStatementOfTruth implements CcdPageConfiguration {
 
     @Override
-    public void addTo(final PageBuilder pageBuilder) {
+    public void addTo(final PageBuilder<CaseData, UserRole, State> pageBuilder) {
 
         pageBuilder
             .page("Applicant2SolStatementOfTruth")

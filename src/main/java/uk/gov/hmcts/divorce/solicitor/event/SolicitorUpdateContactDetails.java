@@ -38,7 +38,7 @@ public class SolicitorUpdateContactDetails implements CCDConfig<CaseData, State,
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        final PageBuilder pageBuilder = addEventConfig(configBuilder);
+        final PageBuilder<CaseData, UserRole, State> pageBuilder = addEventConfig(configBuilder);
         solUpdateContactDetails.addTo(pageBuilder);
     }
 
@@ -53,9 +53,9 @@ public class SolicitorUpdateContactDetails implements CCDConfig<CaseData, State,
             .build();
     }
 
-    private PageBuilder addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+    private PageBuilder<CaseData, UserRole, State> addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
-        return new PageBuilder(configBuilder
+        return new PageBuilder<>(configBuilder
             .event(SOLICITOR_UPDATE_CONTACT_DETAILS)
             .forState(Submitted)
             .name("Update contact details")

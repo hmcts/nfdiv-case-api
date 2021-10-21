@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaOrganisationResponse;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaRefDataClient;
@@ -44,7 +45,7 @@ public class SolPayment implements CcdPageConfiguration {
     private AuthTokenGenerator authTokenGenerator;
 
     @Override
-    public void addTo(final PageBuilder pageBuilder) {
+    public void addTo(final PageBuilder<CaseData, UserRole, State> pageBuilder) {
 
         pageBuilder
             //.page("SolPayment", this::midEvent) // Temporarily commenting as midevent has a bug which clears our fields

@@ -24,7 +24,7 @@ public class CaseworkerChangeApplicationType implements CCDConfig<CaseData, Stat
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        new PageBuilder(configBuilder
+        new PageBuilder<>(configBuilder
             .event(CASEWORKER_CHANGE_APPLICATION_TYPE)
             .forAllStates()
             .name("Change application type")

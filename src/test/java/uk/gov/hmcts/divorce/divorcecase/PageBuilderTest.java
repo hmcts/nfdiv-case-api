@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.divorcecase;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.Event.EventBuilder;
@@ -24,15 +23,12 @@ class PageBuilderTest {
     @Mock
     private EventBuilder<CaseData, UserRole, State> eventBuilder;
 
-    @InjectMocks
-    private PageBuilder pageBuilder;
-
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Test
     void shouldReturnFieldCollectionBuilderForPageWithId() {
 
         final FieldCollectionBuilder fieldCollectionBuilder = mock(FieldCollectionBuilder.class);
-
+        final PageBuilder<CaseData, UserRole, State> pageBuilder = new PageBuilder<>(eventBuilder);
         when(eventBuilder.fields()).thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.page("id")).thenReturn(fieldCollectionBuilder);
 
@@ -45,6 +41,7 @@ class PageBuilderTest {
 
         final FieldCollectionBuilder fieldCollectionBuilder = mock(FieldCollectionBuilder.class);
         final MidEvent midEvent = mock(MidEvent.class);
+        final PageBuilder<CaseData, UserRole, State> pageBuilder = new PageBuilder<>(eventBuilder);
 
         when(eventBuilder.fields()).thenReturn(fieldCollectionBuilder);
         when(fieldCollectionBuilder.page("id", midEvent)).thenReturn(fieldCollectionBuilder);

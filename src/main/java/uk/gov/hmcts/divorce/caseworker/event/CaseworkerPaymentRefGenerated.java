@@ -23,7 +23,7 @@ public class CaseworkerPaymentRefGenerated implements CCDConfig<CaseData, State,
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        new PageBuilder(configBuilder
+        new PageBuilder<>(configBuilder
             .event(CASEWORKER_PAYMENT_REF_GENERATED)
             .forStateTransition(AwaitingPayment, AwaitingPayment)
             .name("Payment reference generated")

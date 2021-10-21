@@ -6,13 +6,15 @@ import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 public class Applicant2SolUpdateAosApplicant1Application implements CcdPageConfiguration {
 
     private static final String ALWAYS_HIDE = "miniApplicationLink=\"ALWAYS_HIDE\"";
 
     @Override
-    public void addTo(PageBuilder pageBuilder) {
+    public void addTo(PageBuilder<CaseData, UserRole, State> pageBuilder) {
         pageBuilder
             .page("Applicant2SolUpdateAosApplicant1Application")
             .pageLabel("Review the applicant 1's application")

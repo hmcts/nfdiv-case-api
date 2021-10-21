@@ -36,7 +36,7 @@ public class LegalAdvisorGrantConditionalOrder implements CCDConfig<CaseData, St
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        new PageBuilder(configBuilder
+        new PageBuilder<>(configBuilder
             .event(LEGAL_ADVISOR_GRANT_CONDITIONAL_ORDER)
             .forStateTransition(AwaitingLegalAdvisorReferral, AwaitingPronouncement)
             .name("Make a decision")

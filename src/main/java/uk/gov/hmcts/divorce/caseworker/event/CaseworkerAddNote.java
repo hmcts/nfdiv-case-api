@@ -49,7 +49,7 @@ public class CaseworkerAddNote implements CCDConfig<CaseData, State, UserRole> {
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        new PageBuilder(configBuilder
+        new PageBuilder<>(configBuilder
             .event(CASEWORKER_ADD_NOTE)
             .forAllStates()
             .name("Add note")

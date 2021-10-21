@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.GeneralOrderTemplateContent;
 
@@ -37,7 +38,7 @@ public class CreateGeneralOrder implements CcdPageConfiguration {
     private Clock clock;
 
     @Override
-    public void addTo(PageBuilder pageBuilder) {
+    public void addTo(PageBuilder<CaseData, UserRole, State> pageBuilder) {
         pageBuilder.page("CreateGeneralOrder", this::midEvent)
             .complex(CaseData::getGeneralOrder)
                 .mandatory(GeneralOrder::getGeneralOrderDate)

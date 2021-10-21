@@ -42,7 +42,7 @@ public class CaseworkerIssueBailiffPack implements CCDConfig<CaseData, State, Us
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        new PageBuilder(configBuilder
+        new PageBuilder<>(configBuilder
             .event(CASEWORKER_ISSUE_BAILIFF_PACK)
             .forStateTransition(AwaitingBailiffService, IssuedToBailiff)
             .name("Issue bailiff pack")

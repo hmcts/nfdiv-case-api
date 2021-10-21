@@ -42,7 +42,7 @@ public class SolicitorSubmitAos implements CCDConfig<CaseData, State, UserRole> 
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        final PageBuilder pageBuilder = addEventConfig(configBuilder);
+        final PageBuilder<CaseData, UserRole, State> pageBuilder = addEventConfig(configBuilder);
         pages.forEach(page -> page.addTo(pageBuilder));
     }
 
@@ -87,8 +87,8 @@ public class SolicitorSubmitAos implements CCDConfig<CaseData, State, UserRole> 
         return errors;
     }
 
-    private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        return new PageBuilder(configBuilder
+    private PageBuilder<CaseData, UserRole, State> addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        return new PageBuilder<>(configBuilder
             .event(SOLICITOR_SUBMIT_AOS)
             .forStateTransition(AosDrafted, Holding)
             .name("Submit AoS")

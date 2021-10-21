@@ -90,7 +90,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             new SolPaymentSummary(),
             new SolSummary());
 
-        final PageBuilder pageBuilder = addEventConfig(configBuilder);
+        final PageBuilder<CaseData, UserRole, State> pageBuilder = addEventConfig(configBuilder);
 
         pages.forEach(page -> page.addTo(pageBuilder));
     }
@@ -218,9 +218,9 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         return SubmittedCallbackResponse.builder().build();
     }
 
-    private PageBuilder addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+    private PageBuilder<CaseData, UserRole, State> addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
-        return new PageBuilder(configBuilder.event(SOLICITOR_SUBMIT)
+        return new PageBuilder<>(configBuilder.event(SOLICITOR_SUBMIT)
             .forStates(Draft)
             .name("Case submission")
             .description("Agree Statement of Truth, Pay & Submit")

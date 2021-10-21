@@ -57,7 +57,7 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        final PageBuilder pageBuilder = addEventConfig(configBuilder);
+        final PageBuilder<CaseData, UserRole, State> pageBuilder = addEventConfig(configBuilder);
 
         final List<CcdPageConfiguration> pages = asList(
             new SolHowDoYouWantToApplyForDivorce(),
@@ -88,7 +88,7 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
             .build();
     }
 
-    private PageBuilder addEventConfig(
+    private PageBuilder<CaseData, UserRole, State> addEventConfig(
         final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         var defaultRoles = new ArrayList<UserRole>();
@@ -96,7 +96,7 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
 
         var updatedRoles = addSystemUpdateRole.addIfConfiguredForEnvironment(defaultRoles);
 
-        return new PageBuilder(configBuilder
+        return new PageBuilder<>(configBuilder
             .event(SOLICITOR_CREATE)
             .initialState(Draft)
             .name("Apply for a divorce")

@@ -41,7 +41,7 @@ public class CaseworkerAddBailiffReturn implements CCDConfig<CaseData, State, Us
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        new PageBuilder(configBuilder
+        new PageBuilder<>(configBuilder
             .event(CASEWORKER_ADD_BAILIFF_RETURN)
             .forStates(
                 IssuedToBailiff,

@@ -24,7 +24,7 @@ public class SolicitorUpdateApplicant2Language implements CCDConfig<CaseData, St
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        new PageBuilder(configBuilder
+        new PageBuilder<>(configBuilder
             .event(SOLICITOR_UPDATE_APPLICANT_2_LANGUAGE)
             .forAllStates()
             .name("Update language")

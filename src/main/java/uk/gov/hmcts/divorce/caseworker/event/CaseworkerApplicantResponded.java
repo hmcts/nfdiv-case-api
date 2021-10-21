@@ -23,7 +23,7 @@ public class CaseworkerApplicantResponded implements CCDConfig<CaseData, State, 
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        new PageBuilder(configBuilder
+        new PageBuilder<>(configBuilder
             .event(CASEWORKER_APPLICANT_RESPONDED)
             .forStateTransition(AwaitingDocuments, Submitted)
             .name("Applicant responded")

@@ -52,7 +52,7 @@ public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, Us
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        final PageBuilder pageBuilder = addEventConfig(configBuilder);
+        final PageBuilder<CaseData, UserRole, State> pageBuilder = addEventConfig(configBuilder);
 
         final List<CcdPageConfiguration> pages = asList(
             new SolHowDoYouWantToApplyForDivorce(),
@@ -87,9 +87,9 @@ public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, Us
             .build();
     }
 
-    private PageBuilder addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+    private PageBuilder<CaseData, UserRole, State> addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
-        return new PageBuilder(configBuilder
+        return new PageBuilder<>(configBuilder
             .event(SOLICITOR_UPDATE)
             .forState(Draft)
             .name("Amend divorce application")

@@ -43,7 +43,7 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        final PageBuilder pageBuilder = addEventConfig(configBuilder);
+        final PageBuilder<CaseData, UserRole, State> pageBuilder = addEventConfig(configBuilder);
         pages.forEach(page -> page.addTo(pageBuilder));
     }
 
@@ -80,8 +80,8 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
             .build();
     }
 
-    private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        return new PageBuilder(configBuilder
+    private PageBuilder<CaseData, UserRole, State> addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        return new PageBuilder<>(configBuilder
             .event(SOLICITOR_CONFIRM_SERVICE)
             .forStateTransition(AwaitingService, AwaitingAos)
             .name("Solicitor Confirm Service")

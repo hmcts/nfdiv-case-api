@@ -37,12 +37,12 @@ public class SolicitorDraftConditionalOrder implements CCDConfig<CaseData, State
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        final PageBuilder pageBuilder = addEventConfig(configBuilder);
+        final PageBuilder<CaseData, UserRole, State> pageBuilder = addEventConfig(configBuilder);
         pages.forEach(page -> page.addTo(pageBuilder));
     }
 
-    private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        return new PageBuilder(configBuilder
+    private PageBuilder<CaseData, UserRole, State> addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        return new PageBuilder<>(configBuilder
             .event(SOLICITOR_DRAFT_CONDITIONAL_ORDER)
             .forStateTransition(AwaitingConditionalOrder, ConditionalOrderDrafted)
             .name("Draft Conditional Order")

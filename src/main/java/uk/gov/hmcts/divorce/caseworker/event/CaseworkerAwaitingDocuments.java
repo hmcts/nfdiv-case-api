@@ -28,7 +28,7 @@ public class CaseworkerAwaitingDocuments implements CCDConfig<CaseData, State, U
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        new PageBuilder(configBuilder
+        new PageBuilder<>(configBuilder
             .event(CASEWORKER_AWAITING_DOCUMENTS)
             .forStateTransition(EnumSet.of(AwaitingPayment, AwaitingHWFDecision, Submitted), AwaitingDocuments)
             .name("Awaiting documents")

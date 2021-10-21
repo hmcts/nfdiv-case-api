@@ -36,7 +36,7 @@ public class SolicitorSubmitConditionalOrder implements CCDConfig<CaseData, Stat
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        new PageBuilder(configBuilder
+        new PageBuilder<>(configBuilder
             .event(SOLICITOR_SUBMIT_CONDITIONAL_ORDER)
             .forStateTransition(ConditionalOrderDrafted, AwaitingLegalAdvisorReferral)
             .name("Submit Conditional Order")

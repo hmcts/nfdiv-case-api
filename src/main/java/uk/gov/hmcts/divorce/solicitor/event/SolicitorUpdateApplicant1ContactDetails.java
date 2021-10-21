@@ -27,13 +27,13 @@ public class SolicitorUpdateApplicant1ContactDetails implements CCDConfig<CaseDa
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        final PageBuilder pageBuilder = addEventConfig(configBuilder);
+        final PageBuilder<CaseData, UserRole, State> pageBuilder = addEventConfig(configBuilder);
         applicant1UpdateContactDetails.addTo(pageBuilder);
     }
 
-    private PageBuilder addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+    private PageBuilder<CaseData, UserRole, State> addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
-        return new PageBuilder(configBuilder
+        return new PageBuilder<>(configBuilder
             .event(APPLICANT_UPDATE_APPLICANT1_CONTACT_DETAILS)
             .forAllStates()
             .name("Update applicant contact info")

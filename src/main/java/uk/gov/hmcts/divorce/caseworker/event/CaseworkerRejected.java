@@ -31,7 +31,7 @@ public class CaseworkerRejected implements CCDConfig<CaseData, State, UserRole> 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
-        new PageBuilder(configBuilder
+        new PageBuilder<>(configBuilder
             .event(CASEWORKER_REJECTED)
             .forStateTransition(allOf(State.class), Rejected)
             .aboutToSubmitCallback(this::aboutToSubmit)

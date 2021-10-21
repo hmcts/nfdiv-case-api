@@ -27,7 +27,7 @@ public class SystemIssueSolicitorServicePack implements CCDConfig<CaseData, Stat
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
-        new PageBuilder(configBuilder
+        new PageBuilder<>(configBuilder
             .event(SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK)
             .forState(AwaitingService)
             .name("Issue Solicitor Service Pack")

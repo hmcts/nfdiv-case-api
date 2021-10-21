@@ -23,7 +23,7 @@ public class CaseworkerWithdrawn implements CCDConfig<CaseData, State, UserRole>
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        new PageBuilder(configBuilder
+        new PageBuilder<>(configBuilder
             .event(CASEWORKER_WITHDRAWN)
             .forStateTransition(allOf(State.class), Withdrawn)
             .name("Withdrawn")

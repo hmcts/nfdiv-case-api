@@ -6,6 +6,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 
 public class Applicant2SolConfirmContactDetails implements CcdPageConfiguration {
@@ -13,7 +15,7 @@ public class Applicant2SolConfirmContactDetails implements CcdPageConfiguration 
     private static final String ALWAYS_HIDE = "applicant2SolicitorName=\"ALWAYS_HIDE\"";
 
     @Override
-    public void addTo(PageBuilder pageBuilder) {
+    public void addTo(PageBuilder<CaseData, UserRole, State> pageBuilder) {
         pageBuilder
             .page("Applicant2SolConfirmContactDetails")
             .pageLabel("Confirm contact details")

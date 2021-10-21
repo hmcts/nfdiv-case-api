@@ -45,7 +45,7 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        new PageBuilder(configBuilder
+        new PageBuilder<>(configBuilder
             .event(CASEWORKER_REISSUE_APPLICATION)
             .forStates(
                 AwaitingAos,AosDrafted, AosOverdue,

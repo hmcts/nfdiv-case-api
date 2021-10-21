@@ -24,7 +24,7 @@ public class CaseworkerUpdateDueDate implements CCDConfig<CaseData, State, UserR
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        new PageBuilder(configBuilder
+        new PageBuilder<>(configBuilder
             .event(CASEWORKER_UPDATE_DUE_DATE)
             .forAllStates()
             .name("Update due date")

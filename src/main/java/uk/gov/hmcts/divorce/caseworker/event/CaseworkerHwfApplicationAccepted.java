@@ -27,7 +27,7 @@ public class CaseworkerHwfApplicationAccepted implements CCDConfig<CaseData, Sta
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        new PageBuilder(configBuilder
+        new PageBuilder<>(configBuilder
             .event(CASEWORKER_HWF_APPLICATION_ACCEPTED)
             .forStateTransition(EnumSet.of(AwaitingHWFDecision, AwaitingPayment, AwaitingDocuments),
                 Submitted)

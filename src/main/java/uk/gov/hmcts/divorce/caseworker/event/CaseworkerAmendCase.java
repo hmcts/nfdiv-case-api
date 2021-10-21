@@ -40,8 +40,8 @@ public class CaseworkerAmendCase implements CCDConfig<CaseData, State, UserRole>
         amendCase.addTo(pageBuilder);
     }
 
-    private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        return new PageBuilder(configBuilder
+    private PageBuilder<CaseData, UserRole, State> addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        return new PageBuilder<>(configBuilder
             .event(CASEWORKER_AMEND_CASE)
             .forStates(AwaitingAos, AosDrafted, AosOverdue,
                 PendingDispute, Holding, AwaitingConditionalOrder,

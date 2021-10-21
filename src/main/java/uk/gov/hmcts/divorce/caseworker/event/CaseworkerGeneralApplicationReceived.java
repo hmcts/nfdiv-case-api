@@ -20,7 +20,7 @@ public class CaseworkerGeneralApplicationReceived implements CCDConfig<CaseData,
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        new PageBuilder(configBuilder
+        new PageBuilder<>(configBuilder
             .event(CASEWORKER_GENERAL_APPLICATION_RECEIVED)
             .forAllStates()
             .name("General application received")

@@ -47,7 +47,7 @@ public class CaseworkerCreateGeneralOrder implements CCDConfig<CaseData, State, 
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        final PageBuilder pageBuilder = addEventConfig(configBuilder);
+        final PageBuilder<CaseData, UserRole, State> pageBuilder = addEventConfig(configBuilder);
 
         final List<CcdPageConfiguration> pages = asList(
             createGeneralOrder,
@@ -57,10 +57,10 @@ public class CaseworkerCreateGeneralOrder implements CCDConfig<CaseData, State, 
         pages.forEach(page -> page.addTo(pageBuilder));
     }
 
-    private PageBuilder addEventConfig(
+    private PageBuilder<CaseData, UserRole, State> addEventConfig(
         final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
-        return new PageBuilder(configBuilder
+        return new PageBuilder<>(configBuilder
             .event(CASEWORKER_CREATE_GENERAL_ORDER)
             .forAllStates()
             .name("Create general order")

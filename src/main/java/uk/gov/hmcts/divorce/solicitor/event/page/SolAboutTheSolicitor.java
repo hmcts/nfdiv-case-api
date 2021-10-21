@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorCreateApplicationService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,7 +33,7 @@ public class SolAboutTheSolicitor implements CcdPageConfiguration {
     private HttpServletRequest request;
 
     @Override
-    public void addTo(final PageBuilder pageBuilder) {
+    public void addTo(final PageBuilder<CaseData, UserRole, State> pageBuilder) {
 
         pageBuilder
             .page("SolAboutTheSolicitor", this::midEvent)
