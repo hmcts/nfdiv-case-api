@@ -7,24 +7,32 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionPageBuilder;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
+import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.service.BulkTriggerService;
 import uk.gov.hmcts.divorce.bulkaction.service.ListValueUtil;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.solicitor.service.task.PronounceCase;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.List;
+
 import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Pronounced;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCaseErrors.SYSTEM_BULK_CASE_ERRORS;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -41,16 +49,19 @@ public class CaseworkerPronounceList implements CCDConfig<BulkActionCaseData, Bu
     public static final String CASEWORKER_PRONOUNCE_LIST = "caseworker-pronounce-list";
 
     @Autowired
-    private BulkTriggerService bulkTriggerService;
+    private CcdUpdateService ccdUpdateService;
 
     @Autowired
-    private HttpServletRequest request;
+    private BulkTriggerService bulkTriggerService;
 
     @Autowired
     private IdamService idamService;
 
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
+
+    @Autowired
+    private HttpServletRequest request;
 
     @Autowired
     private PronounceCase pronounceCase;
@@ -114,6 +125,7 @@ public class CaseworkerPronounceList implements CCDConfig<BulkActionCaseData, Bu
     ) {
 
         final BulkActionCaseData caseData = details.getData();
+        final List<ListValue<BulkListCaseDetails>> originalBulkListCaseDetails = caseData.getBulkListCaseDetails();
 
         caseData.setBulkListCaseDetails(
             listValueUtil.fromListToListValue(
@@ -125,8 +137,33 @@ public class CaseworkerPronounceList implements CCDConfig<BulkActionCaseData, Bu
                     authTokenGenerator.generate()))
         );
 
-        // TODO: use Nitin's update event on the bulkcase to save the result of bulkTrigger call
+        appendFailedCasesToErrorList(
+            caseData,
+            listValueUtil.fromListValueToList(originalBulkListCaseDetails));
+
+        try {
+            ccdUpdateService.submitBulkActionEvent(
+                details,
+                SYSTEM_BULK_CASE_ERRORS,
+                idamService.retrieveUser(request.getHeader(AUTHORIZATION)),
+                authTokenGenerator.generate()
+            );
+        } catch (final CcdManagementException e) {
+            log.error("Update failed for bulk case id {} ", details.getId());
+        }
 
         return SubmittedCallbackResponse.builder().build();
+    }
+
+    private void appendFailedCasesToErrorList(BulkActionCaseData caseData, List<BulkListCaseDetails> originalCaseList) {
+        List<Long> updatedCaseList = listValueUtil.fromListValueToList(caseData.getBulkListCaseDetails()).stream()
+            .map(c -> Long.valueOf(c.getCaseReference().getCaseReference()))
+            .collect(toList());
+
+        List<BulkListCaseDetails> errorCases = originalCaseList.stream()
+            .filter(c -> !updatedCaseList.contains(Long.valueOf(c.getCaseReference().getCaseReference())))
+            .collect(toList());
+
+        caseData.getErroredCaseDetails().addAll(listValueUtil.fromListToListValue(errorCases));
     }
 }
