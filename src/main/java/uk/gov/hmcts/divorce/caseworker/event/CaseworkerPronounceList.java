@@ -22,9 +22,8 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
-import javax.servlet.http.HttpServletRequest;
-
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;

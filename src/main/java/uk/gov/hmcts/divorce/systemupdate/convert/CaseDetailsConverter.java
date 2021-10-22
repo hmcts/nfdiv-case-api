@@ -19,7 +19,9 @@ public class CaseDetailsConverter {
         return objectMapper.convertValue(caseDetails, CaseDetails.class);
     }
 
-    public CaseDetails convertToReformModelFromBulkActionCaseDetails(final uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState> caseDetails) {
+    public CaseDetails convertToReformModelFromBulkActionCaseDetails(
+        final uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState> caseDetails) {
+
         return objectMapper.convertValue(caseDetails, CaseDetails.class);
     }
 }
