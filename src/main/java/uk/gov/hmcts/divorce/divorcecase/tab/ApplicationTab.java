@@ -29,6 +29,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("createdDate")
             .field("dateSubmitted")
             .field("issueDate")
+            .field("dueDate")
             .field(CaseData::getApplicationType)
             .field(CaseData::getDivorceOrDissolution)
             .field(CaseData::getDivorceUnit)
