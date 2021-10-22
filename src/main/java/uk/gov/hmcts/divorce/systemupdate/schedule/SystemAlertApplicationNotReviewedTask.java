@@ -2,8 +2,10 @@ package uk.gov.hmcts.divorce.systemupdate.schedule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.JointApplicationOverdueNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -19,6 +21,11 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 import java.time.LocalDate;
 import java.util.List;
 
+import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
+import static uk.gov.hmcts.divorce.common.config.QueryConstants.DUE_DATE;
+import static uk.gov.hmcts.divorce.common.config.QueryConstants.STATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemAlertApplicationNotReviewed.SYSTEM_APPLICATION_NOT_REVIEWED;
 
@@ -54,8 +61,14 @@ public class SystemAlertApplicationNotReviewedTask implements Runnable {
         final String serviceAuthorization = authTokenGenerator.generate();
 
         try {
+            BoolQueryBuilder query =
+                boolQuery()
+                    .must(matchQuery(STATE, AwaitingApplicant2Response))
+                    .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
+                    .mustNot(matchQuery(String.format("data.%s", FLAG), YesOrNo.YES));
+
             final List<CaseDetails> casesInAwaitingApplicant2Response =
-                ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, FLAG, user, serviceAuthorization);
+                ccdSearchService.searchForAllCasesWithQuery(AwaitingApplicant2Response, query, user, serviceAuthorization);
 
             for (final CaseDetails caseDetails : casesInAwaitingApplicant2Response) {
                 try {

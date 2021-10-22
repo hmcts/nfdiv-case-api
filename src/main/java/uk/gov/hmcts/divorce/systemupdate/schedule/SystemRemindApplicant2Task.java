@@ -2,8 +2,10 @@ package uk.gov.hmcts.divorce.systemupdate.schedule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewApplicant2Notification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -19,6 +21,13 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 import java.time.LocalDate;
 import java.util.List;
 
+import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
+import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
+import static uk.gov.hmcts.divorce.common.config.QueryConstants.ACCESS_CODE;
+import static uk.gov.hmcts.divorce.common.config.QueryConstants.DUE_DATE;
+import static uk.gov.hmcts.divorce.common.config.QueryConstants.STATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicant2.SYSTEM_REMIND_APPLICANT2;
 
@@ -28,6 +37,7 @@ public class SystemRemindApplicant2Task implements Runnable {
 
     private static final int FOUR_DAYS = 4;
     private static final String FLAG = "applicant2ReminderSent";
+
 
     @Autowired
     private CcdSearchService ccdSearchService;
@@ -55,8 +65,15 @@ public class SystemRemindApplicant2Task implements Runnable {
         final String serviceAuthorization = authTokenGenerator.generate();
 
         try {
+            BoolQueryBuilder query =
+                boolQuery()
+                    .must(matchQuery(STATE, AwaitingApplicant2Response))
+                    .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
+                    .must(existsQuery(ACCESS_CODE))
+                    .mustNot(matchQuery(String.format("data.%s", FLAG), YesOrNo.YES));
+
             final List<CaseDetails> casesInAwaitingApplicant2Response =
-                ccdSearchService.searchForAllCasesWithStateOf(AwaitingApplicant2Response, FLAG, user, serviceAuthorization);
+                ccdSearchService.searchForAllCasesWithQuery(AwaitingApplicant2Response, query, user, serviceAuthorization);
 
             for (final CaseDetails caseDetails : casesInAwaitingApplicant2Response) {
                 try {

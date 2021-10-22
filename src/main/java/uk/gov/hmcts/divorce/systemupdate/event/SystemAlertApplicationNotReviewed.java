@@ -40,7 +40,6 @@ public class SystemAlertApplicationNotReviewed implements CCDConfig<CaseData, St
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
-            .state(AwaitingApplicant2Response)
             .build();
     }
 }

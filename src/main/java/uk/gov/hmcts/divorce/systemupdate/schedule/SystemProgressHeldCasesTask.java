@@ -2,8 +2,10 @@ package uk.gov.hmcts.divorce.systemupdate.schedule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.common.config.QueryConstants;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -20,6 +22,10 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 import java.time.LocalDate;
 import java.util.List;
 
+import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
+import static uk.gov.hmcts.divorce.common.config.QueryConstants.STATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemProgressHeldCase.SYSTEM_PROGRESS_HELD_CASE;
 
@@ -61,7 +67,11 @@ public class SystemProgressHeldCasesTask implements Runnable {
         final String serviceAuth = authTokenGenerator.generate();
 
         try {
-            final List<CaseDetails> casesInHoldingState = ccdSearchService.searchForAllCasesWithStateOf(Holding, user, serviceAuth);
+            BoolQueryBuilder query = boolQuery()
+                .must(matchQuery(STATE, Holding))
+                .filter(rangeQuery(QueryConstants.DUE_DATE).lte(LocalDate.now()));
+
+            final List<CaseDetails> casesInHoldingState = ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, serviceAuth);
 
             for (final CaseDetails caseDetails : casesInHoldingState) {
                 try {

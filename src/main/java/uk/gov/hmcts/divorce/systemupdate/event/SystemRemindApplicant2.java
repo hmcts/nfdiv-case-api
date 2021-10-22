@@ -40,7 +40,6 @@ public class SystemRemindApplicant2 implements CCDConfig<CaseData, State, UserRo
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
-            .state(AwaitingApplicant2Response)
             .build();
     }
 }
