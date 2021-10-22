@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 
@@ -39,14 +40,26 @@ public class RetiredFields {
     @CCD(label = "retiredDateConditionalOrderSubmitted")
     private LocalDateTime dateConditionalOrderSubmitted;
 
-    @CCD(label = "retiredWhoPaysCosts")
-    private WhoPaysCostOrder whoPaysCosts;
+    @CCD(
+        label = "retiredCoWhoPaysCosts",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "WhoPaysCostOrder"
+    )
+    private WhoPaysCostOrder coWhoPaysCosts;
 
-    @CCD(label = "retiredJudgeWhoPaysCosts")
-    private WhoPaysCostOrder judgeWhoPaysCosts;
+    @CCD(
+        label = "retiredCoJudgeWhoPaysCosts",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "WhoPaysCostOrder"
+    )
+    private WhoPaysCostOrder coJudgeWhoPaysCosts;
 
-    @CCD(label = "retiredJudgeTypeCostsDecision")
-    private CostOrderList judgeTypeCostsDecision;
+    @CCD(
+        label = "retiredCoJudgeTypeCostsDecision",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "CostOrderList"
+    )
+    private CostOrderList coJudgeTypeCostsDecision;
 
     @JsonIgnore
     private static final Map<String, Consumer<Map<String, Object>>> migrations = Map.of(
