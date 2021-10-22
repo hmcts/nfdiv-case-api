@@ -62,7 +62,7 @@ public class SystemNotifyApplicant1ApplyForConditionalOrder implements Runnable 
         final String serviceAuthorization = authTokenGenerator.generate();
 
         try {
-            BoolQueryBuilder query =
+            final BoolQueryBuilder query =
                 boolQuery()
                     .must(matchQuery(STATE, AwaitingConditionalOrder))
                     .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
@@ -71,7 +71,7 @@ public class SystemNotifyApplicant1ApplyForConditionalOrder implements Runnable 
             final List<CaseDetails> casesInAwaitingApplicant2Response =
                 ccdSearchService.searchForAllCasesWithQuery(AwaitingConditionalOrder, query, user, serviceAuthorization);
 
-            for (final CaseDetails caseDetails : casesInAwaitingApplicant2Response) {
+            for (CaseDetails caseDetails : casesInAwaitingApplicant2Response) {
                 try {
                     final CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
                     final LocalDate canApplyForConditionalOrderFrom = caseData.getDueDate().plusWeeks(TWENTY_WEEKS);
@@ -104,6 +104,7 @@ public class SystemNotifyApplicant1ApplyForConditionalOrder implements Runnable 
             caseDetails.getId());
 
         applicant1ApplyForConditionalOrderNotification.sendToApplicant1(caseData, caseDetails.getId());
+        caseDetails.getData().put("applicant1NotifiedCanApplyForConditionalOrder", YesOrNo.YES);
         ccdUpdateService.submitEvent(caseDetails, SYSTEM_NOTIFY_APPLICANT1_CONDITIONAL_ORDER, user, serviceAuth);
     }
 }

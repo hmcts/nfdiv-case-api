@@ -61,7 +61,7 @@ public class SystemAlertApplicationNotReviewedTask implements Runnable {
         final String serviceAuthorization = authTokenGenerator.generate();
 
         try {
-            BoolQueryBuilder query =
+            final BoolQueryBuilder query =
                 boolQuery()
                     .must(matchQuery(STATE, AwaitingApplicant2Response))
                     .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
@@ -113,6 +113,7 @@ public class SystemAlertApplicationNotReviewedTask implements Runnable {
         );
 
         jointApplicationOverdueNotification.sendApplicationNotReviewedEmail(caseData, caseDetails.getId());
+        caseDetails.getData().put("overdueNotificationSent", YesOrNo.YES);
         ccdUpdateService.submitEvent(caseDetails, SYSTEM_APPLICATION_NOT_REVIEWED, user, serviceAuth);
     }
 }

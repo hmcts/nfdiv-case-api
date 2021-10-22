@@ -97,13 +97,19 @@ public class SystemRemindApplicant1ApplicationApprovedTaskTest {
         final CaseData caseData1 = CaseData.builder().dueDate(LocalDate.now()).build();
         final CaseData caseData2 = CaseData.builder().dueDate(LocalDate.now().plusDays(15)).build();
 
-        when(caseDetails1.getData()).thenReturn(Map.of("dueDate", LocalDate.now()));
+        Map<String, Object> data1 = new HashMap<>();
+        data1.put("dueDate", LocalDate.now());
+
+        Map<String, Object> data2 = new HashMap<>();
+        data2.put("dueDate", LocalDate.now().plusDays(15));
+
+        when(caseDetails1.getData()).thenReturn(data1);
         when(caseDetails1.getId()).thenReturn(1L);
-        when(caseDetails2.getData()).thenReturn(Map.of("dueDate", LocalDate.now().plusDays(15)));
+        when(caseDetails2.getData()).thenReturn(data2);
         when(caseDetails2.getId()).thenReturn(2L);
 
-        when(mapper.convertValue(Map.of("dueDate", LocalDate.now()), CaseData.class)).thenReturn(caseData1);
-        when(mapper.convertValue(Map.of("dueDate", LocalDate.now().plusDays(15)), CaseData.class)).thenReturn(caseData2);
+        when(mapper.convertValue(data1, CaseData.class)).thenReturn(caseData1);
+        when(mapper.convertValue(data2, CaseData.class)).thenReturn(caseData2);
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
@@ -127,8 +133,12 @@ public class SystemRemindApplicant1ApplicationApprovedTaskTest {
                 .build())
             .build();
 
-        when(caseDetails1.getData()).thenReturn(Map.of("dueDate", LocalDate.now()));
-        when(mapper.convertValue(Map.of("dueDate", LocalDate.now()), CaseData.class)).thenReturn(caseData1);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("dueDate", LocalDate.now());
+
+        when(caseDetails1.getData()).thenReturn(data);
+        when(mapper.convertValue(data, CaseData.class)).thenReturn(caseData1);
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
 
@@ -148,7 +158,7 @@ public class SystemRemindApplicant1ApplicationApprovedTaskTest {
         Map<String, Object> caseDataMap = new HashMap<>();
         caseDataMap.put("dueDate", LocalDate.now().plusDays(15));
 
-        when(caseDetails.getData()).thenReturn(Map.of("dueDate", LocalDate.now().plusDays(15)));
+        when(caseDetails.getData()).thenReturn(caseDataMap);
         when(mapper.convertValue(caseDataMap, CaseData.class)).thenReturn(caseData);
         when(ccdSearchService.searchForAllCasesWithQuery(Applicant2Approved, query, user, SERVICE_AUTHORIZATION))
             .thenReturn(singletonList(caseDetails));
@@ -177,8 +187,11 @@ public class SystemRemindApplicant1ApplicationApprovedTaskTest {
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
         final CaseData caseData1 = CaseData.builder().dueDate(LocalDate.now()).build();
 
-        when(caseDetails1.getData()).thenReturn(Map.of("dueDate", LocalDate.now()));
-        when(mapper.convertValue(Map.of("dueDate", LocalDate.now()), CaseData.class)).thenReturn(caseData1);
+        Map<String, Object> data = new HashMap<>();
+        data.put("dueDate", LocalDate.now());
+
+        when(caseDetails1.getData()).thenReturn(data);
+        when(mapper.convertValue(data, CaseData.class)).thenReturn(caseData1);
         when(ccdSearchService.searchForAllCasesWithQuery(Applicant2Approved, query, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
@@ -199,10 +212,16 @@ public class SystemRemindApplicant1ApplicationApprovedTaskTest {
         final CaseData caseData1 = CaseData.builder().dueDate(LocalDate.now()).build();
         final CaseData caseData2 = CaseData.builder().dueDate(LocalDate.now().minusDays(5)).build();
 
-        when(caseDetails1.getData()).thenReturn(Map.of("dueDate", LocalDate.now()));
-        when(caseDetails2.getData()).thenReturn(Map.of("dueDate", LocalDate.now().minusDays(5)));
-        when(mapper.convertValue(Map.of("dueDate", LocalDate.now()), CaseData.class)).thenReturn(caseData1);
-        when(mapper.convertValue(Map.of("dueDate", LocalDate.now().minusDays(5)), CaseData.class)).thenReturn(caseData2);
+        Map<String, Object> data1 = new HashMap<>();
+        data1.put("dueDate", LocalDate.now());
+
+        Map<String, Object> data2 = new HashMap<>();
+        data2.put("dueDate", LocalDate.now().minusDays(5));
+
+        when(caseDetails1.getData()).thenReturn(data1);
+        when(caseDetails2.getData()).thenReturn(data2);
+        when(mapper.convertValue(data1, CaseData.class)).thenReturn(caseData1);
+        when(mapper.convertValue(data2, CaseData.class)).thenReturn(caseData2);
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 

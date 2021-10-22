@@ -26,7 +26,7 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -96,9 +96,6 @@ public class SystemRemindApplicant2TaskTest {
 
     @Test
     void shouldSendReminderEmailToApplicant2IfTenDaysSinceOriginalInviteSent() {
-        final CaseDetails caseDetails1 = mock(CaseDetails.class);
-        final CaseDetails caseDetails2 = mock(CaseDetails.class);
-
         final CaseData caseData1 = CaseData.builder()
             .dueDate(LocalDate.now().plusDays(4))
             .build();
@@ -113,15 +110,24 @@ public class SystemRemindApplicant2TaskTest {
         caseData1.setCaseInvite(caseInvite);
         caseData2.setCaseInvite(caseInvite);
 
-        when(caseDetails1.getData()).thenReturn(Map.of("dueDate", LocalDate.now().plusDays(4)));
+        Map<String, Object> data1 = new HashMap<>();
+        data1.put("dueDate", LocalDate.now().plusDays(4));
+
+        Map<String, Object> data2 = new HashMap<>();
+        data2.put("dueDate", LocalDate.now().plusDays(10));
+
+        final CaseDetails caseDetails1 = mock(CaseDetails.class);
+        final CaseDetails caseDetails2 = mock(CaseDetails.class);
+
+        when(caseDetails1.getData()).thenReturn(data1);
         when(caseDetails1.getId()).thenReturn(1L);
-        when(caseDetails2.getData()).thenReturn(Map.of("dueDate", LocalDate.now().plusDays(10)));
+        when(caseDetails2.getData()).thenReturn(data2);
         when(caseDetails2.getId()).thenReturn(2L);
 
-        when(mapper.convertValue(Map.of("dueDate", LocalDate.now().plusDays(4)), CaseData.class)).thenReturn(caseData1);
-        when(mapper.convertValue(Map.of("dueDate", LocalDate.now().plusDays(10)), CaseData.class)).thenReturn(caseData2);
+        when(mapper.convertValue(data1, CaseData.class)).thenReturn(caseData1);
+        when(mapper.convertValue(data2, CaseData.class)).thenReturn(caseData2);
 
-        final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
+        List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
         when(ccdSearchService.searchForAllCasesWithQuery(AwaitingApplicant2Response, query, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
@@ -149,8 +155,11 @@ public class SystemRemindApplicant2TaskTest {
 
         caseData1.setCaseInvite(caseInvite);
 
-        when(caseDetails1.getData()).thenReturn(Map.of("dueDate", LocalDate.now().plusDays(4)));
-        when(mapper.convertValue(Map.of("dueDate", LocalDate.now().plusDays(4)), CaseData.class)).thenReturn(caseData1);
+        Map<String, Object> data1 = new HashMap<>();
+        data1.put("dueDate", LocalDate.now().plusDays(4));
+
+        when(caseDetails1.getData()).thenReturn(data1);
+        when(mapper.convertValue(data1, CaseData.class)).thenReturn(caseData1);
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
 
@@ -169,7 +178,10 @@ public class SystemRemindApplicant2TaskTest {
             .dueDate(LocalDate.now().plusDays(10))
             .build();
 
-        when(caseDetails.getData()).thenReturn(Map.of("dueDate", LocalDateTime.now().plusDays(10)));
+        Map<String, Object> data1 = new HashMap<>();
+        data1.put("dueDate", LocalDate.now().plusDays(10));
+
+        when(caseDetails.getData()).thenReturn(data1);
         when(mapper.convertValue(anyMap(), eq(CaseData.class))).thenReturn(caseData);
         when(ccdSearchService.searchForAllCasesWithQuery(AwaitingApplicant2Response, query, user, SERVICE_AUTHORIZATION))
             .thenReturn(singletonList(caseDetails));
@@ -195,7 +207,6 @@ public class SystemRemindApplicant2TaskTest {
     void shouldStopProcessingIfThereIsConflictDuringSubmission() {
         final CaseDetails caseDetails1 = mock(CaseDetails.class);
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
-        final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
         final CaseData caseData1 = CaseData.builder()
             .dueDate(LocalDate.now().plusDays(4))
             .build();
@@ -203,10 +214,14 @@ public class SystemRemindApplicant2TaskTest {
         CaseInvite caseInvite = CaseInvite.builder()
             .accessCode("123456789")
             .build();
+        final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
         caseData1.setCaseInvite(caseInvite);
 
-        when(caseDetails1.getData()).thenReturn(Map.of("dueDate", LocalDate.now().plusDays(4)));
+        Map<String, Object> data1 = new HashMap<>();
+        data1.put("dueDate", LocalDate.now().plusDays(4));
+
+        when(caseDetails1.getData()).thenReturn(data1);
         when(mapper.convertValue(anyMap(), eq(CaseData.class))).thenReturn(caseData1);
         when(ccdSearchService.searchForAllCasesWithQuery(AwaitingApplicant2Response, query, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
@@ -239,10 +254,16 @@ public class SystemRemindApplicant2TaskTest {
         caseData1.setCaseInvite(caseInvite);
         caseData2.setCaseInvite(caseInvite);
 
-        when(caseDetails1.getData()).thenReturn(Map.of("dueDate", LocalDate.now().plusDays(4)));
-        when(caseDetails2.getData()).thenReturn(Map.of("dueDate", LocalDate.now().plusDays(3)));
-        when(mapper.convertValue(Map.of("dueDate", LocalDate.now().plusDays(4)), CaseData.class)).thenReturn(caseData1);
-        when(mapper.convertValue(Map.of("dueDate", LocalDate.now().plusDays(3)), CaseData.class)).thenReturn(caseData2);
+        Map<String, Object> data1 = new HashMap<>();
+        data1.put("dueDate", LocalDate.now().plusDays(4));
+
+        Map<String, Object> data2 = new HashMap<>();
+        data2.put("dueDate", LocalDate.now().plusDays(3));
+
+        when(caseDetails1.getData()).thenReturn(data1);
+        when(caseDetails2.getData()).thenReturn(data2);
+        when(mapper.convertValue(data1, CaseData.class)).thenReturn(caseData1);
+        when(mapper.convertValue(data2, CaseData.class)).thenReturn(caseData2);
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 

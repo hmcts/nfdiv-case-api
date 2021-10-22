@@ -55,7 +55,7 @@ public class SystemProgressCasesToAosOverdueTask implements Runnable {
         final String serviceAuth = authTokenGenerator.generate();
 
         try {
-            BoolQueryBuilder query =
+            final BoolQueryBuilder query =
                 boolQuery()
                     .must(matchQuery(STATE, AwaitingAos))
                     .filter(rangeQuery(QueryConstants.DUE_DATE).lte(LocalDate.now()));

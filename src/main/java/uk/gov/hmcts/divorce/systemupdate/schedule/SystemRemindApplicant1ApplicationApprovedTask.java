@@ -61,7 +61,7 @@ public class SystemRemindApplicant1ApplicationApprovedTask implements Runnable {
         final String serviceAuthorization = authTokenGenerator.generate();
 
         try {
-            BoolQueryBuilder query =
+            final BoolQueryBuilder query =
                 boolQuery()
                     .must(matchQuery(STATE, Applicant2Approved))
                     .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
@@ -108,6 +108,7 @@ public class SystemRemindApplicant1ApplicationApprovedTask implements Runnable {
         );
 
         jointApplicationOverdueNotification.sendApplicationApprovedReminderToApplicant1(caseData, caseDetails.getId());
+        caseDetails.getData().put("applicant1ReminderSent", YesOrNo.YES);
         ccdUpdateService.submitEvent(caseDetails, SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED, user, serviceAuth);
     }
 }

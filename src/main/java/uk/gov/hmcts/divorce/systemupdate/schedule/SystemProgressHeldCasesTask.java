@@ -67,7 +67,7 @@ public class SystemProgressHeldCasesTask implements Runnable {
         final String serviceAuth = authTokenGenerator.generate();
 
         try {
-            BoolQueryBuilder query = boolQuery()
+            final BoolQueryBuilder query = boolQuery()
                 .must(matchQuery(STATE, Holding))
                 .filter(rangeQuery(QueryConstants.DUE_DATE).lte(LocalDate.now()));
 

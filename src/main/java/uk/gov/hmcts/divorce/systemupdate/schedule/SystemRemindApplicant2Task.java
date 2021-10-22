@@ -65,7 +65,7 @@ public class SystemRemindApplicant2Task implements Runnable {
         final String serviceAuthorization = authTokenGenerator.generate();
 
         try {
-            BoolQueryBuilder query =
+            final BoolQueryBuilder query =
                 boolQuery()
                     .must(matchQuery(STATE, AwaitingApplicant2Response))
                     .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
@@ -110,6 +110,7 @@ public class SystemRemindApplicant2Task implements Runnable {
         );
 
         applicationSentForReviewApplicant2Notification.sendReminder(caseData, caseDetails.getId());
+        caseDetails.getData().put("applicant2ReminderSent", YesOrNo.YES);
         ccdUpdateService.submitEvent(caseDetails, SYSTEM_REMIND_APPLICANT2, user, serviceAuth);
     }
 }
