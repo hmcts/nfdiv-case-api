@@ -38,6 +38,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.common.config.QueryConstants.DATA;
 import static uk.gov.hmcts.divorce.common.config.QueryConstants.DUE_DATE;
 import static uk.gov.hmcts.divorce.common.config.QueryConstants.STATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
@@ -76,7 +77,7 @@ public class SystemNotifyApplicant1ApplyForConditionalOrderTest {
         boolQuery()
             .must(matchQuery(STATE, AwaitingConditionalOrder))
             .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
-            .mustNot(matchQuery(String.format("data.%s", FLAG), YesOrNo.YES));
+            .mustNot(matchQuery(String.format(DATA, FLAG), YesOrNo.YES));
 
     @BeforeEach
     void setUp() {

@@ -26,6 +26,7 @@ import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static uk.gov.hmcts.divorce.common.config.QueryConstants.ACCESS_CODE;
+import static uk.gov.hmcts.divorce.common.config.QueryConstants.DATA;
 import static uk.gov.hmcts.divorce.common.config.QueryConstants.DUE_DATE;
 import static uk.gov.hmcts.divorce.common.config.QueryConstants.STATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
@@ -70,7 +71,7 @@ public class SystemRemindApplicant2Task implements Runnable {
                     .must(matchQuery(STATE, AwaitingApplicant2Response))
                     .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
                     .must(existsQuery(ACCESS_CODE))
-                    .mustNot(matchQuery(String.format("data.%s", FLAG), YesOrNo.YES));
+                    .mustNot(matchQuery(String.format(DATA, FLAG), YesOrNo.YES));
 
             final List<CaseDetails> casesInAwaitingApplicant2Response =
                 ccdSearchService.searchForAllCasesWithQuery(AwaitingApplicant2Response, query, user, serviceAuthorization);

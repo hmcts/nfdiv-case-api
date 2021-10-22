@@ -24,6 +24,7 @@ import java.util.List;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
+import static uk.gov.hmcts.divorce.common.config.QueryConstants.DATA;
 import static uk.gov.hmcts.divorce.common.config.QueryConstants.DUE_DATE;
 import static uk.gov.hmcts.divorce.common.config.QueryConstants.STATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
@@ -65,7 +66,7 @@ public class SystemRemindApplicant1ApplicationApprovedTask implements Runnable {
                 boolQuery()
                     .must(matchQuery(STATE, Applicant2Approved))
                     .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
-                    .mustNot(matchQuery(String.format("data.%s", FLAG), YesOrNo.YES));
+                    .mustNot(matchQuery(String.format(DATA, FLAG), YesOrNo.YES));
 
             final List<CaseDetails> casesInAwaitingApplicant1Response =
                 ccdSearchService.searchForAllCasesWithQuery(Applicant2Approved, query, user, serviceAuthorization);
