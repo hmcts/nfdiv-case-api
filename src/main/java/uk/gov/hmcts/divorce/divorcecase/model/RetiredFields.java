@@ -39,6 +39,15 @@ public class RetiredFields {
     @CCD(label = "retiredDateConditionalOrderSubmitted")
     private LocalDateTime dateConditionalOrderSubmitted;
 
+    @CCD(label = "retiredWhoPaysCosts")
+    private WhoPaysCostOrder whoPaysCosts;
+
+    @CCD(label = "retiredJudgeWhoPaysCosts")
+    private WhoPaysCostOrder judgeWhoPaysCosts;
+
+    @CCD(label = "retiredJudgeTypeCostsDecision")
+    private CostOrderList judgeTypeCostsDecision;
+
     @JsonIgnore
     private static final Map<String, Consumer<Map<String, Object>>> migrations = Map.of(
         "exampleRetiredField", data -> data.put("applicant1FirstName", data.get("exampleRetiredField")),
