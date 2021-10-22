@@ -119,13 +119,6 @@ public class ConditionalOrder {
     private LocalDate grantedDate;
 
     @CCD(
-        label = "Who should pay?",
-        typeOverride = FixedRadioList,
-        typeParameterOverride = "WhoPaysCostOrder"
-    )
-    private WhoPaysCostOrder whoPaysCosts;
-
-    @CCD(
         label = "Make a costs order:",
         typeOverride = FixedRadioList,
         typeParameterOverride = "CostOrderList"
@@ -212,20 +205,6 @@ public class ConditionalOrder {
         typeParameterOverride = "JudgeCostsClaimGranted"
     )
     private JudgeCostsClaimGranted judgeCostsClaimGranted;
-
-    @CCD(
-        label = "Who should pay?",
-        typeOverride = FixedRadioList,
-        typeParameterOverride = "WhoPaysCostOrder"
-    )
-    private WhoPaysCostOrder judgeWhoPaysCosts;
-
-    @CCD(
-        label = "Make a cost order:",
-        typeOverride = FixedRadioList,
-        typeParameterOverride = "CostOrderList"
-    )
-    private CostOrderList judgeTypeCostsDecision;
 
     @CCD(
         label = "Additional info",
