@@ -10,7 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.citizen.notification.JointApplicationOverdueNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -36,16 +35,15 @@ import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.common.config.QueryConstants.DATA;
-import static uk.gov.hmcts.divorce.common.config.QueryConstants.DUE_DATE;
-import static uk.gov.hmcts.divorce.common.config.QueryConstants.STATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemAlertApplicationNotReviewed.SYSTEM_APPLICATION_NOT_REVIEWED;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DUE_DATE;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 
@@ -57,9 +55,6 @@ public class SystemAlertApplicationNotReviewedTaskTest {
 
     @Mock
     private CcdUpdateService ccdUpdateService;
-
-    @Mock
-    private JointApplicationOverdueNotification jointApplicationOverdueNotification;
 
     @Mock
     private ObjectMapper mapper;
@@ -118,8 +113,6 @@ public class SystemAlertApplicationNotReviewedTaskTest {
 
         systemAlertApplicationNotReviewedTask.run();
 
-        verify(jointApplicationOverdueNotification).sendApplicationNotReviewedEmail(caseData1, caseDetails1.getId());
-        verify(jointApplicationOverdueNotification, times(0)).sendApplicationNotReviewedEmail(caseData2, caseDetails2.getId());
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_APPLICATION_NOT_REVIEWED, user, SERVICE_AUTHORIZATION);
     }
 
@@ -146,7 +139,7 @@ public class SystemAlertApplicationNotReviewedTaskTest {
 
         systemAlertApplicationNotReviewedTask.run();
 
-        verifyNoInteractions(jointApplicationOverdueNotification, ccdUpdateService);
+        verifyNoInteractions(ccdUpdateService);
     }
 
     @Test
@@ -165,7 +158,6 @@ public class SystemAlertApplicationNotReviewedTaskTest {
 
         systemAlertApplicationNotReviewedTask.run();
 
-        verify(jointApplicationOverdueNotification, never()).sendApplicationNotReviewedEmail(caseData, caseDetails.getId());
         verify(ccdUpdateService, never()).submitEvent(caseDetails, SYSTEM_APPLICATION_NOT_REVIEWED, user, SERVICE_AUTHORIZATION);
     }
 
@@ -184,7 +176,6 @@ public class SystemAlertApplicationNotReviewedTaskTest {
 
         systemAlertApplicationNotReviewedTask.run();
 
-        verifyNoInteractions(jointApplicationOverdueNotification);
         verifyNoInteractions(ccdUpdateService);
     }
 
@@ -196,7 +187,6 @@ public class SystemAlertApplicationNotReviewedTaskTest {
 
         systemAlertApplicationNotReviewedTask.run();
 
-        verifyNoInteractions(jointApplicationOverdueNotification);
         verifyNoInteractions(ccdUpdateService);
     }
 

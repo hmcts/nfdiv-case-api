@@ -10,7 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewApplicant2Notification;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
@@ -40,17 +39,16 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.common.config.QueryConstants.ACCESS_CODE;
-import static uk.gov.hmcts.divorce.common.config.QueryConstants.DATA;
-import static uk.gov.hmcts.divorce.common.config.QueryConstants.DUE_DATE;
-import static uk.gov.hmcts.divorce.common.config.QueryConstants.STATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicant2.SYSTEM_REMIND_APPLICANT2;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.ACCESS_CODE;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DUE_DATE;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 
@@ -62,9 +60,6 @@ public class SystemRemindApplicant2TaskTest {
 
     @Mock
     private CcdUpdateService ccdUpdateService;
-
-    @Mock
-    private ApplicationSentForReviewApplicant2Notification applicationSentForReviewApplicant2Notification;
 
     @Mock
     private ObjectMapper mapper;
@@ -135,8 +130,6 @@ public class SystemRemindApplicant2TaskTest {
 
         systemRemindApplicant2Task.run();
 
-        verify(applicationSentForReviewApplicant2Notification).sendReminder(caseData1, caseDetails1.getId());
-        verify(applicationSentForReviewApplicant2Notification, times(0)).sendReminder(caseData2, caseDetails2.getId());
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT2, user, SERVICE_AUTHORIZATION);
     }
 
@@ -169,7 +162,7 @@ public class SystemRemindApplicant2TaskTest {
 
         systemRemindApplicant2Task.run();
 
-        verifyNoInteractions(applicationSentForReviewApplicant2Notification, ccdUpdateService);
+        verifyNoInteractions(ccdUpdateService);
     }
 
     @Test
@@ -189,7 +182,6 @@ public class SystemRemindApplicant2TaskTest {
 
         systemRemindApplicant2Task.run();
 
-        verifyNoInteractions(applicationSentForReviewApplicant2Notification);
         verifyNoInteractions(ccdUpdateService);
     }
 
@@ -200,7 +192,6 @@ public class SystemRemindApplicant2TaskTest {
 
         systemRemindApplicant2Task.run();
 
-        verifyNoInteractions(applicationSentForReviewApplicant2Notification);
         verifyNoInteractions(ccdUpdateService);
     }
 

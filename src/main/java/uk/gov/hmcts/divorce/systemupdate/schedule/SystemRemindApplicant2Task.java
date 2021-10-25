@@ -6,7 +6,6 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewApplicant2Notification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
@@ -25,12 +24,12 @@ import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
-import static uk.gov.hmcts.divorce.common.config.QueryConstants.ACCESS_CODE;
-import static uk.gov.hmcts.divorce.common.config.QueryConstants.DATA;
-import static uk.gov.hmcts.divorce.common.config.QueryConstants.DUE_DATE;
-import static uk.gov.hmcts.divorce.common.config.QueryConstants.STATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicant2.SYSTEM_REMIND_APPLICANT2;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.ACCESS_CODE;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DUE_DATE;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
 @Component
 @Slf4j
@@ -45,9 +44,6 @@ public class SystemRemindApplicant2Task implements Runnable {
 
     @Autowired
     private CcdUpdateService ccdUpdateService;
-
-    @Autowired
-    private ApplicationSentForReviewApplicant2Notification applicationSentForReviewApplicant2Notification;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -110,8 +106,6 @@ public class SystemRemindApplicant2Task implements Runnable {
             caseDetails.getId()
         );
 
-        applicationSentForReviewApplicant2Notification.sendReminder(caseData, caseDetails.getId());
-        caseDetails.getData().put(NOTIFICATION_FLAG, YesOrNo.YES);
         ccdUpdateService.submitEvent(caseDetails, SYSTEM_REMIND_APPLICANT2, user, serviceAuth);
     }
 }

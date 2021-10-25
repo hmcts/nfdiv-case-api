@@ -6,7 +6,6 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1ApplyForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
@@ -24,11 +23,11 @@ import java.util.List;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
-import static uk.gov.hmcts.divorce.common.config.QueryConstants.DATA;
-import static uk.gov.hmcts.divorce.common.config.QueryConstants.DUE_DATE;
-import static uk.gov.hmcts.divorce.common.config.QueryConstants.STATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemApplicant1ApplyForConditionalOrder.SYSTEM_NOTIFY_APPLICANT1_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DUE_DATE;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
 @Component
 @Slf4j
@@ -42,9 +41,6 @@ public class SystemNotifyApplicant1ApplyForConditionalOrder implements Runnable 
 
     @Autowired
     private CcdUpdateService ccdUpdateService;
-
-    @Autowired
-    private Applicant1ApplyForConditionalOrderNotification applicant1ApplyForConditionalOrderNotification;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -104,8 +100,6 @@ public class SystemNotifyApplicant1ApplyForConditionalOrder implements Runnable 
             "20 weeks has passed since due date for Case id {} - notifying Applicant 1 that they can apply for a Conditional Order",
             caseDetails.getId());
 
-        applicant1ApplyForConditionalOrderNotification.sendToApplicant1(caseData, caseDetails.getId());
-        caseDetails.getData().put(NOTIFICATION_FLAG, YesOrNo.YES);
         ccdUpdateService.submitEvent(caseDetails, SYSTEM_NOTIFY_APPLICANT1_CONDITIONAL_ORDER, user, serviceAuth);
     }
 }

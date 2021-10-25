@@ -10,7 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1ApplyForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
@@ -34,15 +33,14 @@ import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.common.config.QueryConstants.DATA;
-import static uk.gov.hmcts.divorce.common.config.QueryConstants.DUE_DATE;
-import static uk.gov.hmcts.divorce.common.config.QueryConstants.STATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemApplicant1ApplyForConditionalOrder.SYSTEM_NOTIFY_APPLICANT1_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DUE_DATE;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 
@@ -54,9 +52,6 @@ public class SystemNotifyApplicant1ApplyForConditionalOrderTest {
 
     @Mock
     private CcdUpdateService ccdUpdateService;
-
-    @Mock
-    private Applicant1ApplyForConditionalOrderNotification applicant1ApplyForConditionalOrderNotification;
 
     @Mock
     private ObjectMapper mapper;
@@ -107,7 +102,6 @@ public class SystemNotifyApplicant1ApplyForConditionalOrderTest {
         when(caseDetails1.getData()).thenReturn(data1);
         when(caseDetails1.getId()).thenReturn(1L);
         when(caseDetails2.getData()).thenReturn(data2);
-        when(caseDetails2.getId()).thenReturn(2L);
 
         when(mapper.convertValue(data1, CaseData.class)).thenReturn(caseData1);
         when(mapper.convertValue(data2, CaseData.class)).thenReturn(caseData2);
@@ -119,8 +113,6 @@ public class SystemNotifyApplicant1ApplyForConditionalOrderTest {
 
         systemNotifyApplicant1ApplyForConditionalOrder.run();
 
-        verify(applicant1ApplyForConditionalOrderNotification).sendToApplicant1(caseData1, caseDetails1.getId());
-        verify(applicant1ApplyForConditionalOrderNotification, times(0)).sendToApplicant1(caseData2, caseDetails2.getId());
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_NOTIFY_APPLICANT1_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
     }
 
@@ -155,7 +147,7 @@ public class SystemNotifyApplicant1ApplyForConditionalOrderTest {
 
         systemNotifyApplicant1ApplyForConditionalOrder.run();
 
-        verifyNoInteractions(applicant1ApplyForConditionalOrderNotification, ccdUpdateService);
+        verifyNoInteractions(ccdUpdateService);
     }
 
     @Test
@@ -165,7 +157,7 @@ public class SystemNotifyApplicant1ApplyForConditionalOrderTest {
 
         systemNotifyApplicant1ApplyForConditionalOrder.run();
 
-        verifyNoInteractions(applicant1ApplyForConditionalOrderNotification, ccdUpdateService);
+        verifyNoInteractions(ccdUpdateService);
     }
 
     @Test

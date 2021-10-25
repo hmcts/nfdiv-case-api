@@ -10,7 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.citizen.notification.JointApplicationOverdueNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -36,16 +35,15 @@ import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.common.config.QueryConstants.DATA;
-import static uk.gov.hmcts.divorce.common.config.QueryConstants.DUE_DATE;
-import static uk.gov.hmcts.divorce.common.config.QueryConstants.STATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicant1ApplicationReviewed.SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DUE_DATE;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 
@@ -59,11 +57,7 @@ public class SystemRemindApplicant1ApplicationApprovedTaskTest {
     private CcdUpdateService ccdUpdateService;
 
     @Mock
-    private JointApplicationOverdueNotification jointApplicationOverdueNotification;
-
-    @Mock
     private ObjectMapper mapper;
-
 
     @Mock
     private IdamService idamService;
@@ -119,8 +113,6 @@ public class SystemRemindApplicant1ApplicationApprovedTaskTest {
 
         systemRemindApplicant1ApplicationApprovedTask.run();
 
-        verify(jointApplicationOverdueNotification).sendApplicationApprovedReminderToApplicant1(caseData1, caseDetails1.getId());
-        verify(jointApplicationOverdueNotification, times(0)).sendApplicationApprovedReminderToApplicant1(caseData2, caseDetails2.getId());
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED, user, SERVICE_AUTHORIZATION);
     }
 
@@ -148,7 +140,7 @@ public class SystemRemindApplicant1ApplicationApprovedTaskTest {
 
         systemRemindApplicant1ApplicationApprovedTask.run();
 
-        verifyNoInteractions(jointApplicationOverdueNotification, ccdUpdateService);
+        verifyNoInteractions(ccdUpdateService);
     }
 
     @Test
@@ -166,7 +158,6 @@ public class SystemRemindApplicant1ApplicationApprovedTaskTest {
 
         systemRemindApplicant1ApplicationApprovedTask.run();
 
-        verifyNoInteractions(jointApplicationOverdueNotification);
         verifyNoInteractions(ccdUpdateService);
     }
 
@@ -177,7 +168,6 @@ public class SystemRemindApplicant1ApplicationApprovedTaskTest {
 
         systemRemindApplicant1ApplicationApprovedTask.run();
 
-        verifyNoInteractions(jointApplicationOverdueNotification);
         verifyNoInteractions(ccdUpdateService);
     }
 

@@ -24,14 +24,17 @@ import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.elasticsearch.search.sort.SortOrder.ASC;
-import static uk.gov.hmcts.divorce.common.config.QueryConstants.DUE_DATE;
-import static uk.gov.hmcts.divorce.common.config.QueryConstants.STATE;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 
 @Service
 @Slf4j
 public class CcdSearchService {
+
+    public static final String ACCESS_CODE = "data.accessCode";
+    public static final String DUE_DATE = "data.dueDate";
+    public static final String DATA = "data.%s";
+    public static final String STATE = "state";
 
     @Value("${core_case_data.search.page_size}")
     private int pageSize;
