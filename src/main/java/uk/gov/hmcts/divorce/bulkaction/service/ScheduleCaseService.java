@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -45,6 +46,10 @@ public class ScheduleCaseService {
     public void updateCourtHearingDetailsForCasesInBulk(final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails) {
         final BulkActionCaseData bulkActionCaseData = bulkCaseDetails.getData();
 
+        String requestHeader = request.getHeader(AUTHORIZATION);
+        User user = idamService.retrieveUser(requestHeader);
+        String serviceAuth = authTokenGenerator.generate();
+
         final List<ListValue<BulkListCaseDetails>> unprocessedBulkCases = bulkTriggerService.bulkTrigger(
             bulkActionCaseData.getBulkListCaseDetails(),
             SYSTEM_UPDATE_CASE_COURT_HEARING,
@@ -58,8 +63,8 @@ public class ScheduleCaseService {
                 );
                 return mainCaseDetails;
             },
-            idamService.retrieveUser(request.getHeader(AUTHORIZATION)),
-            authTokenGenerator.generate()
+            user,
+            serviceAuth
         );
 
         log.info("Unprocessed bulk cases {} ", unprocessedBulkCases);
@@ -72,8 +77,8 @@ public class ScheduleCaseService {
                 ccdUpdateService.submitBulkActionEvent(
                     bulkCaseDetails,
                     SYSTEM_BULK_CASE_ERRORS,
-                    idamService.retrieveUser(request.getHeader(AUTHORIZATION)),
-                    authTokenGenerator.generate()
+                    user,
+                    serviceAuth
                 );
             } catch (final FeignException e) {
                 log.error("Update failed for bulk case id {} ", bulkCaseDetails.getId(), e);
