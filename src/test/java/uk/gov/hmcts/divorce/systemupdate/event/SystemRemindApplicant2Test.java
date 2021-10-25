@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewApplicant2Notification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -17,6 +18,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicant2.SYSTEM_REMIND_APPLICANT2;
@@ -29,6 +31,9 @@ public class SystemRemindApplicant2Test {
 
     @Mock
     private HttpServletRequest httpServletRequest;
+
+    @Mock
+    private ApplicationSentForReviewApplicant2Notification applicationSentForReviewApplicant2Notification;
 
     @InjectMocks
     private SystemRemindApplicant2 systemRemindApplicant2;
@@ -57,6 +62,7 @@ public class SystemRemindApplicant2Test {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             systemRemindApplicant2.aboutToSubmit(details, details);
 
+        verify(applicationSentForReviewApplicant2Notification).sendReminder(caseData, details.getId());
         assertThat(response.getData().getApplication().getApplicant2ReminderSent()).isEqualTo(YesOrNo.YES);
     }
 }
