@@ -1,10 +1,12 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1ApplyForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -18,6 +20,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class SystemApplicant1ApplyForConditionalOrder implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SYSTEM_NOTIFY_APPLICANT1_CONDITIONAL_ORDER = "system-notify-applicant1-conditional-order";
+
+    @Autowired
+    private Applicant1ApplyForConditionalOrderNotification applicant1ApplyForConditionalOrderNotification;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -36,6 +41,8 @@ public class SystemApplicant1ApplyForConditionalOrder implements CCDConfig<CaseD
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
         CaseData data = details.getData();
+
+        applicant1ApplyForConditionalOrderNotification.sendToApplicant1(data, details.getId());
         data.getApplication().setApplicant1NotifiedCanApplyForConditionalOrder(YES);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

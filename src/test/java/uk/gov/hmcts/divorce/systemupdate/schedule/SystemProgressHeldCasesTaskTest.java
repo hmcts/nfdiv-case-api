@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.systemupdate.schedule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,6 +34,9 @@ import java.util.Map;
 
 import static java.time.LocalDate.parse;
 import static java.util.Collections.singletonList;
+import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
@@ -46,6 +50,8 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemProgressHeldCase.SYSTEM_PROGRESS_HELD_CASE;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DUE_DATE;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 
@@ -67,16 +73,20 @@ class SystemProgressHeldCasesTaskTest {
     @Mock
     private ObjectMapper objectMapper;
 
-    @InjectMocks
-    private SystemProgressHeldCasesTask awaitingConditionalOrderTask;
-
     @Mock
     private IdamService idamService;
 
     @Mock
     private AuthTokenGenerator authTokenGenerator;
 
+    @InjectMocks
+    private SystemProgressHeldCasesTask awaitingConditionalOrderTask;
+
     private User user;
+
+    private static final BoolQueryBuilder query = boolQuery()
+        .must(matchQuery(STATE, Holding))
+        .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()));
 
     @BeforeEach
     void setUp() {
@@ -104,7 +114,7 @@ class SystemProgressHeldCasesTaskTest {
         when(holdingPeriodService.isHoldingPeriodFinished(issueDate2)).thenReturn(true);
         when(holdingPeriodService.isHoldingPeriodFinished(issueDate3)).thenReturn(false);
         when(holdingPeriodService.getHoldingPeriodInWeeks()).thenReturn(14);
-        when(ccdSearchService.searchForAllCasesWithStateOf(Holding, user, SERVICE_AUTHORIZATION)).thenReturn(caseDetailsList);
+        when(ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, SERVICE_AUTHORIZATION)).thenReturn(caseDetailsList);
 
         doNothing().when(conditionalOrderNotification).send(any(CaseData.class), anyLong());
 
@@ -125,7 +135,7 @@ class SystemProgressHeldCasesTaskTest {
 
         mockInteractions(caseDetails, null, caseDataMap(caseDetails, null));
 
-        when(ccdSearchService.searchForAllCasesWithStateOf(Holding, user, SERVICE_AUTHORIZATION)).thenReturn(caseDetailsList);
+        when(ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, SERVICE_AUTHORIZATION)).thenReturn(caseDetailsList);
 
         awaitingConditionalOrderTask.run();
 
@@ -139,7 +149,8 @@ class SystemProgressHeldCasesTaskTest {
         final LocalDate issueDate = LocalDate.now();
         mockInteractions(caseDetails1, issueDate, caseDataMap(caseDetails1, issueDate));
 
-        when(ccdSearchService.searchForAllCasesWithStateOf(Holding, user, SERVICE_AUTHORIZATION)).thenReturn(singletonList(caseDetails1));
+        when(ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, SERVICE_AUTHORIZATION))
+            .thenReturn(singletonList(caseDetails1));
 
         awaitingConditionalOrderTask.run();
 
@@ -148,7 +159,7 @@ class SystemProgressHeldCasesTaskTest {
 
     @Test
     void shouldNotSubmitEventIfSearchFails() {
-        when(ccdSearchService.searchForAllCasesWithStateOf(Holding, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, SERVICE_AUTHORIZATION))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
         awaitingConditionalOrderTask.run();
@@ -167,7 +178,7 @@ class SystemProgressHeldCasesTaskTest {
 
         when(holdingPeriodService.isHoldingPeriodFinished(issueDate)).thenReturn(true);
         when(holdingPeriodService.getHoldingPeriodInWeeks()).thenReturn(14);
-        when(ccdSearchService.searchForAllCasesWithStateOf(Holding, user, SERVICE_AUTHORIZATION)).thenReturn(caseDetailsList);
+        when(ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, SERVICE_AUTHORIZATION)).thenReturn(caseDetailsList);
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
@@ -190,7 +201,7 @@ class SystemProgressHeldCasesTaskTest {
         when(holdingPeriodService.isHoldingPeriodFinished(issueDate1)).thenReturn(true);
         when(holdingPeriodService.isHoldingPeriodFinished(issueDate2)).thenReturn(true);
         when(holdingPeriodService.getHoldingPeriodInWeeks()).thenReturn(14);
-        when(ccdSearchService.searchForAllCasesWithStateOf(Holding, user, SERVICE_AUTHORIZATION)).thenReturn(caseDetailsList);
+        when(ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, SERVICE_AUTHORIZATION)).thenReturn(caseDetailsList);
 
         doThrow(new CcdManagementException("Failed processing of case", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
