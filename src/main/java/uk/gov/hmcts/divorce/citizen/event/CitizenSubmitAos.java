@@ -77,10 +77,12 @@ public class CitizenSubmitAos implements CCDConfig<CaseData, State, UserRole> {
         }
 
         if (data.getAcknowledgementOfService().getDisputeApplication() == YesOrNo.YES) {
+            data.setDueDate(data.getApplication().getIssueDate().plusDays(37));
             soleAosSubmittedNotification.sendApplicationDisputedToApplicant(data, details.getId());
             soleAosSubmittedNotification.sendApplicationDisputedToRespondent(data, details.getId());
             state = PendingDispute;
         } else {
+            data.setDueDate(data.getApplication().getIssueDate().plusDays(141));
             soleAosSubmittedNotification.sendApplicationNotDisputedToApplicant(data, details.getId());
             soleAosSubmittedNotification.sendApplicationNotDisputedToRespondent(data, details.getId());
             state = Holding;
