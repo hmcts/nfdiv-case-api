@@ -12,7 +12,6 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.service.BulkTriggerService;
-import uk.gov.hmcts.divorce.bulkaction.service.ListValueUtil;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
@@ -20,10 +19,9 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
-import static java.util.stream.Collectors.toList;
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
@@ -40,9 +38,6 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
 
     @Autowired
     private BulkTriggerService bulkTriggerService;
-
-    @Autowired
-    private ListValueUtil listValueUtil;
 
     @Autowired
     private HttpServletRequest request;
@@ -80,30 +75,27 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
         CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails
     ) {
         final BulkActionCaseData bulkActionCaseData = bulkCaseDetails.getData();
-        final List<ListValue<BulkListCaseDetails>> originalBulkListCaseDetails = bulkActionCaseData.getBulkListCaseDetails();
 
-        bulkActionCaseData.setBulkListCaseDetails(
-            listValueUtil.fromListToListValue(
-                bulkTriggerService.bulkTrigger(
-                    listValueUtil.fromListValueToList(bulkActionCaseData.getBulkListCaseDetails()),
-                    SYSTEM_UPDATE_CASE_COURT_HEARING,
-                    mainCaseDetails -> {
-                        final var conditionalOrder = mainCaseDetails.getData().getConditionalOrder();
-                        conditionalOrder.setDateAndTimeOfHearing(
-                            bulkCaseDetails.getData().getDateAndTimeOfHearing()
-                        );
-                        conditionalOrder.setCourtName(
-                            bulkCaseDetails.getData().getCourtName()
-                        );
-                        return mainCaseDetails;
-                    },
-                    idamService.retrieveUser(request.getHeader(AUTHORIZATION)),
-                    authTokenGenerator.generate()))
+        final List<ListValue<BulkListCaseDetails>> unprocessedBulkCases = bulkTriggerService.bulkTrigger(
+            bulkActionCaseData.getBulkListCaseDetails(),
+            SYSTEM_UPDATE_CASE_COURT_HEARING,
+            mainCaseDetails -> {
+                final var conditionalOrder = mainCaseDetails.getData().getConditionalOrder();
+                conditionalOrder.setDateAndTimeOfHearing(
+                    bulkCaseDetails.getData().getDateAndTimeOfHearing()
+                );
+                conditionalOrder.setCourtName(
+                    bulkCaseDetails.getData().getCourtName()
+                );
+                return mainCaseDetails;
+            },
+            idamService.retrieveUser(request.getHeader(AUTHORIZATION)),
+            authTokenGenerator.generate()
         );
 
-        appendFailedCasesToErrorList(
-            bulkActionCaseData,
-            listValueUtil.fromListValueToList(originalBulkListCaseDetails));
+        log.info("Unprocessed bulk cases {} ", unprocessedBulkCases);
+
+        bulkActionCaseData.getErroredCaseDetails().addAll(unprocessedBulkCases);
 
         try {
             ccdUpdateService.submitBulkActionEvent(
@@ -117,19 +109,5 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
         }
 
         return SubmittedCallbackResponse.builder().build();
-    }
-
-    private void appendFailedCasesToErrorList(BulkActionCaseData caseData, List<BulkListCaseDetails> originalCaseList) {
-        List<Long> updatedCaseList = listValueUtil.fromListValueToList(caseData.getBulkListCaseDetails())
-            .stream()
-            .map(c -> Long.valueOf(c.getCaseReference().getCaseReference()))
-            .collect(toList());
-
-        List<BulkListCaseDetails> errorCases = originalCaseList
-            .stream()
-            .filter(c -> !updatedCaseList.contains(Long.valueOf(c.getCaseReference().getCaseReference())))
-            .collect(toList());
-
-        caseData.getErroredCaseDetails().addAll(listValueUtil.fromListToListValue(errorCases));
     }
 }

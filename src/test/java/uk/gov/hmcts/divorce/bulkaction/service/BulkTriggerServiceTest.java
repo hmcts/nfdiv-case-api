@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.service.CaseTriggerService.TriggerResult;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
@@ -33,16 +34,20 @@ public class BulkTriggerServiceTest {
 
         final User user = mock(User.class);
         final CaseTask caseTask = details -> details;
-        final BulkListCaseDetails bulkListCaseDetails1 = getBulkListCaseDetails("1");
-        final BulkListCaseDetails bulkListCaseDetails2 = getBulkListCaseDetails("2");
-        final List<BulkListCaseDetails> bulkListCaseDetails = Arrays.asList(bulkListCaseDetails1, bulkListCaseDetails2);
+        final ListValue<BulkListCaseDetails> bulkListCaseDetailsListValue1 =
+            ListValue.<BulkListCaseDetails>builder().value(getBulkListCaseDetails("1")).build();
+        final ListValue<BulkListCaseDetails> bulkListCaseDetailsListValue2 =
+            ListValue.<BulkListCaseDetails>builder().value(getBulkListCaseDetails("2")).build();
 
-        when(caseTriggerService.caseTrigger(bulkListCaseDetails1, "event Id", caseTask, user, SERVICE_AUTHORIZATION))
-            .thenReturn(new TriggerResult(true, bulkListCaseDetails1));
-        when(caseTriggerService.caseTrigger(bulkListCaseDetails2, "event Id", caseTask, user, SERVICE_AUTHORIZATION))
-            .thenReturn(new TriggerResult(false, bulkListCaseDetails2));
+        final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails =
+            Arrays.asList(bulkListCaseDetailsListValue1, bulkListCaseDetailsListValue2);
 
-        final List<BulkListCaseDetails> errors = bulkTriggerService.bulkTrigger(
+        when(caseTriggerService.caseTrigger(bulkListCaseDetailsListValue1, "event Id", caseTask, user, SERVICE_AUTHORIZATION))
+            .thenReturn(new TriggerResult(true, bulkListCaseDetailsListValue1));
+        when(caseTriggerService.caseTrigger(bulkListCaseDetailsListValue2, "event Id", caseTask, user, SERVICE_AUTHORIZATION))
+            .thenReturn(new TriggerResult(false, bulkListCaseDetailsListValue2));
+
+        final List<ListValue<BulkListCaseDetails>> errors = bulkTriggerService.bulkTrigger(
             bulkListCaseDetails,
             "event Id",
             caseTask,
@@ -50,7 +55,7 @@ public class BulkTriggerServiceTest {
             SERVICE_AUTHORIZATION);
 
         assertThat(errors).hasSize(1);
-        assertThat(errors.get(0)).isEqualTo(bulkListCaseDetails2);
+        assertThat(errors.get(0)).isEqualTo(bulkListCaseDetailsListValue2);
     }
 
     private BulkListCaseDetails getBulkListCaseDetails(final String caseId) {
