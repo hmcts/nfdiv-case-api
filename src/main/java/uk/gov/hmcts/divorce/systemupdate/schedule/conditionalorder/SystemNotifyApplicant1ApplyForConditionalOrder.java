@@ -35,7 +35,7 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemApplicant1ApplyForCo
 public class SystemNotifyApplicant1ApplyForConditionalOrder implements Runnable {
 
     private static final int TWENTY_WEEKS = 20;
-    private static final String FLAG = "applicant1NotifiedCanApplyForConditionalOrder";
+    private static final String NOTIFICATION_FLAG = "applicant1NotifiedCanApplyForConditionalOrder";
 
     @Autowired
     private CcdSearchService ccdSearchService;
@@ -67,7 +67,7 @@ public class SystemNotifyApplicant1ApplyForConditionalOrder implements Runnable 
                 boolQuery()
                     .must(matchQuery(STATE, AwaitingConditionalOrder))
                     .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
-                    .mustNot(matchQuery(String.format(DATA, FLAG), YesOrNo.YES));
+                    .mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YesOrNo.YES));
 
             final List<CaseDetails> casesInAwaitingApplicant2Response =
                 ccdSearchService.searchForAllCasesWithQuery(AwaitingConditionalOrder, query, user, serviceAuthorization);
@@ -105,7 +105,7 @@ public class SystemNotifyApplicant1ApplyForConditionalOrder implements Runnable 
             caseDetails.getId());
 
         applicant1ApplyForConditionalOrderNotification.sendToApplicant1(caseData, caseDetails.getId());
-        caseDetails.getData().put("applicant1NotifiedCanApplyForConditionalOrder", YesOrNo.YES);
+        caseDetails.getData().put(NOTIFICATION_FLAG, YesOrNo.YES);
         ccdUpdateService.submitEvent(caseDetails, SYSTEM_NOTIFY_APPLICANT1_CONDITIONAL_ORDER, user, serviceAuth);
     }
 }

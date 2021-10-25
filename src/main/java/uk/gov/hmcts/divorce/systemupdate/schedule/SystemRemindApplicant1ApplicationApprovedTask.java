@@ -34,7 +34,7 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicant1Appl
 @Slf4j
 public class SystemRemindApplicant1ApplicationApprovedTask implements Runnable {
 
-    private static final String FLAG = "applicant1ReminderSent";
+    private static final String NOTIFICATION_FLAG = "applicant1ReminderSent";
 
     @Autowired
     private CcdSearchService ccdSearchService;
@@ -66,7 +66,7 @@ public class SystemRemindApplicant1ApplicationApprovedTask implements Runnable {
                 boolQuery()
                     .must(matchQuery(STATE, Applicant2Approved))
                     .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
-                    .mustNot(matchQuery(String.format(DATA, FLAG), YesOrNo.YES));
+                    .mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YesOrNo.YES));
 
             final List<CaseDetails> casesInAwaitingApplicant1Response =
                 ccdSearchService.searchForAllCasesWithQuery(Applicant2Approved, query, user, serviceAuthorization);
@@ -109,7 +109,7 @@ public class SystemRemindApplicant1ApplicationApprovedTask implements Runnable {
         );
 
         jointApplicationOverdueNotification.sendApplicationApprovedReminderToApplicant1(caseData, caseDetails.getId());
-        caseDetails.getData().put("applicant1ReminderSent", YesOrNo.YES);
+        caseDetails.getData().put(NOTIFICATION_FLAG, YesOrNo.YES);
         ccdUpdateService.submitEvent(caseDetails, SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED, user, serviceAuth);
     }
 }

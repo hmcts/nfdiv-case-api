@@ -37,7 +37,7 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicant2.SYS
 public class SystemRemindApplicant2Task implements Runnable {
 
     private static final int FOUR_DAYS = 4;
-    private static final String FLAG = "applicant2ReminderSent";
+    private static final String NOTIFICATION_FLAG = "applicant2ReminderSent";
 
 
     @Autowired
@@ -71,7 +71,7 @@ public class SystemRemindApplicant2Task implements Runnable {
                     .must(matchQuery(STATE, AwaitingApplicant2Response))
                     .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
                     .must(existsQuery(ACCESS_CODE))
-                    .mustNot(matchQuery(String.format(DATA, FLAG), YesOrNo.YES));
+                    .mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YesOrNo.YES));
 
             final List<CaseDetails> casesInAwaitingApplicant2Response =
                 ccdSearchService.searchForAllCasesWithQuery(AwaitingApplicant2Response, query, user, serviceAuthorization);
@@ -111,7 +111,7 @@ public class SystemRemindApplicant2Task implements Runnable {
         );
 
         applicationSentForReviewApplicant2Notification.sendReminder(caseData, caseDetails.getId());
-        caseDetails.getData().put("applicant2ReminderSent", YesOrNo.YES);
+        caseDetails.getData().put(NOTIFICATION_FLAG, YesOrNo.YES);
         ccdUpdateService.submitEvent(caseDetails, SYSTEM_REMIND_APPLICANT2, user, serviceAuth);
     }
 }

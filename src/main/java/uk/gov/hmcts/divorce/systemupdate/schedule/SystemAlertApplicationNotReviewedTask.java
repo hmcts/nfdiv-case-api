@@ -34,7 +34,7 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemAlertApplicationNotR
 @Slf4j
 public class SystemAlertApplicationNotReviewedTask implements Runnable {
 
-    private static final String FLAG = "overdueNotificationSent";
+    private static final String NOTIFICATION_FLAG = "overdueNotificationSent";
 
     @Autowired
     private CcdSearchService ccdSearchService;
@@ -66,7 +66,7 @@ public class SystemAlertApplicationNotReviewedTask implements Runnable {
                 boolQuery()
                     .must(matchQuery(STATE, AwaitingApplicant2Response))
                     .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
-                    .mustNot(matchQuery(String.format(DATA, FLAG), YesOrNo.YES));
+                    .mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YesOrNo.YES));
 
             final List<CaseDetails> casesInAwaitingApplicant2Response =
                 ccdSearchService.searchForAllCasesWithQuery(AwaitingApplicant2Response, query, user, serviceAuthorization);
@@ -114,7 +114,7 @@ public class SystemAlertApplicationNotReviewedTask implements Runnable {
         );
 
         jointApplicationOverdueNotification.sendApplicationNotReviewedEmail(caseData, caseDetails.getId());
-        caseDetails.getData().put("overdueNotificationSent", YesOrNo.YES);
+        caseDetails.getData().put(NOTIFICATION_FLAG, YesOrNo.YES);
         ccdUpdateService.submitEvent(caseDetails, SYSTEM_APPLICATION_NOT_REVIEWED, user, serviceAuth);
     }
 }
