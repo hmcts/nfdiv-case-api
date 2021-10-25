@@ -46,9 +46,9 @@ public class ScheduleCaseService {
     public void updateCourtHearingDetailsForCasesInBulk(final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails) {
         final BulkActionCaseData bulkActionCaseData = bulkCaseDetails.getData();
 
-        String requestHeader = request.getHeader(AUTHORIZATION);
-        User user = idamService.retrieveUser(requestHeader);
-        String serviceAuth = authTokenGenerator.generate();
+        final String requestHeader = request.getHeader(AUTHORIZATION);
+        final User user = idamService.retrieveUser(requestHeader);
+        final String serviceAuth = authTokenGenerator.generate();
 
         final List<ListValue<BulkListCaseDetails>> unprocessedBulkCases = bulkTriggerService.bulkTrigger(
             bulkActionCaseData.getBulkListCaseDetails(),
