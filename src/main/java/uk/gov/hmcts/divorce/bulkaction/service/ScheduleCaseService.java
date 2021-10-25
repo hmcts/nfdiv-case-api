@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.bulkaction.service;
 
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -10,7 +11,6 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
@@ -18,6 +18,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCaseErrors.SYSTEM_BULK_CASE_ERRORS;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
 
@@ -63,17 +64,20 @@ public class ScheduleCaseService {
 
         log.info("Unprocessed bulk cases {} ", unprocessedBulkCases);
 
-        bulkActionCaseData.getErroredCaseDetails().addAll(unprocessedBulkCases);
+        if (!isEmpty(unprocessedBulkCases)) {
+            log.info("Error bulk case details list is not empty hence updating bulk case with error list");
+            bulkActionCaseData.setErroredCaseDetails(unprocessedBulkCases);
 
-        try {
-            ccdUpdateService.submitBulkActionEvent(
-                bulkCaseDetails,
-                SYSTEM_BULK_CASE_ERRORS,
-                idamService.retrieveUser(request.getHeader(AUTHORIZATION)),
-                authTokenGenerator.generate()
-            );
-        } catch (final CcdManagementException e) {
-            log.error("Update failed for bulk case id {} ", bulkCaseDetails.getId());
+            try {
+                ccdUpdateService.submitBulkActionEvent(
+                    bulkCaseDetails,
+                    SYSTEM_BULK_CASE_ERRORS,
+                    idamService.retrieveUser(request.getHeader(AUTHORIZATION)),
+                    authTokenGenerator.generate()
+                );
+            } catch (final FeignException e) {
+                log.error("Update failed for bulk case id {} ", bulkCaseDetails.getId(), e);
+            }
         }
     }
 }
