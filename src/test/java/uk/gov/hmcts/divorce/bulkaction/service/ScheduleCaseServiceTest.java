@@ -87,7 +87,7 @@ class ScheduleCaseServiceTest {
             .<BulkActionCaseData, BulkActionState>builder()
             .data(bulkActionCaseData)
             .build();
-        
+
         scheduleCaseService.updateCourtHearingDetailsForCasesInBulk(bulkActionCaseDetails);
 
         verify(bulkTriggerService).bulkTrigger(
