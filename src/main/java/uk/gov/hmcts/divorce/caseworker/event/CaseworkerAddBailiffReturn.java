@@ -15,7 +15,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.divorcecase.model.CaseData.archiveAlternativeServiceApplicationOnCompletion;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
@@ -89,7 +88,7 @@ public class CaseworkerAddBailiffReturn implements CCDConfig<CaseData, State, Us
             state = AwaitingAos;
         }
 
-        archiveAlternativeServiceApplicationOnCompletion(caseData);
+        caseData.archiveAlternativeServiceApplicationOnCompletion(caseData);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

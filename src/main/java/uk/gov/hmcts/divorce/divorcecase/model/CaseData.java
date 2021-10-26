@@ -321,7 +321,7 @@ public class CaseData {
         return sortedDocuments;
     }
 
-    public static void archiveAlternativeServiceApplicationOnCompletion(CaseData caseData) {
+    public void archiveAlternativeServiceApplicationOnCompletion(CaseData caseData) {
 
         AlternativeService alternativeService = caseData.getAlternativeService();
 

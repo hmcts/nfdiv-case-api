@@ -16,7 +16,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import java.time.Clock;
 import java.time.LocalDate;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.CaseData.archiveAlternativeServiceApplicationOnCompletion;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffService;
@@ -77,7 +76,7 @@ public class CaseworkerMakeBailiffDecision implements CCDConfig<CaseData, State,
             // ServiceApplication is archived after BailiffReturn if ServiceGranted is set to Yes
         } else {
             endState = AwaitingAos;
-            archiveAlternativeServiceApplicationOnCompletion(caseDataCopy);
+            caseDataCopy.archiveAlternativeServiceApplicationOnCompletion(caseDataCopy);
         }
 
         log.info("Setting end state of case id {} to {}", details.getId(), endState);

@@ -9,7 +9,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.BAILIFF;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
-import static uk.gov.hmcts.divorce.divorcecase.model.CaseData.archiveAlternativeServiceApplicationOnCompletion;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 
@@ -21,7 +20,7 @@ class AlternativeServiceUtilTest {
         final CaseData caseData = caseData();
         caseData.getAlternativeService().setAlternativeServiceType(DEEMED);
 
-        archiveAlternativeServiceApplicationOnCompletion(caseData);
+        caseData.archiveAlternativeServiceApplicationOnCompletion(caseData);
 
         assertThat(caseData.getAlternativeServiceApplications()).isNotNull();
         assertThat(caseData.getAlternativeServiceApplications().size()).isEqualTo(1);
@@ -33,16 +32,16 @@ class AlternativeServiceUtilTest {
 
         final CaseData caseData = caseData();
         caseData.getAlternativeService().setAlternativeServiceType(DEEMED);
-        archiveAlternativeServiceApplicationOnCompletion(caseData);
+        caseData.archiveAlternativeServiceApplicationOnCompletion(caseData);
 
         caseData.setAlternativeService(new AlternativeService());
         caseData.getAlternativeService().setAlternativeServiceType(DISPENSED);
-        archiveAlternativeServiceApplicationOnCompletion(caseData);
+        caseData.archiveAlternativeServiceApplicationOnCompletion(caseData);
 
         caseData.setAlternativeService(new AlternativeService());
         caseData.getAlternativeService().setAlternativeServiceType(BAILIFF);
         caseData.getAlternativeService().getBailiff().setSuccessfulServedByBailiff(YesOrNo.YES);
-        archiveAlternativeServiceApplicationOnCompletion(caseData);
+        caseData.archiveAlternativeServiceApplicationOnCompletion(caseData);
 
         assertThat(caseData.getAlternativeServiceApplications().size()).isEqualTo(3);
         assertThat(caseData.getAlternativeServiceApplications().get(0).getValue().getAlternativeServiceType()).isEqualTo(BAILIFF);
@@ -57,7 +56,7 @@ class AlternativeServiceUtilTest {
     public void shouldNotAddToServiceApplicationCollectionIfServiceApplicationIsNull() {
         final CaseData caseData = caseData();
         caseData.setAlternativeService(null);
-        archiveAlternativeServiceApplicationOnCompletion(caseData);
+        caseData.archiveAlternativeServiceApplicationOnCompletion(caseData);
         assertThat(caseData.getAlternativeServiceApplications()).isNull();
     }
 

@@ -25,7 +25,6 @@ import java.util.UUID;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
-import static uk.gov.hmcts.divorce.divorcecase.model.CaseData.archiveAlternativeServiceApplicationOnCompletion;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
@@ -119,7 +118,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
             endState = AwaitingAos;
         }
 
-        archiveAlternativeServiceApplicationOnCompletion(caseDataCopy);
+        caseDataCopy.archiveAlternativeServiceApplicationOnCompletion(caseDataCopy);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseDataCopy)
