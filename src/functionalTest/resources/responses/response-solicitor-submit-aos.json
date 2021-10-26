@@ -13,7 +13,6 @@
     "statementOfTruth": "Yes",
     "prayerHasBeenGiven": "Yes",
     "divorceUnit": "serviceCentre",
-    "selectedDivorceCentreSiteId": "AA07",
     "documentsGenerated": [
       {
         "id": "${json-unit.any-string}",

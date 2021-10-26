@@ -457,7 +457,6 @@ public class PaymentServiceTest {
 
     private CaseData caseData() {
         var caseData = caseDataWithOrderSummary();
-        caseData.setSelectedDivorceCentreSiteId("test_site_id");
         caseData.getApplication().setPbaNumbers(getPbaNumbersForAccount("PBA0012345"));
         caseData.getApplicant1().setSolicitor(
             Solicitor
