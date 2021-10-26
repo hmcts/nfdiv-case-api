@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
@@ -31,6 +32,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Pronounced;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
@@ -300,6 +302,34 @@ class CcdSearchServiceTest {
         assertThat(exception.getMessage()).contains("Failed to complete search for Cases with state of AwaitingPronouncement");
     }
 
+    @Test
+    void shouldReturnAllCasesInStatePronouncedWithCasesInErrorList() {
+
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final SearchResult expectedSearchResult1 = SearchResult.builder().total(100)
+            .cases(createCaseDetailsList(100)).build();
+        final SearchResult expectedSearchResult2 = SearchResult.builder().total(1)
+            .cases(createCaseDetailsList(1)).build();
+
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            BulkActionCaseTypeConfig.CASE_TYPE,
+            searchSourceBuilderForPronouncedCasesWithCasesInError(0).toString()))
+            .thenReturn(expectedSearchResult1);
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            BulkActionCaseTypeConfig.CASE_TYPE,
+            searchSourceBuilderForPronouncedCasesWithCasesInError(100).toString()))
+            .thenReturn(expectedSearchResult2);
+
+        final List<CaseDetails> searchResult = ccdSearchService
+            .searchForBulkCasesWithCaseErrorsAndState(Pronounced, user, SERVICE_AUTHORIZATION);
+
+        assertThat(searchResult.size()).isEqualTo(101);
+    }
+
     private List<CaseDetails> createCaseDetailsList(final int size) {
 
         final List<CaseDetails> caseDetails = new ArrayList<>();
@@ -336,5 +366,24 @@ class CcdSearchServiceTest {
             .from(0)
             .size(BULK_LIST_MAX_PAGE_SIZE);
 
+    }
+
+    private SearchSourceBuilder searchSourceBuilderForPronouncedCasesWithCasesInError(final int from) {
+        final QueryBuilder stateQuery = matchQuery("state", Pronounced);
+        final QueryBuilder errorCasesExist = existsQuery("data.erroredCaseDetails");
+        final QueryBuilder processedCases = existsQuery("data.processedCaseDetails");
+
+        final QueryBuilder query = boolQuery()
+            .must(stateQuery)
+            .must(boolQuery()
+                .should(boolQuery().must(errorCasesExist))
+                .should(boolQuery().mustNot(processedCases))
+            );
+
+        return SearchSourceBuilder
+            .searchSource()
+            .query(query)
+            .from(from)
+            .size(PAGE_SIZE);
     }
 }
