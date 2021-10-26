@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.bulkaction.ccd.event;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
@@ -15,7 +14,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
-@Slf4j
 public class CreateBulkList implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
     public static final String CREATE_BULK_LIST = "create-bulk-list";
 
