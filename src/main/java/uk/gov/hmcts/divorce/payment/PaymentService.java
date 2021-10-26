@@ -33,6 +33,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.Fee.getValueInPence;
+import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.CAE0001;
 import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.CAE0003;
 import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.CAE0004;
@@ -249,8 +250,8 @@ public class PaymentService {
 
         creditAccountPaymentRequest.setService(DIVORCE_SERVICE);
         creditAccountPaymentRequest.setCurrency(GBP);
-        creditAccountPaymentRequest.setSiteId(caseData.getSelectedDivorceCentreSiteId());
         creditAccountPaymentRequest.setAccountNumber(getPbaNumber(caseData));
+        creditAccountPaymentRequest.setCaseType(CASE_TYPE);
 
         creditAccountPaymentRequest.setOrganisationName(solicitor.getOrganisationPolicy().getOrganisation().getOrganisationName());
 
@@ -261,10 +262,8 @@ public class PaymentService {
 
         creditAccountPaymentRequest.setAmount(orderSummary.getPaymentTotal());
         creditAccountPaymentRequest.setCcdCaseNumber(String.valueOf(caseId));
-        creditAccountPaymentRequest.setSiteId(caseData.getSelectedDivorceCentreSiteId());
 
-        List<PaymentItem> paymentItemList =
-            populateFeesPaymentItems(caseData, caseId, orderSummary.getPaymentTotal(), fee, solicitor.getReference());
+        List<PaymentItem> paymentItemList = populateFeesPaymentItems(caseId, orderSummary.getPaymentTotal(), fee, solicitor.getReference());
 
         creditAccountPaymentRequest.setFees(paymentItemList);
 
@@ -276,7 +275,6 @@ public class PaymentService {
     }
 
     private List<PaymentItem> populateFeesPaymentItems(
-        CaseData caseData,
         Long caseId,
         String paymentTotal,
         Fee fee,
