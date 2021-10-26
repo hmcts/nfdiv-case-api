@@ -88,7 +88,7 @@ class CaseworkerIssueBailiffPackTest {
         AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
             issueBailiffPack.aboutToSubmit(details, details);
 
-        Bailiff bailiff = aboutToStartOrSubmitResponse.getData().getBailiff();
+        Bailiff bailiff = aboutToStartOrSubmitResponse.getData().getAlternativeService().getBailiff();
 
         var cosDivorceDocument = DivorceDocument
             .builder()
