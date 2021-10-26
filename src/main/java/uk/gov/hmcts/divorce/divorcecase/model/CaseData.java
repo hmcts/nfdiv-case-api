@@ -321,15 +321,15 @@ public class CaseData {
         return sortedDocuments;
     }
 
-    public void archiveAlternativeServiceApplicationOnCompletion(CaseData caseData) {
+    public void archiveAlternativeServiceApplicationOnCompletion() {
 
-        AlternativeService alternativeService = caseData.getAlternativeService();
+        AlternativeService alternativeService = this.getAlternativeService();
 
         if (null != alternativeService) {
 
             alternativeService.setReceivedServiceAddedDate(LocalDate.now());
 
-            if (isEmpty(caseData.getAlternativeServiceApplications())) {
+            if (isEmpty(this.getAlternativeServiceApplications())) {
 
                 List<ListValue<AlternativeService>> listValues = new ArrayList<>();
 
@@ -340,7 +340,7 @@ public class CaseData {
                     .build();
 
                 listValues.add(listValue);
-                caseData.setAlternativeServiceApplications(listValues);
+                this.setAlternativeServiceApplications(listValues);
 
             } else {
 
@@ -350,13 +350,13 @@ public class CaseData {
                     .build();
 
                 int listValueIndex = 0;
-                caseData.getAlternativeServiceApplications().add(0, listValue);
-                for (ListValue<AlternativeService> asListValue : caseData.getAlternativeServiceApplications()) {
+                this.getAlternativeServiceApplications().add(0, listValue);
+                for (ListValue<AlternativeService> asListValue : this.getAlternativeServiceApplications()) {
                     asListValue.setId(String.valueOf(listValueIndex++));
                 }
             }
             // Null the current AlternativeService object instance in the CaseData so that a new one can be created
-            caseData.setAlternativeService(null);
+            this.setAlternativeService(null);
         }
     }
 

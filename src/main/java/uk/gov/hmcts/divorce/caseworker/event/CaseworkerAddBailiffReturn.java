@@ -88,7 +88,7 @@ public class CaseworkerAddBailiffReturn implements CCDConfig<CaseData, State, Us
             state = AwaitingAos;
         }
 
-        caseData.archiveAlternativeServiceApplicationOnCompletion(caseData);
+        caseData.archiveAlternativeServiceApplicationOnCompletion();
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

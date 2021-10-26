@@ -118,7 +118,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
             endState = AwaitingAos;
         }
 
-        caseDataCopy.archiveAlternativeServiceApplicationOnCompletion(caseDataCopy);
+        caseDataCopy.archiveAlternativeServiceApplicationOnCompletion();
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseDataCopy)

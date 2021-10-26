@@ -20,7 +20,7 @@ class AlternativeServiceUtilTest {
         final CaseData caseData = caseData();
         caseData.getAlternativeService().setAlternativeServiceType(DEEMED);
 
-        caseData.archiveAlternativeServiceApplicationOnCompletion(caseData);
+        caseData.archiveAlternativeServiceApplicationOnCompletion();
 
         assertThat(caseData.getAlternativeServiceApplications()).isNotNull();
         assertThat(caseData.getAlternativeServiceApplications().size()).isEqualTo(1);
@@ -32,16 +32,16 @@ class AlternativeServiceUtilTest {
 
         final CaseData caseData = caseData();
         caseData.getAlternativeService().setAlternativeServiceType(DEEMED);
-        caseData.archiveAlternativeServiceApplicationOnCompletion(caseData);
+        caseData.archiveAlternativeServiceApplicationOnCompletion();
 
         caseData.setAlternativeService(new AlternativeService());
         caseData.getAlternativeService().setAlternativeServiceType(DISPENSED);
-        caseData.archiveAlternativeServiceApplicationOnCompletion(caseData);
+        caseData.archiveAlternativeServiceApplicationOnCompletion();
 
         caseData.setAlternativeService(new AlternativeService());
         caseData.getAlternativeService().setAlternativeServiceType(BAILIFF);
         caseData.getAlternativeService().getBailiff().setSuccessfulServedByBailiff(YesOrNo.YES);
-        caseData.archiveAlternativeServiceApplicationOnCompletion(caseData);
+        caseData.archiveAlternativeServiceApplicationOnCompletion();
 
         assertThat(caseData.getAlternativeServiceApplications().size()).isEqualTo(3);
         assertThat(caseData.getAlternativeServiceApplications().get(0).getValue().getAlternativeServiceType()).isEqualTo(BAILIFF);
@@ -56,7 +56,7 @@ class AlternativeServiceUtilTest {
     public void shouldNotAddToServiceApplicationCollectionIfServiceApplicationIsNull() {
         final CaseData caseData = caseData();
         caseData.setAlternativeService(null);
-        caseData.archiveAlternativeServiceApplicationOnCompletion(caseData);
+        caseData.archiveAlternativeServiceApplicationOnCompletion();
         assertThat(caseData.getAlternativeServiceApplications()).isNull();
     }
 
