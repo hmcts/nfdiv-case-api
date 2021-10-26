@@ -76,7 +76,7 @@ public class SystemNotifyApplicant1ApplyForConditionalOrder implements Runnable 
                     if (!canApplyForConditionalOrderFrom.isAfter(LocalDate.now())
                         && !caseData.getApplication().hasApplicant1BeenNotifiedCanApplyForConditionalOrder()
                     ) {
-                        notifyApplicant1(caseDetails, caseData, user, serviceAuthorization);
+                        notifyApplicant1(caseDetails, user, serviceAuthorization);
                     }
                 } catch (final CcdManagementException e) {
                     log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
@@ -95,7 +95,7 @@ public class SystemNotifyApplicant1ApplyForConditionalOrder implements Runnable 
         }
     }
 
-    private void notifyApplicant1(CaseDetails caseDetails, CaseData caseData, User user, String serviceAuth) {
+    private void notifyApplicant1(CaseDetails caseDetails, User user, String serviceAuth) {
         log.info(
             "20 weeks has passed since due date for Case id {} - notifying Applicant 1 that they can apply for a Conditional Order",
             caseDetails.getId());
