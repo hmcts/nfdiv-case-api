@@ -23,7 +23,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Collections.emptyList;
-import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -71,7 +70,6 @@ class ScheduleCaseServiceTest {
 
         var user = mock(User.class);
 
-        when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_SYSTEM_AUTHORISATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
 
@@ -88,7 +86,7 @@ class ScheduleCaseServiceTest {
             .data(bulkActionCaseData)
             .build();
 
-        scheduleCaseService.updateCourtHearingDetailsForCasesInBulk(bulkActionCaseDetails);
+        scheduleCaseService.updateCourtHearingDetailsForCasesInBulk(bulkActionCaseDetails, TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         verify(bulkTriggerService).bulkTrigger(
             eq(bulkActionCaseData.getBulkListCaseDetails()),
@@ -122,7 +120,6 @@ class ScheduleCaseServiceTest {
 
         var user = mock(User.class);
 
-        when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_SYSTEM_AUTHORISATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
 
@@ -142,7 +139,7 @@ class ScheduleCaseServiceTest {
             SERVICE_AUTHORIZATION
         );
 
-        scheduleCaseService.updateCourtHearingDetailsForCasesInBulk(bulkActionCaseDetails);
+        scheduleCaseService.updateCourtHearingDetailsForCasesInBulk(bulkActionCaseDetails, TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         verify(bulkTriggerService).bulkTrigger(
             eq(bulkActionCaseData.getBulkListCaseDetails()),
@@ -181,7 +178,6 @@ class ScheduleCaseServiceTest {
 
         var user = mock(User.class);
 
-        when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_SYSTEM_AUTHORISATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
 
@@ -202,7 +198,7 @@ class ScheduleCaseServiceTest {
                 SERVICE_AUTHORIZATION
             );
 
-        scheduleCaseService.updateCourtHearingDetailsForCasesInBulk(bulkActionCaseDetails);
+        scheduleCaseService.updateCourtHearingDetailsForCasesInBulk(bulkActionCaseDetails, TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         verify(bulkTriggerService).bulkTrigger(
             eq(bulkActionCaseData.getBulkListCaseDetails()),

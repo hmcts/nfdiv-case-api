@@ -16,9 +16,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 
-import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCaseErrors.SYSTEM_BULK_CASE_ERRORS;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
@@ -31,9 +29,6 @@ public class ScheduleCaseService {
     private BulkTriggerService bulkTriggerService;
 
     @Autowired
-    private HttpServletRequest request;
-
-    @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
     @Autowired
@@ -43,11 +38,11 @@ public class ScheduleCaseService {
     private IdamService idamService;
 
     @Async
-    public void updateCourtHearingDetailsForCasesInBulk(final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails) {
+    public void updateCourtHearingDetailsForCasesInBulk(final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
+                                                        final String authorization) {
         final BulkActionCaseData bulkActionCaseData = bulkCaseDetails.getData();
 
-        final String requestHeader = request.getHeader(AUTHORIZATION);
-        final User user = idamService.retrieveUser(requestHeader);
+        final User user = idamService.retrieveUser(authorization);
         final String serviceAuth = authTokenGenerator.generate();
 
         final List<ListValue<BulkListCaseDetails>> unprocessedBulkCases = bulkTriggerService.bulkTrigger(
