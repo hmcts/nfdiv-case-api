@@ -81,7 +81,7 @@ public class SystemRemindApplicant2Task implements Runnable {
                     if (!reminderDate.isAfter(LocalDate.now()) && caseData.getCaseInvite().getAccessCode() != null
                         && !caseData.getApplication().isApplicant2ReminderSent()
                     ) {
-                        notifyApplicant2(caseDetails, caseData, reminderDate, user, serviceAuthorization);
+                        notifyApplicant2(caseDetails, reminderDate, user, serviceAuthorization);
                     }
                 } catch (final CcdManagementException e) {
                     log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
@@ -100,12 +100,13 @@ public class SystemRemindApplicant2Task implements Runnable {
         }
     }
 
-    private void notifyApplicant2(CaseDetails caseDetails, CaseData caseData, LocalDate reminderDate, User user, String serviceAuth) {
+    private void notifyApplicant2(CaseDetails caseDetails, LocalDate reminderDate, User user, String serviceAuth) {
         log.info("Reminder date {} for Case id {} is on/before current date - sending reminder to Applicant 2",
             reminderDate,
             caseDetails.getId()
         );
 
+        caseDetails.getData().put(NOTIFICATION_FLAG, YesOrNo.YES);
         ccdUpdateService.submitEvent(caseDetails, SYSTEM_REMIND_APPLICANT2, user, serviceAuth);
     }
 }
