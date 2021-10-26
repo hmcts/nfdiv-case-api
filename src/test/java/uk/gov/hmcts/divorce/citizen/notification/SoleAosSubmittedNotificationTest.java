@@ -132,7 +132,7 @@ public class SoleAosSubmittedNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(YOUR_UNION, YOUR_DIVORCE.toLowerCase(Locale.ROOT)),
-                hasEntry("apply for CO date", data.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER))
+                hasEntry("apply for CO date", data.getDueDate().format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
@@ -158,7 +158,7 @@ public class SoleAosSubmittedNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(YOUR_UNION, ENDING_YOUR_CIVIL_PARTNERSHIP.toLowerCase(Locale.ROOT)),
-                hasEntry("apply for CO date", data.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER))
+                hasEntry("apply for CO date", data.getDueDate().format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
