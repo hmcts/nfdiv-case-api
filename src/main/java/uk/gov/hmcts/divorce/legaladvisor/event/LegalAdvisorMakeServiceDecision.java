@@ -25,6 +25,7 @@ import java.util.UUID;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
@@ -89,6 +90,8 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
 
         State endState = details.getState();
 
+        log.info("Application end state is {}", endState);
+
         if (serviceApplication.getServiceApplicationGranted().toBoolean()) {
             log.info("Service application granted for case id {}", details.getId());
             serviceApplication.setServiceApplicationDecisionDate(LocalDate.now(clock));
@@ -109,7 +112,13 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
                     DocumentType.DEEMED_AS_SERVICE_GRANTED
                 );
             }
+        } else {
+            // TODO - implement optional state logic under ticket NFDIV-1215
+            log.info("ServiceApplication refused. Due date is {}", caseDataCopy.getDueDate());
+            endState = AwaitingAos;
         }
+
+        caseDataCopy.archiveAlternativeServiceApplicationOnCompletion();
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseDataCopy)
