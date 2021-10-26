@@ -15,6 +15,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.time.LocalDate;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -81,6 +83,7 @@ class CitizenSubmitAosTest {
 
         final CaseData caseData = caseData();
         caseData.setAcknowledgementOfService(acknowledgementOfService);
+        caseData.getApplication().setIssueDate(LocalDate.now());
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -92,6 +95,7 @@ class CitizenSubmitAosTest {
         verifyNoMoreInteractions(soleAosSubmittedNotification);
 
         assertThat(response.getState()).isEqualTo(PendingDispute);
+        assertThat(response.getData().getDueDate()).isEqualTo(response.getData().getApplication().getIssueDate().plusDays(37));
         assertThat(response.getErrors()).isNull();
     }
 
@@ -106,6 +110,7 @@ class CitizenSubmitAosTest {
 
         final CaseData caseData = caseData();
         caseData.setAcknowledgementOfService(acknowledgementOfService);
+        caseData.getApplication().setIssueDate(LocalDate.now());
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -117,6 +122,7 @@ class CitizenSubmitAosTest {
         verifyNoMoreInteractions(soleAosSubmittedNotification);
 
         assertThat(response.getState()).isEqualTo(Holding);
+        assertThat(response.getData().getDueDate()).isEqualTo(response.getData().getApplication().getIssueDate().plusDays(141));
         assertThat(response.getErrors()).isNull();
     }
 }
