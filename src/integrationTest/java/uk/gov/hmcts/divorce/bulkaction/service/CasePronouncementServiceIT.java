@@ -1,5 +1,7 @@
 package uk.gov.hmcts.divorce.bulkaction.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +14,9 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Court;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdCaseDataContentProvider;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -28,33 +32,28 @@ import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CreateBulkList.CREATE_BULK_LIST;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.*;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetailsListValue;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @DirtiesContext
-public class ScheduleCaseServiceIT {
+public class CasePronouncementServiceIT {
 
     private static final String DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY = "No Fault Divorce case submission event";
     private static final String DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION = "Submitting No Fault Divorce Case Event";
 
     @Autowired
-    private ScheduleCaseService scheduleCaseService;
+    private CasePronouncementService casePronouncementService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @MockBean
     private CoreCaseDataApi coreCaseDataApi;
@@ -93,7 +92,7 @@ public class ScheduleCaseServiceIT {
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         final StartEventResponse startEventResponse = StartEventResponse.builder()
-            .eventId(CREATE_BULK_LIST)
+            .eventId(SYSTEM_PRONOUNCE_CASE)
             .token("startEventToken")
             .caseDetails(getCaseDetails())
             .build();
@@ -106,7 +105,7 @@ public class ScheduleCaseServiceIT {
                 JURISDICTION,
                 CASE_TYPE,
                 TEST_CASE_ID.toString(),
-                SYSTEM_UPDATE_CASE_COURT_HEARING))
+                SYSTEM_PRONOUNCE_CASE))
             .thenReturn(startEventResponse);
 
         final CaseDataContent caseDataContent = mock(CaseDataContent.class);
@@ -130,7 +129,7 @@ public class ScheduleCaseServiceIT {
             caseDataContent
         )).thenReturn(getCaseDetails());
 
-        scheduleCaseService.updateCourtHearingDetailsForCasesInBulk(bulkActionCaseDetails, CASEWORKER_AUTH_TOKEN);
+        casePronouncementService.pronounceCases(bulkActionCaseDetails, CASEWORKER_AUTH_TOKEN);
 
         verify(coreCaseDataApi)
             .startEventForCaseWorker(
@@ -140,7 +139,7 @@ public class ScheduleCaseServiceIT {
                 JURISDICTION,
                 CASE_TYPE,
                 TEST_CASE_ID.toString(),
-                SYSTEM_UPDATE_CASE_COURT_HEARING
+                SYSTEM_PRONOUNCE_CASE
             );
 
         verify(ccdCaseDataContentProvider)
@@ -163,9 +162,15 @@ public class ScheduleCaseServiceIT {
     }
 
     private uk.gov.hmcts.reform.ccd.client.model.CaseDetails getCaseDetails() {
+        CaseData caseData = CaseData.builder()
+            .conditionalOrder(ConditionalOrder.builder()
+                .dateAndTimeOfHearing(LocalDateTime.of(2021, 10, 26, 10, 0, 0))
+                .build())
+            .finalOrder(FinalOrder.builder().build())
+            .build();
+
         return uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
-            .data(Map.of("dateAndTimeOfHearing", "2021-01-18'T'00:00:00.000",
-                "courtName", "serviceCentre"))
+            .data(objectMapper.convertValue(caseData, new TypeReference<>(){}))
             .build();
     }
 }

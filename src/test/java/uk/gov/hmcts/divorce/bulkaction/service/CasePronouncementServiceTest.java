@@ -29,14 +29,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCaseErrors.SYSTEM_BULK_CASE_ERRORS;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.feignException;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetailsListValue;
 
 @ExtendWith(MockitoExtension.class)
-class ScheduleCaseServiceTest {
+public class CasePronouncementServiceTest {
 
     @Mock
     private BulkTriggerService bulkTriggerService;
@@ -54,11 +54,10 @@ class ScheduleCaseServiceTest {
     private CcdUpdateService ccdUpdateService;
 
     @InjectMocks
-    private ScheduleCaseService scheduleCaseService;
+    private CasePronouncementService casePronouncementService;
 
     @Test
-    void shouldSuccessfullyUpdateCourtHearingDetailsForCasesInBulk() {
-
+    void shouldSuccessfullyPronounceBulkCases() {
         var bulkActionCaseData = BulkActionCaseData
             .builder()
             .dateAndTimeOfHearing(LocalDateTime.of(2021, 11, 10, 0, 0, 0))
@@ -73,7 +72,7 @@ class ScheduleCaseServiceTest {
 
         when(bulkTriggerService.bulkTrigger(
             eq(bulkActionCaseData.getBulkListCaseDetails()),
-            eq(SYSTEM_UPDATE_CASE_COURT_HEARING),
+            eq(SYSTEM_PRONOUNCE_CASE),
             any(CaseTask.class),
             eq(user),
             eq(SERVICE_AUTHORIZATION)
@@ -84,11 +83,11 @@ class ScheduleCaseServiceTest {
             .data(bulkActionCaseData)
             .build();
 
-        scheduleCaseService.updateCourtHearingDetailsForCasesInBulk(bulkActionCaseDetails, TEST_SYSTEM_AUTHORISATION_TOKEN);
+        casePronouncementService.pronounceCases(bulkActionCaseDetails, TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         verify(bulkTriggerService).bulkTrigger(
             eq(bulkActionCaseData.getBulkListCaseDetails()),
-            eq(SYSTEM_UPDATE_CASE_COURT_HEARING),
+            eq(SYSTEM_PRONOUNCE_CASE),
             any(CaseTask.class),
             eq(user),
             eq(SERVICE_AUTHORIZATION)
@@ -98,7 +97,7 @@ class ScheduleCaseServiceTest {
     }
 
     @Test
-    void shouldSuccessfullyUpdateErrorBulkCaseListInBulkCaseWhenUpdatingCourtHearingDetailsFailsForMainCase() {
+    void shouldSuccessfullyUpdateErrorBulkCaseListInBulkCaseWhenCasePronouncementFailsForMainCase() {
         var bulkListCaseDetailsListValue1 = getBulkListCaseDetailsListValue("1");
         var bulkListCaseDetailsListValue2 = getBulkListCaseDetailsListValue("2");
         var bulkActionCaseData = BulkActionCaseData
@@ -124,7 +123,7 @@ class ScheduleCaseServiceTest {
         var unprocessedBulkCases = List.of(bulkListCaseDetailsListValue2);
         when(bulkTriggerService.bulkTrigger(
             eq(bulkActionCaseData.getBulkListCaseDetails()),
-            eq(SYSTEM_UPDATE_CASE_COURT_HEARING),
+            eq(SYSTEM_PRONOUNCE_CASE),
             any(CaseTask.class),
             eq(user),
             eq(SERVICE_AUTHORIZATION)
@@ -137,11 +136,11 @@ class ScheduleCaseServiceTest {
             SERVICE_AUTHORIZATION
         );
 
-        scheduleCaseService.updateCourtHearingDetailsForCasesInBulk(bulkActionCaseDetails, TEST_SYSTEM_AUTHORISATION_TOKEN);
+        casePronouncementService.pronounceCases(bulkActionCaseDetails, TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         verify(bulkTriggerService).bulkTrigger(
             eq(bulkActionCaseData.getBulkListCaseDetails()),
-            eq(SYSTEM_UPDATE_CASE_COURT_HEARING),
+            eq(SYSTEM_PRONOUNCE_CASE),
             any(CaseTask.class),
             eq(user),
             eq(SERVICE_AUTHORIZATION)
@@ -156,7 +155,7 @@ class ScheduleCaseServiceTest {
     }
 
     @Test
-    void shouldNotUpdateErrorBulkCaseListInBulkCaseWhenUpdatingCourtHearingDetailsFailsForMainCaseAndBulkCaseUpdateThrowsError() {
+    void shouldNotUpdateErrorBulkCaseListInBulkCaseWhenCasePronouncementFailsForMainCaseAndBulkCaseUpdateThrowsError() {
         var bulkListCaseDetailsListValue1 = getBulkListCaseDetailsListValue("1");
         var bulkListCaseDetailsListValue2 = getBulkListCaseDetailsListValue("2");
         var bulkActionCaseData = BulkActionCaseData
@@ -182,7 +181,7 @@ class ScheduleCaseServiceTest {
         var unprocessedBulkCases = List.of(bulkListCaseDetailsListValue2);
         when(bulkTriggerService.bulkTrigger(
             eq(bulkActionCaseData.getBulkListCaseDetails()),
-            eq(SYSTEM_UPDATE_CASE_COURT_HEARING),
+            eq(SYSTEM_PRONOUNCE_CASE),
             any(CaseTask.class),
             eq(user),
             eq(SERVICE_AUTHORIZATION)
@@ -196,11 +195,11 @@ class ScheduleCaseServiceTest {
                 SERVICE_AUTHORIZATION
             );
 
-        scheduleCaseService.updateCourtHearingDetailsForCasesInBulk(bulkActionCaseDetails, TEST_SYSTEM_AUTHORISATION_TOKEN);
+        casePronouncementService.pronounceCases(bulkActionCaseDetails, TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         verify(bulkTriggerService).bulkTrigger(
             eq(bulkActionCaseData.getBulkListCaseDetails()),
-            eq(SYSTEM_UPDATE_CASE_COURT_HEARING),
+            eq(SYSTEM_PRONOUNCE_CASE),
             any(CaseTask.class),
             eq(user),
             eq(SERVICE_AUTHORIZATION)

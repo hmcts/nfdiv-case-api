@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,4 +31,9 @@ public class FinalOrder {
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateFinalOrderEligibleFrom;
+
+    @JsonIgnore
+    public LocalDate getDateFinalOrderEligibleFrom(LocalDateTime dateTime) {
+        return dateTime.toLocalDate().plusWeeks(6).plusDays(1);
+    }
 }

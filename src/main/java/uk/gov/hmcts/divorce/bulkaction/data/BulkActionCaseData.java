@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.bulkaction.data;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -87,4 +88,9 @@ public class BulkActionCaseData {
         access = {CaseworkerAccess.class}
     )
     private List<ListValue<BulkListCaseDetails>> erroredCaseDetails;
+
+    @JsonIgnore
+    public LocalDate getDateFinalOrderEligibleFrom(LocalDateTime dateTime) {
+        return dateTime.toLocalDate().plusWeeks(6).plusDays(1);
+    }
 }

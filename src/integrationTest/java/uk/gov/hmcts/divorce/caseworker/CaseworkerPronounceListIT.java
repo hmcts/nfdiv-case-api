@@ -111,7 +111,8 @@ public class CaseworkerPronounceListIT {
             .andExpect(
                 jsonPath("$.data.pronouncedDate").value(LocalDate.now().toString()))
             .andExpect(
-                jsonPath("$.data.dateFinalOrderEligibleFrom").value(LocalDate.now().plusWeeks(6).plusDays(1).toString()));
+                jsonPath("$.data.dateFinalOrderEligibleFrom")
+                    .value(caseData.getDateFinalOrderEligibleFrom(LocalDateTime.now()).toString()));
     }
 
     @Test
