@@ -22,9 +22,6 @@ public class CreditAccountPaymentRequest {
     @JsonProperty("amount")
     private String amount;
 
-    @JsonProperty("case_reference")
-    private String caseReference;
-
     @JsonProperty("fees")
     private List<PaymentItem> fees;
 
@@ -36,6 +33,9 @@ public class CreditAccountPaymentRequest {
 
     @JsonProperty("site_id")
     private String siteId;
+
+    @JsonProperty("case_type")
+    private String caseType;
 
     @JsonProperty("description")
     private String description;

@@ -110,7 +110,6 @@ public class CaseworkerRejectedIT {
             .divorceOrDissolution(DIVORCE)
             .application(application)
             .divorceUnit(Court.SERVICE_CENTRE)
-            .selectedDivorceCentreSiteId("AA07")
             .build();
     }
 
