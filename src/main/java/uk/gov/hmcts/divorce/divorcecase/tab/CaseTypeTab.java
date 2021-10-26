@@ -167,7 +167,6 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("successfulServedByBailiff")
             .field("reasonFailureToServeByBailiff")
             .field("alternativeServiceApplications");
-
     }
 
     private void buildConditionalOrderTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {

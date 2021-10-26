@@ -326,4 +326,44 @@ public class CaseData {
 
         return sortedDocuments;
     }
+
+    public static void archiveAlternativeServiceApplicationOnCompletion(CaseData caseData) {
+
+        AlternativeService alternativeService = caseData.getAlternativeService();
+
+        if (null != alternativeService) {
+
+            alternativeService.setReceivedServiceAddedDate(LocalDate.now());
+
+            if (isEmpty(caseData.getAlternativeServiceApplications())) {
+
+                List<ListValue<AlternativeService>> listValues = new ArrayList<>();
+
+                var listValue = ListValue
+                    .<AlternativeService>builder()
+                    .id("1")
+                    .value(alternativeService)
+                    .build();
+
+                listValues.add(listValue);
+                caseData.setAlternativeServiceApplications(listValues);
+
+            } else {
+
+                var listValue = ListValue
+                    .<AlternativeService>builder()
+                    .value(alternativeService)
+                    .build();
+
+                int listValueIndex = 0;
+                caseData.getAlternativeServiceApplications().add(0, listValue);
+                for (ListValue<AlternativeService> asListValue : caseData.getAlternativeServiceApplications()) {
+                    asListValue.setId(String.valueOf(listValueIndex++));
+                }
+            }
+            // Null the current AlternativeService object instance in the CaseData so that a new one can be created
+            caseData.setAlternativeService(null);
+        }
+    }
+
 }
