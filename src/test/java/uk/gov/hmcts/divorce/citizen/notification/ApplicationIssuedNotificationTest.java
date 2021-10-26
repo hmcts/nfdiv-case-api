@@ -38,7 +38,6 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.ENDING_YOU
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PROCESS;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.REMINDER_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.REMINDER_APPLICATION_VALUE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.REVIEW_DEADLINE_DATE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.YOUR_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.YOUR_UNION;
