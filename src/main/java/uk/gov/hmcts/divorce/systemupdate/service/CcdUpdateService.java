@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
+import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
+import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
@@ -194,5 +196,18 @@ public class CcdUpdateService {
             caseId,
             true,
             caseDataContent);
+    }
+
+    public void submitBulkActionEvent(final uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState> caseDetails,
+                                      final String eventId,
+                                      final User user,
+                                      final String serviceAuth) {
+        updateBulkCaseWithRetries(
+            caseDetailsConverter.convertToReformModelFromBulkActionCaseDetails(caseDetails),
+            eventId,
+            user,
+            serviceAuth,
+            caseDetails.getId()
+        );
     }
 }

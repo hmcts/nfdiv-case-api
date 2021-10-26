@@ -33,6 +33,5 @@ class SolicitorCourtDetailsTest {
         final var result = solicitorCourtDetails.apply(caseDetails);
 
         assertThat(result.getData().getDivorceUnit(), is(SERVICE_CENTRE));
-        assertThat(result.getData().getSelectedDivorceCentreSiteId(), is(SERVICE_CENTRE.getSiteId()));
     }
 }
