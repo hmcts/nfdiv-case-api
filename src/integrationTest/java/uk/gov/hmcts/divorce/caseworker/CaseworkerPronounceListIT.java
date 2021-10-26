@@ -114,47 +114,4 @@ public class CaseworkerPronounceListIT {
                 jsonPath("$.data.dateFinalOrderEligibleFrom")
                     .value(caseData.getDateFinalOrderEligibleFrom(LocalDateTime.now()).toString()));
     }
-
-    @Test
-    void shouldSubmit() throws Exception {
-        final BulkActionCaseData caseData = new BulkActionCaseData();
-        caseData.setDateAndTimeOfHearing(LocalDateTime.now());
-        caseData.setBulkListCaseDetails(new ArrayList<>());
-        caseData.setErroredCaseDetails(new ArrayList<>());
-
-        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
-
-        CallbackRequest request = CallbackRequest
-            .builder()
-            .eventId(CASEWORKER_PRONOUNCE_LIST)
-            .caseDetailsBefore(CaseDetails.builder().build())
-            .caseDetails(
-                CaseDetails
-                    .builder()
-                    .caseTypeId(CASE_TYPE)
-                    .data(objectMapper.convertValue(caseData, new TypeReference<>(){}))
-                    .id(TEST_CASE_ID)
-                    .build()
-            )
-            .build();
-
-        mockMvc.perform(post(SUBMITTED_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(request))
-            .accept(APPLICATION_JSON))
-            .andExpect(
-                status().isOk());
-    }
-
-    @Test
-    void givenRequestBodyIsNullWhenSubmittedCallbackInvokedThenReturnBadRequest() throws Exception {
-        mockMvc.perform(post(SUBMITTED_URL)
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .header(AUTHORIZATION, AUTH_HEADER_VALUE)
-            .contentType(APPLICATION_JSON)
-            .accept(APPLICATION_JSON))
-            .andExpect(status().isBadRequest());
-    }
 }
