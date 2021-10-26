@@ -17,6 +17,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetailsListValue;
 
 @ExtendWith(MockitoExtension.class)
 public class BulkActionUtilTest {
@@ -156,5 +157,38 @@ public class BulkActionUtilTest {
                     .build())
                 .build())
             .collect(toList());
+    }
+
+    @Test
+    void shouldBulkListCaseDetailsWhenErroredListIsEmpty() {
+        List<ListValue<BulkListCaseDetails>> result = bulkActionUtil.filterProcessedCases(
+            emptyList(),
+            List.of(getBulkListCaseDetailsListValue("1")),
+            1L
+        );
+
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    void shouldReturnProcessedCases() {
+        List<ListValue<BulkListCaseDetails>> result = bulkActionUtil.filterProcessedCases(
+            List.of(getBulkListCaseDetailsListValue("1")),
+            List.of(getBulkListCaseDetailsListValue("2")),
+            1L
+        );
+
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    void shouldReturnEmptyListWhenErroredCaseIsOnlyCaseInBulkListCaseDetails() {
+        List<ListValue<BulkListCaseDetails>> result = bulkActionUtil.filterProcessedCases(
+            List.of(getBulkListCaseDetailsListValue("1")),
+            List.of(getBulkListCaseDetailsListValue("1")),
+            1L
+        );
+
+        assertThat(result).hasSize(0);
     }
 }

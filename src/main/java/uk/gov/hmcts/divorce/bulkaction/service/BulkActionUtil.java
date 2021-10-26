@@ -45,15 +45,15 @@ public class BulkActionUtil {
     public List<ListValue<BulkListCaseDetails>> filterProcessedCases(final List<ListValue<BulkListCaseDetails>> unprocessedBulkCases,
                                                                       final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails,
                                                                       final Long bulkCaseId) {
+        if (isEmpty(unprocessedBulkCases)) {
+            log.info("No unprocessed cases in bulk list for case id {} ", bulkCaseId);
+            return bulkListCaseDetails;
+        }
+
         List<String> unprocessedCaseIds = unprocessedBulkCases
             .stream()
             .map(lv -> lv.getValue().getCaseReference().getCaseReference())
             .collect(toList());
-
-        if (isEmpty(unprocessedCaseIds)) {
-            log.info("No unprocessed cases in bulk list for case id {} ", bulkCaseId);
-            return bulkListCaseDetails;
-        }
 
         return bulkListCaseDetails
             .stream()

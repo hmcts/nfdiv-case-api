@@ -25,7 +25,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Pronounced;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerPronounceList.CASEWORKER_PRONOUNCE_LIST;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createBulkActionConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -94,7 +93,6 @@ class CaseworkerPronounceListTest {
 
         final var result = caseworkerPronounceList.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(result.getState()).isEqualTo(Pronounced);
         assertThat(result.getData().getPronouncedDate()).isEqualTo(LocalDate.now());
         assertThat(result.getData().getDateFinalOrderEligibleFrom())
             .isEqualTo(result.getData().getDateFinalOrderEligibleFrom(LocalDateTime.now()));

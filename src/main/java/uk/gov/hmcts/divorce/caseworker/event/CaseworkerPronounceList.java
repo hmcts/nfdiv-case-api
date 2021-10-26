@@ -87,7 +87,6 @@ public class CaseworkerPronounceList implements CCDConfig<BulkActionCaseData, Bu
 
         return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder()
             .data(caseData)
-            .state(Pronounced)
             .build();
     }
 
