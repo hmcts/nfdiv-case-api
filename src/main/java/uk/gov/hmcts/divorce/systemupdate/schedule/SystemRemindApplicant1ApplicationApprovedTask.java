@@ -2,9 +2,10 @@ package uk.gov.hmcts.divorce.systemupdate.schedule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.divorce.citizen.notification.JointApplicationOverdueNotification;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
@@ -19,23 +20,26 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 import java.time.LocalDate;
 import java.util.List;
 
+import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicant1ApplicationReviewed.SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DUE_DATE;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
 @Component
 @Slf4j
 public class SystemRemindApplicant1ApplicationApprovedTask implements Runnable {
 
-    private static final String FLAG = "applicant1ReminderSent";
+    private static final String NOTIFICATION_FLAG = "applicant1ReminderSent";
 
     @Autowired
     private CcdSearchService ccdSearchService;
 
     @Autowired
     private CcdUpdateService ccdUpdateService;
-
-    @Autowired
-    private JointApplicationOverdueNotification jointApplicationOverdueNotification;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -54,8 +58,14 @@ public class SystemRemindApplicant1ApplicationApprovedTask implements Runnable {
         final String serviceAuthorization = authTokenGenerator.generate();
 
         try {
+            final BoolQueryBuilder query =
+                boolQuery()
+                    .must(matchQuery(STATE, Applicant2Approved))
+                    .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
+                    .mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YesOrNo.YES));
+
             final List<CaseDetails> casesInAwaitingApplicant1Response =
-                ccdSearchService.searchForAllCasesWithStateOf(Applicant2Approved, FLAG, user, serviceAuthorization);
+                ccdSearchService.searchForAllCasesWithQuery(Applicant2Approved, query, user, serviceAuthorization);
 
             for (final CaseDetails caseDetails : casesInAwaitingApplicant1Response) {
                 try {
@@ -66,7 +76,7 @@ public class SystemRemindApplicant1ApplicationApprovedTask implements Runnable {
                     if (!reminderDate.isAfter(LocalDate.now())
                         && !caseData.getApplication().isApplicant1ReminderSent()
                     ) {
-                        notifyApplicant1(caseDetails, caseData, reminderDate, user, serviceAuthorization);
+                        notifyApplicant1(caseDetails, reminderDate, user, serviceAuthorization);
                     } else {
                         log.info("Case id {} not eligible for SystemRemindApplicant1ApplicationApprovedTask as Reminder Date is: {}",
                             caseDetails.getId(), reminderDate);
@@ -88,13 +98,13 @@ public class SystemRemindApplicant1ApplicationApprovedTask implements Runnable {
         }
     }
 
-    private void notifyApplicant1(CaseDetails caseDetails, CaseData caseData, LocalDate reminderDate, User user, String serviceAuth) {
+    private void notifyApplicant1(CaseDetails caseDetails, LocalDate reminderDate, User user, String serviceAuth) {
         log.info("Reminder date {} for Case id {} is on/before current date - sending reminder to Applicant 1",
             reminderDate,
             caseDetails.getId()
         );
 
-        jointApplicationOverdueNotification.sendApplicationApprovedReminderToApplicant1(caseData, caseDetails.getId());
+        caseDetails.getData().put(NOTIFICATION_FLAG, YesOrNo.YES);
         ccdUpdateService.submitEvent(caseDetails, SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED, user, serviceAuth);
     }
 }

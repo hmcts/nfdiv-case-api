@@ -190,15 +190,14 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("coDecisionDate")
             .field("coGranted")
             .field("coClaimsGranted")
-            .field("coWhoPaysCosts")
             .field("coTypeCostsDecision")
             .field("coClaimsCostsOrderInformation", "coTypeCostsDecision=\"additionalInformation\"")
             .field("coRefusalDecision")
-            .field("coRefusalAdminErrorInfo", "coRefusalDecision=\"adminError\"")
+            .field("coRefusalAdminErrorInfo")
             .field("coRefusalRejectionReason")
-            .field("coRefusalRejectionAdditionalInfo", "coRefusalRejectionReason=\"other\"")
+            .field("coRefusalRejectionAdditionalInfo")
             .field("coRefusalClarificationReason")
-            .field("coRefusalClarificationAdditionalInfo", "coRefusalClarificationReason=\"other\"")
+            .field("coRefusalClarificationAdditionalInfo")
             .label("labelCoClarificationResponse", null, "## Clarification Response")
             .field("coClarificationResponse")
             .field("coClarificationUploadDocuments")
@@ -211,14 +210,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("dateFinalOrderEligibleFrom")
             .field("coOutcomeCase")
             .label("labelJudgeCostsDecision",
-                "coJudgeCostsClaimGranted=\"*\" "
-                    + "OR coJudgeWhoPaysCosts=\"*\" "
-                    + "OR coJudgeTypeCostsDecision=\"*\" "
-                    + "OR coJudgeCostsOrderAdditionalInfo=\"*\"",
+                "coJudgeCostsClaimGranted=\"*\" OR coJudgeCostsOrderAdditionalInfo=\"*\"",
                 "## Judge costs decision")
             .field("coJudgeCostsClaimGranted")
-            .field("coJudgeWhoPaysCosts")
-            .field("coJudgeTypeCostsDecision")
-            .field("coJudgeCostsOrderAdditionalInfo", "coJudgeTypeCostsDecision=\"additionalInformation\"");
+            .field("coJudgeCostsOrderAdditionalInfo");
     }
 }

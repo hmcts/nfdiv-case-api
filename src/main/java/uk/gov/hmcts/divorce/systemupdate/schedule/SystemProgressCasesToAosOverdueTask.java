@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule;
 
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -17,8 +18,12 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemProgressCaseToAosOverdue.SYSTEM_PROGRESS_TO_AOS_OVERDUE;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
 @Component
 @Slf4j
@@ -49,7 +54,13 @@ public class SystemProgressCasesToAosOverdueTask implements Runnable {
         final String serviceAuth = authTokenGenerator.generate();
 
         try {
-            final List<CaseDetails> casesInAwaitingAosState = ccdSearchService.searchForAllCasesWithStateOf(AwaitingAos, user, serviceAuth);
+            final BoolQueryBuilder query =
+                boolQuery()
+                    .must(matchQuery(STATE, AwaitingAos))
+                    .filter(rangeQuery(CcdSearchService.DUE_DATE).lte(LocalDate.now()));
+
+            final List<CaseDetails> casesInAwaitingAosState =
+                ccdSearchService.searchForAllCasesWithQuery(AwaitingAos, query, user, serviceAuth);
 
             for (final CaseDetails caseDetails : casesInAwaitingAosState) {
                 try {
