@@ -19,10 +19,10 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-public class ListValueUtilTest {
+public class BulkActionUtilTest {
 
     @InjectMocks
-    private ListValueUtil listValueUtil;
+    private BulkActionUtil bulkActionUtil;
 
     @Test
     void shouldRemoveListValuesThatMatchFromList() {
@@ -37,7 +37,7 @@ public class ListValueUtilTest {
 
         final List<BulkListCaseDetails> removeListValues = asList(bulkListCaseDetails2, bulkListCaseDetails4);
 
-        final List<ListValue<BulkListCaseDetails>> result = listValueUtil.removeFromList(bulListValues, removeListValues);
+        final List<ListValue<BulkListCaseDetails>> result = bulkActionUtil.removeFromList(bulListValues, removeListValues);
 
         assertThat(result).hasSize(3);
         assertThat(result.get(0).getId()).isEqualTo("1");
@@ -65,7 +65,7 @@ public class ListValueUtilTest {
                 .build())
             .build());
 
-        final List<ListValue<BulkListCaseDetails>> result = listValueUtil.removeFromList(bulListValues, removeListValues);
+        final List<ListValue<BulkListCaseDetails>> result = bulkActionUtil.removeFromList(bulListValues, removeListValues);
 
         assertThat(result).hasSize(5);
         assertThat(result.get(0).getId()).isEqualTo("1");
@@ -93,7 +93,7 @@ public class ListValueUtilTest {
 
         final List<BulkListCaseDetails> removeListValues = emptyList();
 
-        final List<ListValue<BulkListCaseDetails>> result = listValueUtil.removeFromList(bulListValues, removeListValues);
+        final List<ListValue<BulkListCaseDetails>> result = bulkActionUtil.removeFromList(bulListValues, removeListValues);
 
         assertThat(result).hasSize(5);
         assertThat(result.get(0).getId()).isEqualTo("1");
@@ -113,7 +113,7 @@ public class ListValueUtilTest {
         final List<ListValue<BulkListCaseDetails>> list = createListValues("1", "2", "3", "4", "5");
         final List<BulkListCaseDetails> expectedList = createList("1", "2", "3", "4", "5");
 
-        List<BulkListCaseDetails> result = listValueUtil.fromListValueToList(list);
+        List<BulkListCaseDetails> result = bulkActionUtil.fromListValueToList(list);
 
         assertThat(result).hasSize(5);
         assertThat(result).isEqualTo(expectedList);
@@ -124,7 +124,7 @@ public class ListValueUtilTest {
         final List<BulkListCaseDetails> list = createList("1", "2", "3", "4", "5");
         final List<ListValue<BulkListCaseDetails>> expectedList = createListValues("1", "2", "3", "4", "5");
 
-        List<ListValue<BulkListCaseDetails>> result = listValueUtil.fromListToListValue(list);
+        List<ListValue<BulkListCaseDetails>> result = bulkActionUtil.fromListToListValue(list);
 
         assertThat(result).hasSize(5);
         assertThat(result).isEqualTo(expectedList);

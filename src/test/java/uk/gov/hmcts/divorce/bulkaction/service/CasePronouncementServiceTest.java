@@ -26,7 +26,6 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCaseErrors.SYSTEM_BULK_CASE_ERRORS;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
@@ -52,6 +51,9 @@ public class CasePronouncementServiceTest {
 
     @Mock
     private CcdUpdateService ccdUpdateService;
+
+    @Mock
+    private BulkActionUtil bulkActionUtil;
 
     @InjectMocks
     private CasePronouncementService casePronouncementService;
@@ -93,7 +95,12 @@ public class CasePronouncementServiceTest {
             eq(SERVICE_AUTHORIZATION)
         );
 
-        verifyNoInteractions(ccdUpdateService);
+        verify(ccdUpdateService).submitBulkActionEvent(
+            eq(bulkActionCaseDetails),
+            eq(SYSTEM_BULK_CASE_ERRORS),
+            eq(user),
+            eq(SERVICE_AUTHORIZATION)
+        );
     }
 
     @Test

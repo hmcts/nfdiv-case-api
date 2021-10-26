@@ -17,7 +17,6 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.List;
 
-import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCaseErrors.SYSTEM_BULK_CASE_ERRORS;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
@@ -38,14 +37,17 @@ public class CasePronouncementService {
     @Autowired
     private IdamService idamService;
 
+    @Autowired
+    private BulkActionUtil bulkActionUtil;
+
     @Async
     public void pronounceCases(final CaseDetails<BulkActionCaseData, BulkActionState> details,
                                final String authorization) {
+        final BulkActionCaseData bulkActionCaseData = details.getData();
 
         final User user = idamService.retrieveUser(authorization);
         final String serviceAuth = authTokenGenerator.generate();
 
-        final BulkActionCaseData bulkActionCaseData = details.getData();
         final List<ListValue<BulkListCaseDetails>> unprocessedBulkCases =
             bulkTriggerService.bulkTrigger(
                 bulkActionCaseData.getBulkListCaseDetails(),
@@ -66,22 +68,25 @@ public class CasePronouncementService {
                 user,
                 serviceAuth);
 
-        log.info("Unprocessed bulk cases {} ", unprocessedBulkCases);
+        log.info("Error bulk case details list size {}", unprocessedBulkCases.size());
 
-        if (!isEmpty(unprocessedBulkCases)) {
-            log.info("Error bulk case details list is not empty. Updating bulk case with error list");
-            bulkActionCaseData.setErroredCaseDetails(unprocessedBulkCases);
+        List<ListValue<BulkListCaseDetails>> processedBulkCases =
+            bulkActionUtil.filterProcessedCases(unprocessedBulkCases, bulkActionCaseData.getBulkListCaseDetails(), details.getId());
 
-            try {
-                ccdUpdateService.submitBulkActionEvent(
-                    details,
-                    SYSTEM_BULK_CASE_ERRORS,
-                    user,
-                    serviceAuth
-                );
-            } catch (final FeignException e) {
-                log.error("Update failed for bulk case id {} ", details.getId(), e);
-            }
+        log.info("Successfully processed bulk case details list size {}", processedBulkCases.size());
+
+        bulkActionCaseData.setErroredCaseDetails(unprocessedBulkCases);
+        bulkActionCaseData.setProcessedCaseDetails(processedBulkCases);
+
+        try {
+            ccdUpdateService.submitBulkActionEvent(
+                details,
+                SYSTEM_BULK_CASE_ERRORS,
+                user,
+                serviceAuth
+            );
+        } catch (final FeignException e) {
+            log.error("Update failed for bulk case id {} ", details.getId(), e);
         }
     }
 }

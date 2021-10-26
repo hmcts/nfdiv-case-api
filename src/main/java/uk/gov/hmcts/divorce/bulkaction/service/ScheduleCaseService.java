@@ -17,8 +17,6 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
-import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCaseErrors.SYSTEM_BULK_CASE_ERRORS;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
 
@@ -37,6 +35,9 @@ public class ScheduleCaseService {
 
     @Autowired
     private IdamService idamService;
+
+    @Autowired
+    private BulkActionUtil bulkActionUtil;
 
     @Async
     public void updateCourtHearingDetailsForCasesInBulk(final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
@@ -64,12 +65,12 @@ public class ScheduleCaseService {
             serviceAuth
         );
 
-        log.info("Error bulk case details list size{}", unprocessedBulkCases.size());
+        log.info("Error bulk case details list size {}", unprocessedBulkCases.size());
 
         List<ListValue<BulkListCaseDetails>> processedBulkCases =
-            filterProcessedCases(unprocessedBulkCases, bulkListCaseDetails, bulkCaseDetails.getId());
+            bulkActionUtil.filterProcessedCases(unprocessedBulkCases, bulkListCaseDetails, bulkCaseDetails.getId());
 
-        log.info("Successfully processed bulk case details list size{}", processedBulkCases.size());
+        log.info("Successfully processed bulk case details list size {}", processedBulkCases.size());
 
         bulkCaseDetails.getData().setErroredCaseDetails(unprocessedBulkCases);
         bulkCaseDetails.getData().setProcessedCaseDetails(processedBulkCases);
@@ -84,25 +85,5 @@ public class ScheduleCaseService {
         } catch (final FeignException e) {
             log.error("Update failed for bulk case id {} ", bulkCaseDetails.getId(), e);
         }
-    }
-
-    private List<ListValue<BulkListCaseDetails>> filterProcessedCases(final List<ListValue<BulkListCaseDetails>> unprocessedBulkCases,
-                                                                      final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails,
-                                                                      final Long bulkCaseId) {
-
-        List<String> unprocessedCaseIds = unprocessedBulkCases
-            .stream()
-            .map(lv -> lv.getValue().getCaseReference().getCaseReference())
-            .collect(toList());
-
-        if (isEmpty(unprocessedCaseIds)) {
-            log.info("No unprocessed cases in bulk list for case id {} ", bulkCaseId);
-            return bulkListCaseDetails;
-        }
-
-        return bulkListCaseDetails
-            .stream()
-            .filter(lv -> !unprocessedCaseIds.contains(lv.getValue().getCaseReference().getCaseReference()))
-            .collect(toList());
     }
 }
