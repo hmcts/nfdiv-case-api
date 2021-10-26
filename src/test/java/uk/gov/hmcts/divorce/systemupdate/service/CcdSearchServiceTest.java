@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.systemupdate.service;
 
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +26,6 @@ import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.elasticsearch.search.sort.SortOrder.ASC;
-import static org.elasticsearch.search.sort.SortOrder.DESC;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -59,48 +59,20 @@ class CcdSearchServiceTest {
     }
 
     @Test
-    void shouldReturnCasesWithGivenStateFromZeroToPageSizeOfFifty() {
-
-        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
-        final SearchResult expected = SearchResult.builder().build();
-        final int from = 0;
-        final int pageSize = 50;
-
-        SearchSourceBuilder sourceBuilder = SearchSourceBuilder
-            .searchSource()
-            .sort("data.issueDate", ASC)
-            .query(boolQuery().must(matchQuery("state", Holding)))
-            .from(from)
-            .size(pageSize);
-
-        when(coreCaseDataApi.searchCases(
-            SYSTEM_UPDATE_AUTH_TOKEN,
-            SERVICE_AUTHORIZATION,
-            CASE_TYPE,
-            sourceBuilder.toString()))
-            .thenReturn(expected);
-
-        final SearchResult result = ccdSearchService.searchForCasesInHolding(from, pageSize, user, SERVICE_AUTHORIZATION);
-
-        assertThat(result).isEqualTo(expected);
-    }
-
-    @Test
     void shouldReturnCasesWithGivenStateBeforeTodayWithoutFlag() {
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
         final int from = 0;
         final int pageSize = 100;
         final SearchResult expected = SearchResult.builder().total(PAGE_SIZE).cases(createCaseDetailsList(PAGE_SIZE)).build();
+        final BoolQueryBuilder query = boolQuery()
+            .must(matchQuery("state", AwaitingApplicant2Response))
+            .filter(rangeQuery("data.dueDate").lte(LocalDate.now()))
+            .mustNot(matchQuery("data.applicant2ReminderSent", YesOrNo.YES));
 
         SearchSourceBuilder sourceBuilder = SearchSourceBuilder
             .searchSource()
-            .sort("data.dueDate", DESC)
-            .query(
-                boolQuery()
-                    .must(matchQuery("state", AwaitingApplicant2Response))
-                    .filter(rangeQuery("data.dueDate").lte(LocalDate.now()))
-                    .mustNot(matchQuery("data.applicant2ReminderSent", YesOrNo.YES))
-            )
+            .sort("data.dueDate", ASC)
+            .query(query)
             .from(from)
             .size(pageSize);
 
@@ -111,8 +83,7 @@ class CcdSearchServiceTest {
             sourceBuilder.toString()))
             .thenReturn(expected);
 
-        final SearchResult result = ccdSearchService.searchForCasesWithStateOfDueDateBeforeWithoutFlagSet(
-            AwaitingApplicant2Response, from, pageSize, "applicant2ReminderSent", user, SERVICE_AUTHORIZATION);
+        final SearchResult result = ccdSearchService.searchForCasesWithQuery(from, pageSize, query, user, SERVICE_AUTHORIZATION);
 
         assertThat(result.getTotal()).isEqualTo(100);
         assertThat(result).isEqualTo(expected);
@@ -120,7 +91,9 @@ class CcdSearchServiceTest {
 
     @Test
     void shouldReturnAllCasesWithGivenState() {
-
+        final BoolQueryBuilder query = boolQuery()
+            .must(matchQuery("state", Submitted))
+            .filter(rangeQuery("data.dueDate").lte(LocalDate.now()));
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
         final SearchResult expected1 = SearchResult.builder().total(PAGE_SIZE).cases(createCaseDetailsList(PAGE_SIZE)).build();
         final SearchResult expected2 = SearchResult.builder().total(1).cases(createCaseDetailsList(1)).build();
@@ -138,13 +111,16 @@ class CcdSearchServiceTest {
             getSourceBuilder(PAGE_SIZE, PAGE_SIZE).toString()))
             .thenReturn(expected2);
 
-        final List<CaseDetails> searchResult = ccdSearchService.searchForAllCasesWithStateOf(Submitted, null, user, SERVICE_AUTHORIZATION);
+        final List<CaseDetails> searchResult = ccdSearchService.searchForAllCasesWithQuery(Submitted, query, user, SERVICE_AUTHORIZATION);
 
         assertThat(searchResult.size()).isEqualTo(101);
     }
 
     @Test
     void shouldReturnAllCasesInHolding() {
+        final BoolQueryBuilder query = boolQuery()
+            .must(matchQuery("state", Holding))
+            .filter(rangeQuery("data.dueDate").lte(LocalDate.now()));
 
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
         final SearchResult expected1 = SearchResult.builder().total(PAGE_SIZE).cases(createCaseDetailsList(PAGE_SIZE)).build();
@@ -152,15 +128,23 @@ class CcdSearchServiceTest {
 
         SearchSourceBuilder sourceBuilder1 = SearchSourceBuilder
             .searchSource()
-            .sort("data.issueDate", ASC)
-            .query(boolQuery().must(matchQuery("state", Holding)))
+            .sort("data.dueDate", ASC)
+            .query(
+                boolQuery()
+                    .must(matchQuery("state", Holding))
+                    .filter(rangeQuery("data.dueDate").lte(LocalDate.now()))
+            )
             .from(0)
             .size(PAGE_SIZE);
 
         SearchSourceBuilder sourceBuilder2 = SearchSourceBuilder
             .searchSource()
-            .sort("data.issueDate", ASC)
-            .query(boolQuery().must(matchQuery("state", Holding)))
+            .sort("data.dueDate", ASC)
+            .query(
+                boolQuery()
+                    .must(matchQuery("state", Holding))
+                    .filter(rangeQuery("data.dueDate").lte(LocalDate.now()))
+            )
             .from(PAGE_SIZE)
             .size(PAGE_SIZE);
 
@@ -177,7 +161,7 @@ class CcdSearchServiceTest {
             sourceBuilder2.toString()))
             .thenReturn(expected2);
 
-        final List<CaseDetails> searchResult = ccdSearchService.searchForAllCasesWithStateOf(Holding, null, user, SERVICE_AUTHORIZATION);
+        final List<CaseDetails> searchResult = ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, SERVICE_AUTHORIZATION);
 
         assertThat(searchResult.size()).isEqualTo(101);
     }
@@ -189,28 +173,22 @@ class CcdSearchServiceTest {
         final int from = 0;
         final SearchResult expected = SearchResult.builder().total(PAGE_SIZE).cases(createCaseDetailsList(PAGE_SIZE)).build();
         final SearchResult expected2 = SearchResult.builder().total(1).cases(createCaseDetailsList(1)).build();
+        final BoolQueryBuilder query = boolQuery()
+            .must(matchQuery("state", AwaitingApplicant2Response))
+            .filter(rangeQuery("data.dueDate").lte(LocalDate.now()))
+            .mustNot(matchQuery("data.applicant2ReminderSent", YesOrNo.YES));
 
         SearchSourceBuilder sourceBuilder = SearchSourceBuilder
             .searchSource()
-            .sort("data.dueDate", DESC)
-            .query(
-                boolQuery()
-                    .must(matchQuery("state", AwaitingApplicant2Response))
-                    .filter(rangeQuery("data.dueDate").lte(LocalDate.now()))
-                    .mustNot(matchQuery("data.applicant2ReminderSent", YesOrNo.YES))
-            )
+            .sort("data.dueDate", ASC)
+            .query(query)
             .from(from)
             .size(PAGE_SIZE);
 
         SearchSourceBuilder sourceBuilder2 = SearchSourceBuilder
             .searchSource()
-            .sort("data.dueDate", DESC)
-            .query(
-                boolQuery()
-                    .must(matchQuery("state", AwaitingApplicant2Response))
-                    .filter(rangeQuery("data.dueDate").lte(LocalDate.now()))
-                    .mustNot(matchQuery("data.applicant2ReminderSent", YesOrNo.YES))
-            )
+            .sort("data.dueDate", ASC)
+            .query(query)
             .from(PAGE_SIZE)
             .size(PAGE_SIZE);
 
@@ -228,8 +206,8 @@ class CcdSearchServiceTest {
             sourceBuilder2.toString()))
             .thenReturn(expected2);
 
-        final List<CaseDetails> searchResult = ccdSearchService.searchForAllCasesWithStateOf(
-            AwaitingApplicant2Response, "applicant2ReminderSent", user, SERVICE_AUTHORIZATION);
+        final List<CaseDetails> searchResult = ccdSearchService.searchForAllCasesWithQuery(
+            AwaitingApplicant2Response, query, user, SERVICE_AUTHORIZATION);
 
         assertThat(searchResult.size()).isEqualTo(101);
     }
@@ -265,7 +243,9 @@ class CcdSearchServiceTest {
 
     @Test
     void shouldThrowCcdSearchFailedExceptionIfSearchFails() {
-
+        final BoolQueryBuilder query = boolQuery()
+            .must(matchQuery("state", Submitted))
+            .filter(rangeQuery("data.dueDate").lte(LocalDate.now()));
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
 
         doThrow(feignException(422, "A reason")).when(coreCaseDataApi)
@@ -277,7 +257,7 @@ class CcdSearchServiceTest {
 
         final CcdSearchCaseException exception = assertThrows(
             CcdSearchCaseException.class,
-            () -> ccdSearchService.searchForAllCasesWithStateOf(Submitted, null, user, SERVICE_AUTHORIZATION));
+            () -> ccdSearchService.searchForAllCasesWithQuery(Submitted, query, user, SERVICE_AUTHORIZATION));
 
         assertThat(exception.getMessage()).contains("Failed to complete search for Cases with state of Submitted");
     }
@@ -334,7 +314,7 @@ class CcdSearchServiceTest {
     private SearchSourceBuilder getSourceBuilder(final int from, final int pageSize) {
         return SearchSourceBuilder
             .searchSource()
-            .sort("data.dueDate", DESC)
+            .sort("data.dueDate", ASC)
             .query(boolQuery()
                 .must(matchQuery("state", Submitted))
                 .filter(rangeQuery("data.dueDate").lte(LocalDate.now())))

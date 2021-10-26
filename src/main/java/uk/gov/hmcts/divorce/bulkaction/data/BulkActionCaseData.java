@@ -43,7 +43,7 @@ public class BulkActionCaseData {
         label = "Date and time of hearing",
         access = {CaseworkerAccess.class}
     )
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime dateAndTimeOfHearing;
 
     @CCD(
