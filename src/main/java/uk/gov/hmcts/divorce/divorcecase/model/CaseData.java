@@ -147,12 +147,6 @@ public class CaseData {
     private Court divorceUnit;
 
     @CCD(
-        label = "Site ID for selected court",
-        access = {DefaultAccess.class}
-    )
-    private String selectedDivorceCentreSiteId;
-
-    @CCD(
         label = "Documents generated",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
