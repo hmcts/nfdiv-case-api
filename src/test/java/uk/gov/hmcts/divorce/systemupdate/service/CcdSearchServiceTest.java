@@ -303,7 +303,7 @@ class CcdSearchServiceTest {
     }
 
     @Test
-    void shouldReturnAllCasesInStatePronouncedWithCasesInErrorList() {
+    void shouldReturnAllCasesInStatePronouncedWithCasesInErrorListOrEmptyProcessedList() {
 
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
         final SearchResult expectedSearchResult1 = SearchResult.builder().total(100)
@@ -328,6 +328,27 @@ class CcdSearchServiceTest {
             .searchForBulkCasesWithCaseErrorsAndState(Pronounced, user, SERVICE_AUTHORIZATION);
 
         assertThat(searchResult.size()).isEqualTo(101);
+    }
+
+    @Test
+    void shouldThrowCcdSearchCaseExceptionIfFeignExceptionIsThrown() {
+
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final SearchResult expectedSearchResult1 = SearchResult.builder().total(100)
+            .cases(createCaseDetailsList(100)).build();
+        final SearchResult expectedSearchResult2 = SearchResult.builder().total(1)
+            .cases(createCaseDetailsList(1)).build();
+
+        doThrow(feignException(409, "some error")).when(coreCaseDataApi).searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            BulkActionCaseTypeConfig.CASE_TYPE,
+            searchSourceBuilderForPronouncedCasesWithCasesInError(0).toString());
+
+        assertThrows(
+            CcdSearchCaseException.class,
+            () -> ccdSearchService.searchForBulkCasesWithCaseErrorsAndState(Pronounced, user, SERVICE_AUTHORIZATION),
+            "Failed to complete search for Bulk Cases with state of Pronounced");
     }
 
     private List<CaseDetails> createCaseDetailsList(final int size) {
