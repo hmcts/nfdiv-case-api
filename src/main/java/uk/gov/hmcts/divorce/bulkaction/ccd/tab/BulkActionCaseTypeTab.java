@@ -1,8 +1,9 @@
-package uk.gov.hmcts.divorce.bulkaction.ccd;
+package uk.gov.hmcts.divorce.bulkaction.ccd.tab;
 
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
@@ -20,5 +21,8 @@ public class BulkActionCaseTypeTab implements CCDConfig<BulkActionCaseData, Bulk
             .field(BulkActionCaseData::getPronouncedDate)
             .field(BulkActionCaseData::getDateFinalOrderEligibleFrom)
             .field(BulkActionCaseData::getBulkListCaseDetails);
+
+        configBuilder.tab("unprocessedBulkCaseList", "Unprocessed bulk case list")
+            .field(BulkActionCaseData::getErroredCaseDetails);
     }
 }

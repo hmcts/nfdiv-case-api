@@ -9,6 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -86,10 +87,11 @@ public class BulkTriggerServiceIT {
             ))
             .thenReturn(caseDataContent);
 
-        final List<BulkListCaseDetails> bulkListCaseDetails = getBulkListCaseDetailsForCaseIds("1", "2", "3", "4", "5");
+        final List<ListValue<BulkListCaseDetails>> bulkListCaseDetailsListValues =
+            getBulkListCaseDetailsListValueForCaseIds("1", "2", "3", "4", "5");
 
-        final List<BulkListCaseDetails> errors = bulkTriggerService.bulkTrigger(
-            bulkListCaseDetails,
+        final List<ListValue<BulkListCaseDetails>> errors = bulkTriggerService.bulkTrigger(
+            bulkListCaseDetailsListValues,
             "event Id",
             details -> details,
             user,
@@ -133,10 +135,10 @@ public class BulkTriggerServiceIT {
                 caseDataContent
             );
 
-        final List<BulkListCaseDetails> bulkListCaseDetails = getBulkListCaseDetailsForCaseIds("1");
+        final List<ListValue<BulkListCaseDetails>> bulkListCaseDetailsListValues = getBulkListCaseDetailsListValueForCaseIds("1");
 
         bulkTriggerService.bulkTrigger(
-            bulkListCaseDetails,
+            bulkListCaseDetailsListValues,
             "event Id",
             details -> details,
             user,
@@ -187,17 +189,18 @@ public class BulkTriggerServiceIT {
                 caseDataContent
             );
 
-        final List<BulkListCaseDetails> bulkListCaseDetails = getBulkListCaseDetailsForCaseIds("1", "2", "3", "4", "5");
+        final List<ListValue<BulkListCaseDetails>> bulkListCaseDetailsListValues =
+            getBulkListCaseDetailsListValueForCaseIds("1", "2", "3", "4", "5");
 
-        final List<BulkListCaseDetails> errors = bulkTriggerService.bulkTrigger(
-            bulkListCaseDetails,
+        final List<ListValue<BulkListCaseDetails>> errors = bulkTriggerService.bulkTrigger(
+            bulkListCaseDetailsListValues,
             "event Id",
             details -> details,
             user,
             SERVICE_AUTHORIZATION);
 
         assertThat(errors).hasSize(1);
-        assertThat(errors.get(0).getCaseReference().getCaseReference()).isEqualTo("3");
+        assertThat(errors.get(0).getValue().getCaseReference().getCaseReference()).isEqualTo("3");
 
         verifySubmitEventForCaseIds(caseDataContent, "1", "2", "4", "5");
         verify(coreCaseDataApi, times(3)).submitEventForCaseWorker(
@@ -212,9 +215,9 @@ public class BulkTriggerServiceIT {
         );
     }
 
-    private List<BulkListCaseDetails> getBulkListCaseDetailsForCaseIds(final String... caseIds) {
+    private List<ListValue<BulkListCaseDetails>> getBulkListCaseDetailsListValueForCaseIds(final String... caseIds) {
         return Arrays.stream(caseIds)
-            .map(this::getBulkListCaseDetails).collect(toList());
+            .map(this::getBulkListCaseDetailsListValue).collect(toList());
     }
 
     private void verifySubmitEventForCaseIds(final CaseDataContent caseDataContent, final String... caseIds) {
@@ -247,8 +250,9 @@ public class BulkTriggerServiceIT {
         }
     }
 
-    private BulkListCaseDetails getBulkListCaseDetails(final String caseId) {
-        return BulkListCaseDetails.builder().caseReference(CaseLink.builder().caseReference(caseId).build()).build();
+    private ListValue<BulkListCaseDetails> getBulkListCaseDetailsListValue(final String caseId) {
+        var bulkListCaseDetails = BulkListCaseDetails.builder().caseReference(CaseLink.builder().caseReference(caseId).build()).build();
+        return ListValue.<BulkListCaseDetails>builder().value(bulkListCaseDetails).build();
     }
 
     private User systemUpdateUser() {
