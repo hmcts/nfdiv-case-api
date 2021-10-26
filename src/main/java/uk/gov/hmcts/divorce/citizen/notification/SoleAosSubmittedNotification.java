@@ -53,7 +53,7 @@ public class SoleAosSubmittedNotification {
         Map<String, String> templateVars = commonContent.templateVarsForApplicant(
             caseData, caseData.getApplicant1(), caseData.getApplicant2());
 
-        templateVars.put(APPLY_FOR_CO_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
+        templateVars.put(APPLY_FOR_CO_DATE, caseData.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER));
         templateVars.put(APPLICATION_REFERENCE, formatId(id));
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
@@ -81,7 +81,7 @@ public class SoleAosSubmittedNotification {
             caseData, caseData.getApplicant2(), caseData.getApplicant1());
 
         templateVars.put(APPLICATION_REFERENCE, formatId(id));
-        templateVars.put(APPLY_FOR_CO_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
+        templateVars.put(APPLY_FOR_CO_DATE, caseData.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER));
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateVars.put(YOUR_UNION, YOUR_DIVORCE.toLowerCase(Locale.ROOT));

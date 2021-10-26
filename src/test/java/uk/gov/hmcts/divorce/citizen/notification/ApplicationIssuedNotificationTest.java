@@ -373,7 +373,7 @@ public class ApplicationIssuedNotificationTest {
             eq(SOL_APPLICANT_PARTNER_HAS_NOT_RESPONDED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(REVIEW_DEADLINE_DATE, data.getApplication().getIssueDate().plusDays(16).format(DATE_TIME_FORMATTER))
+                hasEntry(SUBMISSION_RESPONSE_DATE, data.getDueDate().format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
