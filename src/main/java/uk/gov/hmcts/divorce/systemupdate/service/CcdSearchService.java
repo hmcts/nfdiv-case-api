@@ -9,6 +9,8 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
+import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
@@ -16,9 +18,9 @@ import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
+import static java.util.Collections.emptyList;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
@@ -145,6 +147,55 @@ public class CcdSearchService {
             throw new CcdSearchCaseException(message, e);
         }
 
-        return Collections.emptyList();
+        return emptyList();
+    }
+
+    public List<CaseDetails> searchForBulkCasesWithCaseErrorsAndState(final BulkActionState state,
+                                                                      final User user,
+                                                                      final String serviceAuth) {
+
+        final List<CaseDetails> allCaseDetails = new ArrayList<>();
+        int from = 0;
+        int totalResults = pageSize;
+
+        final QueryBuilder stateQuery = matchQuery(STATE, state);
+        final QueryBuilder errorCasesExist = existsQuery("data.erroredCaseDetails");
+        final QueryBuilder processedCases = existsQuery("data.processedCaseDetails");
+
+        final QueryBuilder query = boolQuery()
+            .must(stateQuery)
+            .must(boolQuery()
+                .should(boolQuery().must(errorCasesExist))
+                .should(boolQuery().mustNot(processedCases))
+            );
+
+        try {
+            while (totalResults == pageSize) {
+
+                final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+                    .searchSource()
+                    .query(query)
+                    .from(from)
+                    .size(pageSize);
+
+                final SearchResult searchResult = coreCaseDataApi.searchCases(
+                    user.getAuthToken(),
+                    serviceAuth,
+                    BulkActionCaseTypeConfig.CASE_TYPE,
+                    sourceBuilder.toString());
+
+                allCaseDetails.addAll(searchResult.getCases());
+
+                from += pageSize;
+                totalResults = searchResult.getTotal();
+            }
+        } catch (final FeignException e) {
+
+            final String message = String.format("Failed to complete search for Bulk Cases with state of %s", state);
+            log.info(message, e);
+            throw new CcdSearchCaseException(message, e);
+        }
+
+        return allCaseDetails;
     }
 }
