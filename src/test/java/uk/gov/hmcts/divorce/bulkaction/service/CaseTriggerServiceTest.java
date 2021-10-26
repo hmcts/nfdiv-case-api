@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
@@ -30,23 +31,27 @@ class CaseTriggerServiceTest {
     @Test
     void shouldReturnSuccessfulTriggerResult() {
 
-        final BulkListCaseDetails bulkListCaseDetails = BulkListCaseDetails.builder()
+        final var bulkListCaseDetails = BulkListCaseDetails.builder()
             .caseReference(CaseLink.builder()
                 .caseReference("1")
                 .build())
             .build();
+
+        final var bulkListCaseDetailsListValue = ListValue.<BulkListCaseDetails>builder()
+            .value(bulkListCaseDetails).build();
+
         final CaseTask caseTask = caseDetails -> caseDetails;
         final User user = mock(User.class);
 
         final CaseTriggerService.TriggerResult triggerResult = caseTriggerService.caseTrigger(
-            bulkListCaseDetails,
+            bulkListCaseDetailsListValue,
             "Event Id",
             caseTask,
             user,
             SERVICE_AUTHORIZATION);
 
         assertThat(triggerResult.isProcessed()).isTrue();
-        assertThat(triggerResult.getBulkListCaseDetails()).isEqualTo(bulkListCaseDetails);
+        assertThat(triggerResult.getListValueBulkListCaseDetails().getValue()).isEqualTo(bulkListCaseDetails);
 
         verify(ccdUpdateService).submitEventWithRetry(
             "1",
@@ -59,11 +64,14 @@ class CaseTriggerServiceTest {
     @Test
     void shouldReturnFailedTriggerResultIfCcdUpdateServiceThrowException() {
 
-        final BulkListCaseDetails bulkListCaseDetails = BulkListCaseDetails.builder()
+        final var bulkListCaseDetails = BulkListCaseDetails.builder()
             .caseReference(CaseLink.builder()
                 .caseReference("1")
                 .build())
             .build();
+        final var bulkListCaseDetailsListValue = ListValue.<BulkListCaseDetails>builder()
+            .value(bulkListCaseDetails).build();
+
         final CaseTask caseTask = caseDetails -> caseDetails;
         final User user = mock(User.class);
 
@@ -76,13 +84,13 @@ class CaseTriggerServiceTest {
                 SERVICE_AUTHORIZATION);
 
         final CaseTriggerService.TriggerResult triggerResult = caseTriggerService.caseTrigger(
-            bulkListCaseDetails,
+            bulkListCaseDetailsListValue,
             "1",
             caseTask,
             mock(User.class),
             SERVICE_AUTHORIZATION);
 
         assertThat(triggerResult.isProcessed()).isFalse();
-        assertThat(triggerResult.getBulkListCaseDetails()).isEqualTo(bulkListCaseDetails);
+        assertThat(triggerResult.getListValueBulkListCaseDetails().getValue()).isEqualTo(bulkListCaseDetails);
     }
 }

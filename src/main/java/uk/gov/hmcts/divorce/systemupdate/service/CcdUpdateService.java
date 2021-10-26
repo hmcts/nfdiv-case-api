@@ -210,4 +210,17 @@ public class CcdUpdateService {
             true,
             caseDataContent);
     }
+
+    public void submitBulkActionEvent(final uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState> caseDetails,
+                                      final String eventId,
+                                      final User user,
+                                      final String serviceAuth) {
+        updateBulkCaseWithRetries(
+            caseDetailsConverter.convertToReformModelFromBulkActionCaseDetails(caseDetails),
+            eventId,
+            user,
+            serviceAuth,
+            caseDetails.getId()
+        );
+    }
 }

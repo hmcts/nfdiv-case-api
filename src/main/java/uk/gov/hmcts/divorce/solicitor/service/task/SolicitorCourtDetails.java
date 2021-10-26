@@ -17,7 +17,6 @@ public class SolicitorCourtDetails implements CaseTask {
         final CaseData caseData = caseDetails.getData();
 
         caseData.setDivorceUnit(SERVICE_CENTRE);
-        caseData.setSelectedDivorceCentreSiteId(SERVICE_CENTRE.getSiteId());
 
         return caseDetails;
     }
