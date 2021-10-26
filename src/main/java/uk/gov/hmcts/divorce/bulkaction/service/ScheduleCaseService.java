@@ -17,6 +17,7 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCaseErrors.SYSTEM_BULK_CASE_ERRORS;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
@@ -44,9 +45,10 @@ public class ScheduleCaseService {
 
         final User user = idamService.retrieveUser(authorization);
         final String serviceAuth = authTokenGenerator.generate();
+        final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails = bulkActionCaseData.getBulkListCaseDetails();
 
         final List<ListValue<BulkListCaseDetails>> unprocessedBulkCases = bulkTriggerService.bulkTrigger(
-            bulkActionCaseData.getBulkListCaseDetails(),
+            bulkListCaseDetails,
             SYSTEM_UPDATE_CASE_COURT_HEARING,
             mainCaseDetails -> {
                 final var conditionalOrder = mainCaseDetails.getData().getConditionalOrder();
@@ -62,22 +64,45 @@ public class ScheduleCaseService {
             serviceAuth
         );
 
-        log.info("Unprocessed bulk cases {} ", unprocessedBulkCases);
+        log.info("Error bulk case details list size{}", unprocessedBulkCases.size());
 
-        if (!isEmpty(unprocessedBulkCases)) {
-            log.info("Error bulk case details list is not empty hence updating bulk case with error list");
-            bulkActionCaseData.setErroredCaseDetails(unprocessedBulkCases);
+        List<ListValue<BulkListCaseDetails>> processedBulkCases =
+            filterProcessedCases(unprocessedBulkCases, bulkListCaseDetails, bulkCaseDetails.getId());
 
-            try {
-                ccdUpdateService.submitBulkActionEvent(
-                    bulkCaseDetails,
-                    SYSTEM_BULK_CASE_ERRORS,
-                    user,
-                    serviceAuth
-                );
-            } catch (final FeignException e) {
-                log.error("Update failed for bulk case id {} ", bulkCaseDetails.getId(), e);
-            }
+        log.info("Successfully processed bulk case details list size{}", processedBulkCases.size());
+
+        bulkCaseDetails.getData().setErroredCaseDetails(unprocessedBulkCases);
+        bulkCaseDetails.getData().setProcessedCaseDetails(processedBulkCases);
+
+        try {
+            ccdUpdateService.submitBulkActionEvent(
+                bulkCaseDetails,
+                SYSTEM_BULK_CASE_ERRORS,
+                user,
+                serviceAuth
+            );
+        } catch (final FeignException e) {
+            log.error("Update failed for bulk case id {} ", bulkCaseDetails.getId(), e);
         }
+    }
+
+    private List<ListValue<BulkListCaseDetails>> filterProcessedCases(final List<ListValue<BulkListCaseDetails>> unprocessedBulkCases,
+                                                                      final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails,
+                                                                      final Long bulkCaseId) {
+
+        List<String> unprocessedCaseIds = unprocessedBulkCases
+            .stream()
+            .map(lv -> lv.getValue().getCaseReference().getCaseReference())
+            .collect(toList());
+
+        if (isEmpty(unprocessedCaseIds)) {
+            log.info("No unprocessed cases in bulk list for case id {} ", bulkCaseId);
+            return bulkListCaseDetails;
+        }
+
+        return bulkListCaseDetails
+            .stream()
+            .filter(lv -> !unprocessedCaseIds.contains(lv.getValue().getCaseReference().getCaseReference()))
+            .collect(toList());
     }
 }

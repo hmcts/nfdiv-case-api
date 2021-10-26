@@ -19,6 +19,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
@@ -29,7 +30,6 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCaseErrors.SYSTEM_BULK_CASE_ERRORS;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
@@ -61,14 +61,15 @@ class ScheduleCaseServiceTest {
     @Test
     void shouldSuccessfullyUpdateCourtHearingDetailsForCasesInBulk() {
 
-        var bulkActionCaseData = BulkActionCaseData
+        final List<ListValue<BulkListCaseDetails>> bulkListCaseDetailsListValue = List.of(getBulkListCaseDetailsListValue("1"));
+        final var bulkActionCaseData = BulkActionCaseData
             .builder()
             .dateAndTimeOfHearing(LocalDateTime.of(2021, 11, 10, 0, 0, 0))
             .courtName(Court.SERVICE_CENTRE)
-            .bulkListCaseDetails(List.of(getBulkListCaseDetailsListValue("1")))
+            .bulkListCaseDetails(bulkListCaseDetailsListValue)
             .build();
 
-        var user = mock(User.class);
+        final var user = mock(User.class);
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
@@ -81,10 +82,17 @@ class ScheduleCaseServiceTest {
             eq(SERVICE_AUTHORIZATION)
         )).thenReturn(emptyList());
 
-        var bulkActionCaseDetails = CaseDetails
+        final var bulkActionCaseDetails = CaseDetails
             .<BulkActionCaseData, BulkActionState>builder()
             .data(bulkActionCaseData)
             .build();
+
+        doNothing().when(ccdUpdateService).submitBulkActionEvent(
+            bulkActionCaseDetails,
+            SYSTEM_BULK_CASE_ERRORS,
+            user,
+            SERVICE_AUTHORIZATION
+        );
 
         scheduleCaseService.updateCourtHearingDetailsForCasesInBulk(bulkActionCaseDetails, TEST_SYSTEM_AUTHORISATION_TOKEN);
 
@@ -96,34 +104,38 @@ class ScheduleCaseServiceTest {
             eq(SERVICE_AUTHORIZATION)
         );
 
-        verifyNoInteractions(ccdUpdateService);
+        verify(ccdUpdateService).submitBulkActionEvent(
+            bulkActionCaseDetails,
+            SYSTEM_BULK_CASE_ERRORS,
+            user,
+            SERVICE_AUTHORIZATION
+        );
     }
 
     @Test
     void shouldSuccessfullyUpdateErrorBulkCaseListInBulkCaseWhenUpdatingCourtHearingDetailsFailsForMainCase() {
-        var bulkListCaseDetailsListValue1 = getBulkListCaseDetailsListValue("1");
-        var bulkListCaseDetailsListValue2 = getBulkListCaseDetailsListValue("2");
-        var bulkActionCaseData = BulkActionCaseData
-            .builder()
-            .dateAndTimeOfHearing(LocalDateTime.of(2021, 11, 10, 0, 0, 0))
-            .courtName(Court.SERVICE_CENTRE)
-            .bulkListCaseDetails(List.of(
-                bulkListCaseDetailsListValue1,
-                bulkListCaseDetailsListValue2
-            ))
-            .build();
+        final var bulkListCaseDetailsListValue1 = getBulkListCaseDetailsListValue("1");
+        final var bulkListCaseDetailsListValue2 = getBulkListCaseDetailsListValue("2");
 
-        var bulkActionCaseDetails = CaseDetails
-            .<BulkActionCaseData, BulkActionState>builder()
-            .data(bulkActionCaseData)
-            .build();
+        final List<ListValue<BulkListCaseDetails>> bulkListCaseDetailsListValues = new ArrayList<>();
+        bulkListCaseDetailsListValues.add(bulkListCaseDetailsListValue1);
+        bulkListCaseDetailsListValues.add(bulkListCaseDetailsListValue2);
 
-        var user = mock(User.class);
+        final var user = mock(User.class);
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
 
-        var unprocessedBulkCases = List.of(bulkListCaseDetailsListValue2);
+        List<ListValue<BulkListCaseDetails>> unprocessedBulkCases = new ArrayList<>();
+        unprocessedBulkCases.add(bulkListCaseDetailsListValue2);
+
+        final var bulkActionCaseData = BulkActionCaseData
+            .builder()
+            .dateAndTimeOfHearing(LocalDateTime.of(2021, 11, 10, 0, 0, 0))
+            .courtName(Court.SERVICE_CENTRE)
+            .bulkListCaseDetails(bulkListCaseDetailsListValues)
+            .build();
+
         when(bulkTriggerService.bulkTrigger(
             eq(bulkActionCaseData.getBulkListCaseDetails()),
             eq(SYSTEM_UPDATE_CASE_COURT_HEARING),
@@ -131,6 +143,11 @@ class ScheduleCaseServiceTest {
             eq(user),
             eq(SERVICE_AUTHORIZATION)
         )).thenReturn(unprocessedBulkCases);
+
+        final var bulkActionCaseDetails = CaseDetails
+            .<BulkActionCaseData, BulkActionState>builder()
+            .data(bulkActionCaseData)
+            .build();
 
         doNothing().when(ccdUpdateService).submitBulkActionEvent(
             bulkActionCaseDetails,
@@ -159,29 +176,29 @@ class ScheduleCaseServiceTest {
 
     @Test
     void shouldNotUpdateErrorBulkCaseListInBulkCaseWhenUpdatingCourtHearingDetailsFailsForMainCaseAndBulkCaseUpdateThrowsError() {
-        var bulkListCaseDetailsListValue1 = getBulkListCaseDetailsListValue("1");
-        var bulkListCaseDetailsListValue2 = getBulkListCaseDetailsListValue("2");
-        var bulkActionCaseData = BulkActionCaseData
-            .builder()
-            .dateAndTimeOfHearing(LocalDateTime.of(2021, 11, 10, 0, 0, 0))
-            .courtName(Court.SERVICE_CENTRE)
-            .bulkListCaseDetails(List.of(
-                bulkListCaseDetailsListValue1,
-                bulkListCaseDetailsListValue2
-            ))
-            .build();
+        final var bulkListCaseDetailsListValue1 = getBulkListCaseDetailsListValue("1");
+        final var bulkListCaseDetailsListValue2 = getBulkListCaseDetailsListValue("2");
 
-        var bulkActionCaseDetails = CaseDetails
-            .<BulkActionCaseData, BulkActionState>builder()
-            .data(bulkActionCaseData)
-            .build();
-
-        var user = mock(User.class);
+        final var user = mock(User.class);
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
 
-        var unprocessedBulkCases = List.of(bulkListCaseDetailsListValue2);
+        List<ListValue<BulkListCaseDetails>> unprocessedBulkCases = new ArrayList<>();
+        unprocessedBulkCases.add(bulkListCaseDetailsListValue2);
+
+
+        final List<ListValue<BulkListCaseDetails>> bulkListCaseDetailsListValues = new ArrayList<>();
+        bulkListCaseDetailsListValues.add(bulkListCaseDetailsListValue1);
+        bulkListCaseDetailsListValues.add(bulkListCaseDetailsListValue2);
+
+        final var bulkActionCaseData = BulkActionCaseData
+            .builder()
+            .dateAndTimeOfHearing(LocalDateTime.of(2021, 11, 10, 0, 0, 0))
+            .courtName(Court.SERVICE_CENTRE)
+            .bulkListCaseDetails(bulkListCaseDetailsListValues)
+            .build();
+
         when(bulkTriggerService.bulkTrigger(
             eq(bulkActionCaseData.getBulkListCaseDetails()),
             eq(SYSTEM_UPDATE_CASE_COURT_HEARING),
@@ -189,6 +206,11 @@ class ScheduleCaseServiceTest {
             eq(user),
             eq(SERVICE_AUTHORIZATION)
         )).thenReturn(unprocessedBulkCases);
+
+        final var bulkActionCaseDetails = CaseDetails
+            .<BulkActionCaseData, BulkActionState>builder()
+            .data(bulkActionCaseData)
+            .build();
 
         doThrow(feignException(409, "some error"))
             .when(ccdUpdateService).submitBulkActionEvent(
