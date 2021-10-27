@@ -27,8 +27,8 @@ public class CaseworkerHwfRefused implements CCDConfig<CaseData, State, UserRole
         new PageBuilder(configBuilder
             .event(CASEWORKER_HWF_REFUSED)
             .forStateTransition(AwaitingHWFDecision, AwaitingDocuments)
-            .name("HWF Refused")
-            .description("HWF Refused")
+            .name("HWF refused")
+            .description("HWF refused")
             .showEventNotes()
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
