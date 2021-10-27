@@ -55,9 +55,6 @@ class ScheduleCaseServiceTest {
     @Mock
     private CcdUpdateService ccdUpdateService;
 
-    @Mock
-    private BulkActionUtil bulkActionUtil;
-
     @InjectMocks
     private ScheduleCaseService scheduleCaseService;
 
