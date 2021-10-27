@@ -18,7 +18,9 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.List;
 
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithPronouncementJudge.SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE;
 
@@ -122,6 +124,21 @@ public class ScheduleCaseService {
                     conditionalOrder.setPronouncementJudge(
                         bulkActionCaseData.getPronouncementJudge()
                     );
+                    return mainCaseDetails;
+                };
+
+            case SYSTEM_PRONOUNCE_CASE:
+                return  mainCaseDetails -> {
+                    final var conditionalOrder = mainCaseDetails.getData().getConditionalOrder();
+                    final var finalOrder = mainCaseDetails.getData().getFinalOrder();
+
+                    mainCaseDetails.getData().setDueDate(
+                        finalOrder.getDateFinalOrderEligibleFrom(bulkActionCaseData.getDateAndTimeOfHearing()));
+                    conditionalOrder.setOutcomeCase(YES);
+                    conditionalOrder.setGrantedDate(bulkActionCaseData.getDateAndTimeOfHearing().toLocalDate());
+                    finalOrder.setDateFinalOrderEligibleFrom(
+                        finalOrder.getDateFinalOrderEligibleFrom(bulkActionCaseData.getDateAndTimeOfHearing()));
+
                     return mainCaseDetails;
                 };
 

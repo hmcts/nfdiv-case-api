@@ -11,6 +11,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
+import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
+import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
+import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
@@ -28,6 +31,7 @@ import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.elasticsearch.search.sort.SortOrder.ASC;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -50,6 +54,9 @@ class CcdSearchServiceTest {
 
     @Mock
     private CoreCaseDataApi coreCaseDataApi;
+
+    @Mock
+    private CaseDetailsConverter caseDetailsConverter;
 
     @InjectMocks
     private CcdSearchService ccdSearchService;
@@ -302,6 +309,7 @@ class CcdSearchServiceTest {
         assertThat(exception.getMessage()).contains("Failed to complete search for Cases with state of AwaitingPronouncement");
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     void shouldReturnAllCasesInStatePronouncedWithCasesInErrorListOrEmptyProcessedList() {
 
@@ -310,6 +318,8 @@ class CcdSearchServiceTest {
             .cases(createCaseDetailsList(100)).build();
         final SearchResult expectedSearchResult2 = SearchResult.builder().total(1)
             .cases(createCaseDetailsList(1)).build();
+        final uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails =
+            mock(uk.gov.hmcts.ccd.sdk.api.CaseDetails.class);
 
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
@@ -323,9 +333,11 @@ class CcdSearchServiceTest {
             BulkActionCaseTypeConfig.CASE_TYPE,
             searchSourceBuilderForPronouncedCasesWithCasesInError(100).toString()))
             .thenReturn(expectedSearchResult2);
+        when(caseDetailsConverter.convertToBulkActionCaseDetailsFromReformModel(any(CaseDetails.class)))
+            .thenReturn(bulkCaseDetails);
 
-        final List<CaseDetails> searchResult = ccdSearchService
-            .searchForUnprocessedOrErroredBulkCasesWithStateOf(Pronounced, user, SERVICE_AUTHORIZATION);
+        final List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState>> searchResult = ccdSearchService
+            .searchForUnprocessedOrErroredBulkCases(Pronounced, user, SERVICE_AUTHORIZATION);
 
         assertThat(searchResult.size()).isEqualTo(101);
     }
@@ -347,7 +359,7 @@ class CcdSearchServiceTest {
 
         assertThrows(
             CcdSearchCaseException.class,
-            () -> ccdSearchService.searchForUnprocessedOrErroredBulkCasesWithStateOf(Pronounced, user, SERVICE_AUTHORIZATION),
+            () -> ccdSearchService.searchForUnprocessedOrErroredBulkCases(Pronounced, user, SERVICE_AUTHORIZATION),
             "Failed to complete search for Bulk Cases with state of Pronounced");
     }
 

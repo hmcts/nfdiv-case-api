@@ -17,7 +17,6 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.List;
 
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 
@@ -37,6 +36,9 @@ public class CasePronouncementService {
     @Autowired
     private IdamService idamService;
 
+    @Autowired
+    private ScheduleCaseService scheduleCaseService;
+
     @Async
     public void pronounceCases(final CaseDetails<BulkActionCaseData, BulkActionState> details,
                                final String authorization) {
@@ -49,19 +51,7 @@ public class CasePronouncementService {
             bulkTriggerService.bulkTrigger(
                 bulkActionCaseData.getBulkListCaseDetails(),
                 SYSTEM_PRONOUNCE_CASE,
-                mainCaseDetails -> {
-                    final var conditionalOrder = mainCaseDetails.getData().getConditionalOrder();
-                    final var finalOrder = mainCaseDetails.getData().getFinalOrder();
-
-                    mainCaseDetails.getData().setDueDate(
-                        finalOrder.getDateFinalOrderEligibleFrom(details.getData().getDateAndTimeOfHearing()));
-                    conditionalOrder.setOutcomeCase(YES);
-                    conditionalOrder.setGrantedDate(details.getData().getDateAndTimeOfHearing().toLocalDate());
-                    finalOrder.setDateFinalOrderEligibleFrom(
-                        finalOrder.getDateFinalOrderEligibleFrom(details.getData().getDateAndTimeOfHearing()));
-
-                    return mainCaseDetails;
-                },
+                scheduleCaseService.getCaseTask(bulkActionCaseData, SYSTEM_PRONOUNCE_CASE),
                 user,
                 serviceAuth);
 

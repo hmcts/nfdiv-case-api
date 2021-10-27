@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
+import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
@@ -21,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
@@ -47,6 +50,9 @@ public class CcdSearchService {
 
     @Autowired
     private CoreCaseDataApi coreCaseDataApi;
+
+    @Autowired
+    private CaseDetailsConverter caseDetailsConverter;
 
     public List<CaseDetails> searchForAllCasesWithQuery(final State state, final BoolQueryBuilder query, User user, String serviceAuth) {
 
@@ -150,9 +156,10 @@ public class CcdSearchService {
         return emptyList();
     }
 
-    public List<CaseDetails> searchForUnprocessedOrErroredBulkCasesWithStateOf(final BulkActionState state,
-                                                                               final User user,
-                                                                               final String serviceAuth) {
+    public List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState>> searchForUnprocessedOrErroredBulkCases(
+        final BulkActionState state,
+        final User user,
+        final String serviceAuth) {
 
         final List<CaseDetails> allCaseDetails = new ArrayList<>();
         int from = 0;
@@ -194,6 +201,8 @@ public class CcdSearchService {
             throw new CcdSearchCaseException(message, e);
         }
 
-        return allCaseDetails;
+        return allCaseDetails.stream()
+            .map(caseDetailsConverter::convertToBulkActionCaseDetailsFromReformModel)
+            .collect(toList());
     }
 }
