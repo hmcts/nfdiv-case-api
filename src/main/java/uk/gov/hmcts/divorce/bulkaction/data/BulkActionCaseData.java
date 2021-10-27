@@ -18,6 +18,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -106,5 +108,22 @@ public class BulkActionCaseData {
     @JsonIgnore
     public LocalDate getDateFinalOrderEligibleFrom(LocalDateTime dateTime) {
         return dateTime.toLocalDate().plusWeeks(FINAL_ORDER_OFFSET_WEEKS).plusDays(FINAL_ORDER_OFFSET_DAYS);
+    }
+
+    @JsonIgnore
+    public List<ListValue<BulkListCaseDetails>> calculateProcessedCases(final List<ListValue<BulkListCaseDetails>> unprocessedBulkCases) {
+        if (isEmpty(unprocessedBulkCases)) {
+            return bulkListCaseDetails;
+        }
+
+        List<String> unprocessedCaseIds = unprocessedBulkCases
+            .stream()
+            .map(lv -> lv.getValue().getCaseReference().getCaseReference())
+            .collect(toList());
+
+        return bulkListCaseDetails
+            .stream()
+            .filter(lv -> !unprocessedCaseIds.contains(lv.getValue().getCaseReference().getCaseReference()))
+            .collect(toList());
     }
 }

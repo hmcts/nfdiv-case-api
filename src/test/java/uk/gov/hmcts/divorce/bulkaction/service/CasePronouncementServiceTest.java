@@ -52,9 +52,6 @@ public class CasePronouncementServiceTest {
     @Mock
     private CcdUpdateService ccdUpdateService;
 
-    @Mock
-    private BulkActionUtil bulkActionUtil;
-
     @InjectMocks
     private CasePronouncementService casePronouncementService;
 

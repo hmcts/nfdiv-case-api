@@ -37,9 +37,6 @@ public class CasePronouncementService {
     @Autowired
     private IdamService idamService;
 
-    @Autowired
-    private BulkActionUtil bulkActionUtil;
-
     @Async
     public void pronounceCases(final CaseDetails<BulkActionCaseData, BulkActionState> details,
                                final String authorization) {
@@ -70,8 +67,7 @@ public class CasePronouncementService {
 
         log.info("Error bulk case details list size {}", unprocessedBulkCases.size());
 
-        List<ListValue<BulkListCaseDetails>> processedBulkCases =
-            bulkActionUtil.filterProcessedCases(unprocessedBulkCases, bulkActionCaseData.getBulkListCaseDetails(), details.getId());
+        List<ListValue<BulkListCaseDetails>> processedBulkCases = bulkActionCaseData.calculateProcessedCases(unprocessedBulkCases);
 
         log.info("Successfully processed bulk case details list size {}", processedBulkCases.size());
 
