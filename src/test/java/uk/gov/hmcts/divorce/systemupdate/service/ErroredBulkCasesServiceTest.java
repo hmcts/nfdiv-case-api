@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -54,13 +55,13 @@ class ErroredBulkCasesServiceTest {
         final User user = mock(User.class);
         final List<ListValue<BulkListCaseDetails>> fullBulkList = getBulkListCaseDetailsListValueForCaseIds("1", "2", "3", "4");
         final List<ListValue<BulkListCaseDetails>> currentProcessed = getBulkListCaseDetailsListValueForCaseIds("3", "4");
-        final List<ListValue<BulkListCaseDetails>> updatedProcessed = getBulkListCaseDetailsListValueForCaseIds("3", "4", "1");
+        final List<ListValue<BulkListCaseDetails>> updatedProcessed = getBulkListCaseDetailsListValueForCaseIds("1", "3", "4");
         final List<ListValue<BulkListCaseDetails>> currentErrors = getBulkListCaseDetailsListValueForCaseIds("1", "2");
         final List<ListValue<BulkListCaseDetails>> updatedErrors = getBulkListCaseDetailsListValueForCaseIds("2");
 
-        final Object expectedProcessed1 = objectMapper.convertValue(updatedProcessed, new TypeReference<>() {
+        final Object expectedProcessed = objectMapper.convertValue(updatedProcessed, new TypeReference<>() {
         });
-        final Object expectedErrors1 = objectMapper.convertValue(updatedErrors, new TypeReference<>() {
+        final Object expectedErrors = objectMapper.convertValue(updatedErrors, new TypeReference<>() {
         });
 
         final BulkActionCaseData bulkActionCaseData = BulkActionCaseData.builder()
@@ -91,8 +92,109 @@ class ErroredBulkCasesServiceTest {
             user,
             SERVICE_AUTHORIZATION);
 
-        assertThat(caseDetails.getData().get("processedCaseDetails")).isEqualTo(expectedProcessed1);
-        assertThat(caseDetails.getData().get("erroredCaseDetails")).isEqualTo(expectedErrors1);
+        assertThat(caseDetails.getData().get("processedCaseDetails")).isEqualTo(expectedProcessed);
+        assertThat(caseDetails.getData().get("erroredCaseDetails")).isEqualTo(expectedErrors);
+
+        verify(ccdUpdateService).updateBulkCaseWithRetries(
+            caseDetails,
+            SYSTEM_BULK_CASE_ERRORS,
+            user,
+            SERVICE_AUTHORIZATION,
+            1L);
+    }
+
+    @Test
+    void shouldProcessBulkActionCasesWithNoProcessedCasesAndUpdateWithAnyErrorsAfterCompletion() {
+
+        final User user = mock(User.class);
+        final List<ListValue<BulkListCaseDetails>> fullBulkList = getBulkListCaseDetailsListValueForCaseIds("1", "2", "3", "4");
+        final List<ListValue<BulkListCaseDetails>> updatedProcessed = getBulkListCaseDetailsListValueForCaseIds("1", "3", "4");
+        final List<ListValue<BulkListCaseDetails>> updatedErrors = getBulkListCaseDetailsListValueForCaseIds("2");
+
+        final Object expectedProcessed = objectMapper.convertValue(updatedProcessed, new TypeReference<>() {
+        });
+        final Object expectedErrors = objectMapper.convertValue(updatedErrors, new TypeReference<>() {
+        });
+
+        final BulkActionCaseData bulkActionCaseData = BulkActionCaseData.builder()
+            .bulkListCaseDetails(fullBulkList)
+            .build();
+
+        final Map<String, Object> caseDataMap = objectMapper.convertValue(bulkActionCaseData, new TypeReference<>() {
+        });
+
+        final CaseDetails caseDetails = CaseDetails.builder()
+            .id(1L)
+            .data(caseDataMap)
+            .build();
+
+        when(bulkTriggerService.bulkTrigger(
+            eq(fullBulkList),
+            eq(SYSTEM_PRONOUNCE_CASE),
+            any(CaseTask.class),
+            eq(user),
+            eq(SERVICE_AUTHORIZATION)))
+            .thenReturn(updatedErrors);
+
+        erroredBulkCasesService.processErroredCasesAndUpdateBulkCase(
+            caseDetails,
+            SYSTEM_PRONOUNCE_CASE,
+            user,
+            SERVICE_AUTHORIZATION);
+
+        assertThat(caseDetails.getData().get("processedCaseDetails")).isEqualTo(expectedProcessed);
+        assertThat(caseDetails.getData().get("erroredCaseDetails")).isEqualTo(expectedErrors);
+
+        verify(ccdUpdateService).updateBulkCaseWithRetries(
+            caseDetails,
+            SYSTEM_BULK_CASE_ERRORS,
+            user,
+            SERVICE_AUTHORIZATION,
+            1L);
+    }
+
+    @Test
+    void shouldProcessBulkActionCasesWithEmptyProcessedCasesAndUpdateWithAnyErrorsAfterCompletion() {
+
+        final User user = mock(User.class);
+        final List<ListValue<BulkListCaseDetails>> fullBulkList = getBulkListCaseDetailsListValueForCaseIds("1", "2", "3", "4");
+        final List<ListValue<BulkListCaseDetails>> updatedProcessed = getBulkListCaseDetailsListValueForCaseIds("1", "3", "4");
+        final List<ListValue<BulkListCaseDetails>> updatedErrors = getBulkListCaseDetailsListValueForCaseIds("2");
+
+        final Object expectedProcessed = objectMapper.convertValue(updatedProcessed, new TypeReference<>() {
+        });
+        final Object expectedErrors = objectMapper.convertValue(updatedErrors, new TypeReference<>() {
+        });
+
+        final BulkActionCaseData bulkActionCaseData = BulkActionCaseData.builder()
+            .bulkListCaseDetails(fullBulkList)
+            .processedCaseDetails(emptyList())
+            .build();
+
+        final Map<String, Object> caseDataMap = objectMapper.convertValue(bulkActionCaseData, new TypeReference<>() {
+        });
+
+        final CaseDetails caseDetails = CaseDetails.builder()
+            .id(1L)
+            .data(caseDataMap)
+            .build();
+
+        when(bulkTriggerService.bulkTrigger(
+            eq(fullBulkList),
+            eq(SYSTEM_PRONOUNCE_CASE),
+            any(CaseTask.class),
+            eq(user),
+            eq(SERVICE_AUTHORIZATION)))
+            .thenReturn(updatedErrors);
+
+        erroredBulkCasesService.processErroredCasesAndUpdateBulkCase(
+            caseDetails,
+            SYSTEM_PRONOUNCE_CASE,
+            user,
+            SERVICE_AUTHORIZATION);
+
+        assertThat(caseDetails.getData().get("processedCaseDetails")).isEqualTo(expectedProcessed);
+        assertThat(caseDetails.getData().get("erroredCaseDetails")).isEqualTo(expectedErrors);
 
         verify(ccdUpdateService).updateBulkCaseWithRetries(
             caseDetails,
