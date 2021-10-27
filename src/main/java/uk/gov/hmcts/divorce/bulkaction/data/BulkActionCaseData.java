@@ -28,7 +28,10 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 @Builder(toBuilder = true)
 public class BulkActionCaseData {
 
+    @JsonIgnore
     private static final int FINAL_ORDER_OFFSET_WEEKS = 6;
+
+    @JsonIgnore
     private static final int FINAL_ORDER_OFFSET_DAYS = 1;
 
     @CCD(

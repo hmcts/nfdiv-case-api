@@ -18,7 +18,10 @@ import java.time.LocalDateTime;
 @Builder
 public class FinalOrder {
 
+    @JsonIgnore
     private static final int FINAL_ORDER_OFFSET_WEEKS = 6;
+
+    @JsonIgnore
     private static final int FINAL_ORDER_OFFSET_DAYS = 1;
 
     @CCD(
