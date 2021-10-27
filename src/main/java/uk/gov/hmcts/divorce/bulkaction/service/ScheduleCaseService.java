@@ -36,9 +36,6 @@ public class ScheduleCaseService {
     @Autowired
     private IdamService idamService;
 
-    @Autowired
-    private BulkActionUtil bulkActionUtil;
-
     @Async
     public void updateCourtHearingDetailsForCasesInBulk(final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
                                                         final String authorization) {
@@ -67,8 +64,7 @@ public class ScheduleCaseService {
 
         log.info("Error bulk case details list size {}", unprocessedBulkCases.size());
 
-        List<ListValue<BulkListCaseDetails>> processedBulkCases =
-            bulkActionUtil.filterProcessedCases(unprocessedBulkCases, bulkListCaseDetails, bulkCaseDetails.getId());
+        List<ListValue<BulkListCaseDetails>> processedBulkCases = bulkActionCaseData.calculateProcessedCases(unprocessedBulkCases);
 
         log.info("Successfully processed bulk case details list size {}", processedBulkCases.size());
 
