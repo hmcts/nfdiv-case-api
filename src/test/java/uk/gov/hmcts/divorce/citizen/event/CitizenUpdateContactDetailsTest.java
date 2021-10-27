@@ -17,9 +17,8 @@ import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
-import javax.servlet.http.HttpServletRequest;
-
 import java.util.Collections;
+import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -85,7 +84,8 @@ public class CitizenUpdateContactDetailsTest {
         when(idamService.retrieveUser(anyString()))
             .thenReturn(new User("token", userDetails));
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenUpdateContactDetails.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            citizenUpdateContactDetails.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
 
         assertThat(response.getData().getApplicant1().getPhoneNumber()).isEqualTo("01234567890");
         assertThat(response.getData().getApplicant1().getHomeAddress()).isEqualTo(address);
@@ -122,7 +122,8 @@ public class CitizenUpdateContactDetailsTest {
         when(idamService.retrieveUser(anyString()))
             .thenReturn(new User("token", userDetails));
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenUpdateContactDetails.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            citizenUpdateContactDetails.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
 
         assertThat(response.getData().getApplicant2().getPhoneNumber()).isEqualTo("01234567890");
         assertThat(response.getData().getApplicant2().getHomeAddress()).isEqualTo(address);
