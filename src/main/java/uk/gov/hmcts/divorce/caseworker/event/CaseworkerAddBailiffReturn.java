@@ -53,8 +53,8 @@ public class CaseworkerAddBailiffReturn implements CCDConfig<CaseData, State, Us
                 Submitted,
                 AwaitingDocuments,
                 AwaitingPayment)
-            .name("Add Bailiff Return")
-            .description("Add Bailiff Return")
+            .name("Add bailiff return")
+            .description("Add bailiff return")
             .showSummary()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .explicitGrants()
