@@ -16,11 +16,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import java.time.Clock;
 import java.time.LocalDate;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.BAILIFF;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffService;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
@@ -73,16 +71,12 @@ public class CaseworkerMakeBailiffDecision implements CCDConfig<CaseData, State,
         State endState;
 
         if (serviceApplication.getServiceApplicationGranted().toBoolean()) {
-
             serviceApplication.setServiceApplicationDecisionDate(LocalDate.now(clock));
-
-            if (BAILIFF.equals(serviceApplication.getAlternativeServiceType())) {
-                endState = AwaitingBailiffService;
-            } else {
-                endState = AwaitingConditionalOrder;
-            }
+            endState = AwaitingBailiffService;
+            // ServiceApplication is archived after BailiffReturn if ServiceGranted is set to Yes
         } else {
             endState = AwaitingAos;
+            caseDataCopy.archiveAlternativeServiceApplicationOnCompletion();
         }
 
         log.info("Setting end state of case id {} to {}", details.getId(), endState);
