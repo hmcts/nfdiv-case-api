@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.citizen.event;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -33,6 +34,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 public class CitizenSubmitAos implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CITIZEN_SUBMIT_AOS = "citizen-submit-aos";
+
+    @Value("${submit_aos.dispute_offset_days}")
+    private int disputeOffsetDays;
+
+    @Value("${submit_aos.holding_offset_days}")
+    private int holdingOffsetDays;
 
     @Autowired
     private SoleAosSubmittedNotification soleAosSubmittedNotification;
@@ -77,12 +84,12 @@ public class CitizenSubmitAos implements CCDConfig<CaseData, State, UserRole> {
         }
 
         if (data.getAcknowledgementOfService().getDisputeApplication() == YesOrNo.YES) {
-            data.setDueDate(data.getApplication().getIssueDate().plusDays(37));
+            data.setDueDate(data.getApplication().getIssueDate().plusDays(disputeOffsetDays));
             soleAosSubmittedNotification.sendApplicationDisputedToApplicant(data, details.getId());
             soleAosSubmittedNotification.sendApplicationDisputedToRespondent(data, details.getId());
             state = PendingDispute;
         } else {
-            data.setDueDate(data.getApplication().getIssueDate().plusDays(141));
+            data.setDueDate(data.getApplication().getIssueDate().plusDays(holdingOffsetDays));
             soleAosSubmittedNotification.sendApplicationNotDisputedToApplicant(data, details.getId());
             soleAosSubmittedNotification.sendApplicationNotDisputedToRespondent(data, details.getId());
             state = Holding;
