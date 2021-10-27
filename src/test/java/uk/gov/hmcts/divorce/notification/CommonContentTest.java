@@ -16,9 +16,12 @@ import java.util.Map;
 import static java.lang.String.join;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.isDivorce;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION;
@@ -150,5 +153,19 @@ class CommonContentTest {
                 entry(APPLICANT_NAME, join(" ", TEST_FIRST_NAME, TEST_LAST_NAME)),
                 entry(RESPONDENT_NAME, join(" ", APPLICANT_2_FIRST_NAME, TEST_LAST_NAME)),
                 entry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)));
+    }
+
+    @Test
+    void shouldReturnIsDivorce() {
+        CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
+
+        assertTrue(isDivorce(caseData));
+    }
+
+    @Test
+    void shouldReturnIsDissolution() {
+        CaseData caseData = CaseData.builder().divorceOrDissolution(DISSOLUTION).build();
+
+        assertFalse(isDivorce(caseData));
     }
 }

@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static uk.gov.hmcts.divorce.notification.CommonContent.isDivorce;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
@@ -172,7 +173,7 @@ public class ApplicationIssuedNotification {
     public void notifyApplicantOfServiceToOverseasRespondent(CaseData caseData, Long id) {
         log.info("Notifying sole applicant of application issue (case {}) to overseas respondent", id);
 
-        final boolean hasEmail = !caseData.getApplicant2().getEmail().isEmpty();
+        final boolean hasEmail = Objects.nonNull(caseData.getApplicant2().getEmail()) && !caseData.getApplicant2().getEmail().isEmpty();
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
             hasEmail ? OVERSEAS_RESPONDENT_HAS_EMAIL_APPLICATION_ISSUED : OVERSEAS_RESPONDENT_NO_EMAIL_APPLICATION_ISSUED,
