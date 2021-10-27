@@ -31,7 +31,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig.CASE_TYPE;
-import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Pronounced;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerPronounceList.CASEWORKER_PRONOUNCE_LIST;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.CASEWORKER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamDetails;
@@ -103,8 +102,6 @@ public class CaseworkerPronounceListIT {
             .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk())
-            .andExpect(
-                jsonPath("$.state").value(Pronounced.getName()))
             .andExpect(
                 jsonPath("$.data.pronouncedDate").value(LocalDate.now().toString()))
             .andExpect(
