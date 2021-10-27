@@ -51,7 +51,6 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.RESPONDENT
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.REVIEW_DEADLINE_DATE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.TO_END_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.TWENTY_EIGHT_DAY_DEADLINE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.YES;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.YOUR_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.YOUR_UNION;
@@ -229,7 +228,7 @@ public class ApplicationIssuedNotification {
         templateVars.put(FIRST_NAME, caseData.getApplicant1().getFirstName());
         templateVars.put(LAST_NAME, caseData.getApplicant1().getLastName());
         templateVars.put(PARTNER, commonContent.getPartner(caseData, caseData.getApplicant2()));
-        templateVars.put(TWENTY_EIGHT_DAY_DEADLINE, caseData.getApplication().getIssueDate().plusDays(28).format(DATE_TIME_FORMATTER));
+        templateVars.put(REVIEW_DEADLINE_DATE, caseData.getApplication().getIssueDate().plusDays(28).format(DATE_TIME_FORMATTER));
         templateVars.put(COURT_EMAIL, emailTemplatesConfig.getTemplateVars().get(DISSOLUTION_COURT_EMAIL));
         return templateVars;
     }

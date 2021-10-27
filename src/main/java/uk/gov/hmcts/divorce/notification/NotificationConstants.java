@@ -93,7 +93,6 @@ public final class NotificationConstants {
     public static final String PAID = " and paid";
 
     public static final String REVIEW_DEADLINE_DATE = "review deadline date";
-    public static final String TWENTY_EIGHT_DAY_DEADLINE = "28 days after issue";
 
     private NotificationConstants() {
     }
