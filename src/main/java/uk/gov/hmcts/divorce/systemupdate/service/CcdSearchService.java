@@ -150,9 +150,9 @@ public class CcdSearchService {
         return emptyList();
     }
 
-    public List<CaseDetails> searchForBulkCasesWithCaseErrorsAndState(final BulkActionState state,
-                                                                      final User user,
-                                                                      final String serviceAuth) {
+    public List<CaseDetails> searchForUnprocessedOrErroredBulkCasesWithStateOf(final BulkActionState state,
+                                                                               final User user,
+                                                                               final String serviceAuth) {
 
         final List<CaseDetails> allCaseDetails = new ArrayList<>();
         int from = 0;
