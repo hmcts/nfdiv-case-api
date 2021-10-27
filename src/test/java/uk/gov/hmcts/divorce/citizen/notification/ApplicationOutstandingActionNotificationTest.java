@@ -124,7 +124,7 @@ class ApplicationOutstandingActionNotificationTest {
 
         final HashMap<String, String> templateVars = new HashMap<>();
         when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
-        when(commonContent.getTheirPartner(data, data.getApplicant2())).thenReturn("husband");
+        when(commonContent.getPartner(data, data.getApplicant2())).thenReturn("husband");
         when(commonContent.getService(data.getDivorceOrDissolution())).thenReturn("divorce");
 
         notification.sendToApplicant1(data, 1234567890123456L);
@@ -149,7 +149,7 @@ class ApplicationOutstandingActionNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2());
-        verify(commonContent).getTheirPartner(data, data.getApplicant2());
+        verify(commonContent).getPartner(data, data.getApplicant2());
     }
 
     @Test

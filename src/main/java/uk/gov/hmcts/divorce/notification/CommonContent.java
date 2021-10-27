@@ -52,7 +52,7 @@ public class CommonContent {
 
         templateVars.put(FIRST_NAME, applicant.getFirstName());
         templateVars.put(LAST_NAME, applicant.getLastName());
-        templateVars.put(PARTNER, getTheirPartner(caseData, partner));
+        templateVars.put(PARTNER, getPartner(caseData, partner));
 
         return templateVars;
     }
@@ -86,15 +86,16 @@ public class CommonContent {
         return templateVars;
     }
 
+    public static boolean isDivorce(CaseData caseData) {
+        return caseData.getDivorceOrDissolution().isDivorce();
+    }
+
     public String getService(DivorceOrDissolution divorceOrDissolution) {
         return divorceOrDissolution.isDivorce() ? "divorce" : "civil partnership";
     }
 
-    public String getTheirPartner(CaseData caseData, Applicant applicant) {
-        if (caseData.getDivorceOrDissolution().isDivorce()) {
-            return applicant.getGender() == Gender.MALE ? "husband" : "wife";
-        }
-        return "civil partner";
+    public static String getPartner(CaseData caseData, Applicant partner) {
+        return isDivorce(caseData) ? partner.getGender() == Gender.MALE ? "husband" : "wife" : "civil partner";
     }
 
     public Map<String, String> commonNotificationTemplateVars(final CaseData caseData, final Long caseId) {
