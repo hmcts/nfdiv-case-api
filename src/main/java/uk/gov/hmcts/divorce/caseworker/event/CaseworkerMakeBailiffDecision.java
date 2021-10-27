@@ -39,8 +39,8 @@ public class CaseworkerMakeBailiffDecision implements CCDConfig<CaseData, State,
         new PageBuilder(configBuilder
             .event(CASEWORKER_BAILIFF_DECISION)
             .forState(AwaitingBailiffReferral)
-            .name("Make Bailiff Decision")
-            .description("Make Bailiff Decision")
+            .name("Make bailiff decision")
+            .description("Make bailiff decision")
             .explicitGrants()
             .showSummary()
             .aboutToSubmitCallback(this::aboutToSubmit)

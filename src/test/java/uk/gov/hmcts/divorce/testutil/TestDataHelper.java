@@ -8,6 +8,7 @@ import feign.FeignException;
 import feign.Request;
 import feign.Response;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
+import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
@@ -16,6 +17,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
+import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -639,6 +641,19 @@ public class TestDataHelper {
             .builder()
             .paymentTotal("55000")
             .fees(singletonList(getFeeListValue()))
+            .build();
+    }
+
+    public static ListValue<BulkListCaseDetails> getBulkListCaseDetailsListValue(String caseReference) {
+        final var bulkListCaseDetails = BulkListCaseDetails.builder()
+            .caseReference(CaseLink.builder()
+                .caseReference(caseReference)
+                .build())
+            .build();
+
+        return ListValue
+            .<BulkListCaseDetails>builder()
+            .value(bulkListCaseDetails)
             .build();
     }
 }

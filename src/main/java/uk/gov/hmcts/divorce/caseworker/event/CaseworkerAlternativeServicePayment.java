@@ -55,8 +55,8 @@ public class CaseworkerAlternativeServicePayment implements CCDConfig<CaseData, 
         return new PageBuilder(configBuilder
             .event(CASEWORKER_SERVICE_PAYMENT)
             .forState(AwaitingServicePayment)
-            .name("Confirm Service Payment")
-            .description("Service Payment made")
+            .name("Confirm service payment")
+            .description("Service payment made")
             .showSummary()
             .showEventNotes()
             .aboutToStartCallback(this::aboutToStart)
