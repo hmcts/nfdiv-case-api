@@ -1,10 +1,12 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
@@ -14,6 +16,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+
+import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -30,11 +34,20 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 @ExtendWith(MockitoExtension.class)
 class CitizenSubmitAosTest {
 
+    private static final int DISPUTE_OFFSET_DAYS = 37;
+    private static final int HOLDING_OFFSET_DAYS = 141;
+
     @Mock
     private SoleAosSubmittedNotification soleAosSubmittedNotification;
 
     @InjectMocks
     private CitizenSubmitAos citizenSubmitAos;
+
+    @BeforeEach
+    void setPageSize() {
+        ReflectionTestUtils.setField(citizenSubmitAos, "disputeOffsetDays", DISPUTE_OFFSET_DAYS);
+        ReflectionTestUtils.setField(citizenSubmitAos, "holdingOffsetDays", HOLDING_OFFSET_DAYS);
+    }
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
@@ -81,6 +94,7 @@ class CitizenSubmitAosTest {
 
         final CaseData caseData = caseData();
         caseData.setAcknowledgementOfService(acknowledgementOfService);
+        caseData.getApplication().setIssueDate(LocalDate.now());
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -92,6 +106,7 @@ class CitizenSubmitAosTest {
         verifyNoMoreInteractions(soleAosSubmittedNotification);
 
         assertThat(response.getState()).isEqualTo(PendingDispute);
+        assertThat(response.getData().getDueDate()).isEqualTo(response.getData().getApplication().getIssueDate().plusDays(37));
         assertThat(response.getErrors()).isNull();
     }
 
@@ -106,6 +121,7 @@ class CitizenSubmitAosTest {
 
         final CaseData caseData = caseData();
         caseData.setAcknowledgementOfService(acknowledgementOfService);
+        caseData.getApplication().setIssueDate(LocalDate.now());
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -117,6 +133,7 @@ class CitizenSubmitAosTest {
         verifyNoMoreInteractions(soleAosSubmittedNotification);
 
         assertThat(response.getState()).isEqualTo(Holding);
+        assertThat(response.getData().getDueDate()).isEqualTo(response.getData().getApplication().getIssueDate().plusDays(141));
         assertThat(response.getErrors()).isNull();
     }
 }

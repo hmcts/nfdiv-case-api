@@ -104,7 +104,7 @@ public class SoleAosSubmittedNotification {
             caseData, caseData.getApplicant1(), caseData.getApplicant2());
 
         templateVars.put(APPLICATION_REFERENCE, formatId(id));
-        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getApplication().getIssueDate().plusDays(37).format(DATE_TIME_FORMATTER));
+        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateVars.put(YOUR_UNION, YOUR_DIVORCE.toLowerCase(Locale.ROOT));
@@ -131,7 +131,7 @@ public class SoleAosSubmittedNotification {
             caseData, caseData.getApplicant2(), caseData.getApplicant1());
 
         templateVars.put(APPLICATION_REFERENCE, formatId(id));
-        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getApplication().getIssueDate().plusDays(37).format(DATE_TIME_FORMATTER));
+        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateVars.put(DIVORCE_OR_DISSOLUTION, DIVORCE);

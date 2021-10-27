@@ -169,6 +169,10 @@ aos_pack:
 case_progression:
   holding_period_in_weeks: ${CASE_HOLDING_WEEKS:20}
 
+submit_aos:
+  dispute_offset_days: ${DISPUTE_DUE_DATE_OFFSET_DAYS:37}
+  holding_offset_days: ${HOLDING_DUE_DATE_OFFSET_DAYS:141}
+
 court:
   locations:
     serviceCentre:
