@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.caseworker.event;
+package uk.gov.hmcts.divorce.systemupdate.event;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -15,9 +15,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Component
 @Slf4j
-public class CaseworkerSystemUserUpdateIssueDate implements CCDConfig<CaseData, State, UserRole> {
+public class SystemUpdateIssueDate implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String CASEWORKER_SYSTEM_USER_UPDATE_ISSUE_DATE = "caseworker-system-user-update-issue-date";
+    public static final String CASEWORKER_SYSTEM_USER_UPDATE_ISSUE_DATE = "system-update-issue-date";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

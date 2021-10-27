@@ -223,7 +223,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         return new PageBuilder(configBuilder.event(SOLICITOR_SUBMIT)
             .forStates(Draft)
             .name("Case submission")
-            .description("Agree Statement of Truth, Pay & Submit")
+            .description("Agree statement of truth, pay & submit")
             .showSummary()
             .endButtonLabel("Submit Application")
             .aboutToStartCallback(this::aboutToStart)

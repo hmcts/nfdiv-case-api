@@ -30,8 +30,8 @@ public class SystemIssueSolicitorServicePack implements CCDConfig<CaseData, Stat
         new PageBuilder(configBuilder
             .event(SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK)
             .forState(AwaitingService)
-            .name("Issue Solicitor Service Pack")
-            .description("Issue Solicitor Service Pack to applicant's solicitor (if service method = Solicitor Service)")
+            .name("Issue solicitor service pack")
+            .description("Issue solicitor service pack to applicant's solicitor (if service method = Solicitor Service)")
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .grant(READ, SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR)
