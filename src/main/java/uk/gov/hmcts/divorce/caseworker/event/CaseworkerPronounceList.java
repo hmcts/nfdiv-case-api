@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -9,10 +10,14 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionPageBuilder;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
+import uk.gov.hmcts.divorce.bulkaction.service.CasePronouncementService;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
+import javax.servlet.http.HttpServletRequest;
+
 import static java.util.Collections.singletonList;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Pronounced;
@@ -30,6 +35,12 @@ public class CaseworkerPronounceList implements CCDConfig<BulkActionCaseData, Bu
 
     public static final String CASEWORKER_PRONOUNCE_LIST = "caseworker-pronounce-list";
 
+    @Autowired
+    private CasePronouncementService casePronouncementService;
+
+    @Autowired
+    private HttpServletRequest request;
+
     @Override
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
         new BulkActionPageBuilder(configBuilder
@@ -38,6 +49,7 @@ public class CaseworkerPronounceList implements CCDConfig<BulkActionCaseData, Bu
             .name("Pronounce list")
             .description("Pronounce list")
             .showSummary()
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
@@ -63,9 +75,26 @@ public class CaseworkerPronounceList implements CCDConfig<BulkActionCaseData, Bu
         return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder().build();
     }
 
-    public SubmittedCallbackResponse submitted(final CaseDetails<BulkActionCaseData, BulkActionState> details,
-                                               final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails) {
-        //TODO: Tom to add implementation
+    public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToSubmit(
+        CaseDetails<BulkActionCaseData, BulkActionState> details,
+        CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails
+    ) {
+
+        final BulkActionCaseData caseData = details.getData();
+
+        caseData.setPronouncedDate(caseData.getDateAndTimeOfHearing().toLocalDate());
+        caseData.setDateFinalOrderEligibleFrom(caseData.getDateFinalOrderEligibleFrom(caseData.getDateAndTimeOfHearing()));
+
+        return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder()
+            .data(caseData)
+            .build();
+    }
+
+    public SubmittedCallbackResponse submitted(
+        CaseDetails<BulkActionCaseData, BulkActionState> details,
+        CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails
+    ) {
+        casePronouncementService.pronounceCases(details, request.getHeader(AUTHORIZATION));
         return SubmittedCallbackResponse.builder().build();
     }
 }

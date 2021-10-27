@@ -100,6 +100,54 @@ class CcdUpdateServiceTest {
     }
 
     @Test
+    void shouldSubmitActionEvent() {
+
+        final User user = systemUpdateUser();
+        final Map<String, Object> caseData = new HashMap<>();
+        final CaseDetails reformCaseDetails = getCaseDetails(caseData);
+        final uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState> caseDetails =
+            new uk.gov.hmcts.ccd.sdk.api.CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(BulkActionCaseData.builder().build());
+
+        final StartEventResponse startEventResponse = getStartEventResponse();
+        final CaseDataContent caseDataContent = mock(CaseDataContent.class);
+
+        when(caseDetailsConverter.convertToReformModelFromBulkActionCaseDetails(caseDetails)).thenReturn(reformCaseDetails);
+        when(coreCaseDataApi
+            .startEventForCaseWorker(
+                SYSTEM_UPDATE_AUTH_TOKEN,
+                SERVICE_AUTHORIZATION,
+                SYSTEM_USER_USER_ID,
+                JURISDICTION,
+                BulkActionCaseTypeConfig.CASE_TYPE,
+                TEST_CASE_ID.toString(),
+                SYSTEM_REMOVE_FAILED_CASES)
+        )
+            .thenReturn(startEventResponse);
+
+        when(ccdCaseDataContentProvider
+            .createCaseDataContent(
+                startEventResponse,
+                DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY,
+                DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION,
+                caseData))
+            .thenReturn(caseDataContent);
+
+        ccdUpdateService.submitBulkActionEvent(caseDetails, SYSTEM_REMOVE_FAILED_CASES, user, SERVICE_AUTHORIZATION);
+
+        verify(coreCaseDataApi).submitEventForCaseWorker(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            SYSTEM_USER_USER_ID,
+            JURISDICTION,
+            BulkActionCaseTypeConfig.CASE_TYPE,
+            TEST_CASE_ID.toString(),
+            true,
+            caseDataContent);
+    }
+
+    @Test
     void shouldSubmitEventForUpdateBulkCaseAsSystemUpdateUser() {
 
         final User user = systemUpdateUser();
