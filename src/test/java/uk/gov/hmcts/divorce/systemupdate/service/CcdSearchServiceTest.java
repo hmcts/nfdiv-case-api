@@ -325,7 +325,7 @@ class CcdSearchServiceTest {
             .thenReturn(expectedSearchResult2);
 
         final List<CaseDetails> searchResult = ccdSearchService
-            .searchForBulkCasesWithCaseErrorsAndState(Pronounced, user, SERVICE_AUTHORIZATION);
+            .searchForUnprocessedOrErroredBulkCasesWithStateOf(Pronounced, user, SERVICE_AUTHORIZATION);
 
         assertThat(searchResult.size()).isEqualTo(101);
     }
@@ -347,7 +347,7 @@ class CcdSearchServiceTest {
 
         assertThrows(
             CcdSearchCaseException.class,
-            () -> ccdSearchService.searchForBulkCasesWithCaseErrorsAndState(Pronounced, user, SERVICE_AUTHORIZATION),
+            () -> ccdSearchService.searchForUnprocessedOrErroredBulkCasesWithStateOf(Pronounced, user, SERVICE_AUTHORIZATION),
             "Failed to complete search for Bulk Cases with state of Pronounced");
     }
 
