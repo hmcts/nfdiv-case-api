@@ -25,10 +25,8 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerMakeBailiffDecision.CASEWORKER_BAILIFF_DECISION;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.BAILIFF;
-import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffService;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
@@ -83,36 +81,6 @@ public class CaseworkerMakeBailiffDecisionIT {
                 status().isOk())
             .andExpect(
                 jsonPath("$.state").value(AwaitingBailiffService.getName()))
-            .andExpect(
-                jsonPath("$.data.serviceApplicationDecisionDate").value(getExpectedLocalDate().toString())
-            );
-    }
-
-    @Test
-    public void shouldChangeCaseStateToAwaitingConditionalOrderAndSetDecisionDateWhenServiceApplicationIsGrantedAndServiceTypeIsNotBailiff()
-        throws Exception {
-        setMockClock(clock);
-
-        final CaseData caseData = caseData();
-        caseData.getAlternativeService().setServiceApplicationGranted(YES);
-        caseData.getAlternativeService().setAlternativeServiceType(DEEMED);
-
-        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-                .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .content(objectMapper.writeValueAsString(
-                        callbackRequest(
-                            caseData,
-                            CASEWORKER_BAILIFF_DECISION)
-                    )
-                )
-                .accept(APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(
-                status().isOk())
-            .andExpect(
-                jsonPath("$.state").value(AwaitingConditionalOrder.getName()))
             .andExpect(
                 jsonPath("$.data.serviceApplicationDecisionDate").value(getExpectedLocalDate().toString())
             );

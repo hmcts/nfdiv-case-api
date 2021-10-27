@@ -177,7 +177,6 @@ public class SolicitorSubmitUpdateDraftAosIT {
             .applicant1(applicant1)
             .divorceOrDissolution(DIVORCE)
             .divorceUnit(Court.SERVICE_CENTRE)
-            .selectedDivorceCentreSiteId("AA07")
             .documentsGenerated(List.of(listValue))
             .build();
     }
@@ -191,7 +190,6 @@ public class SolicitorSubmitUpdateDraftAosIT {
             .applicant1(applicant1)
             .divorceOrDissolution(DIVORCE)
             .divorceUnit(Court.SERVICE_CENTRE)
-            .selectedDivorceCentreSiteId("AA07")
             .build();
     }
 
