@@ -28,6 +28,9 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 @Builder(toBuilder = true)
 public class BulkActionCaseData {
 
+    private static final int FINAL_ORDER_OFFSET_WEEKS = 6;
+    private static final int FINAL_ORDER_OFFSET_DAYS = 1;
+
     @CCD(
         label = "Case title",
         access = {CaseworkerAccess.class}
@@ -99,6 +102,6 @@ public class BulkActionCaseData {
 
     @JsonIgnore
     public LocalDate getDateFinalOrderEligibleFrom(LocalDateTime dateTime) {
-        return dateTime.toLocalDate().plusWeeks(6).plusDays(1);
+        return dateTime.toLocalDate().plusWeeks(FINAL_ORDER_OFFSET_WEEKS).plusDays(FINAL_ORDER_OFFSET_DAYS);
     }
 }

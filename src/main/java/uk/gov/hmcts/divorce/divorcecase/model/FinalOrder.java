@@ -18,6 +18,9 @@ import java.time.LocalDateTime;
 @Builder
 public class FinalOrder {
 
+    private static final int FINAL_ORDER_OFFSET_WEEKS = 6;
+    private static final int FINAL_ORDER_OFFSET_DAYS = 1;
+
     @CCD(
         label = "Date Final Order submitted to HMCTS",
         access = {DefaultAccess.class}
@@ -34,6 +37,6 @@ public class FinalOrder {
 
     @JsonIgnore
     public LocalDate getDateFinalOrderEligibleFrom(LocalDateTime dateTime) {
-        return dateTime.toLocalDate().plusWeeks(6).plusDays(1);
+        return dateTime.toLocalDate().plusWeeks(FINAL_ORDER_OFFSET_WEEKS).plusDays(FINAL_ORDER_OFFSET_DAYS);
     }
 }
