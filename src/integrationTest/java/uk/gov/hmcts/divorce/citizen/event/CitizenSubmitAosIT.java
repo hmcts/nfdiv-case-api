@@ -77,7 +77,7 @@ public class CitizenSubmitAosIT {
     @Test
     public void givenValidCaseDataWithoutDisputeWhenCallbackIsInvokedThenSendEmailToApplicantAndRespondent() throws Exception {
         CaseData data = validCaseDataForAosSubmitted();
-        data.setDueDate(LOCAL_DATE);
+        data.getApplication().setIssueDate(LOCAL_DATE);
         data.getAcknowledgementOfService().setDisputeApplication(NO);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
