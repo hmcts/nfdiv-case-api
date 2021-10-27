@@ -64,6 +64,13 @@ public class RetiredFields {
     @CCD(label = "Site ID for selected court")
     private String selectedDivorceCentreSiteId;
 
+    @CCD(
+        label = "retiredCoTypeCostsDecision",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "CostOrderList"
+    )
+    private CostOrderList coTypeCostsDecision;
+
     @JsonIgnore
     private static final Map<String, Consumer<Map<String, Object>>> migrations = Map.of(
         "exampleRetiredField", data -> data.put("applicant1FirstName", data.get("exampleRetiredField")),
