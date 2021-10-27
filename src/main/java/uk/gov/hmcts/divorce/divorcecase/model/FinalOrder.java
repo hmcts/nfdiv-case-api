@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +18,12 @@ import java.time.LocalDateTime;
 @Builder
 public class FinalOrder {
 
+    @JsonIgnore
+    private static final int FINAL_ORDER_OFFSET_WEEKS = 6;
+
+    @JsonIgnore
+    private static final int FINAL_ORDER_OFFSET_DAYS = 1;
+
     @CCD(
         label = "Date Final Order submitted to HMCTS",
         access = {DefaultAccess.class}
@@ -30,4 +37,9 @@ public class FinalOrder {
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateFinalOrderEligibleFrom;
+
+    @JsonIgnore
+    public LocalDate getDateFinalOrderEligibleFrom(LocalDateTime dateTime) {
+        return dateTime.toLocalDate().plusWeeks(FINAL_ORDER_OFFSET_WEEKS).plusDays(FINAL_ORDER_OFFSET_DAYS);
+    }
 }
