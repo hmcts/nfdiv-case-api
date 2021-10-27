@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.citizen.notification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -93,11 +92,11 @@ public class ApplicationSentForReviewApplicant2Notification {
         templateVars.put(APPLICATION_REFERENCE, formatId(id));
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         templateVars.put(ACCESS_CODE, caseData.getCaseInvite().getAccessCode());
-        templateVars.put(REMINDER_APPLICATION, StringUtils.capitalize(APPLICATION));
+        templateVars.put(REMINDER_APPLICATION, APPLICATION);
     }
 
     private void setDivorceVariables(Map<String, String> templateVars) {
-        templateVars.put(APPLICATION, "a " + DIVORCE_APPLICATION);
+        templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), "a " + DIVORCE_APPLICATION);
         templateVars.put(ACCOUNT, DIVORCE_ACCOUNT);
         templateVars.put(FOR_YOUR_APPLICATION, FOR_YOUR_DIVORCE);
 
@@ -106,7 +105,7 @@ public class ApplicationSentForReviewApplicant2Notification {
     }
 
     private void setDissolutionVariables(Map<String, String> templateVars) {
-        templateVars.put(APPLICATION, "an " + APPLICATION_TO_END_CIVIL_PARTNERSHIP);
+        templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), "an " + APPLICATION_TO_END_CIVIL_PARTNERSHIP);
         templateVars.put(ACCOUNT, CIVIL_PARTNERSHIP_ACCOUNT);
         templateVars.put(FOR_YOUR_APPLICATION, TO_END_CIVIL_PARTNERSHIP);
 

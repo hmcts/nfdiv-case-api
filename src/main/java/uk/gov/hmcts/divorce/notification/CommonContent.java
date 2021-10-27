@@ -64,14 +64,24 @@ public class CommonContent {
 
         Map<String, String> configTemplateVars = emailTemplatesConfig.getTemplateVars();
 
-        boolean isDivorce = caseData.getDivorceOrDissolution().isDivorce();
-        templateVars.put(RELATIONSHIP, isDivorce ? DIVORCE_APPLICATION : APPLICATION_TO_END_CIVIL_PARTNERSHIP);
-        templateVars.put(RELATIONSHIP_COURT_HEADER,  isDivorce ? APPLY_FOR_DIVORCE : END_CIVIL_PARTNERSHIP);
-        templateVars.put(COURT_EMAIL, configTemplateVars.get(isDivorce ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
-        templateVars.put(SIGN_IN_URL_NOTIFY_KEY, configTemplateVars.get(isDivorce ? SIGN_IN_DIVORCE_URL : SIGN_IN_DISSOLUTION_URL));
-        templateVars.put(UNION,  isDivorce ? MARRIAGE : CIVIL_PARTNERSHIP);
-        templateVars.put(APPLICATION,  isDivorce ? FOR_DIVORCE : TO_END_CIVIL_PARTNERSHIP);
-        templateVars.put(APPLICATION_TYPE.toLowerCase(Locale.ROOT), isDivorce ? DIVORCE_APPLICATION : APPLICATION_TO_END_CIVIL_PARTNERSHIP);
+        if (caseData.getDivorceOrDissolution().isDivorce()) {
+            templateVars.put(RELATIONSHIP, DIVORCE_APPLICATION);
+            templateVars.put(RELATIONSHIP_COURT_HEADER, APPLY_FOR_DIVORCE);
+            templateVars.put(COURT_EMAIL, configTemplateVars.get(DIVORCE_COURT_EMAIL));
+            templateVars.put(SIGN_IN_URL_NOTIFY_KEY, configTemplateVars.get(SIGN_IN_DIVORCE_URL));
+            templateVars.put(UNION, MARRIAGE);
+            templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), FOR_DIVORCE);
+            templateVars.put(APPLICATION_TYPE.toLowerCase(Locale.ROOT), DIVORCE_APPLICATION);
+
+        } else {
+            templateVars.put(RELATIONSHIP, APPLICATION_TO_END_CIVIL_PARTNERSHIP);
+            templateVars.put(RELATIONSHIP_COURT_HEADER, END_CIVIL_PARTNERSHIP);
+            templateVars.put(COURT_EMAIL, configTemplateVars.get(DISSOLUTION_COURT_EMAIL));
+            templateVars.put(SIGN_IN_URL_NOTIFY_KEY, configTemplateVars.get(SIGN_IN_DISSOLUTION_URL));
+            templateVars.put(UNION, CIVIL_PARTNERSHIP);
+            templateVars.put(APPLICATION.toLowerCase(Locale.ROOT), TO_END_CIVIL_PARTNERSHIP);
+            templateVars.put(APPLICATION_TYPE.toLowerCase(Locale.ROOT), APPLICATION_TO_END_CIVIL_PARTNERSHIP);
+        }
 
         return templateVars;
     }

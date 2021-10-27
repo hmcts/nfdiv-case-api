@@ -95,7 +95,7 @@ class CommonContentTest {
                 entry(COURT_EMAIL, courtEmail),
                 entry(SIGN_IN_URL_NOTIFY_KEY, SIGN_IN_DIVORCE_URL),
                 entry(UNION, MARRIAGE),
-                entry(APPLICATION, FOR_DIVORCE),
+                entry(APPLICATION.toLowerCase(Locale.ROOT), FOR_DIVORCE),
                 entry(APPLICATION_TYPE.toLowerCase(Locale.ROOT), DIVORCE_APPLICATION));
     }
 
@@ -133,7 +133,7 @@ class CommonContentTest {
                 entry(COURT_EMAIL, courtEmail),
                 entry(SIGN_IN_URL_NOTIFY_KEY, SIGN_IN_DISSOLUTION_URL),
                 entry(UNION, CIVIL_PARTNERSHIP),
-                entry(APPLICATION, TO_END_CIVIL_PARTNERSHIP),
+                entry(APPLICATION.toLowerCase(Locale.ROOT), TO_END_CIVIL_PARTNERSHIP),
                 entry(APPLICATION_TYPE.toLowerCase(Locale.ROOT), APPLICATION_TO_END_CIVIL_PARTNERSHIP));
     }
 
