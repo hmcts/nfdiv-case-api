@@ -12,6 +12,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.Bailiff;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -27,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAddBailiffReturn.CASEWORKER_ADD_BAILIFF_RETURN;
+import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.BAILIFF;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
@@ -60,10 +62,16 @@ public class CaseworkerAddBailiffReturnIT {
         final LocalDate certificateOfServiceDate = getExpectedLocalDate();
 
         final CaseData caseData = CaseData.builder()
-            .bailiff(Bailiff.builder()
-                .successfulServedByBailiff(YES)
-                .certificateOfServiceDate(certificateOfServiceDate)
-                .build())
+            .alternativeService(
+                AlternativeService
+                    .builder()
+                    .alternativeServiceType(BAILIFF)
+                    .bailiff(
+                        Bailiff.builder()
+                            .successfulServedByBailiff(YES)
+                            .certificateOfServiceDate(certificateOfServiceDate)
+                        .build())
+                    .build())
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -96,9 +104,16 @@ public class CaseworkerAddBailiffReturnIT {
         final LocalDate certificateOfServiceDate = getExpectedLocalDate();
 
         final CaseData caseData = CaseData.builder()
-            .bailiff(Bailiff.builder()
-                .successfulServedByBailiff(NO)
-                .certificateOfServiceDate(certificateOfServiceDate)
+            .alternativeService(
+                AlternativeService
+                    .builder()
+                    .alternativeServiceType(BAILIFF)
+                    .bailiff(
+                        Bailiff
+                            .builder()
+                            .successfulServedByBailiff(NO)
+                            .certificateOfServiceDate(certificateOfServiceDate)
+                    .build())
                 .build())
             .build();
 

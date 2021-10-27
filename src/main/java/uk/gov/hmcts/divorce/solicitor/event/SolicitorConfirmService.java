@@ -84,8 +84,8 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
         return new PageBuilder(configBuilder
             .event(SOLICITOR_CONFIRM_SERVICE)
             .forStateTransition(AwaitingService, AwaitingAos)
-            .name("Solicitor Confirm Service")
-            .description("Solicitor Confirm Service")
+            .name("Solicitor confirm service")
+            .description("Solicitor confirm service")
             .showSummary()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .explicitGrants()

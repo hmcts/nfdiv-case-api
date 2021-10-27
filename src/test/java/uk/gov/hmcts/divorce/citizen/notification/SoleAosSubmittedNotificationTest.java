@@ -183,7 +183,7 @@ public class SoleAosSubmittedNotificationTest {
             eq(SOL_APPLICANT_DISPUTED_AOS_SUBMITTED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(37).format(DATE_TIME_FORMATTER)),
+                hasEntry(SUBMISSION_RESPONSE_DATE, data.getDueDate().format(DATE_TIME_FORMATTER)),
                 hasEntry(YOUR_UNION, YOUR_DIVORCE.toLowerCase(Locale.ROOT)),
                 hasEntry("ending of your union", DIVORCE),
                 hasEntry(ACCOUNT, DIVORCE_ACCOUNT)
@@ -212,7 +212,7 @@ public class SoleAosSubmittedNotificationTest {
             eq(SOL_APPLICANT_DISPUTED_AOS_SUBMITTED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(37).format(DATE_TIME_FORMATTER)),
+                hasEntry(SUBMISSION_RESPONSE_DATE, data.getDueDate().format(DATE_TIME_FORMATTER)),
                 hasEntry(YOUR_UNION, ENDING_YOUR_CIVIL_PARTNERSHIP.toLowerCase(Locale.ROOT)),
                 hasEntry("ending of your union", "ending of your civil partnership"),
                 hasEntry(ACCOUNT, CIVIL_PARTNERSHIP_ACCOUNT)
@@ -240,7 +240,7 @@ public class SoleAosSubmittedNotificationTest {
             eq(SOL_RESPONDENT_DISPUTED_AOS_SUBMITTED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(37).format(DATE_TIME_FORMATTER)),
+                hasEntry(SUBMISSION_RESPONSE_DATE, data.getDueDate().format(DATE_TIME_FORMATTER)),
                 hasEntry("divorce / dissolution", DIVORCE),
                 hasEntry("service", "Divorce Service"),
                 hasEntry("ending of your union", DIVORCE)
@@ -269,7 +269,7 @@ public class SoleAosSubmittedNotificationTest {
             eq(SOL_RESPONDENT_DISPUTED_AOS_SUBMITTED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(37).format(DATE_TIME_FORMATTER)),
+                hasEntry(SUBMISSION_RESPONSE_DATE, data.getDueDate().format(DATE_TIME_FORMATTER)),
                 hasEntry("divorce / dissolution", "dissolution"),
                 hasEntry("service", "Ending Civil Partnerships"),
                 hasEntry("ending of your union", APPLICATION_TO_END_CIVIL_PARTNERSHIP)

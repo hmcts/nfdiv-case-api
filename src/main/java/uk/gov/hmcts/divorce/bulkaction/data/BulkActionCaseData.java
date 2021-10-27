@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.bulkaction.data;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -17,6 +18,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -26,6 +29,12 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 public class BulkActionCaseData {
+
+    @JsonIgnore
+    private static final int FINAL_ORDER_OFFSET_WEEKS = 6;
+
+    @JsonIgnore
+    private static final int FINAL_ORDER_OFFSET_DAYS = 1;
 
     @CCD(
         label = "Case title",
@@ -81,10 +90,40 @@ public class BulkActionCaseData {
     private List<ListValue<BulkListCaseDetails>> bulkListCaseDetails;
 
     @CCD(
+        label = "Cases that have successfully processed",
+        typeOverride = Collection,
+        typeParameterOverride = "BulkListCaseDetails",
+        access = {CaseworkerAccess.class}
+    )
+    private List<ListValue<BulkListCaseDetails>> processedCaseDetails;
+
+    @CCD(
         label = "Cases that have errored",
         typeOverride = Collection,
         typeParameterOverride = "BulkListCaseDetails",
         access = {CaseworkerAccess.class}
     )
     private List<ListValue<BulkListCaseDetails>> erroredCaseDetails;
+
+    @JsonIgnore
+    public LocalDate getDateFinalOrderEligibleFrom(LocalDateTime dateTime) {
+        return dateTime.toLocalDate().plusWeeks(FINAL_ORDER_OFFSET_WEEKS).plusDays(FINAL_ORDER_OFFSET_DAYS);
+    }
+
+    @JsonIgnore
+    public List<ListValue<BulkListCaseDetails>> calculateProcessedCases(final List<ListValue<BulkListCaseDetails>> unprocessedBulkCases) {
+        if (isEmpty(unprocessedBulkCases)) {
+            return bulkListCaseDetails;
+        }
+
+        List<String> unprocessedCaseIds = unprocessedBulkCases
+            .stream()
+            .map(lv -> lv.getValue().getCaseReference().getCaseReference())
+            .collect(toList());
+
+        return bulkListCaseDetails
+            .stream()
+            .filter(lv -> !unprocessedCaseIds.contains(lv.getValue().getCaseReference().getCaseReference()))
+            .collect(toList());
+    }
 }
