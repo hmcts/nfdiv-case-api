@@ -38,10 +38,13 @@ public class SoleAosSubmittedNotification {
     private static final String APPLY_FOR_CO_DATE = "apply for CO date";
     private static final String ENDING_OF_YOUR_CIVIL_PARTNERSHIP = "ending of your civil partnership";
     private static final String ENDING_OF_YOUR_UNION = "ending of your union";
+    private static final String END_UNION = "end union";
     private static final String DIVORCE_OR_DISSOLUTION = "divorce / dissolution";
     private static final String SERVICE = "service";
     private static final String DIVORCE_SERVICE = "Divorce Service";
     private static final String CIVIL_PARTNERSHIP_SERVICE = "Ending Civil Partnerships";
+    private static final String GET_DIVORCE = "get divorced";
+    private static final String END_YOUR_CIVIL_PARTNERSHIP = "end your civil partnership";
 
     @Autowired
     private NotificationService notificationService;
@@ -85,8 +88,11 @@ public class SoleAosSubmittedNotification {
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateVars.put(YOUR_UNION, YOUR_DIVORCE.toLowerCase(Locale.ROOT));
+            templateVars.put(END_UNION, GET_DIVORCE);
         } else {
             templateVars.put(YOUR_UNION, ENDING_YOUR_CIVIL_PARTNERSHIP.toLowerCase(Locale.ROOT));
+            templateVars.put(END_UNION, END_YOUR_CIVIL_PARTNERSHIP);
+
         }
 
         log.info("Sending Aos submitted without dispute notification to respondent");
