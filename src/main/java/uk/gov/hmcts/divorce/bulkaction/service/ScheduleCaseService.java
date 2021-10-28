@@ -19,6 +19,7 @@ import java.util.List;
 
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCaseErrors.SYSTEM_BULK_CASE_ERRORS;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithPronouncementJudge.SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE;
 
 @Service
 @Slf4j
@@ -39,11 +40,10 @@ public class ScheduleCaseService {
     @Async
     public void updateCourtHearingDetailsForCasesInBulk(final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
                                                         final String authorization) {
-        final BulkActionCaseData bulkActionCaseData = bulkCaseDetails.getData();
 
         final User user = idamService.retrieveUser(authorization);
         final String serviceAuth = authTokenGenerator.generate();
-        final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails = bulkActionCaseData.getBulkListCaseDetails();
+        final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails = getBulkListCaseDetails(bulkCaseDetails);
 
         final List<ListValue<BulkListCaseDetails>> unprocessedBulkCases = bulkTriggerService.bulkTrigger(
             bulkListCaseDetails,
@@ -61,10 +61,41 @@ public class ScheduleCaseService {
             user,
             serviceAuth
         );
+        submitBulkActionEvent(user, serviceAuth, bulkCaseDetails, unprocessedBulkCases);
+    }
+
+    @Async
+    public void updatePronouncementJudgeDetailsForCasesInBulk(final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
+                                                              final String authorization) {
+
+        final User user = idamService.retrieveUser(authorization);
+        final String serviceAuth = authTokenGenerator.generate();
+        final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails = getBulkListCaseDetails(bulkCaseDetails);
+
+        final List<ListValue<BulkListCaseDetails>> unprocessedBulkCases = bulkTriggerService.bulkTrigger(
+            bulkListCaseDetails,
+            SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE,
+            mainCaseDetails -> {
+                final var conditionalOrder = mainCaseDetails.getData().getConditionalOrder();
+                conditionalOrder.setPronouncementJudge(
+                    bulkCaseDetails.getData().getPronouncementJudge()
+                );
+                return mainCaseDetails;
+            },
+            user,
+            serviceAuth
+        );
+        submitBulkActionEvent(user, serviceAuth, bulkCaseDetails, unprocessedBulkCases);
+    }
+
+    private void submitBulkActionEvent(User user,
+                                        String serviceAuth,
+                                        CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
+                                        List<ListValue<BulkListCaseDetails>> unprocessedBulkCases) {
 
         log.info("Error bulk case details list size {}", unprocessedBulkCases.size());
 
-        List<ListValue<BulkListCaseDetails>> processedBulkCases = bulkActionCaseData.calculateProcessedCases(unprocessedBulkCases);
+        List<ListValue<BulkListCaseDetails>> processedBulkCases = bulkCaseDetails.getData().calculateProcessedCases(unprocessedBulkCases);
 
         log.info("Successfully processed bulk case details list size {}", processedBulkCases.size());
 
@@ -81,5 +112,10 @@ public class ScheduleCaseService {
         } catch (final FeignException e) {
             log.error("Update failed for bulk case id {} ", bulkCaseDetails.getId(), e);
         }
+    }
+
+    private List<ListValue<BulkListCaseDetails>> getBulkListCaseDetails(CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails) {
+        BulkActionCaseData bulkActionCaseData = bulkCaseDetails.getData();
+        return bulkActionCaseData.getBulkListCaseDetails();
     }
 }
