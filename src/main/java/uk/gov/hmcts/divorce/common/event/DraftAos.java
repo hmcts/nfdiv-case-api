@@ -8,13 +8,13 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.event.page.Applicant2SolAosJurisdiction;
+import uk.gov.hmcts.divorce.common.event.page.Applicant2SolAosOtherProceedings;
+import uk.gov.hmcts.divorce.common.event.page.Applicant2SolConfirmContactDetails;
+import uk.gov.hmcts.divorce.common.event.page.Applicant2SolReviewApplicant1Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolAosOtherProceedings;
-import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolAosjurisdiction;
-import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolConfirmContactDetails;
-import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolReviewApplicant1Application;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
 
 import java.util.List;
@@ -42,7 +42,7 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
     private final List<CcdPageConfiguration> pages = asList(
         new Applicant2SolConfirmContactDetails(),
         new Applicant2SolReviewApplicant1Application(),
-        new Applicant2SolAosjurisdiction(),
+        new Applicant2SolAosJurisdiction(),
         new Applicant2SolAosOtherProceedings()
     );
 
