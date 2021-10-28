@@ -32,7 +32,7 @@ public class SendApplicationIssueNotifications implements CaseTask {
                     applicationIssuedNotification.sendToSoleRespondent(caseData, caseId);
                 }
                 if (caseDetails.getState() == AwaitingAos
-                    && !caseData.getApplicant2().getHomeAddress().getCountry().equalsIgnoreCase("UK")) {
+                    && !("UK").equalsIgnoreCase(caseData.getApplicant2().getHomeAddress().getCountry())) {
                     applicationIssuedNotification.notifyApplicantOfServiceToOverseasRespondent(caseData, caseId);
                 }
             } else {
