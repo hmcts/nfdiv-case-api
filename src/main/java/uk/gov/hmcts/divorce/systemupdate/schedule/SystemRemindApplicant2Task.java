@@ -106,7 +106,6 @@ public class SystemRemindApplicant2Task implements Runnable {
             caseDetails.getId()
         );
 
-        caseDetails.getData().put(NOTIFICATION_FLAG, YesOrNo.YES);
         ccdUpdateService.submitEvent(caseDetails, SYSTEM_REMIND_APPLICANT2, user, serviceAuth);
     }
 }
