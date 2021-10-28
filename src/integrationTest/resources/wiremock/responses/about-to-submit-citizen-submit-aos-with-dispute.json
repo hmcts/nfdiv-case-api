@@ -10,7 +10,6 @@
     "applicant1LegalProceedings":"No",
     "applicant1MiddleName":"test_middle_name",
     "applicant1PrayerHasBeenGiven":"Yes",
-    "applicant1SolicitorEmail":"solicitor@test.com",
     "applicant1StatementOfTruth":"Yes",
     "applicant2Email":"test@test.com",
     "applicant2FinancialOrder":"No",
@@ -54,7 +53,7 @@
     "disputeApplication":"Yes",
     "divorceOrDissolution":"divorce",
     "documentUploadComplete":"Yes",
-    "dueDate":"2021-06-04",
+    "dueDate": "${json-unit.any-string}",
     "jurisdictionApplicant1Residence":"Yes",
     "jurisdictionApplicant2Residence":"Yes",
     "jurisdictionConnections":["J"],
@@ -69,8 +68,31 @@
     "statementOfTruth":"Yes",
     "confirmReadPetition": "Yes",
     "jurisdictionAgree": "Yes",
-    "dataVersion": 6,
-    "issueDate":"2021-04-28"
+    "issueDate":"2021-04-28",
+    "documentsGenerated": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentDateAdded": null,
+          "documentComment": null,
+          "documentFileName": "respondentAnswers.pdf",
+          "documentType": "respondentAnswers",
+          "documentEmailContent": null,
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100",
+            "document_filename": "respondentAnswers.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100/binary"
+          }
+        }
+      }
+    ],
+    "coRespondentAnswersLink": {
+      "document_url": "${json-unit.any-string}",
+      "document_filename": "${json-unit.any-string}",
+      "document_binary_url": "${json-unit.any-string}"
+    },
+    "dateAosSubmitted": "${json-unit.any-string}",
+    "dataVersion": "${json-unit.any-number}"
   },
   "errors": null,
   "warnings": null,

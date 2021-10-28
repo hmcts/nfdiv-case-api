@@ -10,10 +10,10 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import java.util.Locale;
 import java.util.Map;
 
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_AOS_SUBMITTED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_DISPUTED_AOS_SUBMITTED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_RESPONDENT_AOS_SUBMITTED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_RESPONDENT_DISPUTED_AOS_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_AOS_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_AOS_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.ACCOUNT;
@@ -70,7 +70,7 @@ public class SoleAosSubmittedNotification {
 
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
-            SOL_APPLICANT_AOS_SUBMITTED,
+            SOLE_APPLICANT_AOS_SUBMITTED,
             templateVars,
             caseData.getApplicant1().getLanguagePreference()
         );
@@ -93,7 +93,7 @@ public class SoleAosSubmittedNotification {
 
         notificationService.sendEmail(
             caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
-            SOL_RESPONDENT_AOS_SUBMITTED,
+            SOLE_RESPONDENT_AOS_SUBMITTED,
             templateVars,
             caseData.getApplicant2().getLanguagePreference()
         );
@@ -120,7 +120,7 @@ public class SoleAosSubmittedNotification {
 
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
-            SOL_APPLICANT_DISPUTED_AOS_SUBMITTED,
+            SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED,
             templateVars,
             caseData.getApplicant1().getLanguagePreference()
         );
@@ -147,7 +147,7 @@ public class SoleAosSubmittedNotification {
 
         notificationService.sendEmail(
             caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
-            SOL_RESPONDENT_DISPUTED_AOS_SUBMITTED,
+            SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED,
             templateVars,
             caseData.getApplicant2().getLanguagePreference()
         );

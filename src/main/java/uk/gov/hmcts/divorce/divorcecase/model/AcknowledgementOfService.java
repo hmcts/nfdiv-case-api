@@ -56,19 +56,6 @@ public class AcknowledgementOfService {
     private String jurisdictionDisagreeReason;
 
     @CCD(
-        label = "Do legal proceedings exist (respondent)?",
-        access = AosAccess.class
-    )
-    private YesOrNo legalProceedingsExist;
-
-    @CCD(
-        label = "Legal proceedings details (respondent)",
-        typeOverride = TextArea,
-        access = AosAccess.class
-    )
-    private String legalProceedingsDescription;
-
-    @CCD(
         label = "Date AoS submitted to HMCTS",
         access = {DefaultAccess.class}
     )

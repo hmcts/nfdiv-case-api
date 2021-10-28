@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor.event;
+package uk.gov.hmcts.divorce.common.event;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -8,12 +8,12 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.event.page.Applicant2SolStatementOfTruth;
+import uk.gov.hmcts.divorce.common.service.SubmitAosService;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2SolStatementOfTruth;
-import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitAosService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +21,7 @@ import java.util.List;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -29,12 +30,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
-public class SolicitorSubmitAos implements CCDConfig<CaseData, State, UserRole> {
+public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String SOLICITOR_SUBMIT_AOS = "solicitor-submit-aos";
+    public static final String SUBMIT_AOS = "submit-aos";
 
     @Autowired
-    private SolicitorSubmitAosService solicitorSubmitAosService;
+    private SubmitAosService submitAosService;
 
     private final List<CcdPageConfiguration> pages = List.of(
         new Applicant2SolStatementOfTruth()
@@ -60,7 +61,7 @@ public class SolicitorSubmitAos implements CCDConfig<CaseData, State, UserRole> 
                 .build();
         }
 
-        final CaseDetails<CaseData, State> updateDetails = solicitorSubmitAosService.submitAos(details);
+        final CaseDetails<CaseData, State> updateDetails = submitAosService.submitAos(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updateDetails.getData())
@@ -89,14 +90,14 @@ public class SolicitorSubmitAos implements CCDConfig<CaseData, State, UserRole> 
 
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
-            .event(SOLICITOR_SUBMIT_AOS)
+            .event(SUBMIT_AOS)
             .forStateTransition(AosDrafted, Holding)
             .name("Submit AoS")
             .description("Submit AoS")
             .showSummary()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .explicitGrants()
-            .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
+            .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR, APPLICANT_2)
             .grant(READ,
                 CASE_WORKER,
                 LEGAL_ADVISOR,

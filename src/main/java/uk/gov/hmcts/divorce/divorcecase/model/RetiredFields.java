@@ -71,6 +71,12 @@ public class RetiredFields {
     )
     private CostOrderList coTypeCostsDecision;
 
+    @CCD(label = "Do legal proceedings exist (respondent)?")
+    private YesOrNo legalProceedingsExist;
+
+    @CCD(label = "Legal proceedings details (respondent)")
+    private String legalProceedingsDescription;
+
     @JsonIgnore
     private static final Map<String, Consumer<Map<String, Object>>> migrations = Map.of(
         "exampleRetiredField", data -> data.put("applicant1FirstName", data.get("exampleRetiredField")),
@@ -86,7 +92,9 @@ public class RetiredFields {
         ),
         "applicant1FinancialOrderForRemoved", data -> { },
         "applicant2FinancialOrderForRemoved", data -> { },
-        "dateConditionalOrderSubmitted", data -> data.put("coDateSubmitted", data.get("dateConditionalOrderSubmitted"))
+        "dateConditionalOrderSubmitted", data -> data.put("coDateSubmitted", data.get("dateConditionalOrderSubmitted")),
+        "legalProceedingsExist", data -> data.put("applicant2LegalProceedings", data.get("legalProceedingsExist")),
+        "legalProceedingsDescription", data -> data.put("applicant2LegalProceedingsDetails", data.get("legalProceedingsDescription"))
     );
 
     public static Map<String, Object> migrate(Map<String, Object> data) {
