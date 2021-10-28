@@ -222,7 +222,7 @@ public class ApplicationIssuedNotification {
     }
 
     private Map<String, String> overseasRespondentTemplateVars(final CaseData caseData, Long id) {
-        final HashMap<String, String> templateVars = new HashMap<>();
+        final Map<String, String> templateVars = new HashMap<>();
         templateVars.put(IS_DIVORCE,  isDivorce(caseData) ? YES : NO);
         templateVars.put(IS_DISSOLUTION,  isDivorce(caseData) ? NO : YES);
         templateVars.put(APPLICATION_REFERENCE, formatId(id));
