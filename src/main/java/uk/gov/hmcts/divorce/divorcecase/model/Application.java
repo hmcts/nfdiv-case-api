@@ -423,12 +423,12 @@ public class Application {
     }
 
     @JsonIgnore
-    public boolean isApplicant2ReminderSent() {
+    public boolean hasApplicant2ReminderBeenSent() {
         return YES.equals(applicant2ReminderSent);
     }
 
     @JsonIgnore
-    public boolean isApplicant1ReminderSent() {
+    public boolean hasApplicant1ReminderBeenSent() {
         return YES.equals(applicant1ReminderSent);
     }
 
@@ -438,7 +438,7 @@ public class Application {
     }
 
     @JsonIgnore
-    public boolean isOverdueNotificationSent() {
+    public boolean hasOverdueNotificationBeenSent() {
         return YES.equals(overdueNotificationSent);
     }
 
