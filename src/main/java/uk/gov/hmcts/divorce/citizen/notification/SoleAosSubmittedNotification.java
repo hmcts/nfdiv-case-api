@@ -84,7 +84,7 @@ public class SoleAosSubmittedNotification {
         templateVars.put(APPLY_FOR_CO_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
-            templateVars.put(YOUR_UNION, YOUR_DIVORCE);
+            templateVars.put(YOUR_UNION, YOUR_DIVORCE.toLowerCase(Locale.ROOT));
         } else {
             templateVars.put(YOUR_UNION, ENDING_YOUR_CIVIL_PARTNERSHIP.toLowerCase(Locale.ROOT));
         }
