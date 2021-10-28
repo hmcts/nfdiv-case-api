@@ -35,10 +35,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.common.event.DraftAos.DRAFT_AOS;
+import static uk.gov.hmcts.divorce.common.event.UpdateAos.UPDATE_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorUpdateAos.SOLICITOR_UPDATE_AOS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
@@ -84,7 +84,7 @@ public class SolicitorSubmitUpdateDraftAosIT {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {DRAFT_AOS, SOLICITOR_UPDATE_AOS})
+    @ValueSource(strings = {DRAFT_AOS, UPDATE_AOS})
     void givenCaseDataWithDivorceApplicationWhenAboutToStartCallbackIsInvokedMiniapplicationlinkIsSet(String eventId) throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
@@ -108,7 +108,7 @@ public class SolicitorSubmitUpdateDraftAosIT {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {DRAFT_AOS, SOLICITOR_UPDATE_AOS})
+    @ValueSource(strings = {DRAFT_AOS, UPDATE_AOS})
     void givenCaseDataWithoutDivorceAppWhenAboutToStartCallbackIsInvokedMiniapplicationlinkIsNotPresent(
         String eventId
     ) throws Exception {
@@ -130,7 +130,7 @@ public class SolicitorSubmitUpdateDraftAosIT {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {DRAFT_AOS, SOLICITOR_UPDATE_AOS})
+    @ValueSource(strings = {DRAFT_AOS, UPDATE_AOS})
     void givenCaseDataWithoutDocumentsWhenAboutToStartCallbackIsInvokedMiniapplicationlinkIsNotPresent(String eventId) throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
