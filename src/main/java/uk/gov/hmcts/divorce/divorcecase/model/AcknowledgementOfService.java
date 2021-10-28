@@ -81,12 +81,6 @@ public class AcknowledgementOfService {
     private String noticeOfProceedingsSolicitorFirm;
 
     @CCD(
-        label = "Does court have jurisdiction",
-        access = {AosAccess.class}
-    )
-    private YesOrNo doYouAgreeCourtHasJurisdiction;
-
-    @CCD(
         label = "No jurisdiction reason",
         access = {AosAccess.class}
     )
