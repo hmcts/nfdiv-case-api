@@ -13,7 +13,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorDraftAos.SOLICITOR_DRAFT_AOS;
+import static uk.gov.hmcts.divorce.common.event.DraftAos.DRAFT_AOS;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorUpdateAos.SOLICITOR_UPDATE_AOS;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_START_URL;
@@ -26,7 +26,7 @@ public class SolicitorSubmitUpdateDraftAosFT extends FunctionalTestSuite {
     private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata-solicitor-draft-aos.json";
 
     @ParameterizedTest
-    @ValueSource(strings = {SOLICITOR_DRAFT_AOS, SOLICITOR_UPDATE_AOS})
+    @ValueSource(strings = {DRAFT_AOS, SOLICITOR_UPDATE_AOS})
     public void shouldUpdateCaseDataWhenAboutToStartCallbackIsSuccessful(String eventId) throws Exception {
 
         final Map<String, Object> caseData = caseData(REQUEST);

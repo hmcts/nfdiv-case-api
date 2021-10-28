@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor.event;
+package uk.gov.hmcts.divorce.common.event;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,6 +22,7 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -31,9 +32,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
 @Component
-public class SolicitorDraftAos implements CCDConfig<CaseData, State, UserRole> {
+public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String SOLICITOR_DRAFT_AOS = "solicitor-draft-aos";
+    public static final String DRAFT_AOS = "draft-aos";
 
     @Autowired
     private AddMiniApplicationLink addMiniApplicationLink;
@@ -53,7 +54,7 @@ public class SolicitorDraftAos implements CCDConfig<CaseData, State, UserRole> {
 
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
-            .event(SOLICITOR_DRAFT_AOS)
+            .event(DRAFT_AOS)
             .forStateTransition(AwaitingAos, AosDrafted)
             .name("Draft AoS")
             .description("Draft Acknowledgement of Service")
@@ -61,7 +62,7 @@ public class SolicitorDraftAos implements CCDConfig<CaseData, State, UserRole> {
             .showSummary()
             .endButtonLabel("Save AoS Response")
             .explicitGrants()
-            .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
+            .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR, APPLICANT_2)
             .grant(READ,
                 CASE_WORKER,
                 SUPER_USER,
