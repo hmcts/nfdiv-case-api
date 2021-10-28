@@ -9,7 +9,6 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateIssueDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateIssueDate.CASEWORKER_SYSTEM_USER_UPDATE_ISSUE_DATE;

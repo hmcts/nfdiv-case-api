@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor.event;
+package uk.gov.hmcts.divorce.common.event;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,28 +17,28 @@ import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorDraftAos.SOLICITOR_DRAFT_AOS;
+import static uk.gov.hmcts.divorce.common.event.DraftAos.DRAFT_AOS;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-class SolicitorDraftAosTest {
+class DraftAosTest {
 
     @Mock
     private AddMiniApplicationLink addMiniApplicationLink;
 
     @InjectMocks
-    private SolicitorDraftAos solicitorDraftAos;
+    private DraftAos draftAos;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        solicitorDraftAos.configure(configBuilder);
+        draftAos.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(SOLICITOR_DRAFT_AOS);
+            .contains(DRAFT_AOS);
     }
 
     @Test
@@ -51,7 +51,7 @@ class SolicitorDraftAosTest {
 
         when(addMiniApplicationLink.apply(caseDetails)).thenReturn(updateCaseDetails);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorDraftAos.aboutToStart(caseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = draftAos.aboutToStart(caseDetails);
 
         assertThat(response.getData()).isSameAs(expectedCaseData);
 

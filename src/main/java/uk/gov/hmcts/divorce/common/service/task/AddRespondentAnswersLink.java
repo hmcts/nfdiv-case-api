@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor.service.task;
+package uk.gov.hmcts.divorce.common.service.task;
 
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;

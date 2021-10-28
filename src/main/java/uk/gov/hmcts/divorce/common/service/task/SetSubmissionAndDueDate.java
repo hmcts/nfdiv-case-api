@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor.service.task;
+package uk.gov.hmcts.divorce.common.service.task;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -11,8 +11,8 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import java.util.HashMap;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_SOLICITOR_AMENDED_APPLICATION_SUBMITTED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_SOLICITOR_AMENDED_APPLICATION_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FIRST_NAME;
@@ -45,11 +45,11 @@ public class SolicitorSubmittedNotification {
             final EmailTemplateName templateName;
             final String logMessage;
             if (caseData.isAmendedCase()) {
-                templateName = SOL_APPLICANT_SOLICITOR_AMENDED_APPLICATION_SUBMITTED;
+                templateName = SOLE_APPLICANT_SOLICITOR_AMENDED_APPLICATION_SUBMITTED;
                 logMessage = SENDING_AMENDED_APPLICATION_EMAIL;
 
             } else {
-                templateName = SOL_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED;
+                templateName = SOLE_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED;
                 logMessage = SENDING_APPLICATION_EMAIL;
             }
 
