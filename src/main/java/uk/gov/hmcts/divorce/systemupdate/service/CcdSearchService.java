@@ -164,10 +164,8 @@ public class CcdSearchService {
 
         final QueryBuilder query = boolQuery()
             .must(stateQuery)
-            .must(boolQuery()
-                .should(boolQuery().must(errorCasesExist))
-                .should(boolQuery().mustNot(processedCases))
-            );
+            .should(boolQuery().must(errorCasesExist))
+            .should(boolQuery().mustNot(processedCases));
 
         try {
             while (totalResults == pageSize) {
