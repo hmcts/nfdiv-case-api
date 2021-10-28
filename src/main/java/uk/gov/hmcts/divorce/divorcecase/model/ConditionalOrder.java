@@ -119,13 +119,6 @@ public class ConditionalOrder {
     private LocalDate grantedDate;
 
     @CCD(
-        label = "Make a costs order:",
-        typeOverride = FixedRadioList,
-        typeParameterOverride = "CostOrderList"
-    )
-    private CostOrderList typeCostsDecision;
-
-    @CCD(
         label = "Refusal decision",
         typeOverride = FixedRadioList,
         typeParameterOverride = "RefusalOption"

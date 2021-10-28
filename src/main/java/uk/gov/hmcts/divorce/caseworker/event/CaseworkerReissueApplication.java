@@ -52,7 +52,7 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
                 Rejected, ConditionalOrderRefused, Withdrawn,
                 Disputed, Holding, AwaitingDocuments, AwaitingService)
             .name("Reissued")
-            .description("Application Reissued")
+            .description("Application reissued")
             .showSummary()
             .explicitGrants()
             .aboutToSubmitCallback(this::aboutToSubmit)

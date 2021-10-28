@@ -9,11 +9,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.ccd.sdk.type.CaseLink;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
-import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Court;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -45,6 +42,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOK
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetailsListValue;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -79,7 +77,7 @@ public class ScheduleCaseServiceIT {
             .builder()
             .dateAndTimeOfHearing(dateAndTimeOfHearing)
             .courtName(Court.SERVICE_CENTRE)
-            .bulkListCaseDetails(List.of(getBulkListCaseDetailsListValue()))
+            .bulkListCaseDetails(List.of(getBulkListCaseDetailsListValue(TEST_CASE_ID.toString())))
             .build();
 
 
@@ -168,19 +166,6 @@ public class ScheduleCaseServiceIT {
         return uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
             .data(Map.of("dateAndTimeOfHearing", "2021-01-18'T'00:00:00.000",
                 "courtName", "serviceCentre"))
-            .build();
-    }
-
-    private ListValue<BulkListCaseDetails> getBulkListCaseDetailsListValue() {
-        final var bulkListCaseDetails = BulkListCaseDetails.builder()
-            .caseReference(CaseLink.builder()
-                .caseReference(TEST_CASE_ID.toString())
-                .build())
-            .build();
-
-        return ListValue
-            .<BulkListCaseDetails>builder()
-            .value(bulkListCaseDetails)
             .build();
     }
 }

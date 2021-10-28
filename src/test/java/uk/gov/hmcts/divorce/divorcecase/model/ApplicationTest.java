@@ -226,7 +226,7 @@ class ApplicationTest {
             .applicant2ReminderSent(YES)
             .build();
 
-        assertThat(application.isApplicant2ReminderSent()).isTrue();
+        assertThat(application.hasApplicant2ReminderBeenSent()).isTrue();
     }
 
     @Test
@@ -238,8 +238,8 @@ class ApplicationTest {
         final var application2 = Application.builder()
             .build();
 
-        assertThat(application1.isApplicant2ReminderSent()).isFalse();
-        assertThat(application2.isApplicant2ReminderSent()).isFalse();
+        assertThat(application1.hasApplicant2ReminderBeenSent()).isFalse();
+        assertThat(application2.hasApplicant2ReminderBeenSent()).isFalse();
     }
 
     @Test
@@ -249,7 +249,7 @@ class ApplicationTest {
             .applicant1ReminderSent(YES)
             .build();
 
-        assertThat(application.isApplicant1ReminderSent()).isTrue();
+        assertThat(application.hasApplicant1ReminderBeenSent()).isTrue();
     }
 
     @Test
@@ -261,8 +261,8 @@ class ApplicationTest {
         final var application2 = Application.builder()
             .build();
 
-        assertThat(application1.isApplicant1ReminderSent()).isFalse();
-        assertThat(application2.isApplicant1ReminderSent()).isFalse();
+        assertThat(application1.hasApplicant1ReminderBeenSent()).isFalse();
+        assertThat(application2.hasApplicant1ReminderBeenSent()).isFalse();
     }
 
     @Test
@@ -272,7 +272,7 @@ class ApplicationTest {
             .overdueNotificationSent(YES)
             .build();
 
-        assertThat(application.isOverdueNotificationSent()).isTrue();
+        assertThat(application.hasOverdueNotificationBeenSent()).isTrue();
     }
 
     @Test
@@ -284,8 +284,8 @@ class ApplicationTest {
         final var application2 = Application.builder()
             .build();
 
-        assertThat(application1.isOverdueNotificationSent()).isFalse();
-        assertThat(application2.isOverdueNotificationSent()).isFalse();
+        assertThat(application1.hasOverdueNotificationBeenSent()).isFalse();
+        assertThat(application2.hasOverdueNotificationBeenSent()).isFalse();
     }
 
     @Test

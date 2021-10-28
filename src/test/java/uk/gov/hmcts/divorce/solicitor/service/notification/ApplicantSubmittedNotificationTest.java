@@ -21,8 +21,8 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_AMENDED_APPLICATION_SUBMITTED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_APPLICATION_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_AMENDED_APPLICATION_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
 
 @ExtendWith(MockitoExtension.class)
@@ -54,7 +54,7 @@ class ApplicantSubmittedNotificationTest {
 
         verify(notificationService).sendEmail(
             applicant1Email,
-            SOL_APPLICANT_APPLICATION_SUBMITTED,
+            SOLE_APPLICANT_APPLICATION_SUBMITTED,
             templateVars,
             ENGLISH);
     }
@@ -77,7 +77,7 @@ class ApplicantSubmittedNotificationTest {
 
         verify(notificationService).sendEmail(
             applicant1Email,
-            SOL_APPLICANT_AMENDED_APPLICATION_SUBMITTED,
+            SOLE_APPLICANT_AMENDED_APPLICATION_SUBMITTED,
             templateVars,
             ENGLISH);
     }

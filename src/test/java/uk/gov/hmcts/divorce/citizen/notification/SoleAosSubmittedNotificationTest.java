@@ -22,10 +22,10 @@ import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_AOS_SUBMITTED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_DISPUTED_AOS_SUBMITTED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_RESPONDENT_AOS_SUBMITTED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_RESPONDENT_DISPUTED_AOS_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_AOS_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_AOS_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.ACCOUNT;
@@ -73,7 +73,7 @@ public class SoleAosSubmittedNotificationTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
-            eq(SOL_APPLICANT_AOS_SUBMITTED),
+            eq(SOLE_APPLICANT_AOS_SUBMITTED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry("apply for CO date", data.getDueDate().format(DATE_TIME_FORMATTER)),
@@ -101,7 +101,7 @@ public class SoleAosSubmittedNotificationTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
-            eq(SOL_APPLICANT_AOS_SUBMITTED),
+            eq(SOLE_APPLICANT_AOS_SUBMITTED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry("apply for CO date", data.getDueDate().format(DATE_TIME_FORMATTER)),
@@ -128,10 +128,10 @@ public class SoleAosSubmittedNotificationTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
-            eq(SOL_RESPONDENT_AOS_SUBMITTED),
+            eq(SOLE_RESPONDENT_AOS_SUBMITTED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(YOUR_UNION, YOUR_DIVORCE),
+                hasEntry(YOUR_UNION, YOUR_DIVORCE.toLowerCase(Locale.ROOT)),
                 hasEntry("apply for CO date", data.getDueDate().format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
@@ -154,7 +154,7 @@ public class SoleAosSubmittedNotificationTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
-            eq(SOL_RESPONDENT_AOS_SUBMITTED),
+            eq(SOLE_RESPONDENT_AOS_SUBMITTED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(YOUR_UNION, ENDING_YOUR_CIVIL_PARTNERSHIP.toLowerCase(Locale.ROOT)),
@@ -180,10 +180,10 @@ public class SoleAosSubmittedNotificationTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
-            eq(SOL_APPLICANT_DISPUTED_AOS_SUBMITTED),
+            eq(SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(37).format(DATE_TIME_FORMATTER)),
+                hasEntry(SUBMISSION_RESPONSE_DATE, data.getDueDate().format(DATE_TIME_FORMATTER)),
                 hasEntry(YOUR_UNION, YOUR_DIVORCE.toLowerCase(Locale.ROOT)),
                 hasEntry("ending of your union", DIVORCE),
                 hasEntry(ACCOUNT, DIVORCE_ACCOUNT)
@@ -209,10 +209,10 @@ public class SoleAosSubmittedNotificationTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
-            eq(SOL_APPLICANT_DISPUTED_AOS_SUBMITTED),
+            eq(SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(37).format(DATE_TIME_FORMATTER)),
+                hasEntry(SUBMISSION_RESPONSE_DATE, data.getDueDate().format(DATE_TIME_FORMATTER)),
                 hasEntry(YOUR_UNION, ENDING_YOUR_CIVIL_PARTNERSHIP.toLowerCase(Locale.ROOT)),
                 hasEntry("ending of your union", "ending of your civil partnership"),
                 hasEntry(ACCOUNT, CIVIL_PARTNERSHIP_ACCOUNT)
@@ -237,10 +237,10 @@ public class SoleAosSubmittedNotificationTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
-            eq(SOL_RESPONDENT_DISPUTED_AOS_SUBMITTED),
+            eq(SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(37).format(DATE_TIME_FORMATTER)),
+                hasEntry(SUBMISSION_RESPONSE_DATE, data.getDueDate().format(DATE_TIME_FORMATTER)),
                 hasEntry("divorce / dissolution", DIVORCE),
                 hasEntry("service", "Divorce Service"),
                 hasEntry("ending of your union", DIVORCE)
@@ -266,10 +266,10 @@ public class SoleAosSubmittedNotificationTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
-            eq(SOL_RESPONDENT_DISPUTED_AOS_SUBMITTED),
+            eq(SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(37).format(DATE_TIME_FORMATTER)),
+                hasEntry(SUBMISSION_RESPONSE_DATE, data.getDueDate().format(DATE_TIME_FORMATTER)),
                 hasEntry("divorce / dissolution", "dissolution"),
                 hasEntry("service", "Ending Civil Partnerships"),
                 hasEntry("ending of your union", APPLICATION_TO_END_CIVIL_PARTNERSHIP)

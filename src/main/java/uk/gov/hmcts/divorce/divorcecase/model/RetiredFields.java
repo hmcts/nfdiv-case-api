@@ -64,6 +64,22 @@ public class RetiredFields {
     @CCD(label = "Site ID for selected court")
     private String selectedDivorceCentreSiteId;
 
+    @CCD(
+        label = "retiredCoTypeCostsDecision",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "CostOrderList"
+    )
+    private CostOrderList coTypeCostsDecision;
+
+    @CCD(label = "Do legal proceedings exist (respondent)?")
+    private YesOrNo legalProceedingsExist;
+
+    @CCD(label = "Legal proceedings details (respondent)")
+    private String legalProceedingsDescription;
+
+    @CCD(label = "Does court have jurisdiction")
+    private YesOrNo doYouAgreeCourtHasJurisdiction;
+
     @JsonIgnore
     private static final Map<String, Consumer<Map<String, Object>>> migrations = Map.of(
         "exampleRetiredField", data -> data.put("applicant1FirstName", data.get("exampleRetiredField")),
@@ -79,7 +95,10 @@ public class RetiredFields {
         ),
         "applicant1FinancialOrderForRemoved", data -> { },
         "applicant2FinancialOrderForRemoved", data -> { },
-        "dateConditionalOrderSubmitted", data -> data.put("coDateSubmitted", data.get("dateConditionalOrderSubmitted"))
+        "dateConditionalOrderSubmitted", data -> data.put("coDateSubmitted", data.get("dateConditionalOrderSubmitted")),
+        "legalProceedingsExist", data -> data.put("applicant2LegalProceedings", data.get("legalProceedingsExist")),
+        "legalProceedingsDescription", data -> data.put("applicant2LegalProceedingsDetails", data.get("legalProceedingsDescription")),
+        "doYouAgreeCourtHasJurisdiction", data -> data.put("jurisdictionAgree", data.get("doYouAgreeCourtHasJurisdiction"))
     );
 
     public static Map<String, Object> migrate(Map<String, Object> data) {

@@ -109,15 +109,18 @@ public class CaseData {
     @Builder.Default
     private GeneralReferral generalReferral = new GeneralReferral();
 
-    @JsonUnwrapped
-    @Builder.Default
-    @CCD(access = {CaseworkerAccessBetaOnlyAccess.class})
-    private AlternativeService alternativeService = new AlternativeService();
+    @CCD(
+        label = "Previous Service Applications",
+        typeOverride = Collection,
+        typeParameterOverride = "AlternativeService",
+        access = {CaseworkerAccessBetaOnlyAccess.class}
+    )
+    private List<ListValue<AlternativeService>> alternativeServiceApplications;
 
     @JsonUnwrapped
     @Builder.Default
     @CCD(access = {CaseworkerAccessBetaOnlyAccess.class})
-    private Bailiff bailiff = new Bailiff();
+    private AlternativeService alternativeService = new AlternativeService();
 
     @CCD(
         label = "Applicant 1 Documents uploaded",
@@ -317,4 +320,44 @@ public class CaseData {
 
         return sortedDocuments;
     }
+
+    public void archiveAlternativeServiceApplicationOnCompletion() {
+
+        AlternativeService alternativeService = this.getAlternativeService();
+
+        if (null != alternativeService) {
+
+            alternativeService.setReceivedServiceAddedDate(LocalDate.now());
+
+            if (isEmpty(this.getAlternativeServiceApplications())) {
+
+                List<ListValue<AlternativeService>> listValues = new ArrayList<>();
+
+                var listValue = ListValue
+                    .<AlternativeService>builder()
+                    .id("1")
+                    .value(alternativeService)
+                    .build();
+
+                listValues.add(listValue);
+                this.setAlternativeServiceApplications(listValues);
+
+            } else {
+
+                var listValue = ListValue
+                    .<AlternativeService>builder()
+                    .value(alternativeService)
+                    .build();
+
+                int listValueIndex = 0;
+                this.getAlternativeServiceApplications().add(0, listValue);
+                for (ListValue<AlternativeService> asListValue : this.getAlternativeServiceApplications()) {
+                    asListValue.setId(String.valueOf(listValueIndex++));
+                }
+            }
+            // Null the current AlternativeService object instance in the CaseData so that a new one can be created
+            this.setAlternativeService(null);
+        }
+    }
+
 }

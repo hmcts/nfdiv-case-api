@@ -56,8 +56,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("confirmReadPetition")
             .field("jurisdictionAgree")
             .field("jurisdictionDisagreeReason")
-            .field("legalProceedingsExist")
-            .field("legalProceedingsDescription")
+            .field("applicant2LegalProceedings")
+            .field("applicant2LegalProceedingsDetails")
             .field("applicant2UserId")
             .field("dueDate")
             .label("LabelAosTabOnlineResponse-RespondentRepresent", null, "### Respondent")
@@ -149,9 +149,6 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("feeAccountNumber", "paymentMethod=\"feePayByAccount\"")
             .field("feeAccountReferenceNumber", "paymentMethod=\"feePayByAccount\"")
             .field("helpWithFeesReferenceNumber", "paymentMethod=\"feePayByHelp\"")
-            .field("serviceApplicationDecisionDate")
-            .field("deemedServiceDate")
-            .field("serviceApplicationGranted")
             .label("bailiffLocalCourtDetailsLabel",
                 "localCourtName=\"*\" OR localCourtEmail=\"*\"", "### Bailiff local court details")
             .field("localCourtName")
@@ -160,9 +157,16 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 "certificateOfServiceDate=\"*\" OR successfulServedByBailiff=\"*\" OR reasonFailureToServeByBailiff=\"*\"",
                 "### Bailiff return")
             .field("certificateOfServiceDate")
+            .label("serviceOutcomeLabel",
+                    "serviceApplicationGranted=\"No\" OR serviceApplicationGranted=\"Yes\"",
+                                "Outcome of Service Application")
+            .field("serviceApplicationGranted")
+            .field("serviceApplicationDecisionDate")
+            .field("serviceApplicationRefusalReason", "serviceApplicationGranted=\"No\"")
+            .field("deemedServiceDate")
             .field("successfulServedByBailiff")
-            .field("reasonFailureToServeByBailiff");
-
+            .field("reasonFailureToServeByBailiff")
+            .field("alternativeServiceApplications");
     }
 
     private void buildConditionalOrderTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -188,8 +192,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("coDecisionDate")
             .field("coGranted")
             .field("coClaimsGranted")
-            .field("coTypeCostsDecision")
-            .field("coClaimsCostsOrderInformation", "coTypeCostsDecision=\"additionalInformation\"")
+            .field("coClaimsCostsOrderInformation")
             .field("coRefusalDecision")
             .field("coRefusalAdminErrorInfo")
             .field("coRefusalRejectionReason")

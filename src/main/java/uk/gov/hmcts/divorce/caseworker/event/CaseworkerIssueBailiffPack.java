@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.Bailiff;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -60,9 +61,10 @@ public class CaseworkerIssueBailiffPack implements CCDConfig<CaseData, State, Us
                     + "invitation letter for the respondent and a certificate of service to the local court."
             )
             .label("localCourtDetailsLabel", "### Local court details")
-            .complex(CaseData::getBailiff)
-                .mandatory(Bailiff::getLocalCourtName)
-                .mandatory(Bailiff::getLocalCourtEmail)
+            .complex(CaseData::getAlternativeService)
+                .complex(AlternativeService::getBailiff)
+                    .mandatory(Bailiff::getLocalCourtName)
+                    .mandatory(Bailiff::getLocalCourtEmail)
                 .done();
     }
 
@@ -94,7 +96,7 @@ public class CaseworkerIssueBailiffPack implements CCDConfig<CaseData, State, Us
             .documentType(CERTIFICATE_OF_SERVICE)
             .build();
 
-        caseDataCopy.getBailiff().setCertificateOfServiceDocument(cosDivorceDocument);
+        caseDataCopy.getAlternativeService().getBailiff().setCertificateOfServiceDocument(cosDivorceDocument);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseDataCopy)

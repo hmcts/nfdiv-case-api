@@ -3,13 +3,14 @@
   "applicant1FirstName": "John",
   "applicant1LastName": "Smith",
   "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+  "applicant2SolicitorEmail": "simulate-delivered@notifications.service.gov.uk",
   "languagePreferenceWelsh": "NO",
   "applicant1FinancialOrder": "NO",
   "divorceUnit": "serviceCentre",
   "issueDate": "2021-06-17",
   "jurisdictionAgree": "Yes",
-  "legalProceedingsExist": "Yes",
-  "legalProceedingsDescription": "some description",
+  "applicant2LegalProceedings": "Yes",
+  "applicant2LegalProceedingsDetails": "some description",
   "statementOfTruth": "Yes",
   "prayerHasBeenGiven": "Yes"
 }
