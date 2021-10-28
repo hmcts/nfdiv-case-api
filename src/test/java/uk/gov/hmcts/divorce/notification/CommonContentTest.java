@@ -156,16 +156,32 @@ class CommonContentTest {
     }
 
     @Test
-    void shouldReturnIsDivorce() {
-        CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
+    void shouldGetService() {
+        CaseData caseData = caseData();
+        assertThat(commonContent.getService(caseData.getDivorceOrDissolution())).isEqualTo("divorce");
 
-        assertTrue(isDivorce(caseData));
+        caseData.setDivorceOrDissolution(DISSOLUTION);
+        assertThat(commonContent.getService(caseData.getDivorceOrDissolution())).isEqualTo("civil partnership");
     }
 
     @Test
-    void shouldReturnIsDissolution() {
-        CaseData caseData = CaseData.builder().divorceOrDissolution(DISSOLUTION).build();
+    void shouldGetPartner() {
+        CaseData caseData = caseData();
+        assertThat(commonContent.getPartner(caseData, caseData.getApplicant2())).isEqualTo("wife");
 
+        caseData.getApplicant2().setGender(Gender.MALE);
+        assertThat(commonContent.getPartner(caseData, caseData.getApplicant2())).isEqualTo("husband");
+
+        caseData.setDivorceOrDissolution(DISSOLUTION);
+        assertThat(commonContent.getPartner(caseData, caseData.getApplicant2())).isEqualTo("civil partner");
+    }
+
+    @Test
+    void shouldReturnDivorceOrDissolution() {
+        CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
+        assertTrue(isDivorce(caseData));
+
+        caseData.setDivorceOrDissolution(DISSOLUTION);
         assertFalse(isDivorce(caseData));
     }
 }
