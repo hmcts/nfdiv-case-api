@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationIssuedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -30,8 +31,10 @@ class SendApplicationIssueNotificationsTest {
     void shouldSendSoleNotifications() {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplicant2().setHomeAddress(AddressGlobalUK.builder().country("Spain").build());
         caseData.getCaseInvite().setApplicant2InviteEmailAddress("applicant2Invite@email.com");
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        caseDetails.setState(AwaitingAos);
         caseDetails.setState(AwaitingAos);
 
         underTest.apply(caseDetails);

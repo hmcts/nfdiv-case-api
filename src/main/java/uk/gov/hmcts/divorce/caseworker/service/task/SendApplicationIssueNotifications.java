@@ -31,7 +31,8 @@ public class SendApplicationIssueNotifications implements CaseTask {
                 if (Objects.nonNull(caseData.getCaseInvite().getApplicant2InviteEmailAddress())) {
                     applicationIssuedNotification.sendToSoleRespondent(caseData, caseId);
                 }
-                if (caseDetails.getState() == AwaitingAos) {
+                if (caseDetails.getState() == AwaitingAos
+                    && !caseData.getApplicant2().getHomeAddress().getCountry().equalsIgnoreCase("UK")) {
                     applicationIssuedNotification.notifyApplicantOfServiceToOverseasRespondent(caseData, caseId);
                 }
             } else {
