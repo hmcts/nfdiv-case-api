@@ -62,7 +62,7 @@
     "marriageDate":"1990-06-10",
     "marriagePlaceOfMarriage":"Somewhere",
     "solServiceTruthStatement":"I believe that the facts stated in the application are true.",
-    "dataVersion": 6,
+    "dataVersion": "${json-unit.any-number}",
     "issueDate":"2021-04-28"
   },
   "errors": null,

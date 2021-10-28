@@ -56,7 +56,7 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
         CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
         CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails
     ) {
-        scheduleCaseService.updateCourtHearingDetailsForCasesInBulk(bulkCaseDetails,request.getHeader(AUTHORIZATION));
+        scheduleCaseService.updateCourtHearingDetailsForCasesInBulk(bulkCaseDetails, request.getHeader(AUTHORIZATION));
         return SubmittedCallbackResponse.builder().build();
     }
 }

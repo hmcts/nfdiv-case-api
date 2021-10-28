@@ -2,11 +2,18 @@
   "data": {
     "labelContentUnionType": "dissolution",
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
-    "receivedServiceApplicationDate": "2021-06-18",
-    "alternativeServiceType": "dispensed",
-    "serviceApplicationGranted": "Yes",
-    "serviceApplicationDecisionDate": "${json-unit.any-string}",
-    "deemedServiceDate": "${json-unit.any-string}",
+    "alternativeServiceApplications": [
+      {
+        "id": "1",
+        "value": {
+          "receivedServiceApplicationDate": "2021-06-18",
+          "alternativeServiceType": "dispensed",
+          "receivedServiceAddedDate": "${json-unit.any-string}",
+          "serviceApplicationGranted": "Yes",
+          "serviceApplicationDecisionDate": "${json-unit.any-string}",
+          "deemedServiceDate": "${json-unit.any-string}"
+        }
+      }],
     "documentsGenerated": [
       {
         "id": "${json-unit.any-string}",
@@ -24,7 +31,7 @@
         }
       }
     ],
-    "dataVersion": 6
+    "dataVersion": "${json-unit.any-number}"
   },
   "errors": null,
   "warnings": null,

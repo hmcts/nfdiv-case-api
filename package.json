@@ -11,9 +11,10 @@
     "node": ">=12.0.0"
   },
   "scripts": {
-    "prepublishOnly": "npm run genCaseTypeConsts && npm run genCitizenEventNameConsts && npm run genSystemEventNameConsts",
+    "prepublishOnly": "npm run genCaseTypeConsts && npm run genCitizenEventNameConsts && npm run genCommonEventNameConsts && npm run genSystemEventNameConsts",
     "genCaseTypeConsts": "grep -rh \"public static final String\" ./src/main/java/uk/gov/hmcts/divorce/divorcecase/NoFaultDivorce.java | sed \"s/    public static final String/export const/\" >> ./build/ts/index.ts",
     "genCitizenEventNameConsts": "grep -rh \"public static final String\" ./src/main/java/uk/gov/hmcts/divorce/citizen/event | sed \"s/    public static final String/export const/\" >> ./build/ts/index.ts",
+    "genCommonEventNameConsts": "grep -rh \"public static final String\" ./src/main/java/uk/gov/hmcts/divorce/common/event | sed \"s/    public static final String/export const/\" >> ./build/ts/index.ts",
     "genSystemEventNameConsts": "grep -rh \"public static final String\" ./src/main/java/uk/gov/hmcts/divorce/systemupdate/event | sed \"s/    public static final String/export const/\" >> ./build/ts/index.ts"
   }
 }

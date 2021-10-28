@@ -6,7 +6,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
@@ -36,6 +35,7 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtH
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.feignException;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetailsListValue;
 
 @ExtendWith(MockitoExtension.class)
 class ScheduleCaseServiceTest {
@@ -237,18 +237,4 @@ class ScheduleCaseServiceTest {
             SERVICE_AUTHORIZATION
         );
     }
-
-    private ListValue<BulkListCaseDetails> getBulkListCaseDetailsListValue(String caseReference) {
-        final var bulkListCaseDetails = BulkListCaseDetails.builder()
-            .caseReference(CaseLink.builder()
-                .caseReference(caseReference)
-                .build())
-            .build();
-
-        return ListValue
-            .<BulkListCaseDetails>builder()
-            .value(bulkListCaseDetails)
-            .build();
-    }
-
 }
