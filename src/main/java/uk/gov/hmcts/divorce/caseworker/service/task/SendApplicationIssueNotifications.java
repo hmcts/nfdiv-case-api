@@ -28,7 +28,7 @@ public class SendApplicationIssueNotifications implements CaseTask {
 
             if (caseData.getApplicationType().isSole()) {
                 applicationIssuedNotification.sendToSoleApplicant1(caseData, caseId);
-                if (!Objects.isNull(caseData.getCaseInvite().getApplicant2InviteEmailAddress())) {
+                if (Objects.nonNull(caseData.getCaseInvite().getApplicant2InviteEmailAddress())) {
                     applicationIssuedNotification.sendToSoleRespondent(caseData, caseId);
                 }
                 if (caseDetails.getState() == AwaitingAos) {
