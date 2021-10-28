@@ -21,9 +21,8 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.List;
-import java.util.Map;
 
-import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_BULK_CASE_ERRORS;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
 
@@ -58,7 +57,7 @@ public class SystemProcessFailedScheduledCasesTask implements Runnable {
 
         try {
             final List<CaseDetails> listedCasesWithErrorsOrUnprocessedCases =
-                ccdSearchService.searchForBulkCasesWithCaseErrorsAndState(Created, user, serviceAuth);
+                ccdSearchService.searchForBulkCasesWithCaseErrorsAndState(Listed, user, serviceAuth);
             log.info("No of cases fetched which has unprocessed or error cases {} .", listedCasesWithErrorsOrUnprocessedCases.size());
             listedCasesWithErrorsOrUnprocessedCases.forEach(bulkCaseDetails -> processFailedCases(bulkCaseDetails, user, serviceAuth));
 
@@ -108,11 +107,8 @@ public class SystemProcessFailedScheduledCasesTask implements Runnable {
         bulkCaseData.setErroredCaseDetails(unprocessedBulkCases);
         bulkCaseData.setProcessedCaseDetails(processedBulkCases);
 
-
-        final Map<String, Object> data = objectMapper.convertValue(bulkCaseData, new TypeReference<>() {
-        });
-
-        bulkCaseDetails.setData(data);
+        bulkCaseDetails.setData(objectMapper.convertValue(bulkCaseData, new TypeReference<>() {
+        }));
 
         try {
             ccdUpdateService.updateBulkCaseWithRetries(
