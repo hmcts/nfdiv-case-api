@@ -1,9 +1,10 @@
-package uk.gov.hmcts.divorce.solicitor.event.page;
+package uk.gov.hmcts.divorce.common.event.page;
 
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 
 @Component
@@ -21,8 +22,12 @@ public class Applicant2SolStatementOfTruth implements CcdPageConfiguration {
                 .readonlyNoSummary(AcknowledgementOfService::getConfirmReadPetition)
                 .readonlyNoSummary(AcknowledgementOfService::getJurisdictionAgree)
                 .readonlyNoSummary(AcknowledgementOfService::getJurisdictionDisagreeReason)
-                .readonlyNoSummary(AcknowledgementOfService::getLegalProceedingsExist)
-                .readonlyNoSummary(AcknowledgementOfService::getLegalProceedingsDescription)
+            .done()
+            .complex(CaseData::getApplicant2)
+                .readonlyNoSummary(Applicant::getLegalProceedings)
+                .readonlyNoSummary(Applicant::getLegalProceedingsDetails)
+            .done()
+            .complex(CaseData::getAcknowledgementOfService)
                 .label("LabelApplicant2SolStatementOfTruth-SOT", "## Statement of truth")
                 .mandatory(AcknowledgementOfService::getStatementOfTruth)
                 .label("LabelApplicant2SolStatementOfTruth-Prayer", "## Prayer")

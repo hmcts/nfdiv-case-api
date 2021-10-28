@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor.service.task;
+package uk.gov.hmcts.divorce.common.service.task;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingDispute;
 
@@ -18,7 +19,8 @@ public class SetSubmitAosState implements CaseTask {
     @Override
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> caseDetails) {
 
-        if (NO.equals(caseDetails.getData().getAcknowledgementOfService().getJurisdictionAgree())) {
+        if (NO.equals(caseDetails.getData().getAcknowledgementOfService().getJurisdictionAgree())
+            || YES.equals(caseDetails.getData().getAcknowledgementOfService().getDisputeApplication())) {
             caseDetails.setState(PendingDispute);
         } else {
             caseDetails.setState(Holding);

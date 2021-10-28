@@ -22,9 +22,9 @@ import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_APPLICATION_ACCEPTED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_PARTNER_HAS_NOT_RESPONDED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_RESPONDENT_APPLICATION_ACCEPTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_APPLICATION_ACCEPTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_PARTNER_HAS_NOT_RESPONDED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.ACCOUNT;
@@ -76,7 +76,7 @@ public class ApplicationIssuedNotificationTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
-            eq(SOL_APPLICANT_APPLICATION_ACCEPTED),
+            eq(SOLE_APPLICANT_APPLICATION_ACCEPTED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER)),
@@ -105,7 +105,7 @@ public class ApplicationIssuedNotificationTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
-            eq(SOL_APPLICANT_APPLICATION_ACCEPTED),
+            eq(SOLE_APPLICANT_APPLICATION_ACCEPTED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER)),
@@ -134,7 +134,7 @@ public class ApplicationIssuedNotificationTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
-            eq(SOL_RESPONDENT_APPLICATION_ACCEPTED),
+            eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
             argThat(allOf(
                 hasEntry(REMINDER_APPLICATION, APPLICATION),
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
@@ -165,7 +165,7 @@ public class ApplicationIssuedNotificationTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
-            eq(SOL_RESPONDENT_APPLICATION_ACCEPTED),
+            eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
             argThat(allOf(
                 hasEntry(REMINDER_APPLICATION, APPLICATION),
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
@@ -195,7 +195,7 @@ public class ApplicationIssuedNotificationTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
-            eq(SOL_RESPONDENT_APPLICATION_ACCEPTED),
+            eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
             argThat(allOf(
                 hasEntry(REMINDER_APPLICATION, REMINDER_APPLICATION_VALUE),
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
@@ -226,7 +226,7 @@ public class ApplicationIssuedNotificationTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
-            eq(SOL_RESPONDENT_APPLICATION_ACCEPTED),
+            eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
             argThat(allOf(
                 hasEntry(REMINDER_APPLICATION, REMINDER_APPLICATION_VALUE),
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
@@ -369,7 +369,7 @@ public class ApplicationIssuedNotificationTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
-            eq(SOL_APPLICANT_PARTNER_HAS_NOT_RESPONDED),
+            eq(SOLE_APPLICANT_PARTNER_HAS_NOT_RESPONDED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(SUBMISSION_RESPONSE_DATE, data.getDueDate().format(DATE_TIME_FORMATTER))

@@ -12,9 +12,9 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_APPLICATION_ACCEPTED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_PARTNER_HAS_NOT_RESPONDED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_RESPONDENT_APPLICATION_ACCEPTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_APPLICATION_ACCEPTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_PARTNER_HAS_NOT_RESPONDED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.ACCESS_CODE;
@@ -77,7 +77,7 @@ public class ApplicationIssuedNotification {
 
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
-            SOL_APPLICANT_APPLICATION_ACCEPTED,
+            SOLE_APPLICANT_APPLICATION_ACCEPTED,
             templateVars,
             caseData.getApplicant1().getLanguagePreference()
         );
@@ -93,7 +93,7 @@ public class ApplicationIssuedNotification {
 
         notificationService.sendEmail(
             caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
-            SOL_RESPONDENT_APPLICATION_ACCEPTED,
+            SOLE_RESPONDENT_APPLICATION_ACCEPTED,
             templateVars,
             caseData.getApplicant1().getLanguagePreference()
         );
@@ -109,7 +109,7 @@ public class ApplicationIssuedNotification {
 
         notificationService.sendEmail(
             caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
-            SOL_RESPONDENT_APPLICATION_ACCEPTED,
+            SOLE_RESPONDENT_APPLICATION_ACCEPTED,
             templateVars,
             caseData.getApplicant1().getLanguagePreference()
         );
@@ -124,7 +124,7 @@ public class ApplicationIssuedNotification {
 
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
-            SOL_APPLICANT_PARTNER_HAS_NOT_RESPONDED,
+            SOLE_APPLICANT_PARTNER_HAS_NOT_RESPONDED,
             templateVars,
             caseData.getApplicant1().getLanguagePreference()
         );

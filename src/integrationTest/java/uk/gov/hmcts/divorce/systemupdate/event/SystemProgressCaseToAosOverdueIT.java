@@ -29,8 +29,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_PARTNER_HAS_NOT_RESPONDED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_RESPONDENT_APPLICATION_ACCEPTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_PARTNER_HAS_NOT_RESPONDED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemProgressCaseToAosOverdue.SYSTEM_PROGRESS_TO_AOS_OVERDUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
@@ -94,10 +94,10 @@ public class SystemProgressCaseToAosOverdueIT {
             .isEqualTo(json(expectedCcdAboutToStartCallbackSuccess()));
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(SOL_APPLICANT_PARTNER_HAS_NOT_RESPONDED), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(SOLE_APPLICANT_PARTNER_HAS_NOT_RESPONDED), anyMap(), eq(ENGLISH));
 
         verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(SOL_RESPONDENT_APPLICATION_ACCEPTED), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED), anyMap(), eq(ENGLISH));
 
         verifyNoMoreInteractions(notificationService);
     }

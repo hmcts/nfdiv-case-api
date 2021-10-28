@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor.service.task;
+package uk.gov.hmcts.divorce.common.service.task;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
