@@ -269,7 +269,7 @@ class CcdUpdateServiceTest {
         final StartEventResponse startEventResponse = getStartEventResponse();
         final CaseDataContent caseDataContent = mock(CaseDataContent.class);
 
-        when(caseDetailsConverter.convertToReformModel(caseDetails)).thenReturn(reformCaseDetails);
+        when(caseDetailsConverter.convertToReformModelFromCaseDetails(caseDetails)).thenReturn(reformCaseDetails);
         when(coreCaseDataApi
             .startEventForCaseWorker(
                 CASEWORKER_AUTH_TOKEN,
