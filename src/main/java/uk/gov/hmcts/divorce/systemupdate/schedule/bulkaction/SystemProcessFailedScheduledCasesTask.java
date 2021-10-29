@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.service.BulkTriggerService;
+import uk.gov.hmcts.divorce.bulkaction.service.ScheduleCaseService;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
@@ -47,6 +48,9 @@ public class SystemProcessFailedScheduledCasesTask implements Runnable {
 
     @Autowired
     private BulkTriggerService bulkTriggerService;
+
+    @Autowired
+    private ScheduleCaseService scheduleCaseService;
 
     @Override
     public void run() {
@@ -89,12 +93,7 @@ public class SystemProcessFailedScheduledCasesTask implements Runnable {
         final List<ListValue<BulkListCaseDetails>> unprocessedBulkCases = bulkTriggerService.bulkTrigger(
             bulkCasesTobeReprocessed,
             SYSTEM_UPDATE_CASE_COURT_HEARING,
-            mainCaseDetails -> {
-                final var conditionalOrder = mainCaseDetails.getData().getConditionalOrder();
-                conditionalOrder.setDateAndTimeOfHearing(bulkCaseData.getDateAndTimeOfHearing());
-                conditionalOrder.setCourtName(bulkCaseData.getCourtName());
-                return mainCaseDetails;
-            },
+            scheduleCaseService.getCaseTask(bulkCaseData),
             user,
             serviceAuth);
 

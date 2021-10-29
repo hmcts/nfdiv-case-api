@@ -13,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.service.BulkTriggerService;
+import uk.gov.hmcts.divorce.bulkaction.service.ScheduleCaseService;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
@@ -32,6 +33,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -60,6 +62,9 @@ public class SystemProcessFailedScheduledCasesTaskTest {
 
     @Mock
     private ObjectMapper mapper;
+
+    @Mock
+    private ScheduleCaseService scheduleCaseService;
 
     @InjectMocks
     private SystemProcessFailedScheduledCasesTask systemProcessFailedScheduledCasesTask;
@@ -120,10 +125,13 @@ public class SystemProcessFailedScheduledCasesTaskTest {
 
         when(mapper.convertValue(eq(bulkActionCaseData), any(TypeReference.class))).thenReturn(caseDataMap);
 
+        CaseTask caseTask = mock(CaseTask.class);
+        when(scheduleCaseService.getCaseTask(bulkActionCaseData)).thenReturn(caseTask);
+
         when(bulkTriggerService.bulkTrigger(
             eq(List.of(getBulkListCaseDetailsListValue(errorBulkListCase))),
             eq(SYSTEM_UPDATE_CASE_COURT_HEARING),
-            any(CaseTask.class),
+            eq(caseTask),
             eq(user),
             eq(SERVICE_AUTHORIZATION)
         )).thenReturn(emptyList());
@@ -142,7 +150,7 @@ public class SystemProcessFailedScheduledCasesTaskTest {
         verify(bulkTriggerService).bulkTrigger(
             eq(List.of(getBulkListCaseDetailsListValue(errorBulkListCase))),
             eq(SYSTEM_UPDATE_CASE_COURT_HEARING),
-            any(CaseTask.class),
+            eq(caseTask),
             eq(user),
             eq(SERVICE_AUTHORIZATION)
         );
