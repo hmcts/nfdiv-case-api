@@ -17,14 +17,14 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Component
 @Slf4j
-public class SystemUpdateCaseErrors implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
+public class SystemUpdateCase implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
 
-    public static final String SYSTEM_BULK_CASE_ERRORS = "system-update-case-errors";
+    public static final String SYSTEM_UPDATE_BULK_CASE = "system-update-case";
 
     @Override
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
         new BulkActionPageBuilder(configBuilder
-            .event(SYSTEM_BULK_CASE_ERRORS)
+            .event(SYSTEM_UPDATE_BULK_CASE)
             .forStates(Listed, Pronounced)
             .name("List of case errors updated")
             .description("List of case errors updated")
