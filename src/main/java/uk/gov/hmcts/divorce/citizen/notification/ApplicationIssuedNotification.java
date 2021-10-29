@@ -9,9 +9,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
+import static uk.gov.hmcts.divorce.notification.CommonContent.isDivorce;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OVERSEAS_RESPONDENT_HAS_EMAIL_APPLICATION_ISSUED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OVERSEAS_RESPONDENT_NO_EMAIL_APPLICATION_ISSUED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_PARTNER_HAS_NOT_RESPONDED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLICATION_ACCEPTED;
@@ -24,13 +29,21 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATIO
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TO_END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.CIVIL_PARTNERSHIP_ACCOUNT;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.CIVIL_PARTNERSHIP_PROCESS;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.CREATE_ACCOUNT_LINK;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.DISSOLUTION_COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_ACCOUNT;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_PROCESS;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.ENDING_YOUR_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.FIRST_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_A_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_YOUR_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_YOUR_DIVORCE;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.IS_DISSOLUTION;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.IS_DIVORCE;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.LAST_NAME;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.NO;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.PARTNER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PROCESS;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.REMINDER_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.REMINDER_APPLICATION_VALUE;
@@ -39,6 +52,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.RESPONDENT
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.REVIEW_DEADLINE_DATE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.TO_END_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.YES;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.YOUR_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.YOUR_UNION;
 
@@ -156,24 +170,30 @@ public class ApplicationIssuedNotification {
         );
     }
 
-    private Map<String, String> setTemplateVariables(CaseData caseData, Long id, Applicant applicant, Applicant respondent) {
-        Map<String, String> templateVars = commonContent.templateVarsForApplicant(
-            caseData, applicant, respondent);
+    public void notifyApplicantOfServiceToOverseasRespondent(CaseData caseData, Long id) {
+        log.info("Notifying sole applicant of application issue (case {}) to overseas respondent", id);
 
+        final boolean hasEmail = Objects.nonNull(caseData.getApplicant2().getEmail()) && !caseData.getApplicant2().getEmail().isEmpty();
+        notificationService.sendEmail(
+            caseData.getApplicant1().getEmail(),
+            hasEmail ? OVERSEAS_RESPONDENT_HAS_EMAIL_APPLICATION_ISSUED : OVERSEAS_RESPONDENT_NO_EMAIL_APPLICATION_ISSUED,
+            overseasRespondentTemplateVars(caseData, id),
+            caseData.getApplicant1().getLanguagePreference()
+        );
+    }
+
+    private Map<String, String> setTemplateVariables(CaseData caseData, Long id, Applicant applicant, Applicant respondent) {
+        Map<String, String> templateVars = commonContent.templateVarsForApplicant(caseData, applicant, respondent);
         templateVars.put(APPLICATION_REFERENCE, formatId(id));
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
-
-        if (caseData.getDivorceOrDissolution().isDivorce()) {
-
+        if (isDivorce(caseData)) {
             templateVars.put(PROCESS, DIVORCE_PROCESS);
             templateVars.put(ACCOUNT, DIVORCE_ACCOUNT);
             templateVars.put(YOUR_UNION, YOUR_DIVORCE);
             templateVars.put(SERVICE, DIVORCE_SERVICE);
             templateVars.put(GOV_UK_LINK, DIVORCE_GOV_UK_LINK);
             templateVars.put(CITIZENS_ADVICE_LINK, DIVORCE_CITIZENS_ADVICE_LINK);
-
         } else {
-
             templateVars.put(PROCESS, CIVIL_PARTNERSHIP_PROCESS);
             templateVars.put(ACCOUNT, CIVIL_PARTNERSHIP_ACCOUNT);
             templateVars.put(YOUR_UNION, ENDING_YOUR_CIVIL_PARTNERSHIP);
@@ -181,15 +201,12 @@ public class ApplicationIssuedNotification {
             templateVars.put(GOV_UK_LINK, CIVIL_PARTNERSHIP_GOV_UK_LINK);
             templateVars.put(CITIZENS_ADVICE_LINK, CIVIL_PARTNERSHIP_CITIZENS_ADVICE_LINK);
         }
-
         templateVars.put(REVIEW_DEADLINE_DATE, caseData.getApplication().getIssueDate().plusDays(16).format(DATE_TIME_FORMATTER));
-
         return templateVars;
     }
 
     private void setInviteVariables(Map<String, String> templateVars, CaseData caseData) {
         Map<String, String> configTemplateVars = emailTemplatesConfig.getTemplateVars();
-
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateVars.put(FOR_YOUR_APPLICATION, FOR_YOUR_DIVORCE);
             templateVars.put(FOR_A_APPLICATION, FOR_A_DIVORCE);
@@ -201,7 +218,19 @@ public class ApplicationIssuedNotification {
             templateVars.put(APPLICATION_TYPE_PROGRESS, APPLICATION_TO_END_CIVIL_PARTNERSHIP);
             templateVars.put(CREATE_ACCOUNT_LINK, configTemplateVars.get(RESPONDENT_SIGN_IN_DISSOLUTION_URL));
         }
-
         templateVars.put(ACCESS_CODE, caseData.getCaseInvite().getAccessCode());
+    }
+
+    private Map<String, String> overseasRespondentTemplateVars(final CaseData caseData, Long id) {
+        final Map<String, String> templateVars = new HashMap<>();
+        templateVars.put(IS_DIVORCE,  isDivorce(caseData) ? YES : NO);
+        templateVars.put(IS_DISSOLUTION,  isDivorce(caseData) ? NO : YES);
+        templateVars.put(APPLICATION_REFERENCE, formatId(id));
+        templateVars.put(FIRST_NAME, caseData.getApplicant1().getFirstName());
+        templateVars.put(LAST_NAME, caseData.getApplicant1().getLastName());
+        templateVars.put(PARTNER, commonContent.getPartner(caseData, caseData.getApplicant2()));
+        templateVars.put(REVIEW_DEADLINE_DATE, caseData.getApplication().getIssueDate().plusDays(28).format(DATE_TIME_FORMATTER));
+        templateVars.put(COURT_EMAIL, emailTemplatesConfig.getTemplateVars().get(DISSOLUTION_COURT_EMAIL));
+        return templateVars;
     }
 }

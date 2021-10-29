@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor.event;
+package uk.gov.hmcts.divorce.common.event;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +20,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorR
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -27,9 +28,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 @Slf4j
-public class SolicitorSubmitConditionalOrder implements CCDConfig<CaseData, State, UserRole> {
+public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String SOLICITOR_SUBMIT_CONDITIONAL_ORDER = "solicitor-submit-conditional-order";
+    public static final String SUBMIT_CONDITIONAL_ORDER = "submit-conditional-order";
 
     @Autowired
     private Clock clock;
@@ -37,14 +38,14 @@ public class SolicitorSubmitConditionalOrder implements CCDConfig<CaseData, Stat
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(SOLICITOR_SUBMIT_CONDITIONAL_ORDER)
+            .event(SUBMIT_CONDITIONAL_ORDER)
             .forStateTransition(ConditionalOrderDrafted, AwaitingLegalAdvisorReferral)
             .name("Submit Conditional Order")
             .description("Submit Conditional Order")
             .endButtonLabel("Save Conditional Order")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .explicitGrants()
-            .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
+            .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, CREATOR)
             .grant(READ,
                 CASE_WORKER,
                 SUPER_USER,
@@ -63,7 +64,7 @@ public class SolicitorSubmitConditionalOrder implements CCDConfig<CaseData, Stat
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Solicitor submit conditional order about to submit callback invoked for case id: {}", details.getId());
+        log.info("Submit conditional order about to submit callback invoked for case id: {}", details.getId());
 
         details.getData().getConditionalOrder().setDateSubmitted(LocalDateTime.now(clock));
 

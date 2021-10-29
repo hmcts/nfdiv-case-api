@@ -100,7 +100,6 @@ public class SystemNotifyApplicant1ApplyForConditionalOrder implements Runnable 
             "20 weeks has passed since due date for Case id {} - notifying Applicant 1 that they can apply for a Conditional Order",
             caseDetails.getId());
 
-        caseDetails.getData().put(NOTIFICATION_FLAG, YesOrNo.YES);
         ccdUpdateService.submitEvent(caseDetails, SYSTEM_NOTIFY_APPLICANT1_CONDITIONAL_ORDER, user, serviceAuth);
     }
 }

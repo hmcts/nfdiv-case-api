@@ -81,7 +81,7 @@ public class SystemAlertApplicationNotReviewedTask implements Runnable {
                         );
                     } else {
                         if (!dueDate.isAfter(LocalDate.now())
-                            && !caseData.getApplication().isOverdueNotificationSent()
+                            && !caseData.getApplication().hasOverdueNotificationBeenSent()
                         ) {
                             notifyApplicant1(caseDetails, dueDate, user, serviceAuthorization);
                         }
@@ -109,7 +109,6 @@ public class SystemAlertApplicationNotReviewedTask implements Runnable {
             caseDetails.getId()
         );
 
-        caseDetails.getData().put(NOTIFICATION_FLAG, YesOrNo.YES);
         ccdUpdateService.submitEvent(caseDetails, SYSTEM_APPLICATION_NOT_REVIEWED, user, serviceAuth);
     }
 }

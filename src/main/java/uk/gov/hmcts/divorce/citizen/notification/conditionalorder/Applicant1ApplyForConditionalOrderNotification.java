@@ -40,7 +40,7 @@ public class Applicant1ApplyForConditionalOrderNotification {
             templateVars.put(JOINT_CONDITIONAL_ORDER, "");
         } else {
             templateVars.put(JOINT_CONDITIONAL_ORDER,
-                String.format(PARTNER_JOINT, commonContent.getTheirPartner(caseData, caseData.getApplicant2())));
+                String.format(PARTNER_JOINT, commonContent.getPartner(caseData, caseData.getApplicant2())));
         }
 
         log.info("Sending notification to applicant 1 to notify them that they can apply for a conditional order: {}", id);

@@ -101,7 +101,7 @@ public class Applicant1ApplyForConditionalOrderNotificationTest {
         final HashMap<String, String> templateVars = new HashMap<>();
 
         when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
-        when(commonContent.getTheirPartner(data, data.getApplicant2())).thenReturn("husband");
+        when(commonContent.getPartner(data, data.getApplicant2())).thenReturn("husband");
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
@@ -129,7 +129,7 @@ public class Applicant1ApplyForConditionalOrderNotificationTest {
         final HashMap<String, String> templateVars = new HashMap<>();
 
         when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
-        when(commonContent.getTheirPartner(data, data.getApplicant2())).thenReturn("wife");
+        when(commonContent.getPartner(data, data.getApplicant2())).thenReturn("wife");
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
@@ -157,7 +157,7 @@ public class Applicant1ApplyForConditionalOrderNotificationTest {
         final HashMap<String, String> templateVars = new HashMap<>();
 
         when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
-        when(commonContent.getTheirPartner(data, data.getApplicant2())).thenReturn("civil partner");
+        when(commonContent.getPartner(data, data.getApplicant2())).thenReturn("civil partner");
 
         notification.sendToApplicant1(data, 1234567890123456L);
 

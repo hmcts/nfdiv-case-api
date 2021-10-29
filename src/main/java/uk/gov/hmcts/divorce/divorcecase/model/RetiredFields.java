@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -80,6 +81,13 @@ public class RetiredFields {
     @CCD(label = "Does court have jurisdiction")
     private YesOrNo doYouAgreeCourtHasJurisdiction;
 
+    @CCD(
+        label = "Service application type",
+        typeOverride = FixedList,
+        typeParameterOverride = "AlternativeServiceType"
+    )
+    private AlternativeServiceType serviceApplicationType;
+
     @JsonIgnore
     private static final Map<String, Consumer<Map<String, Object>>> migrations = Map.of(
         "exampleRetiredField", data -> data.put("applicant1FirstName", data.get("exampleRetiredField")),
@@ -98,7 +106,8 @@ public class RetiredFields {
         "dateConditionalOrderSubmitted", data -> data.put("coDateSubmitted", data.get("dateConditionalOrderSubmitted")),
         "legalProceedingsExist", data -> data.put("applicant2LegalProceedings", data.get("legalProceedingsExist")),
         "legalProceedingsDescription", data -> data.put("applicant2LegalProceedingsDetails", data.get("legalProceedingsDescription")),
-        "doYouAgreeCourtHasJurisdiction", data -> data.put("jurisdictionAgree", data.get("doYouAgreeCourtHasJurisdiction"))
+        "doYouAgreeCourtHasJurisdiction", data -> data.put("jurisdictionAgree", data.get("doYouAgreeCourtHasJurisdiction")),
+        "serviceApplicationType", data -> data.put("alternativeServiceType", data.get("serviceApplicationType"))
     );
 
     public static Map<String, Object> migrate(Map<String, Object> data) {
