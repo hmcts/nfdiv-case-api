@@ -1,25 +1,12 @@
 package uk.gov.hmcts.divorce.bulkaction.ccd.event;
 
-import com.microsoft.applicationinsights.core.dependencies.xstream.io.binary.Token;
-import com.sun.jdi.ClassNotLoadedException;
-import com.sun.jdi.Field;
-import com.sun.jdi.IncompatibleThreadStateException;
-import com.sun.jdi.InvalidTypeException;
-import com.sun.jdi.InvocationException;
-import com.sun.jdi.Method;
-import com.sun.jdi.ObjectReference;
-import com.sun.jdi.ReferenceType;
-import com.sun.jdi.StringReference;
-import com.sun.jdi.ThreadReference;
-import com.sun.jdi.Type;
-import com.sun.jdi.Value;
-import com.sun.jdi.VirtualMachine;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionPageBuilder;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
@@ -28,9 +15,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import javax.servlet.http.HttpServletRequest;
-
-import java.util.List;
-import java.util.Map;
 
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
@@ -60,6 +44,7 @@ public class CaseworkerPrintPronouncement implements CCDConfig<BulkActionCaseDat
             .showSummary()
             .showEventNotes()
             .submittedCallback(this::submitted)
+            .aboutToStartCallback(this::aboutToStart)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE))
             .page("printPronouncement")
@@ -73,5 +58,19 @@ public class CaseworkerPrintPronouncement implements CCDConfig<BulkActionCaseDat
     ) {
         scheduleCaseService.updatePronouncementJudgeDetailsForCasesInBulk(bulkCaseDetails,request.getHeader(AUTHORIZATION));
         return SubmittedCallbackResponse.builder().build();
+    }
+
+    public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToStart(
+        final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails
+    ) {
+        final BulkActionCaseData caseData = bulkCaseDetails.getData();
+
+        if (null == caseData.getPronouncementJudge()) {
+            caseData.setPronouncementJudge("District Judge");
+        }
+
+        return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder()
+            .data(caseData)
+            .build();
     }
 }
