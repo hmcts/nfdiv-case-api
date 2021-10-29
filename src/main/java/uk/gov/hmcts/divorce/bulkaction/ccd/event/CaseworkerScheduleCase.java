@@ -37,7 +37,7 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
         new BulkActionPageBuilder(configBuilder
             .event(CASEWORKER_SCHEDULE_CASE)
-            .forStateTransition(Created,Listed)
+            .forStateTransition(Created, Listed)
             .name("Schedule cases for listing")
             .description("Schedule cases for listing")
             .showSummary()
