@@ -12,7 +12,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
-import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -40,7 +39,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemRemoveFailedCases.SYSTEM_REMOVE_FAILED_CASES;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYSTEM_LINK_WITH_BULK_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
@@ -60,14 +58,17 @@ public class SystemCreateBulkCaseListTaskTest {
     @Mock
     private ObjectMapper mapper;
 
-    @InjectMocks
-    private SystemCreateBulkCaseListTask systemCreateBulkCaseListTask;
-
     @Mock
     private IdamService idamService;
 
     @Mock
     private AuthTokenGenerator authTokenGenerator;
+
+    @Mock
+    private BulkCaseFailedCaseRemover bulkCaseFailedCaseRemover;
+
+    @InjectMocks
+    private SystemCreateBulkCaseListTask systemCreateBulkCaseListTask;
 
     private User user;
 
@@ -233,28 +234,6 @@ public class SystemCreateBulkCaseListTaskTest {
         doNothing().when(ccdUpdateService)
             .submitEventWithRetry(caseDetails2, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
 
-        var bulkActionCaseData = mock(BulkActionCaseData.class);
-        when(mapper.convertValue(caseDetailsBulkCase.getData(), BulkActionCaseData.class))
-            .thenReturn(bulkActionCaseData);
-
-        when(bulkActionCaseData.getBulkListCaseDetails()).thenReturn(bulkCaseList);
-
-        var bulkCaseWithOnlySuccessfulAwaitingPronouncement = CaseDetails
-            .builder()
-            .data(Map.of("bulkListCaseDetails", List.of(bulkListCaseDetails2)))
-            .id(3L)
-            .build();
-
-        doNothing()
-            .when(ccdUpdateService)
-            .updateBulkCaseWithRetries(
-                bulkCaseWithOnlySuccessfulAwaitingPronouncement,
-                SYSTEM_REMOVE_FAILED_CASES,
-                user,
-                SERVICE_AUTHORIZATION,
-                bulkCaseWithOnlySuccessfulAwaitingPronouncement.getId()
-            );
-
         systemCreateBulkCaseListTask.run();
 
         var caseDetailsForBulkCaseCreation =
@@ -268,14 +247,12 @@ public class SystemCreateBulkCaseListTaskTest {
         verify(ccdCreateService).createBulkCase(caseDetailsForBulkCaseCreation, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService)
             .submitEventWithRetry(caseDetails2, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService)
-            .updateBulkCaseWithRetries(
-                bulkCaseWithOnlySuccessfulAwaitingPronouncement,
-                SYSTEM_REMOVE_FAILED_CASES,
+        verify(bulkCaseFailedCaseRemover)
+            .removeFailedCasesFromBulkListCaseDetails(
+                List.of(1L),
+                caseDetailsBulkCase,
                 user,
-                SERVICE_AUTHORIZATION,
-                bulkCaseWithOnlySuccessfulAwaitingPronouncement.getId()
-            );
+                SERVICE_AUTHORIZATION);
         verifyNoMoreInteractions(ccdSearchService, ccdCreateService, ccdUpdateService);
     }
 

@@ -73,7 +73,7 @@ public class CcdUpdateService {
                             final User user,
                             final String serviceAuth) {
 
-        submitEvent(caseDetailsConverter.convertToReformModel(caseDetails), eventId, user, serviceAuth);
+        submitEvent(caseDetailsConverter.convertToReformModelFromCaseDetails(caseDetails), eventId, user, serviceAuth);
     }
 
     @Retryable(value = {FeignException.class, RuntimeException.class})
