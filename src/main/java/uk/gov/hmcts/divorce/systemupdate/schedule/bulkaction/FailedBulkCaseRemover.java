@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.systemupdate.schedule.bulkaction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
@@ -17,11 +16,12 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemRemoveFailedCases.SYSTEM_REMOVE_FAILED_CASES;
 
 @Component
 @Slf4j
-public class BulkCaseFailedCaseRemover {
+public class FailedBulkCaseRemover {
 
     @Autowired
     private CcdUpdateService ccdUpdateService;
@@ -34,7 +34,7 @@ public class BulkCaseFailedCaseRemover {
                                                          final User user,
                                                          final String serviceAuth) {
 
-        if (!CollectionUtils.isEmpty(failedCaseIds)) {
+        if (!isEmpty(failedCaseIds)) {
             log.info(
                 "There are failed awaiting pronouncement cases with ids {} for bulk list case with id {} ",
                 failedCaseIds,
