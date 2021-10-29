@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
+import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -48,16 +49,7 @@ public class ScheduleCaseService {
         final List<ListValue<BulkListCaseDetails>> unprocessedBulkCases = bulkTriggerService.bulkTrigger(
             bulkListCaseDetails,
             SYSTEM_UPDATE_CASE_COURT_HEARING,
-            mainCaseDetails -> {
-                final var conditionalOrder = mainCaseDetails.getData().getConditionalOrder();
-                conditionalOrder.setDateAndTimeOfHearing(
-                    bulkCaseDetails.getData().getDateAndTimeOfHearing()
-                );
-                conditionalOrder.setCourtName(
-                    bulkCaseDetails.getData().getCourtName()
-                );
-                return mainCaseDetails;
-            },
+            getCaseTask(bulkCaseDetails.getData()),
             user,
             serviceAuth
         );
@@ -81,5 +73,18 @@ public class ScheduleCaseService {
         } catch (final FeignException e) {
             log.error("Update failed for bulk case id {} ", bulkCaseDetails.getId(), e);
         }
+    }
+
+    public CaseTask getCaseTask(final BulkActionCaseData bulkActionCaseData) {
+        return mainCaseDetails -> {
+            final var conditionalOrder = mainCaseDetails.getData().getConditionalOrder();
+            conditionalOrder.setDateAndTimeOfHearing(
+                bulkActionCaseData.getDateAndTimeOfHearing()
+            );
+            conditionalOrder.setCourtName(
+                bulkActionCaseData.getCourtName()
+            );
+            return mainCaseDetails;
+        };
     }
 }
