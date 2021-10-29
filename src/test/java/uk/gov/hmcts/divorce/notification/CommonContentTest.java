@@ -16,9 +16,12 @@ import java.util.Map;
 import static java.lang.String.join;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.isDivorce;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION;
@@ -150,5 +153,35 @@ class CommonContentTest {
                 entry(APPLICANT_NAME, join(" ", TEST_FIRST_NAME, TEST_LAST_NAME)),
                 entry(RESPONDENT_NAME, join(" ", APPLICANT_2_FIRST_NAME, TEST_LAST_NAME)),
                 entry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)));
+    }
+
+    @Test
+    void shouldGetService() {
+        CaseData caseData = caseData();
+        assertThat(commonContent.getService(caseData.getDivorceOrDissolution())).isEqualTo("divorce");
+
+        caseData.setDivorceOrDissolution(DISSOLUTION);
+        assertThat(commonContent.getService(caseData.getDivorceOrDissolution())).isEqualTo("civil partnership");
+    }
+
+    @Test
+    void shouldGetPartner() {
+        CaseData caseData = caseData();
+        assertThat(commonContent.getPartner(caseData, caseData.getApplicant2())).isEqualTo("wife");
+
+        caseData.getApplicant2().setGender(Gender.MALE);
+        assertThat(commonContent.getPartner(caseData, caseData.getApplicant2())).isEqualTo("husband");
+
+        caseData.setDivorceOrDissolution(DISSOLUTION);
+        assertThat(commonContent.getPartner(caseData, caseData.getApplicant2())).isEqualTo("civil partner");
+    }
+
+    @Test
+    void shouldReturnDivorceOrDissolution() {
+        CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
+        assertTrue(isDivorce(caseData));
+
+        caseData.setDivorceOrDissolution(DISSOLUTION);
+        assertFalse(isDivorce(caseData));
     }
 }
