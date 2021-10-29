@@ -33,7 +33,7 @@
         }
       }
     ],
-    "dataVersion": 6
+    "dataVersion": "${json-unit.any-number}"
   },
   "errors": null,
   "warnings": null,

@@ -67,9 +67,10 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITA
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OVERSEAS_RESPONDENT_HAS_EMAIL_APPLICATION_ISSUED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_APPLICANT_APPLICATION_ACCEPTED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOL_RESPONDENT_APPLICATION_ACCEPTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_APPLICATION_ACCEPTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssembly;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyUnauthorized;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
@@ -205,14 +206,21 @@ public class CaseworkerIssueApplicationIT {
         verify(notificationService)
             .sendEmail(
                 eq(TEST_USER_EMAIL),
-                eq(SOL_APPLICANT_APPLICATION_ACCEPTED),
+                eq(SOLE_APPLICANT_APPLICATION_ACCEPTED),
                 anyMap(),
                 eq(ENGLISH));
 
         verify(notificationService)
             .sendEmail(
                 eq(TEST_APPLICANT_2_USER_EMAIL),
-                eq(SOL_RESPONDENT_APPLICATION_ACCEPTED),
+                eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
+                anyMap(),
+                eq(ENGLISH));
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_USER_EMAIL),
+                eq(OVERSEAS_RESPONDENT_HAS_EMAIL_APPLICATION_ISSUED),
                 anyMap(),
                 eq(ENGLISH));
 
@@ -255,6 +263,7 @@ public class CaseworkerIssueApplicationIT {
                 eq(JOINT_APPLICATION_ACCEPTED),
                 anyMap(),
                 eq(ENGLISH));
+
         verify(notificationService)
             .sendEmail(
                 eq(TEST_APPLICANT_2_USER_EMAIL),

@@ -45,8 +45,8 @@ public class RespondentAnswersTemplateContent {
         var acknowledgementOfService = caseData.getAcknowledgementOfService();
         templateContent.put(RESP_JURISDICTION_AGREE, acknowledgementOfService.getJurisdictionAgree().getValue());
         templateContent.put(RESP_JURISDICTION_DISAGREE_REASON, acknowledgementOfService.getJurisdictionDisagreeReason());
-        templateContent.put(RESP_LEGAL_PROCEEDINGS_EXIST, acknowledgementOfService.getLegalProceedingsExist().getValue());
-        templateContent.put(RESP_LEGAL_PROCEEDINGS_DESCRIPTION, acknowledgementOfService.getLegalProceedingsDescription());
+        templateContent.put(RESP_LEGAL_PROCEEDINGS_EXIST, caseData.getApplicant2().getLegalProceedings().getValue());
+        templateContent.put(RESP_LEGAL_PROCEEDINGS_DESCRIPTION, caseData.getApplicant2().getLegalProceedingsDetails());
 
         return templateContent;
     }

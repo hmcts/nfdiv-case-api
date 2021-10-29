@@ -30,9 +30,10 @@ public class RespondentAnswersTemplateContentTest {
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForRespondentAnswers() {
         CaseData caseData = caseData();
-        caseData.getAcknowledgementOfService().setLegalProceedingsDescription("some description");
+        caseData.getApplicant2().setLegalProceedingsDetails("some description");
+        caseData.getApplicant2().setLegalProceedings(YES);
+
         caseData.getAcknowledgementOfService().setJurisdictionAgree(YES);
-        caseData.getAcknowledgementOfService().setLegalProceedingsExist(YES);
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder().email(TEST_SOLICITOR_EMAIL).build()
         );
