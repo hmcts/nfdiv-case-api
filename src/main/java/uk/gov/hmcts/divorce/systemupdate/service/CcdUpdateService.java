@@ -202,6 +202,7 @@ public class CcdUpdateService {
                                       final String eventId,
                                       final User user,
                                       final String serviceAuth) {
+
         updateBulkCaseWithRetries(
             caseDetailsConverter.convertToReformModelFromBulkActionCaseDetails(caseDetails),
             eventId,

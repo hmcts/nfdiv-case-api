@@ -1,8 +1,6 @@
 package uk.gov.hmcts.divorce.bulkaction.ccd.event;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
@@ -22,10 +20,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
-@Component
-@Slf4j
-public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
-    public static final String CASEWORKER_SCHEDULE_CASE = "caseworker-schedule-case";
+public class CaseworkerEditBulkCase implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
+
+    public static final String CASEWORKER_EDIT_BULK_CASE = "caseworker-edit-bulk-case";
 
     @Autowired
     private ScheduleCaseService scheduleCaseService;
@@ -36,20 +33,19 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
     @Override
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
         new BulkActionPageBuilder(configBuilder
-            .event(CASEWORKER_SCHEDULE_CASE)
-            .forStateTransition(Created, Listed)
-            .name("Schedule cases for listing")
-            .description("Schedule cases for listing")
+            .event(CASEWORKER_EDIT_BULK_CASE)
+            .forStates(Created, Listed)
+            .name("Edit bulk case")
+            .description("Edit bulk case")
             .showSummary()
             .showEventNotes()
             .submittedCallback(this::submitted)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE))
-            .page("scheduleForListing")
-            .pageLabel("Schedule cases for listing")
+            .page("editBulkCase")
+            .pageLabel("Edit bulk case")
             .mandatory(BulkActionCaseData::getCourtName)
-            .mandatory(BulkActionCaseData::getDateAndTimeOfHearing)
-            .mandatoryNoSummary(BulkActionCaseData::getBulkListCaseDetails);
+            .mandatory(BulkActionCaseData::getDateAndTimeOfHearing);
     }
 
     public SubmittedCallbackResponse submitted(
