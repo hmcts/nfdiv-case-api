@@ -13,7 +13,6 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.service.BulkTriggerService;
 import uk.gov.hmcts.divorce.bulkaction.service.ScheduleCaseService;
 import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
@@ -24,7 +23,7 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
-import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_BULK_CASE_ERRORS;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
 
 @Component
@@ -68,8 +67,6 @@ public class SystemProcessFailedScheduledCasesTask implements Runnable {
             log.info("Processing failed scheduled cases task completed.");
         } catch (final CcdSearchCaseException e) {
             log.error("Processing failed scheduled cases task stopped after search error", e);
-        } catch (final CcdManagementException e) {
-            log.error("Exception occurred while processing failed scheduled cases ", e);
         }
     }
 
@@ -84,7 +81,7 @@ public class SystemProcessFailedScheduledCasesTask implements Runnable {
 
         if (CollectionUtils.isEmpty(bulkCaseData.getProcessedCaseDetails())) {
             log.info("Processed cases list is empty hence processing all cases in bulk case with id {} ", bulkCaseId);
-            bulkCasesTobeReprocessed = bulkCaseData.getProcessedCaseDetails();
+            bulkCasesTobeReprocessed = bulkCaseData.getBulkListCaseDetails();
         } else {
             log.info("Processed cases with errors in bulk case with id {} ", bulkCaseId);
             bulkCasesTobeReprocessed = bulkCaseData.getErroredCaseDetails();
@@ -112,7 +109,7 @@ public class SystemProcessFailedScheduledCasesTask implements Runnable {
         try {
             ccdUpdateService.updateBulkCaseWithRetries(
                 bulkCaseDetails,
-                SYSTEM_BULK_CASE_ERRORS,
+                SYSTEM_UPDATE_BULK_CASE,
                 user,
                 serviceAuth,
                 bulkCaseId);

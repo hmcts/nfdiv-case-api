@@ -38,7 +38,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
-import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_BULK_CASE_ERRORS;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
@@ -138,7 +138,7 @@ public class SystemProcessFailedScheduledCasesTaskTest {
 
         doNothing().when(ccdUpdateService).updateBulkCaseWithRetries(
             caseDetails,
-            SYSTEM_BULK_CASE_ERRORS,
+            SYSTEM_UPDATE_BULK_CASE,
             user,
             SERVICE_AUTHORIZATION,
             1L);
@@ -157,7 +157,7 @@ public class SystemProcessFailedScheduledCasesTaskTest {
 
         verify(ccdUpdateService).updateBulkCaseWithRetries(
             caseDetails,
-            SYSTEM_BULK_CASE_ERRORS,
+            SYSTEM_UPDATE_BULK_CASE,
             user,
             SERVICE_AUTHORIZATION,
             1L);
@@ -165,6 +165,82 @@ public class SystemProcessFailedScheduledCasesTaskTest {
         verify(mapper).convertValue(eq(bulkActionCaseData), any(TypeReference.class));
     }
 
+    @Test
+    @SuppressWarnings("unchecked")
+    void shouldProcessAllCasesInBulkWhenProcessedListIsEmpty() {
+
+        final var bulkListCase =
+            BulkListCaseDetails.builder().caseReference(CaseLink.builder().caseReference("4").build()).build();
+
+        final Map<String, Object> caseDataMap = new HashMap<>();
+        caseDataMap.put("courtName", "westMidlands");
+        caseDataMap.put("erroredCaseDetails", emptyList());
+        caseDataMap.put("bulkListCaseDetails", List.of(bulkListCase));
+        caseDataMap.put("dateAndTimeOfHearing", "2021-11-24T00:00:00.000");
+        caseDataMap.put("processedCaseDetails", emptyList());
+
+        final CaseDetails caseDetails = CaseDetails.builder()
+            .id(1L)
+            .data(caseDataMap)
+            .build();
+
+
+        final var caseDetailsList = List.of(caseDetails);
+        when(ccdSearchService.searchForBulkCasesWithCaseErrorsAndState(Listed, user, SERVICE_AUTHORIZATION))
+            .thenReturn(caseDetailsList);
+
+        final var bulkActionCaseData = BulkActionCaseData.builder().build();
+        final var bulkListCaseDetailsListValues = List.of(
+            getBulkListCaseDetailsListValue(bulkListCase)
+        );
+
+        bulkActionCaseData.setBulkListCaseDetails(bulkListCaseDetailsListValues);
+
+        when(mapper.convertValue(eq(caseDetails.getData()), eq(BulkActionCaseData.class)))
+            .thenReturn(bulkActionCaseData);
+
+        when(mapper.convertValue(eq(bulkActionCaseData), any(TypeReference.class))).thenReturn(caseDataMap);
+
+        CaseTask caseTask = mock(CaseTask.class);
+        when(scheduleCaseService.getCaseTask(bulkActionCaseData)).thenReturn(caseTask);
+
+        when(bulkTriggerService.bulkTrigger(
+            eq(List.of(getBulkListCaseDetailsListValue(bulkListCase))),
+            eq(SYSTEM_UPDATE_CASE_COURT_HEARING),
+            eq(caseTask),
+            eq(user),
+            eq(SERVICE_AUTHORIZATION)
+        )).thenReturn(emptyList());
+
+        doNothing().when(ccdUpdateService).updateBulkCaseWithRetries(
+            caseDetails,
+            SYSTEM_UPDATE_BULK_CASE,
+            user,
+            SERVICE_AUTHORIZATION,
+            1L);
+
+        systemProcessFailedScheduledCasesTask.run();
+
+        verify(mapper).convertValue(eq(caseDetails.getData()), eq(BulkActionCaseData.class));
+
+        verify(bulkTriggerService).bulkTrigger(
+            eq(List.of(getBulkListCaseDetailsListValue(bulkListCase))),
+            eq(SYSTEM_UPDATE_CASE_COURT_HEARING),
+            eq(caseTask),
+            eq(user),
+            eq(SERVICE_AUTHORIZATION)
+        );
+
+        verify(ccdUpdateService).updateBulkCaseWithRetries(
+            caseDetails,
+            SYSTEM_UPDATE_BULK_CASE,
+            user,
+            SERVICE_AUTHORIZATION,
+            1L);
+
+        verify(mapper).convertValue(eq(bulkActionCaseData), any(TypeReference.class));
+    }
+    
     @Test
     void shouldStopProcessingIfCcdSearchCaseExceptionIsThrown() {
         doThrow(new CcdSearchCaseException("message", null))

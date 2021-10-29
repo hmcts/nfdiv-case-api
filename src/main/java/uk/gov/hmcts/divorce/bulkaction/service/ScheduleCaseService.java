@@ -18,7 +18,7 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.List;
 
-import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_BULK_CASE_ERRORS;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
 
 @Service
@@ -66,7 +66,7 @@ public class ScheduleCaseService {
         try {
             ccdUpdateService.submitBulkActionEvent(
                 bulkCaseDetails,
-                SYSTEM_BULK_CASE_ERRORS,
+                SYSTEM_UPDATE_BULK_CASE,
                 user,
                 serviceAuth
             );
