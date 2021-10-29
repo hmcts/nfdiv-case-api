@@ -53,7 +53,7 @@ public class SystemCreateBulkCaseListTask implements Runnable {
     private AuthTokenGenerator authTokenGenerator;
 
     @Autowired
-    private BulkCaseFailedCaseRemover bulkCaseFailedCaseRemover;
+    private FailedBulkCaseRemover failedBulkCaseRemover;
 
     @Override
     public void run() {
@@ -86,7 +86,7 @@ public class SystemCreateBulkCaseListTask implements Runnable {
                     serviceAuth
                 );
 
-                bulkCaseFailedCaseRemover.removeFailedCasesFromBulkListCaseDetails(
+                failedBulkCaseRemover.removeFailedCasesFromBulkListCaseDetails(
                     failedAwaitingPronouncementCaseIds,
                     caseDetailsBulkCase,
                     user,

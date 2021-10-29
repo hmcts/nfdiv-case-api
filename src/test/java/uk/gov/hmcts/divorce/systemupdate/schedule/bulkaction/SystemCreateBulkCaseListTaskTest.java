@@ -65,7 +65,7 @@ public class SystemCreateBulkCaseListTaskTest {
     private AuthTokenGenerator authTokenGenerator;
 
     @Mock
-    private BulkCaseFailedCaseRemover bulkCaseFailedCaseRemover;
+    private FailedBulkCaseRemover failedBulkCaseRemover;
 
     @InjectMocks
     private SystemCreateBulkCaseListTask systemCreateBulkCaseListTask;
@@ -247,7 +247,7 @@ public class SystemCreateBulkCaseListTaskTest {
         verify(ccdCreateService).createBulkCase(caseDetailsForBulkCaseCreation, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService)
             .submitEventWithRetry(caseDetails2, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
-        verify(bulkCaseFailedCaseRemover)
+        verify(failedBulkCaseRemover)
             .removeFailedCasesFromBulkListCaseDetails(
                 List.of(1L),
                 caseDetailsBulkCase,

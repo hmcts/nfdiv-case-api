@@ -35,7 +35,7 @@ import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemRemoveFailedCases.
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 
 @ExtendWith(MockitoExtension.class)
-class BulkCaseFailedCaseRemoverTest {
+class FailedBulkCaseRemoverTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
 
@@ -46,7 +46,7 @@ class BulkCaseFailedCaseRemoverTest {
     private CaseDetailsConverter caseDetailsConverter;
 
     @InjectMocks
-    private BulkCaseFailedCaseRemover bulkCaseFailedCaseRemover;
+    private FailedBulkCaseRemover failedBulkCaseRemover;
 
     @Test
     void shouldRemoveGivenCaseIdsFromBulkCaseListAndUpdateBulkCase() {
@@ -68,7 +68,7 @@ class BulkCaseFailedCaseRemoverTest {
 
         when(caseDetailsConverter.convertToBulkActionCaseDetailsFromReformModel(bulkCaseDetails)).thenReturn(resultCaseDetails);
 
-        bulkCaseFailedCaseRemover.removeFailedCasesFromBulkListCaseDetails(
+        failedBulkCaseRemover.removeFailedCasesFromBulkListCaseDetails(
             failedCaseIds,
             bulkCaseDetails,
             user,
@@ -96,7 +96,7 @@ class BulkCaseFailedCaseRemoverTest {
             .id(1L)
             .build();
 
-        bulkCaseFailedCaseRemover.removeFailedCasesFromBulkListCaseDetails(
+        failedBulkCaseRemover.removeFailedCasesFromBulkListCaseDetails(
             emptyList(),
             bulkCaseDetails,
             user,
@@ -133,7 +133,7 @@ class BulkCaseFailedCaseRemoverTest {
                 SERVICE_AUTHORIZATION);
 
         try {
-            bulkCaseFailedCaseRemover.removeFailedCasesFromBulkListCaseDetails(
+            failedBulkCaseRemover.removeFailedCasesFromBulkListCaseDetails(
                 failedCaseIds,
                 bulkCaseDetails,
                 user,
