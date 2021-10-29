@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor.event;
+package uk.gov.hmcts.divorce.common.event;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,24 +11,23 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorDraftConditionalOrder.SOLICITOR_DRAFT_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.common.event.UpdateConditionalOrder.UPDATE_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-class SolicitorDraftConditionalOrderTest {
-
+class UpdateConditionalOrderTest {
     @InjectMocks
-    private SolicitorDraftConditionalOrder solicitorDraftConditionalOrder;
+    private UpdateConditionalOrder updateConditionalOrder;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        solicitorDraftConditionalOrder.configure(configBuilder);
+        updateConditionalOrder.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(SOLICITOR_DRAFT_CONDITIONAL_ORDER);
+            .contains(UPDATE_CONDITIONAL_ORDER);
     }
 }

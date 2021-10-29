@@ -13,11 +13,10 @@
     "country": "United Kingdom"
   },
   "applicant2HomeAddress": {
-    "addressLine1": "221a Baker Street",
-    "postTown": "London",
-    "county": "Greater London",
-    "postCode": "NW1 6XE",
-    "country": "United Kingdom"
+    "addressLine1": "Parc de la Ciutadella",
+    "postTown": "Barcelona",
+    "county": "Catalunya",
+    "country": "Spain"
   },
   "applicant1LanguagePreferenceWelsh": "No",
   "applicant1KeepContactDetailsConfidential": "Yes",

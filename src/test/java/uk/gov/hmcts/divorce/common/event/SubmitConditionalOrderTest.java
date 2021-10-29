@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor.event;
+package uk.gov.hmcts.divorce.common.event;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,30 +17,30 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import java.time.Clock;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorSubmitConditionalOrder.SOLICITOR_SUBMIT_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.common.event.SubmitConditionalOrder.SUBMIT_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-class SolicitorSubmitConditionalOrderTest {
+class SubmitConditionalOrderTest {
 
     @Mock
     private Clock clock;
 
     @InjectMocks
-    private SolicitorSubmitConditionalOrder solicitorSubmitConditionalOrder;
+    private SubmitConditionalOrder submitConditionalOrder;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        solicitorSubmitConditionalOrder.configure(configBuilder);
+        submitConditionalOrder.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(SOLICITOR_SUBMIT_CONDITIONAL_ORDER);
+            .contains(SUBMIT_CONDITIONAL_ORDER);
     }
 
     @Test
@@ -55,7 +55,7 @@ class SolicitorSubmitConditionalOrderTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitConditionalOrder.aboutToSubmit(caseDetails, null);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, null);
 
         assertThat(response.getData().getConditionalOrder().getDateSubmitted()).isEqualTo(getExpectedLocalDateTime());
     }
