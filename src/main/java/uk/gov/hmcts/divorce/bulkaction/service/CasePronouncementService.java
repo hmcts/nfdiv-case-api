@@ -54,11 +54,11 @@ public class CasePronouncementService {
                     final var finalOrder = mainCaseDetails.getData().getFinalOrder();
 
                     mainCaseDetails.getData().setDueDate(
-                        finalOrder.getDateFinalOrderEligibleFrom(conditionalOrder.getDateAndTimeOfHearing()));
+                        finalOrder.getDateFinalOrderEligibleFrom(details.getData().getDateAndTimeOfHearing()));
                     conditionalOrder.setOutcomeCase(YES);
-                    conditionalOrder.setGrantedDate(conditionalOrder.getDateAndTimeOfHearing().toLocalDate());
+                    conditionalOrder.setGrantedDate(details.getData().getDateAndTimeOfHearing().toLocalDate());
                     finalOrder.setDateFinalOrderEligibleFrom(
-                        finalOrder.getDateFinalOrderEligibleFrom(conditionalOrder.getDateAndTimeOfHearing()));
+                        finalOrder.getDateFinalOrderEligibleFrom(details.getData().getDateAndTimeOfHearing()));
 
                     return mainCaseDetails;
                 },
