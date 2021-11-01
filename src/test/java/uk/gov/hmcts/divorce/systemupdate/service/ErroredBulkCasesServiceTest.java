@@ -1,25 +1,22 @@
 package uk.gov.hmcts.divorce.systemupdate.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.service.BulkTriggerService;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
-import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
@@ -30,7 +27,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCaseErrors.SYSTEM_BULK_CASE_ERRORS;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 
@@ -39,9 +36,6 @@ class ErroredBulkCasesServiceTest {
 
     @Mock
     private CcdUpdateService ccdUpdateService;
-
-    @Spy
-    private ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
 
     @Mock
     private BulkTriggerService bulkTriggerService;
@@ -59,24 +53,15 @@ class ErroredBulkCasesServiceTest {
         final List<ListValue<BulkListCaseDetails>> currentErrors = getBulkListCaseDetailsListValueForCaseIds("1", "2");
         final List<ListValue<BulkListCaseDetails>> updatedErrors = getBulkListCaseDetailsListValueForCaseIds("2");
 
-        final Object expectedProcessed = objectMapper.convertValue(updatedProcessed, new TypeReference<>() {
-        });
-        final Object expectedErrors = objectMapper.convertValue(updatedErrors, new TypeReference<>() {
-        });
-
         final BulkActionCaseData bulkActionCaseData = BulkActionCaseData.builder()
             .bulkListCaseDetails(fullBulkList)
             .processedCaseDetails(currentProcessed)
             .erroredCaseDetails(currentErrors)
             .build();
 
-        final Map<String, Object> caseDataMap = objectMapper.convertValue(bulkActionCaseData, new TypeReference<>() {
-        });
-
-        final CaseDetails caseDetails = CaseDetails.builder()
-            .id(1L)
-            .data(caseDataMap)
-            .build();
+        final CaseDetails<BulkActionCaseData, BulkActionState> caseDetails = new CaseDetails<>();
+        caseDetails.setId(1L);
+        caseDetails.setData(bulkActionCaseData);
 
         when(bulkTriggerService.bulkTrigger(
             eq(currentErrors),
@@ -89,18 +74,18 @@ class ErroredBulkCasesServiceTest {
         erroredBulkCasesService.processErroredCasesAndUpdateBulkCase(
             caseDetails,
             SYSTEM_PRONOUNCE_CASE,
+            bulkCaseDetails -> bulkCaseDetails,
             user,
             SERVICE_AUTHORIZATION);
 
-        assertThat(caseDetails.getData().get("processedCaseDetails")).isEqualTo(expectedProcessed);
-        assertThat(caseDetails.getData().get("erroredCaseDetails")).isEqualTo(expectedErrors);
+        assertThat(caseDetails.getData().getProcessedCaseDetails()).isEqualTo(updatedProcessed);
+        assertThat(caseDetails.getData().getErroredCaseDetails()).isEqualTo(updatedErrors);
 
-        verify(ccdUpdateService).updateBulkCaseWithRetries(
+        verify(ccdUpdateService).submitBulkActionEvent(
             caseDetails,
-            SYSTEM_BULK_CASE_ERRORS,
+            SYSTEM_UPDATE_BULK_CASE,
             user,
-            SERVICE_AUTHORIZATION,
-            1L);
+            SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -111,22 +96,13 @@ class ErroredBulkCasesServiceTest {
         final List<ListValue<BulkListCaseDetails>> updatedProcessed = getBulkListCaseDetailsListValueForCaseIds("1", "3", "4");
         final List<ListValue<BulkListCaseDetails>> updatedErrors = getBulkListCaseDetailsListValueForCaseIds("2");
 
-        final Object expectedProcessed = objectMapper.convertValue(updatedProcessed, new TypeReference<>() {
-        });
-        final Object expectedErrors = objectMapper.convertValue(updatedErrors, new TypeReference<>() {
-        });
-
         final BulkActionCaseData bulkActionCaseData = BulkActionCaseData.builder()
             .bulkListCaseDetails(fullBulkList)
             .build();
 
-        final Map<String, Object> caseDataMap = objectMapper.convertValue(bulkActionCaseData, new TypeReference<>() {
-        });
-
-        final CaseDetails caseDetails = CaseDetails.builder()
-            .id(1L)
-            .data(caseDataMap)
-            .build();
+        final CaseDetails<BulkActionCaseData, BulkActionState> caseDetails = new CaseDetails<>();
+        caseDetails.setId(1L);
+        caseDetails.setData(bulkActionCaseData);
 
         when(bulkTriggerService.bulkTrigger(
             eq(fullBulkList),
@@ -139,18 +115,18 @@ class ErroredBulkCasesServiceTest {
         erroredBulkCasesService.processErroredCasesAndUpdateBulkCase(
             caseDetails,
             SYSTEM_PRONOUNCE_CASE,
+            bulkCaseDetails -> bulkCaseDetails,
             user,
             SERVICE_AUTHORIZATION);
 
-        assertThat(caseDetails.getData().get("processedCaseDetails")).isEqualTo(expectedProcessed);
-        assertThat(caseDetails.getData().get("erroredCaseDetails")).isEqualTo(expectedErrors);
+        assertThat(caseDetails.getData().getProcessedCaseDetails()).isEqualTo(updatedProcessed);
+        assertThat(caseDetails.getData().getErroredCaseDetails()).isEqualTo(updatedErrors);
 
-        verify(ccdUpdateService).updateBulkCaseWithRetries(
+        verify(ccdUpdateService).submitBulkActionEvent(
             caseDetails,
-            SYSTEM_BULK_CASE_ERRORS,
+            SYSTEM_UPDATE_BULK_CASE,
             user,
-            SERVICE_AUTHORIZATION,
-            1L);
+            SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -161,23 +137,14 @@ class ErroredBulkCasesServiceTest {
         final List<ListValue<BulkListCaseDetails>> updatedProcessed = getBulkListCaseDetailsListValueForCaseIds("1", "3", "4");
         final List<ListValue<BulkListCaseDetails>> updatedErrors = getBulkListCaseDetailsListValueForCaseIds("2");
 
-        final Object expectedProcessed = objectMapper.convertValue(updatedProcessed, new TypeReference<>() {
-        });
-        final Object expectedErrors = objectMapper.convertValue(updatedErrors, new TypeReference<>() {
-        });
-
         final BulkActionCaseData bulkActionCaseData = BulkActionCaseData.builder()
             .bulkListCaseDetails(fullBulkList)
             .processedCaseDetails(emptyList())
             .build();
 
-        final Map<String, Object> caseDataMap = objectMapper.convertValue(bulkActionCaseData, new TypeReference<>() {
-        });
-
-        final CaseDetails caseDetails = CaseDetails.builder()
-            .id(1L)
-            .data(caseDataMap)
-            .build();
+        final CaseDetails<BulkActionCaseData, BulkActionState> caseDetails = new CaseDetails<>();
+        caseDetails.setId(1L);
+        caseDetails.setData(bulkActionCaseData);
 
         when(bulkTriggerService.bulkTrigger(
             eq(fullBulkList),
@@ -190,18 +157,18 @@ class ErroredBulkCasesServiceTest {
         erroredBulkCasesService.processErroredCasesAndUpdateBulkCase(
             caseDetails,
             SYSTEM_PRONOUNCE_CASE,
+            bulkCaseDetails -> bulkCaseDetails,
             user,
             SERVICE_AUTHORIZATION);
 
-        assertThat(caseDetails.getData().get("processedCaseDetails")).isEqualTo(expectedProcessed);
-        assertThat(caseDetails.getData().get("erroredCaseDetails")).isEqualTo(expectedErrors);
+        assertThat(caseDetails.getData().getProcessedCaseDetails()).isEqualTo(updatedProcessed);
+        assertThat(caseDetails.getData().getErroredCaseDetails()).isEqualTo(updatedErrors);
 
-        verify(ccdUpdateService).updateBulkCaseWithRetries(
+        verify(ccdUpdateService).submitBulkActionEvent(
             caseDetails,
-            SYSTEM_BULK_CASE_ERRORS,
+            SYSTEM_UPDATE_BULK_CASE,
             user,
-            SERVICE_AUTHORIZATION,
-            1L);
+            SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -219,13 +186,9 @@ class ErroredBulkCasesServiceTest {
             .erroredCaseDetails(currentErrors)
             .build();
 
-        final Map<String, Object> caseDataMap = objectMapper.convertValue(bulkActionCaseData, new TypeReference<>() {
-        });
-
-        final CaseDetails caseDetails = CaseDetails.builder()
-            .id(1L)
-            .data(caseDataMap)
-            .build();
+        final CaseDetails<BulkActionCaseData, BulkActionState> caseDetails = new CaseDetails<>();
+        caseDetails.setId(1L);
+        caseDetails.setData(bulkActionCaseData);
 
         when(bulkTriggerService.bulkTrigger(
             eq(currentErrors),
@@ -236,16 +199,16 @@ class ErroredBulkCasesServiceTest {
             .thenReturn(updatedErrors);
 
         doThrow(new CcdManagementException("Message", null))
-            .when(ccdUpdateService).updateBulkCaseWithRetries(
+            .when(ccdUpdateService).submitBulkActionEvent(
                 caseDetails,
-                SYSTEM_BULK_CASE_ERRORS,
+                SYSTEM_UPDATE_BULK_CASE,
                 user,
-                SERVICE_AUTHORIZATION,
-                1L);
+                SERVICE_AUTHORIZATION);
 
         erroredBulkCasesService.processErroredCasesAndUpdateBulkCase(
             caseDetails,
             SYSTEM_PRONOUNCE_CASE,
+            bulkCaseDetails -> bulkCaseDetails,
             user,
             SERVICE_AUTHORIZATION);
     }

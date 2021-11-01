@@ -3,12 +3,15 @@ package uk.gov.hmcts.divorce.systemupdate.schedule.bulkaction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
+import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
+import uk.gov.hmcts.divorce.bulkaction.service.ScheduleCaseService;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.divorce.systemupdate.service.ErroredBulkCasesService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.List;
@@ -30,6 +33,9 @@ public class SystemRetryBulkCasePronouncedErrors implements Runnable {
     private AuthTokenGenerator authTokenGenerator;
 
     @Autowired
+    private ScheduleCaseService scheduleCaseService;
+
+    @Autowired
     private ErroredBulkCasesService erroredBulkCasesService;
 
     @Override
@@ -42,14 +48,15 @@ public class SystemRetryBulkCasePronouncedErrors implements Runnable {
 
         try {
 
-            final List<CaseDetails> bulkCases = ccdSearchService
-                .searchForUnprocessedOrErroredBulkCasesWithStateOf(Pronounced, user, serviceAuth);
+            final List<CaseDetails<BulkActionCaseData, BulkActionState>> bulkCases = ccdSearchService
+                .searchForUnprocessedOrErroredBulkCases(Pronounced, user, serviceAuth);
 
             bulkCases.parallelStream()
                 .forEach(caseDetailsBulkCase -> erroredBulkCasesService
                     .processErroredCasesAndUpdateBulkCase(
                         caseDetailsBulkCase,
                         SYSTEM_PRONOUNCE_CASE,
+                        scheduleCaseService.getCaseTask(caseDetailsBulkCase.getData(), SYSTEM_PRONOUNCE_CASE),
                         user,
                         serviceAuth));
 

@@ -6,12 +6,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
+import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
+import uk.gov.hmcts.divorce.bulkaction.service.ScheduleCaseService;
+import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.divorce.systemupdate.service.ErroredBulkCasesService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
@@ -19,6 +23,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -40,6 +45,9 @@ class SystemRetryBulkCasePronouncedErrorsTest {
     private AuthTokenGenerator authTokenGenerator;
 
     @Mock
+    private ScheduleCaseService scheduleCaseService;
+
+    @Mock
     private ErroredBulkCasesService erroredBulkCasesService;
 
     @InjectMocks
@@ -57,17 +65,23 @@ class SystemRetryBulkCasePronouncedErrorsTest {
     @Test
     void shouldProcessPronouncedBulkActionCases() {
 
-        final CaseDetails caseDetails1 = CaseDetails.builder()
-            .id(1L)
-            .build();
-        final CaseDetails caseDetails2 = CaseDetails.builder()
-            .id(2L)
-            .build();
+        final var bulkActionCaseData = BulkActionCaseData.builder().build();
 
-        final List<CaseDetails> caseDetailsList = asList(caseDetails1, caseDetails2);
+        final CaseDetails<BulkActionCaseData, BulkActionState> caseDetails1 = new CaseDetails<>();
+        caseDetails1.setId(1L);
+        caseDetails1.setData(bulkActionCaseData);
 
-        when(ccdSearchService.searchForUnprocessedOrErroredBulkCasesWithStateOf(Pronounced, user, SERVICE_AUTHORIZATION))
+        final CaseDetails<BulkActionCaseData, BulkActionState> caseDetails2 = new CaseDetails<>();
+        caseDetails2.setId(2L);
+        caseDetails2.setData(bulkActionCaseData);
+
+        final List<CaseDetails<BulkActionCaseData, BulkActionState>> caseDetailsList = asList(caseDetails1, caseDetails2);
+
+        when(ccdSearchService.searchForUnprocessedOrErroredBulkCases(Pronounced, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
+
+        final CaseTask caseTask = mock(CaseTask.class);
+        when(scheduleCaseService.getCaseTask(bulkActionCaseData, SYSTEM_PRONOUNCE_CASE)).thenReturn(caseTask);
 
         systemCreateBulkCaseListTask.run();
 
@@ -75,12 +89,14 @@ class SystemRetryBulkCasePronouncedErrorsTest {
             .processErroredCasesAndUpdateBulkCase(
                 caseDetails1,
                 SYSTEM_PRONOUNCE_CASE,
+                caseTask,
                 user,
                 SERVICE_AUTHORIZATION);
         verify(erroredBulkCasesService)
             .processErroredCasesAndUpdateBulkCase(
                 caseDetails2,
                 SYSTEM_PRONOUNCE_CASE,
+                caseTask,
                 user,
                 SERVICE_AUTHORIZATION);
     }
@@ -90,7 +106,7 @@ class SystemRetryBulkCasePronouncedErrorsTest {
 
         doThrow(new CcdSearchCaseException("message", null))
             .when(ccdSearchService)
-            .searchForUnprocessedOrErroredBulkCasesWithStateOf(Pronounced, user, SERVICE_AUTHORIZATION);
+            .searchForUnprocessedOrErroredBulkCases(Pronounced, user, SERVICE_AUTHORIZATION);
 
         systemCreateBulkCaseListTask.run();
 
