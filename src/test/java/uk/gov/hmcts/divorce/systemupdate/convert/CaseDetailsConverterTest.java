@@ -35,11 +35,9 @@ class CaseDetailsConverterTest {
     private CaseDetailsConverter caseDetailsConverter;
 
     @Test
-    void shouldConvertCaseDetailsToReformModelCaseDetails() {
+    void shouldConvertToReformModelCaseDetailsFromCaseDetails() {
 
         final long id = 456L;
-        final String jurisdiction = "NFD";
-        final String caseTypeId = "case type id";
         final int lockedBy = 5;
         final int securityLevel = 5;
         final CaseData caseData = CaseData.builder()
@@ -49,8 +47,8 @@ class CaseDetailsConverterTest {
 
         final uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails = new uk.gov.hmcts.ccd.sdk.api.CaseDetails<>();
         caseDetails.setId(id);
-        caseDetails.setJurisdiction(jurisdiction);
-        caseDetails.setCaseTypeId(caseTypeId);
+        caseDetails.setJurisdiction(JURISDICTION);
+        caseDetails.setCaseTypeId(CASE_TYPE);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
         caseDetails.setLastModified(LOCAL_DATE_TIME);
         caseDetails.setState(Submitted);
@@ -60,11 +58,11 @@ class CaseDetailsConverterTest {
         caseDetails.setSecurityClassification(PUBLIC);
         caseDetails.setCallbackResponseStatus(callbackResponseStatus);
 
-        final CaseDetails reformModelCaseDetails = caseDetailsConverter.convertToReformModel(caseDetails);
+        final CaseDetails reformModelCaseDetails = caseDetailsConverter.convertToReformModelFromCaseDetails(caseDetails);
 
         assertThat(reformModelCaseDetails.getId()).isEqualTo(id);
-        assertThat(reformModelCaseDetails.getJurisdiction()).isEqualTo(jurisdiction);
-        assertThat(reformModelCaseDetails.getCaseTypeId()).isEqualTo(caseTypeId);
+        assertThat(reformModelCaseDetails.getJurisdiction()).isEqualTo(JURISDICTION);
+        assertThat(reformModelCaseDetails.getCaseTypeId()).isEqualTo(CASE_TYPE);
         assertThat(reformModelCaseDetails.getCreatedDate()).isEqualTo(LOCAL_DATE_TIME);
         assertThat(reformModelCaseDetails.getLastModified()).isEqualTo(LOCAL_DATE_TIME);
         assertThat(reformModelCaseDetails.getState()).isEqualTo(Submitted.getName());
@@ -73,6 +71,44 @@ class CaseDetailsConverterTest {
         assertThat(reformModelCaseDetails.getData()).isEqualTo(expectedData(caseData));
         assertThat(reformModelCaseDetails.getSecurityClassification()).isEqualTo(PUBLIC);
         assertThat(reformModelCaseDetails.getCallbackResponseStatus()).isEqualTo(callbackResponseStatus);
+    }
+
+    @Test
+    void shouldConvertToCaseDetailsFromReformModelCaseDetails() {
+
+        final long id = 456L;
+        final int lockedBy = 5;
+        final int securityLevel = 5;
+        final String callbackResponseStatus = "Status";
+
+        final CaseDetails reformCaseDetails = CaseDetails.builder()
+            .id(456L)
+            .jurisdiction(JURISDICTION)
+            .caseTypeId(CASE_TYPE)
+            .createdDate(LOCAL_DATE_TIME)
+            .lastModified(LOCAL_DATE_TIME)
+            .state(Submitted.getName())
+            .lockedBy(lockedBy)
+            .securityLevel(securityLevel)
+            .data(Map.of("createdDate", LOCAL_DATE))
+            .securityClassification(PUBLIC)
+            .callbackResponseStatus(callbackResponseStatus)
+            .build();
+
+        final uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails =
+            caseDetailsConverter.convertToCaseDetailsFromReformModel(reformCaseDetails);
+
+        assertThat(caseDetails.getId()).isEqualTo(id);
+        assertThat(caseDetails.getJurisdiction()).isEqualTo(JURISDICTION);
+        assertThat(caseDetails.getCaseTypeId()).isEqualTo(CASE_TYPE);
+        assertThat(caseDetails.getCreatedDate()).isEqualTo(LOCAL_DATE_TIME);
+        assertThat(caseDetails.getLastModified()).isEqualTo(LOCAL_DATE_TIME);
+        assertThat(caseDetails.getState()).isEqualTo(Submitted);
+        assertThat(caseDetails.getLockedBy()).isEqualTo(lockedBy);
+        assertThat(caseDetails.getSecurityLevel()).isEqualTo(securityLevel);
+        assertThat(caseDetails.getData().getApplication().getCreatedDate()).isEqualTo(LOCAL_DATE);
+        assertThat(caseDetails.getSecurityClassification()).isEqualTo(PUBLIC);
+        assertThat(caseDetails.getCallbackResponseStatus()).isEqualTo(callbackResponseStatus);
     }
 
     @Test
@@ -116,6 +152,43 @@ class CaseDetailsConverterTest {
         assertThat(reformModelCaseDetails.getCallbackResponseStatus()).isEqualTo(callbackResponseStatus);
     }
 
+    @Test
+    void shouldConvertToBulkActionCaseDetailsFromReformModel() {
+
+        final long id = 456L;
+        final int lockedBy = 5;
+        final int securityLevel = 5;
+        final String callbackResponseStatus = "Status";
+
+        final CaseDetails reformCaseDetails = CaseDetails.builder()
+            .id(456L)
+            .jurisdiction(JURISDICTION)
+            .caseTypeId(CASE_TYPE)
+            .createdDate(LOCAL_DATE_TIME)
+            .lastModified(LOCAL_DATE_TIME)
+            .state(Created.getName())
+            .lockedBy(lockedBy)
+            .securityLevel(securityLevel)
+            .data(Map.of("caseTitle", "test"))
+            .securityClassification(PUBLIC)
+            .callbackResponseStatus(callbackResponseStatus)
+            .build();
+
+        final uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState> caseDetails =
+            caseDetailsConverter.convertToBulkActionCaseDetailsFromReformModel(reformCaseDetails);
+
+        assertThat(caseDetails.getId()).isEqualTo(id);
+        assertThat(caseDetails.getJurisdiction()).isEqualTo(JURISDICTION);
+        assertThat(caseDetails.getCaseTypeId()).isEqualTo(CASE_TYPE);
+        assertThat(caseDetails.getCreatedDate()).isEqualTo(LOCAL_DATE_TIME);
+        assertThat(caseDetails.getLastModified()).isEqualTo(LOCAL_DATE_TIME);
+        assertThat(caseDetails.getState()).isEqualTo(Created);
+        assertThat(caseDetails.getLockedBy()).isEqualTo(lockedBy);
+        assertThat(caseDetails.getSecurityLevel()).isEqualTo(securityLevel);
+        assertThat(caseDetails.getData().getCaseTitle()).isEqualTo("test");
+        assertThat(caseDetails.getSecurityClassification()).isEqualTo(PUBLIC);
+        assertThat(caseDetails.getCallbackResponseStatus()).isEqualTo(callbackResponseStatus);
+    }
 
     private Map<Object, Object> expectedData(final CaseData caseData) {
         return objectMapper.convertValue(caseData, new TypeReference<>() {

@@ -5,11 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
-import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -25,10 +23,8 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemRemoveFailedCases.SYSTEM_REMOVE_FAILED_CASES;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYSTEM_LINK_WITH_BULK_CASE;
 
 @Component
@@ -55,6 +51,9 @@ public class SystemCreateBulkCaseListTask implements Runnable {
 
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
+
+    @Autowired
+    private FailedBulkCaseRemover failedBulkCaseRemover;
 
     @Override
     public void run() {
@@ -87,7 +86,7 @@ public class SystemCreateBulkCaseListTask implements Runnable {
                     serviceAuth
                 );
 
-                removeFailedAwaitingPronouncementCasesFromBulkCase(
+                failedBulkCaseRemover.removeFailedCasesFromBulkListCaseDetails(
                     failedAwaitingPronouncementCaseIds,
                     caseDetailsBulkCase,
                     user,
@@ -104,44 +103,6 @@ public class SystemCreateBulkCaseListTask implements Runnable {
             log.error("Awaiting pronouncement schedule task stopped after search error", e);
         } catch (final CcdManagementException e) {
             log.error("Bulk case creation failed with exception ", e);
-        }
-    }
-
-    private void removeFailedAwaitingPronouncementCasesFromBulkCase(final List<Long> failedAwaitingPronouncementCaseIds,
-                                                                    final CaseDetails caseDetailsBulkCase,
-                                                                    final User user,
-                                                                    final String serviceAuth) {
-        if (!CollectionUtils.isEmpty(failedAwaitingPronouncementCaseIds)) {
-            log.info(
-                "There are failed awaiting pronouncement cases with ids {} for bulk list case with id {} ",
-                failedAwaitingPronouncementCaseIds,
-                caseDetailsBulkCase.getId()
-            );
-
-            var bulkCaseData = objectMapper.convertValue(caseDetailsBulkCase.getData(), BulkActionCaseData.class);
-
-            List<ListValue<BulkListCaseDetails>> bulkCaseDetailsListValues = bulkCaseData.getBulkListCaseDetails();
-
-            final Predicate<ListValue<BulkListCaseDetails>> listValuePredicate = lv -> {
-                Long caseId = Long.valueOf(lv.getValue().getCaseReference().getCaseReference());
-                return failedAwaitingPronouncementCaseIds.contains(caseId);
-            };
-
-            bulkCaseDetailsListValues.removeIf(listValuePredicate);
-
-            try {
-                ccdUpdateService.updateBulkCaseWithRetries(
-                    caseDetailsBulkCase,
-                    SYSTEM_REMOVE_FAILED_CASES,
-                    user,
-                    serviceAuth,
-                    caseDetailsBulkCase.getId()
-                );
-            } catch (final CcdManagementException e) {
-                log.error("Removing failed awaiting pronouncement cases failed for bulk case id {} ", caseDetailsBulkCase.getId());
-            }
-        } else {
-            log.info("No failed awaiting pronouncement cases to remove from bulk list case with id {} ", caseDetailsBulkCase.getId());
         }
     }
 
