@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.bulkaction.ccd.event;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
@@ -20,6 +21,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
+@Component
 public class CaseworkerEditBulkCase implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
 
     public static final String CASEWORKER_EDIT_BULK_CASE = "caseworker-edit-bulk-case";
