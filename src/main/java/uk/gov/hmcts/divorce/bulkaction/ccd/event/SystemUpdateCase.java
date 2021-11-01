@@ -26,8 +26,8 @@ public class SystemUpdateCase implements CCDConfig<BulkActionCaseData, BulkActio
         new BulkActionPageBuilder(configBuilder
             .event(SYSTEM_UPDATE_BULK_CASE)
             .forStates(Listed, Pronounced)
-            .name("List of case errors updated")
-            .description("List of case errors updated")
+            .name("System update case")
+            .description("System update case")
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE));
     }
