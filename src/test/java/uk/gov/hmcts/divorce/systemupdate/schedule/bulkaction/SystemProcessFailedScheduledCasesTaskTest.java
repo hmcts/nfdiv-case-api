@@ -126,7 +126,7 @@ public class SystemProcessFailedScheduledCasesTaskTest {
         when(mapper.convertValue(eq(bulkActionCaseData), any(TypeReference.class))).thenReturn(caseDataMap);
 
         CaseTask caseTask = mock(CaseTask.class);
-        when(scheduleCaseService.getCaseTask(bulkActionCaseData)).thenReturn(caseTask);
+        when(scheduleCaseService.getCaseTask(bulkActionCaseData, SYSTEM_UPDATE_CASE_COURT_HEARING)).thenReturn(caseTask);
 
         when(bulkTriggerService.bulkTrigger(
             eq(List.of(getBulkListCaseDetailsListValue(errorBulkListCase))),
@@ -202,7 +202,7 @@ public class SystemProcessFailedScheduledCasesTaskTest {
         when(mapper.convertValue(eq(bulkActionCaseData), any(TypeReference.class))).thenReturn(caseDataMap);
 
         CaseTask caseTask = mock(CaseTask.class);
-        when(scheduleCaseService.getCaseTask(bulkActionCaseData)).thenReturn(caseTask);
+        when(scheduleCaseService.getCaseTask(bulkActionCaseData, SYSTEM_UPDATE_CASE_COURT_HEARING)).thenReturn(caseTask);
 
         when(bulkTriggerService.bulkTrigger(
             eq(List.of(getBulkListCaseDetailsListValue(bulkListCase))),
@@ -240,7 +240,7 @@ public class SystemProcessFailedScheduledCasesTaskTest {
 
         verify(mapper).convertValue(eq(bulkActionCaseData), any(TypeReference.class));
     }
-    
+
     @Test
     void shouldStopProcessingIfCcdSearchCaseExceptionIsThrown() {
         doThrow(new CcdSearchCaseException("message", null))

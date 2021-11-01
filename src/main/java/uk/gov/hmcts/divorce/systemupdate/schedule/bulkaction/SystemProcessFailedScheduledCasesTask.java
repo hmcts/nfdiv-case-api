@@ -90,7 +90,7 @@ public class SystemProcessFailedScheduledCasesTask implements Runnable {
         final List<ListValue<BulkListCaseDetails>> unprocessedBulkCases = bulkTriggerService.bulkTrigger(
             bulkCasesTobeReprocessed,
             SYSTEM_UPDATE_CASE_COURT_HEARING,
-            scheduleCaseService.getCaseTask(bulkCaseData),
+            scheduleCaseService.getCaseTask(bulkCaseData, SYSTEM_UPDATE_CASE_COURT_HEARING),
             user,
             serviceAuth);
 
