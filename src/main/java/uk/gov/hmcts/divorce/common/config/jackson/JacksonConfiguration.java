@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.common.config.jackson;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -21,6 +22,7 @@ public class JacksonConfiguration {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(ACCEPT_CASE_INSENSITIVE_ENUMS, true);
         mapper.enable(INFER_BUILDER_TYPE_BINDINGS);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
         SimpleModule deserialization = new SimpleModule();
         deserialization.addDeserializer(HasRole.class, new HasRoleDeserializer());
