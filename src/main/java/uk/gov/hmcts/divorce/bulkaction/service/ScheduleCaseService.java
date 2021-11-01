@@ -75,24 +75,6 @@ public class ScheduleCaseService {
         submitBulkActionEvent(user, serviceAuth, bulkCaseDetails, unprocessedBulkCases);
     }
 
-    @Async
-    public void pronounceCases(final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
-                               final String authorization) {
-
-        final User user = idamService.retrieveUser(authorization);
-        final String serviceAuth = authTokenGenerator.generate();
-        final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails = getBulkListCaseDetails(bulkCaseDetails);
-
-        final List<ListValue<BulkListCaseDetails>> unprocessedBulkCases = bulkTriggerService.bulkTrigger(
-            bulkListCaseDetails,
-            SYSTEM_PRONOUNCE_CASE,
-            getCaseTask(bulkCaseDetails.getData(), SYSTEM_PRONOUNCE_CASE),
-            user,
-            serviceAuth
-        );
-        submitBulkActionEvent(user, serviceAuth, bulkCaseDetails, unprocessedBulkCases);
-    }
-
     private void submitBulkActionEvent(User user,
                                         String serviceAuth,
                                         CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
