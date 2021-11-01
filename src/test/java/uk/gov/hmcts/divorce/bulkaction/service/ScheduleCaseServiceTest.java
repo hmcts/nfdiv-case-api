@@ -269,7 +269,7 @@ class ScheduleCaseServiceTest {
 
         doNothing().when(ccdUpdateService).submitBulkActionEvent(
             bulkActionCaseDetails,
-            SYSTEM_BULK_CASE_ERRORS,
+            SYSTEM_UPDATE_BULK_CASE,
             user,
             SERVICE_AUTHORIZATION
         );
@@ -286,7 +286,7 @@ class ScheduleCaseServiceTest {
 
         verify(ccdUpdateService).submitBulkActionEvent(
             bulkActionCaseDetails,
-            SYSTEM_BULK_CASE_ERRORS,
+            SYSTEM_UPDATE_BULK_CASE,
             user,
             SERVICE_AUTHORIZATION
         );
