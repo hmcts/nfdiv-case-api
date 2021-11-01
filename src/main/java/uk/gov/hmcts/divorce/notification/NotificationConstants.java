@@ -9,6 +9,7 @@ public final class NotificationConstants {
 
     public static final String IS_DIVORCE = "isDivorce";
     public static final String IS_DISSOLUTION = "isDissolution";
+    public static final String IS_REMINDER = "isReminder";
     public static final String YES = "yes";
     public static final String NO = "no";
     public static final String APPLICATION = "Application";
@@ -21,7 +22,6 @@ public final class NotificationConstants {
     public static final String YOUR_UNION = "Your union";
     public static final String ENDING_YOUR_CIVIL_PARTNERSHIP = "Ending your civil partnership";
     public static final String YOUR_DIVORCE = "Your divorce";
-    public static final String YOUR_CIVIL_PARTNERSHIP = "your civil partnership";
     public static final String DIVORCE_APPLICATION = "divorce application";
     public static final String APPLICATION_TO_END_A_CIVIL_PARTNERSHIP = "application to end a civil partnership";
     public static final String APPLICATION_TO_END_CIVIL_PARTNERSHIP = "application to end your civil partnership";
