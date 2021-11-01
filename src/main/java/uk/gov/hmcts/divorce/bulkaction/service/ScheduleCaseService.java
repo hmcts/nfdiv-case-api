@@ -20,6 +20,7 @@ import java.util.List;
 
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithPronouncementJudge.SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE;
 
 @Service
 @Slf4j
@@ -40,23 +41,47 @@ public class ScheduleCaseService {
     @Async
     public void updateCourtHearingDetailsForCasesInBulk(final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
                                                         final String authorization) {
-        final BulkActionCaseData bulkActionCaseData = bulkCaseDetails.getData();
 
         final User user = idamService.retrieveUser(authorization);
         final String serviceAuth = authTokenGenerator.generate();
-        final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails = bulkActionCaseData.getBulkListCaseDetails();
+        final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails = getBulkListCaseDetails(bulkCaseDetails);
 
         final List<ListValue<BulkListCaseDetails>> unprocessedBulkCases = bulkTriggerService.bulkTrigger(
             bulkListCaseDetails,
             SYSTEM_UPDATE_CASE_COURT_HEARING,
-            getCaseTask(bulkCaseDetails.getData()),
+            getCaseTask(bulkCaseDetails.getData(), SYSTEM_UPDATE_CASE_COURT_HEARING),
             user,
             serviceAuth
         );
+        submitBulkActionEvent(user, serviceAuth, bulkCaseDetails, unprocessedBulkCases);
+    }
+
+    @Async
+    public void updatePronouncementJudgeDetailsForCasesInBulk(final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
+                                                              final String authorization) {
+
+        final User user = idamService.retrieveUser(authorization);
+        final String serviceAuth = authTokenGenerator.generate();
+        final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails = getBulkListCaseDetails(bulkCaseDetails);
+
+        final List<ListValue<BulkListCaseDetails>> unprocessedBulkCases = bulkTriggerService.bulkTrigger(
+            bulkListCaseDetails,
+            SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE,
+            getCaseTask(bulkCaseDetails.getData(), SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE),
+            user,
+            serviceAuth
+        );
+        submitBulkActionEvent(user, serviceAuth, bulkCaseDetails, unprocessedBulkCases);
+    }
+
+    private void submitBulkActionEvent(User user,
+                                        String serviceAuth,
+                                        CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
+                                        List<ListValue<BulkListCaseDetails>> unprocessedBulkCases) {
 
         log.info("Error bulk case details list size {}", unprocessedBulkCases.size());
 
-        List<ListValue<BulkListCaseDetails>> processedBulkCases = bulkActionCaseData.calculateProcessedCases(unprocessedBulkCases);
+        List<ListValue<BulkListCaseDetails>> processedBulkCases = bulkCaseDetails.getData().calculateProcessedCases(unprocessedBulkCases);
 
         log.info("Successfully processed bulk case details list size {}", processedBulkCases.size());
 
@@ -75,16 +100,38 @@ public class ScheduleCaseService {
         }
     }
 
-    public CaseTask getCaseTask(final BulkActionCaseData bulkActionCaseData) {
-        return mainCaseDetails -> {
-            final var conditionalOrder = mainCaseDetails.getData().getConditionalOrder();
-            conditionalOrder.setDateAndTimeOfHearing(
-                bulkActionCaseData.getDateAndTimeOfHearing()
-            );
-            conditionalOrder.setCourtName(
-                bulkActionCaseData.getCourtName()
-            );
-            return mainCaseDetails;
-        };
+    public CaseTask getCaseTask(final BulkActionCaseData bulkActionCaseData, String updateEvent) {
+
+        switch (updateEvent) {
+
+            case SYSTEM_UPDATE_CASE_COURT_HEARING:
+                return mainCaseDetails -> {
+                    final var conditionalOrder = mainCaseDetails.getData().getConditionalOrder();
+                    conditionalOrder.setDateAndTimeOfHearing(
+                        bulkActionCaseData.getDateAndTimeOfHearing()
+                    );
+                    conditionalOrder.setCourtName(
+                        bulkActionCaseData.getCourtName()
+                    );
+                    return mainCaseDetails;
+                };
+
+            case SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE:
+                return mainCaseDetails -> {
+                    final var conditionalOrder = mainCaseDetails.getData().getConditionalOrder();
+                    conditionalOrder.setPronouncementJudge(
+                        bulkActionCaseData.getPronouncementJudge()
+                    );
+                    return mainCaseDetails;
+                };
+
+            default:
+                return null;
+        }
+    }
+
+    private List<ListValue<BulkListCaseDetails>> getBulkListCaseDetails(CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails) {
+        BulkActionCaseData bulkActionCaseData = bulkCaseDetails.getData();
+        return bulkActionCaseData.getBulkListCaseDetails();
     }
 }

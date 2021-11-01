@@ -32,6 +32,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithPronouncementJudge.SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.feignException;
@@ -233,6 +234,59 @@ class ScheduleCaseServiceTest {
         verify(ccdUpdateService).submitBulkActionEvent(
             bulkActionCaseDetails,
                 SYSTEM_UPDATE_BULK_CASE,
+            user,
+            SERVICE_AUTHORIZATION
+        );
+    }
+
+    @Test
+    void shouldSuccessfullyUpdatePronouncementJudgeDetailsForCasesInBulk() {
+
+        final List<ListValue<BulkListCaseDetails>> bulkListCaseDetailsListValue = List.of(getBulkListCaseDetailsListValue("1"));
+        final var bulkActionCaseData = BulkActionCaseData
+            .builder()
+            .pronouncementJudge("District Judge")
+            .bulkListCaseDetails(bulkListCaseDetailsListValue)
+            .build();
+
+        final var user = mock(User.class);
+
+        when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
+        when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
+
+        when(bulkTriggerService.bulkTrigger(
+            eq(bulkActionCaseData.getBulkListCaseDetails()),
+            eq(SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE),
+            any(CaseTask.class),
+            eq(user),
+            eq(SERVICE_AUTHORIZATION)
+        )).thenReturn(emptyList());
+
+        final var bulkActionCaseDetails = CaseDetails
+            .<BulkActionCaseData, BulkActionState>builder()
+            .data(bulkActionCaseData)
+            .build();
+
+        doNothing().when(ccdUpdateService).submitBulkActionEvent(
+            bulkActionCaseDetails,
+            SYSTEM_UPDATE_BULK_CASE,
+            user,
+            SERVICE_AUTHORIZATION
+        );
+
+        scheduleCaseService.updatePronouncementJudgeDetailsForCasesInBulk(bulkActionCaseDetails, TEST_SYSTEM_AUTHORISATION_TOKEN);
+
+        verify(bulkTriggerService).bulkTrigger(
+            eq(bulkActionCaseData.getBulkListCaseDetails()),
+            eq(SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE),
+            any(CaseTask.class),
+            eq(user),
+            eq(SERVICE_AUTHORIZATION)
+        );
+
+        verify(ccdUpdateService).submitBulkActionEvent(
+            bulkActionCaseDetails,
+            SYSTEM_UPDATE_BULK_CASE,
             user,
             SERVICE_AUTHORIZATION
         );
