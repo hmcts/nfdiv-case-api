@@ -123,7 +123,6 @@ public class ApplicationIssuedNotificationTest {
             eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER)),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO)
             )),
@@ -146,9 +145,7 @@ public class ApplicationIssuedNotificationTest {
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
             argThat(allOf(
-                hasEntry(REMINDER_APPLICATION, APPLICATION),
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER)),
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES)
             )),
@@ -170,9 +167,7 @@ public class ApplicationIssuedNotificationTest {
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
             argThat(allOf(
-                hasEntry(REMINDER_APPLICATION, REMINDER_APPLICATION_VALUE),
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER)),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO)
             )),
@@ -195,7 +190,6 @@ public class ApplicationIssuedNotificationTest {
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
             argThat(allOf(
-                hasEntry(REMINDER_APPLICATION, REMINDER_APPLICATION_VALUE),
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES)
@@ -305,7 +299,9 @@ public class ApplicationIssuedNotificationTest {
             eq(SOLE_APPLICANT_PARTNER_HAS_NOT_RESPONDED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(SUBMISSION_RESPONSE_DATE, data.getDueDate().format(DATE_TIME_FORMATTER))
+                hasEntry(SUBMISSION_RESPONSE_DATE, data.getDueDate().format(DATE_TIME_FORMATTER)),
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(IS_DISSOLUTION, NO)
             )),
             eq(ENGLISH)
         );
