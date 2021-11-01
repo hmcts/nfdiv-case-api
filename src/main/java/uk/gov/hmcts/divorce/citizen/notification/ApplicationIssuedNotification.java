@@ -145,6 +145,7 @@ public class ApplicationIssuedNotification {
 
     private Map<String, String> soleRespondentTemplateVars(final CaseData caseData, Long id) {
         final Map<String, String> templateVars = commonTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
+        templateVars.put(IS_REMINDER,  NO);
         templateVars.put(REVIEW_DEADLINE_DATE, caseData.getApplication().getIssueDate().plusDays(16).format(DATE_TIME_FORMATTER));
         templateVars.put(
             CREATE_ACCOUNT_LINK,
