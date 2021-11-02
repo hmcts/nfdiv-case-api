@@ -58,12 +58,14 @@ public class CitizenUpdateContactDetails implements CCDConfig<CaseData, State, U
         CaseData updatedData = details.getData();
         CaseData data = beforeDetails.getData();
 
-        if (user.getUserDetails().getRoles().contains(APPLICANT_2.getRole())) {
+        if (updatedData.getCaseInvite().getApplicant2UserId().equals(user.getUserDetails().getId())) {
             data.getApplicant2().setHomeAddress(updatedData.getApplicant2().getHomeAddress());
             data.getApplicant2().setPhoneNumber(updatedData.getApplicant2().getPhoneNumber());
+            data.getApplicant2().setKeepContactDetailsConfidential(updatedData.getApplicant2().getKeepContactDetailsConfidential());
         } else {
             data.getApplicant1().setHomeAddress(updatedData.getApplicant1().getHomeAddress());
             data.getApplicant1().setPhoneNumber(updatedData.getApplicant1().getPhoneNumber());
+            data.getApplicant1().setKeepContactDetailsConfidential(updatedData.getApplicant1().getKeepContactDetailsConfidential());
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
