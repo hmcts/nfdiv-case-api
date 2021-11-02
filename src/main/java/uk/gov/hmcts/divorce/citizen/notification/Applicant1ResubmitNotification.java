@@ -29,6 +29,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DI
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_URL_NOTIFY_KEY;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.THEIR_EMAIL_ADDRESS;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.YES;
 
 @Component
@@ -50,7 +51,7 @@ public class Applicant1ResubmitNotification {
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
             JOINT_APPLICANT1_APPLICANT1_CHANGES_MADE,
-            resubmitTemplateVars(caseData, caseData.getApplicant1(), caseData.getApplicant2()),
+            applicant1TemplateVars(caseData),
             caseData.getApplicant1().getLanguagePreference()
         );
     }
@@ -64,6 +65,12 @@ public class Applicant1ResubmitNotification {
             applicant2TemplateVars(caseData),
             caseData.getApplicant2().getLanguagePreference()
         );
+    }
+
+    private Map<String, String> applicant1TemplateVars(CaseData caseData) {
+        Map<String, String> templateVars = resubmitTemplateVars(caseData, caseData.getApplicant1(), caseData.getApplicant2());
+        templateVars.put(THEIR_EMAIL_ADDRESS, caseData.getCaseInvite().getApplicant2InviteEmailAddress());
+        return templateVars;
     }
 
     private Map<String, String> applicant2TemplateVars(CaseData caseData) {
