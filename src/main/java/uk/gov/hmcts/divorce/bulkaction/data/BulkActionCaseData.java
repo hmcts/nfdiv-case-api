@@ -9,14 +9,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.ccd.sdk.type.*;
 import uk.gov.hmcts.divorce.divorcecase.model.Court;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -105,6 +107,12 @@ public class BulkActionCaseData {
     )
     private List<ListValue<BulkListCaseDetails>> erroredCaseDetails;
 
+    @CCD(
+        label = "Case references",
+        access = {DefaultAccess.class}
+    )
+    private DynamicList caseReferences;
+
     @JsonIgnore
     public LocalDate getDateFinalOrderEligibleFrom(LocalDateTime dateTime) {
         return dateTime.toLocalDate().plusWeeks(FINAL_ORDER_OFFSET_WEEKS).plusDays(FINAL_ORDER_OFFSET_DAYS);
@@ -125,5 +133,21 @@ public class BulkActionCaseData {
             .stream()
             .filter(lv -> !unprocessedCaseIds.contains(lv.getValue().getCaseReference().getCaseReference()))
             .collect(toList());
+    }
+
+    @JsonIgnore
+    public DynamicList transformBulkCasesToDynamicList() {
+        List<DynamicListElement> caseReferences = bulkListCaseDetails.stream()
+            .map(c -> DynamicListElement.builder()
+                .code(UUID.randomUUID())
+                .label(c.getValue().getCaseReference().getCaseReference())
+                .build()
+            )
+            .collect(Collectors.toList());
+
+        return DynamicList.builder()
+            .value(DynamicListElement.builder().build())
+            .listItems(caseReferences)
+            .build();
     }
 }
