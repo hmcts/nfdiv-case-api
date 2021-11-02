@@ -51,7 +51,7 @@ public class SystemProcessFailedScheduledCasesTask implements Runnable {
 
             log.info("No of cases fetched which has unprocessed or error cases {} .", listedCasesWithErrorsOrUnprocessedCases.size());
 
-            listedCasesWithErrorsOrUnprocessedCases.parallelStream()
+            listedCasesWithErrorsOrUnprocessedCases
                 .forEach(caseDetailsBulkCase -> erroredBulkCasesService
                     .processErroredCasesAndUpdateBulkCase(
                         caseDetailsBulkCase,

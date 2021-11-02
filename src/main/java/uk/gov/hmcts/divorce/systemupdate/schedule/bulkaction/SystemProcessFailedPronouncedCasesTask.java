@@ -51,7 +51,7 @@ public class SystemProcessFailedPronouncedCasesTask implements Runnable {
             final List<CaseDetails<BulkActionCaseData, BulkActionState>> bulkCases = ccdSearchService
                 .searchForUnprocessedOrErroredBulkCases(Pronounced, user, serviceAuth);
 
-            bulkCases.parallelStream()
+            bulkCases
                 .forEach(caseDetailsBulkCase -> erroredBulkCasesService
                     .processErroredCasesAndUpdateBulkCase(
                         caseDetailsBulkCase,
