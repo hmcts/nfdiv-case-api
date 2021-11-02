@@ -47,7 +47,7 @@ public class SolPayment implements CcdPageConfiguration {
     public void addTo(final PageBuilder pageBuilder) {
 
         pageBuilder
-            //.page("SolPayment", this::midEvent) // Temporarily commenting as midevent has a bug which clears our fields
+            .page("SolPayment", this::midEvent) // Temporarily commenting as midevent has a bug which clears our fields
             .page("SolPayment")
             .pageLabel("Payment")
             .label(
@@ -66,23 +66,22 @@ public class SolPayment implements CcdPageConfiguration {
 
         CaseData caseData = details.getData();
 
-        /* Temporarily disable this as it  will be triggered from about to start
         if (!caseData.getApplication().isSolicitorPaymentMethodPba()) {
             log.info("Payment method is not PBA for case id {}  :", details.getId());
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .build();
         }
-        */
 
+        var code = UUID.randomUUID();
         List<DynamicListElement> pbaAccountNumbers = retrievePbaNumbers()
             .stream()
-            .map(pbaNumber -> DynamicListElement.builder().label(pbaNumber).code(UUID.randomUUID()).build())
+            .map(pbaNumber -> DynamicListElement.builder().label(pbaNumber).code(code).build())
             .collect(Collectors.toList());
 
         DynamicList pbaNumbersDynamicList = DynamicList
             .builder()
-            .value(DynamicListElement.builder().build())
+            .value(DynamicListElement.builder().label("pbaNumber").code(code).build())
             .listItems(pbaAccountNumbers)
             .build();
 
