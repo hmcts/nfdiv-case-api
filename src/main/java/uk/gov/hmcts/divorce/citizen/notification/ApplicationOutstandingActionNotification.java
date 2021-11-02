@@ -83,9 +83,21 @@ public class ApplicationOutstandingActionNotification {
         templateVars.putAll(
             missingDocsTemplateVars(caseData, caseData.getApplication().getApplicant1CannotUploadSupportingDocument())
         );
-
         boolean soleServingAnotherWay = caseData.getApplicationType().isSole()
             && caseData.getApplication().getApplicant1WantsToHavePapersServedAnotherWay() == YesOrNo.YES;
+        templateVars.putAll(serveAnotherWayTemplateVars(soleServingAnotherWay, caseData));
+        return templateVars;
+    }
+
+    private Map<String, String> applicant2TemplateVars(final CaseData caseData, Long id) {
+        Map<String, String> templateVars = commonTemplateVars(caseData, id, caseData.getApplicant2());
+        templateVars.putAll(missingDocsTemplateVars(caseData, caseData.getApplication().getApplicant2CannotUploadSupportingDocument()));
+        templateVars.putAll(serveAnotherWayTemplateVars(false, caseData));
+        return templateVars;
+    }
+
+    private Map<String, String> serveAnotherWayTemplateVars(boolean soleServingAnotherWay, CaseData caseData) {
+        Map<String, String> templateVars = new HashMap<>();
 
         templateVars.put(PAPERS_SERVED_ANOTHER_WAY, soleServingAnotherWay ? YES : NO);
         templateVars.put(DIVORCE_SERVED_ANOTHER_WAY, soleServingAnotherWay && isDivorce(caseData) ? YES : NO);
@@ -94,12 +106,6 @@ public class ApplicationOutstandingActionNotification {
         templateVars.put(SERVE_HUSBAND_ANOTHER_WAY,
             soleServingAnotherWay && isDivorce(caseData) && caseData.getApplicant2().getGender().equals(Gender.MALE) ? YES : NO);
         templateVars.put(DISSOLUTION_SERVED_ANOTHER_WAY, soleServingAnotherWay && !isDivorce(caseData) ? YES : NO);
-        return templateVars;
-    }
-
-    private Map<String, String> applicant2TemplateVars(final CaseData caseData, Long id) {
-        Map<String, String> templateVars = commonTemplateVars(caseData, id, caseData.getApplicant2());
-        templateVars.putAll(missingDocsTemplateVars(caseData, caseData.getApplication().getApplicant2CannotUploadSupportingDocument()));
         return templateVars;
     }
 
