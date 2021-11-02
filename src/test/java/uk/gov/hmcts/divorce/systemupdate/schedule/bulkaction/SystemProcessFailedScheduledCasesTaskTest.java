@@ -12,7 +12,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
-import uk.gov.hmcts.divorce.bulkaction.service.ScheduleCaseService;
+import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
@@ -49,7 +49,7 @@ public class SystemProcessFailedScheduledCasesTaskTest {
     private AuthTokenGenerator authTokenGenerator;
 
     @Mock
-    private ScheduleCaseService scheduleCaseService;
+    private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
 
     @Mock
     private ErroredBulkCasesService erroredBulkCasesService;
@@ -85,7 +85,7 @@ public class SystemProcessFailedScheduledCasesTaskTest {
             .thenReturn(caseDetailsList);
 
         final CaseTask caseTask = mock(CaseTask.class);
-        when(scheduleCaseService.getCaseTask(bulkActionCaseData, SYSTEM_UPDATE_CASE_COURT_HEARING)).thenReturn(caseTask);
+        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseData, SYSTEM_UPDATE_CASE_COURT_HEARING)).thenReturn(caseTask);
 
         systemProcessFailedScheduledCasesTask.run();
 

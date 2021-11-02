@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
+import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
 import uk.gov.hmcts.divorce.divorcecase.model.Court;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -53,7 +54,7 @@ public class CasePronouncementServiceTest {
     private CcdUpdateService ccdUpdateService;
 
     @Mock
-    private ScheduleCaseService scheduleCaseService;
+    private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
 
     @InjectMocks
     private CasePronouncementService casePronouncementService;
@@ -73,7 +74,7 @@ public class CasePronouncementServiceTest {
         when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
 
         var caseTask = mock(CaseTask.class);
-        when(scheduleCaseService.getCaseTask(bulkActionCaseData, SYSTEM_PRONOUNCE_CASE)).thenReturn(caseTask);
+        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseData, SYSTEM_PRONOUNCE_CASE)).thenReturn(caseTask);
 
         when(bulkTriggerService.bulkTrigger(
             bulkActionCaseData.getBulkListCaseDetails(),
@@ -133,7 +134,7 @@ public class CasePronouncementServiceTest {
         var unprocessedBulkCases = List.of(bulkListCaseDetailsListValue2);
 
         var caseTask = mock(CaseTask.class);
-        when(scheduleCaseService.getCaseTask(bulkActionCaseData, SYSTEM_PRONOUNCE_CASE)).thenReturn(caseTask);
+        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseData, SYSTEM_PRONOUNCE_CASE)).thenReturn(caseTask);
 
         when(bulkTriggerService.bulkTrigger(
             bulkActionCaseData.getBulkListCaseDetails(),
@@ -194,7 +195,7 @@ public class CasePronouncementServiceTest {
 
         var unprocessedBulkCases = List.of(bulkListCaseDetailsListValue2);
         var caseTask = mock(CaseTask.class);
-        when(scheduleCaseService.getCaseTask(bulkActionCaseData, SYSTEM_PRONOUNCE_CASE)).thenReturn(caseTask);
+        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseData, SYSTEM_PRONOUNCE_CASE)).thenReturn(caseTask);
 
         when(bulkTriggerService.bulkTrigger(
             bulkActionCaseData.getBulkListCaseDetails(),

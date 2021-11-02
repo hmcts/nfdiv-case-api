@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
+import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -37,7 +38,7 @@ public class CasePronouncementService {
     private IdamService idamService;
 
     @Autowired
-    private ScheduleCaseService scheduleCaseService;
+    private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
 
     @Async
     public void pronounceCases(final CaseDetails<BulkActionCaseData, BulkActionState> details,
@@ -51,7 +52,7 @@ public class CasePronouncementService {
             bulkTriggerService.bulkTrigger(
                 bulkActionCaseData.getBulkListCaseDetails(),
                 SYSTEM_PRONOUNCE_CASE,
-                scheduleCaseService.getCaseTask(bulkActionCaseData, SYSTEM_PRONOUNCE_CASE),
+                bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseData, SYSTEM_PRONOUNCE_CASE),
                 user,
                 serviceAuth);
 

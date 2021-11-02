@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
-import uk.gov.hmcts.divorce.bulkaction.service.ScheduleCaseService;
+import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
@@ -33,7 +33,7 @@ public class SystemProcessFailedPronouncedCasesTask implements Runnable {
     private AuthTokenGenerator authTokenGenerator;
 
     @Autowired
-    private ScheduleCaseService scheduleCaseService;
+    private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
 
     @Autowired
     private ErroredBulkCasesService erroredBulkCasesService;
@@ -56,7 +56,7 @@ public class SystemProcessFailedPronouncedCasesTask implements Runnable {
                     .processErroredCasesAndUpdateBulkCase(
                         caseDetailsBulkCase,
                         SYSTEM_PRONOUNCE_CASE,
-                        scheduleCaseService.getCaseTask(caseDetailsBulkCase.getData(), SYSTEM_PRONOUNCE_CASE),
+                        bulkCaseCaseTaskFactory.getCaseTask(caseDetailsBulkCase.getData(), SYSTEM_PRONOUNCE_CASE),
                         user,
                         serviceAuth));
 

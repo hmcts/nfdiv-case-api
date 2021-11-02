@@ -10,11 +10,8 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
 import uk.gov.hmcts.divorce.divorcecase.model.Court;
-import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
-import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
@@ -27,7 +24,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Collections.emptyList;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -35,13 +31,9 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithPronouncementJudge.SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE;
-import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
-import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.feignException;
@@ -65,6 +57,9 @@ class ScheduleCaseServiceTest {
     @Mock
     private CcdUpdateService ccdUpdateService;
 
+    @Mock
+    private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
+
     @InjectMocks
     private ScheduleCaseService scheduleCaseService;
 
@@ -80,16 +75,19 @@ class ScheduleCaseServiceTest {
             .build();
 
         final var user = mock(User.class);
+        final CaseTask caseTask = caseDetails -> caseDetails;
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
+        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseData, SYSTEM_UPDATE_CASE_COURT_HEARING))
+            .thenReturn(caseTask);
 
         when(bulkTriggerService.bulkTrigger(
-            eq(bulkActionCaseData.getBulkListCaseDetails()),
-            eq(SYSTEM_UPDATE_CASE_COURT_HEARING),
-            any(CaseTask.class),
-            eq(user),
-            eq(SERVICE_AUTHORIZATION)
+            bulkActionCaseData.getBulkListCaseDetails(),
+            SYSTEM_UPDATE_CASE_COURT_HEARING,
+            caseTask,
+            user,
+            SERVICE_AUTHORIZATION
         )).thenReturn(emptyList());
 
         final var bulkActionCaseDetails = CaseDetails
@@ -132,6 +130,7 @@ class ScheduleCaseServiceTest {
         bulkListCaseDetailsListValues.add(bulkListCaseDetailsListValue2);
 
         final var user = mock(User.class);
+        final CaseTask caseTask = caseDetails -> caseDetails;
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
@@ -146,12 +145,15 @@ class ScheduleCaseServiceTest {
             .bulkListCaseDetails(bulkListCaseDetailsListValues)
             .build();
 
+        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseData, SYSTEM_UPDATE_CASE_COURT_HEARING))
+            .thenReturn(caseTask);
+
         when(bulkTriggerService.bulkTrigger(
-            eq(bulkActionCaseData.getBulkListCaseDetails()),
-            eq(SYSTEM_UPDATE_CASE_COURT_HEARING),
-            any(CaseTask.class),
-            eq(user),
-            eq(SERVICE_AUTHORIZATION)
+            bulkActionCaseData.getBulkListCaseDetails(),
+            SYSTEM_UPDATE_CASE_COURT_HEARING,
+            caseTask,
+            user,
+            SERVICE_AUTHORIZATION
         )).thenReturn(unprocessedBulkCases);
 
         final var bulkActionCaseDetails = CaseDetails
@@ -190,13 +192,13 @@ class ScheduleCaseServiceTest {
         final var bulkListCaseDetailsListValue2 = getBulkListCaseDetailsListValue("2");
 
         final var user = mock(User.class);
+        final CaseTask caseTask = caseDetails -> caseDetails;
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
 
         List<ListValue<BulkListCaseDetails>> unprocessedBulkCases = new ArrayList<>();
         unprocessedBulkCases.add(bulkListCaseDetailsListValue2);
-
 
         final List<ListValue<BulkListCaseDetails>> bulkListCaseDetailsListValues = new ArrayList<>();
         bulkListCaseDetailsListValues.add(bulkListCaseDetailsListValue1);
@@ -209,12 +211,15 @@ class ScheduleCaseServiceTest {
             .bulkListCaseDetails(bulkListCaseDetailsListValues)
             .build();
 
+        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseData, SYSTEM_UPDATE_CASE_COURT_HEARING))
+            .thenReturn(caseTask);
+
         when(bulkTriggerService.bulkTrigger(
-            eq(bulkActionCaseData.getBulkListCaseDetails()),
-            eq(SYSTEM_UPDATE_CASE_COURT_HEARING),
-            any(CaseTask.class),
-            eq(user),
-            eq(SERVICE_AUTHORIZATION)
+            bulkActionCaseData.getBulkListCaseDetails(),
+            SYSTEM_UPDATE_CASE_COURT_HEARING,
+            caseTask,
+            user,
+            SERVICE_AUTHORIZATION
         )).thenReturn(unprocessedBulkCases);
 
         final var bulkActionCaseDetails = CaseDetails
@@ -259,16 +264,19 @@ class ScheduleCaseServiceTest {
             .build();
 
         final var user = mock(User.class);
+        final CaseTask caseTask = caseDetails -> caseDetails;
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
+        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseData, SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE))
+            .thenReturn(caseTask);
 
         when(bulkTriggerService.bulkTrigger(
-            eq(bulkActionCaseData.getBulkListCaseDetails()),
-            eq(SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE),
-            any(CaseTask.class),
-            eq(user),
-            eq(SERVICE_AUTHORIZATION)
+            bulkActionCaseData.getBulkListCaseDetails(),
+            SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE,
+            caseTask,
+            user,
+            SERVICE_AUTHORIZATION
         )).thenReturn(emptyList());
 
         final var bulkActionCaseDetails = CaseDetails
@@ -299,35 +307,5 @@ class ScheduleCaseServiceTest {
             user,
             SERVICE_AUTHORIZATION
         );
-    }
-
-    @Test
-    void shouldReturnSystemPronounceCaseTask() {
-
-        final var localDateTime = getExpectedLocalDateTime();
-        final var localDate = getExpectedLocalDate();
-        final var expectedDate = FinalOrder.builder().build().getDateFinalOrderEligibleFrom(localDateTime);
-        final var bulkActionCaseData = BulkActionCaseData
-            .builder()
-            .dateAndTimeOfHearing(localDateTime)
-            .build();
-
-        final var caseData = CaseData.builder()
-            .finalOrder(FinalOrder.builder().build())
-            .build();
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-
-        final CaseTask caseTask = scheduleCaseService.getCaseTask(bulkActionCaseData, SYSTEM_PRONOUNCE_CASE);
-
-        final CaseDetails<CaseData, State> resultCaseDetails = caseTask.apply(caseDetails);
-        final CaseData resultCaseData = resultCaseDetails.getData();
-        final ConditionalOrder resultConditionalOrder = resultCaseData.getConditionalOrder();
-
-        assertThat(resultCaseData.getDueDate()).isEqualTo(expectedDate);
-        assertThat(resultConditionalOrder.getOutcomeCase()).isEqualTo(YES);
-        assertThat(resultConditionalOrder.getGrantedDate()).isEqualTo(localDate);
-        assertThat(resultCaseData.getFinalOrder().getDateFinalOrderEligibleFrom()).isEqualTo(expectedDate);
     }
 }

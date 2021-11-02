@@ -9,7 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
-import uk.gov.hmcts.divorce.bulkaction.service.ScheduleCaseService;
+import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
@@ -45,7 +45,7 @@ class SystemProcessFailedPronouncedCasesTaskTest {
     private AuthTokenGenerator authTokenGenerator;
 
     @Mock
-    private ScheduleCaseService scheduleCaseService;
+    private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
 
     @Mock
     private ErroredBulkCasesService erroredBulkCasesService;
@@ -81,7 +81,7 @@ class SystemProcessFailedPronouncedCasesTaskTest {
             .thenReturn(caseDetailsList);
 
         final CaseTask caseTask = mock(CaseTask.class);
-        when(scheduleCaseService.getCaseTask(bulkActionCaseData, SYSTEM_PRONOUNCE_CASE)).thenReturn(caseTask);
+        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseData, SYSTEM_PRONOUNCE_CASE)).thenReturn(caseTask);
 
         systemCreateBulkCaseListTask.run();
 
