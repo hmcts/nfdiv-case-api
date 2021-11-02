@@ -63,7 +63,7 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
         if (bulkCaseDetails.getData().getDateAndTimeOfHearing().isBefore(LocalDateTime.now())) {
             return AboutToStartOrSubmitResponse
                 .<BulkActionCaseData, BulkActionState>builder()
-                .errors(List.of("Please enter hearing date and time which is in future"))
+                .errors(List.of("Please enter a hearing date and time in future"))
                 .data(bulkCaseDetails.getData())
                 .build();
         }

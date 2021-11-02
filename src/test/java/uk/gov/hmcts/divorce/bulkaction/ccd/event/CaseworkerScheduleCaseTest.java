@@ -93,6 +93,6 @@ public class CaseworkerScheduleCaseTest {
 
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.aboutToSubmit(details, details);
 
-        assertThat(response.getErrors()).containsExactly("Please enter hearing date and time which is in future");
+        assertThat(response.getErrors()).containsExactly("Please enter a hearing date and time in future");
     }
 }
