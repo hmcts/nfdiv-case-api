@@ -82,7 +82,7 @@ public class CaseworkerScheduleCaseTest {
     }
 
     @Test
-    void shouldNPopulateErrorMessageWhenHearingDateIsInPastAndAboutToSubmitIsTriggered() {
+    void shouldPopulateErrorMessageWhenHearingDateIsInPastAndAboutToSubmitIsTriggered() {
         final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
         details.setData(BulkActionCaseData
             .builder()
