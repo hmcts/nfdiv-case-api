@@ -10,6 +10,8 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -23,8 +25,7 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
         new BulkActionPageBuilder(configBuilder
             .event(CASEWORKER_REMOVE_CASES_BULK_LIST)
-//            .forStates(Created, Listed)
-            .forAllStates()
+            .forStates(Created, Listed)
             .name("Remove cases from bulk list")
             .description("Remove cases from bulk list")
             .showSummary()
@@ -36,9 +37,11 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
             .readonlyNoSummary(BulkActionCaseData::getCaseReferences);
     }
 
-    public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToStart(CaseDetails<BulkActionCaseData, BulkActionState> details) {
+    public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToStart(
+        CaseDetails<BulkActionCaseData, BulkActionState> details
+    ) {
         BulkActionCaseData caseData = details.getData();
-        caseData.setCaseReferences(caseData.transformBulkCasesToDynamicList());
+        caseData.setCaseReferences(caseData.transformToBulkCaseElement());
 
         return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder()
             .data(caseData)
