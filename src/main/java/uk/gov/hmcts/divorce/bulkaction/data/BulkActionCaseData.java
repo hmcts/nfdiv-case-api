@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Court;
@@ -24,7 +25,6 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
-import static uk.gov.hmcts.ccd.sdk.type.FieldType.MultiSelectList;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -111,11 +111,9 @@ public class BulkActionCaseData {
 
     @CCD(
         label = "Case references",
-        access = {DefaultAccess.class},
-        typeOverride = MultiSelectList,
-        typeParameterOverride = "BulkCaseElement"
+        access = {DefaultAccess.class}
     )
-    private Set<BulkCaseElement> caseReferences;
+    private Set<CaseLink> caseReferences;
 
     @JsonIgnore
     public LocalDate getDateFinalOrderEligibleFrom(LocalDateTime dateTime) {
@@ -140,13 +138,9 @@ public class BulkActionCaseData {
     }
 
     @JsonIgnore
-    public Set<BulkCaseElement> transformToBulkCaseElement() {
+    public Set<CaseLink> transformToCaseLinkSet() {
         return bulkListCaseDetails.stream()
-            .map(c ->
-                new BulkCaseElement(
-                    c.getValue().getCaseReference(),
-                    String.format("%s %s", c.getValue().getCaseReference().getCaseReference(), c.getValue().getCaseParties())
-                ))
+            .map(c -> c.getValue().getCaseReference())
             .collect(Collectors.toSet());
     }
 }

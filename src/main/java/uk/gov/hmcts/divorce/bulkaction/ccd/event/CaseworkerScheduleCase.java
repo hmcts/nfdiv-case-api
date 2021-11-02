@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionPageBuilder;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
@@ -49,7 +50,19 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
             .pageLabel("Schedule cases for listing")
             .mandatory(BulkActionCaseData::getCourtName)
             .mandatory(BulkActionCaseData::getDateAndTimeOfHearing)
-            .mandatoryNoSummary(BulkActionCaseData::getBulkListCaseDetails);
+            .mandatoryNoSummary(BulkActionCaseData::getBulkListCaseDetails)
+            .mandatoryNoSummary(BulkActionCaseData::getCaseReferences);
+    }
+
+    public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToStart(
+        CaseDetails<BulkActionCaseData, BulkActionState> details
+    ) {
+        BulkActionCaseData caseData = details.getData();
+        caseData.setCaseReferences(caseData.transformToCaseLinkSet());
+
+        return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder()
+            .data(caseData)
+            .build();
     }
 
     public SubmittedCallbackResponse submitted(

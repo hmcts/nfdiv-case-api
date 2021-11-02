@@ -41,7 +41,7 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
         CaseDetails<BulkActionCaseData, BulkActionState> details
     ) {
         BulkActionCaseData caseData = details.getData();
-        caseData.setCaseReferences(caseData.transformToBulkCaseElement());
+        caseData.setCaseReferences(caseData.transformToCaseLinkSet());
 
         return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder()
             .data(caseData)
