@@ -57,20 +57,6 @@ public final class NotificationConstants {
 
     public static final String COURT_EMAIL = "court email";
 
-    public static final String PAPERS_SERVED_ANOTHER_WAY = "papersServedAnotherWay";
-    public static final String DIVORCE_SERVED_ANOTHER_WAY = "divorceServedAnotherWay";
-    public static final String SERVE_WIFE_ANOTHER_WAY = "serveWifeAnotherWay";
-    public static final String SERVE_HUSBAND_ANOTHER_WAY = "serveHusbandAnotherWay";
-    public static final String DISSOLUTION_SERVED_ANOTHER_WAY = "dissolutionServedAnotherWay";
-
-    public static final String MISSING_MARRIAGE_CERTIFICATE = "mariageCertificate";
-    public static final String MISSING_CIVIL_PARTNERSHIP_CERTIFICATE = "civilPartnershipCertificate";
-    public static final String MISSING_FOREIGN_MARRIAGE_CERTIFICATE = "foreignMarriageCertificate";
-    public static final String MISSING_FOREIGN_CIVIL_PARTNERSHIP_CERTIFICATE = "foreignCivilPartnershipCertificate";
-    public static final String MISSING_MARRIAGE_CERTIFICATE_TRANSLATION = "marriageCertificateTranslation";
-    public static final String MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION = "civilPartnershipCertificateTranslation";
-    public static final String MISSING_NAME_CHANGE_PROOF = "nameChangeProof";
-
     public static final String SUBMISSION_RESPONSE_DATE = "date of response";
     public static final String APPLICATION_REFERENCE = "reference number";
     public static final String CASE_ID = "case id";
