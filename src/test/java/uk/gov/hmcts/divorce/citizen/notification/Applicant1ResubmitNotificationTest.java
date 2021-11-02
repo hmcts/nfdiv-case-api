@@ -25,7 +25,6 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICAN
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_URL_NOTIFY_KEY;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.THEIR_EMAIL_ADDRESS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DISSOLUTION_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DIVORCE_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
@@ -66,13 +65,10 @@ class Applicant1ResubmitNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT1_APPLICANT1_CHANGES_MADE),
             argThat(allOf(
-                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER)),
-                hasEntry(THEIR_EMAIL_ADDRESS, TEST_APPLICANT_2_USER_EMAIL)
+                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
-
-        verify(commonContent).templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -81,33 +77,22 @@ class Applicant1ResubmitNotificationTest {
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         data.setDueDate(LOCAL_DATE);
 
-        final HashMap<String, String> templateVars = new HashMap<>();
-
-        when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
-
         notification.sendToApplicant1(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT1_APPLICANT1_CHANGES_MADE),
             argThat(allOf(
-                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER)),
-                hasEntry(THEIR_EMAIL_ADDRESS, TEST_APPLICANT_2_USER_EMAIL)
+                hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
-
-        verify(commonContent).templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
     void shouldSendEmailToApplicant2WithDivorceContent() {
         CaseData data = validApplicant2CaseData();
         data.setDueDate(LOCAL_DATE);
-
-        final HashMap<String, String> templateVars = new HashMap<>();
-
-        when(commonContent.templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
         notification.sendToApplicant2(data, 1234567890123456L);
@@ -121,8 +106,6 @@ class Applicant1ResubmitNotificationTest {
             )),
             eq(ENGLISH)
         );
-
-        verify(commonContent).templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -130,10 +113,6 @@ class Applicant1ResubmitNotificationTest {
         CaseData data = validApplicant2CaseData();
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         data.setDueDate(LOCAL_DATE);
-
-        final HashMap<String, String> templateVars = new HashMap<>();
-
-        when(commonContent.templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
         notification.sendToApplicant2(data, 1234567890123456L);
@@ -147,6 +126,5 @@ class Applicant1ResubmitNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1());
     }
 }
