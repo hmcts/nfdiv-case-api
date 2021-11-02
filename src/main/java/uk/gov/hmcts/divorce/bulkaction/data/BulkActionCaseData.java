@@ -113,7 +113,7 @@ public class BulkActionCaseData {
         label = "Case references",
         access = {DefaultAccess.class}
     )
-    private Set<CaseLink> caseReferences;
+    private Set<CaseLink> casesToRemove;
 
     @JsonIgnore
     public LocalDate getDateFinalOrderEligibleFrom(LocalDateTime dateTime) {

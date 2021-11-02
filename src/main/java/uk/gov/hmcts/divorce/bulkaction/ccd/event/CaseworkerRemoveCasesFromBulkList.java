@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionPageBuilder;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
@@ -30,21 +31,43 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
             .description("Remove cases from bulk list")
             .showSummary()
             .showEventNotes()
+            .aboutToStartCallback(this::aboutToStart)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE))
-            .page("removeCasesFromBulkList")
+            .page("removeCasesFromBulkList", this::midEvent)
             .pageLabel("Remove cases from bulk list")
-            .readonlyNoSummary(BulkActionCaseData::getCaseReferences);
+            .mandatoryNoSummary(BulkActionCaseData::getCasesToRemove);
     }
 
     public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToStart(
         CaseDetails<BulkActionCaseData, BulkActionState> details
     ) {
         BulkActionCaseData caseData = details.getData();
-        caseData.setCaseReferences(caseData.transformToCaseLinkSet());
+        caseData.setCasesToRemove(caseData.transformToCaseLinkSet());
 
         return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder()
             .data(caseData)
             .build();
+    }
+
+    public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> midEvent(
+        CaseDetails<BulkActionCaseData, BulkActionState> details,
+        CaseDetails<BulkActionCaseData, BulkActionState> detailsBefore
+    ) {
+        BulkActionCaseData caseData = details.getData();
+        // TODO: validate case references passed (ensure none were added, ensure only those in removal)
+
+        return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder()
+            .data(caseData)
+            .build();
+    }
+
+    public SubmittedCallbackResponse submitted(
+        CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
+        CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails
+    ) {
+        // TODO: process case list after removal of cases removed by user
+
+        return SubmittedCallbackResponse.builder().build();
     }
 }
