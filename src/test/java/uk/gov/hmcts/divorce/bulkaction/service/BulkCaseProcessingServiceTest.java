@@ -22,6 +22,7 @@ import java.util.List;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
@@ -248,12 +249,16 @@ class BulkCaseProcessingServiceTest {
                 user,
                 SERVICE_AUTHORIZATION);
 
-        bulkCaseProcessingService.updateUnprocessedBulkCases(
-            caseDetails,
-            SYSTEM_PRONOUNCE_CASE,
-            bulkCaseDetails -> bulkCaseDetails,
-            user,
-            SERVICE_AUTHORIZATION);
+        try {
+            bulkCaseProcessingService.updateUnprocessedBulkCases(
+                caseDetails,
+                SYSTEM_PRONOUNCE_CASE,
+                bulkCaseDetails -> bulkCaseDetails,
+                user,
+                SERVICE_AUTHORIZATION);
+        } catch (Exception e) {
+            fail("No exception should be thrown");
+        }
     }
 
     private List<ListValue<BulkListCaseDetails>> getBulkListCaseDetailsListValueForCaseIds(final String... caseIds) {
