@@ -5,25 +5,13 @@
     "applicant1MiddleName": "test_middle_name",
     "applicant1LastName": "test_last_name",
     "applicant1Email": "test@test.com",
-    "applicant1AgreedToReceiveEmails": null,
     "applicant1LanguagePreferenceWelsh": "No",
-    "applicant1NameDifferentToMarriageCertificate": null,
-    "applicant1LastNameChangedWhenMarried": null,
-    "applicant1NameChangedHow": null,
-    "applicant1NameChangedHowOtherDetails": null,
     "applicant1HomeAddress": {
       "AddressLine1": "line 1",
-      "AddressLine2": null,
-      "AddressLine3": null,
       "PostTown": "town",
-      "County": null,
-      "PostCode": "postcode",
-      "Country": null
+      "PostCode": "postcode"
     },
-    "applicant1PhoneNumber": null,
-    "applicant1KeepContactDetailsConfidential": null,
     "applicant1Gender": "male",
-    "applicant1CorrespondenceAddress": null,
     "applicant1SolicitorRepresented": "Yes",
     "applicant1SolicitorAddress": "Line 1\nLine 2\nTown\nWC1 2TG",
     "applicant1SolicitorEmail": "sol1@example.com",
@@ -33,68 +21,20 @@
         "OrganisationID": "ABC123"
       }
     },
-    "applicant2FirstName": null,
-    "applicant2MiddleName": null,
-    "applicant2LastName": null,
-    "applicant2Email": null,
-    "applicant2AgreedToReceiveEmails": null,
-    "applicant2LanguagePreferenceWelsh": null,
-    "applicant2NameDifferentToMarriageCertificate": null,
-    "applicant2LastNameChangedWhenMarried": null,
-    "applicant2NameChangedHow": null,
-    "applicant2NameChangedHowOtherDetails": null,
-    "applicant2PhoneNumber": null,
-    "applicant2KeepContactDetailsConfidential": null,
-    "applicant2Gender": null,
-    "applicant2CorrespondenceAddress": null,
-    "applicant2SolicitorRepresented": null,
     "applicant2SolicitorOrganisationPolicy": {
       "Organisation": {
         "OrganisationName": "Test Organisation",
         "OrganisationID": "ABC123"
       }
     },
-    "confirmReadPetition": null,
-    "jurisdictionAgree": null,
-    "jurisdictionDisagreeReason": null,
-    "applicant2LegalProceedings": null,
-    "applicant2LegalProceedingsDetails": null,
-    "dateAosSubmitted": null,
-    "marriageApplicant1Name": null,
-    "marriageApplicant2Name": null,
-    "marriageMarriedInUk": null,
-    "marriageCertificateInEnglish": null,
-    "marriageCertifiedTranslation": null,
-    "marriageCountryOfMarriage": null,
-    "marriagePlaceOfMarriage": null,
-    "marriageDate": null,
-    "marriageIsSameSexCouple": null,
-    "marriageCertifyMarriageCertificateIsCorrect": null,
-    "marriageMarriageCertificateIsIncorrectDetails": null,
-    "marriageIssueApplicationWithoutMarriageCertificate": null,
-    "applicant1HWFAppliedForFees": null,
-    "applicant1HWFReferenceNumber": null,
-    "applicant1HWFNeedHelp": null,
-    "jurisdictionApplicant1Residence": null,
-    "jurisdictionApplicant2Residence": null,
-    "jurisdictionApplicant1Domicile": null,
-    "jurisdictionApplicant2Domicile": null,
-    "jurisdictionApp1HabituallyResLastTwelveMonths": null,
-    "jurisdictionApp1HabituallyResLastSixMonths": null,
-    "jurisdictionResidualEligible": null,
-    "jurisdictionBothLastHabituallyResident": null,
-    "jurisdictionConnections": null,
     "applicant1FinancialOrder": "No",
     "divorceUnit": "serviceCentre",
     "documentsGenerated": [
       {
         "id": "Divorce application",
         "value": {
-          "documentDateAdded": null,
-          "documentComment": null,
           "documentFileName": "draft-divorce-application-1616591401473378.pdf",
           "documentType": "application",
-          "documentEmailContent": null,
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/8d2bd0f2-80e9-4b0f-b38d-2c138b243e27",
             "document_filename": "draft-divorce-application-1616591401473378.pdf",
@@ -103,8 +43,5 @@
         }
       }
     ]
-  },
-  "errors": null,
-  "warnings": null,
-  "state": null
+  }
 }

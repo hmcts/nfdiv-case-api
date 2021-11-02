@@ -18,11 +18,8 @@
       {
         "id": "${json-unit.any-string}",
         "value": {
-          "documentDateAdded": null,
-          "documentComment": null,
           "documentFileName": "respondentAnswers.pdf",
           "documentType": "respondentAnswers",
-          "documentEmailContent": null,
           "documentLink": {
             "document_url": "${json-unit.any-string}",
             "document_filename": "respondentAnswers.pdf",
@@ -39,8 +36,6 @@
     "dueDate": "${json-unit.any-string}",
     "dataVersion": "${json-unit.any-number}",
     "solServiceTruthStatement": "I believe that the facts stated in the application are true."
-  },
-  "errors": null,
-  "warnings": null,
+  }
   "state": "Holding"
 }

@@ -10,68 +10,26 @@
     "applicant1LastName": "Bob",
     "applicant1KeepContactDetailsConfidential": "Yes",
     "applicant1Email": "test@mailinator.com",
-    "applicant1AgreedToReceiveEmails": null,
-    "applicant1NameChangedHow": null,
-    "applicant1NameDifferentToMarriageCertificate": null,
-    "applicant1LastNameChangedWhenMarried": null,
-    "applicant1PhoneNumber": null,
-    "applicant1NameChangedHowOtherDetails": null,
-    "applicant1LanguagePreferenceWelsh": null,
-    "applicant1CorrespondenceAddress": null,
-    "applicant1SolicitorRepresented": null,
-    "applicant2CorrespondenceAddress": null,
-    "applicant2SolicitorRepresented": null,
-    "confirmReadPetition": null,
-    "jurisdictionAgree": null,
-    "jurisdictionDisagreeReason": null,
-    "applicant2LegalProceedings": null,
-    "applicant2LegalProceedingsDetails": null,
-    "dateAosSubmitted": null,
-    "applicant2MiddleName": null,
-    "applicant2AgreedToReceiveEmails": null,
-    "applicant2Email": null,
-    "applicant2LanguagePreferenceWelsh": null,
-    "applicant2NameChangedHow": null,
-    "applicant2NameDifferentToMarriageCertificate": null,
-    "applicant2LastNameChangedWhenMarried": null,
-    "applicant2NameChangedHowOtherDetails": null,
-    "applicant2PhoneNumber": null,
-    "applicant2KeepContactDetailsConfidential": null,
     "applicant2FirstName": "test_first_name",
     "applicant2LastName": "test_last_name",
-    "applicant1HWFAppliedForFees": null,
-    "applicant1HWFReferenceNumber": null,
-    "applicant1HWFNeedHelp": null,
     "marriageApplicant1Name": "test_first_name test_last_name",
-    "marriageApplicant2Name": null,
     "applicant1FinancialOrder": "No",
     "applicant1PrayerHasBeenGiven": "Yes",
     "solSignStatementOfTruth": "Yes",
     "jurisdictionApplicant1Residence": "Yes",
-    "jurisdictionApplicant2Residence":"Yes",
-    "jurisdictionApplicant1Domicile":null,
-    "jurisdictionApplicant2Domicile":null,
-    "jurisdictionApp1HabituallyResLastTwelveMonths":null,
-    "jurisdictionApp1HabituallyResLastSixMonths":null,
-    "jurisdictionResidualEligible":null,
-    "jurisdictionBothLastHabituallyResident":null,
-    "jurisdictionConnections": ["A"],
+    "jurisdictionApplicant2Residence": "Yes",
+    "jurisdictionConnections": [
+      "A"
+    ],
     "marriageMarriedInUk": "Yes",
-    "marriageCertificateInEnglish":null,
-    "marriageCertifiedTranslation":null,
-    "marriageCountryOfMarriage":null,
-    "marriagePlaceOfMarriage":null,
-    "marriageIsSameSexCouple":null,
-    "marriageCertifyMarriageCertificateIsCorrect": null,
-    "marriageMarriageCertificateIsIncorrectDetails": null,
-    "marriageIssueApplicationWithoutMarriageCertificate": null,
-    "applicant1CannotUploadSupportingDocument": ["marriageCertificate", "nameChangeEvidence"],
+    "applicant1CannotUploadSupportingDocument": [
+      "marriageCertificate",
+      "nameChangeEvidence"
+    ],
     "applicationFeeOrderSummary": {
       "PaymentTotal": "55000",
-      "PaymentReference": null,
       "Fees": [
         {
-          "id": null,
           "value": {
             "FeeDescription": "Filing an application for a divorce, nullity or civil partnership dissolution",
             "FeeVersion": "5",
@@ -81,20 +39,15 @@
         }
       ]
     },
-    "applicationPayments": [{
-      "id": "1",
-      "value": {
-        "created": null,
-        "feeCode": null,
-        "amount": 55000,
-        "status": "success",
-        "channel": null,
-        "reference": null,
-        "transactionId": null
+    "applicationPayments": [
+      {
+        "id": "1",
+        "value": {
+          "amount": 55000,
+          "status": "success"
+        }
       }
-    }]
+    ]
   },
-  "errors": null,
-  "state": "AwaitingDocuments",
-  "warnings": null
+  "state": "AwaitingDocuments"
 }

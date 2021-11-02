@@ -15,16 +15,14 @@
           "serviceApplicationDecisionDate": "${json-unit.any-string}",
           "deemedServiceDate": "2021-06-20"
         }
-      }],
+      }
+    ],
     "documentsGenerated": [
       {
         "id": "${json-unit.any-string}",
         "value": {
-          "documentDateAdded": null,
-          "documentComment": null,
           "documentFileName": "deemedAsServedGranted.pdf",
           "documentType": "deemedAsServiceGranted",
-          "documentEmailContent": null,
           "documentLink": {
             "document_url": "${json-unit.any-string}",
             "document_filename": "deemedAsServedGranted.pdf",
@@ -35,7 +33,5 @@
     ],
     "dataVersion": "${json-unit.any-number}"
   },
-  "errors": null,
-  "warnings": null,
   "state": "Holding"
 }

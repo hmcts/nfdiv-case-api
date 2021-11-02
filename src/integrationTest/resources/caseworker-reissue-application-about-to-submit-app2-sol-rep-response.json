@@ -2,7 +2,6 @@
   "data": {
     "applicationType": "soleApplication",
     "divorceOrDissolution": "divorce",
-    "labelContentUnionType": "dissolution",
     "applicant1FirstName": "test_first_name",
     "applicant1MiddleName": "test_middle_name",
     "applicant1LastName": "test_last_name",
@@ -24,12 +23,8 @@
 
     "applicant2HomeAddress": {
       "AddressLine1": "line 1",
-      "AddressLine2": null,
-      "AddressLine3": null,
       "PostTown": "town",
-      "County": null,
-      "PostCode": "postcode",
-      "Country": null
+      "PostCode": "postcode"
     },
 
     "applicant2Gender": "male",
@@ -57,18 +52,13 @@
     "applicant1StatementOfTruth": "Yes",
     "solSignStatementOfTruth": "Yes",
     "applicationFeeOrderSummary": {
-      "PaymentReference": null,
-      "Fees": null,
       "PaymentTotal": "55000"
     },
     "documentUploadComplete": "Yes",
     "reissueDate": "2021-06-17",
     "applicationPayments": [
       {
-        "id": null,
         "value": {
-          "created": null,
-          "updated": null,
           "feeCode": "FEE0001",
           "amount": 55000,
           "status": "success",
@@ -82,11 +72,8 @@
       {
         "id": "Respondent Invitation",
         "value": {
-          "documentDateAdded": null,
-          "documentComment": null,
           "documentFileName": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
           "documentType": "aos",
-          "documentEmailContent": null,
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100",
             "document_filename": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
@@ -97,7 +84,5 @@
     ],
     "dueDate": "2021-07-03"
   },
-  "errors": null,
-  "warnings": null,
   "state": "AwaitingAos"
 }
