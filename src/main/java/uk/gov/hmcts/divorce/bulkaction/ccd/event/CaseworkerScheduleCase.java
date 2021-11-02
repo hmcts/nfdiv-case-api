@@ -14,10 +14,9 @@ import uk.gov.hmcts.divorce.bulkaction.service.ScheduleCaseService;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
-import javax.servlet.http.HttpServletRequest;
-import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
@@ -36,9 +35,6 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
 
     @Autowired
     private HttpServletRequest request;
-
-    @Autowired
-    private Clock clock;
 
     @Override
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
@@ -60,11 +56,13 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
             .mandatoryNoSummary(BulkActionCaseData::getBulkListCaseDetails);
     }
 
-    private AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToSubmit(final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
-                                                                                            final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails) {
+    public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToSubmit(
+        final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
+        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails
+    ) {
         String errorMessage = null;
-        if (bulkCaseDetails.getData().getDateAndTimeOfHearing().isBefore(LocalDateTime.now(clock))) {
-            errorMessage = "Please enter hearing date and time which is not in past";
+        if (bulkCaseDetails.getData().getDateAndTimeOfHearing().isBefore(LocalDateTime.now())) {
+            errorMessage = "Please enter hearing date and time which is in future";
             return AboutToStartOrSubmitResponse
                 .<BulkActionCaseData, BulkActionState>builder()
                 .errors(List.of(errorMessage))
