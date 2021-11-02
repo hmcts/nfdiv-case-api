@@ -12,12 +12,12 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
+import uk.gov.hmcts.divorce.bulkaction.service.BulkCaseProcessingService;
 import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
-import uk.gov.hmcts.divorce.systemupdate.service.ErroredBulkCasesService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
@@ -52,7 +52,7 @@ public class SystemProcessFailedScheduledCasesTaskTest {
     private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
 
     @Mock
-    private ErroredBulkCasesService erroredBulkCasesService;
+    private BulkCaseProcessingService bulkCaseProcessingService;
 
     @InjectMocks
     private SystemProcessFailedScheduledCasesTask systemProcessFailedScheduledCasesTask;
@@ -89,15 +89,15 @@ public class SystemProcessFailedScheduledCasesTaskTest {
 
         systemProcessFailedScheduledCasesTask.run();
 
-        verify(erroredBulkCasesService)
-            .processErroredCasesAndUpdateBulkCase(
+        verify(bulkCaseProcessingService)
+            .updateUnprocessedBulkCases(
                 caseDetails1,
                 SYSTEM_UPDATE_CASE_COURT_HEARING,
                 caseTask,
                 user,
                 SERVICE_AUTHORIZATION);
-        verify(erroredBulkCasesService)
-            .processErroredCasesAndUpdateBulkCase(
+        verify(bulkCaseProcessingService)
+            .updateUnprocessedBulkCases(
                 caseDetails2,
                 SYSTEM_UPDATE_CASE_COURT_HEARING,
                 caseTask,
@@ -112,7 +112,7 @@ public class SystemProcessFailedScheduledCasesTaskTest {
 
         systemProcessFailedScheduledCasesTask.run();
 
-        verifyNoInteractions(erroredBulkCasesService);
+        verifyNoInteractions(bulkCaseProcessingService);
     }
 
     private List<ListValue<BulkListCaseDetails>> getBulkListCaseDetailsListValueForCaseIds(final String... caseIds) {

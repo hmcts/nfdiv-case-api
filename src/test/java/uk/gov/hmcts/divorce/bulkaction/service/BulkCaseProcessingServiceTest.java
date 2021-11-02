@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.systemupdate.service;
+package uk.gov.hmcts.divorce.bulkaction.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,8 +11,9 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
-import uk.gov.hmcts.divorce.bulkaction.service.BulkTriggerService;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.Arrays;
@@ -32,7 +33,7 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 
 @ExtendWith(MockitoExtension.class)
-class ErroredBulkCasesServiceTest {
+class BulkCaseProcessingServiceTest {
 
     @Mock
     private CcdUpdateService ccdUpdateService;
@@ -41,7 +42,49 @@ class ErroredBulkCasesServiceTest {
     private BulkTriggerService bulkTriggerService;
 
     @InjectMocks
-    private ErroredBulkCasesService erroredBulkCasesService;
+    private BulkCaseProcessingService bulkCaseProcessingService;
+
+    @Test
+    void shouldProcessAllBulkActionCasesAndUpdateWithAnyErrorsAfterCompletion() {
+
+        final User user = mock(User.class);
+        final CaseTask caseTask = bulkCaseDetails -> bulkCaseDetails;
+        final List<ListValue<BulkListCaseDetails>> fullBulkList = getBulkListCaseDetailsListValueForCaseIds("1", "2", "3", "4");
+        final List<ListValue<BulkListCaseDetails>> processedCases = getBulkListCaseDetailsListValueForCaseIds("1", "3", "4");
+        final List<ListValue<BulkListCaseDetails>> unprocessedCases = getBulkListCaseDetailsListValueForCaseIds("2");
+
+        final BulkActionCaseData bulkActionCaseData = BulkActionCaseData.builder()
+            .bulkListCaseDetails(fullBulkList)
+            .build();
+
+        final CaseDetails<BulkActionCaseData, BulkActionState> caseDetails = new CaseDetails<>();
+        caseDetails.setId(1L);
+        caseDetails.setData(bulkActionCaseData);
+
+        when(bulkTriggerService.bulkTrigger(
+            fullBulkList,
+            SYSTEM_PRONOUNCE_CASE,
+            caseTask,
+            user,
+            SERVICE_AUTHORIZATION))
+            .thenReturn(unprocessedCases);
+
+        bulkCaseProcessingService.updateAllBulkCases(
+            caseDetails,
+            SYSTEM_PRONOUNCE_CASE,
+            caseTask,
+            user,
+            SERVICE_AUTHORIZATION);
+
+        assertThat(caseDetails.getData().getProcessedCaseDetails()).isEqualTo(processedCases);
+        assertThat(caseDetails.getData().getErroredCaseDetails()).isEqualTo(unprocessedCases);
+
+        verify(ccdUpdateService).submitBulkActionEvent(
+            caseDetails,
+            SYSTEM_UPDATE_BULK_CASE,
+            user,
+            SERVICE_AUTHORIZATION);
+    }
 
     @Test
     void shouldProcessBulkActionCasesWithErrorsAndUpdateWithAnyErrorsAfterCompletion() {
@@ -71,7 +114,7 @@ class ErroredBulkCasesServiceTest {
             eq(SERVICE_AUTHORIZATION)))
             .thenReturn(updatedErrors);
 
-        erroredBulkCasesService.processErroredCasesAndUpdateBulkCase(
+        bulkCaseProcessingService.updateUnprocessedBulkCases(
             caseDetails,
             SYSTEM_PRONOUNCE_CASE,
             bulkCaseDetails -> bulkCaseDetails,
@@ -112,7 +155,7 @@ class ErroredBulkCasesServiceTest {
             eq(SERVICE_AUTHORIZATION)))
             .thenReturn(updatedErrors);
 
-        erroredBulkCasesService.processErroredCasesAndUpdateBulkCase(
+        bulkCaseProcessingService.updateUnprocessedBulkCases(
             caseDetails,
             SYSTEM_PRONOUNCE_CASE,
             bulkCaseDetails -> bulkCaseDetails,
@@ -154,7 +197,7 @@ class ErroredBulkCasesServiceTest {
             eq(SERVICE_AUTHORIZATION)))
             .thenReturn(updatedErrors);
 
-        erroredBulkCasesService.processErroredCasesAndUpdateBulkCase(
+        bulkCaseProcessingService.updateUnprocessedBulkCases(
             caseDetails,
             SYSTEM_PRONOUNCE_CASE,
             bulkCaseDetails -> bulkCaseDetails,
@@ -205,7 +248,7 @@ class ErroredBulkCasesServiceTest {
                 user,
                 SERVICE_AUTHORIZATION);
 
-        erroredBulkCasesService.processErroredCasesAndUpdateBulkCase(
+        bulkCaseProcessingService.updateUnprocessedBulkCases(
             caseDetails,
             SYSTEM_PRONOUNCE_CASE,
             bulkCaseDetails -> bulkCaseDetails,

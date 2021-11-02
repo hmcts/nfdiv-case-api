@@ -6,11 +6,11 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
+import uk.gov.hmcts.divorce.bulkaction.service.BulkCaseProcessingService;
 import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
-import uk.gov.hmcts.divorce.systemupdate.service.ErroredBulkCasesService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
@@ -36,7 +36,7 @@ public class SystemProcessFailedPronouncedCasesTask implements Runnable {
     private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
 
     @Autowired
-    private ErroredBulkCasesService erroredBulkCasesService;
+    private BulkCaseProcessingService bulkCaseProcessingService;
 
     @Override
     public void run() {
@@ -52,8 +52,8 @@ public class SystemProcessFailedPronouncedCasesTask implements Runnable {
                 .searchForUnprocessedOrErroredBulkCases(Pronounced, user, serviceAuth);
 
             bulkCases
-                .forEach(caseDetailsBulkCase -> erroredBulkCasesService
-                    .processErroredCasesAndUpdateBulkCase(
+                .forEach(caseDetailsBulkCase -> bulkCaseProcessingService
+                    .updateUnprocessedBulkCases(
                         caseDetailsBulkCase,
                         SYSTEM_PRONOUNCE_CASE,
                         bulkCaseCaseTaskFactory.getCaseTask(caseDetailsBulkCase.getData(), SYSTEM_PRONOUNCE_CASE),
