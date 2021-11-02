@@ -33,7 +33,7 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE))
             .page("removeCasesFromBulkList")
             .pageLabel("Remove cases from bulk list")
-            .readonlyNoSummary(BulkActionCaseData::transformBulkCasesToDynamicList);
+            .readonlyNoSummary(BulkActionCaseData::getCaseReferences);
     }
 
     public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToStart(CaseDetails<BulkActionCaseData, BulkActionState> details) {
