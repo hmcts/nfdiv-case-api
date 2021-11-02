@@ -4,7 +4,6 @@
     "applicant1FirstName": "John",
     "applicant1LastName": "Smith",
     "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
-    "dateAosSubmitted": "${json-unit.ignore}",
     "applicant1FinancialOrder": "No",
     "divorceUnit": "serviceCentre",
     "documentsGenerated": [
