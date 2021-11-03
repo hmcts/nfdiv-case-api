@@ -26,8 +26,11 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_AP
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FIRST_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_DIVORCE;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.IS_DISSOLUTION;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.MARRIAGE;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.NO;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PARTNER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.RELATIONSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.RELATIONSHIP_COURT_HEADER;
@@ -37,6 +40,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DI
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_URL_NOTIFY_KEY;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.TO_END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.UNION;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.YES;
 
 @Component
 public class CommonContent {
@@ -45,7 +49,7 @@ public class CommonContent {
     private static final String END_CIVIL_PARTNERSHIP = "End a civil partnership service";
 
     @Autowired
-    private EmailTemplatesConfig emailTemplatesConfig;
+    private EmailTemplatesConfig config;
 
     public Map<String, String> templateVarsForApplicant(final CaseData caseData, Applicant applicant, Applicant partner) {
         Map<String, String> templateVars = templateVarsFor(caseData);
@@ -62,7 +66,7 @@ public class CommonContent {
 
         final HashMap<String, String> templateVars = new HashMap<>();
 
-        Map<String, String> configTemplateVars = emailTemplatesConfig.getTemplateVars();
+        Map<String, String> configTemplateVars = config.getTemplateVars();
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateVars.put(RELATIONSHIP, DIVORCE_APPLICATION);
@@ -108,6 +112,20 @@ public class CommonContent {
         templateVars.put(RESPONDENT_NAME, join(" ", respondent.getFirstName(), respondent.getLastName()));
         templateVars.put(APPLICATION_REFERENCE, formatId(caseId));
 
+        return templateVars;
+    }
+
+    public Map<String, String> commonTemplateVars(CaseData caseData, Applicant applicant, Applicant partner) {
+        Map<String, String> templateVars = new HashMap<>();
+        templateVars.put(IS_DIVORCE, isDivorce(caseData) ? YES : NO);
+        templateVars.put(IS_DISSOLUTION, !isDivorce(caseData) ? YES : NO);
+        templateVars.put(FIRST_NAME, applicant.getFirstName());
+        templateVars.put(LAST_NAME, applicant.getLastName());
+        templateVars.put(PARTNER, getPartner(caseData, partner));
+        templateVars.put(COURT_EMAIL,
+            config.getTemplateVars().get(isDivorce(caseData) ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
+        templateVars.put(SIGN_IN_URL_NOTIFY_KEY,
+            config.getTemplateVars().get(isDivorce(caseData) ? SIGN_IN_DIVORCE_URL : SIGN_IN_DISSOLUTION_URL));
         return templateVars;
     }
 }
