@@ -16,12 +16,12 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.List;
 
-import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Pronounced;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 
 @Component
 @Slf4j
-public class SystemProcessFailedScheduledCasesTask implements Runnable {
+public class SystemProcessFailedPronouncedCasesTask implements Runnable {
 
     @Autowired
     private CcdSearchService ccdSearchService;
@@ -40,29 +40,28 @@ public class SystemProcessFailedScheduledCasesTask implements Runnable {
 
     @Override
     public void run() {
-        log.info("Processing failed scheduled cases task started");
+
+        log.info("Check bulk case pronounced errors scheduled task started");
 
         final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuth = authTokenGenerator.generate();
 
         try {
-            final List<CaseDetails<BulkActionCaseData, BulkActionState>> listedCasesWithErrorsOrUnprocessedCases =
-                ccdSearchService.searchForUnprocessedOrErroredBulkCases(Listed, user, serviceAuth);
 
-            log.info("No of cases fetched which has unprocessed or error cases {} .", listedCasesWithErrorsOrUnprocessedCases.size());
+            final List<CaseDetails<BulkActionCaseData, BulkActionState>> bulkCases = ccdSearchService
+                .searchForUnprocessedOrErroredBulkCases(Pronounced, user, serviceAuth);
 
-            listedCasesWithErrorsOrUnprocessedCases
+            bulkCases
                 .forEach(caseDetailsBulkCase -> bulkCaseProcessingService
                     .updateUnprocessedBulkCases(
                         caseDetailsBulkCase,
-                        SYSTEM_UPDATE_CASE_COURT_HEARING,
-                        bulkCaseCaseTaskFactory.getCaseTask(caseDetailsBulkCase.getData(), SYSTEM_UPDATE_CASE_COURT_HEARING),
+                        SYSTEM_PRONOUNCE_CASE,
+                        bulkCaseCaseTaskFactory.getCaseTask(caseDetailsBulkCase.getData(), SYSTEM_PRONOUNCE_CASE),
                         user,
                         serviceAuth));
 
-            log.info("Processing failed scheduled cases task completed.");
         } catch (final CcdSearchCaseException e) {
-            log.error("Processing failed scheduled cases task stopped after search error", e);
+            log.error("Retry bulk case pronounced errors schedule task, stopped after search error", e);
         }
     }
 }
