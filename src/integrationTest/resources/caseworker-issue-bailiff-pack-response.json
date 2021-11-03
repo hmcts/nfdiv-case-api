@@ -1,7 +1,6 @@
 {
   "data": {
     "divorceOrDissolution": "divorce",
-    "labelContentUnionType": "dissolution",
     "applicant1FirstName": "test_first_name",
     "applicant1MiddleName": "test_middle_name",
     "applicant1LastName": "test_last_name",
@@ -11,19 +10,13 @@
     "applicant1Gender": "female",
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "certificateOfServiceDocument": {
-      "documentDateAdded": null,
-      "documentComment": null,
       "documentFileName": "certificateOfService.pdf",
       "documentType": "certificateOfService",
-      "documentEmailContent": null,
       "documentLink": {
         "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
         "document_filename": "certificateOfService.pdf",
         "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
       }
     }
-  },
-  "errors": null,
-  "warnings": null,
-  "state": null
+  }
 }

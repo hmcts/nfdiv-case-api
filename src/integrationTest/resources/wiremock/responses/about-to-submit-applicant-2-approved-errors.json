@@ -6,7 +6,5 @@
     "Applicant2StatementOfTruth cannot be empty or null",
     "Applicant2PrayerHasBeenGiven cannot be empty or null",
     "MarriageApplicant2Name cannot be empty or null"
-  ],
-  "warnings": null,
-  "state": null
+  ]
 }

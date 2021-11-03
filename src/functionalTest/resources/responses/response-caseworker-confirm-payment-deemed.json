@@ -1,24 +1,24 @@
 {
-  "data":{
-    "divorceOrDissolution":"divorce",
-    "applicant1FirstName":"John",
-    "applicant1LastName":"Smith",
-    "applicant1Email":"simulate-delivered@notifications.service.gov.uk",
-    "applicant2Gender":"female",
-    "solServiceTruthStatement":"I believe that the facts stated in the application are true.",
-    "solPaymentHowToPay":"feePayByAccount",
-    "alternativeServiceType":"deemed",
+  "data": {
+    "divorceOrDissolution": "divorce",
+    "applicant1FirstName": "John",
+    "applicant1LastName": "Smith",
+    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+    "applicant2Gender": "female",
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "solPaymentHowToPay": "feePayByAccount",
+    "alternativeServiceType": "deemed",
     "servicePaymentFeeOrderSummary": {
-      "PaymentReference":null,
-      "PaymentTotal":"5300",
-      "Fees":[{
-        "id":null,
-        "value":{
-          "FeeAmount":"5300",
-          "FeeCode":"FEE0228",
-          "FeeDescription":"Application (without notice)",
-          "FeeVersion": "${json-unit.any-string}"
-        }}
+      "PaymentTotal": "5300",
+      "Fees": [
+        {
+          "value": {
+            "FeeAmount": "5300",
+            "FeeCode": "FEE0228",
+            "FeeDescription": "Application (without notice)",
+            "FeeVersion": "${json-unit.any-string}"
+          }
+        }
       ]
     },
     "dataVersion": "${json-unit.any-number}"

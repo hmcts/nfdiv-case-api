@@ -10,14 +10,15 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
-import java.util.Collections;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,8 +26,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenUpdateContactDetails.CITIZEN_UPDATE_CONTACT_DETAILS;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
@@ -68,6 +67,12 @@ public class CitizenUpdateContactDetailsTest {
             .postCode("POSTCODE")
             .build();
         updatedData.getApplicant1().setHomeAddress(address);
+        updatedData.getApplicant1().setKeepContactDetailsConfidential(YesOrNo.NO);
+        updatedData.setCaseInvite(
+            CaseInvite.builder()
+                .applicant2UserId("app2")
+                .build()
+        );
 
         updatedCaseDetails.setData(updatedData);
         previousCaseDetails.setData(caseData);
@@ -78,7 +83,6 @@ public class CitizenUpdateContactDetailsTest {
         final var userDetails = UserDetails.builder()
             .email("test@test.com")
             .id("app1")
-            .roles(Collections.singletonList(CITIZEN.getRole()))
             .build();
 
         when(idamService.retrieveUser(anyString()))
@@ -89,6 +93,7 @@ public class CitizenUpdateContactDetailsTest {
 
         assertThat(response.getData().getApplicant1().getPhoneNumber()).isEqualTo("01234567890");
         assertThat(response.getData().getApplicant1().getHomeAddress()).isEqualTo(address);
+        assertThat(response.getData().getApplicant1().getKeepContactDetailsConfidential()).isEqualTo(YesOrNo.NO);
     }
 
     @Test
@@ -106,6 +111,12 @@ public class CitizenUpdateContactDetailsTest {
             .postCode("POSTCODE")
             .build();
         updatedData.getApplicant2().setHomeAddress(address);
+        updatedData.getApplicant2().setKeepContactDetailsConfidential(YesOrNo.NO);
+        updatedData.setCaseInvite(
+            CaseInvite.builder()
+                .applicant2UserId("app2")
+                .build()
+        );
 
         updatedCaseDetails.setData(updatedData);
         previousCaseDetails.setData(caseData);
@@ -115,8 +126,7 @@ public class CitizenUpdateContactDetailsTest {
 
         final var userDetails = UserDetails.builder()
             .email("test@test.com")
-            .id("app1")
-            .roles(Collections.singletonList(APPLICANT_2.getRole()))
+            .id("app2")
             .build();
 
         when(idamService.retrieveUser(anyString()))
@@ -127,5 +137,6 @@ public class CitizenUpdateContactDetailsTest {
 
         assertThat(response.getData().getApplicant2().getPhoneNumber()).isEqualTo("01234567890");
         assertThat(response.getData().getApplicant2().getHomeAddress()).isEqualTo(address);
+        assertThat(response.getData().getApplicant2().getKeepContactDetailsConfidential()).isEqualTo(YesOrNo.NO);
     }
 }
