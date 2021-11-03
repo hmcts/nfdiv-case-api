@@ -9,6 +9,7 @@ import java.util.Map;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
+import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
@@ -36,7 +37,7 @@ public class SolicitorPaymentMidEventCallbackFT extends FunctionalTestSuite {
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
         assertThatJson(response.asString())
-            .when(TREATING_NULL_AS_ABSENT)
+            .when(TREATING_NULL_AS_ABSENT, IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(
                 "classpath:responses/response-solicitor-payment-mid-event.json"
             )));
