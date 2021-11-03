@@ -200,7 +200,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("coRefusalRejectionAdditionalInfo")
             .field("coRefusalClarificationReason")
             .field("coRefusalClarificationAdditionalInfo")
-            .label("labelCoClarificationResponse", null, "## Clarification Response")
+            .label("labelCoClarificationResponse",
+                "coClarificationResponse=\"*\" OR coClarificationUploadDocuments=\"*\"",
+                "## Clarification Response")
             .field("coClarificationResponse")
             .field("coClarificationUploadDocuments")
             .label("labelCoPronouncementDetails", null, "## Pronouncement Details")

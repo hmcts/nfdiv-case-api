@@ -93,5 +93,17 @@
       <property name="maxmethods" value="20" />
     </properties>
   </rule>
+  <rule ref="category/java/design.xml/NPathComplexity">
+    <properties>
+      <property name="reportLevel" value="35000" />
+    </properties>
+  </rule>
+  <rule ref="category/java/design.xml/CyclomaticComplexity">
+    <properties>
+      <property name="classReportLevel" value="80" />
+      <property name="methodReportLevel" value="20" />
+      <property name="cycloOptions" value="" />
+    </properties>
+  </rule>
 
 </ruleset>

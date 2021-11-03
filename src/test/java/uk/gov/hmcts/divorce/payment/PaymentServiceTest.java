@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import static feign.Request.HttpMethod.GET;
 import static feign.Request.HttpMethod.POST;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -401,7 +402,7 @@ public class PaymentServiceTest {
         Request request = Request.create(POST, EMPTY, Map.of(), null, UTF_8, null);
 
         byte[] body = "Account information could not be found".getBytes(UTF_8);
-        FeignException feignException = new FeignException.FeignClientException(NOT_FOUND.value(), "error", request, body);
+        FeignException feignException = new FeignException.FeignClientException(NOT_FOUND.value(), "error", request, body, emptyMap());
 
         doThrow(feignException)
             .when(paymentPbaClient).creditAccountPayment(
@@ -494,7 +495,7 @@ public class PaymentServiceTest {
         byte[] body = new ObjectMapper().writeValueAsString(creditAccountPaymentResponse).getBytes();
         Request request = Request.create(POST, EMPTY, Map.of(), null, UTF_8, null);
 
-        return new FeignException.FeignClientException(HttpStatus.FORBIDDEN.value(), "error", request, body);
+        return new FeignException.FeignClientException(HttpStatus.FORBIDDEN.value(), "error", request, body, emptyMap());
     }
 
     private Solicitor solicitor() {

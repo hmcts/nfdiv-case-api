@@ -83,10 +83,10 @@ public class SolicitorSubmitApplicationTest {
     private SubmissionService submissionService;
 
     @Mock
-    private SolPayment solPayment;
+    private SolicitorSubmittedNotification solicitorSubmittedNotification;
 
     @Mock
-    private SolicitorSubmittedNotification solicitorSubmittedNotification;
+    private SolPayment solPayment;
 
     @InjectMocks
     private SolicitorSubmitApplication solicitorSubmitApplication;
@@ -113,8 +113,6 @@ public class SolicitorSubmitApplicationTest {
             = AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(midEventCaseData)
             .build();
-
-        when(solPayment.midEvent(caseDetails, caseDetails)).thenReturn(pbaResponse);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             solicitorSubmitApplication.aboutToStart(caseDetails);

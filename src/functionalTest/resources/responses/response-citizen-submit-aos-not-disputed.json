@@ -1,5 +1,5 @@
-{"data":
-  {
+{
+  "data": {
     "divorceOrDissolution": "divorce",
     "applicationType": "soleApplication",
     "applicant1Gender": "female",
@@ -23,7 +23,5 @@
     "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
     "dueDate": "2021-09-16"
   },
-  "errors":null,
-  "warnings":null,
-  "state":"Holding"
+  "state": "Holding"
 }

@@ -57,15 +57,6 @@ public final class NotificationConstants {
 
     public static final String COURT_EMAIL = "court email";
 
-    public static final String PAPERS_SERVED_ANOTHER_WAY_APPLY = "papersServedAnotherWayApply";
-    public static final String PAPERS_SERVED_ANOTHER_WAY_PARAGRAPH = "papersServedAnotherWayParagraph";
-    public static final String PAPERS_SERVED_ANOTHER_WAY_TITLE = "papersServedAnotherWayTitle";
-
-    public static final String CERTIFICATE = "certificate";
-    public static final String FOREIGN_CERTIFICATE = "foreignCertificate";
-    public static final String FOREIGN_CERTIFICATE_TRANSLATION = "foreignCertificateTranslation";
-    public static final String NAME_CHANGE_PROOF = "nameChangeProof";
-
     public static final String SUBMISSION_RESPONSE_DATE = "date of response";
     public static final String APPLICATION_REFERENCE = "reference number";
     public static final String CASE_ID = "case id";

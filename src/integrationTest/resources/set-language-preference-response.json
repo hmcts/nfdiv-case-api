@@ -5,8 +5,5 @@
     "applicant1LastName": "test_last_name",
     "applicant1Email": "test@test.com",
     "languagePreferenceWelsh": "No"
-  },
-  "errors": null,
-  "warnings": null,
-  "state": null
+  }
 }

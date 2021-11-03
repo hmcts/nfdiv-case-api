@@ -5,6 +5,5 @@
     "applicant1LastName": "test_last_name",
     "applicant1Email": "test@test.com",
     "solSignStatementOfTruth": "Yes"
-  },
-  "warnings": null
+  }
 }

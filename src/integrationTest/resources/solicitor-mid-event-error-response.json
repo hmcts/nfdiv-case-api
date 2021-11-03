@@ -1,8 +1,5 @@
 {
-  "data": null,
   "errors": [
     "Please select an organisation you belong to"
-  ],
-  "warnings": null,
-  "state": null
+  ]
 }

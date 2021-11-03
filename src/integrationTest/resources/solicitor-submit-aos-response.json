@@ -1,7 +1,6 @@
 {
   "data": {
     "divorceOrDissolution": "divorce",
-    "labelContentUnionType": "dissolution",
     "applicant1FirstName": "test_first_name",
     "applicant1MiddleName": "test_middle_name",
     "applicant1LastName": "test_last_name",
@@ -22,11 +21,8 @@
       {
         "id": "${json-unit.any-string}",
         "value": {
-          "documentDateAdded": null,
-          "documentComment": null,
           "documentFileName": "respondentAnswers.pdf",
           "documentType": "respondentAnswers",
-          "documentEmailContent": null,
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100",
             "document_filename": "respondentAnswers.pdf",
@@ -44,7 +40,5 @@
     "dataVersion": "${json-unit.any-number}",
     "solServiceTruthStatement": "I believe that the facts stated in the application are true."
   },
-  "errors": null,
-  "warnings": null,
   "state": "Holding"
 }
