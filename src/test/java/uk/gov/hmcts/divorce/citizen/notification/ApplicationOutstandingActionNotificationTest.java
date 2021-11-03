@@ -11,9 +11,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,7 +21,6 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_CIVIL_PARTNERSHIP_CERTIFICATE;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_FOREIGN_MARRIAGE_CERTIFICATE;
@@ -50,6 +49,9 @@ class ApplicationOutstandingActionNotificationTest {
     private NotificationService notificationService;
 
     @Mock
+    private CommonContent commonContent;
+
+    @Mock
     private EmailTemplatesConfig configVars;
 
     @InjectMocks
@@ -67,8 +69,6 @@ class ApplicationOutstandingActionNotificationTest {
         docs.add(DocumentType.MARRIAGE_CERTIFICATE_TRANSLATION);
         docs.add(NAME_CHANGE_EVIDENCE);
         data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
-        when(configVars.getTemplateVars()).thenReturn(new HashMap<>());
-
 
         notification.sendToApplicant1(data, 1234567890123456L);
 

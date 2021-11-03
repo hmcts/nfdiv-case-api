@@ -9,28 +9,17 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.notification.CommonContent.isDivorce;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT1_CHANGES_MADE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.COURT_EMAIL;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.DISSOLUTION_COURT_EMAIL;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_COURT_EMAIL;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.FIRST_NAME;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.IS_DISSOLUTION;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.IS_DIVORCE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.LAST_NAME;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.NO;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.PARTNER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_URL_NOTIFY_KEY;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.THEIR_EMAIL_ADDRESS;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.YES;
 
 @Component
 @Slf4j
@@ -81,17 +70,8 @@ public class Applicant1ResubmitNotification {
     }
 
     private Map<String, String> resubmitTemplateVars(CaseData caseData, Applicant applicant, Applicant partner) {
-        Map<String, String> templateVars = new HashMap<>();
-        templateVars.put(IS_DIVORCE, isDivorce(caseData) ? YES : NO);
-        templateVars.put(IS_DISSOLUTION, !isDivorce(caseData) ? YES : NO);
-        templateVars.put(FIRST_NAME, applicant.getFirstName());
-        templateVars.put(LAST_NAME, applicant.getLastName());
-        templateVars.put(PARTNER, commonContent.getPartner(caseData, partner));
+        Map<String, String> templateVars = commonContent.commonTemplateVars(caseData, applicant, partner);
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
-        templateVars.put(SIGN_IN_URL_NOTIFY_KEY,
-            configVars.getTemplateVars().get(isDivorce(caseData) ? SIGN_IN_DIVORCE_URL : SIGN_IN_DISSOLUTION_URL));
-        templateVars.put(COURT_EMAIL,
-            configVars.getTemplateVars().get(isDivorce(caseData) ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
         return templateVars;
     }
 }

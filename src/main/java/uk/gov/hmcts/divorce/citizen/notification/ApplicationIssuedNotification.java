@@ -9,7 +9,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.notification.CommonContent.isDivorce;
@@ -23,16 +22,9 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.CREATE_ACCOUNT_LINK;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.DISSOLUTION_COURT_EMAIL;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.FIRST_NAME;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.IS_DISSOLUTION;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.IS_REMINDER;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.NO;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.PARTNER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.RESPONDENT_SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.RESPONDENT_SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.REVIEW_DEADLINE_DATE;
@@ -185,14 +177,8 @@ public class ApplicationIssuedNotification {
     }
 
     private Map<String, String> commonTemplateVars(final CaseData caseData, Long id, Applicant applicant, Applicant partner) {
-        final Map<String, String> templateVars = new HashMap<>();
-        templateVars.put(IS_DIVORCE,  isDivorce(caseData) ? YES : NO);
-        templateVars.put(IS_DISSOLUTION,  isDivorce(caseData) ? NO : YES);
+        final Map<String, String> templateVars = commonContent.commonTemplateVars(caseData, applicant, partner);
         templateVars.put(APPLICATION_REFERENCE, formatId(id));
-        templateVars.put(FIRST_NAME, applicant.getFirstName());
-        templateVars.put(LAST_NAME, applicant.getLastName());
-        templateVars.put(PARTNER, commonContent.getPartner(caseData, partner));
-        templateVars.put(COURT_EMAIL, emailTemplatesConfig.getTemplateVars().get(DISSOLUTION_COURT_EMAIL));
         return templateVars;
     }
 }
