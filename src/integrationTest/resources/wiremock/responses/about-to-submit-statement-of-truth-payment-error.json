@@ -9,6 +9,5 @@
   "errors": [
     "Payment incomplete"
   ],
-  "warnings": null,
   "state": "AwaitingPayment"
 }

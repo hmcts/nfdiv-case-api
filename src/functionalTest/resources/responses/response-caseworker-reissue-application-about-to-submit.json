@@ -48,23 +48,17 @@
     "jurisdictionConnections": [
       "J"
     ],
-
     "applicant1PrayerHasBeenGiven": "Yes",
     "applicant1StatementOfTruth": "Yes",
     "solSignStatementOfTruth": "Yes",
     "applicationFeeOrderSummary": {
-      "PaymentReference": null,
-      "Fees": null,
       "PaymentTotal": "55000"
     },
     "documentUploadComplete": "Yes",
     "reissueDate": "${json-unit.any-string}",
     "applicationPayments": [
       {
-        "id": null,
         "value": {
-          "created": null,
-          "updated": null,
           "feeCode": "FEE0001",
           "amount": 55000,
           "status": "success",
@@ -74,19 +68,14 @@
         }
       }
     ],
-    "applicant1NotifiedCanApplyForConditionalOrder": null,
-    "reissueOption": null,
     "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
     "accessCode": "${json-unit.any-string}",
     "documentsGenerated": [
       {
         "id": "${json-unit.any-string}",
         "value": {
-          "documentDateAdded": null,
-          "documentComment": null,
           "documentFileName": "${json-unit.any-string}",
           "documentType": "aos",
-          "documentEmailContent": null,
           "documentLink": {
             "document_url": "${json-unit.any-string}",
             "document_filename": "${json-unit.any-string}",
@@ -96,10 +85,7 @@
       }
     ],
     "dueDate": "${json-unit.any-string}",
-    "dataVersion": "${json-unit.any-number}",
-    "exampleRetiredField": null
+    "dataVersion": "${json-unit.any-number}"
   },
-  "errors": null,
-  "warnings": null,
   "state": "AwaitingAos"
 }

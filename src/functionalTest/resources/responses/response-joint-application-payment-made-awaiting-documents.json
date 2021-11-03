@@ -17,17 +17,22 @@
     "applicant1FinancialOrder": "No",
     "applicant1PrayerHasBeenGiven": "Yes",
     "jurisdictionApplicant1Residence": "Yes",
-    "jurisdictionApplicant2Residence":"Yes",
-    "jurisdictionConnections": ["A"],
+    "jurisdictionApplicant2Residence": "Yes",
+    "jurisdictionConnections": [
+      "A"
+    ],
     "marriageMarriedInUk": "Yes",
-    "applicant1CannotUploadSupportingDocument": ["marriageCertificate", "nameChangeEvidence"],
-    "applicant2CannotUploadSupportingDocument": ["nameChangeEvidence"],
+    "applicant1CannotUploadSupportingDocument": [
+      "marriageCertificate",
+      "nameChangeEvidence"
+    ],
+    "applicant2CannotUploadSupportingDocument": [
+      "nameChangeEvidence"
+    ],
     "applicationFeeOrderSummary": {
       "PaymentTotal": "55000",
-      "PaymentReference": null,
       "Fees": [
         {
-          "id": null,
           "value": {
             "FeeDescription": "Filing an application for a divorce, nullity or civil partnership dissolution",
             "FeeVersion": "${json-unit.any-string}",
@@ -37,20 +42,15 @@
         }
       ]
     },
-    "applicationPayments": [{
-      "id": "1",
-      "value": {
-        "created": null,
-        "feeCode": null,
-        "amount": 55000,
-        "status": "success",
-        "channel": null,
-        "reference": null,
-        "transactionId": null
+    "applicationPayments": [
+      {
+        "id": "1",
+        "value": {
+          "amount": 55000,
+          "status": "success"
+        }
       }
-    }]
+    ]
   },
-  "errors": null,
-  "state": "AwaitingDocuments",
-  "warnings": null
+  "state": "AwaitingDocuments"
 }

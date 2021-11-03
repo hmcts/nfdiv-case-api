@@ -137,13 +137,6 @@ public enum State {
     AwaitingLegalAdvisorReferral("AwaitingLegalAdvisorReferral"),
 
     @CCD(
-        name = "Awaiting reissue",
-        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
-        access = {CaseAccessAdministrator.class}
-    )
-    AwaitingReissue("AwaitingReissue"),
-
-    @CCD(
         name = "Awaiting service",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
@@ -224,13 +217,6 @@ public enum State {
         access = {CaseAccessAdministrator.class}
     )
     PendingDispute("PendingDispute"),
-
-    @CCD(
-        name = "Pending rejection",
-        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
-        access = {CaseAccessAdministrator.class}
-    )
-    PendingRejection("PendingRejection"),
 
     @CCD(
         name = "Submitted",

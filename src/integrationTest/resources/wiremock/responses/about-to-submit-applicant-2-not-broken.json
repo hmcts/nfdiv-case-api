@@ -14,12 +14,9 @@
     "jurisdictionApplicant1Residence": "Yes",
     "jurisdictionApplicant2Residence": "Yes",
     "jurisdictionConnections": ["A"],
-    "labelContentUnionType": "dissolution",
     "marriageApplicant1Name": "test_first_name test_last_name",
     "marriageApplicant2Name": "test_first_name test_last_name",
     "marriageDate": "1990-06-10"
   },
-  "errors": null,
-  "warnings": null,
   "state": "AwaitingApplicant1Response"
 }

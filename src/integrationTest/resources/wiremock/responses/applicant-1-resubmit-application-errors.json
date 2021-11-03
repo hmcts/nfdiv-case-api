@@ -8,6 +8,5 @@
     "MarriageDate cannot be empty or null",
     "JurisdictionConnections cannot be empty or null"
   ],
-  "warnings": null,
   "state": "AwaitingApplicant1Response"
 }

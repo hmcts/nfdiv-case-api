@@ -14,16 +14,14 @@
           "serviceApplicationGranted": "Yes",
           "serviceApplicationDecisionDate": "${json-unit.any-string}"
         }
-      }],
+      }
+    ],
     "documentsGenerated": [
       {
         "id": "${json-unit.any-string}",
         "value": {
-          "documentDateAdded": null,
-          "documentComment": null,
           "documentFileName": "dispensedAsServedGranted.pdf",
           "documentType": "dispenseWithServiceGranted",
-          "documentEmailContent": null,
           "documentLink": {
             "document_url": "${json-unit.any-string}",
             "document_filename": "dispensedAsServedGranted.pdf",
@@ -34,7 +32,5 @@
     ],
     "dataVersion": "${json-unit.any-number}"
   },
-  "errors": null,
-  "warnings": null,
   "state": "Holding"
 }

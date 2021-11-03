@@ -30,7 +30,6 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -146,7 +145,7 @@ public class SolicitorSubmitApplicationIT {
                 content().json(expectedCcdCallbackResponse())
             );
 
-        verify(serviceTokenGenerator,times(2)).generate();
+        verify(serviceTokenGenerator).generate();
         verifyNoMoreInteractions(serviceTokenGenerator);
     }
 

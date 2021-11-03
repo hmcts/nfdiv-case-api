@@ -1,70 +1,60 @@
 {
-  "data":
-  {"applicant1Email":"test@test.com",
-    "applicant1FinancialOrder":"No",
-    "applicant1FirstName":"test_first_name",
-    "applicant1Gender":"female",
-    "applicant1KeepContactDetailsConfidential":"No",
-    "applicant1LanguagePreferenceWelsh":"No",
-    "applicant1LastName":"test_last_name",
-    "applicant1LegalProceedings":"No",
-    "applicant1MiddleName":"test_middle_name",
-    "applicant1PrayerHasBeenGiven":"Yes",
-    "applicant1StatementOfTruth":"Yes",
-    "applicant2Email":"test@test.com",
-    "applicant2FinancialOrder":"No",
-    "applicant2FirstName":"test_first_name",
-    "applicant2Gender":"male",
-    "applicant2HomeAddress":{
-      "AddressLine1":"line 1",
-      "AddressLine2":null,
-      "AddressLine3":null,
-      "Country":null,
-      "County":null,
-      "PostCode":"postcode",
-      "PostTown":"town"
+  "data": {
+    "applicant1Email": "test@test.com",
+    "applicant1FinancialOrder": "No",
+    "applicant1FirstName": "test_first_name",
+    "applicant1Gender": "female",
+    "applicant1KeepContactDetailsConfidential": "No",
+    "applicant1LanguagePreferenceWelsh": "No",
+    "applicant1LastName": "test_last_name",
+    "applicant1LegalProceedings": "No",
+    "applicant1MiddleName": "test_middle_name",
+    "applicant1PrayerHasBeenGiven": "Yes",
+    "applicant1StatementOfTruth": "Yes",
+    "applicant2Email": "test@test.com",
+    "applicant2FinancialOrder": "No",
+    "applicant2FirstName": "test_first_name",
+    "applicant2Gender": "male",
+    "applicant2HomeAddress": {
+      "AddressLine1": "line 1",
+      "PostCode": "postcode",
+      "PostTown": "town"
     },
-    "applicant2InviteEmailAddress":"applicant2@test.com",
-    "applicant2LanguagePreferenceWelsh":"No",
-    "applicant2LastName":"test_last_name",
-    "applicant2MiddleName":"test_middle_name",
+    "applicant2InviteEmailAddress": "applicant2@test.com",
+    "applicant2LanguagePreferenceWelsh": "No",
+    "applicant2LastName": "test_last_name",
+    "applicant2MiddleName": "test_middle_name",
     "applicationFeeOrderSummary": {
-      "Fees":null,
-      "PaymentReference":null,
-      "PaymentTotal":"55000"
+      "PaymentTotal": "55000"
     },
-    "applicationPayments":[
+    "applicationPayments": [
       {
-        "id":null,
-        "value":{
-          "amount":55000,
-          "channel":"online",
-          "created":null,
-          "feeCode":"FEE0001",
-          "reference":"paymentRef",
-          "status":"success",
-          "transactionId":"ge7po9h5bhbtbd466424src9tk",
-          "updated":null
+        "value": {
+          "amount": 55000,
+          "channel": "online",
+          "feeCode": "FEE0001",
+          "reference": "paymentRef",
+          "status": "success",
+          "transactionId": "ge7po9h5bhbtbd466424src9tk"
         }
       }
     ],
     "accessCode": "1234-1234-1234-1234",
-    "applicationType":"soleApplication",
-    "divorceOrDissolution":"divorce",
-    "documentUploadComplete":"Yes",
-    "dueDate":"2021-04-28",
-    "jurisdictionApplicant1Residence":"Yes",
-    "jurisdictionApplicant2Residence":"Yes",
-    "jurisdictionConnections":["J"],
-    "labelContentUnionType":"dissolution",
-    "marriageApplicant1Name":"test_first_name test_last_name",
-    "marriageApplicant2Name":"test_first_name test_last_name",
-    "marriageDate":"1990-06-10",
-    "marriagePlaceOfMarriage":"Somewhere",
-    "solServiceTruthStatement":"I believe that the facts stated in the application are true.",
+    "applicationType": "soleApplication",
+    "divorceOrDissolution": "divorce",
+    "documentUploadComplete": "Yes",
+    "dueDate": "2021-04-28",
+    "jurisdictionApplicant1Residence": "Yes",
+    "jurisdictionApplicant2Residence": "Yes",
+    "jurisdictionConnections": [
+      "J"
+    ],
+    "marriageApplicant1Name": "test_first_name test_last_name",
+    "marriageApplicant2Name": "test_first_name test_last_name",
+    "marriageDate": "1990-06-10",
+    "marriagePlaceOfMarriage": "Somewhere",
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "dataVersion": "${json-unit.any-number}",
-    "issueDate":"2021-04-28"
-  },
-  "errors": null,
-  "warnings": null
+    "issueDate": "2021-04-28"
+  }
 }

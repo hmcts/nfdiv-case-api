@@ -19,6 +19,5 @@
     "MarriageDate cannot be empty or null",
     "JurisdictionConnections cannot be empty or null"
   ],
-  "state": "Draft",
-  "warnings": null
+  "state": "Draft"
 }

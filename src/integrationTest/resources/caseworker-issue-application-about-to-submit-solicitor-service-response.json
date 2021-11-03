@@ -3,7 +3,6 @@
     "accessCode":"${json-unit.any-string}",
     "applicationType":"soleApplication",
     "divorceOrDissolution": "divorce",
-    "labelContentUnionType":"dissolution",
     "solServiceMethod":"solicitorService",
     "applicant1FirstName": "test_first_name",
     "applicant1MiddleName": "test_middle_name",

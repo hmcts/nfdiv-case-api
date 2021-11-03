@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -83,7 +82,6 @@ public class Applicant {
     private String nameChangedHowOtherDetails;
 
     @CCD(label = "Home address")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private AddressGlobalUK homeAddress;
 
     @CCD(

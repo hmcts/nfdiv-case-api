@@ -1,7 +1,6 @@
 {
   "data": {
     "divorceOrDissolution": "divorce",
-    "labelContentUnionType": "dissolution",
     "applicant1FirstName": "test_first_name",
     "applicant1MiddleName": "test_middle_name",
     "applicant1LastName": "test_last_name",
@@ -23,20 +22,16 @@
         "code": "${json-unit.any-string}",
         "label": "PBA0012345"
       },
-      "list_items": null,
       "valueLabel": "PBA0012345",
       "valueCode": "${json-unit.any-string}"
     },
     "applicationFeeOrderSummary": {
-      "PaymentReference": null,
       "Fees": [
         {
-          "id": null,
           "value": {
             "FeeAmount": "550",
             "FeeCode": "FEE002",
-            "FeeDescription": "fees for divorce",
-            "FeeVersion": null
+            "FeeDescription": "fees for divorce"
           }
         }
       ],
@@ -47,20 +42,14 @@
       {
         "id": "${json-unit.any-string}",
         "value": {
-          "created": null,
-          "updated": null,
           "feeCode": "FEE002",
           "amount": 55000,
           "status": "success",
-          "channel": "online",
-          "reference": null,
-          "transactionId": null
+          "channel": "online"
         }
       }
     ],
     "dueDate": "${json-unit.any-string}"
   },
-  "errors": null,
-  "warnings": null,
   "state": "Submitted"
 }
