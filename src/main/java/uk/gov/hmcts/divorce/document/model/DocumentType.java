@@ -119,6 +119,9 @@ public enum DocumentType implements HasLabel {
     @JsonAlias({"aosOfflineInvitationLetterToApplicant2"})
     OTHER("Other"),
 
+    @JsonProperty("pronouncementList")
+    PRONOUNCEMENT_LIST("Pronouncement List"),
+
     @JsonProperty("respondentAnswers")
     @JsonAlias("applicant2Answers")
     RESPONDENT_ANSWERS("Respondent answers"),

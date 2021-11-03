@@ -38,6 +38,9 @@ public class ScheduleCaseService {
     @Autowired
     private IdamService idamService;
 
+    //@Autowired
+    //private PronouncementListDocService pronouncementListDocService;
+
     @Async
     public void updateCourtHearingDetailsForCasesInBulk(final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
                                                         final String authorization) {
@@ -72,6 +75,8 @@ public class ScheduleCaseService {
             serviceAuth
         );
         submitBulkActionEvent(user, serviceAuth, bulkCaseDetails, unprocessedBulkCases);
+
+        //pronouncementListDocService.generateDocument(bulkCaseDetails, bulkListCaseDetails);
     }
 
     private void submitBulkActionEvent(User user,

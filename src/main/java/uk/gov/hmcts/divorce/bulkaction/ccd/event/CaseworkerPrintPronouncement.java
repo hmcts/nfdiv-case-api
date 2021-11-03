@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionPageBuilder;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
+import uk.gov.hmcts.divorce.bulkaction.service.PronouncementListDocService;
 import uk.gov.hmcts.divorce.bulkaction.service.ScheduleCaseService;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
@@ -33,6 +34,9 @@ public class CaseworkerPrintPronouncement implements CCDConfig<BulkActionCaseDat
     @Autowired
     private HttpServletRequest request;
 
+    @Autowired
+    private PronouncementListDocService pronouncementListDocService;
+
     @Override
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
 
@@ -43,6 +47,7 @@ public class CaseworkerPrintPronouncement implements CCDConfig<BulkActionCaseDat
             .description("Print for pronouncement")
             .showSummary()
             .showEventNotes()
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .aboutToStartCallback(this::aboutToStart)
             .explicitGrants()
@@ -59,6 +64,22 @@ public class CaseworkerPrintPronouncement implements CCDConfig<BulkActionCaseDat
         scheduleCaseService.updatePronouncementJudgeDetailsForCasesInBulk(bulkCaseDetails,request.getHeader(AUTHORIZATION));
         return SubmittedCallbackResponse.builder().build();
     }
+
+    public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToSubmit(
+        CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
+        CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetailsBefore) {
+
+        log.info("Solicitor update contact details about to submit callback invoked");
+
+        final BulkActionCaseData caseData = bulkCaseDetails.getData();
+
+        pronouncementListDocService.generateDocument(bulkCaseDetails, bulkCaseDetails.getData().getBulkListCaseDetails());
+
+        return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder()
+            .data(caseData)
+            .build();
+    }
+
 
     public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToStart(
         final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails
