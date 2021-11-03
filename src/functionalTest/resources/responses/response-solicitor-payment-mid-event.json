@@ -6,18 +6,26 @@
     "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
     "applicant1FinancialOrder": "No",
     "applicant2Gender": "female",
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "solPaymentHowToPay": "feePayByAccount",
     "pbaNumbers": {
+      "value": {
+        "code": "${json-unit.any-string}",
+        "label": "pbaNumber"
+      },
       "list_items": [
         {
           "code": "${json-unit.any-string}",
-          "label": "PBA0082311"
+          "label": "PBA0087672"
         },
         {
           "code": "${json-unit.any-string}",
-          "label": "PBA0087672"
+          "label": "PBA0082311"
         }
-      ]
-    }
+      ],
+      "valueLabel": "pbaNumber",
+      "valueCode": "${json-unit.any-string}"
+    },
+    "dataVersion": "${json-unit.any-number}"
   }
 }
