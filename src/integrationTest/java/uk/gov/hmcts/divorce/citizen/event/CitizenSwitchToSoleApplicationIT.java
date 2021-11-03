@@ -95,10 +95,8 @@ public class CitizenSwitchToSoleApplicationIT {
 
         verify(notificationService)
             .sendEmail(eq(TEST_USER_EMAIL), eq(APPLICANT1_APPLICANT1_SWITCH_TO_SOLE), anyMap(), eq(ENGLISH));
-
         verify(notificationService)
             .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(JOINT_APPLICATION_ENDED), anyMap(), eq(ENGLISH));
-
         verifyNoMoreInteractions(notificationService);
     }
 
