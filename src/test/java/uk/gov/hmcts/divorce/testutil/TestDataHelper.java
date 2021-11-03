@@ -75,6 +75,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_2_SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_2_SIGN_IN_DIVORCE_URL;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.COURT_EMAIL;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.FIRST_NAME;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.LAST_NAME;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.PARTNER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
@@ -562,6 +566,15 @@ public class TestDataHelper {
             APPLICANT_2_SIGN_IN_DIVORCE_URL, APPLICANT_2_SIGN_IN_DIVORCE_TEST_URL,
             APPLICANT_2_SIGN_IN_DISSOLUTION_URL, APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL
         );
+    }
+
+    public static Map<String, String> getCommonTemplateVars() {
+        Map<String, String> templateVars = new HashMap<>();
+        templateVars.put(FIRST_NAME, TEST_FIRST_NAME);
+        templateVars.put(LAST_NAME, TEST_LAST_NAME);
+        templateVars.put(PARTNER, "partner");
+        templateVars.put(COURT_EMAIL, "courtEmail");
+        return templateVars;
     }
 
     public static GeneralOrder getGeneralOrder(Document ccdDocument) {
