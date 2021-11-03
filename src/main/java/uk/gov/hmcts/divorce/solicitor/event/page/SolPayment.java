@@ -47,7 +47,7 @@ public class SolPayment implements CcdPageConfiguration {
     public void addTo(final PageBuilder pageBuilder) {
 
         pageBuilder
-            .page("SolPayment", this::midEvent) // Temporarily commenting as midevent has a bug which clears our fields
+            .page("SolPayment", this::midEvent)
             .page("SolPayment")
             .pageLabel("Payment")
             .label(
