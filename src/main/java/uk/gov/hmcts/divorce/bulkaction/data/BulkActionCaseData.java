@@ -136,7 +136,7 @@ public class BulkActionCaseData {
     }
 
     @JsonIgnore
-    public List<ListValue<CaseLink>> transformToCaseLinkList() {
+    public List<ListValue<CaseLink>> transformToCasesAcceptedToListForHearing() {
         final AtomicInteger counter = new AtomicInteger(1);
         return bulkListCaseDetails.stream()
             .map(c ->
@@ -145,6 +145,13 @@ public class BulkActionCaseData {
                     .value(c.getValue().getCaseReference())
                     .build()
             )
+            .collect(toList());
+    }
+
+    @JsonIgnore
+    public <T> List<T> fromListValueToList(final List<ListValue<T>> targetList) {
+        return targetList.stream()
+            .map(ListValue::getValue)
             .collect(toList());
     }
 }
