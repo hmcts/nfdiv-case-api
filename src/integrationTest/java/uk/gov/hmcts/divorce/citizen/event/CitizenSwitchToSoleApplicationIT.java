@@ -89,7 +89,6 @@ public class CitizenSwitchToSoleApplicationIT {
         assertThatJson(actualResponse)
             .when(TREATING_NULL_AS_ABSENT)
             .isEqualTo(json(expectedCcdAboutToSubmitCallbackSuccessfulResponse()));
-
         assertThatJson(actualResponse)
             .inPath("$.data.applicationType")
             .isEqualTo(ApplicationType.SOLE_APPLICATION);
