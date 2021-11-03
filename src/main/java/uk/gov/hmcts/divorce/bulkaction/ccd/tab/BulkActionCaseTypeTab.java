@@ -23,6 +23,7 @@ public class BulkActionCaseTypeTab implements CCDConfig<BulkActionCaseData, Bulk
             .field(BulkActionCaseData::getBulkListCaseDetails);
 
         configBuilder.tab("unprocessedBulkCaseList", "Unprocessed bulk case list")
+            .showCondition("erroredCaseDetails=\"*\"")
             .field(BulkActionCaseData::getErroredCaseDetails);
     }
 }
