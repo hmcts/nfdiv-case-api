@@ -11,6 +11,10 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
+import java.util.List;
+
+import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -30,20 +34,20 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
             .name("Remove cases from bulk list")
             .description("Remove cases from bulk list")
             .showSummary()
-            .showEventNotes()
             .aboutToStartCallback(this::aboutToStart)
+            .showEventNotes()
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE))
             .page("removeCasesFromBulkList", this::midEvent)
             .pageLabel("Remove cases from bulk list")
-            .mandatoryNoSummary(BulkActionCaseData::getCasesToRemove);
+            .mandatoryNoSummary(BulkActionCaseData::getCasesAcceptedToListForHearing);
     }
 
     public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToStart(
         CaseDetails<BulkActionCaseData, BulkActionState> details
     ) {
         BulkActionCaseData caseData = details.getData();
-        caseData.setCasesToRemove(caseData.transformToCaseLinkSet());
+        caseData.setCasesAcceptedToListForHearing(caseData.transformToCaseLinkList());
 
         return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder()
             .data(caseData)
@@ -55,7 +59,18 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
         CaseDetails<BulkActionCaseData, BulkActionState> detailsBefore
     ) {
         BulkActionCaseData caseData = details.getData();
-        // TODO: validate case references passed (ensure none were added, ensure only those in removal)
+
+        List<String> caseReferences = caseData.getBulkListCaseDetails().stream()
+            .map(c -> c.getValue().getCaseReference().getCaseReference())
+            .collect(toList());
+
+        if (caseData.getCasesAcceptedToListForHearing().stream()
+            .anyMatch(caseLink -> !caseReferences.contains(caseLink.getValue().getCaseReference()))) {
+            return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder()
+                .errors(singletonList("You can only remove cases from the list of cases accepted to list for hearing."))
+                .data(caseData)
+                .build();
+        }
 
         return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder()
             .data(caseData)
@@ -67,6 +82,7 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
         CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails
     ) {
         // TODO: process case list after removal of cases removed by user
+        // Unlink?
 
         return SubmittedCallbackResponse.builder().build();
     }

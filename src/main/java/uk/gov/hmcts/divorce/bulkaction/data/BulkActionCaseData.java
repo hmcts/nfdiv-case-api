@@ -14,13 +14,11 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Court;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
-import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -110,10 +108,12 @@ public class BulkActionCaseData {
     private List<ListValue<BulkListCaseDetails>> erroredCaseDetails;
 
     @CCD(
-        label = "Case references",
-        access = {DefaultAccess.class}
+        label = "Cases accepted to list for hearing",
+        typeOverride = Collection,
+        typeParameterOverride = "CaseLink",
+        access = {CaseworkerAccess.class}
     )
-    private Set<CaseLink> casesToRemove;
+    private List<ListValue<CaseLink>> casesAcceptedToListForHearing;
 
     @JsonIgnore
     public LocalDate getDateFinalOrderEligibleFrom(LocalDateTime dateTime) {
@@ -138,9 +138,15 @@ public class BulkActionCaseData {
     }
 
     @JsonIgnore
-    public Set<CaseLink> transformToCaseLinkSet() {
+    public List<ListValue<CaseLink>> transformToCaseLinkList() {
+        final AtomicInteger counter = new AtomicInteger(1);
         return bulkListCaseDetails.stream()
-            .map(c -> c.getValue().getCaseReference())
-            .collect(Collectors.toSet());
+            .map(c ->
+                ListValue.<CaseLink>builder()
+                    .id(String.valueOf(counter.getAndIncrement()))
+                    .value(c.getValue().getCaseReference())
+                    .build()
+            )
+            .collect(toList());
     }
 }
