@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionPageBuilder;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
@@ -13,6 +14,8 @@ import uk.gov.hmcts.divorce.bulkaction.service.ScheduleCaseService;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
@@ -42,6 +45,7 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
             .description("Schedule cases for listing")
             .showSummary()
             .showEventNotes()
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE))
@@ -50,6 +54,24 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
             .mandatory(BulkActionCaseData::getCourtName)
             .mandatory(BulkActionCaseData::getDateAndTimeOfHearing)
             .mandatoryNoSummary(BulkActionCaseData::getBulkListCaseDetails);
+    }
+
+    public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToSubmit(
+        final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
+        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails
+    ) {
+        if (bulkCaseDetails.getData().getDateAndTimeOfHearing().isBefore(LocalDateTime.now())) {
+            return AboutToStartOrSubmitResponse
+                .<BulkActionCaseData, BulkActionState>builder()
+                .errors(List.of("Please enter a hearing date and time in future"))
+                .data(bulkCaseDetails.getData())
+                .build();
+        }
+
+        return AboutToStartOrSubmitResponse
+            .<BulkActionCaseData, BulkActionState>builder()
+            .data(bulkCaseDetails.getData())
+            .build();
     }
 
     public SubmittedCallbackResponse submitted(
