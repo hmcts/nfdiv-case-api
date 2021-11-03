@@ -17,8 +17,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
@@ -137,6 +139,11 @@ public class BulkActionCaseData {
 
     @JsonIgnore
     public List<ListValue<CaseLink>> transformToCasesAcceptedToListForHearing() {
+
+        if (Objects.isNull(bulkListCaseDetails) || bulkListCaseDetails.isEmpty()) {
+            return emptyList();
+        }
+
         final AtomicInteger counter = new AtomicInteger(1);
         return bulkListCaseDetails.stream()
             .map(c ->

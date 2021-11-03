@@ -111,6 +111,5 @@ class CaseworkerPronounceListTest {
 
         assertThat(submittedCallbackResponse).isNotNull();
         verify(casePronouncementService).pronounceCases(details, CASEWORKER_AUTH_TOKEN);
-
     }
 }

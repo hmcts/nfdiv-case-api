@@ -96,15 +96,16 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
         BulkActionCaseData caseData = details.getData();
 
         List<String> casesAcceptedToListForHearing =
-            caseData.fromListValueToList(caseData.getCasesAcceptedToListForHearing()).stream()
+            caseData.fromListValueToList(caseData.getCasesAcceptedToListForHearing())
+                .stream()
                 .map(CaseLink::getCaseReference)
                 .collect(toList());
 
-        List<String> bulkListCaseDetailsToCaseLinks = caseData.getBulkListCaseDetails().stream()
+        List<String> bulkListCaseDetailsToCaseReferences = caseData.getBulkListCaseDetails().stream()
             .map(c -> c.getValue().getCaseReference().getCaseReference())
             .collect(toList());
 
-        List<String> casesToRemove = bulkListCaseDetailsToCaseLinks.stream()
+        List<String> casesToRemove = bulkListCaseDetailsToCaseReferences.stream()
             .filter(caseLink -> !casesAcceptedToListForHearing.contains(caseLink))
             .collect(toList());
 
