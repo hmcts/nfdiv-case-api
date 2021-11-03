@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.testutil;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
@@ -42,7 +43,6 @@ public final class PaymentWireMock {
     private static final WireMockServer PAYMENTS_SERVER = new WireMockServer(wireMockConfig().dynamicPort());
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-    private static PbaOrganisationResponse pbaOrganisationResponse;
 
     private PaymentWireMock() {
     }
@@ -61,7 +61,7 @@ public final class PaymentWireMock {
     }
 
     public static void stubCreditAccountPayment(HttpStatus status, CreditAccountPaymentResponse response) throws JsonProcessingException {
-
+        OBJECT_MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         var orderSummary = orderSummaryWithFee();
         CreditAccountPaymentRequest request = getCreditAccountPaymentRequest(orderSummary);
 

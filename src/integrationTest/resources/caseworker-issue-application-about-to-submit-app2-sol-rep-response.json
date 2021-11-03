@@ -5,59 +5,26 @@
     "applicant1MiddleName": "test_middle_name",
     "applicant1LastName": "test_last_name",
     "applicant1Email": "test@test.com",
-    "applicant1AgreedToReceiveEmails": null,
     "applicant1LanguagePreferenceWelsh": "No",
-    "applicant1NameDifferentToMarriageCertificate": null,
-    "applicant1LastNameChangedWhenMarried": null,
-    "applicant1NameChangedHow": null,
-    "applicant1NameChangedHowOtherDetails": null,
-    "applicant1PhoneNumber": null,
     "applicant1KeepContactDetailsConfidential": "No",
     "applicant1Gender": "female",
-    "applicant1CorrespondenceAddress": null,
-    "applicant1SolicitorRepresented": null,
     "applicant1SolicitorEmail": "solicitor@test.com",
     "applicant2FirstName": "test_first_name",
     "applicant2MiddleName": "test_middle_name",
     "applicant2LastName": "test_last_name",
     "applicant2Email": "test@test.com",
-    "applicant2AgreedToReceiveEmails": null,
     "applicant2LanguagePreferenceWelsh": "No",
-    "applicant2NameDifferentToMarriageCertificate": null,
-    "applicant2LastNameChangedWhenMarried": null,
-    "applicant2NameChangedHow": null,
-    "applicant2NameChangedHowOtherDetails": null,
-    "applicant2PhoneNumber": null,
-    "applicant2KeepContactDetailsConfidential": null,
     "applicant2Gender": "male",
-    "applicant2CorrespondenceAddress": null,
     "applicant2SolicitorRepresented": "Yes",
     "applicant2SolicitorName": "testsol",
     "applicant2SolicitorEmail": "solicitor@test.com",
     "applicant2SolicitorAddress": "223b\nBaker Street\nLondon\nGreater London\nNW1 5FG\nUnited Kingdom",
     "marriageApplicant1Name": "test_first_name test_last_name",
     "marriageApplicant2Name": "test_first_name test_last_name",
-    "marriageMarriedInUk": null,
-    "marriageCertificateInEnglish": null,
-    "marriageCertifiedTranslation": null,
-    "marriageCountryOfMarriage": null,
     "marriagePlaceOfMarriage": "Somewhere",
     "marriageDate": "1990-06-10",
-    "marriageIsSameSexCouple": null,
-    "marriageCertifyMarriageCertificateIsCorrect": null,
-    "marriageMarriageCertificateIsIncorrectDetails": null,
-    "marriageIssueApplicationWithoutMarriageCertificate": null,
-    "applicant1HWFAppliedForFees": null,
-    "applicant1HWFReferenceNumber": null,
-    "applicant1HWFNeedHelp": null,
     "jurisdictionApplicant1Residence": "Yes",
     "jurisdictionApplicant2Residence": "Yes",
-    "jurisdictionApplicant1Domicile": null,
-    "jurisdictionApplicant2Domicile": null,
-    "jurisdictionApp1HabituallyResLastTwelveMonths": null,
-    "jurisdictionApp1HabituallyResLastSixMonths": null,
-    "jurisdictionResidualEligible": null,
-    "jurisdictionBothLastHabituallyResident": null,
     "jurisdictionConnections": [
       "J"
     ],
@@ -66,19 +33,14 @@
     "applicant1StatementOfTruth": "Yes",
     "solSignStatementOfTruth": "Yes",
     "applicationFeeOrderSummary": {
-      "PaymentReference": null,
-      "Fees": null,
       "PaymentTotal": "55000"
     },
     "documentsGenerated": [
       {
         "id": "Respondent Invitation",
         "value": {
-          "documentDateAdded": null,
-          "documentComment": null,
           "documentFileName": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
           "documentType": "aos",
-          "documentEmailContent": null,
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-aa67-ac1422bb8100",
             "document_filename": "aosinvitation-1616591401473378-2021-06-17:13:00.pdf",
@@ -89,11 +51,8 @@
       {
         "id": "Divorce application",
         "value": {
-          "documentDateAdded": null,
-          "documentComment": null,
           "documentFileName": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
           "documentType": "application",
-          "documentEmailContent": null,
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
             "document_filename": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
@@ -104,9 +63,7 @@
     ],
     "applicationPayments": [
       {
-        "id": null,
         "value": {
-          "created": null,
           "feeCode": "FEE0001",
           "amount": 55000,
           "status": "success",
@@ -123,7 +80,5 @@
     "noticeOfProceedingsEmail": "solicitor@test.com",
     "noticeOfProceedingsSolicitorFirm": "Test Organisation"
   },
-  "errors": null,
-  "warnings": null,
   "state": "AwaitingAos"
 }

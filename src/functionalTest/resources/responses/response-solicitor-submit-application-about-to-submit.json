@@ -42,7 +42,6 @@
         "OrganisationID": "ABC456"
       }
     },
-    "applicant1WantsToHavePapersServedAnotherWay": null,
     "solPaymentHowToPay": "feePayByAccount",
     "pbaNumbers": {
       "value": {
@@ -63,10 +62,8 @@
       "valueCode": "93018b67-a1af-4c1e-afa0-22de272bb5f2"
     },
     "applicationFeeOrderSummary": {
-      "PaymentReference": null,
       "Fees": [
         {
-          "id": null,
           "value": {
             "FeeAmount": "55000",
             "FeeCode": "FEE0002",
@@ -78,21 +75,16 @@
       "PaymentTotal": "55000"
     },
     "dateSubmitted": "${json-unit.any-string}",
-    "applicant2ConfirmApplicant1Information": null,
-    "applicant2ExplainsApplicant1IncorrectInformation": null,
     "solSignStatementOfTruth": "Yes",
     "applicationPayments": [
       {
         "id": "${json-unit.any-string}",
         "value": {
-          "created": null,
-          "updated": null,
           "feeCode": "FEE0002",
           "amount": 55000,
           "status": "success",
           "channel": "online",
-          "reference": "${json-unit.any-string}",
-          "transactionId": null
+          "reference": "${json-unit.any-string}"
         }
       }
     ],
@@ -101,7 +93,5 @@
     "dataVersion": "${json-unit.any-number}",
     "solServiceTruthStatement": "I believe that the facts stated in the application are true."
   },
-  "errors": null,
-  "warnings": null,
   "state": "Submitted"
 }

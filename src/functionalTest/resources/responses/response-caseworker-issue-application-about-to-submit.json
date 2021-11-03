@@ -1,8 +1,6 @@
 {
   "data": {
-    "applicant1AgreedToReceiveEmails": null,
     "applicant1KeepContactDetailsConfidential": "No",
-    "applicant1CorrespondenceAddress": null,
     "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
     "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
     "applicant1FirstName": "test_first_name",
@@ -10,11 +8,6 @@
     "applicant1LanguagePreferenceWelsh": "No",
     "applicant1LastName": "test_last_name",
     "applicant1MiddleName": "test_middle_name",
-    "applicant1NameChangedHow": null,
-    "applicant1NameChangedHowOtherDetails": null,
-    "applicant1NameDifferentToMarriageCertificate": null,
-    "applicant1LastNameChangedWhenMarried": null,
-    "applicant1PhoneNumber": null,
     "applicant1SolicitorName": "Applicant 1 Solicitor",
     "applicant1SolicitorEmail": "applicant1.solicitor@example.com",
     "applicant1SolicitorAddress": "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom",
@@ -24,20 +17,13 @@
         "OrganisationID": "ABC456"
       }
     },
-    "applicant2AgreedToReceiveEmails": null,
     "applicant2KeepContactDetailsConfidential": "No",
-    "applicant2CorrespondenceAddress": null,
     "applicant2Email": "applicant2@example.com",
     "applicant2FirstName": "test_first_name",
     "applicant2Gender": "female",
     "applicant2LanguagePreferenceWelsh": "No",
     "applicant2LastName": "test_last_name",
     "applicant2MiddleName": "test_middle_name",
-    "applicant2NameChangedHow": null,
-    "applicant2NameChangedHowOtherDetails": null,
-    "applicant2NameDifferentToMarriageCertificate": null,
-    "applicant2LastNameChangedWhenMarried": null,
-    "applicant2PhoneNumber": null,
     "applicant2SolicitorName": "Applicant 2 Solicitor",
     "applicant2SolicitorEmail": "applicant2.solicitor@example.com",
     "applicant2SolicitorAddress": "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom",
@@ -47,20 +33,9 @@
         "OrganisationID": "ABC123"
       }
     },
-    "confirmReadPetition": null,
-    "jurisdictionAgree": null,
-    "jurisdictionDisagreeReason": null,
-    "applicant2LegalProceedings": null,
-    "applicant2LegalProceedingsDetails": null,
-    "dateAosSubmitted": null,
     "applicant2SolicitorRepresented": "Yes",
-    "applicant1HWFAppliedForFees": null,
-    "applicant1HWFReferenceNumber": null,
-    "applicant1HWFNeedHelp": null,
     "accessCode": "${json-unit.any-string}",
     "applicationFeeOrderSummary": {
-      "Fees": null,
-      "PaymentReference": null,
       "PaymentTotal": "55000"
     },
     "divorceOrDissolution": "divorce",
@@ -69,11 +44,8 @@
       {
         "id": "${json-unit.any-string}",
         "value": {
-          "documentDateAdded": null,
-          "documentComment": null,
           "documentFileName": "${json-unit.any-string}",
           "documentType": "aos",
-          "documentEmailContent": null,
           "documentLink": {
             "document_url": "${json-unit.any-string}",
             "document_filename": "${json-unit.any-string}",
@@ -84,11 +56,8 @@
       {
         "id": "${json-unit.any-string}",
         "value": {
-          "documentDateAdded": null,
-          "documentComment": null,
           "documentFileName": "${json-unit.any-string}",
           "documentType": "application",
-          "documentEmailContent": null,
           "documentLink": {
             "document_url": "${json-unit.any-string}",
             "document_filename": "${json-unit.any-string}",
@@ -99,36 +68,20 @@
     ],
     "applicant1FinancialOrder": "No",
     "issueDate": "${json-unit.any-string}",
-    "jurisdictionApp1HabituallyResLastSixMonths": null,
-    "jurisdictionApp1HabituallyResLastTwelveMonths": null,
-    "jurisdictionApplicant1Domicile": null,
     "jurisdictionApplicant1Residence": "Yes",
-    "jurisdictionApplicant2Domicile": null,
     "jurisdictionApplicant2Residence": "Yes",
-    "jurisdictionBothLastHabituallyResident": null,
     "jurisdictionConnections": [
       "J"
     ],
-    "jurisdictionResidualEligible": null,
     "marriageApplicant1Name": "test_first_name test_last_name",
     "marriageApplicant2Name": "test_first_name test_last_name",
-    "marriageCertificateInEnglish": null,
-    "marriageCertifiedTranslation": null,
-    "marriageCertifyMarriageCertificateIsCorrect": null,
-    "marriageCountryOfMarriage": null,
     "marriageDate": "1990-06-10",
-    "marriageIsSameSexCouple": null,
-    "marriageIssueApplicationWithoutMarriageCertificate": null,
-    "marriageMarriageCertificateIsIncorrectDetails": null,
-    "marriageMarriedInUk": null,
     "marriagePlaceOfMarriage": "Somewhere",
     "applicationPayments": [
       {
-        "id": null,
         "value": {
           "amount": 55000,
           "channel": "online",
-          "created": null,
           "feeCode": "FEE0001",
           "reference": "paymentRef",
           "status": "success",
@@ -140,7 +93,5 @@
     "solSignStatementOfTruth": "Yes",
     "applicant1StatementOfTruth": "Yes"
   },
-  "errors": null,
-  "state": "AwaitingAos",
-  "warnings": null
+  "state": "AwaitingAos"
 }

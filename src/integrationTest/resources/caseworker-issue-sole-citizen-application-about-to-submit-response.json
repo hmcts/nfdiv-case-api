@@ -13,7 +13,6 @@
     "applicant2LastName": "test_last_name",
     "applicant2Email": "test@test.com",
     "applicant2LanguagePreferenceWelsh": "No",
-    "applicant2KeepContactDetailsConfidential": null,
     "applicant2Gender": "male",
     "marriageApplicant1Name": "test_first_name test_last_name",
     "marriageApplicant2Name": "test_first_name test_last_name",
@@ -24,7 +23,5 @@
       "J"
     ]
   },
-  "errors": null,
-  "warnings": null,
   "state": "AwaitingAos"
 }

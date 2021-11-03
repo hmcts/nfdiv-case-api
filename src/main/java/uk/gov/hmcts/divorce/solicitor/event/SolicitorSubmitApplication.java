@@ -116,12 +116,6 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             details.getId()
         );
 
-        //Temporarily retrieve PBA numbers in about to start event as mid-event callback has bug in exui
-        log.info("Retrieving Pba numbers in event {} for about to start", SOLICITOR_SUBMIT);
-        AboutToStartOrSubmitResponse<CaseData, State> response = solPayment.midEvent(details, details);
-
-        caseData.getApplication().setPbaNumbers(response.getData().getApplication().getPbaNumbers());
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .errors(null)

@@ -16,8 +16,6 @@
     "applicant2LastName": "test_last_name",
     "applicant2MiddleName": "test_middle_name",
     "applicationFeeOrderSummary": {
-      "Fees": null,
-      "PaymentReference": null,
       "PaymentTotal": "55000"
     },
     "divorceOrDissolution": "divorce",
@@ -35,11 +33,9 @@
     "marriagePlaceOfMarriage": "Somewhere",
     "applicationPayments": [
       {
-        "id": null,
         "value": {
           "amount": 55000,
           "channel": "online",
-          "created": null,
           "feeCode": "FEE0001",
           "reference": "paymentRef",
           "status": "success",
@@ -52,7 +48,5 @@
     "applicant2PrayerHasBeenGiven": "Yes",
     "applicant2StatementOfTruth": "Yes"
   },
-  "errors": null,
-  "state": "Holding",
-  "warnings": null
+  "state": "Holding"
 }

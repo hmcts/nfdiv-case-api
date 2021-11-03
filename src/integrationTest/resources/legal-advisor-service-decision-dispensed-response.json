@@ -1,6 +1,5 @@
 {
   "data": {
-    "labelContentUnionType": "dissolution",
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "alternativeServiceApplications": [
       {
@@ -18,11 +17,8 @@
       {
         "id": "${json-unit.any-string}",
         "value": {
-          "documentDateAdded": null,
-          "documentComment": null,
           "documentFileName": "dispensedAsServedGranted.pdf",
           "documentType": "dispenseWithServiceGranted",
-          "documentEmailContent": null,
           "documentLink": {
             "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
             "document_filename": "dispensedAsServedGranted.pdf",
@@ -33,7 +29,5 @@
     ],
     "dataVersion": "${json-unit.any-number}"
   },
-  "errors": null,
-  "warnings": null,
   "state": "Holding"
 }

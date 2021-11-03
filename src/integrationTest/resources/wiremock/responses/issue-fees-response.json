@@ -8,7 +8,6 @@
       "PaymentTotal": "1000",
       "Fees": [
         {
-          "id": null,
           "value": {
             "FeeDescription": "Issue Fee",
             "FeeVersion": "1",
@@ -18,8 +17,5 @@
         }
       ]
     }
-  },
-  "errors": null,
-  "warnings": null,
-  "state": null
+  }
 }

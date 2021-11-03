@@ -9,8 +9,7 @@
   },
   "errors": [
     "Applicant2PrayerHasBeenGiven cannot be empty or null",
-    "Applicant2StatementOfTruth cannot be empty or null",
+    "Applicant2StatementOfTruth cannot be empty or null"
   ],
-  "state": "Draft",
-  "warnings": null
+  "state": "Draft"
 }
