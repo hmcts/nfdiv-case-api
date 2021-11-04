@@ -28,7 +28,7 @@ public class SystemProgressHeldCase implements CCDConfig<CaseData, State, UserRo
         new PageBuilder(configBuilder
             .event(SYSTEM_PROGRESS_HELD_CASE)
             .forStateTransition(Holding, AwaitingConditionalOrder)
-            .name("Progress held case")
+            .name("Awaiting Conditional Order")
             .description("Progress held case to Awaiting Conditional Order")
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
