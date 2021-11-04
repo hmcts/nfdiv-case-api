@@ -73,15 +73,14 @@ public class SolPayment implements CcdPageConfiguration {
                 .build();
         }
 
-        var code = UUID.randomUUID();
         List<DynamicListElement> pbaAccountNumbers = retrievePbaNumbers()
             .stream()
-            .map(pbaNumber -> DynamicListElement.builder().label(pbaNumber).code(code).build())
+            .map(pbaNumber -> DynamicListElement.builder().label(pbaNumber).code(UUID.randomUUID()).build())
             .collect(Collectors.toList());
 
         DynamicList pbaNumbersDynamicList = DynamicList
             .builder()
-            .value(DynamicListElement.builder().label("pbaNumber").code(code).build())
+            .value(DynamicListElement.builder().label("pbaNumber").code(UUID.randomUUID()).build())
             .listItems(pbaAccountNumbers)
             .build();
 
