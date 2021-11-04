@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
+import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -35,6 +36,9 @@ public class CaseRemovalService {
     private CcdUpdateService ccdUpdateService;
 
     @Autowired
+    private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
+
+    @Autowired
     private IdamService idamService;
 
     @Async
@@ -54,10 +58,7 @@ public class CaseRemovalService {
             bulkTriggerService.bulkTrigger(
                 casesToProcess,
                 SYSTEM_REMOVE_BULK_CASE,
-                mainCaseDetails -> {
-                    mainCaseDetails.getData().setBulkListCaseReference(null);
-                    return mainCaseDetails;
-                },
+                bulkCaseCaseTaskFactory.getCaseTask(details.getData(), SYSTEM_REMOVE_BULK_CASE),
                 user,
                 serviceAuth
             )
@@ -74,7 +75,7 @@ public class CaseRemovalService {
             bulkActionCaseData.getBulkListCaseDetails().stream()
                 .filter(lv -> casesSuccessfullyRemoved.contains(lv.getValue().getCaseReference().getCaseReference()))
                 .collect(toList()));
-        bulkActionCaseData.setCasesAcceptedToListForHearing(null);
+        bulkActionCaseData.setCasesAcceptedToListForHearing(bulkActionCaseData.transformToCasesAcceptedToListForHearing());
 
         try {
             ccdUpdateService.submitBulkActionEvent(
