@@ -12,7 +12,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.allOf;
@@ -26,14 +25,16 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_NEED_TO_MAKE_CHANGES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_REQUEST_CHANGES;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_2_COMMENTS;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.FOR_THE_APPLICATION;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.IS_DISSOLUTION;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.IS_DIVORCE;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.NO;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DIVORCE_URL;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.THE_DIVORCE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.TO_END_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.YES;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getCommonTemplateVars;
 
 @ExtendWith(SpringExtension.class)
 class Applicant2RequestChangesNotificationTest {
@@ -55,10 +56,7 @@ class Applicant2RequestChangesNotificationTest {
         CaseData data = caseData();
         data.setApplicant2(getApplicant(Gender.FEMALE));
         data.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation("Not correct!");
-
-        final HashMap<String, String> templateVars = new HashMap<>();
-
-        when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        when(commonContent.commonTemplateVars(data, data.getApplicant1(), data.getApplicant2())).thenReturn(getCommonTemplateVars());
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(SIGN_IN_DIVORCE_URL, "sign in divorce link"));
 
         notification.sendToApplicant1(data, 1234567890123456L);
@@ -68,12 +66,12 @@ class Applicant2RequestChangesNotificationTest {
             eq(JOINT_APPLICANT1_NEED_TO_MAKE_CHANGES),
             argThat(allOf(
                 hasEntry(APPLICANT_2_COMMENTS, "Not correct!"),
-                hasEntry(FOR_THE_APPLICATION, THE_DIVORCE)
+                hasEntry(IS_DISSOLUTION, NO),
+                hasEntry(IS_DIVORCE, YES)
             )),
             eq(ENGLISH)
         );
-
-        verify(commonContent).templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).commonTemplateVars(data, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -82,10 +80,9 @@ class Applicant2RequestChangesNotificationTest {
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         data.setApplicant2(getApplicant(Gender.MALE));
         data.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation("Not correct!");
-
-        final HashMap<String, String> templateVars = new HashMap<>();
-
-        when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        final Map<String, String> templateVars = getCommonTemplateVars();
+        templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
+        when(commonContent.commonTemplateVars(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(SIGN_IN_DISSOLUTION_URL, "sign in dissolution link"));
 
         notification.sendToApplicant1(data, 1234567890123456L);
@@ -95,12 +92,12 @@ class Applicant2RequestChangesNotificationTest {
             eq(JOINT_APPLICANT1_NEED_TO_MAKE_CHANGES),
             argThat(allOf(
                 hasEntry(APPLICANT_2_COMMENTS, "Not correct!"),
-                hasEntry(FOR_THE_APPLICATION, TO_END_CIVIL_PARTNERSHIP)
+                hasEntry(IS_DISSOLUTION, YES),
+                hasEntry(IS_DIVORCE, NO)
             )),
             eq(ENGLISH)
         );
-
-        verify(commonContent).templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).commonTemplateVars(data, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -108,10 +105,7 @@ class Applicant2RequestChangesNotificationTest {
         CaseData data = caseData();
         data.setApplicant2(getApplicant(Gender.FEMALE));
         data.getCaseInvite().setApplicant2InviteEmailAddress(TEST_USER_EMAIL);
-
-        final HashMap<String, String> templateVars = new HashMap<>();
-
-        when(commonContent.templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
+        when(commonContent.commonTemplateVars(data, data.getApplicant2(), data.getApplicant1())).thenReturn(getCommonTemplateVars());
 
         notification.sendToApplicant2(data, 1234567890123456L);
 
@@ -121,8 +115,7 @@ class Applicant2RequestChangesNotificationTest {
             any(),
             eq(ENGLISH)
         );
-
-        verify(commonContent).templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).commonTemplateVars(data, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -131,10 +124,9 @@ class Applicant2RequestChangesNotificationTest {
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         data.setApplicant2(getApplicant(Gender.MALE));
         data.getCaseInvite().setApplicant2InviteEmailAddress(TEST_USER_EMAIL);
-
-        final HashMap<String, String> templateVars = new HashMap<>();
-
-        when(commonContent.templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
+        final Map<String, String> templateVars = getCommonTemplateVars();
+        templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
+        when(commonContent.commonTemplateVars(data, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
 
         notification.sendToApplicant2(data, 1234567890123456L);
 
@@ -144,7 +136,6 @@ class Applicant2RequestChangesNotificationTest {
             any(),
             eq(ENGLISH)
         );
-
-        verify(commonContent).templateVarsForApplicant(data, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).commonTemplateVars(data, data.getApplicant2(), data.getApplicant1());
     }
 }
