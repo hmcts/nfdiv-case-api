@@ -25,19 +25,10 @@ public final class NotificationConstants {
     public static final String DIVORCE_APPLICATION = "divorce application";
     public static final String APPLICATION_TO_END_A_CIVIL_PARTNERSHIP = "application to end a civil partnership";
     public static final String APPLICATION_TO_END_CIVIL_PARTNERSHIP = "application to end your civil partnership";
-    public static final String FOR_YOUR_APPLICATION = " for your divorce/ to end your civil partnership";
-    public static final String FOR_THE_APPLICATION = "for the divorce / to end your civil partnership";
-    public static final String FOR_A_APPLICATION = "for a divorce / to end your civil partnership";
-    public static final String FOR_YOUR_DIVORCE = " for your divorce";
-    public static final String DIVORCE_OR_END_CIVIL_PARTNERSHIP = "divorce / end your civil partnership";
-    public static final String TO_DIVORCE = " to divorce";
-    public static final String THE_DIVORCE = "for the divorce";
     public static final String TO_END_CIVIL_PARTNERSHIP = "to end your civil partnership";
     public static final String FOR_DIVORCE = "for divorce";
     public static final String REMINDER = "Reminder:";
     public static final String REMINDER_ACTION_REQUIRED = "Reminder/Action required";
-    public static final String REMINDER_APPLICATION = "Reminder: application / Application ";
-    public static final String REMINDER_APPLICATION_VALUE = "Reminder: application";
     public static final String PROCESS = "process";
     public static final String DIVORCE_PROCESS = "divorce process";
     public static final String CIVIL_PARTNERSHIP_PROCESS = "process to end your civil partnership";
@@ -79,9 +70,7 @@ public final class NotificationConstants {
     public static final String GENERAL_EMAIL_DETAILS = "general email details";
 
     public static final String PAY_FOR = " and pay for";
-    public static final String PAY_FOR_IT = " and pay for it";
     public static final String PAID_FOR = " and paid for";
-    public static final String PAID = " and paid";
 
     public static final String REVIEW_DEADLINE_DATE = "review deadline date";
 
