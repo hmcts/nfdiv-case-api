@@ -10,6 +10,7 @@ public final class NotificationConstants {
     public static final String IS_DIVORCE = "isDivorce";
     public static final String IS_DISSOLUTION = "isDissolution";
     public static final String IS_REMINDER = "isReminder";
+    public static final String ACTION_REQUIRED = "actionRequired";
     public static final String YES = "yes";
     public static final String NO = "no";
     public static final String APPLICATION = "Application";
@@ -23,12 +24,9 @@ public final class NotificationConstants {
     public static final String ENDING_YOUR_CIVIL_PARTNERSHIP = "Ending your civil partnership";
     public static final String YOUR_DIVORCE = "Your divorce";
     public static final String DIVORCE_APPLICATION = "divorce application";
-    public static final String APPLICATION_TO_END_A_CIVIL_PARTNERSHIP = "application to end a civil partnership";
     public static final String APPLICATION_TO_END_CIVIL_PARTNERSHIP = "application to end your civil partnership";
     public static final String TO_END_CIVIL_PARTNERSHIP = "to end your civil partnership";
     public static final String FOR_DIVORCE = "for divorce";
-    public static final String REMINDER = "Reminder:";
-    public static final String REMINDER_ACTION_REQUIRED = "Reminder/Action required";
     public static final String PROCESS = "process";
     public static final String DIVORCE_PROCESS = "divorce process";
     public static final String CIVIL_PARTNERSHIP_PROCESS = "process to end your civil partnership";
@@ -68,9 +66,6 @@ public final class NotificationConstants {
     public static final String CCD_REFERENCE = "CCD reference";
     public static final String GENERAL_OTHER_RECIPIENT_NAME = "general other recipient name";
     public static final String GENERAL_EMAIL_DETAILS = "general email details";
-
-    public static final String PAY_FOR = " and pay for";
-    public static final String PAID_FOR = " and paid for";
 
     public static final String REVIEW_DEADLINE_DATE = "review deadline date";
 

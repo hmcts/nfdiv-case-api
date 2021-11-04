@@ -6,7 +6,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -17,7 +16,7 @@ import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
-import static uk.gov.hmcts.divorce.citizen.notification.Applicant2ApprovedNotification.NEED_FEES_HELP;
+import static uk.gov.hmcts.divorce.citizen.notification.Applicant2ApprovedNotification.PAYS_FEES;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT2_APPROVED;
@@ -39,9 +38,6 @@ class Applicant2ApprovedNotificationTest {
     private NotificationService notificationService;
 
     @Mock
-    private EmailTemplatesConfig configVars;
-
-    @Mock
     private CommonContent commonContent;
 
     @InjectMocks
@@ -59,7 +55,7 @@ class Applicant2ApprovedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT1_APPLICANT2_APPROVED),
             argThat(allOf(
-                hasEntry(NEED_FEES_HELP, YES)
+                hasEntry(PAYS_FEES, YES)
             )),
             eq(ENGLISH)
         );
@@ -78,7 +74,7 @@ class Applicant2ApprovedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT1_APPLICANT2_APPROVED),
             argThat(allOf(
-                hasEntry(NEED_FEES_HELP, NO)
+                hasEntry(PAYS_FEES, NO)
             )),
             eq(ENGLISH)
         );
@@ -96,7 +92,7 @@ class Applicant2ApprovedNotificationTest {
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_APPLICANT2_APPLICANT2_APPROVED),
             argThat(allOf(
-                hasEntry(NEED_FEES_HELP, YES),
+                hasEntry(PAYS_FEES, YES),
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
@@ -116,7 +112,7 @@ class Applicant2ApprovedNotificationTest {
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_APPLICANT2_APPLICANT2_APPROVED),
             argThat(allOf(
-                hasEntry(NEED_FEES_HELP, NO),
+                hasEntry(PAYS_FEES, NO),
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
@@ -136,7 +132,7 @@ class Applicant2ApprovedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICANT1_APPLICANT2_APPROVED),
             argThat(allOf(
-                hasEntry(NEED_FEES_HELP, YES)
+                hasEntry(PAYS_FEES, YES)
             )),
             eq(ENGLISH)
         );
@@ -155,7 +151,7 @@ class Applicant2ApprovedNotificationTest {
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(JOINT_APPLICANT2_APPLICANT2_APPROVED),
             argThat(allOf(
-                hasEntry(NEED_FEES_HELP, YES),
+                hasEntry(PAYS_FEES, YES),
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)

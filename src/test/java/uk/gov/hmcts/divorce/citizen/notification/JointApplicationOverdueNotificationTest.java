@@ -6,7 +6,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
@@ -16,7 +15,7 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.Locale;
+import java.util.Map;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
@@ -24,20 +23,21 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
+import static uk.gov.hmcts.divorce.citizen.notification.Applicant2ApprovedNotification.PAYS_FEES;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_APPROVED_APPLICANT1_REMINDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_OVERDUE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TO_END_A_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_TYPE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.PAID_FOR;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.PAY_FOR;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.REMINDER;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.REMINDER_ACTION_REQUIRED;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.IS_DISSOLUTION;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.IS_DIVORCE;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.IS_REMINDER;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.NO;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.REVIEW_DEADLINE_DATE;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.YES;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getCommonTemplateVars;
 
 @ExtendWith(SpringExtension.class)
 public class JointApplicationOverdueNotificationTest {
@@ -48,9 +48,6 @@ public class JointApplicationOverdueNotificationTest {
     @Mock
     private CommonContent commonContent;
 
-    @Mock
-    private EmailTemplatesConfig emailTemplatesConfig;
-
     @InjectMocks
     private JointApplicationOverdueNotification notification;
 
@@ -59,10 +56,7 @@ public class JointApplicationOverdueNotificationTest {
         CaseData data = caseData();
         data.setDueDate(LocalDate.now());
         data.setApplicant2(getApplicant(Gender.FEMALE));
-
-        final HashMap<String, String> templateVars = new HashMap<>();
-
-        when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        when(commonContent.commonTemplateVars(data, data.getApplicant1(), data.getApplicant2())).thenReturn(getCommonTemplateVars());
 
         notification.sendApplicationNotReviewedEmail(data, 1234567890123456L);
 
@@ -74,8 +68,7 @@ public class JointApplicationOverdueNotificationTest {
             )),
             eq(ENGLISH)
         );
-
-        verify(commonContent).templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).commonTemplateVars(data, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -84,10 +77,9 @@ public class JointApplicationOverdueNotificationTest {
         data.setDueDate(LocalDate.now());
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         data.setApplicant2(getApplicant(Gender.MALE));
-
-        final HashMap<String, String> templateVars = new HashMap<>();
-
-        when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        final Map<String, String> templateVars = getCommonTemplateVars();
+        templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
+        when(commonContent.commonTemplateVars(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
 
         notification.sendApplicationNotReviewedEmail(data, 1234567890123456L);
 
@@ -95,13 +87,13 @@ public class JointApplicationOverdueNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICATION_OVERDUE),
             argThat(allOf(
-                hasEntry(APPLICATION_TYPE.toLowerCase(Locale.ROOT), APPLICATION_TO_END_A_CIVIL_PARTNERSHIP),
+                hasEntry(IS_DISSOLUTION, YES),
+                hasEntry(IS_DIVORCE, NO),
                 hasEntry(REVIEW_DEADLINE_DATE, LocalDate.now().format(DATE_TIME_FORMATTER))
             )),
             eq(ENGLISH)
         );
-
-        verify(commonContent).templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).commonTemplateVars(data, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -109,10 +101,7 @@ public class JointApplicationOverdueNotificationTest {
         CaseData data = caseData();
         data.setDueDate(LocalDate.now());
         data.setApplicant2(getApplicant(Gender.FEMALE));
-
-        final HashMap<String, String> templateVars = new HashMap<>();
-
-        when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        when(commonContent.commonTemplateVars(data, data.getApplicant1(), data.getApplicant2())).thenReturn(getCommonTemplateVars());
 
         notification.sendApplicationApprovedReminderToApplicant1(data, 1234567890123456L);
 
@@ -120,14 +109,12 @@ public class JointApplicationOverdueNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICATION_APPROVED_APPLICANT1_REMINDER),
             argThat(allOf(
-                hasEntry(REMINDER_ACTION_REQUIRED, REMINDER),
-                hasEntry(PAY_FOR, PAY_FOR),
-                hasEntry(PAID_FOR, PAID_FOR)
+                hasEntry(IS_REMINDER, YES),
+                hasEntry(PAYS_FEES, YES)
             )),
             eq(ENGLISH)
         );
-
-        verify(commonContent).templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).commonTemplateVars(data, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -137,10 +124,7 @@ public class JointApplicationOverdueNotificationTest {
         data.setApplicant2(getApplicant(Gender.FEMALE));
         HelpWithFees hwf = HelpWithFees.builder().needHelp(YesOrNo.YES).build();
         data.getApplication().setApplicant1HelpWithFees(hwf);
-
-        final HashMap<String, String> templateVars = new HashMap<>();
-
-        when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        when(commonContent.commonTemplateVars(data, data.getApplicant1(), data.getApplicant2())).thenReturn(getCommonTemplateVars());
 
         notification.sendApplicationApprovedReminderToApplicant1(data, 1234567890123456L);
 
@@ -148,14 +132,12 @@ public class JointApplicationOverdueNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICATION_APPROVED_APPLICANT1_REMINDER),
             argThat(allOf(
-                hasEntry(REMINDER_ACTION_REQUIRED, REMINDER),
-                hasEntry(PAY_FOR, ""),
-                hasEntry(PAID_FOR, "")
+                hasEntry(IS_REMINDER, YES),
+                hasEntry(PAYS_FEES, NO)
             )),
             eq(ENGLISH)
         );
-
-        verify(commonContent).templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).commonTemplateVars(data, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -164,10 +146,8 @@ public class JointApplicationOverdueNotificationTest {
         data.setDueDate(LocalDate.now());
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         data.setApplicant2(getApplicant(Gender.MALE));
-
-        final HashMap<String, String> templateVars = new HashMap<>();
-
-        when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        final Map<String, String> templateVars = getCommonTemplateVars();
+        when(commonContent.commonTemplateVars(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
 
         notification.sendApplicationApprovedReminderToApplicant1(data, 1234567890123456L);
 
@@ -175,14 +155,12 @@ public class JointApplicationOverdueNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICATION_APPROVED_APPLICANT1_REMINDER),
             argThat(allOf(
-                hasEntry(REMINDER_ACTION_REQUIRED, REMINDER),
-                hasEntry(PAY_FOR, PAY_FOR),
-                hasEntry(PAID_FOR, PAID_FOR)
+                hasEntry(IS_REMINDER, YES),
+                hasEntry(PAYS_FEES, YES)
             )),
             eq(ENGLISH)
         );
-
-        verify(commonContent).templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).commonTemplateVars(data, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -193,10 +171,9 @@ public class JointApplicationOverdueNotificationTest {
         data.setApplicant2(getApplicant(Gender.MALE));
         HelpWithFees hwf = HelpWithFees.builder().needHelp(YesOrNo.YES).build();
         data.getApplication().setApplicant1HelpWithFees(hwf);
-
         final HashMap<String, String> templateVars = new HashMap<>();
-
-        when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
+        when(commonContent.commonTemplateVars(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
 
         notification.sendApplicationApprovedReminderToApplicant1(data, 1234567890123456L);
 
@@ -204,13 +181,11 @@ public class JointApplicationOverdueNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(JOINT_APPLICATION_APPROVED_APPLICANT1_REMINDER),
             argThat(allOf(
-                hasEntry(REMINDER_ACTION_REQUIRED, REMINDER),
-                hasEntry(PAY_FOR, ""),
-                hasEntry(PAID_FOR, "")
+                hasEntry(IS_REMINDER, YES),
+                hasEntry(PAYS_FEES, NO)
             )),
             eq(ENGLISH)
         );
-
-        verify(commonContent).templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).commonTemplateVars(data, data.getApplicant1(), data.getApplicant2());
     }
 }
