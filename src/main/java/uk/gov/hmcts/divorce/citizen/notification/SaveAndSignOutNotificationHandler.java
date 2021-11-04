@@ -27,7 +27,7 @@ public class SaveAndSignOutNotificationHandler {
         notificationService.sendEmail(
             user.getEmail(),
             SAVE_SIGN_OUT,
-            commonContent.templateVarsForApplicant(caseData, self, partner),
+            commonContent.commonTemplateVars(caseData, self, partner),
             self.getLanguagePreference()
         );
     }
