@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
+import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
 import uk.gov.hmcts.divorce.divorcecase.model.Court;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -52,6 +53,9 @@ public class CasePronouncementServiceTest {
     @Mock
     private CcdUpdateService ccdUpdateService;
 
+    @Mock
+    private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
+
     @InjectMocks
     private CasePronouncementService casePronouncementService;
 
@@ -69,12 +73,15 @@ public class CasePronouncementServiceTest {
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
 
+        var caseTask = mock(CaseTask.class);
+        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseData, SYSTEM_PRONOUNCE_CASE)).thenReturn(caseTask);
+
         when(bulkTriggerService.bulkTrigger(
-            eq(bulkActionCaseData.getBulkListCaseDetails()),
-            eq(SYSTEM_PRONOUNCE_CASE),
-            any(CaseTask.class),
-            eq(user),
-            eq(SERVICE_AUTHORIZATION)
+            bulkActionCaseData.getBulkListCaseDetails(),
+            SYSTEM_PRONOUNCE_CASE,
+            caseTask,
+            user,
+            SERVICE_AUTHORIZATION
         )).thenReturn(emptyList());
 
         var bulkActionCaseDetails = CaseDetails
@@ -125,17 +132,21 @@ public class CasePronouncementServiceTest {
         when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
 
         var unprocessedBulkCases = List.of(bulkListCaseDetailsListValue2);
+
+        var caseTask = mock(CaseTask.class);
+        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseData, SYSTEM_PRONOUNCE_CASE)).thenReturn(caseTask);
+
         when(bulkTriggerService.bulkTrigger(
-            eq(bulkActionCaseData.getBulkListCaseDetails()),
-            eq(SYSTEM_PRONOUNCE_CASE),
-            any(CaseTask.class),
-            eq(user),
-            eq(SERVICE_AUTHORIZATION)
+            bulkActionCaseData.getBulkListCaseDetails(),
+            SYSTEM_PRONOUNCE_CASE,
+            caseTask,
+            user,
+            SERVICE_AUTHORIZATION
         )).thenReturn(unprocessedBulkCases);
 
         doNothing().when(ccdUpdateService).submitBulkActionEvent(
             bulkActionCaseDetails,
-                SYSTEM_UPDATE_BULK_CASE,
+            SYSTEM_UPDATE_BULK_CASE,
             user,
             SERVICE_AUTHORIZATION
         );
@@ -152,7 +163,7 @@ public class CasePronouncementServiceTest {
 
         verify(ccdUpdateService).submitBulkActionEvent(
             bulkActionCaseDetails,
-                SYSTEM_UPDATE_BULK_CASE,
+            SYSTEM_UPDATE_BULK_CASE,
             user,
             SERVICE_AUTHORIZATION
         );
@@ -183,18 +194,21 @@ public class CasePronouncementServiceTest {
         when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
 
         var unprocessedBulkCases = List.of(bulkListCaseDetailsListValue2);
+        var caseTask = mock(CaseTask.class);
+        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseData, SYSTEM_PRONOUNCE_CASE)).thenReturn(caseTask);
+
         when(bulkTriggerService.bulkTrigger(
-            eq(bulkActionCaseData.getBulkListCaseDetails()),
-            eq(SYSTEM_PRONOUNCE_CASE),
-            any(CaseTask.class),
-            eq(user),
-            eq(SERVICE_AUTHORIZATION)
+            bulkActionCaseData.getBulkListCaseDetails(),
+            SYSTEM_PRONOUNCE_CASE,
+            caseTask,
+            user,
+            SERVICE_AUTHORIZATION
         )).thenReturn(unprocessedBulkCases);
 
         doThrow(feignException(409, "some error"))
             .when(ccdUpdateService).submitBulkActionEvent(
                 bulkActionCaseDetails,
-                        SYSTEM_UPDATE_BULK_CASE,
+                SYSTEM_UPDATE_BULK_CASE,
                 user,
                 SERVICE_AUTHORIZATION
             );
@@ -211,7 +225,7 @@ public class CasePronouncementServiceTest {
 
         verify(ccdUpdateService).submitBulkActionEvent(
             bulkActionCaseDetails,
-                SYSTEM_UPDATE_BULK_CASE,
+            SYSTEM_UPDATE_BULK_CASE,
             user,
             SERVICE_AUTHORIZATION
         );
