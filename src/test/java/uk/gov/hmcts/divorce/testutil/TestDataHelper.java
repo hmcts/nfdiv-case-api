@@ -43,6 +43,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.SolicitorService;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.notification.NotificationConstants;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
@@ -77,6 +78,8 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_2_SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FIRST_NAME;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.IS_DISSOLUTION;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.PARTNER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
@@ -570,6 +573,8 @@ public class TestDataHelper {
 
     public static Map<String, String> getCommonTemplateVars() {
         Map<String, String> templateVars = new HashMap<>();
+        templateVars.put(IS_DIVORCE, NotificationConstants.YES);
+        templateVars.put(IS_DISSOLUTION, NotificationConstants.NO);
         templateVars.put(FIRST_NAME, TEST_FIRST_NAME);
         templateVars.put(LAST_NAME, TEST_LAST_NAME);
         templateVars.put(PARTNER, "partner");
