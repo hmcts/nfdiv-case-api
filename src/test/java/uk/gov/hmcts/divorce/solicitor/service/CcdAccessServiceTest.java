@@ -26,7 +26,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_1_SOL_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_2_CITIZEN_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
@@ -77,7 +76,7 @@ public class CcdAccessServiceTest {
                 TEST_SERVICE_AUTH_TOKEN,
                 String.valueOf(TEST_CASE_ID),
                 SOLICITOR_USER_ID,
-                new CaseUser(SOLICITOR_USER_ID, Set.of(CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole()))
+                new CaseUser(SOLICITOR_USER_ID, Set.of(APPLICANT_1_SOLICITOR.getRole()))
             );
 
         assertThatCode(() -> ccdAccessService.addApplicant1SolicitorRole(APP_1_SOL_AUTH_TOKEN, TEST_CASE_ID))
@@ -92,7 +91,7 @@ public class CcdAccessServiceTest {
                 TEST_SERVICE_AUTH_TOKEN,
                 String.valueOf(TEST_CASE_ID),
                 SOLICITOR_USER_ID,
-                new CaseUser(SOLICITOR_USER_ID, Set.of(CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole()))
+                new CaseUser(SOLICITOR_USER_ID, Set.of(APPLICANT_1_SOLICITOR.getRole()))
             );
 
         verifyNoMoreInteractions(idamService, authTokenGenerator, caseUserApi);
@@ -174,7 +173,7 @@ public class CcdAccessServiceTest {
                 TEST_SERVICE_AUTH_TOKEN,
                 String.valueOf(TEST_CASE_ID),
                 SOLICITOR_USER_ID,
-                new CaseUser(SOLICITOR_USER_ID, Set.of(CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole()))
+                new CaseUser(SOLICITOR_USER_ID, Set.of(APPLICANT_1_SOLICITOR.getRole()))
             );
 
         assertThatThrownBy(() -> ccdAccessService.addApplicant1SolicitorRole(APP_1_SOL_AUTH_TOKEN, TEST_CASE_ID))
