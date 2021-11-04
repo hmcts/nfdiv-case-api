@@ -64,6 +64,15 @@ public final class DocmosisTemplateConstants {
     public static final String IS_SERVICE_ORDER_TYPE_DEEMED = "isServiceOrderTypeDeemed";
     public static final String DOCUMENTS_ISSUED_ON = "documentIssuedOn";
 
+    public static final String PRONOUNCEMENT_JUDGE = "pronouncementJudge";
+    public static final String COURT_NAME = "courtName";
+    public static final String DATE_OF_HEARING = "dateOfHearing";
+    public static final String TIME_OF_HEARING = "timeOfHearing";
+    public static final String BULK_LIST = "bulkList";
+    public static final String APPLICANT_HEADING = "applicant";
+    public static final String RESPONDENT_HEADING = "respondent";
+    public static final String COSTS_GRANTED = "costsGranted";
+
     private DocmosisTemplateConstants() {
     }
 }
