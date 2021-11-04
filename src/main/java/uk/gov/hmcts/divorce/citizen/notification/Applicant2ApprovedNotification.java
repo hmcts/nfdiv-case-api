@@ -15,6 +15,8 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICAN
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT2_APPROVED_WITHOUT_HWF;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT2_APPROVED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.ACTION_REQUIRED;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.NO;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.YES;
@@ -23,7 +25,7 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.YES;
 @Slf4j
 public class Applicant2ApprovedNotification {
 
-    public static final String NEED_FEES_HELP = "needHelpWithFees";
+    public static final String PAYS_FEES = "paysFees";
 
     @Autowired
     private NotificationService notificationService;
@@ -66,18 +68,20 @@ public class Applicant2ApprovedNotification {
 
     private Map<String, String> applicant1TemplateVars(CaseData caseData, Applicant applicant, Applicant partner) {
         Map<String, String> templateVars = commonContent.commonTemplateVars(caseData, applicant, partner);
-        templateVars.put(NEED_FEES_HELP, needsHwf(caseData) ? YES : NO);
+        templateVars.put(PAYS_FEES, noFeesHelp(caseData) ? YES : NO);
+        templateVars.put(ACTION_REQUIRED, YES);
+        templateVars.put(IS_REMINDER, NO);
         return templateVars;
     }
 
     private Map<String, String> applicant2TemplateVars(CaseData caseData, Applicant applicant, Applicant partner) {
         Map<String, String> templateVars = commonContent.commonTemplateVars(caseData, applicant, partner);
-        templateVars.put(NEED_FEES_HELP, needsHwf(caseData) ? YES : NO);
+        templateVars.put(PAYS_FEES, noFeesHelp(caseData) ? YES : NO);
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         return templateVars;
     }
 
-    private boolean needsHwf(CaseData caseData) {
+    private boolean noFeesHelp(CaseData caseData) {
         return caseData.getApplication().getApplicant1HelpWithFees().getNeedHelp() == YesOrNo.NO
             || caseData.getApplication().getApplicant2HelpWithFees().getNeedHelp() == YesOrNo.NO;
     }
