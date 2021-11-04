@@ -20,12 +20,18 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemoveBulkCase.SYSTEM_REMOVE_BULK_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetailsListValue;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getCaseLinkListValue;
 
 @ExtendWith(MockitoExtension.class)
 public class CaseRemovalServiceTest {
@@ -54,20 +60,22 @@ public class CaseRemovalServiceTest {
             .builder()
             .dateAndTimeOfHearing(LocalDateTime.of(2021, 11, 10, 0, 0, 0))
             .courtName(Court.SERVICE_CENTRE)
-            .bulkListCaseDetails(List.of(getBulkListCaseDetailsListValue("1")))
+            .bulkListCaseDetails(List.of(getBulkListCaseDetailsListValue("1"), getBulkListCaseDetailsListValue("2")))
+            .casesAcceptedToListForHearing(List.of(getCaseLinkListValue("1")))
             .build();
 
+        var casesToProcess = List.of(getBulkListCaseDetailsListValue("2"));
         var user = mock(User.class);
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
 
         var caseTask = mock(CaseTask.class);
-        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseData, SYSTEM_PRONOUNCE_CASE)).thenReturn(caseTask);
+        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseData, SYSTEM_REMOVE_BULK_CASE)).thenReturn(caseTask);
 
         when(bulkTriggerService.bulkTrigger(
-            bulkActionCaseData.getBulkListCaseDetails(),
-            SYSTEM_PRONOUNCE_CASE,
+            casesToProcess,
+            SYSTEM_REMOVE_BULK_CASE,
             caseTask,
             user,
             SERVICE_AUTHORIZATION
@@ -78,8 +86,23 @@ public class CaseRemovalServiceTest {
             .data(bulkActionCaseData)
             .build();
 
-        caseRemovalService.removeCases(bulkActionCaseDetails, TEST_SYSTEM_AUTHORISATION_TOKEN);
+        caseRemovalService.removeCases(bulkActionCaseDetails, List.of("2"), TEST_SYSTEM_AUTHORISATION_TOKEN);
 
-        // verify stuff happened
+        verify(bulkTriggerService).bulkTrigger(
+            eq(casesToProcess),
+            eq(SYSTEM_REMOVE_BULK_CASE),
+            any(CaseTask.class),
+            eq(user),
+            eq(SERVICE_AUTHORIZATION)
+        );
+
+        verify(ccdUpdateService).submitBulkActionEvent(
+            eq(bulkActionCaseDetails),
+            eq(SYSTEM_UPDATE_BULK_CASE),
+            eq(user),
+            eq(SERVICE_AUTHORIZATION)
+        );
+
+        assertThat(bulkActionCaseDetails.getData().getBulkListCaseDetails()).hasSize(1);
     }
 }

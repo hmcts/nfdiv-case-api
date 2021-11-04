@@ -656,4 +656,15 @@ public class TestDataHelper {
             .value(bulkListCaseDetails)
             .build();
     }
+
+    public static ListValue<CaseLink> getCaseLinkListValue(String caseReference) {
+        final var caseLink = CaseLink.builder()
+            .caseReference(caseReference)
+            .build();
+
+        return ListValue
+            .<CaseLink>builder()
+            .value(caseLink)
+            .build();
+    }
 }
