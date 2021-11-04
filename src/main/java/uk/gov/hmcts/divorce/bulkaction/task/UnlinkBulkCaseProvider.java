@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemUnLinkBulkCase.SYSTEM_UNLINK_BULK_CASE;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemUnlinkBulkCase.SYSTEM_UNLINK_BULK_CASE;
 
 @Component
 public class UnlinkBulkCaseProvider implements BulkActionCaseTaskProvider {

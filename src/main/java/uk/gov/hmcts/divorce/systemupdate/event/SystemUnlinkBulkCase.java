@@ -18,7 +18,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
-public class SystemUnLinkBulkCase implements CCDConfig<CaseData, State, UserRole> {
+public class SystemUnlinkBulkCase implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SYSTEM_UNLINK_BULK_CASE = "system-unlink-bulk-case";
 

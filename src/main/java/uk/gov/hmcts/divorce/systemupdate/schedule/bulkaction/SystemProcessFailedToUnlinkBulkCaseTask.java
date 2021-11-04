@@ -17,7 +17,7 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Dropped;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemUnLinkBulkCase.SYSTEM_UNLINK_BULK_CASE;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemUnlinkBulkCase.SYSTEM_UNLINK_BULK_CASE;
 
 @Component
 @Slf4j
