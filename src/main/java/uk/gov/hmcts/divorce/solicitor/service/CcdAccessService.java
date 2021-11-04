@@ -14,7 +14,6 @@ import java.util.Set;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 
 @Service
 @Slf4j
@@ -32,7 +31,7 @@ public class CcdAccessService {
         User solicitorUser = idamService.retrieveUser(solicitorIdamToken);
         User systemUpdateUser = idamService.retrieveSystemUpdateUserDetails();
 
-        Set<String> caseRoles = Set.of(CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
+        Set<String> caseRoles = Set.of(APPLICANT_1_SOLICITOR.getRole());
 
         String solicitorUserId = solicitorUser.getUserDetails().getId();
 

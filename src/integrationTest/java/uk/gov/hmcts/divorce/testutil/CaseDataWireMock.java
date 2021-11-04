@@ -44,7 +44,7 @@ public final class CaseDataWireMock {
             .withHeader(HttpHeaders.AUTHORIZATION, new EqualToPattern(BEARER + SYSTEM_UPDATE_AUTH_TOKEN))
             .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(AUTH_HEADER_VALUE))
             .withRequestBody(new EqualToJsonPattern(
-                "{\"user_id\" : \"1\", \"case_roles\":[\"[CREATOR]\",\"[APPONESOLICITOR]\"]}",
+                "{\"user_id\" : \"1\", \"case_roles\":[\"[APPONESOLICITOR]\"]}",
                 true,
                 true))
             .willReturn(aResponse().withStatus(200))
@@ -68,7 +68,7 @@ public final class CaseDataWireMock {
             .withHeader(HttpHeaders.AUTHORIZATION, new EqualToPattern(BEARER + CASEWORKER_AUTH_TOKEN))
             .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(SERVICE_AUTHORIZATION))
             .withRequestBody(new EqualToJsonPattern(
-                "{\"user_id\" : \"1\", \"case_roles\":[\"[CREATOR]\",\"[APPONESOLICITOR]\"]}",
+                "{\"user_id\" : \"1\", \"case_roles\":[\"[APPONESOLICITOR]\"]}",
                 true,
                 true))
             .willReturn(aResponse().withStatus(403))
