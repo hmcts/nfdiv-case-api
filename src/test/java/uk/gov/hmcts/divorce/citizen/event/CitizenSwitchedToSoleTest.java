@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
+import uk.gov.hmcts.divorce.citizen.notification.Applicant1SwitchToSoleNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
@@ -23,6 +24,8 @@ import java.util.HashSet;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSwitchedToSole.SWITCH_TO_SOLE;
@@ -35,6 +38,9 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1C
 
 @ExtendWith(MockitoExtension.class)
 class CitizenSwitchedToSoleTest {
+
+    @Mock
+    private Applicant1SwitchToSoleNotification applicant1SwitchToSoleNotification;
 
     @Mock
     private CcdAccessService ccdAccessService;
@@ -57,7 +63,7 @@ class CitizenSwitchedToSoleTest {
     }
 
     @Test
-    void givenEventStartedWithValidJointCaseShouldSetApplicationTypeToSole() {
+    void givenEventStartedWithValidJointCaseShouldSetApplicationTypeToSoleAndSendNotifications() {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = validJointApplicant1CaseData();
@@ -67,6 +73,10 @@ class CitizenSwitchedToSoleTest {
         caseDetails.setId(caseId);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetails);
+
+        verify(applicant1SwitchToSoleNotification).sendToApplicant1(caseData, caseDetails.getId());
+        verify(applicant1SwitchToSoleNotification).sendToApplicant2(caseData, caseDetails.getId());
+        verifyNoMoreInteractions(applicant1SwitchToSoleNotification);
 
         assertThat(response.getData().getApplicationType()).isEqualTo(SOLE_APPLICATION);
     }
@@ -192,7 +202,7 @@ class CitizenSwitchedToSoleTest {
                     .lastName("Build")
                     .gender(MALE)
                     .build());
-        
+
         assertThat(response.getData().getCaseInvite())
             .isEqualTo(CaseInvite.builder()
                 .applicant2InviteEmailAddress("bob@buildings.com")
