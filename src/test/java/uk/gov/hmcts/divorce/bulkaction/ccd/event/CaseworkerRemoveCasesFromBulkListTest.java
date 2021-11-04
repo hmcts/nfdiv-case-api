@@ -147,6 +147,51 @@ public class CaseworkerRemoveCasesFromBulkListTest {
     }
 
     @Test
+    void shouldReturnErrorIfDuplicateCaseIsAddedToCasesAcceptedToListForHearingList() {
+        final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
+        final CaseLink caseLink1 = CaseLink.builder()
+            .caseReference("12345")
+            .build();
+        final CaseLink caseLink2 = CaseLink.builder()
+            .caseReference("12345")
+            .build();
+        final CaseLink caseLink3 = CaseLink.builder()
+            .caseReference("98765")
+            .build();
+        final ListValue<BulkListCaseDetails> bulkListCaseDetailsListValue1 =
+            ListValue.<BulkListCaseDetails>builder()
+                .value(BulkListCaseDetails.builder()
+                    .caseReference(caseLink1)
+                    .build())
+                .build();
+        final ListValue<BulkListCaseDetails> bulkListCaseDetailsListValue2 =
+            ListValue.<BulkListCaseDetails>builder()
+                .value(BulkListCaseDetails.builder()
+                    .caseReference(caseLink3)
+                    .build())
+                .build();
+        final ListValue<CaseLink> caseLinkListValue1 =
+            ListValue.<CaseLink>builder()
+                .value(caseLink1)
+                .build();
+        final ListValue<CaseLink> caseLinkListValue2 =
+            ListValue.<CaseLink>builder()
+                .value(caseLink2)
+                .build();
+
+        details.setData(BulkActionCaseData.builder().build());
+        details.getData().setBulkListCaseDetails(List.of(bulkListCaseDetailsListValue1, bulkListCaseDetailsListValue2));
+        details.getData().setCasesAcceptedToListForHearing(List.of(caseLinkListValue1, caseLinkListValue2));
+        details.setId(1L);
+
+        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> result =
+            caseworkerRemoveCasesFromBulkList.midEvent(details, details);
+
+        assertThat(result.getErrors()).isNotNull();
+        assertThat(result.getErrors().size(), is(1));
+    }
+
+    @Test
     void shouldNotReturnErrorIfNoCasesAreAddedToCasesAcceptedToListForHearingList() {
         final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
         final CaseLink caseLink = CaseLink.builder()

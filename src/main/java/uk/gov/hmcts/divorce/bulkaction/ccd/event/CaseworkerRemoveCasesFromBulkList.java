@@ -17,7 +17,6 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
@@ -25,6 +24,7 @@ import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCasesAcceptedToListForHearing;
 
 @Component
 public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
@@ -71,15 +71,11 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
         CaseDetails<BulkActionCaseData, BulkActionState> detailsBefore
     ) {
         BulkActionCaseData caseData = details.getData();
+        List<String> validationErrors = validateCasesAcceptedToListForHearing(caseData);
 
-        List<String> caseReferences = caseData.getBulkListCaseDetails().stream()
-            .map(c -> c.getValue().getCaseReference().getCaseReference())
-            .collect(toList());
-
-        if (caseData.getCasesAcceptedToListForHearing().stream()
-            .anyMatch(caseLink -> !caseReferences.contains(caseLink.getValue().getCaseReference()))) {
+        if (!validationErrors.isEmpty()) {
             return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder()
-                .errors(singletonList("You can only remove cases from the list of cases accepted to list for hearing."))
+                .errors(validationErrors)
                 .data(caseData)
                 .build();
         }
