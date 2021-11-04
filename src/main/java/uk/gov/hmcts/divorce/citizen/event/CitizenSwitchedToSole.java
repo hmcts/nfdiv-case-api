@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.citizen.notification.Applicant1SwitchToSoleNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -36,6 +37,9 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
 
     @Autowired
     private HttpServletRequest httpServletRequest;
+
+    @Autowired
+    private Applicant1SwitchToSoleNotification applicant1SwitchToSoleNotification;
 
     public static final String SWITCH_TO_SOLE = "switch-to-sole";
 
@@ -72,6 +76,9 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
 
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
         removeApplicant2AnswersFromCase(data);
+
+        applicant1SwitchToSoleNotification.sendToApplicant1(data, details.getId());
+        applicant1SwitchToSoleNotification.sendToApplicant2(data, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
