@@ -17,6 +17,8 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
+import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
+import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
@@ -415,6 +417,26 @@ public class TestDataHelper {
             .build();
     }
 
+    public static CallbackRequest callbackRequest(final BulkActionCaseData caseData,
+                                                  final String eventId) {
+        OBJECT_MAPPER.registerModule(new JavaTimeModule());
+
+        return CallbackRequest
+            .builder()
+            .eventId(eventId)
+            .caseDetailsBefore(caseDetailsBefore(caseData))
+            .caseDetails(
+                CaseDetails
+                    .builder()
+                    .data(OBJECT_MAPPER.convertValue(caseData, TYPE_REFERENCE))
+                    .id(TEST_CASE_ID)
+                    .createdDate(LOCAL_DATE_TIME)
+                    .caseTypeId(BulkActionCaseTypeConfig.CASE_TYPE)
+                    .build()
+            )
+            .build();
+    }
+
     public static CallbackRequest callbackRequest(final CaseData caseData,
                                                   final String eventId) {
         OBJECT_MAPPER.registerModule(new JavaTimeModule());
@@ -620,6 +642,15 @@ public class TestDataHelper {
             .data(OBJECT_MAPPER.convertValue(caseData, TYPE_REFERENCE))
             .id(TEST_CASE_ID)
             .caseTypeId(CASE_TYPE)
+            .build();
+    }
+
+    private static CaseDetails caseDetailsBefore(BulkActionCaseData caseData) {
+        return CaseDetails
+            .builder()
+            .data(OBJECT_MAPPER.convertValue(caseData, TYPE_REFERENCE))
+            .id(TEST_CASE_ID)
+            .caseTypeId(BulkActionCaseTypeConfig.CASE_TYPE)
             .build();
     }
 

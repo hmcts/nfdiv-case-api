@@ -24,14 +24,12 @@ import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayment;
-import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.solicitor.service.notification.SolicitorSubmittedNotification;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import javax.servlet.http.HttpServletRequest;
 
 import static java.lang.Integer.parseInt;
 import static java.util.Collections.singletonList;
@@ -41,7 +39,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -74,12 +71,6 @@ public class SolicitorSubmitApplicationTest {
     private PaymentService paymentService;
 
     @Mock
-    private CcdAccessService ccdAccessService;
-
-    @Mock
-    private HttpServletRequest httpServletRequest;
-
-    @Mock
     private SubmissionService submissionService;
 
     @Mock
@@ -103,7 +94,6 @@ public class SolicitorSubmitApplicationTest {
         caseDetails.setId(caseId);
 
         when(paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE)).thenReturn(orderSummary);
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(authorization);
         when(orderSummary.getPaymentTotal()).thenReturn("55000");
 
         var midEventCaseData = caseData();
@@ -119,11 +109,6 @@ public class SolicitorSubmitApplicationTest {
 
         assertThat(response.getData().getApplication().getApplicationFeeOrderSummary()).isEqualTo(orderSummary);
         assertThat(response.getData().getApplication().getSolApplicationFeeInPounds()).isEqualTo("550");
-
-        verify(ccdAccessService).addApplicant1SolicitorRole(
-            authorization,
-            caseId
-        );
     }
 
     @Test

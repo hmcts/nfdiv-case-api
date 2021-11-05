@@ -25,12 +25,16 @@ import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant2;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutTheSolicitor;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolHowDoYouWantToApplyForDivorce;
 import uk.gov.hmcts.divorce.solicitor.event.page.UploadDocument;
+import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorCreateApplicationService;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Arrays.asList;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -54,6 +58,12 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
 
     @Autowired
     private AddSystemUpdateRole addSystemUpdateRole;
+
+    @Autowired
+    private CcdAccessService ccdAccessService;
+
+    @Autowired
+    private HttpServletRequest httpServletRequest;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -104,9 +114,29 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
             .showSummary()
             .endButtonLabel("Save Application")
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, updatedRoles.toArray(UserRole[]::new))
             .grant(READ_UPDATE, SUPER_USER)
             .grant(READ, CASE_WORKER, LEGAL_ADVISOR));
+    }
+
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> before) {
+        var orgId = details
+            .getData()
+            .getApplicant1()
+            .getSolicitor()
+            .getOrganisationPolicy()
+            .getOrganisation()
+            .getOrganisationId();
+
+        log.info("Adding the applicant's solicitor case roles");
+        ccdAccessService.addApplicant1SolicitorRole(
+            httpServletRequest.getHeader(AUTHORIZATION),
+            details.getId(),
+            orgId
+        );
+
+        return SubmittedCallbackResponse.builder().build();
     }
 }
