@@ -20,16 +20,10 @@ public final class NotificationConstants {
     public static final String DIVORCE = "divorce";
     public static final String DISSOLUTION = "dissolution";
     public static final String CIVIL_PARTNERSHIP = "civil partnership";
-    public static final String YOUR_UNION = "Your union";
-    public static final String ENDING_YOUR_CIVIL_PARTNERSHIP = "Ending your civil partnership";
-    public static final String YOUR_DIVORCE = "Your divorce";
     public static final String DIVORCE_APPLICATION = "divorce application";
     public static final String APPLICATION_TO_END_CIVIL_PARTNERSHIP = "application to end your civil partnership";
     public static final String TO_END_CIVIL_PARTNERSHIP = "to end your civil partnership";
     public static final String FOR_DIVORCE = "for divorce";
-    public static final String PROCESS = "process";
-    public static final String DIVORCE_PROCESS = "divorce process";
-    public static final String CIVIL_PARTNERSHIP_PROCESS = "process to end your civil partnership";
 
     public static final String CREATE_ACCOUNT_LINK = "create account link";
     public static final String SIGN_IN_URL_NOTIFY_KEY = "signin url";
@@ -49,10 +43,6 @@ public final class NotificationConstants {
     public static final String SUBMISSION_RESPONSE_DATE = "date of response";
     public static final String APPLICATION_REFERENCE = "reference number";
     public static final String CASE_ID = "case id";
-
-    public static final String ACCOUNT = "account";
-    public static final String DIVORCE_ACCOUNT = "divorce account";
-    public static final String CIVIL_PARTNERSHIP_ACCOUNT = "account to end your civil partnership";
 
     public static final String ACCESS_CODE = "access code";
 
