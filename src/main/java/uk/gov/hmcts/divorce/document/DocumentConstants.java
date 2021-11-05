@@ -8,6 +8,9 @@ public final class DocumentConstants {
     public static final String RESPONDENT_ANSWERS_DOCUMENT_NAME = "respondentAnswers";
     public static final String RESPONDENT_ANSWERS_TEMPLATE_ID = "RESPONDENT_ANSWERS";
 
+    public static final String PRONOUNCEMENT_LIST_TEMPLATE_ID = "BULK_CASE_PRONOUNCEMENT";
+    public static final String PRONOUNCEMENT_LIST_DOCUMENT_NAME = "NFD_Pronouncement_List";
+
     public static final String DIVORCE_DRAFT_APPLICATION = "DIVORCE_DRAFT_APPLICATION";
     public static final String DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME = "draft-divorce-application-";
 
