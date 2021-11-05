@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.bulkaction.service;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -41,8 +40,7 @@ public class CaseRemovalService {
     @Autowired
     private IdamService idamService;
 
-    @Async
-    public void removeCases(final CaseDetails<BulkActionCaseData, BulkActionState> details,
+    public List<String> removeCases(final CaseDetails<BulkActionCaseData, BulkActionState> details,
                             final List<String> casesToRemove, final String authorization) {
         final BulkActionCaseData bulkActionCaseData = details.getData();
 
@@ -87,5 +85,7 @@ public class CaseRemovalService {
         } catch (final FeignException e) {
             log.error("Update failed for bulk case id {} ", details.getId(), e);
         }
+
+        return unprocessedBulkCaseIds;
     }
 }
