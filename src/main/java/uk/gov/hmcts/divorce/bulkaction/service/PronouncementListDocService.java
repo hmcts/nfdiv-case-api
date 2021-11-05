@@ -44,7 +44,7 @@ public class PronouncementListDocService {
 
         var pronouncementListDoc = caseDataDocumentService.renderDocument(
             templateContent,
-            1L,
+            caseId,
             PRONOUNCEMENT_LIST_TEMPLATE_ID,
             LanguagePreference.ENGLISH,
             PRONOUNCEMENT_LIST_DOCUMENT_NAME
