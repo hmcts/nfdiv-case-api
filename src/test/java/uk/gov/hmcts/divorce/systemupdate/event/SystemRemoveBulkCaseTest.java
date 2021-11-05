@@ -11,15 +11,15 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemUnlinkBulkCase.SYSTEM_UNLINK_BULK_CASE;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemoveBulkCase.SYSTEM_REMOVE_BULK_CASE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(SpringExtension.class)
-public class SystemUnlinkBulkCaseTest {
+public class SystemRemoveBulkCaseTest {
 
     @InjectMocks
-    private SystemUnlinkBulkCase systemUnLinkBulkCase;
+    private SystemRemoveBulkCase systemUnLinkBulkCase;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
@@ -29,6 +29,6 @@ public class SystemUnlinkBulkCaseTest {
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(SYSTEM_UNLINK_BULK_CASE);
+            .contains(SYSTEM_REMOVE_BULK_CASE);
     }
 }

@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Dropped;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Pronounced;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -25,7 +26,7 @@ public class SystemUpdateCase implements CCDConfig<BulkActionCaseData, BulkActio
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
         new BulkActionPageBuilder(configBuilder
             .event(SYSTEM_UPDATE_BULK_CASE)
-            .forStates(Listed, Pronounced)
+            .forStates(Listed, Pronounced, Dropped)
             .name("System update case")
             .description("System update case")
             .explicitGrants()

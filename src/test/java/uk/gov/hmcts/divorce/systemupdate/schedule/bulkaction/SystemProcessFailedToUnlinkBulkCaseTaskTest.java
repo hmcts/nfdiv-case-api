@@ -28,7 +28,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Dropped;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemUnlinkBulkCase.SYSTEM_UNLINK_BULK_CASE;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemoveBulkCase.SYSTEM_REMOVE_BULK_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 
@@ -80,21 +80,21 @@ public class SystemProcessFailedToUnlinkBulkCaseTaskTest {
             .thenReturn(caseDetailsList);
 
         final CaseTask caseTask = mock(CaseTask.class);
-        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseData, SYSTEM_UNLINK_BULK_CASE)).thenReturn(caseTask);
+        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseData, SYSTEM_REMOVE_BULK_CASE)).thenReturn(caseTask);
 
         processFailedToUnlinkBulkCaseTask.run();
 
         verify(bulkCaseProcessingService)
             .updateUnprocessedBulkCases(
                 caseDetails1,
-                SYSTEM_UNLINK_BULK_CASE,
+                SYSTEM_REMOVE_BULK_CASE,
                 caseTask,
                 user,
                 SERVICE_AUTHORIZATION);
         verify(bulkCaseProcessingService)
             .updateUnprocessedBulkCases(
                 caseDetails2,
-                SYSTEM_UNLINK_BULK_CASE,
+                SYSTEM_REMOVE_BULK_CASE,
                 caseTask,
                 user,
                 SERVICE_AUTHORIZATION);

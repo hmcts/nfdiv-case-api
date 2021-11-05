@@ -27,7 +27,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerDropCase.CASEWORKER_DROP_CASE;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemUnlinkBulkCase.SYSTEM_UNLINK_BULK_CASE;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemoveBulkCase.SYSTEM_REMOVE_BULK_CASE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createBulkActionConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
@@ -77,11 +77,11 @@ public class CaseworkerDropCaseTest {
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(CASEWORKER_AUTH_TOKEN);
         when(idamService.retrieveUser(CASEWORKER_AUTH_TOKEN)).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(bulkCaseCaseTaskFactory.getCaseTask(caseData, SYSTEM_UNLINK_BULK_CASE)).thenReturn(caseTask);
+        when(bulkCaseCaseTaskFactory.getCaseTask(caseData, SYSTEM_REMOVE_BULK_CASE)).thenReturn(caseTask);
 
         doNothing().when(bulkCaseProcessingService).updateAllBulkCases(
             details,
-            SYSTEM_UNLINK_BULK_CASE,
+            SYSTEM_REMOVE_BULK_CASE,
             caseTask,
             user,
             TEST_SERVICE_AUTH_TOKEN
@@ -91,7 +91,7 @@ public class CaseworkerDropCaseTest {
 
         verify(bulkCaseProcessingService).updateAllBulkCases(
             details,
-            SYSTEM_UNLINK_BULK_CASE,
+            SYSTEM_REMOVE_BULK_CASE,
             caseTask,
             user,
             TEST_SERVICE_AUTH_TOKEN

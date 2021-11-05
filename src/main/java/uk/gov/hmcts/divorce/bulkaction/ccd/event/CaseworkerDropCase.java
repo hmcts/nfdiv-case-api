@@ -16,8 +16,8 @@ import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
-import java.util.EnumSet;
 import javax.servlet.http.HttpServletRequest;
+import java.util.EnumSet;
 
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
@@ -26,7 +26,7 @@ import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemUnlinkBulkCase.SYSTEM_UNLINK_BULK_CASE;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemoveBulkCase.SYSTEM_REMOVE_BULK_CASE;
 
 @Component
 @Slf4j
@@ -71,8 +71,8 @@ public class CaseworkerDropCase implements CCDConfig<BulkActionCaseData, BulkAct
 
         bulkCaseProcessingService.updateAllBulkCases(
             bulkCaseDetails,
-            SYSTEM_UNLINK_BULK_CASE,
-            bulkCaseCaseTaskFactory.getCaseTask(bulkCaseDetails.getData(), SYSTEM_UNLINK_BULK_CASE),
+            SYSTEM_REMOVE_BULK_CASE,
+            bulkCaseCaseTaskFactory.getCaseTask(bulkCaseDetails.getData(), SYSTEM_REMOVE_BULK_CASE),
             idamService.retrieveUser(request.getHeader(AUTHORIZATION)),
             authTokenGenerator.generate()
         );
