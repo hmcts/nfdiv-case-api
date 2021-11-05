@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.notification;
 public final class NotificationConstants {
     public static final String FIRST_NAME = "first name";
     public static final String LAST_NAME = "last name";
-    public static final String RELATIONSHIP = "relationship";
     public static final String PARTNER = "partner";
     public static final String THEIR_EMAIL_ADDRESS = "their email address";
 
@@ -13,22 +12,9 @@ public final class NotificationConstants {
     public static final String ACTION_REQUIRED = "actionRequired";
     public static final String YES = "yes";
     public static final String NO = "no";
-    public static final String APPLICATION = "Application";
-    public static final String APPLICATION_TYPE = "Application type";
-    public static final String UNION = "union";
-    public static final String MARRIAGE = "marriage";
-    public static final String DIVORCE = "divorce";
-    public static final String DISSOLUTION = "dissolution";
-    public static final String CIVIL_PARTNERSHIP = "civil partnership";
-    public static final String DIVORCE_APPLICATION = "divorce application";
-    public static final String APPLICATION_TO_END_CIVIL_PARTNERSHIP = "application to end your civil partnership";
-    public static final String TO_END_CIVIL_PARTNERSHIP = "to end your civil partnership";
-    public static final String FOR_DIVORCE = "for divorce";
 
     public static final String CREATE_ACCOUNT_LINK = "create account link";
     public static final String SIGN_IN_URL_NOTIFY_KEY = "signin url";
-    public static final String RELATIONSHIP_COURT_HEADER = "relationship court header";
-
     public static final String SIGN_IN_DIVORCE_URL = "signInDivorceUrl";
     public static final String APPLICANT_2_SIGN_IN_DIVORCE_URL = "applicant2SignInDivorceUrl";
     public static final String RESPONDENT_SIGN_IN_DIVORCE_URL = "respondentSignInDivorceUrl";

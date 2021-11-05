@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
@@ -55,10 +56,9 @@ class Applicant1ResubmitNotificationTest {
     void shouldSendEmailToApplicant1WithDivorceContent() {
         CaseData data = validApplicant2CaseData();
         data.setDueDate(LOCAL_DATE);
-
-        final HashMap<String, String> templateVars = new HashMap<>();
-
-        when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        final Map<String, String> templateVars = new HashMap<>();
+        templateVars.putAll(getConfigTemplateVars());
+        when(commonContent.commonTemplateVars(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
