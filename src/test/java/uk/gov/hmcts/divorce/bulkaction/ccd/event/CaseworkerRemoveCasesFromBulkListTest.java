@@ -16,7 +16,6 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.service.CaseRemovalService;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -27,7 +26,6 @@ import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerRemoveCasesFromBulkList.CASEWORKER_REMOVE_CASES_BULK_LIST;
@@ -263,7 +261,7 @@ public class CaseworkerRemoveCasesFromBulkListTest {
     }
 
     @Test
-    void x() {
+    void shouldReturnWarningMessagesIfAnyCasesCannotBeRemoved() {
         final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
         final CaseLink caseLink1 = CaseLink.builder()
             .caseReference("12345")
