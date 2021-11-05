@@ -5,15 +5,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.ccd.client.CaseAssignmentApi;
 import uk.gov.hmcts.reform.ccd.client.CaseUserApi;
+import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRoleWithOrganisation;
+import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseUser;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 
 @Service
 @Slf4j
@@ -22,12 +27,15 @@ public class CcdAccessService {
     private CaseUserApi caseUserApi;
 
     @Autowired
+    private CaseAssignmentApi caseAssignmentApi;
+
+    @Autowired
     private IdamService idamService;
 
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
-    public void addApplicant1SolicitorRole(String solicitorIdamToken, Long caseId) {
+    public void addApplicant1SolicitorRole(String solicitorIdamToken, Long caseId, String orgId) {
         User solicitorUser = idamService.retrieveUser(solicitorIdamToken);
         User systemUpdateUser = idamService.retrieveSystemUpdateUserDetails();
 
@@ -41,12 +49,43 @@ public class CcdAccessService {
             solicitorUserId
         );
 
-        caseUserApi.updateCaseRolesForUser(
-            systemUpdateUser.getAuthToken(),
-            authTokenGenerator.generate(),
-            String.valueOf(caseId),
-            solicitorUserId,
-            new CaseUser(solicitorUserId, caseRoles)
+        String idamToken = systemUpdateUser.getAuthToken();
+        String s2sToken = authTokenGenerator.generate();
+
+        caseAssignmentApi.removeCaseUserRoles(
+            idamToken,
+            s2sToken,
+            CaseAssignmentUserRolesRequest
+                .builder()
+                .caseAssignmentUserRolesWithOrganisation(
+                    List.of(
+                        CaseAssignmentUserRoleWithOrganisation.builder()
+                            .caseDataId(caseId.toString())
+                            .organisationId(orgId)
+                            .caseRole(CREATOR.getRole())
+                            .userId(solicitorUserId)
+                            .build()
+                    )
+                )
+                .build()
+        );
+
+        caseAssignmentApi.addCaseUserRoles(
+            idamToken,
+            s2sToken,
+            CaseAssignmentUserRolesRequest
+                .builder()
+                .caseAssignmentUserRolesWithOrganisation(
+                    List.of(
+                        CaseAssignmentUserRoleWithOrganisation.builder()
+                            .caseDataId(caseId.toString())
+                            .organisationId(orgId)
+                            .caseRole(APPLICANT_1_SOLICITOR.getRole())
+                            .userId(solicitorUserId)
+                            .build()
+                    )
+                )
+                .build()
         );
 
         log.info("Successfully added the applicant's solicitor roles to case Id {} ", caseId);

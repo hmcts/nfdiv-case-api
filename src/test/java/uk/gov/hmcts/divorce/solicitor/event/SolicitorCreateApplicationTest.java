@@ -11,19 +11,25 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.Permission;
+import uk.gov.hmcts.ccd.sdk.type.Organisation;
+import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.common.AddSystemUpdateRole;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolAboutTheSolicitor;
+import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorCreateApplicationService;
 
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.C;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.R;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.U;
@@ -50,6 +56,12 @@ class SolicitorCreateApplicationTest {
 
     @Mock
     private AddSystemUpdateRole addSystemUpdateRole;
+
+    @Mock
+    private CcdAccessService ccdAccessService;
+
+    @Mock
+    private HttpServletRequest httpServletRequest;
 
     @InjectMocks
     private SolicitorCreateApplication solicitorCreateApplication;
@@ -112,5 +124,33 @@ class SolicitorCreateApplicationTest {
         solicitorCreateApplication.aboutToSubmit(details, beforeDetails);
 
         verify(solicitorCreateApplicationService).aboutToSubmit(details);
+    }
+
+    @Test
+    void shouldSetApplicant1SolicitorRoleWhenCaseSubmitted() {
+        final long caseId = 1L;
+        final String authorization = "authorization";
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        final CaseData caseData = CaseData.builder().build();
+        caseDetails.setData(caseData);
+        caseDetails.setId(caseId);
+        caseData.getApplicant1().setSolicitor(
+            Solicitor.builder()
+                .organisationPolicy(OrganisationPolicy.<UserRole>builder()
+                    .organisation(Organisation.builder()
+                        .organisationId("1")
+                        .build())
+                    .build())
+                .build()
+        );
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(authorization);
+
+        solicitorCreateApplication.submitted(caseDetails, caseDetails);
+
+        verify(ccdAccessService).addApplicant1SolicitorRole(
+            authorization,
+            caseId,
+            "1");
     }
 }
