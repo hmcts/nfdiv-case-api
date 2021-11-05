@@ -11,7 +11,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -24,6 +23,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_AMENDED_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getCommonTemplateVars;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicantSubmittedNotificationTest {
@@ -41,45 +41,43 @@ class ApplicantSubmittedNotificationTest {
     void shouldNotifyApplicantByApplicationSubmittedEmail() {
 
         final String applicant1Email = "test@somewher.com";
-        final Map<String, String> templateVars = new HashMap<>();
+        final Map<String, String> templateVars = getCommonTemplateVars();
         final CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder().email(applicant1Email).languagePreferenceWelsh(NO).build())
             .build();
-
-        when(commonContent.templateVarsForApplicant(caseData, caseData.getApplicant1(), caseData.getApplicant2())).thenReturn(templateVars);
+        when(commonContent.commonTemplateVars(caseData, caseData.getApplicant1(), caseData.getApplicant2())).thenReturn(templateVars);
 
         applicationSubmittedNotification.send(caseData, 1234567890123456L);
 
         assertThat(templateVars.get(APPLICATION_REFERENCE), is("1234-5678-9012-3456"));
-
         verify(notificationService).sendEmail(
             applicant1Email,
             SOLE_APPLICANT_APPLICATION_SUBMITTED,
             templateVars,
-            ENGLISH);
+            ENGLISH
+        );
     }
 
     @Test
     void shouldNotifyApplicantByAmendedApplicationSubmittedEmail() {
 
         final String applicant1Email = "test@somewher.com";
-        final Map<String, String> templateVars = new HashMap<>();
+        final Map<String, String> templateVars = getCommonTemplateVars();
         final CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder().email(applicant1Email).languagePreferenceWelsh(NO).build())
             .previousCaseId(new CaseLink("Ref"))
             .build();
-
-        when(commonContent.templateVarsForApplicant(caseData, caseData.getApplicant1(), caseData.getApplicant2())).thenReturn(templateVars);
+        when(commonContent.commonTemplateVars(caseData, caseData.getApplicant1(), caseData.getApplicant2())).thenReturn(templateVars);
 
         applicationSubmittedNotification.send(caseData, 1234567890123456L);
 
         assertThat(templateVars.get(APPLICATION_REFERENCE), is("1234-5678-9012-3456"));
-
         verify(notificationService).sendEmail(
             applicant1Email,
             SOLE_APPLICANT_AMENDED_APPLICATION_SUBMITTED,
             templateVars,
-            ENGLISH);
+            ENGLISH
+        );
     }
 
     @Test
