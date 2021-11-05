@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.User;
@@ -64,14 +65,13 @@ public class CaseRemovalService {
             .map(c -> c.getValue().getCaseReference().getCaseReference())
             .collect(toList());
 
-        final List<String> casesSuccessfullyRemoved = bulkActionCaseData.getCasesAcceptedToListForHearing().stream()
-            .filter(lv -> !unprocessedBulkCaseIds.contains(lv.getValue().getCaseReference()))
-            .map(lv -> lv.getValue().getCaseReference())
+        final List<String> casesSuccessfullyRemoved = casesToRemove.stream()
+            .filter(c -> !unprocessedBulkCaseIds.contains(c))
             .collect(toList());
 
         bulkActionCaseData.setBulkListCaseDetails(
             bulkActionCaseData.getBulkListCaseDetails().stream()
-                .filter(lv -> casesSuccessfullyRemoved.contains(lv.getValue().getCaseReference().getCaseReference()))
+                .filter(lv -> !casesSuccessfullyRemoved.contains(lv.getValue().getCaseReference().getCaseReference()))
                 .collect(toList()));
         bulkActionCaseData.setCasesAcceptedToListForHearing(bulkActionCaseData.transformToCasesAcceptedToListForHearing());
 
@@ -83,7 +83,7 @@ public class CaseRemovalService {
                 serviceAuth
             );
         } catch (final FeignException e) {
-            log.error("Update failed for bulk case id {} ", details.getId(), e);
+            throw new CcdManagementException("Bulk case update after case removal failed", e);
         }
 
         return unprocessedBulkCaseIds;

@@ -113,13 +113,13 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
                 .build();
         }
 
-        List<String> warnings = unprocessedBulkCaseIds.stream()
+        List<String> errors = unprocessedBulkCaseIds.stream()
             .map(unprocessedBulkCase -> String.format("Case could not be removed from Bulk case: %s", unprocessedBulkCase))
             .collect(toList());
 
         return AboutToStartOrSubmitResponse
             .<BulkActionCaseData, BulkActionState>builder()
-            .warnings(warnings)
+            .errors(errors)
             .data(details.getData())
             .build();
     }

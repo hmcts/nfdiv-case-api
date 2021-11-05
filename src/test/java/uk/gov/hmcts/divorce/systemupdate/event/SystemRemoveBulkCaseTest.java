@@ -30,6 +30,5 @@ public class SystemRemoveBulkCaseTest {
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(SYSTEM_REMOVE_BULK_CASE);
-
     }
 }

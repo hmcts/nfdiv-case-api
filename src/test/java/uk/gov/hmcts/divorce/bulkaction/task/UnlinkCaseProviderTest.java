@@ -13,28 +13,25 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-public class RemoveCaseFromBulkListProviderTest {
+class UnlinkCaseProviderTest {
 
     @InjectMocks
-    private RemoveCaseFromBulkListProvider removeCaseFromBulkListProvider;
+    private UnlinkBulkCaseProvider unlinkBulkCaseProvider;
 
     @Test
-    void shouldReturnSystemPronounceCaseTask() {
+    void shouldReturnSystemUnlinkBulkCaseTask() {
 
-        final var bulkActionCaseData = BulkActionCaseData
-            .builder()
-            .build();
+        final var bulkActionCaseData = BulkActionCaseData.builder().build();
 
-        final var caseData = CaseData.builder()
-            .bulkListCaseReference("BulkCaseReference")
-            .build();
+        final var caseData = CaseData.builder().build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
-        final CaseTask caseTask = removeCaseFromBulkListProvider.getCaseTask(bulkActionCaseData);
-        final CaseDetails<CaseData, State> resultCaseDetails = caseTask.apply(caseDetails);
+        final CaseTask caseTask = unlinkBulkCaseProvider.getCaseTask(bulkActionCaseData);
 
-        assertThat(resultCaseDetails.getData().getBulkListCaseReference()).isNull();
+        final CaseDetails<CaseData, State> unlinkBulkCaseProvider = caseTask.apply(caseDetails);
+
+        assertThat(unlinkBulkCaseProvider.getData().getBulkListCaseReference()).isEmpty();
     }
 }

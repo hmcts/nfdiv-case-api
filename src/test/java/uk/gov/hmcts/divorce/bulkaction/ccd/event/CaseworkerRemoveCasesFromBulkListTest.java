@@ -218,7 +218,7 @@ public class CaseworkerRemoveCasesFromBulkListTest {
     }
 
     @Test
-    void shouldUpdateBulkCaseAfterBulkTriggerForSubmittedCallback() {
+    void shouldUpdateBulkCaseAfterBulkTriggerForAboutToSubmitCallback() {
         final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
         final CaseLink caseLink1 = CaseLink.builder()
             .caseReference("12345")
@@ -261,7 +261,7 @@ public class CaseworkerRemoveCasesFromBulkListTest {
     }
 
     @Test
-    void shouldReturnWarningMessagesIfAnyCasesCannotBeRemoved() {
+    void shouldReturnErrorMessagesIfAnyCasesCannotBeRemoved() {
         final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
         final CaseLink caseLink1 = CaseLink.builder()
             .caseReference("12345")
@@ -299,9 +299,9 @@ public class CaseworkerRemoveCasesFromBulkListTest {
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToSubmitCallbackResponse =
             caseworkerRemoveCasesFromBulkList.aboutToSubmit(details, details);
 
-        assertThat(aboutToSubmitCallbackResponse.getWarnings()).isNotNull();
-        assertThat(aboutToSubmitCallbackResponse.getWarnings()).hasSize(1);
-        assertThat(aboutToSubmitCallbackResponse.getWarnings()).contains("Case could not be removed from Bulk case: 98765");
+        assertThat(aboutToSubmitCallbackResponse.getErrors()).isNotNull();
+        assertThat(aboutToSubmitCallbackResponse.getErrors()).hasSize(1);
+        assertThat(aboutToSubmitCallbackResponse.getErrors()).contains("Case could not be removed from Bulk case: 98765");
         verify(caseRemovalService).removeCases(details, casesToRemove, CASEWORKER_AUTH_TOKEN);
     }
 }
