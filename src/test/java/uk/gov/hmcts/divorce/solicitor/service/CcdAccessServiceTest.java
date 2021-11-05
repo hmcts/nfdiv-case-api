@@ -9,7 +9,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.authorisation.exceptions.InvalidTokenException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.ccd.client.CaseAssignmentApi;
 import uk.gov.hmcts.reform.ccd.client.CaseUserApi;
+import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesRequest;
+import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesResponse;
 import uk.gov.hmcts.reform.ccd.client.model.CaseUser;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
@@ -19,12 +22,13 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_1_SOL_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_2_CITIZEN_USER_ID;
@@ -48,6 +52,9 @@ public class CcdAccessServiceTest {
     private CaseUserApi caseUserApi;
 
     @Mock
+    private CaseAssignmentApi caseAssignmentApi;
+
+    @Mock
     private IdamService idamService;
 
     @Mock
@@ -67,34 +74,39 @@ public class CcdAccessServiceTest {
         when(authTokenGenerator.generate())
             .thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        doNothing()
-            .when(
-                caseUserApi
-            )
-            .updateCaseRolesForUser(
-                SYSTEM_UPDATE_AUTH_TOKEN,
-                TEST_SERVICE_AUTH_TOKEN,
-                String.valueOf(TEST_CASE_ID),
-                SOLICITOR_USER_ID,
-                new CaseUser(SOLICITOR_USER_ID, Set.of(APPLICANT_1_SOLICITOR.getRole()))
-            );
+        when(caseAssignmentApi.removeCaseUserRoles(
+                eq(SYSTEM_UPDATE_AUTH_TOKEN),
+                eq(TEST_SERVICE_AUTH_TOKEN),
+                any(CaseAssignmentUserRolesRequest.class)
+            )).thenReturn(CaseAssignmentUserRolesResponse.builder().build());
 
-        assertThatCode(() -> ccdAccessService.addApplicant1SolicitorRole(APP_1_SOL_AUTH_TOKEN, TEST_CASE_ID))
+        when(caseAssignmentApi.addCaseUserRoles(
+                eq(SYSTEM_UPDATE_AUTH_TOKEN),
+                eq(TEST_SERVICE_AUTH_TOKEN),
+                any(CaseAssignmentUserRolesRequest.class)
+            )).thenReturn(CaseAssignmentUserRolesResponse.builder().build());
+
+        assertThatCode(() -> ccdAccessService.addApplicant1SolicitorRole(APP_1_SOL_AUTH_TOKEN, TEST_CASE_ID, "1"))
             .doesNotThrowAnyException();
 
         verify(idamService).retrieveUser(APP_1_SOL_AUTH_TOKEN);
         verify(idamService).retrieveSystemUpdateUserDetails();
         verify(authTokenGenerator).generate();
-        verify(caseUserApi)
-            .updateCaseRolesForUser(
-                SYSTEM_UPDATE_AUTH_TOKEN,
-                TEST_SERVICE_AUTH_TOKEN,
-                String.valueOf(TEST_CASE_ID),
-                SOLICITOR_USER_ID,
-                new CaseUser(SOLICITOR_USER_ID, Set.of(APPLICANT_1_SOLICITOR.getRole()))
+        verify(caseAssignmentApi)
+            .removeCaseUserRoles(
+                eq(SYSTEM_UPDATE_AUTH_TOKEN),
+                eq(TEST_SERVICE_AUTH_TOKEN),
+                any(CaseAssignmentUserRolesRequest.class)
             );
 
-        verifyNoMoreInteractions(idamService, authTokenGenerator, caseUserApi);
+        verify(caseAssignmentApi)
+            .addCaseUserRoles(
+                eq(SYSTEM_UPDATE_AUTH_TOKEN),
+                eq(TEST_SERVICE_AUTH_TOKEN),
+                any(CaseAssignmentUserRolesRequest.class)
+            );
+
+        verifyNoMoreInteractions(idamService, authTokenGenerator, caseUserApi, caseAssignmentApi);
     }
 
     @Test
@@ -102,7 +114,7 @@ public class CcdAccessServiceTest {
         doThrow(feignException(401, "Failed to retrieve Idam user"))
             .when(idamService).retrieveUser(APP_1_SOL_AUTH_TOKEN);
 
-        assertThatThrownBy(() -> ccdAccessService.addApplicant1SolicitorRole(APP_1_SOL_AUTH_TOKEN, TEST_CASE_ID))
+        assertThatThrownBy(() -> ccdAccessService.addApplicant1SolicitorRole(APP_1_SOL_AUTH_TOKEN, TEST_CASE_ID, null))
             .isExactlyInstanceOf(FeignException.Unauthorized.class)
             .hasMessageContaining("Failed to retrieve Idam user");
     }
@@ -117,7 +129,7 @@ public class CcdAccessServiceTest {
         doThrow(feignException(401, "Failed to retrieve Idam user"))
             .when(idamService).retrieveSystemUpdateUserDetails();
 
-        assertThatThrownBy(() -> ccdAccessService.addApplicant1SolicitorRole(APP_1_SOL_AUTH_TOKEN, TEST_CASE_ID))
+        assertThatThrownBy(() -> ccdAccessService.addApplicant1SolicitorRole(APP_1_SOL_AUTH_TOKEN, TEST_CASE_ID, null))
             .isExactlyInstanceOf(FeignException.Unauthorized.class)
             .hasMessageContaining("Failed to retrieve Idam user");
 
@@ -140,7 +152,7 @@ public class CcdAccessServiceTest {
         doThrow(new InvalidTokenException("s2s secret is invalid"))
             .when(authTokenGenerator).generate();
 
-        assertThatThrownBy(() -> ccdAccessService.addApplicant1SolicitorRole(APP_1_SOL_AUTH_TOKEN, TEST_CASE_ID))
+        assertThatThrownBy(() -> ccdAccessService.addApplicant1SolicitorRole(APP_1_SOL_AUTH_TOKEN, TEST_CASE_ID, null))
             .isExactlyInstanceOf(InvalidTokenException.class)
             .hasMessageContaining("s2s secret is invalid");
 
@@ -164,19 +176,13 @@ public class CcdAccessServiceTest {
         when(authTokenGenerator.generate())
             .thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        doThrow(feignException(422, "Case roles not valid"))
-            .when(
-                caseUserApi
-            )
-            .updateCaseRolesForUser(
-                SYSTEM_UPDATE_AUTH_TOKEN,
-                TEST_SERVICE_AUTH_TOKEN,
-                String.valueOf(TEST_CASE_ID),
-                SOLICITOR_USER_ID,
-                new CaseUser(SOLICITOR_USER_ID, Set.of(APPLICANT_1_SOLICITOR.getRole()))
-            );
+        when(caseAssignmentApi.removeCaseUserRoles(
+            eq(SYSTEM_UPDATE_AUTH_TOKEN),
+            eq(TEST_SERVICE_AUTH_TOKEN),
+            any(CaseAssignmentUserRolesRequest.class)
+        )).thenThrow(feignException(422, "Case roles not valid"));
 
-        assertThatThrownBy(() -> ccdAccessService.addApplicant1SolicitorRole(APP_1_SOL_AUTH_TOKEN, TEST_CASE_ID))
+        assertThatThrownBy(() -> ccdAccessService.addApplicant1SolicitorRole(APP_1_SOL_AUTH_TOKEN, TEST_CASE_ID, null))
             .isExactlyInstanceOf(FeignException.UnprocessableEntity.class)
             .hasMessageContaining("Case roles not valid");
 
