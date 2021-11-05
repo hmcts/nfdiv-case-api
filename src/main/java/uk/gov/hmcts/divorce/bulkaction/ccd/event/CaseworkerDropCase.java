@@ -16,8 +16,8 @@ import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.EnumSet;
+import javax.servlet.http.HttpServletRequest;
 
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
