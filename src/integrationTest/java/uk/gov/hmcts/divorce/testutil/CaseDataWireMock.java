@@ -9,12 +9,13 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpHeaders;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.delete;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.BEARER;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
@@ -39,12 +40,24 @@ public final class CaseDataWireMock {
         }
     }
 
-    public static void stubForCcdCaseRoles() {
-        CASE_DATA_SERVER.stubFor(put(urlMatching("/cases/[0-9]+/users/[0-9]+"))
+    public static void stubForCaseAssignmentRoles() {
+        CASE_DATA_SERVER.stubFor(delete(urlMatching("/case-users"))
             .withHeader(HttpHeaders.AUTHORIZATION, new EqualToPattern(BEARER + SYSTEM_UPDATE_AUTH_TOKEN))
             .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(AUTH_HEADER_VALUE))
             .withRequestBody(new EqualToJsonPattern(
-                "{\"user_id\" : \"1\", \"case_roles\":[\"[APPONESOLICITOR]\"]}",
+                "{\"case_users\":[{\"case_id\":\"1616591401473378\",\"case_role\":\"[CREATOR]\",\"organisation_id\":\"ABC123\","
+                    + "\"user_id\":\"1\"}]}",
+                true,
+                true))
+            .willReturn(aResponse().withStatus(200))
+        );
+
+        CASE_DATA_SERVER.stubFor(post(urlMatching("/case-users"))
+            .withHeader(HttpHeaders.AUTHORIZATION, new EqualToPattern(BEARER + SYSTEM_UPDATE_AUTH_TOKEN))
+            .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(AUTH_HEADER_VALUE))
+            .withRequestBody(new EqualToJsonPattern(
+                "{\"case_users\":[{\"case_id\":\"1616591401473378\",\"case_role\":\"[APPONESOLICITOR]\",\"organisation_id\":\"ABC123\","
+                    + "\"user_id\":\"1\"}]}",
                 true,
                 true))
             .willReturn(aResponse().withStatus(200))
@@ -64,11 +77,12 @@ public final class CaseDataWireMock {
     }
 
     public static void stubForCcdCaseRolesUpdateFailure() {
-        CASE_DATA_SERVER.stubFor(put(urlMatching("/cases/[0-9]+/users/[0-9]+"))
-            .withHeader(HttpHeaders.AUTHORIZATION, new EqualToPattern(BEARER + CASEWORKER_AUTH_TOKEN))
-            .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(SERVICE_AUTHORIZATION))
+        CASE_DATA_SERVER.stubFor(delete(urlMatching("/case-users"))
+            .withHeader(HttpHeaders.AUTHORIZATION, new EqualToPattern(BEARER + SYSTEM_UPDATE_AUTH_TOKEN))
+            .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(AUTH_HEADER_VALUE))
             .withRequestBody(new EqualToJsonPattern(
-                "{\"user_id\" : \"1\", \"case_roles\":[\"[APPONESOLICITOR]\"]}",
+                "{\"case_users\":[{\"case_id\":\"1616591401473378\",\"case_role\":\"[CREATOR]\",\"organisation_id\":\"ABC123\","
+                    + "\"user_id\":\"1\"}]}",
                 true,
                 true))
             .willReturn(aResponse().withStatus(403))

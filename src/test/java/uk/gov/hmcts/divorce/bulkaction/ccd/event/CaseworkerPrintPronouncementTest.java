@@ -13,8 +13,11 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.service.ScheduleCaseService;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.PronouncementListTemplateContent;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
+import java.time.Clock;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
@@ -37,6 +40,15 @@ public class CaseworkerPrintPronouncementTest {
 
     @InjectMocks
     private CaseworkerPrintPronouncement printPronounceCase;
+
+    @Mock
+    private PronouncementListTemplateContent templateContentService;
+
+    @Mock
+    private CaseDataDocumentService caseDataDocumentService;
+
+    @Mock
+    private Clock clock;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {

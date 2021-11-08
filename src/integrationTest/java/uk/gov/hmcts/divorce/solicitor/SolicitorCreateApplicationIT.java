@@ -22,6 +22,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInformation;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
+import uk.gov.hmcts.divorce.testutil.CaseDataWireMock;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock;
@@ -31,12 +32,18 @@ import static java.util.Collections.singletonList;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreateApplication.SOLICITOR_CREATE;
+import static uk.gov.hmcts.divorce.testutil.CaseDataWireMock.stubForCaseAssignmentRoles;
+import static uk.gov.hmcts.divorce.testutil.CaseDataWireMock.stubForCcdCaseRolesUpdateFailure;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssembly;
+import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SOLICITOR_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SYSTEM_USER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamDetails;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamToken;
@@ -49,6 +56,9 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_MID_EVENT_ERROR;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_MID_EVENT_RESPONSE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SOLICITOR_USER_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
@@ -64,6 +74,7 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 @AutoConfigureMockMvc
 @ContextConfiguration(initializers = {
     PrdOrganisationWireMock.PropertiesInitializer.class,
+    CaseDataWireMock.PropertiesInitializer.class,
     DocAssemblyWireMock.PropertiesInitializer.class,
     IdamWireMock.PropertiesInitializer.class})
 class SolicitorCreateApplicationIT {
@@ -90,6 +101,7 @@ class SolicitorCreateApplicationIT {
         DocAssemblyWireMock.start();
         PrdOrganisationWireMock.start();
         IdamWireMock.start();
+        CaseDataWireMock.start();
     }
 
     @AfterAll
@@ -97,6 +109,7 @@ class SolicitorCreateApplicationIT {
         DocAssemblyWireMock.stopAndReset();
         PrdOrganisationWireMock.stopAndReset();
         IdamWireMock.stopAndReset();
+        CaseDataWireMock.stopAndReset();
     }
 
     @Test
@@ -235,4 +248,56 @@ class SolicitorCreateApplicationIT {
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .build();
     }
+
+    @Test
+    public void givenValidCaseDataWhenCallbackIsInvokedThenOrderSummaryAndSolicitorRolesAreSet()
+        throws Exception {
+
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, SOLICITOR_USER_ID, SOLICITOR_ROLE);
+        stubForIdamDetails(SYSTEM_UPDATE_AUTH_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(SYSTEM_UPDATE_AUTH_TOKEN);
+        when(serviceTokenGenerator.generate()).thenReturn(AUTH_HEADER_VALUE);
+
+        stubForCaseAssignmentRoles();
+
+        mockMvc.perform(post(SUBMITTED_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant1Org(), SOLICITOR_CREATE)))
+                .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk()
+            );
+
+        verify(serviceTokenGenerator).generate();
+        verifyNoMoreInteractions(serviceTokenGenerator);
+    }
+
+    @Test
+    public void givenValidCaseDataWhenCallbackIsInvokedAndCcdCaseRolesUpdateThrowsForbiddenExceptionThen403IsReturned()
+        throws Exception {
+
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, SOLICITOR_USER_ID, SOLICITOR_ROLE);
+        stubForIdamDetails(SYSTEM_UPDATE_AUTH_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(SYSTEM_UPDATE_AUTH_TOKEN);
+
+        when(serviceTokenGenerator.generate()).thenReturn(AUTH_HEADER_VALUE);
+
+        stubForCcdCaseRolesUpdateFailure();
+
+        mockMvc.perform(post(SUBMITTED_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant1Org(), SOLICITOR_CREATE)))
+                .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isForbidden()
+            )
+            .andExpect(
+                result -> assertThat(result.getResolvedException()).isExactlyInstanceOf(FeignException.Forbidden.class)
+            );
+    }
+
 }
