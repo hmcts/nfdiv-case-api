@@ -223,7 +223,7 @@ public enum State {
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
     )
-    BulkCaseRejected("BulkCaseRejected"),
+    BulkCaseReject("BulkCaseReject"),
 
     @CCD(
         name = "Submitted",
