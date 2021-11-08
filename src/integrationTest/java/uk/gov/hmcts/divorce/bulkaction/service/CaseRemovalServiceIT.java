@@ -143,7 +143,11 @@ public class CaseRemovalServiceIT {
             caseDataContent
         )).thenReturn(getCaseDetails());
 
-        caseRemovalService.removeCases(bulkActionCaseDetails, List.of("2"), CASEWORKER_AUTH_TOKEN);
+        caseRemovalService.removeCases(
+            bulkActionCaseDetails,
+            List.of(getBulkListCaseDetailsListValue("2")),
+            CASEWORKER_AUTH_TOKEN
+        );
 
         verify(coreCaseDataApi)
             .startEventForCaseWorker(

@@ -122,6 +122,14 @@ public class BulkActionCaseData {
     )
     private List<ListValue<CaseLink>> casesAcceptedToListForHearing;
 
+    @CCD(
+        label = "Cases to be removed",
+        typeOverride = Collection,
+        typeParameterOverride = "BulkListCaseDetails",
+        access = {CaseworkerAccess.class}
+    )
+    private List<ListValue<BulkListCaseDetails>> casesToBeRemoved;
+
     @JsonIgnore
     public LocalDate getDateFinalOrderEligibleFrom(LocalDateTime dateTime) {
         return dateTime.toLocalDate().plusWeeks(FINAL_ORDER_OFFSET_WEEKS).plusDays(FINAL_ORDER_OFFSET_DAYS);

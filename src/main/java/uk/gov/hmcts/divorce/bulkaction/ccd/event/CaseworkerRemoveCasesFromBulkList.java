@@ -7,11 +7,14 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionPageBuilder;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
+import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.service.CaseRemovalService;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -45,7 +48,7 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
             .description("Remove cases from bulk list")
             .showSummary()
             .aboutToStartCallback(this::aboutToStart)
-            .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted)
             .showEventNotes()
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE))
@@ -84,7 +87,7 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
             .build();
     }
 
-    public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToSubmit(
+    public SubmittedCallbackResponse submitted(
         CaseDetails<BulkActionCaseData, BulkActionState> details,
         CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails
     ) {
@@ -96,31 +99,13 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
                 .map(CaseLink::getCaseReference)
                 .collect(toList());
 
-        List<String> bulkListCaseDetailsToCaseReferences = caseData.getBulkListCaseDetails().stream()
-            .map(c -> c.getValue().getCaseReference().getCaseReference())
-            .collect(toList());
+        List<ListValue<BulkListCaseDetails>> casesToRemove =
+            caseData.getBulkListCaseDetails().stream()
+                .filter(c -> !casesAcceptedToListForHearing.contains(c.getValue().getCaseReference().getCaseReference()))
+                .collect(toList());
 
-        List<String> casesToRemove = bulkListCaseDetailsToCaseReferences.stream()
-            .filter(caseLink -> !casesAcceptedToListForHearing.contains(caseLink))
-            .collect(toList());
+        caseRemovalService.removeCases(details, casesToRemove, request.getHeader(AUTHORIZATION));
 
-        List<String> unprocessedBulkCaseIds = caseRemovalService.removeCases(details, casesToRemove, request.getHeader(AUTHORIZATION));
-
-        if (unprocessedBulkCaseIds.isEmpty()) {
-            return AboutToStartOrSubmitResponse
-                .<BulkActionCaseData, BulkActionState>builder()
-                .data(details.getData())
-                .build();
-        }
-
-        List<String> errors = unprocessedBulkCaseIds.stream()
-            .map(unprocessedBulkCase -> String.format("Case could not be removed from Bulk case: %s", unprocessedBulkCase))
-            .collect(toList());
-
-        return AboutToStartOrSubmitResponse
-            .<BulkActionCaseData, BulkActionState>builder()
-            .errors(errors)
-            .data(details.getData())
-            .build();
+        return SubmittedCallbackResponse.builder().build();
     }
 }

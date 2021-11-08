@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.service.CaseRemovalService;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -248,60 +249,13 @@ public class CaseworkerRemoveCasesFromBulkListTest {
         details.getData().setCasesAcceptedToListForHearing(singletonList(caseLinkListValue1));
         details.setId(1L);
 
-        final List<String> casesToRemove = List.of("98765");
+        final List<ListValue<BulkListCaseDetails>> casesToRemove = List.of(bulkListCaseDetailsListValue2);
 
         when(request.getHeader(AUTHORIZATION)).thenReturn(CASEWORKER_AUTH_TOKEN);
-        when(caseRemovalService.removeCases(details, casesToRemove, CASEWORKER_AUTH_TOKEN)).thenReturn(emptyList());
 
-        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToSubmitCallbackResponse =
-            caseworkerRemoveCasesFromBulkList.aboutToSubmit(details, details);
+        SubmittedCallbackResponse submittedCallbackResponse = caseworkerRemoveCasesFromBulkList.submitted(details, details);
 
-        assertThat(aboutToSubmitCallbackResponse.getWarnings()).isNull();
-        verify(caseRemovalService).removeCases(details, casesToRemove, CASEWORKER_AUTH_TOKEN);
-    }
-
-    @Test
-    void shouldReturnErrorMessagesIfAnyCasesCannotBeRemoved() {
-        final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
-        final CaseLink caseLink1 = CaseLink.builder()
-            .caseReference("12345")
-            .build();
-        final CaseLink caseLink2 = CaseLink.builder()
-            .caseReference("98765")
-            .build();
-        final ListValue<BulkListCaseDetails> bulkListCaseDetailsListValue1 =
-            ListValue.<BulkListCaseDetails>builder()
-                .value(BulkListCaseDetails.builder()
-                    .caseReference(caseLink1)
-                    .build())
-                .build();
-        final ListValue<BulkListCaseDetails> bulkListCaseDetailsListValue2 =
-            ListValue.<BulkListCaseDetails>builder()
-                .value(BulkListCaseDetails.builder()
-                    .caseReference(caseLink2)
-                    .build())
-                .build();
-        final ListValue<CaseLink> caseLinkListValue1 =
-            ListValue.<CaseLink>builder()
-                .value(caseLink1)
-                .build();
-
-        details.setData(BulkActionCaseData.builder().build());
-        details.getData().setBulkListCaseDetails(List.of(bulkListCaseDetailsListValue1, bulkListCaseDetailsListValue2));
-        details.getData().setCasesAcceptedToListForHearing(singletonList(caseLinkListValue1));
-        details.setId(1L);
-
-        final List<String> casesToRemove = List.of("98765");
-
-        when(request.getHeader(AUTHORIZATION)).thenReturn(CASEWORKER_AUTH_TOKEN);
-        when(caseRemovalService.removeCases(details, casesToRemove, CASEWORKER_AUTH_TOKEN)).thenReturn(casesToRemove);
-
-        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToSubmitCallbackResponse =
-            caseworkerRemoveCasesFromBulkList.aboutToSubmit(details, details);
-
-        assertThat(aboutToSubmitCallbackResponse.getErrors()).isNotNull();
-        assertThat(aboutToSubmitCallbackResponse.getErrors()).hasSize(1);
-        assertThat(aboutToSubmitCallbackResponse.getErrors()).contains("Case could not be removed from Bulk case: 98765");
+        assertThat(submittedCallbackResponse).isNotNull();
         verify(caseRemovalService).removeCases(details, casesToRemove, CASEWORKER_AUTH_TOKEN);
     }
 }
