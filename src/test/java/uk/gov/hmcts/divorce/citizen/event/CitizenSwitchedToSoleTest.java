@@ -82,6 +82,25 @@ class CitizenSwitchedToSoleTest {
     }
 
     @Test
+    void givenApplicant2ScreenHasMarriageBrokenIsNoThenOnlyApplicant1NotificationIsSent() {
+        final long caseId = 1L;
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        CaseData caseData = validJointApplicant1CaseData();
+        caseData.getApplication().setApplicant2ScreenHasMarriageBroken(NO);
+        caseData.setApplicationType(JOINT_APPLICATION);
+
+        caseDetails.setData(caseData);
+        caseDetails.setId(caseId);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetails);
+
+        verify(applicant1SwitchToSoleNotification).sendToApplicant1(caseData, caseDetails.getId());
+        verifyNoMoreInteractions(applicant1SwitchToSoleNotification);
+
+        assertThat(response.getData().getApplicationType()).isEqualTo(SOLE_APPLICATION);
+    }
+
+    @Test
     void givenEventStartedWithValidJointCaseShouldRemoveApplicant2AddressIfPrivate() {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
