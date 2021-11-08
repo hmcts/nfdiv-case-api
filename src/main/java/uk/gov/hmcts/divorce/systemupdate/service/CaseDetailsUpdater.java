@@ -22,6 +22,7 @@ public class CaseDetailsUpdater {
         final CaseDetails<CaseData, State> caseDetails = objectMapper
             .convertValue(startEventResponse.getCaseDetails(), new TypeReference<>() {
             });
+
         return caseTask.apply(caseDetails);
     }
 }

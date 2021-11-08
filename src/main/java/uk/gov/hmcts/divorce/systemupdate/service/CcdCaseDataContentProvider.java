@@ -12,6 +12,8 @@ public class CcdCaseDataContentProvider {
                                                  final String summary,
                                                  final String description,
                                                  final Object data) {
+
+
         return CaseDataContent.builder()
             .eventToken(startEventResponse.getToken())
             .event(

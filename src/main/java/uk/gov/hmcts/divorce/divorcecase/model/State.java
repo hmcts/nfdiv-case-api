@@ -219,6 +219,13 @@ public enum State {
     PendingDispute("PendingDispute"),
 
     @CCD(
+        name = "Removed from bulk case",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    BulkCaseReject("BulkCaseReject"),
+
+    @CCD(
         name = "Submitted",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
