@@ -26,6 +26,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGeneralEmail.CASEWORKER_CREATE_GENERAL_EMAIL;
+import static uk.gov.hmcts.divorce.caseworker.service.notification.GeneralEmailNotification.GENERAL_EMAIL_DETAILS;
+import static uk.gov.hmcts.divorce.caseworker.service.notification.GeneralEmailNotification.GENERAL_OTHER_RECIPIENT_NAME;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
@@ -37,8 +39,6 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_RESPONDENT_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.CCD_REFERENCE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.GENERAL_EMAIL_DETAILS;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.GENERAL_OTHER_RECIPIENT_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.RESPONDENT_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;

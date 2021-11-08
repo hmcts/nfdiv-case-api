@@ -15,13 +15,15 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.CASE_ID;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SOLICITOR_NAME;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.SOLICITOR_ORGANISATION;
 
 @Component
 @Slf4j
 public class NoticeOfProceedingsNotification {
+
+    public static final String CASE_ID = "case id";
+    public static final String SOLICITOR_ORGANISATION = "solicitor organisation";
+
 
     @Autowired
     private NotificationService notificationService;
