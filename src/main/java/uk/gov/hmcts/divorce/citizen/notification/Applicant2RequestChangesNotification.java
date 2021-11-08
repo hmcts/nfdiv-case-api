@@ -11,11 +11,12 @@ import java.util.Map;
 
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_NEED_TO_MAKE_CHANGES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_REQUEST_CHANGES;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_2_COMMENTS;
 
 @Component
 @Slf4j
 public class Applicant2RequestChangesNotification {
+
+    public static final String APPLICANT_2_COMMENTS = "applicant 2 comments";
 
     @Autowired
     private NotificationService notificationService;

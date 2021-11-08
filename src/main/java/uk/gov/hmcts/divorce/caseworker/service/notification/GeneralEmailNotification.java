@@ -20,13 +20,14 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_RESPONDENT_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.CCD_REFERENCE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.GENERAL_EMAIL_DETAILS;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.GENERAL_OTHER_RECIPIENT_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.RESPONDENT_NAME;
 
 @Component
 @Slf4j
 public class GeneralEmailNotification {
+
+    public static final String GENERAL_EMAIL_DETAILS = "general email details";
+    public static final String GENERAL_OTHER_RECIPIENT_NAME = "general other recipient name";
 
     @Autowired
     private NotificationService notificationService;

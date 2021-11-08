@@ -23,21 +23,14 @@ public final class NotificationConstants {
 
     public static final String SUBMISSION_RESPONSE_DATE = "date of response";
     public static final String APPLICATION_REFERENCE = "reference number";
-    public static final String CASE_ID = "case id";
 
     public static final String ACCESS_CODE = "access code";
 
     public static final String APPLICANT_NAME = "applicant name";
     public static final String RESPONDENT_NAME = "respondent name";
     public static final String SOLICITOR_NAME = "solicitor name";
-    public static final String SOLICITOR_ORGANISATION = "solicitor organisation";
-
-    public static final String APPLICANT_2_COMMENTS = "applicant 2 comments";
 
     public static final String CCD_REFERENCE = "CCD reference";
-    public static final String GENERAL_OTHER_RECIPIENT_NAME = "general other recipient name";
-    public static final String GENERAL_EMAIL_DETAILS = "general email details";
-
     public static final String REVIEW_DEADLINE_DATE = "review deadline date";
 
     private NotificationConstants() {
