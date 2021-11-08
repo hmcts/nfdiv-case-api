@@ -36,8 +36,9 @@ public class CommonContent {
     @Autowired
     private EmailTemplatesConfig config;
 
-    public Map<String, String> commonTemplateVars(CaseData caseData, Applicant applicant, Applicant partner) {
+    public Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
         Map<String, String> templateVars = new HashMap<>();
+        templateVars.put(APPLICATION_REFERENCE, id != null ? formatId(id) : null);
         templateVars.put(IS_DIVORCE, isDivorce(caseData) ? YES : NO);
         templateVars.put(IS_DISSOLUTION, !isDivorce(caseData) ? YES : NO);
         templateVars.put(FIRST_NAME, applicant.getFirstName());

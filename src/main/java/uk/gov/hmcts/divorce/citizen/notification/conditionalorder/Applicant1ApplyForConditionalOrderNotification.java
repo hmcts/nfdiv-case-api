@@ -12,8 +12,6 @@ import java.util.Map;
 
 import static uk.gov.hmcts.divorce.notification.CommonContent.isDivorce;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLY_FOR_CONDITIONAL_ORDER;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.NO;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.YES;
 
@@ -35,8 +33,7 @@ public class Applicant1ApplyForConditionalOrderNotification {
     public void sendToApplicant1(CaseData caseData, Long id) {
         log.info("Sending notification to applicant 1 to notify them that they can apply for a conditional order: {}", id);
 
-        Map<String, String> templateVars = commonContent.commonTemplateVars(caseData, caseData.getApplicant1(), caseData.getApplicant2());
-        templateVars.put(APPLICATION_REFERENCE, formatId(id));
+        Map<String, String> templateVars = commonContent.templateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
 
         boolean jointApplication = !caseData.getApplicationType().isSole();
         templateVars.put(JOINT_CONDITIONAL_ORDER, jointApplication ? YES : NO);

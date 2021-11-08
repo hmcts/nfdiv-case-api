@@ -14,11 +14,7 @@ import java.util.Map;
 import static uk.gov.hmcts.divorce.notification.CommonContent.isDivorce;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.ACCESS_CODE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_2_SIGN_IN_DISSOLUTION_URL;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_2_SIGN_IN_DIVORCE_URL;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.CREATE_ACCOUNT_LINK;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.NO;
@@ -28,6 +24,10 @@ import static uk.gov.hmcts.divorce.notification.NotificationConstants.YES;
 @Component
 @Slf4j
 public class ApplicationSentForReviewApplicant2Notification {
+
+    public static final String APPLICANT_2_SIGN_IN_DIVORCE_URL = "applicant2SignInDivorceUrl";
+    public static final String APPLICANT_2_SIGN_IN_DISSOLUTION_URL = "applicant2SignInDissolutionUrl";
+
 
     @Autowired
     private NotificationService notificationService;
@@ -61,9 +61,8 @@ public class ApplicationSentForReviewApplicant2Notification {
     }
 
     private Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner, boolean isReminder) {
-        Map<String, String> templateVars = commonContent.commonTemplateVars(caseData, applicant, partner);
+        Map<String, String> templateVars = commonContent.templateVars(caseData, id, applicant, partner);
         templateVars.put(IS_REMINDER, isReminder ? YES :  NO);
-        templateVars.put(APPLICATION_REFERENCE, formatId(id));
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         templateVars.put(ACCESS_CODE, caseData.getCaseInvite().getAccessCode());
         templateVars.put(CREATE_ACCOUNT_LINK,

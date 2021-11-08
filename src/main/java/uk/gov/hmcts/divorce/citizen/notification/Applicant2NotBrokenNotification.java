@@ -26,7 +26,7 @@ public class Applicant2NotBrokenNotification {
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
             JOINT_APPLICANT1_APPLICANT2_REJECTED,
-            commonContent.commonTemplateVars(caseData, caseData.getApplicant1(), caseData.getApplicant2()),
+            commonContent.templateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
             caseData.getApplicant1().getLanguagePreference()
         );
     }
@@ -37,7 +37,7 @@ public class Applicant2NotBrokenNotification {
         notificationService.sendEmail(
             caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
             JOINT_APPLICANT2_APPLICANT2_REJECTED,
-            commonContent.commonTemplateVars(caseData, caseData.getApplicant2(), caseData.getApplicant1()),
+            commonContent.templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
             caseData.getApplicant1().getLanguagePreference()
         );
     }

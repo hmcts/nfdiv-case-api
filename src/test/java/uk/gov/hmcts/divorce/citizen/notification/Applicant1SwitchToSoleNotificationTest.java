@@ -5,7 +5,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -37,9 +36,6 @@ class Applicant1SwitchToSoleNotificationTest {
     private NotificationService notificationService;
 
     @Mock
-    private EmailTemplatesConfig configVars;
-
-    @Mock
     private CommonContent commonContent;
 
     @InjectMocks
@@ -49,7 +45,7 @@ class Applicant1SwitchToSoleNotificationTest {
     void shouldSendEmailToApplicant1WithDivorceContent() {
         CaseData data = validApplicant2CaseData();
         final Map<String, String> templateVars = Map.of(IS_DIVORCE, YES, IS_DISSOLUTION, NO);
-        when(commonContent.commonTemplateVars(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
         notification.sendToApplicant1(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
@@ -61,7 +57,7 @@ class Applicant1SwitchToSoleNotificationTest {
                 )),
             eq(ENGLISH)
         );
-        verify(commonContent).commonTemplateVars(data, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -69,7 +65,7 @@ class Applicant1SwitchToSoleNotificationTest {
         CaseData data = validApplicant2CaseData();
         data.setDivorceOrDissolution(DISSOLUTION);
         final Map<String, String> templateVars = Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES);
-        when(commonContent.commonTemplateVars(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
@@ -82,7 +78,7 @@ class Applicant1SwitchToSoleNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).commonTemplateVars(data, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
 
     }
 
@@ -90,7 +86,7 @@ class Applicant1SwitchToSoleNotificationTest {
     void shouldSendEmailToApplicant2WithDivorceContent() {
         CaseData data = validApplicant2CaseData();
         final Map<String, String> templateVars = Map.of(IS_DIVORCE, YES, IS_DISSOLUTION, NO);
-        when(commonContent.commonTemplateVars(data, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
 
         notification.sendToApplicant2(data, 1234567890123456L);
 
@@ -103,7 +99,7 @@ class Applicant1SwitchToSoleNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).commonTemplateVars(data, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -111,7 +107,7 @@ class Applicant1SwitchToSoleNotificationTest {
         CaseData data = validApplicant2CaseData();
         data.setDivorceOrDissolution(DISSOLUTION);
         final Map<String, String> templateVars = Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES);
-        when(commonContent.commonTemplateVars(data, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
 
         notification.sendToApplicant2(data, 1234567890123456L);
 
@@ -124,6 +120,6 @@ class Applicant1SwitchToSoleNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).commonTemplateVars(data, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
 }

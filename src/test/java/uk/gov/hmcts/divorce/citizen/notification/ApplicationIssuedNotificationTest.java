@@ -74,7 +74,8 @@ public class ApplicationIssuedNotificationTest {
 
         Map<String, String> divorceTemplateVars = new HashMap<>();
         divorceTemplateVars.putAll(getCommonTemplateVars());
-        when(commonContent.commonTemplateVars(data, data.getApplicant1(), data.getApplicant2())).thenReturn(divorceTemplateVars);
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(divorceTemplateVars);
 
         notification.sendToSoleApplicant1(data, 1234567890123456L);
 
@@ -89,7 +90,7 @@ public class ApplicationIssuedNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).commonTemplateVars(data, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -101,7 +102,8 @@ public class ApplicationIssuedNotificationTest {
         Map<String, String> dissolutionTemplateVars = new HashMap<>();
         dissolutionTemplateVars.putAll(getCommonTemplateVars());
         dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
-        when(commonContent.commonTemplateVars(data, data.getApplicant1(), data.getApplicant2())).thenReturn(dissolutionTemplateVars);
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(dissolutionTemplateVars);
 
         notification.sendToSoleApplicant1(data, 1234567890123456L);
 
@@ -116,7 +118,7 @@ public class ApplicationIssuedNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).commonTemplateVars(data, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -126,7 +128,8 @@ public class ApplicationIssuedNotificationTest {
         data.getApplication().setIssueDate(LocalDate.now());
         Map<String, String> divorceTemplateVars = new HashMap<>();
         divorceTemplateVars.putAll(getCommonTemplateVars());
-        when(commonContent.commonTemplateVars(data, data.getApplicant2(), data.getApplicant1())).thenReturn(divorceTemplateVars);
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(divorceTemplateVars);
 
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
@@ -142,7 +145,7 @@ public class ApplicationIssuedNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).commonTemplateVars(data, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -154,7 +157,8 @@ public class ApplicationIssuedNotificationTest {
         Map<String, String> dissolutionTemplateVars = new HashMap<>();
         dissolutionTemplateVars.putAll(getCommonTemplateVars());
         dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
-        when(commonContent.commonTemplateVars(data, data.getApplicant2(), data.getApplicant1())).thenReturn(dissolutionTemplateVars);
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(dissolutionTemplateVars);
 
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
@@ -170,7 +174,7 @@ public class ApplicationIssuedNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).commonTemplateVars(data, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -180,7 +184,8 @@ public class ApplicationIssuedNotificationTest {
         data.getApplication().setIssueDate(LocalDate.now());
         Map<String, String> divorceTemplateVars = new HashMap<>();
         divorceTemplateVars.putAll(getCommonTemplateVars());
-        when(commonContent.commonTemplateVars(data, data.getApplicant2(), data.getApplicant1())).thenReturn(divorceTemplateVars);
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(divorceTemplateVars);
 
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
@@ -197,7 +202,7 @@ public class ApplicationIssuedNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).commonTemplateVars(data, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -209,7 +214,8 @@ public class ApplicationIssuedNotificationTest {
         Map<String, String> dissolutionTemplateVars = new HashMap<>();
         dissolutionTemplateVars.putAll(getCommonTemplateVars());
         dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
-        when(commonContent.commonTemplateVars(data, data.getApplicant2(), data.getApplicant1())).thenReturn(dissolutionTemplateVars);
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(dissolutionTemplateVars);
 
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
@@ -226,7 +232,7 @@ public class ApplicationIssuedNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).commonTemplateVars(data, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -236,7 +242,8 @@ public class ApplicationIssuedNotificationTest {
         data.getApplication().setIssueDate(LocalDate.now());
         Map<String, String> divorceTemplateVars = new HashMap<>();
         divorceTemplateVars.putAll(getCommonTemplateVars());
-        when(commonContent.commonTemplateVars(data, data.getApplicant1(), data.getApplicant2())).thenReturn(divorceTemplateVars);
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(divorceTemplateVars);
 
         notification.sendToJointApplicant1(data, 1234567890123456L);
 
@@ -251,7 +258,7 @@ public class ApplicationIssuedNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).commonTemplateVars(data, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -263,7 +270,8 @@ public class ApplicationIssuedNotificationTest {
         Map<String, String> dissolutionTemplateVars = new HashMap<>();
         dissolutionTemplateVars.putAll(getCommonTemplateVars());
         dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
-        when(commonContent.commonTemplateVars(data, data.getApplicant1(), data.getApplicant2())).thenReturn(dissolutionTemplateVars);
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(dissolutionTemplateVars);
 
         notification.sendToJointApplicant1(data, 1234567890123456L);
 
@@ -278,7 +286,7 @@ public class ApplicationIssuedNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).commonTemplateVars(data, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -288,7 +296,8 @@ public class ApplicationIssuedNotificationTest {
         data.getApplication().setIssueDate(LocalDate.now());
         Map<String, String> divorceTemplateVars = new HashMap<>();
         divorceTemplateVars.putAll(getCommonTemplateVars());
-        when(commonContent.commonTemplateVars(data, data.getApplicant2(), data.getApplicant1())).thenReturn(divorceTemplateVars);
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(divorceTemplateVars);
 
         notification.sendToJointApplicant2(data, 1234567890123456L);
 
@@ -303,7 +312,7 @@ public class ApplicationIssuedNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).commonTemplateVars(data, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -315,7 +324,8 @@ public class ApplicationIssuedNotificationTest {
         Map<String, String> dissolutionTemplateVars = new HashMap<>();
         dissolutionTemplateVars.putAll(getCommonTemplateVars());
         dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
-        when(commonContent.commonTemplateVars(data, data.getApplicant2(), data.getApplicant1())).thenReturn(dissolutionTemplateVars);
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(dissolutionTemplateVars);
 
         notification.sendToJointApplicant2(data, 1234567890123456L);
 
@@ -330,7 +340,7 @@ public class ApplicationIssuedNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).commonTemplateVars(data, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -340,7 +350,8 @@ public class ApplicationIssuedNotificationTest {
         data.getApplication().setIssueDate(LocalDate.now());
         Map<String, String> divorceTemplateVars = new HashMap<>();
         divorceTemplateVars.putAll(getCommonTemplateVars());
-        when(commonContent.commonTemplateVars(data, data.getApplicant1(), data.getApplicant2())).thenReturn(divorceTemplateVars);
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(divorceTemplateVars);
 
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
@@ -357,7 +368,7 @@ public class ApplicationIssuedNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).commonTemplateVars(data, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -367,7 +378,8 @@ public class ApplicationIssuedNotificationTest {
         data.getApplication().setIssueDate(LocalDate.now());
         Map<String, String> divorceTemplateVars = new HashMap<>();
         divorceTemplateVars.putAll(getCommonTemplateVars());
-        when(commonContent.commonTemplateVars(data, data.getApplicant1(), data.getApplicant2())).thenReturn(divorceTemplateVars);
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(divorceTemplateVars);
 
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
@@ -388,7 +400,7 @@ public class ApplicationIssuedNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).commonTemplateVars(data, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -399,7 +411,8 @@ public class ApplicationIssuedNotificationTest {
         data.getCaseInvite().setApplicant2InviteEmailAddress(null);
         Map<String, String> divorceTemplateVars = new HashMap<>();
         divorceTemplateVars.putAll(getCommonTemplateVars());
-        when(commonContent.commonTemplateVars(data, data.getApplicant1(), data.getApplicant2())).thenReturn(divorceTemplateVars);
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(divorceTemplateVars);
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
         notification.notifyApplicantOfServiceToOverseasRespondent(data, 1234567890123456L);
@@ -419,6 +432,6 @@ public class ApplicationIssuedNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).commonTemplateVars(data, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 }

@@ -66,6 +66,8 @@ import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewApplicant2Notification.APPLICANT_2_SIGN_IN_DISSOLUTION_URL;
+import static uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewApplicant2Notification.APPLICANT_2_SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -74,8 +76,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_JOINT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_2_SIGN_IN_DISSOLUTION_URL;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_2_SIGN_IN_DIVORCE_URL;
+import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.FIRST_NAME;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.IS_DISSOLUTION;
@@ -573,6 +574,7 @@ public class TestDataHelper {
 
     public static Map<String, String> getCommonTemplateVars() {
         Map<String, String> templateVars = new HashMap<>();
+        templateVars.put(APPLICATION_REFERENCE, "1234-5678-9012-3456");
         templateVars.put(IS_DIVORCE, NotificationConstants.YES);
         templateVars.put(IS_DISSOLUTION, NotificationConstants.NO);
         templateVars.put(FIRST_NAME, TEST_FIRST_NAME);

@@ -15,8 +15,6 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
 
 @Component
@@ -76,15 +74,13 @@ public class SoleAosSubmittedNotification {
     }
 
     private Map<String, String> nonDdisputedTemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
-        Map<String, String> templateVars = commonContent.commonTemplateVars(caseData, applicant, partner);
-        templateVars.put(APPLICATION_REFERENCE, formatId(id));
+        Map<String, String> templateVars = commonContent.templateVars(caseData, id, applicant, partner);
         templateVars.put(APPLY_FOR_CO_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         return templateVars;
     }
 
     private Map<String, String> disputedTemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
-        Map<String, String> templateVars = commonContent.commonTemplateVars(caseData, applicant, partner);
-        templateVars.put(APPLICATION_REFERENCE, formatId(id));
+        Map<String, String> templateVars = commonContent.templateVars(caseData, id, applicant, partner);
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         return templateVars;
     }

@@ -26,7 +26,7 @@ public class Applicant1SwitchToSoleNotification {
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
             APPLICANT1_APPLICANT1_SWITCH_TO_SOLE,
-            commonContent.commonTemplateVars(caseData, caseData.getApplicant1(), caseData.getApplicant2()),
+            commonContent.templateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
             caseData.getApplicant1().getLanguagePreference()
         );
     }
@@ -37,7 +37,7 @@ public class Applicant1SwitchToSoleNotification {
         notificationService.sendEmail(
             caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
             JOINT_APPLICATION_ENDED,
-            commonContent.commonTemplateVars(caseData, caseData.getApplicant2(), caseData.getApplicant1()),
+            commonContent.templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
             caseData.getApplicant1().getLanguagePreference()
         );
     }
