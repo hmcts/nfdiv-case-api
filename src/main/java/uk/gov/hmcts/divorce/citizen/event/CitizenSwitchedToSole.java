@@ -76,7 +76,7 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
         );
 
         applicant1SwitchToSoleNotification.sendToApplicant1(data, details.getId());
-        if (!data.getApplication().getApplicant2ScreenHasMarriageBroken().equals(YesOrNo.NO)){
+        if (data.getApplication().getApplicant2ScreenHasMarriageBroken() != YesOrNo.NO) {
             applicant1SwitchToSoleNotification.sendToApplicant2(data, details.getId());
         }
 
