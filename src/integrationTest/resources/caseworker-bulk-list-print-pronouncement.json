@@ -1,0 +1,25 @@
+{
+  "data":{
+    "courtName":"serviceCentre",
+    "dateAndTimeOfHearing":"2021-11-10T00:00:00.000",
+    "pronouncementJudge":"District Judge",
+    "pronouncementListDocument":{
+      "documentFileName":"NFD_Pronouncement_List.pdf",
+      "documentType":"pronouncementList",
+      "documentLink":{
+        "document_url":"http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+        "document_filename":"NFD_Pronouncement_List.pdf",
+        "document_binary_url":"http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
+      }
+    },
+    "bulkListCaseDetails":[
+      {
+        "value":{
+          "caseReference":{
+            "CaseReference":"1616591401473378"
+          }
+        }
+      }
+    ]
+  }
+}

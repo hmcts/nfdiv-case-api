@@ -24,7 +24,6 @@ import uk.gov.hmcts.divorce.solicitor.event.page.SolPayment;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPaymentSummary;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolStatementOfTruth;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolSummary;
-import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.solicitor.service.notification.SolicitorSubmittedNotification;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
@@ -33,12 +32,10 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import javax.servlet.http.HttpServletRequest;
 
 import static java.lang.Integer.parseInt;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -64,12 +61,6 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
 
     @Autowired
     private PaymentService paymentService;
-
-    @Autowired
-    private CcdAccessService ccdAccessService;
-
-    @Autowired
-    private HttpServletRequest httpServletRequest;
 
     @Autowired
     private SolPayment solPayment;
@@ -108,12 +99,6 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             NumberFormat.getNumberInstance().format(
                 new BigDecimal(orderSummary.getPaymentTotal()).movePointLeft(2)
             )
-        );
-
-        log.info("Adding the applicant's solicitor case roles");
-        ccdAccessService.addApplicant1SolicitorRole(
-            httpServletRequest.getHeader(AUTHORIZATION),
-            details.getId()
         );
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

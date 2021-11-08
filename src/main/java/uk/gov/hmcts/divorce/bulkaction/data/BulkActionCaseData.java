@@ -13,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Court;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -82,6 +83,12 @@ public class BulkActionCaseData {
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateFinalOrderEligibleFrom;
+
+    @CCD(
+        label = "Pronouncement List Document",
+        access = {CaseworkerAccess.class}
+    )
+    private DivorceDocument pronouncementListDocument;
 
     @CCD(
         label = "Case list",
