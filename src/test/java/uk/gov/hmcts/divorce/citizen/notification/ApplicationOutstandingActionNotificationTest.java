@@ -6,7 +6,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
@@ -21,6 +20,7 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_CIVIL_PARTNERSHIP_CERTIFICATE;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_FOREIGN_MARRIAGE_CERTIFICATE;
@@ -40,6 +40,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant2;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getCommonTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -50,9 +51,6 @@ class ApplicationOutstandingActionNotificationTest {
 
     @Mock
     private CommonContent commonContent;
-
-    @Mock
-    private EmailTemplatesConfig configVars;
 
     @InjectMocks
     private ApplicationOutstandingActionNotification notification;
@@ -69,6 +67,8 @@ class ApplicationOutstandingActionNotificationTest {
         docs.add(DocumentType.MARRIAGE_CERTIFICATE_TRANSLATION);
         docs.add(NAME_CHANGE_EVIDENCE);
         data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getCommonTemplateVars());
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
@@ -90,6 +90,8 @@ class ApplicationOutstandingActionNotificationTest {
         CaseData data = validApplicant2CaseData();
         data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.NO);
         data.getApplication().setApplicant2CannotUploadSupportingDocument(Set.of(NAME_CHANGE_EVIDENCE));
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(getCommonTemplateVars());
 
         notification.sendToApplicant2(data, 1234567890123456L);
 
@@ -118,6 +120,8 @@ class ApplicationOutstandingActionNotificationTest {
         docs.add(DocumentType.MARRIAGE_CERTIFICATE);
         docs.add(DocumentType.NAME_CHANGE_EVIDENCE);
         data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getCommonTemplateVars());
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
@@ -150,6 +154,8 @@ class ApplicationOutstandingActionNotificationTest {
         docs.add(DocumentType.MARRIAGE_CERTIFICATE);
         docs.add(DocumentType.NAME_CHANGE_EVIDENCE);
         data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getCommonTemplateVars());
 
         notification.sendToApplicant1(data, 1234567890123456L);
 

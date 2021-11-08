@@ -43,7 +43,8 @@ class ApplicationSubmittedNotificationTest {
     void shouldSendEmailToApplicant1WithSubmissionResponseDate() {
         CaseData data = caseData();
         data.setDueDate(LocalDate.of(2021, 4, 21));
-        when(commonContent.commonTemplateVars(data, data.getApplicant1(), data.getApplicant2())).thenReturn(getCommonTemplateVars());
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getCommonTemplateVars());
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
@@ -56,14 +57,15 @@ class ApplicationSubmittedNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).commonTemplateVars(data, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
     void shouldSendEmailToApplicant2WithSubmissionResponseDate() {
         CaseData data = jointCaseDataWithOrderSummary();
         data.setDueDate(LocalDate.of(2021, 4, 21));
-        when(commonContent.commonTemplateVars(data, data.getApplicant2(), data.getApplicant1())).thenReturn(getCommonTemplateVars());
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(getCommonTemplateVars());
 
         notification.sendToApplicant2(data, 1234567890123456L);
 
@@ -76,6 +78,6 @@ class ApplicationSubmittedNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).commonTemplateVars(data, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
 }

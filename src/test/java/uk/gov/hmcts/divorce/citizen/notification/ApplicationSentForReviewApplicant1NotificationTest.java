@@ -44,7 +44,8 @@ class ApplicationSentForReviewApplicant1NotificationTest {
         CaseData data = caseData();
         data.setDueDate(LOCAL_DATE);
         data.setApplicant2(getApplicant2(Gender.MALE));
-        when(commonContent.commonTemplateVars(data, data.getApplicant1(), data.getApplicant2())).thenReturn(getCommonTemplateVars());
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getCommonTemplateVars());
 
         notification.send(data, 1234567890123456L);
 
@@ -56,6 +57,6 @@ class ApplicationSentForReviewApplicant1NotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).commonTemplateVars(data, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 }

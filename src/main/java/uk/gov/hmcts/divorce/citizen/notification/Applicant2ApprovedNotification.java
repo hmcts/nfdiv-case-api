@@ -39,7 +39,7 @@ public class Applicant2ApprovedNotification {
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
             JOINT_APPLICANT1_APPLICANT2_APPROVED,
-            applicant1TemplateVars(caseData, caseData.getApplicant1(), caseData.getApplicant2()),
+            applicant1TemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
             caseData.getApplicant1().getLanguagePreference()
         );
     }
@@ -50,7 +50,7 @@ public class Applicant2ApprovedNotification {
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
             JOINT_APPLICANT1_APPLICANT2_APPROVED_WITHOUT_HWF,
-            commonContent.commonTemplateVars(caseData, caseData.getApplicant1(), caseData.getApplicant2()),
+            commonContent.templateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
             caseData.getApplicant1().getLanguagePreference()
         );
     }
@@ -61,21 +61,21 @@ public class Applicant2ApprovedNotification {
         notificationService.sendEmail(
             caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
             JOINT_APPLICANT2_APPLICANT2_APPROVED,
-            applicant2TemplateVars(caseData, caseData.getApplicant2(), caseData.getApplicant1()),
+            applicant2TemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
             caseData.getApplicant2().getLanguagePreference()
         );
     }
 
-    private Map<String, String> applicant1TemplateVars(CaseData caseData, Applicant applicant, Applicant partner) {
-        Map<String, String> templateVars = commonContent.commonTemplateVars(caseData, applicant, partner);
+    private Map<String, String> applicant1TemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
+        Map<String, String> templateVars = commonContent.templateVars(caseData, id, applicant, partner);
         templateVars.put(PAYS_FEES, noFeesHelp(caseData) ? YES : NO);
         templateVars.put(ACTION_REQUIRED, YES);
         templateVars.put(IS_REMINDER, NO);
         return templateVars;
     }
 
-    private Map<String, String> applicant2TemplateVars(CaseData caseData, Applicant applicant, Applicant partner) {
-        Map<String, String> templateVars = commonContent.commonTemplateVars(caseData, applicant, partner);
+    private Map<String, String> applicant2TemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
+        Map<String, String> templateVars = commonContent.templateVars(caseData, id, applicant, partner);
         templateVars.put(PAYS_FEES, noFeesHelp(caseData) ? YES : NO);
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         return templateVars;

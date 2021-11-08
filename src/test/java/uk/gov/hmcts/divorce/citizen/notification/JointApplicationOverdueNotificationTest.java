@@ -56,7 +56,8 @@ public class JointApplicationOverdueNotificationTest {
         CaseData data = caseData();
         data.setDueDate(LocalDate.now());
         data.setApplicant2(getApplicant(Gender.FEMALE));
-        when(commonContent.commonTemplateVars(data, data.getApplicant1(), data.getApplicant2())).thenReturn(getCommonTemplateVars());
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getCommonTemplateVars());
 
         notification.sendApplicationNotReviewedEmail(data, 1234567890123456L);
 
@@ -68,7 +69,7 @@ public class JointApplicationOverdueNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).commonTemplateVars(data, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -79,7 +80,7 @@ public class JointApplicationOverdueNotificationTest {
         data.setApplicant2(getApplicant(Gender.MALE));
         final Map<String, String> templateVars = getCommonTemplateVars();
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
-        when(commonContent.commonTemplateVars(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
 
         notification.sendApplicationNotReviewedEmail(data, 1234567890123456L);
 
@@ -93,7 +94,7 @@ public class JointApplicationOverdueNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).commonTemplateVars(data, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -101,7 +102,8 @@ public class JointApplicationOverdueNotificationTest {
         CaseData data = caseData();
         data.setDueDate(LocalDate.now());
         data.setApplicant2(getApplicant(Gender.FEMALE));
-        when(commonContent.commonTemplateVars(data, data.getApplicant1(), data.getApplicant2())).thenReturn(getCommonTemplateVars());
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getCommonTemplateVars());
 
         notification.sendApplicationApprovedReminderToApplicant1(data, 1234567890123456L);
 
@@ -114,7 +116,7 @@ public class JointApplicationOverdueNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).commonTemplateVars(data, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -124,7 +126,8 @@ public class JointApplicationOverdueNotificationTest {
         data.setApplicant2(getApplicant(Gender.FEMALE));
         HelpWithFees hwf = HelpWithFees.builder().needHelp(YesOrNo.YES).build();
         data.getApplication().setApplicant1HelpWithFees(hwf);
-        when(commonContent.commonTemplateVars(data, data.getApplicant1(), data.getApplicant2())).thenReturn(getCommonTemplateVars());
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getCommonTemplateVars());
 
         notification.sendApplicationApprovedReminderToApplicant1(data, 1234567890123456L);
 
@@ -137,7 +140,7 @@ public class JointApplicationOverdueNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).commonTemplateVars(data, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -147,7 +150,7 @@ public class JointApplicationOverdueNotificationTest {
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         data.setApplicant2(getApplicant(Gender.MALE));
         final Map<String, String> templateVars = getCommonTemplateVars();
-        when(commonContent.commonTemplateVars(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
 
         notification.sendApplicationApprovedReminderToApplicant1(data, 1234567890123456L);
 
@@ -160,7 +163,7 @@ public class JointApplicationOverdueNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).commonTemplateVars(data, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -173,7 +176,7 @@ public class JointApplicationOverdueNotificationTest {
         data.getApplication().setApplicant1HelpWithFees(hwf);
         final HashMap<String, String> templateVars = new HashMap<>();
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
-        when(commonContent.commonTemplateVars(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
 
         notification.sendApplicationApprovedReminderToApplicant1(data, 1234567890123456L);
 
@@ -186,6 +189,6 @@ public class JointApplicationOverdueNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).commonTemplateVars(data, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 }

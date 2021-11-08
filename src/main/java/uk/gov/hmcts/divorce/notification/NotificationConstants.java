@@ -4,7 +4,6 @@ public final class NotificationConstants {
     public static final String FIRST_NAME = "first name";
     public static final String LAST_NAME = "last name";
     public static final String PARTNER = "partner";
-    public static final String THEIR_EMAIL_ADDRESS = "their email address";
 
     public static final String IS_DIVORCE = "isDivorce";
     public static final String IS_DISSOLUTION = "isDissolution";
@@ -16,11 +15,7 @@ public final class NotificationConstants {
     public static final String CREATE_ACCOUNT_LINK = "create account link";
     public static final String SIGN_IN_URL_NOTIFY_KEY = "signin url";
     public static final String SIGN_IN_DIVORCE_URL = "signInDivorceUrl";
-    public static final String APPLICANT_2_SIGN_IN_DIVORCE_URL = "applicant2SignInDivorceUrl";
-    public static final String RESPONDENT_SIGN_IN_DIVORCE_URL = "respondentSignInDivorceUrl";
     public static final String SIGN_IN_DISSOLUTION_URL = "signInDissolutionUrl";
-    public static final String APPLICANT_2_SIGN_IN_DISSOLUTION_URL = "applicant2SignInDissolutionUrl";
-    public static final String RESPONDENT_SIGN_IN_DISSOLUTION_URL = "respondentSignInDissolutionUrl";
     public static final String DIVORCE_COURT_EMAIL = "divorceCourtEmail";
     public static final String DISSOLUTION_COURT_EMAIL = "dissolutionCourtEmail";
 

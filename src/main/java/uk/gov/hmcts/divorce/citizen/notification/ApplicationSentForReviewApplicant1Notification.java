@@ -24,12 +24,11 @@ public class ApplicationSentForReviewApplicant1Notification {
     private CommonContent commonContent;
 
     public void send(CaseData caseData, Long id) {
-        Map<String, String> templateVars =
-            commonContent.commonTemplateVars(caseData, caseData.getApplicant1(), caseData.getApplicant2());
-
-        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
-
         log.info("Sending application sent for review notification to applicant 1 for case : {}", id);
+
+        Map<String, String> templateVars =
+            commonContent.templateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
+        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
 
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),

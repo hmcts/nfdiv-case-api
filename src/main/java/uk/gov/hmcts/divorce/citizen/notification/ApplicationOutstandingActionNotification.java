@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
@@ -20,8 +19,6 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFIC
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.isDivorce;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_ACTIONS;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.NO;
 import static uk.gov.hmcts.divorce.notification.NotificationConstants.YES;
 
@@ -72,7 +69,7 @@ public class ApplicationOutstandingActionNotification {
     }
 
     private Map<String, String> applicant1TemplateVars(final CaseData caseData, Long id) {
-        Map<String, String> templateVars = commonTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
+        Map<String, String> templateVars = commonContent.templateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
         templateVars.putAll(
             missingDocsTemplateVars(caseData, caseData.getApplication().getApplicant1CannotUploadSupportingDocument())
         );
@@ -83,7 +80,7 @@ public class ApplicationOutstandingActionNotification {
     }
 
     private Map<String, String> applicant2TemplateVars(final CaseData caseData, Long id) {
-        Map<String, String> templateVars = commonTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
+        Map<String, String> templateVars = commonContent.templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
         templateVars.putAll(missingDocsTemplateVars(caseData, caseData.getApplication().getApplicant2CannotUploadSupportingDocument()));
         templateVars.putAll(serveAnotherWayTemplateVars(false, caseData));
         return templateVars;
@@ -120,12 +117,6 @@ public class ApplicationOutstandingActionNotification {
         templateVars.put(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION,
             nonNullMissingDocs && missingDocTypes.contains(MARRIAGE_CERTIFICATE_TRANSLATION) && !isDivorce(caseData) ? YES : NO);
         templateVars.put(MISSING_NAME_CHANGE_PROOF, nonNullMissingDocs && missingDocTypes.contains(NAME_CHANGE_EVIDENCE) ? YES : NO);
-        return  templateVars;
-    }
-
-    private Map<String, String> commonTemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
-        Map<String, String> templateVars = commonContent.commonTemplateVars(caseData, applicant, partner);
-        templateVars.put(APPLICATION_REFERENCE, formatId(id));
         return  templateVars;
     }
 }

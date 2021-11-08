@@ -56,7 +56,8 @@ class Applicant2RequestChangesNotificationTest {
         CaseData data = caseData();
         data.setApplicant2(getApplicant(Gender.FEMALE));
         data.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation("Not correct!");
-        when(commonContent.commonTemplateVars(data, data.getApplicant1(), data.getApplicant2())).thenReturn(getCommonTemplateVars());
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getCommonTemplateVars());
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(SIGN_IN_DIVORCE_URL, "sign in divorce link"));
 
         notification.sendToApplicant1(data, 1234567890123456L);
@@ -71,7 +72,7 @@ class Applicant2RequestChangesNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).commonTemplateVars(data, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -82,7 +83,7 @@ class Applicant2RequestChangesNotificationTest {
         data.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation("Not correct!");
         final Map<String, String> templateVars = getCommonTemplateVars();
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
-        when(commonContent.commonTemplateVars(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(SIGN_IN_DISSOLUTION_URL, "sign in dissolution link"));
 
         notification.sendToApplicant1(data, 1234567890123456L);
@@ -97,7 +98,7 @@ class Applicant2RequestChangesNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).commonTemplateVars(data, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -105,7 +106,8 @@ class Applicant2RequestChangesNotificationTest {
         CaseData data = caseData();
         data.setApplicant2(getApplicant(Gender.FEMALE));
         data.getCaseInvite().setApplicant2InviteEmailAddress(TEST_USER_EMAIL);
-        when(commonContent.commonTemplateVars(data, data.getApplicant2(), data.getApplicant1())).thenReturn(getCommonTemplateVars());
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(getCommonTemplateVars());
 
         notification.sendToApplicant2(data, 1234567890123456L);
 
@@ -115,7 +117,7 @@ class Applicant2RequestChangesNotificationTest {
             any(),
             eq(ENGLISH)
         );
-        verify(commonContent).commonTemplateVars(data, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -126,7 +128,7 @@ class Applicant2RequestChangesNotificationTest {
         data.getCaseInvite().setApplicant2InviteEmailAddress(TEST_USER_EMAIL);
         final Map<String, String> templateVars = getCommonTemplateVars();
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
-        when(commonContent.commonTemplateVars(data, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
+        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
 
         notification.sendToApplicant2(data, 1234567890123456L);
 
@@ -136,6 +138,6 @@ class Applicant2RequestChangesNotificationTest {
             any(),
             eq(ENGLISH)
         );
-        verify(commonContent).commonTemplateVars(data, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
 }
