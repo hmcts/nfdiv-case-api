@@ -181,6 +181,7 @@ public class CaseworkerIssueApplicationIT {
     void shouldSendApplicationIssueNotificationsForSoleCitizenApplication() throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        caseData.setDueDate(LocalDate.of(2021, 6, 20));
         caseData.getApplication().setSolSignStatementOfTruth(null);
         caseData.getApplication().setDivorceWho(WIFE);
 
