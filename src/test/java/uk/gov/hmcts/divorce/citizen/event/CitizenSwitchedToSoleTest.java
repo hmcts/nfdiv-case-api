@@ -63,7 +63,7 @@ class CitizenSwitchedToSoleTest {
     }
 
     @Test
-    void givenEventStartedWithValidJointCaseShouldSetApplicationTypeToSoleAndSendNotifications() {
+    void givenEventStartedWithValidJointCaseAndApplicant2ScreenHasMarriageBrokenIsNullShouldSetApplicationTypeToSoleAndSendNotifications() {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = validJointApplicant1CaseData();
