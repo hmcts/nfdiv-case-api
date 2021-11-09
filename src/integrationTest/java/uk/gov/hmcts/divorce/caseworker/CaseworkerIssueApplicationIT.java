@@ -32,6 +32,7 @@ import uk.gov.hmcts.reform.sendletter.api.SendLetterResponse;
 import java.io.IOException;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -62,6 +63,7 @@ import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.C
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
@@ -130,6 +132,7 @@ public class CaseworkerIssueApplicationIT {
         "classpath:caseworker-issue-joint-citizen-application-about-to-submit-response.json";
     public static final String DIVORCE_APPLICATION_ID = "5cd725e8-f053-4493-9cbe-bb69d1905ae3";
     public static final String AOS_COVER_LETTER_ID = "c35b1868-e397-457a-aa67-ac1422bb8100";
+    public static final String NOTICE_OF_PROCEEDING_ID = "c56b053e-4184-11ec-81d3-0242ac130003";
 
     @Autowired
     private MockMvc mockMvc;
@@ -177,31 +180,37 @@ public class CaseworkerIssueApplicationIT {
     @Test
     void shouldSendApplicationIssueNotificationsForSoleCitizenApplication() throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         caseData.getApplication().setSolSignStatementOfTruth(null);
+        caseData.getApplication().setDivorceWho(WIFE);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
+        when(documentIdProvider.documentId()).thenReturn("Divorce application").thenReturn("Notice of proceeding");
 
-        stubForDocAssemblyWith(DIVORCE_APPLICATION_ID, "NFD_CP_Mini_Application_Sole_Joint.docx");
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_ID, "NFD_CP_Application_Sole.docx");
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "NFD_Notice_Of_Proceedings_Sole.docx");
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
 
-        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    CASEWORKER_ISSUE_APPLICATION)))
-            .accept(APPLICATION_JSON))
+        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_ISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk())
-            .andExpect(
-                content().json(expectedResponse(SOLE_CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT))
-            );
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        assertThatJson(response)
+            .isEqualTo(json(expectedResponse(SOLE_CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT)));
 
         verify(notificationService)
             .sendEmail(
@@ -243,14 +252,14 @@ public class CaseworkerIssueApplicationIT {
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    CASEWORKER_ISSUE_APPLICATION)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_ISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk())
             .andExpect(
@@ -300,14 +309,14 @@ public class CaseworkerIssueApplicationIT {
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    CASEWORKER_ISSUE_APPLICATION)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_ISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk())
             .andExpect(
@@ -348,14 +357,14 @@ public class CaseworkerIssueApplicationIT {
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    CASEWORKER_ISSUE_APPLICATION)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_ISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk())
             .andExpect(
@@ -441,14 +450,14 @@ public class CaseworkerIssueApplicationIT {
         stubForDocAssembly();
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    CASEWORKER_ISSUE_APPLICATION)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_ISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk())
             .andExpect(
@@ -472,14 +481,14 @@ public class CaseworkerIssueApplicationIT {
         stubForDocAssemblyUnauthorized();
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-            .contentType(APPLICATION_JSON)
-            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-            .content(objectMapper.writeValueAsString(
-                callbackRequest(
-                    caseData,
-                    CASEWORKER_ISSUE_APPLICATION)))
-            .accept(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_ISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
             .andExpect(
                 status().isUnauthorized()
             );
