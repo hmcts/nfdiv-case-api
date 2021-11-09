@@ -29,6 +29,8 @@ import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.elasticsearch.search.sort.SortOrder.ASC;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 
@@ -197,6 +199,54 @@ public class CcdSearchService {
         } catch (final FeignException e) {
 
             final String message = String.format("Failed to complete search for Bulk Cases with state of %s", state);
+            log.info(message, e);
+            throw new CcdSearchCaseException(message, e);
+        }
+
+        return allCaseDetails.stream()
+            .map(caseDetailsConverter::convertToBulkActionCaseDetailsFromReformModel)
+            .collect(toList());
+    }
+
+    public List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState>>
+        searchForCreatedOrListedBulkCasesWithCasesToBeRemoved(final User user, final String serviceAuth) {
+
+        final List<CaseDetails> allCaseDetails = new ArrayList<>();
+        int from = 0;
+        int totalResults = pageSize;
+
+        final QueryBuilder createdStateQuery = matchQuery(STATE, Created);
+        final QueryBuilder listedStateQuery = matchQuery(STATE, Listed);
+        final QueryBuilder casesToBeRemovedExist = existsQuery("data.casesToBeRemoved");
+
+        final QueryBuilder query = boolQuery()
+            .must(boolQuery().must(casesToBeRemovedExist))
+            .should(createdStateQuery)
+            .should(listedStateQuery)
+            .minimumShouldMatch(1);
+
+        try {
+            while (totalResults == pageSize) {
+
+                final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+                    .searchSource()
+                    .query(query)
+                    .from(from)
+                    .size(pageSize);
+
+                final SearchResult searchResult = coreCaseDataApi.searchCases(
+                    user.getAuthToken(),
+                    serviceAuth,
+                    BulkActionCaseTypeConfig.CASE_TYPE,
+                    sourceBuilder.toString());
+
+                allCaseDetails.addAll(searchResult.getCases());
+
+                from += pageSize;
+                totalResults = searchResult.getTotal();
+            }
+        } catch (final FeignException e) {
+            final String message = "Failed to complete search for Bulk Cases with state of Created or Listed with cases to be removed";
             log.info(message, e);
             throw new CcdSearchCaseException(message, e);
         }
