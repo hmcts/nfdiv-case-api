@@ -31,6 +31,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemoveBulkCase.SYSTEM_REMOVE_BULK_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 
 @ExtendWith(MockitoExtension.class)
@@ -253,6 +254,124 @@ class BulkCaseProcessingServiceTest {
             bulkCaseProcessingService.updateUnprocessedBulkCases(
                 caseDetails,
                 SYSTEM_PRONOUNCE_CASE,
+                bulkCaseDetails -> bulkCaseDetails,
+                user,
+                SERVICE_AUTHORIZATION);
+        } catch (Exception e) {
+            fail("No exception should be thrown");
+        }
+    }
+
+    @Test
+    void shouldRemoveAllCasesAndEmptyCasesToBeRemovedList() {
+
+        final User user = mock(User.class);
+        final List<ListValue<BulkListCaseDetails>> casesToBeRemoved = getBulkListCaseDetailsListValueForCaseIds("1", "2", "3", "4");
+
+        final BulkActionCaseData bulkActionCaseData = BulkActionCaseData.builder()
+            .casesToBeRemoved(casesToBeRemoved)
+            .build();
+
+        final CaseDetails<BulkActionCaseData, BulkActionState> caseDetails = new CaseDetails<>();
+        caseDetails.setId(1L);
+        caseDetails.setData(bulkActionCaseData);
+
+        when(bulkTriggerService.bulkTrigger(
+            eq(casesToBeRemoved),
+            eq(SYSTEM_REMOVE_BULK_CASE),
+            any(CaseTask.class),
+            eq(user),
+            eq(SERVICE_AUTHORIZATION)))
+            .thenReturn(emptyList());
+
+        bulkCaseProcessingService.updateCasesToBeRemoved(
+            caseDetails,
+            SYSTEM_REMOVE_BULK_CASE,
+            bulkCaseDetails -> bulkCaseDetails,
+            user,
+            SERVICE_AUTHORIZATION);
+
+        assertThat(caseDetails.getData().getCasesToBeRemoved()).isEmpty();
+
+        verify(ccdUpdateService).submitBulkActionEvent(
+            caseDetails,
+            SYSTEM_UPDATE_BULK_CASE,
+            user,
+            SERVICE_AUTHORIZATION);
+    }
+
+    @Test
+    void shouldUpdateCasesToBeRemovedListIfNotAllCasesCouldBeRemoved() {
+
+        final User user = mock(User.class);
+        final List<ListValue<BulkListCaseDetails>> casesToBeRemoved = getBulkListCaseDetailsListValueForCaseIds("1", "2", "3", "4");
+
+        final BulkActionCaseData bulkActionCaseData = BulkActionCaseData.builder()
+            .casesToBeRemoved(casesToBeRemoved)
+            .build();
+
+        final CaseDetails<BulkActionCaseData, BulkActionState> caseDetails = new CaseDetails<>();
+        caseDetails.setId(1L);
+        caseDetails.setData(bulkActionCaseData);
+
+        when(bulkTriggerService.bulkTrigger(
+            eq(casesToBeRemoved),
+            eq(SYSTEM_REMOVE_BULK_CASE),
+            any(CaseTask.class),
+            eq(user),
+            eq(SERVICE_AUTHORIZATION)))
+            .thenReturn(List.of(getBulkListCaseDetailsListValue("1")));
+
+        bulkCaseProcessingService.updateCasesToBeRemoved(
+            caseDetails,
+            SYSTEM_REMOVE_BULK_CASE,
+            bulkCaseDetails -> bulkCaseDetails,
+            user,
+            SERVICE_AUTHORIZATION);
+
+        assertThat(caseDetails.getData().getCasesToBeRemoved()).hasSize(1);
+        assertThat(caseDetails.getData().getCasesToBeRemoved()).contains(getBulkListCaseDetailsListValue("1"));
+
+        verify(ccdUpdateService).submitBulkActionEvent(
+            caseDetails,
+            SYSTEM_UPDATE_BULK_CASE,
+            user,
+            SERVICE_AUTHORIZATION);
+    }
+
+    @Test
+    void shouldCatchAndNotRethrowCcdManagementExceptionWhenUpdatingCasesToBeRemoved() {
+
+        final User user = mock(User.class);
+        final List<ListValue<BulkListCaseDetails>> casesToBeRemoved = getBulkListCaseDetailsListValueForCaseIds("1", "2", "3", "4");
+
+        final BulkActionCaseData bulkActionCaseData = BulkActionCaseData.builder()
+            .casesToBeRemoved(casesToBeRemoved)
+            .build();
+
+        final CaseDetails<BulkActionCaseData, BulkActionState> caseDetails = new CaseDetails<>();
+        caseDetails.setId(1L);
+        caseDetails.setData(bulkActionCaseData);
+
+        when(bulkTriggerService.bulkTrigger(
+            eq(casesToBeRemoved),
+            eq(SYSTEM_REMOVE_BULK_CASE),
+            any(CaseTask.class),
+            eq(user),
+            eq(SERVICE_AUTHORIZATION)))
+            .thenReturn(emptyList());
+
+        doThrow(new CcdManagementException("Message", null))
+            .when(ccdUpdateService).submitBulkActionEvent(
+                caseDetails,
+                SYSTEM_UPDATE_BULK_CASE,
+                user,
+                SERVICE_AUTHORIZATION);
+
+        try {
+            bulkCaseProcessingService.updateCasesToBeRemoved(
+                caseDetails,
+                SYSTEM_REMOVE_BULK_CASE,
                 bulkCaseDetails -> bulkCaseDetails,
                 user,
                 SERVICE_AUTHORIZATION);
