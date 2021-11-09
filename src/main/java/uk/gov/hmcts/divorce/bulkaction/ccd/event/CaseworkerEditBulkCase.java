@@ -49,7 +49,7 @@ public class CaseworkerEditBulkCase implements CCDConfig<BulkActionCaseData, Bul
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE))
             .page("editBulkCase")
             .pageLabel("Edit bulk case")
-            .mandatory(BulkActionCaseData::getCourtName)
+            .mandatory(BulkActionCaseData::getCourt)
             .mandatory(BulkActionCaseData::getDateAndTimeOfHearing);
     }
 

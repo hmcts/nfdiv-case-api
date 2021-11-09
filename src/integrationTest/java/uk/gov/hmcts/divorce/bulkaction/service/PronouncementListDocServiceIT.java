@@ -15,7 +15,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
-import uk.gov.hmcts.divorce.divorcecase.model.Court;
 import uk.gov.hmcts.divorce.document.content.PronouncementListTemplateContent;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
@@ -39,6 +38,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerPrintPronouncement.CASEWORKER_PRINT_PRONOUNCEMENT;
+import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMIGHAM;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SYSTEM_USER_ROLE;
@@ -114,7 +114,7 @@ public class PronouncementListDocServiceIT {
         final var bulkActionCaseData = BulkActionCaseData
             .builder()
             .dateAndTimeOfHearing(dateAndTimeOfHearing)
-            .courtName(Court.SERVICE_CENTRE)
+            .court(BIRMIGHAM)
             .pronouncementJudge("District Judge")
             .bulkListCaseDetails(List.of(getBulkListCaseDetailsListValue(TEST_CASE_ID.toString())))
             .build();
@@ -161,7 +161,7 @@ public class PronouncementListDocServiceIT {
         final var bulkActionCaseData = BulkActionCaseData
             .builder()
             .dateAndTimeOfHearing(dateAndTimeOfHearing)
-            .courtName(Court.SERVICE_CENTRE)
+            .court(BIRMIGHAM)
             .pronouncementJudge("District Judge")
             .bulkListCaseDetails(List.of(getBulkListCaseDetailsListValue(TEST_CASE_ID.toString())))
             .build();
@@ -188,7 +188,7 @@ public class PronouncementListDocServiceIT {
     private Map<String, Object> getMockedTemplateContent() {
         final Map<String, Object> templateContent = new HashMap<>();
 
-        final List<Map<String,Object>> bulkList = new ArrayList<>();
+        final List<Map<String, Object>> bulkList = new ArrayList<>();
         final Map<String, Object> caseLinkMap = new HashMap<>();
 
         caseLinkMap.put("caseReference", "1111222233334444");

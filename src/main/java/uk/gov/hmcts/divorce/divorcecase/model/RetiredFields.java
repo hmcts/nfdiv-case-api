@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -87,6 +88,17 @@ public class RetiredFields {
         typeParameterOverride = "AlternativeServiceType"
     )
     private AlternativeServiceType serviceApplicationType;
+
+    @CCD(
+        label = "retiredCoCourtName"
+    )
+    private Court coCourtName;
+
+    @CCD(
+        label = "retiredBulkActionCourtName",
+        access = {CaseworkerAccess.class}
+    )
+    private Court courtName;
 
     @JsonIgnore
     private static final Map<String, Consumer<Map<String, Object>>> migrations = Map.of(
