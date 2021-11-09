@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.bulkaction.service;
 
+import feign.FeignException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -12,7 +13,6 @@ import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
 import uk.gov.hmcts.divorce.divorcecase.model.Court;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.User;
@@ -23,7 +23,7 @@ import java.util.List;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
@@ -308,7 +308,7 @@ public class CaseRemovalServiceTest {
             .data(bulkActionCaseData)
             .build();
 
-        doThrow(CcdManagementException.class)
+        doThrow(FeignException.class)
             .when(ccdUpdateService)
             .submitBulkActionEvent(
                 eq(bulkActionCaseDetails),
@@ -317,11 +317,13 @@ public class CaseRemovalServiceTest {
                 eq(SERVICE_AUTHORIZATION)
             );
 
-        assertThrows(
-            CcdManagementException.class,
-            () -> caseRemovalService.removeCases(
+        try {
+            caseRemovalService.removeCases(
                 bulkActionCaseDetails,
                 List.of(getBulkListCaseDetailsListValue("2")),
-                TEST_SYSTEM_AUTHORISATION_TOKEN));
+                TEST_SYSTEM_AUTHORISATION_TOKEN);
+        } catch (Exception e) {
+            fail("No exception should be thrown by removeCases");
+        }
     }
 }
