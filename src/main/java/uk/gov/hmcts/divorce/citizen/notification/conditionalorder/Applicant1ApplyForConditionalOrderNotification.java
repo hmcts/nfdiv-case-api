@@ -33,7 +33,7 @@ public class Applicant1ApplyForConditionalOrderNotification {
     public void sendToApplicant1(CaseData caseData, Long id) {
         log.info("Sending notification to applicant 1 to notify them that they can apply for a conditional order: {}", id);
 
-        Map<String, String> templateVars = commonContent.templateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
+        Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
 
         boolean jointApplication = !caseData.getApplicationType().isSole();
         templateVars.put(JOINT_CONDITIONAL_ORDER, jointApplication ? YES : NO);

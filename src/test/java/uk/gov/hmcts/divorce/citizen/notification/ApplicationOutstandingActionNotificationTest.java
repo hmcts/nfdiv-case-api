@@ -67,7 +67,7 @@ class ApplicationOutstandingActionNotificationTest {
         docs.add(DocumentType.MARRIAGE_CERTIFICATE_TRANSLATION);
         docs.add(NAME_CHANGE_EVIDENCE);
         data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
-        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getCommonTemplateVars());
 
         notification.sendToApplicant1(data, 1234567890123456L);
@@ -90,7 +90,7 @@ class ApplicationOutstandingActionNotificationTest {
         CaseData data = validApplicant2CaseData();
         data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.NO);
         data.getApplication().setApplicant2CannotUploadSupportingDocument(Set.of(NAME_CHANGE_EVIDENCE));
-        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getCommonTemplateVars());
 
         notification.sendToApplicant2(data, 1234567890123456L);
@@ -120,7 +120,7 @@ class ApplicationOutstandingActionNotificationTest {
         docs.add(DocumentType.MARRIAGE_CERTIFICATE);
         docs.add(DocumentType.NAME_CHANGE_EVIDENCE);
         data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
-        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getCommonTemplateVars());
 
         notification.sendToApplicant1(data, 1234567890123456L);
@@ -154,7 +154,7 @@ class ApplicationOutstandingActionNotificationTest {
         docs.add(DocumentType.MARRIAGE_CERTIFICATE);
         docs.add(DocumentType.NAME_CHANGE_EVIDENCE);
         data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
-        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getCommonTemplateVars());
 
         notification.sendToApplicant1(data, 1234567890123456L);

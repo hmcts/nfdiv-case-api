@@ -26,7 +26,7 @@ public class Applicant2RequestChangesNotification {
 
     public void sendToApplicant1(CaseData caseData, Long id) {
         Map<String, String> templateVars =
-            commonContent.templateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
+            commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
 
         templateVars.put(APPLICANT_2_COMMENTS, caseData.getApplication().getApplicant2ExplainsApplicant1IncorrectInformation());
 
@@ -46,7 +46,7 @@ public class Applicant2RequestChangesNotification {
         notificationService.sendEmail(
             caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
             JOINT_APPLICANT2_REQUEST_CHANGES,
-            commonContent.templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
+            commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
             caseData.getApplicant2().getLanguagePreference()
         );
     }

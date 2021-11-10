@@ -50,7 +50,7 @@ class SolicitorServiceNotificationTest {
             .applicant1(applicantRepresentedBySolicitor())
             .build();
 
-        when(commonContent.commonNotificationTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
 
         solicitorServiceNotification.send(caseData, TEST_CASE_ID);
 

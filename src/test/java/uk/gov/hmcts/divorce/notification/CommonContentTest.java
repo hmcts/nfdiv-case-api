@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 
 import java.util.Map;
 
@@ -45,34 +44,13 @@ class CommonContentTest {
         final CaseData caseData = caseData();
         caseData.setApplicant2(respondent());
 
-        final Map<String, String> templateVars = commonContent.commonNotificationTemplateVars(caseData, TEST_CASE_ID);
+        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, TEST_CASE_ID);
 
         assertThat(templateVars).isNotEmpty().hasSize(3)
             .contains(
                 entry(APPLICANT_NAME, join(" ", TEST_FIRST_NAME, TEST_LAST_NAME)),
                 entry(RESPONDENT_NAME, join(" ", APPLICANT_2_FIRST_NAME, TEST_LAST_NAME)),
                 entry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)));
-    }
-
-    @Test
-    void shouldGetService() {
-        CaseData caseData = caseData();
-        assertThat(commonContent.getService(caseData.getDivorceOrDissolution())).isEqualTo("divorce");
-
-        caseData.setDivorceOrDissolution(DISSOLUTION);
-        assertThat(commonContent.getService(caseData.getDivorceOrDissolution())).isEqualTo("civil partnership");
-    }
-
-    @Test
-    void shouldGetPartner() {
-        CaseData caseData = caseData();
-        assertThat(commonContent.getPartner(caseData, caseData.getApplicant2())).isEqualTo("wife");
-
-        caseData.getApplicant2().setGender(Gender.MALE);
-        assertThat(commonContent.getPartner(caseData, caseData.getApplicant2())).isEqualTo("husband");
-
-        caseData.setDivorceOrDissolution(DISSOLUTION);
-        assertThat(commonContent.getPartner(caseData, caseData.getApplicant2())).isEqualTo("civil partner");
     }
 
     @Test

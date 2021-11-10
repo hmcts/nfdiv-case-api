@@ -56,7 +56,7 @@ class ApplicationSentForReviewApplicant2NotificationTest {
     void shouldSendEmailToApplicant2WhileInAwaitingApplicant2ResponseState() {
         CaseData data = validJointApplicant1CaseData();
         data.setDueDate(LOCAL_DATE);
-        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getCommonTemplateVars());
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
@@ -71,7 +71,7 @@ class ApplicationSentForReviewApplicant2NotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -81,7 +81,7 @@ class ApplicationSentForReviewApplicant2NotificationTest {
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         final Map<String, String> templateVars = getCommonTemplateVars();
         templateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
-        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
         notification.send(data, 1234567890123456L);
@@ -95,14 +95,14 @@ class ApplicationSentForReviewApplicant2NotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
     void shouldSendEmailToApplicant2WhileInAwaitingApplicant2ResponseStateWhenSendingReminder() {
         CaseData data = validJointApplicant1CaseData();
         data.setDueDate(LOCAL_DATE);
-        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getCommonTemplateVars());
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
@@ -118,7 +118,7 @@ class ApplicationSentForReviewApplicant2NotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -128,7 +128,7 @@ class ApplicationSentForReviewApplicant2NotificationTest {
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         final Map<String, String> templateVars = getCommonTemplateVars();
         templateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
-        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
         notification.sendReminder(data, 1234567890123456L);
@@ -143,6 +143,6 @@ class ApplicationSentForReviewApplicant2NotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
 }

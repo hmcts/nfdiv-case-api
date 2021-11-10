@@ -45,7 +45,7 @@ class ApplicantSubmittedNotificationTest {
         final CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder().email(applicant1Email).languagePreferenceWelsh(NO).build())
             .build();
-        when(commonContent.templateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2()))
+        when(commonContent.mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(templateVars);
 
         applicationSubmittedNotification.send(caseData, 1234567890123456L);
@@ -68,7 +68,7 @@ class ApplicantSubmittedNotificationTest {
             .applicant1(Applicant.builder().email(applicant1Email).languagePreferenceWelsh(NO).build())
             .previousCaseId(new CaseLink("Ref"))
             .build();
-        when(commonContent.templateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2()))
+        when(commonContent.mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(templateVars);
 
         applicationSubmittedNotification.send(caseData, 1234567890123456L);

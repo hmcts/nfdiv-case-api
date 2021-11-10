@@ -66,7 +66,7 @@ public class NoticeOfProceedingsNotification {
             notificationService.sendEmail(
                 applicant.getEmail(),
                 APPLICANT_NOTICE_OF_PROCEEDINGS,
-                commonContent.commonNotificationTemplateVars(caseData, caseId),
+                commonContent.basicTemplateVars(caseData, caseId),
                 applicant.getLanguagePreference());
         }
     }
@@ -74,7 +74,7 @@ public class NoticeOfProceedingsNotification {
     private Map<String, String> respondentSolicitorNoticeOfProceedingsTemplateVars(final CaseData caseData,
                                                                                    final Long caseId) {
 
-        final Map<String, String> templateVars = commonContent.commonNotificationTemplateVars(caseData, caseId);
+        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
         final Solicitor respondentSolicitor = caseData.getApplicant2().getSolicitor();
         final String respondentOrganisationName = respondentSolicitor
             .getOrganisationPolicy()
@@ -89,12 +89,9 @@ public class NoticeOfProceedingsNotification {
     }
 
     private Map<String, String> solicitorNoticeOfProceedingsTemplateVars(final CaseData caseData, final Long caseId) {
-
-        final Map<String, String> templateVars = commonContent.commonNotificationTemplateVars(caseData, caseId);
-
+        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
         templateVars.put(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
         templateVars.put(CASE_ID, caseId.toString());
-
         return templateVars;
     }
 }

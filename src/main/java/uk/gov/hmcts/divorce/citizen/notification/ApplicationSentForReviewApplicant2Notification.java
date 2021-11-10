@@ -61,7 +61,7 @@ public class ApplicationSentForReviewApplicant2Notification {
     }
 
     private Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner, boolean isReminder) {
-        Map<String, String> templateVars = commonContent.templateVars(caseData, id, applicant, partner);
+        Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
         templateVars.put(IS_REMINDER, isReminder ? YES :  NO);
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         templateVars.put(ACCESS_CODE, caseData.getCaseInvite().getAccessCode());

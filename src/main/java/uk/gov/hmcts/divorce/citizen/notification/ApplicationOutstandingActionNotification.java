@@ -69,7 +69,7 @@ public class ApplicationOutstandingActionNotification {
     }
 
     private Map<String, String> applicant1TemplateVars(final CaseData caseData, Long id) {
-        Map<String, String> templateVars = commonContent.templateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
+        Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
         templateVars.putAll(
             missingDocsTemplateVars(caseData, caseData.getApplication().getApplicant1CannotUploadSupportingDocument())
         );
@@ -80,7 +80,7 @@ public class ApplicationOutstandingActionNotification {
     }
 
     private Map<String, String> applicant2TemplateVars(final CaseData caseData, Long id) {
-        Map<String, String> templateVars = commonContent.templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
+        Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
         templateVars.putAll(missingDocsTemplateVars(caseData, caseData.getApplication().getApplicant2CannotUploadSupportingDocument()));
         templateVars.putAll(serveAnotherWayTemplateVars(false, caseData));
         return templateVars;

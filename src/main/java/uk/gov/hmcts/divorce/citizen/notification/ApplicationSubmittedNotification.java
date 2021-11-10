@@ -47,7 +47,7 @@ public class ApplicationSubmittedNotification {
     }
 
     private Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
-        Map<String, String> templateVars = commonContent.templateVars(caseData, id, applicant, partner);
+        Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         return templateVars;
     }

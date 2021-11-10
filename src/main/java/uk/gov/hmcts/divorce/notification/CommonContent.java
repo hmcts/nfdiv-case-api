@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 
 import java.util.HashMap;
@@ -52,14 +51,14 @@ public class CommonContent {
     @Autowired
     private EmailTemplatesConfig config;
 
-    public Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
+    public Map<String, String> mainTemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
         Map<String, String> templateVars = new HashMap<>();
         templateVars.put(APPLICATION_REFERENCE, id != null ? formatId(id) : null);
         templateVars.put(IS_DIVORCE, isDivorce(caseData) ? YES : NO);
         templateVars.put(IS_DISSOLUTION, !isDivorce(caseData) ? YES : NO);
         templateVars.put(FIRST_NAME, applicant.getFirstName());
         templateVars.put(LAST_NAME, applicant.getLastName());
-        templateVars.put(PARTNER, getPartner(caseData, partner));
+        templateVars.put(PARTNER, isDivorce(caseData) ? partner.getGender() == Gender.MALE ? "husband" : "wife" : "civil partner");
         templateVars.put(COURT_EMAIL,
             config.getTemplateVars().get(isDivorce(caseData) ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
         templateVars.put(SIGN_IN_URL_NOTIFY_KEY,
@@ -67,19 +66,7 @@ public class CommonContent {
         return templateVars;
     }
 
-    public static boolean isDivorce(CaseData caseData) {
-        return caseData.getDivorceOrDissolution().isDivorce();
-    }
-
-    public String getService(DivorceOrDissolution divorceOrDissolution) {
-        return divorceOrDissolution.isDivorce() ? "divorce" : "civil partnership";
-    }
-
-    public String getPartner(CaseData caseData, Applicant partner) {
-        return isDivorce(caseData) ? partner.getGender() == Gender.MALE ? "husband" : "wife" : "civil partner";
-    }
-
-    public Map<String, String> commonNotificationTemplateVars(final CaseData caseData, final Long caseId) {
+    public Map<String, String> basicTemplateVars(final CaseData caseData, final Long caseId) {
 
         final Map<String, String> templateVars = new HashMap<>();
         final Applicant applicant = caseData.getApplicant1();
@@ -90,5 +77,9 @@ public class CommonContent {
         templateVars.put(APPLICATION_REFERENCE, formatId(caseId));
 
         return templateVars;
+    }
+
+    public static boolean isDivorce(CaseData caseData) {
+        return caseData.getDivorceOrDissolution().isDivorce();
     }
 }

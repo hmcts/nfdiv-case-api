@@ -53,7 +53,7 @@ public class SoleAosSubmittedNotificationTest {
     void shouldSendAosNotDisputedEmailToSoleApplicantWithDivorceContent() {
         CaseData data = validCaseDataForAosSubmitted();
         data.setDueDate(LocalDate.now().plusDays(141));
-        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getCommonTemplateVars());
 
         notification.sendApplicationNotDisputedToApplicant(data, 1234567890123456L);
@@ -69,7 +69,7 @@ public class SoleAosSubmittedNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -79,7 +79,7 @@ public class SoleAosSubmittedNotificationTest {
         data.setDueDate(LocalDate.now().plusDays(141));
         final Map<String, String> templateVars = getCommonTemplateVars();
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
-        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
 
         notification.sendApplicationNotDisputedToApplicant(data, 1234567890123456L);
 
@@ -94,14 +94,14 @@ public class SoleAosSubmittedNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
     void shouldSendAosNotDisputedEmailToSoleRespondentWithDivorceContent() {
         CaseData data = validCaseDataForAosSubmitted();
         data.setDueDate(LocalDate.now().plusDays(141));
-        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getCommonTemplateVars());
 
         notification.sendApplicationNotDisputedToRespondent(data, 1234567890123456L);
@@ -117,7 +117,7 @@ public class SoleAosSubmittedNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -127,7 +127,7 @@ public class SoleAosSubmittedNotificationTest {
         data.setDueDate(LocalDate.now().plusDays(141));
         final Map<String, String> templateVars = getCommonTemplateVars();
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
-        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
 
         notification.sendApplicationNotDisputedToRespondent(data, 1234567890123456L);
 
@@ -142,7 +142,7 @@ public class SoleAosSubmittedNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -150,7 +150,7 @@ public class SoleAosSubmittedNotificationTest {
         CaseData data = validCaseDataForAosSubmitted();
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
-        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getCommonTemplateVars());
 
         notification.sendApplicationDisputedToApplicant(data, 1234567890123456L);
@@ -166,7 +166,7 @@ public class SoleAosSubmittedNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -177,7 +177,7 @@ public class SoleAosSubmittedNotificationTest {
         data.getApplication().setIssueDate(LocalDate.now());
         final Map<String, String> templateVars = getCommonTemplateVars();
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
-        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
 
         notification.sendApplicationDisputedToApplicant(data, 1234567890123456L);
 
@@ -192,7 +192,7 @@ public class SoleAosSubmittedNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -200,7 +200,7 @@ public class SoleAosSubmittedNotificationTest {
         CaseData data = validCaseDataForAosSubmitted();
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
-        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getCommonTemplateVars());
 
         notification.sendApplicationDisputedToRespondent(data, 1234567890123456L);
@@ -216,7 +216,7 @@ public class SoleAosSubmittedNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -227,7 +227,7 @@ public class SoleAosSubmittedNotificationTest {
         data.getApplication().setIssueDate(LocalDate.now());
         final Map<String, String> templateVars = getCommonTemplateVars();
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
-        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
 
         notification.sendApplicationDisputedToRespondent(data, 1234567890123456L);
 
@@ -242,6 +242,6 @@ public class SoleAosSubmittedNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
 }

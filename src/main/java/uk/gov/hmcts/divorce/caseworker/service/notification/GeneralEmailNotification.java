@@ -4,18 +4,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
-import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_OTHER_PARTY;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_PETITIONER;
@@ -29,6 +26,9 @@ public class GeneralEmailNotification {
 
     public static final String GENERAL_EMAIL_DETAILS = "general email details";
     public static final String GENERAL_OTHER_RECIPIENT_NAME = "general other recipient name";
+
+    @Autowired
+    private CommonContent commonContent;
 
     @Autowired
     private NotificationService notificationService;
@@ -83,10 +83,7 @@ public class GeneralEmailNotification {
     }
 
     private Map<String, String> templateVars(final CaseData caseData, final Long caseId) {
-        final Map<String, String> templateVars = new HashMap<>();
-        templateVars.put(APPLICANT_NAME, caseData.getApplication().getMarriageDetails().getApplicant1Name());
-        templateVars.put(RESPONDENT_NAME, caseData.getApplication().getMarriageDetails().getApplicant2Name());
-        templateVars.put(APPLICATION_REFERENCE, String.valueOf(caseId));
+        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
         templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, caseData.getGeneralEmail().getGeneralEmailOtherRecipientName());
         templateVars.put(GENERAL_EMAIL_DETAILS, caseData.getGeneralEmail().getGeneralEmailDetails());
         return templateVars;
