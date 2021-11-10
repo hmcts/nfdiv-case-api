@@ -66,7 +66,6 @@ public class IssueApplicationService {
             generateCitizenRespondentAosInvitation,
             divorceApplicationRemover,
             generateDivorceApplication,
-            generateNoticeOfProceeding,
             sendAosPack,
             sendAosNotifications,
             setDueDateAfterIssue,
@@ -74,6 +73,7 @@ public class IssueApplicationService {
                 details.getData().getApplication().setIssueDate(LocalDate.now(clock));
                 return details;
             },
+            generateNoticeOfProceeding,
             sendApplicationIssueNotifications
         ).run(caseDetails);
     }
