@@ -89,7 +89,7 @@
         }
       }
     ],
-    "applicant1PrayerHasBeenGiven": ["Yes"],
+    "applicant1PrayerHasBeenGivenCheckbox": ["Yes"],
     "solSignStatementOfTruth": "Yes",
     "applicant1StatementOfTruth": "Yes"
   },

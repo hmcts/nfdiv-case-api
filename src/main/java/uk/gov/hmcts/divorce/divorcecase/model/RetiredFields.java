@@ -91,6 +91,9 @@ public class RetiredFields {
     )
     private AlternativeServiceType serviceApplicationType;
 
+    @CCD(label = "Retired YesNo field used for prayer")
+    private YesOrNo applicant1PrayerHasBeenGiven;
+
     @JsonIgnore
     private static final Map<String, Consumer<Map<String, Object>>> migrations = Map.of(
         "exampleRetiredField", data -> data.put("applicant1FirstName", data.get("exampleRetiredField")),
@@ -111,7 +114,8 @@ public class RetiredFields {
         "doYouAgreeCourtHasJurisdiction", data -> data.put("jurisdictionAgree", data.get("doYouAgreeCourtHasJurisdiction")),
         "serviceApplicationType", data -> data.put("alternativeServiceType", data.get("serviceApplicationType")),
         "applicant1PrayerHasBeenGiven",
-        data -> data.put("applicant1PrayerHasBeenGiven", transformApplicant1PrayerHasBeenGivenField(data))
+        data -> data.put(
+            "applicant1PrayerHasBeenGivenCheckbox", transformApplicant1PrayerHasBeenGivenField(data))
     );
 
     public static Map<String, Object> migrate(Map<String, Object> data) {
@@ -138,8 +142,8 @@ public class RetiredFields {
     }
 
     private static Set<ThePrayer> transformApplicant1PrayerHasBeenGivenField(Map<String, Object> data) {
-        YesOrNo applicant1PrayerHasBeenGiven = (YesOrNo) data.get("applicant1PrayerHasBeenGiven");
-        return YES.equals(applicant1PrayerHasBeenGiven)
+        String value = (String) data.get("applicant1PrayerHasBeenGiven");
+        return YES.getValue().equalsIgnoreCase(value)
             ? Set.of(I_CONFIRM)
             : emptySet();
     }

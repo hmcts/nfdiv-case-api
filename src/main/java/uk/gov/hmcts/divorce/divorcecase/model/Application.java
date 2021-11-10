@@ -141,7 +141,7 @@ public class Application {
         label = "This confirms what you are asking the court to do on behalf of the applicant. It’s known as ‘the prayer’.",
         access = {DefaultAccess.class}
     )
-    private Set<ThePrayer> applicant1PrayerHasBeenGiven;
+    private Set<ThePrayer> applicant1PrayerHasBeenGivenCheckbox;
 
     @Getter
     @AllArgsConstructor

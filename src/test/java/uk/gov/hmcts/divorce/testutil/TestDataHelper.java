@@ -267,7 +267,7 @@ public class TestDataHelper {
         CaseData caseData = validJointApplicant1CaseData();
         caseData.setApplicant2(getApplicant2(MALE));
         caseData.getApplication().setApplicant1StatementOfTruth(YES);
-        caseData.getApplication().setApplicant1PrayerHasBeenGiven(Set.of(I_CONFIRM));
+        caseData.getApplication().setApplicant1PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
         return caseData;
     }
 
@@ -301,7 +301,7 @@ public class TestDataHelper {
 
         var application = Application.builder()
             .solSignStatementOfTruth(YES)
-            .applicant1PrayerHasBeenGiven(Set.of(I_CONFIRM))
+            .applicant1PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM))
             .applicationFeeOrderSummary(orderSummary)
             .applicationPayments(singletonList(payment))
             .marriageDetails(getMarriageDetails())
@@ -374,7 +374,7 @@ public class TestDataHelper {
         final Application application = caseData.getApplication();
         application.setDocumentUploadComplete(YES);
         application.setMarriageDetails(marriageDetails);
-        application.setApplicant1PrayerHasBeenGiven(Set.of(I_CONFIRM));
+        application.setApplicant1PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
         application.setApplicant1StatementOfTruth(YES);
         application.setJurisdiction(getJurisdiction());
         caseData.setApplicationType(SOLE_APPLICATION);

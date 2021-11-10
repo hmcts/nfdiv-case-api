@@ -12,7 +12,7 @@
   "applicant2LastName": "test_last_name",
   "marriageApplicant1Name": "test_first_name test_last_name",
   "applicant1FinancialOrder": "NO",
-  "applicant1PrayerHasBeenGiven": ["Yes"],
+  "applicant1PrayerHasBeenGivenCheckbox": ["Yes"],
   "solSignStatementOfTruth": "YES",
   "jurisdictionApplicant1Residence": "YES",
   "jurisdictionApplicant2Residence": "YES",

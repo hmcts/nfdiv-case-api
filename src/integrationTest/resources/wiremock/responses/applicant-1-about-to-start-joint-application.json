@@ -27,7 +27,7 @@
     "applicant2LanguagePreferenceWelsh": "No",
     "marriageApplicant2Name": "test_first_name test_last_name",
     "applicant1FinancialOrder": "No",
-    "applicant1PrayerHasBeenGiven": ["Yes"],
+    "applicant1PrayerHasBeenGivenCheckbox": ["Yes"],
     "applicant1StatementOfTruth": "Yes"
   },
   "state": "AwaitingPayment"

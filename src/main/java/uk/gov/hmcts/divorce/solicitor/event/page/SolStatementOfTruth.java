@@ -36,7 +36,7 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
                 .mandatory(Application::getSolStatementOfReconciliationCertify)
                 .mandatory(Application::getSolStatementOfReconciliationDiscussed)
                 .label("LabelPrayer", "## The prayer ##")
-                .mandatory(Application::getApplicant1PrayerHasBeenGiven)
+                .mandatory(Application::getApplicant1PrayerHasBeenGivenCheckbox)
                 .label("LabelSolStatementOTruth-PrayerDivorceBullet",
                     "- dissolve their marriage (get a divorce)",
                     "divorceOrDissolution=\"divorce\"")

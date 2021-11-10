@@ -42,7 +42,7 @@
     "jurisdictionConnections": [
       "J"
     ],
-    "applicant1PrayerHasBeenGiven": ["Yes"],
+    "applicant1PrayerHasBeenGivenCheckbox": ["Yes"],
     "applicant1StatementOfTruth": "Yes",
     "solSignStatementOfTruth": "Yes",
     "applicationFeeOrderSummary": {

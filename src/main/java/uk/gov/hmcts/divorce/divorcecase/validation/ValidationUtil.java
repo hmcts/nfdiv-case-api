@@ -47,7 +47,7 @@ public final class ValidationUtil {
             notNull(caseData.getApplication().getMarriageDetails().getApplicant1Name(), "MarriageApplicant1Name"),
             notNull(caseData.getApplicant1().getKeepContactDetailsConfidential(), "Applicant1KeepContactDetailsConfidential"),
             hasStatementOfTruth(caseData.getApplication()),
-            validatePrayer(caseData.getApplication().getApplicant1PrayerHasBeenGiven()),
+            validatePrayer(caseData.getApplication().getApplicant1PrayerHasBeenGivenCheckbox()),
             validateMarriageDate(caseData.getApplication().getMarriageDetails().getDate(), "MarriageDate"),
             validateJurisdictionConnections(caseData.getApplication())
         );
@@ -58,7 +58,7 @@ public final class ValidationUtil {
     }
 
     private static List<String> validatePrayer(Set<Application.ThePrayer> thePrayer) {
-        final String field = "Applicant1PrayerHasBeenGiven";
+        final String field = "applicant1PrayerHasBeenGivenCheckbox";
 
         if (Objects.isNull(thePrayer)) {
             return List.of(field + EMPTY);
