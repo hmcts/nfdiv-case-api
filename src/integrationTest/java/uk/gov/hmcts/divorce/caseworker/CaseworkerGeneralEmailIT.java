@@ -33,7 +33,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
-import static uk.gov.hmcts.divorce.notification.CommonContent.CCD_REFERENCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_OTHER_PARTY;
@@ -115,7 +115,7 @@ public class CaseworkerGeneralEmailIT {
         templateVars.put(GENERAL_EMAIL_DETAILS, "some details");
         templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, null);
         templateVars.put(APPLICANT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME);
-        templateVars.put(CCD_REFERENCE, String.valueOf(TEST_CASE_ID));
+        templateVars.put(APPLICATION_REFERENCE, String.valueOf(TEST_CASE_ID));
         templateVars.put(RESPONDENT_NAME, null);
 
         verify(notificationService).sendEmail(
@@ -165,7 +165,7 @@ public class CaseworkerGeneralEmailIT {
         templateVars.put(SOLICITOR_NAME, TEST_SOLICITOR_NAME);
         templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, null);
         templateVars.put(APPLICANT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME);
-        templateVars.put(CCD_REFERENCE, String.valueOf(TEST_CASE_ID));
+        templateVars.put(APPLICATION_REFERENCE, String.valueOf(TEST_CASE_ID));
         templateVars.put(RESPONDENT_NAME, APPLICANT_2_FIRST_NAME + " " + APPLICANT_2_LAST_NAME);
 
         verify(notificationService).sendEmail(
@@ -212,7 +212,7 @@ public class CaseworkerGeneralEmailIT {
         templateVars.put(GENERAL_EMAIL_DETAILS, "some details");
         templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, null);
         templateVars.put(APPLICANT_NAME, null);
-        templateVars.put(CCD_REFERENCE, String.valueOf(TEST_CASE_ID));
+        templateVars.put(APPLICATION_REFERENCE, String.valueOf(TEST_CASE_ID));
         templateVars.put(RESPONDENT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME);
 
         verify(notificationService).sendEmail(
@@ -262,7 +262,7 @@ public class CaseworkerGeneralEmailIT {
         templateVars.put(SOLICITOR_NAME, TEST_SOLICITOR_NAME);
         templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, null);
         templateVars.put(APPLICANT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME);
-        templateVars.put(CCD_REFERENCE, String.valueOf(TEST_CASE_ID));
+        templateVars.put(APPLICATION_REFERENCE, String.valueOf(TEST_CASE_ID));
         templateVars.put(RESPONDENT_NAME, APPLICANT_2_FIRST_NAME + " " + APPLICANT_2_LAST_NAME);
 
         verify(notificationService).sendEmail(
@@ -309,7 +309,7 @@ public class CaseworkerGeneralEmailIT {
         templateVars.put(GENERAL_EMAIL_DETAILS, "some details");
         templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, "otherparty");
         templateVars.put(APPLICANT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME);
-        templateVars.put(CCD_REFERENCE, String.valueOf(TEST_CASE_ID));
+        templateVars.put(APPLICATION_REFERENCE, String.valueOf(TEST_CASE_ID));
         templateVars.put(RESPONDENT_NAME, APPLICANT_2_FIRST_NAME + " " + APPLICANT_2_LAST_NAME);
 
         verify(notificationService).sendEmail(

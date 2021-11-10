@@ -16,7 +16,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
-import static uk.gov.hmcts.divorce.notification.CommonContent.CCD_REFERENCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_AWAITING_CONDITIONAL_ORDER;
@@ -49,7 +49,7 @@ public class AwaitingConditionalOrderNotification {
         templateVars.put(APPLICANT_NAME, join(" ", applicant1FirstName, applicant1LastName));
         templateVars.put(RESPONDENT_NAME, join(" ", applicant2FirstName, applicant2LastName));
         templateVars.put(SOLICITOR_NAME, applicant1SolicitorName);
-        templateVars.put(CCD_REFERENCE, formatId(caseId));
+        templateVars.put(APPLICATION_REFERENCE, formatId(caseId));
 
         notificationService.sendEmail(
             applicant1SolicitorEmail,
