@@ -309,14 +309,20 @@ public class CaseData {
     private List<ListValue<DivorceDocument>> sortDocuments(final Map<Boolean, List<ListValue<DivorceDocument>>> documentsWithoutIds) {
 
         final List<ListValue<DivorceDocument>> sortedDocuments = new ArrayList<>();
-        sortedDocuments.addAll(0, documentsWithoutIds.get(true)); // add new documents to start of the list
-        sortedDocuments.addAll(1, documentsWithoutIds.get(false));
 
-        sortedDocuments.forEach(
-            uploadedDocumentListValue -> uploadedDocumentListValue.setId(String.valueOf(UUID.randomUUID()))
-        );
+        final var newDocuments = documentsWithoutIds.get(true);
+        final var previousDocuments = documentsWithoutIds.get(false);
 
-        return sortedDocuments;
+        if (null != newDocuments) {
+            sortedDocuments.addAll(0, newDocuments); // add new documents to start of the list
+            sortedDocuments.addAll(1, previousDocuments);
+            sortedDocuments.forEach(
+                uploadedDocumentListValue -> uploadedDocumentListValue.setId(String.valueOf(UUID.randomUUID()))
+            );
+            return sortedDocuments;
+        }
+
+        return previousDocuments;
     }
 
     public void archiveAlternativeServiceApplicationOnCompletion() {

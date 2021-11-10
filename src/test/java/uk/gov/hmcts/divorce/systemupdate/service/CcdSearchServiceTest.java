@@ -36,12 +36,16 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Pronounced;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DUE_DATE;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.feignException;
@@ -74,13 +78,13 @@ class CcdSearchServiceTest {
         final int pageSize = 100;
         final SearchResult expected = SearchResult.builder().total(PAGE_SIZE).cases(createCaseDetailsList(PAGE_SIZE)).build();
         final BoolQueryBuilder query = boolQuery()
-            .must(matchQuery("state", AwaitingApplicant2Response))
-            .filter(rangeQuery("data.dueDate").lte(LocalDate.now()))
+            .must(matchQuery(STATE, AwaitingApplicant2Response))
+            .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
             .mustNot(matchQuery("data.applicant2ReminderSent", YesOrNo.YES));
 
         SearchSourceBuilder sourceBuilder = SearchSourceBuilder
             .searchSource()
-            .sort("data.dueDate", ASC)
+            .sort(DUE_DATE, ASC)
             .query(query)
             .from(from)
             .size(pageSize);
@@ -101,8 +105,8 @@ class CcdSearchServiceTest {
     @Test
     void shouldReturnAllCasesWithGivenState() {
         final BoolQueryBuilder query = boolQuery()
-            .must(matchQuery("state", Submitted))
-            .filter(rangeQuery("data.dueDate").lte(LocalDate.now()));
+            .must(matchQuery(STATE, Submitted))
+            .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()));
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
         final SearchResult expected1 = SearchResult.builder().total(PAGE_SIZE).cases(createCaseDetailsList(PAGE_SIZE)).build();
         final SearchResult expected2 = SearchResult.builder().total(1).cases(createCaseDetailsList(1)).build();
@@ -128,8 +132,8 @@ class CcdSearchServiceTest {
     @Test
     void shouldReturnAllCasesInHolding() {
         final BoolQueryBuilder query = boolQuery()
-            .must(matchQuery("state", Holding))
-            .filter(rangeQuery("data.dueDate").lte(LocalDate.now()));
+            .must(matchQuery(STATE, Holding))
+            .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()));
 
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
         final SearchResult expected1 = SearchResult.builder().total(PAGE_SIZE).cases(createCaseDetailsList(PAGE_SIZE)).build();
@@ -137,22 +141,22 @@ class CcdSearchServiceTest {
 
         SearchSourceBuilder sourceBuilder1 = SearchSourceBuilder
             .searchSource()
-            .sort("data.dueDate", ASC)
+            .sort(DUE_DATE, ASC)
             .query(
                 boolQuery()
-                    .must(matchQuery("state", Holding))
-                    .filter(rangeQuery("data.dueDate").lte(LocalDate.now()))
+                    .must(matchQuery(STATE, Holding))
+                    .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
             )
             .from(0)
             .size(PAGE_SIZE);
 
         SearchSourceBuilder sourceBuilder2 = SearchSourceBuilder
             .searchSource()
-            .sort("data.dueDate", ASC)
+            .sort(DUE_DATE, ASC)
             .query(
                 boolQuery()
-                    .must(matchQuery("state", Holding))
-                    .filter(rangeQuery("data.dueDate").lte(LocalDate.now()))
+                    .must(matchQuery(STATE, Holding))
+                    .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
             )
             .from(PAGE_SIZE)
             .size(PAGE_SIZE);
@@ -184,19 +188,19 @@ class CcdSearchServiceTest {
         final SearchResult expected2 = SearchResult.builder().total(1).cases(createCaseDetailsList(1)).build();
         final BoolQueryBuilder query = boolQuery()
             .must(matchQuery("state", AwaitingApplicant2Response))
-            .filter(rangeQuery("data.dueDate").lte(LocalDate.now()))
+            .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
             .mustNot(matchQuery("data.applicant2ReminderSent", YesOrNo.YES));
 
         SearchSourceBuilder sourceBuilder = SearchSourceBuilder
             .searchSource()
-            .sort("data.dueDate", ASC)
+            .sort(DUE_DATE, ASC)
             .query(query)
             .from(from)
             .size(PAGE_SIZE);
 
         SearchSourceBuilder sourceBuilder2 = SearchSourceBuilder
             .searchSource()
-            .sort("data.dueDate", ASC)
+            .sort(DUE_DATE, ASC)
             .query(query)
             .from(PAGE_SIZE)
             .size(PAGE_SIZE);
@@ -254,7 +258,7 @@ class CcdSearchServiceTest {
     void shouldThrowCcdSearchFailedExceptionIfSearchFails() {
         final BoolQueryBuilder query = boolQuery()
             .must(matchQuery("state", Submitted))
-            .filter(rangeQuery("data.dueDate").lte(LocalDate.now()));
+            .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()));
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
 
         doThrow(feignException(422, "A reason")).when(coreCaseDataApi)
@@ -346,10 +350,6 @@ class CcdSearchServiceTest {
     void shouldThrowCcdSearchCaseExceptionIfFeignExceptionIsThrown() {
 
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
-        final SearchResult expectedSearchResult1 = SearchResult.builder().total(100)
-            .cases(createCaseDetailsList(100)).build();
-        final SearchResult expectedSearchResult2 = SearchResult.builder().total(1)
-            .cases(createCaseDetailsList(1)).build();
 
         doThrow(feignException(409, "some error")).when(coreCaseDataApi).searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
@@ -360,6 +360,56 @@ class CcdSearchServiceTest {
         assertThrows(
             CcdSearchCaseException.class,
             () -> ccdSearchService.searchForUnprocessedOrErroredBulkCases(Pronounced, user, SERVICE_AUTHORIZATION),
+            "Failed to complete search for Bulk Cases with state of Pronounced");
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    void shouldReturnAllCasesInStateCreatedOrListedWithCasesToBeRemoved() {
+
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final SearchResult expectedSearchResult1 = SearchResult.builder().total(100)
+            .cases(createCaseDetailsList(100)).build();
+        final SearchResult expectedSearchResult2 = SearchResult.builder().total(1)
+            .cases(createCaseDetailsList(1)).build();
+        final uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails =
+            mock(uk.gov.hmcts.ccd.sdk.api.CaseDetails.class);
+
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            BulkActionCaseTypeConfig.CASE_TYPE,
+            searchSourceBuilderForCreatedOrListedCasesWithCasesToBeRemoved(0).toString()))
+            .thenReturn(expectedSearchResult1);
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            BulkActionCaseTypeConfig.CASE_TYPE,
+            searchSourceBuilderForCreatedOrListedCasesWithCasesToBeRemoved(100).toString()))
+            .thenReturn(expectedSearchResult2);
+        when(caseDetailsConverter.convertToBulkActionCaseDetailsFromReformModel(any(CaseDetails.class)))
+            .thenReturn(bulkCaseDetails);
+
+        final List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState>> searchResult = ccdSearchService
+            .searchForCreatedOrListedBulkCasesWithCasesToBeRemoved(user, SERVICE_AUTHORIZATION);
+
+        assertThat(searchResult.size()).isEqualTo(101);
+    }
+
+    @Test
+    void shouldThrowCcdSearchCaseExceptionIfFeignExceptionIsThrownWhenFetchingCasesToRemove() {
+
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+
+        doThrow(feignException(409, "some error")).when(coreCaseDataApi).searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            BulkActionCaseTypeConfig.CASE_TYPE,
+            searchSourceBuilderForCreatedOrListedCasesWithCasesToBeRemoved(0).toString());
+
+        assertThrows(
+            CcdSearchCaseException.class,
+            () -> ccdSearchService.searchForCreatedOrListedBulkCasesWithCasesToBeRemoved(user, SERVICE_AUTHORIZATION),
             "Failed to complete search for Bulk Cases with state of Pronounced");
     }
 
@@ -377,16 +427,16 @@ class CcdSearchServiceTest {
     private SearchSourceBuilder getSourceBuilder(final int from, final int pageSize) {
         return SearchSourceBuilder
             .searchSource()
-            .sort("data.dueDate", ASC)
+            .sort(DUE_DATE, ASC)
             .query(boolQuery()
-                .must(matchQuery("state", Submitted))
-                .filter(rangeQuery("data.dueDate").lte(LocalDate.now())))
+                .must(matchQuery(STATE, Submitted))
+                .filter(rangeQuery(DUE_DATE).lte(LocalDate.now())))
             .from(from)
             .size(pageSize);
     }
 
     private SearchSourceBuilder searchSourceBuilderForAwaitingPronouncementCases() {
-        QueryBuilder stateQuery = matchQuery("state", AwaitingPronouncement);
+        QueryBuilder stateQuery = matchQuery(STATE, AwaitingPronouncement);
         QueryBuilder bulkListingCaseId = existsQuery("data.bulkListCaseReference");
 
         QueryBuilder query = boolQuery()
@@ -402,7 +452,7 @@ class CcdSearchServiceTest {
     }
 
     private SearchSourceBuilder searchSourceBuilderForPronouncedCasesWithCasesInError(final int from) {
-        final QueryBuilder stateQuery = matchQuery("state", Pronounced);
+        final QueryBuilder stateQuery = matchQuery(STATE, Pronounced);
         final QueryBuilder errorCasesExist = existsQuery("data.erroredCaseDetails");
         final QueryBuilder processedCases = existsQuery("data.processedCaseDetails");
 
@@ -410,6 +460,24 @@ class CcdSearchServiceTest {
             .must(stateQuery)
             .should(boolQuery().must(errorCasesExist))
             .should(boolQuery().mustNot(processedCases));
+
+        return SearchSourceBuilder
+            .searchSource()
+            .query(query)
+            .from(from)
+            .size(PAGE_SIZE);
+    }
+
+    private SearchSourceBuilder searchSourceBuilderForCreatedOrListedCasesWithCasesToBeRemoved(final int from) {
+        final QueryBuilder createdStateQuery = matchQuery(STATE, Created);
+        final QueryBuilder listedStateQuery = matchQuery(STATE, Listed);
+        final QueryBuilder casesToBeRemovedExist = existsQuery("data.casesToBeRemoved");
+
+        final QueryBuilder query = boolQuery()
+            .must(boolQuery().must(casesToBeRemovedExist))
+            .should(createdStateQuery)
+            .should(listedStateQuery)
+            .minimumShouldMatch(1);
 
         return SearchSourceBuilder
             .searchSource()

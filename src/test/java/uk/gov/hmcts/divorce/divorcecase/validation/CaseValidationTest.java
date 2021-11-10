@@ -1,6 +1,10 @@
 package uk.gov.hmcts.divorce.divorcecase.validation;
 
 import org.junit.jupiter.api.Test;
+import uk.gov.hmcts.ccd.sdk.type.CaseLink;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
+import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
@@ -24,6 +28,7 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.notNull
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.notNullOrNo;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCaseFieldsForIssueApplication;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCasesAcceptedToListForHearing;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateJurisdictionConnections;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateMarriageDate;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -176,4 +181,86 @@ public class CaseValidationTest {
         assertThat(errors).contains(CONNECTION + JurisdictionConnections.APP_1_APP_2_RESIDENT + CANNOT_EXIST);
     }
 
+    @Test
+    public void shouldValidateNoCasesAdded() {
+        final BulkActionCaseData caseData = bulkActionCaseData();
+        final CaseLink caseLink1 = CaseLink.builder()
+            .caseReference("12345")
+            .build();
+        final CaseLink caseLink2 = CaseLink.builder()
+            .caseReference("23456")
+            .build();
+        final CaseLink caseLink3 = CaseLink.builder()
+            .caseReference("34567")
+            .build();
+        final ListValue<CaseLink> caseLinkListValue1 =
+            ListValue.<CaseLink>builder()
+                .value(caseLink1)
+                .build();
+        final ListValue<CaseLink> caseLinkListValue2 =
+            ListValue.<CaseLink>builder()
+                .value(caseLink2)
+                .build();
+        final ListValue<CaseLink> caseLinkListValue3 =
+            ListValue.<CaseLink>builder()
+                .value(caseLink3)
+                .build();
+        caseData.setCasesAcceptedToListForHearing(
+            List.of(caseLinkListValue1, caseLinkListValue2, caseLinkListValue3));
+
+        List<String> errors = validateCasesAcceptedToListForHearing(caseData);
+
+        assertThat(errors).contains("You can only remove cases from the list of cases accepted to list for hearing.");
+    }
+
+    @Test
+    public void shouldValidateNoDuplicateCases() {
+        final BulkActionCaseData caseData = bulkActionCaseData();
+        final CaseLink caseLink1 = CaseLink.builder()
+            .caseReference("12345")
+            .build();
+        final CaseLink caseLink2 = CaseLink.builder()
+            .caseReference("12345")
+            .build();
+        final ListValue<CaseLink> caseLinkListValue1 =
+            ListValue.<CaseLink>builder()
+                .value(caseLink1)
+                .build();
+        final ListValue<CaseLink> caseLinkListValue2 =
+            ListValue.<CaseLink>builder()
+                .value(caseLink2)
+                .build();
+        caseData.setCasesAcceptedToListForHearing(List.of(caseLinkListValue1, caseLinkListValue2));
+
+        List<String> errors = validateCasesAcceptedToListForHearing(caseData);
+
+        assertThat(errors).contains("You can only remove cases from the list of cases accepted to list for hearing.");
+    }
+
+    private BulkActionCaseData bulkActionCaseData() {
+        final CaseLink caseLink1 = CaseLink.builder()
+            .caseReference("12345")
+            .build();
+        final CaseLink caseLink2 = CaseLink.builder()
+            .caseReference("98765")
+            .build();
+
+        final ListValue<BulkListCaseDetails> bulkListCaseDetailsListValue1 =
+            ListValue.<BulkListCaseDetails>builder()
+                .value(BulkListCaseDetails.builder()
+                    .caseReference(caseLink1)
+                    .build())
+                .build();
+
+        final ListValue<BulkListCaseDetails> bulkListCaseDetailsListValue2 =
+            ListValue.<BulkListCaseDetails>builder()
+                .value(BulkListCaseDetails.builder()
+                    .caseReference(caseLink2)
+                    .build())
+                .build();
+
+        return BulkActionCaseData.builder()
+            .bulkListCaseDetails(List.of(bulkListCaseDetailsListValue1, bulkListCaseDetailsListValue2))
+            .build();
+    }
 }

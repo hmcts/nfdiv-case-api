@@ -19,13 +19,13 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 public class SystemRemoveBulkCaseTest {
 
     @InjectMocks
-    private SystemRemoveBulkCase systemUnLinkBulkCase;
+    private SystemRemoveBulkCase systemRemoveBulkCase;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        systemUnLinkBulkCase.configure(configBuilder);
+        systemRemoveBulkCase.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)

@@ -1,6 +1,9 @@
 package uk.gov.hmcts.divorce.divorcecase.validation;
 
+import uk.gov.hmcts.ccd.sdk.type.CaseLink;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
@@ -8,11 +11,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.time.temporal.ChronoUnit.YEARS;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 
@@ -118,6 +123,21 @@ public final class ValidationUtil {
         return application.getJurisdiction().validate();
     }
 
+    public static List<String> validateCasesAcceptedToListForHearing(BulkActionCaseData caseData) {
+        final List<ListValue<CaseLink>> casesAcceptedToListForHearing = caseData.getCasesAcceptedToListForHearing();
+        final List<String> caseReferences = caseData.getBulkListCaseDetails().stream()
+            .map(c -> c.getValue().getCaseReference().getCaseReference())
+            .collect(toList());
+
+        final boolean anyDuplicateCases = !casesAcceptedToListForHearing.stream().allMatch(new HashSet<>()::add);
+        final boolean anyNewCasesAdded =
+            casesAcceptedToListForHearing.stream().anyMatch(caseLink -> !caseReferences.contains(caseLink.getValue().getCaseReference()));
+
+        return anyDuplicateCases || anyNewCasesAdded
+            ? singletonList("You can only remove cases from the list of cases accepted to list for hearing.")
+            : emptyList();
+    }
+
     private static boolean isLessThanOneYearAgo(LocalDate date) {
         return !date.isAfter(LocalDate.now())
             && date.isAfter(LocalDate.now().minus(1, YEARS));
@@ -141,6 +161,6 @@ public final class ValidationUtil {
 
     @SafeVarargs
     public static <E> List<E> flattenLists(List<E>... lists) {
-        return Arrays.stream(lists).flatMap(Collection::stream).collect(Collectors.toList());
+        return Arrays.stream(lists).flatMap(Collection::stream).collect(toList());
     }
 }
