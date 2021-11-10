@@ -32,10 +32,10 @@ import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingAc
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_ACTIONS;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.NO;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.YES;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;

@@ -10,10 +10,10 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
+import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.CommonContent.isDivorce;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLY_FOR_CONDITIONAL_ORDER;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.NO;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.YES;
 
 @Component
 @Slf4j

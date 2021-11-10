@@ -17,10 +17,10 @@ import java.util.Set;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE_TRANSLATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.CommonContent.isDivorce;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_ACTIONS;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.NO;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.YES;
 
 @Component
 @Slf4j

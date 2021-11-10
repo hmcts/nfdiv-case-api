@@ -11,15 +11,15 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
+import static uk.gov.hmcts.divorce.notification.CommonContent.ACCESS_CODE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.CREATE_ACCOUNT_LINK;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.CommonContent.isDivorce;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.ACCESS_CODE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.CREATE_ACCOUNT_LINK;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.IS_REMINDER;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.NO;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.YES;
 
 @Component
 @Slf4j

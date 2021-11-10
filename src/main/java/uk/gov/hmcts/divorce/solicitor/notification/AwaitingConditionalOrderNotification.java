@@ -15,12 +15,12 @@ import static java.lang.String.join;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.CCD_REFERENCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_AWAITING_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_NAME;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.CCD_REFERENCE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.RESPONDENT_NAME;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.SOLICITOR_NAME;
 
 @Component
 @Slf4j
