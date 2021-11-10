@@ -10,8 +10,6 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.RespondentAnswersTemplateContent;
 
-import java.time.LocalDate;
-
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_ANSWERS_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_ANSWERS_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
@@ -31,14 +29,13 @@ public class GenerateRespondentAnswersDoc implements CaseTask {
 
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
-        final LocalDate createdDate = caseDetails.getCreatedDate().toLocalDate();
 
         log.info("Generating respondent answers pdf for CaseID: {}", caseDetails.getId());
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
             RESPONDENT_ANSWERS,
-            templateContent.apply(caseData, caseId, createdDate),
+            templateContent.apply(caseData, caseId),
             caseId,
             RESPONDENT_ANSWERS_TEMPLATE_ID,
             caseData.getApplicant1().getLanguagePreference(),
