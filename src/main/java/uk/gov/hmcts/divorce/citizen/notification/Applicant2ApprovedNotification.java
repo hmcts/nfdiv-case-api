@@ -50,7 +50,7 @@ public class Applicant2ApprovedNotification {
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
             JOINT_APPLICANT1_APPLICANT2_APPROVED_WITHOUT_HWF,
-            commonContent.templateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
+            commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
             caseData.getApplicant1().getLanguagePreference()
         );
     }
@@ -67,7 +67,7 @@ public class Applicant2ApprovedNotification {
     }
 
     private Map<String, String> applicant1TemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
-        Map<String, String> templateVars = commonContent.templateVars(caseData, id, applicant, partner);
+        Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
         templateVars.put(PAYS_FEES, noFeesHelp(caseData) ? YES : NO);
         templateVars.put(ACTION_REQUIRED, YES);
         templateVars.put(IS_REMINDER, NO);
@@ -75,7 +75,7 @@ public class Applicant2ApprovedNotification {
     }
 
     private Map<String, String> applicant2TemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
-        Map<String, String> templateVars = commonContent.templateVars(caseData, id, applicant, partner);
+        Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
         templateVars.put(PAYS_FEES, noFeesHelp(caseData) ? YES : NO);
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         return templateVars;

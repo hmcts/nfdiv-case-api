@@ -45,7 +45,8 @@ class Applicant1SwitchToSoleNotificationTest {
     void shouldSendEmailToApplicant1WithDivorceContent() {
         CaseData data = validApplicant2CaseData();
         final Map<String, String> templateVars = Map.of(IS_DIVORCE, YES, IS_DISSOLUTION, NO);
-        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(templateVars);
         notification.sendToApplicant1(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
@@ -57,7 +58,7 @@ class Applicant1SwitchToSoleNotificationTest {
                 )),
             eq(ENGLISH)
         );
-        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -65,7 +66,8 @@ class Applicant1SwitchToSoleNotificationTest {
         CaseData data = validApplicant2CaseData();
         data.setDivorceOrDissolution(DISSOLUTION);
         final Map<String, String> templateVars = Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES);
-        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(templateVars);
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
@@ -78,7 +80,7 @@ class Applicant1SwitchToSoleNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
 
     }
 
@@ -86,7 +88,8 @@ class Applicant1SwitchToSoleNotificationTest {
     void shouldSendEmailToApplicant2WithDivorceContent() {
         CaseData data = validApplicant2CaseData();
         final Map<String, String> templateVars = Map.of(IS_DIVORCE, YES, IS_DISSOLUTION, NO);
-        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(templateVars);
 
         notification.sendToApplicant2(data, 1234567890123456L);
 
@@ -99,7 +102,7 @@ class Applicant1SwitchToSoleNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -107,7 +110,8 @@ class Applicant1SwitchToSoleNotificationTest {
         CaseData data = validApplicant2CaseData();
         data.setDivorceOrDissolution(DISSOLUTION);
         final Map<String, String> templateVars = Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES);
-        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(templateVars);
 
         notification.sendToApplicant2(data, 1234567890123456L);
 
@@ -120,6 +124,6 @@ class Applicant1SwitchToSoleNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
 }

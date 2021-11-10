@@ -51,7 +51,7 @@ public class Applicant1ApplyForConditionalOrderNotificationTest {
     void shouldSendEmailToApplicant1WithDivorceContent() {
         CaseData data = validJointApplicant1CaseData();
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
-        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getCommonTemplateVars());
 
         notification.sendToApplicant1(data, 1234567890123456L);
@@ -66,7 +66,7 @@ public class Applicant1ApplyForConditionalOrderNotificationTest {
                 )),
             eq(ENGLISH)
         );
-        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -76,7 +76,8 @@ public class Applicant1ApplyForConditionalOrderNotificationTest {
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
         final Map<String, String> templateVars = getCommonTemplateVars();
         templateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
-        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(templateVars);
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
@@ -90,14 +91,14 @@ public class Applicant1ApplyForConditionalOrderNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
     void shouldSendEmailToApplicant1WithJointDivorceHusbandContent() {
         CaseData data = validJointApplicant1CaseData();
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
-        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getCommonTemplateVars());
 
         notification.sendToApplicant1(data, 1234567890123456L);
@@ -112,7 +113,7 @@ public class Applicant1ApplyForConditionalOrderNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -120,7 +121,7 @@ public class Applicant1ApplyForConditionalOrderNotificationTest {
         CaseData data = validJointApplicant1CaseData();
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
         data.getApplicant2().setGender(FEMALE);
-        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getCommonTemplateVars());
 
         notification.sendToApplicant1(data, 1234567890123456L);
@@ -136,7 +137,7 @@ public class Applicant1ApplyForConditionalOrderNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -146,7 +147,8 @@ public class Applicant1ApplyForConditionalOrderNotificationTest {
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
         final Map<String, String> templateVars = getCommonTemplateVars();
         templateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
-        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(templateVars);
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
@@ -160,6 +162,6 @@ public class Applicant1ApplyForConditionalOrderNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
     }
 }

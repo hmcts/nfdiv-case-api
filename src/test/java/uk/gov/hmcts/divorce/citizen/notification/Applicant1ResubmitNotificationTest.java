@@ -58,7 +58,8 @@ class Applicant1ResubmitNotificationTest {
         data.setDueDate(LOCAL_DATE);
         final Map<String, String> templateVars = new HashMap<>();
         templateVars.putAll(getConfigTemplateVars());
-        when(commonContent.templateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(templateVars);
 
         notification.sendToApplicant1(data, 1234567890123456L);
 

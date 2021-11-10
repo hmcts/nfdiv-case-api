@@ -74,13 +74,13 @@ public class SoleAosSubmittedNotification {
     }
 
     private Map<String, String> nonDdisputedTemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
-        Map<String, String> templateVars = commonContent.templateVars(caseData, id, applicant, partner);
+        Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
         templateVars.put(APPLY_FOR_CO_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         return templateVars;
     }
 
     private Map<String, String> disputedTemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
-        Map<String, String> templateVars = commonContent.templateVars(caseData, id, applicant, partner);
+        Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         return templateVars;
     }

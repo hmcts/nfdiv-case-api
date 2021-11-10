@@ -63,7 +63,7 @@ class NoticeOfProceedingsNotificationTest {
             .applicant2(respondent())
             .build();
 
-        when(commonContent.commonNotificationTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
 
         noticeOfProceedingsNotification.send(caseData, TEST_CASE_ID);
 
@@ -88,7 +88,7 @@ class NoticeOfProceedingsNotificationTest {
             .applicant2(respondent())
             .build();
 
-        when(commonContent.commonNotificationTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
 
         noticeOfProceedingsNotification.send(caseData, TEST_CASE_ID);
 
@@ -110,7 +110,7 @@ class NoticeOfProceedingsNotificationTest {
             .applicant2(respondentWithDigitalSolicitor())
             .build();
 
-        when(commonContent.commonNotificationTemplateVars(caseData, TEST_CASE_ID))
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID))
             .thenReturn(commonTemplateVars())
             .thenReturn(commonTemplateVars());
 

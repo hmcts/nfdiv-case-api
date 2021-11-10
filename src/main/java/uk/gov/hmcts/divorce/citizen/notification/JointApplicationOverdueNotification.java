@@ -33,7 +33,7 @@ public class JointApplicationOverdueNotification {
         log.info("Sending notification to applicant 1 to notify them of overdue joint application: {}", id);
 
         Map<String, String> templateVars =
-            commonContent.templateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
+            commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
         templateVars.put(REVIEW_DEADLINE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
 
         notificationService.sendEmail(
@@ -48,7 +48,7 @@ public class JointApplicationOverdueNotification {
         log.info("Sending notification to applicant 1 to notify them that applicant 2 has reviewed the application: {}", id);
 
         Map<String, String> templateVars =
-            commonContent.templateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
+            commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
         templateVars.put(PAYS_FEES, caseData.getApplication().isHelpWithFeesApplication() ? NO : YES);
         templateVars.put(ACTION_REQUIRED, NO);
         templateVars.put(IS_REMINDER, YES);

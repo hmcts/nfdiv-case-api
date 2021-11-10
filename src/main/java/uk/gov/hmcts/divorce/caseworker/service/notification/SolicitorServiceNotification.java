@@ -40,7 +40,7 @@ public class SolicitorServiceNotification {
 
     private Map<String, String> templateVars(final CaseData caseData, final Long caseId) {
 
-        final Map<String, String> templateVars = commonContent.commonNotificationTemplateVars(caseData, caseId);
+        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
         templateVars.put(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
         return templateVars;
     }

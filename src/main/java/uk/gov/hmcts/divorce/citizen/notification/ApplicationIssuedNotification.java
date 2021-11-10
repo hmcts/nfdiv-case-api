@@ -155,7 +155,7 @@ public class ApplicationIssuedNotification {
     }
 
     private Map<String, String> commonTemplateVars(final CaseData caseData, Long id, Applicant applicant, Applicant partner) {
-        final Map<String, String> templateVars = commonContent.templateVars(caseData, id, applicant, partner);
+        final Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         return templateVars;
     }
