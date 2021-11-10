@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCitizenRespondentAosInvitation;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateNoticeOfProceeding;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentSolicitorAosInvitation;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPack;
@@ -41,6 +42,9 @@ public class IssueApplicationService {
     private GenerateCitizenRespondentAosInvitation generateCitizenRespondentAosInvitation;
 
     @Autowired
+    private GenerateNoticeOfProceeding generateNoticeOfProceeding;
+
+    @Autowired
     private SendAosPack sendAosPack;
 
     @Autowired
@@ -62,6 +66,7 @@ public class IssueApplicationService {
             generateCitizenRespondentAosInvitation,
             divorceApplicationRemover,
             generateDivorceApplication,
+            generateNoticeOfProceeding,
             sendAosPack,
             sendAosNotifications,
             setDueDateAfterIssue,
