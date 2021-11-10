@@ -30,6 +30,7 @@ public class RespondentAnswersTemplateContentTest {
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForRespondentAnswers() {
         CaseData caseData = caseData();
+        caseData.getApplication().setIssueDate(LOCAL_DATE);
         caseData.getApplicant2().setLegalProceedingsDetails("some description");
         caseData.getApplicant2().setLegalProceedings(YES);
 
@@ -44,7 +45,7 @@ public class RespondentAnswersTemplateContentTest {
 
         caseData.getApplication().setMarriageDetails(marriageDetails);
 
-        Map<String, Object> templateContent = respondentAnswersTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
+        Map<String, Object> templateContent = respondentAnswersTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).contains(
             entry(ISSUE_DATE, "28 April 2021"),

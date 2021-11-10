@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,13 +25,12 @@ public class RespondentAnswersTemplateContent {
     private static final String RESP_SOLICITOR_REPRESENTED = "respSolicitorRepresented";
 
     public Map<String, Object> apply(final CaseData caseData,
-                                     final Long ccdCaseReference,
-                                     final LocalDate createdDate) {
+                                     final Long ccdCaseReference) {
 
         log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
 
         Map<String, Object> templateContent = new HashMap<>();
-        templateContent.put(ISSUE_DATE, createdDate.format(DATE_TIME_FORMATTER));
+        templateContent.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         templateContent.put(CCD_CASE_REFERENCE, ccdCaseReference);
 
         var application = caseData.getApplication();
