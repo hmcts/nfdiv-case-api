@@ -33,6 +33,9 @@
   "marriageApplicant2Name": "test_first_name test_last_name",
   "marriagePlaceOfMarriage": "Somewhere",
   "marriageDate": "1990-06-10",
+  "issueDate": "2021-06-10",
+  "dueDate": "2021-08-10",
+  "divorceWho": "wife",
   "jurisdictionApplicant1Residence": "Yes",
   "jurisdictionApplicant2Residence": "Yes",
   "jurisdictionConnections": [

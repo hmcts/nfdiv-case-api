@@ -120,4 +120,38 @@ class SolicitorUpdateApplicationTest {
         verify(solicitorUpdateApplicationService).aboutToSubmit(newCaseDetails);
         verifyNoMoreInteractions(solicitorUpdateApplicationService);
     }
+
+    @Test
+    void shouldSkipSortingApp1UploadedDocumentsWhenNoNewDocumentsAreAdded() {
+
+        final ListValue<DivorceDocument> doc1 =
+            getDivorceDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003", "co_granted.pdf", CONDITIONAL_ORDER_GRANTED);
+
+        final var previousCaseData = caseData();
+        previousCaseData.setApplicant1DocumentsUploaded(singletonList(doc1));
+
+        final CaseDetails<CaseData, State> previousCaseDetails = new CaseDetails<>();
+        previousCaseDetails.setData(previousCaseData);
+        previousCaseDetails.setId(TEST_CASE_ID);
+        previousCaseDetails.setCreatedDate(LOCAL_DATE_TIME);
+
+        final var newCaseData = caseData();
+        newCaseData.setApplicant1DocumentsUploaded(singletonList(doc1));
+
+        final CaseDetails<CaseData, State> newCaseDetails = new CaseDetails<>();
+        newCaseDetails.setData(newCaseData);
+        newCaseDetails.setId(TEST_CASE_ID);
+        newCaseDetails.setCreatedDate(LOCAL_DATE_TIME);
+
+        when(solicitorUpdateApplicationService.aboutToSubmit(newCaseDetails)).thenReturn(newCaseDetails);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            solicitorUpdateApplication.aboutToSubmit(newCaseDetails, previousCaseDetails);
+
+        assertThat(response.getData().getApplicant1DocumentsUploaded().size()).isEqualTo(1);
+        assertThat(response.getData().getApplicant1DocumentsUploaded().get(0).getValue()).isSameAs(doc1.getValue());
+
+        verify(solicitorUpdateApplicationService).aboutToSubmit(newCaseDetails);
+        verifyNoMoreInteractions(solicitorUpdateApplicationService);
+    }
 }
