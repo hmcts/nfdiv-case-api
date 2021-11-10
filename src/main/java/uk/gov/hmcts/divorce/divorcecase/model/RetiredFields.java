@@ -133,6 +133,8 @@ public class RetiredFields {
             data -> data.put("applicant2LegalProceedings", data.get("legalProceedingsExist")));
         init.put("legalProceedingsDescription",
             data -> data.put("applicant2LegalProceedingsDetails", data.get("legalProceedingsDescription")));
+        init.put("doYouAgreeCourtHasJurisdiction",
+            data -> data.put("jurisdictionAgree", data.get("doYouAgreeCourtHasJurisdiction")));
         init.put("serviceApplicationType",
             data -> data.put("alternativeServiceType", data.get("serviceApplicationType")));
         init.put("coCourtName",
