@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.document.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -7,7 +8,7 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
@@ -21,7 +22,8 @@ public class DivorceDocument {
     @CCD(
         label = "Date added"
     )
-    private Date documentDateAdded;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate documentDateAdded;
 
     @CCD(
         label = "Comment"

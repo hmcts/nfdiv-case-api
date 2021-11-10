@@ -14,7 +14,10 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.List;
+import java.util.Objects;
 
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
 
@@ -102,13 +105,50 @@ public class BulkCaseProcessingService {
 
         final var bulkCaseId = bulkCaseDetails.getId();
         final var bulkActionCaseData = bulkCaseDetails.getData();
+        final var casesToBeRemoved =
+            Objects.isNull(bulkActionCaseData.getCasesToBeRemoved()) ? emptyList() : bulkActionCaseData.getCasesToBeRemoved();
 
         if (isEmpty(bulkActionCaseData.getProcessedCaseDetails())) {
             log.info("Processed cases list is empty hence processing all cases in bulk case with id {} ", bulkCaseId);
-            return bulkActionCaseData.getBulkListCaseDetails();
+            return bulkActionCaseData.getBulkListCaseDetails().stream()
+                .filter(erroredCase -> !casesToBeRemoved.contains(erroredCase))
+                .collect(toList());
         }
 
         log.info("Processed cases with errors in bulk case with id {} ", bulkCaseId);
-        return bulkActionCaseData.getErroredCaseDetails();
+        return bulkActionCaseData.getErroredCaseDetails().stream()
+            .filter(erroredCase -> !casesToBeRemoved.contains(erroredCase))
+            .collect(toList());
+    }
+
+    public void updateCasesToBeRemoved(final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
+                                       final String eventId,
+                                       final CaseTask caseTask,
+                                       final User user,
+                                       final String serviceAuth) {
+
+        final var bulkCaseId = bulkCaseDetails.getId();
+        final var bulkActionCaseData = bulkCaseDetails.getData();
+
+        try {
+            final List<ListValue<BulkListCaseDetails>> unprocessedCases = bulkTriggerService.bulkTrigger(
+                bulkActionCaseData.getCasesToBeRemoved(),
+                eventId,
+                caseTask,
+                user,
+                serviceAuth
+            );
+
+            bulkActionCaseData.setCasesToBeRemoved(unprocessedCases);
+
+            ccdUpdateService.submitBulkActionEvent(
+                bulkCaseDetails,
+                SYSTEM_UPDATE_BULK_CASE,
+                user,
+                serviceAuth
+            );
+        } catch (final CcdManagementException e) {
+            log.error("Update failed for bulk case id {}, event id {} ", bulkCaseId, eventId, e);
+        }
     }
 }

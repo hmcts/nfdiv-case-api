@@ -1,5 +1,6 @@
 {
   "data": {
+    "applicationType": "soleApplication",
     "divorceOrDissolution": "divorce",
     "applicant1FirstName": "test_first_name",
     "applicant1MiddleName": "test_middle_name",
@@ -8,20 +9,81 @@
     "applicant1LanguagePreferenceWelsh": "No",
     "applicant1KeepContactDetailsConfidential": "No",
     "applicant1Gender": "female",
+    "applicant1SolicitorEmail": "solicitor@test.com",
+    "applicant1FinancialOrder": "No",
+    "applicant1LegalProceedings": "No",
     "applicant2FirstName": "test_first_name",
     "applicant2MiddleName": "test_middle_name",
     "applicant2LastName": "test_last_name",
     "applicant2Email": "test@test.com",
     "applicant2LanguagePreferenceWelsh": "No",
+    "applicant2HomeAddress": {
+      "AddressLine1": "line 1",
+      "PostTown": "town",
+      "PostCode": "postcode"
+    },
     "applicant2Gender": "male",
+    "applicant2FinancialOrder": "No",
     "marriageApplicant1Name": "test_first_name test_last_name",
     "marriageApplicant2Name": "test_first_name test_last_name",
+    "marriagePlaceOfMarriage": "Somewhere",
     "marriageDate": "1990-06-10",
     "jurisdictionApplicant1Residence": "Yes",
     "jurisdictionApplicant2Residence": "Yes",
     "jurisdictionConnections": [
       "J"
-    ]
+    ],
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "divorceWho": "wife",
+    "applicant1PrayerHasBeenGiven": "Yes",
+    "applicant1StatementOfTruth": "Yes",
+    "applicationFeeOrderSummary": {
+      "PaymentTotal": "55000"
+    },
+    "documentUploadComplete": "Yes",
+    "issueDate": "2021-06-17",
+    "applicationPayments": [
+      {
+        "value": {
+          "feeCode": "FEE0001",
+          "amount": 55000,
+          "status": "success",
+          "channel": "online",
+          "reference": "paymentRef",
+          "transactionId": "ge7po9h5bhbtbd466424src9tk"
+        }
+      }
+    ],
+    "applicant2InviteEmailAddress": "applicant2@test.com",
+    "accessCode": "${json-unit.any-string}",
+    "documentsGenerated": [
+      {
+        "id": "Notice of proceeding",
+        "value": {
+          "documentFileName": "noticeOfProceedings.pdf",
+          "documentType": "noticeOfProceedings",
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003",
+            "document_filename": "noticeOfProceedings.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c56b053e-4184-11ec-81d3-0242ac130003/binary"
+          }
+        }
+      },
+      {
+        "id": "Divorce application",
+        "value": {
+          "documentFileName": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
+          "documentType": "application",
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+            "document_filename": "divorce-application-1616591401473378-2021-06-17:13:00.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
+          }
+        }
+      }
+    ],
+    "dueDate": "${json-unit.any-string}",
+    "dataVersion": "${json-unit.any-number}"
   },
   "state": "AwaitingAos"
 }

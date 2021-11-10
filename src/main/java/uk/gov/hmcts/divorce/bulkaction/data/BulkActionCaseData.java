@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Court;
@@ -17,7 +18,10 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
@@ -110,6 +114,22 @@ public class BulkActionCaseData {
     )
     private List<ListValue<BulkListCaseDetails>> erroredCaseDetails;
 
+    @CCD(
+        label = "Cases accepted to list for hearing",
+        typeOverride = Collection,
+        typeParameterOverride = "CaseLink",
+        access = {CaseworkerAccess.class}
+    )
+    private List<ListValue<CaseLink>> casesAcceptedToListForHearing;
+
+    @CCD(
+        label = "Cases to be removed",
+        typeOverride = Collection,
+        typeParameterOverride = "BulkListCaseDetails",
+        access = {CaseworkerAccess.class}
+    )
+    private List<ListValue<BulkListCaseDetails>> casesToBeRemoved;
+
     @JsonIgnore
     public LocalDate getDateFinalOrderEligibleFrom(LocalDateTime dateTime) {
         return dateTime.toLocalDate().plusWeeks(FINAL_ORDER_OFFSET_WEEKS).plusDays(FINAL_ORDER_OFFSET_DAYS);
@@ -129,6 +149,31 @@ public class BulkActionCaseData {
         return bulkListCaseDetails
             .stream()
             .filter(lv -> !unprocessedCaseIds.contains(lv.getValue().getCaseReference().getCaseReference()))
+            .collect(toList());
+    }
+
+    @JsonIgnore
+    public List<ListValue<CaseLink>> transformToCasesAcceptedToListForHearing() {
+
+        if (Objects.isNull(bulkListCaseDetails) || bulkListCaseDetails.isEmpty()) {
+            return emptyList();
+        }
+
+        final AtomicInteger counter = new AtomicInteger(1);
+        return bulkListCaseDetails.stream()
+            .map(c ->
+                ListValue.<CaseLink>builder()
+                    .id(String.valueOf(counter.getAndIncrement()))
+                    .value(c.getValue().getCaseReference())
+                    .build()
+            )
+            .collect(toList());
+    }
+
+    @JsonIgnore
+    public <T> List<T> fromListValueToList(final List<ListValue<T>> targetList) {
+        return targetList.stream()
+            .map(ListValue::getValue)
             .collect(toList());
     }
 }
