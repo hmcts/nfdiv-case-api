@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.divorcecase.validation;
 
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -13,13 +12,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 import static java.time.temporal.ChronoUnit.YEARS;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 
 public final class ValidationUtil {
 
@@ -47,7 +47,7 @@ public final class ValidationUtil {
             notNull(caseData.getApplication().getMarriageDetails().getApplicant1Name(), "MarriageApplicant1Name"),
             notNull(caseData.getApplicant1().getKeepContactDetailsConfidential(), "Applicant1KeepContactDetailsConfidential"),
             hasStatementOfTruth(caseData.getApplication()),
-            notNullOrNo(caseData.getApplication().getApplicant1PrayerHasBeenGiven(), "Applicant1PrayerHasBeenGiven"),
+            validatePrayer(caseData.getApplication().getApplicant1PrayerHasBeenGiven()),
             validateMarriageDate(caseData.getApplication().getMarriageDetails().getDate(), "MarriageDate"),
             validateJurisdictionConnections(caseData.getApplication())
         );
@@ -55,6 +55,17 @@ public final class ValidationUtil {
 
     private static List<String> hasStatementOfTruth(Application application) {
         return application.hasStatementOfTruth() ? emptyList() : List.of(SOT_REQUIRED);
+    }
+
+    private static List<String> validatePrayer(Set<Application.ThePrayer> thePrayer) {
+        final String field = "Applicant1PrayerHasBeenGiven";
+
+        if (Objects.isNull(thePrayer)) {
+            return List.of(field + EMPTY);
+        } else if (thePrayer.isEmpty()) {
+            return List.of(field + MUST_BE_YES);
+        }
+        return emptyList();
     }
 
     public static List<String> validateApplicant1BasicCase(CaseData caseData) {
@@ -89,15 +100,6 @@ public final class ValidationUtil {
 
     public static List<String> notNull(Object value, String field) {
         return value == null ? List.of(field + EMPTY) : emptyList();
-    }
-
-    public static List<String> notNullOrNo(YesOrNo yesOrNo, String field) {
-        if (yesOrNo == null) {
-            return List.of(field + EMPTY);
-        } else if (NO.equals(yesOrNo)) {
-            return List.of(field + MUST_BE_YES);
-        }
-        return emptyList();
     }
 
     public static List<String> validateMarriageDate(LocalDate localDate, String field) {

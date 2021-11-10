@@ -2,12 +2,15 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -135,10 +138,20 @@ public class Application {
     private YesOrNo solStatementOfReconciliationDiscussed;
 
     @CCD(
-        label = "The applicant has given their 'prayer'.",
+        label = "This confirms what you are asking the court to do on behalf of the applicant. It’s known as ‘the prayer’.",
         access = {DefaultAccess.class}
     )
-    private YesOrNo applicant1PrayerHasBeenGiven;
+    private Set<ThePrayer> applicant1PrayerHasBeenGiven;
+
+    @Getter
+    @AllArgsConstructor
+    public enum ThePrayer implements HasLabel {
+
+        @JsonProperty("Yes")
+        I_CONFIRM("I confirm the applicant is applying to the court to:");
+
+        private final String label;
+    }
 
     @CCD(
         label = "The applicant has given their \"prayer\".",

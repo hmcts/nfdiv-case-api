@@ -11,10 +11,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import static java.util.Collections.emptySet;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer;
+import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
 
 @Data
 @NoArgsConstructor
@@ -101,13 +104,14 @@ public class RetiredFields {
             "applicant2KeepContactDetailsConfidential",
             transformContactDetailsConfidentialField("applicant2ContactDetailsConfidential", data)
         ),
-        "applicant1FinancialOrderForRemoved", data -> { },
         "applicant2FinancialOrderForRemoved", data -> { },
         "dateConditionalOrderSubmitted", data -> data.put("coDateSubmitted", data.get("dateConditionalOrderSubmitted")),
         "legalProceedingsExist", data -> data.put("applicant2LegalProceedings", data.get("legalProceedingsExist")),
         "legalProceedingsDescription", data -> data.put("applicant2LegalProceedingsDetails", data.get("legalProceedingsDescription")),
         "doYouAgreeCourtHasJurisdiction", data -> data.put("jurisdictionAgree", data.get("doYouAgreeCourtHasJurisdiction")),
-        "serviceApplicationType", data -> data.put("alternativeServiceType", data.get("serviceApplicationType"))
+        "serviceApplicationType", data -> data.put("alternativeServiceType", data.get("serviceApplicationType")),
+        "applicant1PrayerHasBeenGiven",
+        data -> data.put("applicant1PrayerHasBeenGiven", transformApplicant1PrayerHasBeenGivenField(data))
     );
 
     public static Map<String, Object> migrate(Map<String, Object> data) {
@@ -131,5 +135,12 @@ public class RetiredFields {
     private static YesOrNo transformContactDetailsConfidentialField(String confidentialFieldName, Map<String, Object> data) {
         String confidentialFieldValue = (String) data.get(confidentialFieldName);
         return ConfidentialAddress.KEEP.getLabel().equalsIgnoreCase(confidentialFieldValue) ? YES : NO;
+    }
+
+    private static Set<ThePrayer> transformApplicant1PrayerHasBeenGivenField(Map<String, Object> data) {
+        YesOrNo applicant1PrayerHasBeenGiven = (YesOrNo) data.get("applicant1PrayerHasBeenGiven");
+        return YES.equals(applicant1PrayerHasBeenGiven)
+            ? Set.of(I_CONFIRM)
+            : emptySet();
     }
 }

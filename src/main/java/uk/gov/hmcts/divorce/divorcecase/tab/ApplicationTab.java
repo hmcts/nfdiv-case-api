@@ -146,7 +146,6 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("solUrgentCaseSupportingInformation", "solUrgentCase=\"Yes\"")
             .field("solStatementOfReconciliationCertify")
             .field("solStatementOfReconciliationDiscussed")
-            .field("applicant1PrayerHasBeenGiven")
             .field("applicant1StatementOfTruth")
             .field("solSignStatementOfTruth")
             .field("solStatementOfReconciliationName")

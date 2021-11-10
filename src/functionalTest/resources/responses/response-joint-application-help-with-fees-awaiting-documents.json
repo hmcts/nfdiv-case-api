@@ -29,7 +29,7 @@
     ],
     "applicant1HWFNeedHelp": "Yes",
     "applicant2HWFNeedHelp": "Yes",
-    "applicant1PrayerHasBeenGiven": "Yes",
+    "applicant1PrayerHasBeenGiven": ["Yes"],
     "applicant2PrayerHasBeenGiven": "Yes",
     "applicant1StatementOfTruth": "Yes",
     "applicant2StatementOfTruth": "Yes",

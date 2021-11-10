@@ -13,7 +13,7 @@
   "marriageApplicant1Name": "test_first_name test_last_name",
   "applicant1WantsToHavePapersServedAnotherWay": "NO",
   "applicant1FinancialOrder": "NO",
-  "applicant1PrayerHasBeenGiven": "YES",
+  "applicant1PrayerHasBeenGiven": ["Yes"],
   "solSignStatementOfTruth": "YES",
   "jurisdictionApplicant1Residence": "YES",
   "jurisdictionApplicant2Residence": "YES",

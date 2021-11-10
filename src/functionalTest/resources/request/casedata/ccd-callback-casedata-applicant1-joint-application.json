@@ -16,7 +16,7 @@
   "applicant2FinancialOrder": "NO",
   "applicant1HWFNeedHelp": "NO",
   "applicant2HWFNeedHelp": "NO",
-  "applicant1PrayerHasBeenGiven": "YES",
+  "applicant1PrayerHasBeenGiven": ["Yes"],
   "applicant1StatementOfTruth": "YES",
   "applicant2PrayerHasBeenGiven": "YES",
   "applicant2StatementOfTruth": "YES",

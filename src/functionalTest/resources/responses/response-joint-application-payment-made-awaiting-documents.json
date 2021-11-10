@@ -15,7 +15,7 @@
     "applicant2LastName": "Smith",
     "marriageApplicant1Name": "test_first_name test_last_name",
     "applicant1FinancialOrder": "No",
-    "applicant1PrayerHasBeenGiven": "Yes",
+    "applicant1PrayerHasBeenGiven": ["Yes"],
     "jurisdictionApplicant1Residence": "Yes",
     "jurisdictionApplicant2Residence": "Yes",
     "jurisdictionConnections": [

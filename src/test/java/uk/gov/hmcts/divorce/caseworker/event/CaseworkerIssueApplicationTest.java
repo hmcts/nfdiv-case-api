@@ -32,6 +32,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.CASEWORKER_ISSUE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
@@ -195,7 +196,7 @@ class CaseworkerIssueApplicationTest {
         );
 
         caseData.getApplicant1().setFinancialOrder(NO);
-        caseData.getApplication().setApplicant1PrayerHasBeenGiven(YES);
+        caseData.getApplication().setApplicant1PrayerHasBeenGiven(Set.of(I_CONFIRM));
         caseData.getApplication().setApplicant1StatementOfTruth(YES);
         caseData.getApplication().getJurisdiction().setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
         caseData.getApplication().getJurisdiction().setApplicant1Residence(YES);
