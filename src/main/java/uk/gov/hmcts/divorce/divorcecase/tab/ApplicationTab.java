@@ -53,9 +53,6 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .label("LabelApplicant1DetailsAreConfidential-Heading",
                 "applicant1KeepContactDetailsConfidential=\"Yes\"",
                 "#### The applicant's contact details are confidential")
-            .label("LabelApplicant1DetailsAreShareable-Heading",
-                "applicant1KeepContactDetailsConfidential=\"No\"",
-                "#### The applicant's contact details may be shared")
             .field("applicant1PhoneNumber", "applicant1KeepContactDetailsConfidential=\"No\"")
             .field("applicant1Email", "applicant1KeepContactDetailsConfidential=\"No\"")
             .field("applicant1HomeAddress", "applicant1KeepContactDetailsConfidential=\"No\"")
@@ -146,7 +143,6 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("solUrgentCaseSupportingInformation", "solUrgentCase=\"Yes\"")
             .field("solStatementOfReconciliationCertify")
             .field("solStatementOfReconciliationDiscussed")
-            .field("applicant1PrayerHasBeenGiven")
             .field("applicant1StatementOfTruth")
             .field("solSignStatementOfTruth")
             .field("solStatementOfReconciliationName")
