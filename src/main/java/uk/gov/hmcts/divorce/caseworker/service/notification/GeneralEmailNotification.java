@@ -13,14 +13,14 @@ import java.util.Map;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.CCD_REFERENCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_OTHER_PARTY;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_PETITIONER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_PETITIONER_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_RESPONDENT;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_RESPONDENT_SOLICITOR;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_NAME;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.CCD_REFERENCE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.RESPONDENT_NAME;
 
 @Component
 @Slf4j
