@@ -69,6 +69,7 @@ docmosis:
       CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx #TODO: update content
       SERVICE_ORDER: NFD_Service_Order.docx #TODO: update content
       BULK_CASE_PRONOUNCEMENT: NFD_Pronouncement_List.docx
+      NOTICE_OF_PROCEEDINGS: NFD_Notice_Of_Proceedings_Sole.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
@@ -79,7 +80,8 @@ docmosis:
       RESPONDENT_ANSWERS: NFD_Respondent_Answers_Eng.docx #TODO: update template once available
       CERTIFICATE_OF_SERVICE: NFD_Certificate_Of_Service.docx #TODO: update content
       SERVICE_ORDER: NFD_Service_Order.docx #TODO: update content
-      BULK_CASE_PRONOUNCEMENT: NFD_Pronouncement_List.docx
+      BULK_CASE_PRONOUNCEMENT: NFD_Pronouncement_List.docx  #TODO: update content
+      NOTICE_OF_PROCEEDINGS: NFD_Notice_Of_Proceedings_Sole.docx  #TODO: update content
 
 document_management:
   url: ${DOCUMENT_MANAGEMENT_URL:http://dm-store-aat.service.core-compute-aat.internal}

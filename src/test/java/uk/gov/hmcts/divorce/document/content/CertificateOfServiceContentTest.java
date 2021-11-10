@@ -36,7 +36,7 @@ public class CertificateOfServiceContentTest {
 
         var ctscContactDetails = CtscContactDetails
             .builder()
-            .centreName("HMCTS Digital Divorce")
+            .centreName("HMCTS Digital Divorce and Dissolution")
             .emailAddress("divorcecase@justice.gov.uk")
             .serviceCentre("Courts and Tribunals Service Centre")
             .poBox("PO Box 12706")
