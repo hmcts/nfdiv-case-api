@@ -21,8 +21,8 @@ public class UpdateCaseCourtHearingProvider implements BulkActionCaseTaskProvide
             conditionalOrder.setDateAndTimeOfHearing(
                 bulkActionCaseData.getDateAndTimeOfHearing()
             );
-            conditionalOrder.setCourtName(
-                bulkActionCaseData.getCourtName()
+            conditionalOrder.setCourt(
+                bulkActionCaseData.getCourt()
             );
             return mainCaseDetails;
         };

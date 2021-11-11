@@ -13,7 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.divorcecase.model.Court.SERVICE_CENTRE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMIGHAM;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,7 +29,7 @@ class UpdateCaseCourtHearingProviderTest {
         final var bulkActionCaseData = BulkActionCaseData
             .builder()
             .dateAndTimeOfHearing(localDateTime)
-            .courtName(SERVICE_CENTRE)
+            .court(BIRMIGHAM)
             .build();
 
         final var caseData = CaseData.builder()
@@ -45,6 +45,6 @@ class UpdateCaseCourtHearingProviderTest {
         final ConditionalOrder resultConditionalOrder = resultCaseDetails.getData().getConditionalOrder();
 
         assertThat(resultConditionalOrder.getDateAndTimeOfHearing()).isEqualTo(localDateTime);
-        assertThat(resultConditionalOrder.getCourtName()).isEqualTo(SERVICE_CENTRE);
+        assertThat(resultConditionalOrder.getCourt()).isEqualTo(BIRMIGHAM);
     }
 }

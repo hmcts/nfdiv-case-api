@@ -3,18 +3,22 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.collections4.map.HashedMap;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import static java.util.Collections.unmodifiableMap;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 
 @Data
 @NoArgsConstructor
@@ -88,27 +92,58 @@ public class RetiredFields {
     )
     private AlternativeServiceType serviceApplicationType;
 
+    @CCD(
+        label = "retiredCoCourtName"
+    )
+    private Court coCourtName;
+
+    @CCD(
+        label = "retiredBulkActionCourtName",
+        access = {CaseworkerAccess.class}
+    )
+    private Court courtName;
+
     @JsonIgnore
-    private static final Map<String, Consumer<Map<String, Object>>> migrations = Map.of(
-        "exampleRetiredField", data -> data.put("applicant1FirstName", data.get("exampleRetiredField")),
-        "applicant1ContactDetailsConfidential",
-        data -> data.put(
-            "applicant1KeepContactDetailsConfidential",
-            transformContactDetailsConfidentialField("applicant1ContactDetailsConfidential", data)
-        ),
-        "applicant2ContactDetailsConfidential",
-        data -> data.put(
-            "applicant2KeepContactDetailsConfidential",
-            transformContactDetailsConfidentialField("applicant2ContactDetailsConfidential", data)
-        ),
-        "applicant1FinancialOrderForRemoved", data -> { },
-        "applicant2FinancialOrderForRemoved", data -> { },
-        "dateConditionalOrderSubmitted", data -> data.put("coDateSubmitted", data.get("dateConditionalOrderSubmitted")),
-        "legalProceedingsExist", data -> data.put("applicant2LegalProceedings", data.get("legalProceedingsExist")),
-        "legalProceedingsDescription", data -> data.put("applicant2LegalProceedingsDetails", data.get("legalProceedingsDescription")),
-        "doYouAgreeCourtHasJurisdiction", data -> data.put("jurisdictionAgree", data.get("doYouAgreeCourtHasJurisdiction")),
-        "serviceApplicationType", data -> data.put("alternativeServiceType", data.get("serviceApplicationType"))
-    );
+    private static final Consumer<Map<String, Object>> DO_NOTHING = data -> {
+    };
+
+    @JsonIgnore
+    private static final Map<String, Consumer<Map<String, Object>>> migrations;
+
+    static {
+        final Map<String, Consumer<Map<String, Object>>> init = new HashedMap<>();
+
+        init.put("exampleRetiredField",
+            data -> data.put("applicant1FirstName", data.get("exampleRetiredField")));
+        init.put("applicant1ContactDetailsConfidential",
+            data -> data.put(
+                "applicant1KeepContactDetailsConfidential",
+                transformContactDetailsConfidentialField("applicant1ContactDetailsConfidential", data)
+            ));
+        init.put("applicant2ContactDetailsConfidential",
+            data -> data.put(
+                "applicant2KeepContactDetailsConfidential",
+                transformContactDetailsConfidentialField("applicant2ContactDetailsConfidential", data)
+            ));
+        init.put("applicant1FinancialOrderForRemoved", DO_NOTHING);
+        init.put("applicant2FinancialOrderForRemoved", DO_NOTHING);
+        init.put("dateConditionalOrderSubmitted",
+            data -> data.put("coDateSubmitted", data.get("dateConditionalOrderSubmitted")));
+        init.put("legalProceedingsExist",
+            data -> data.put("applicant2LegalProceedings", data.get("legalProceedingsExist")));
+        init.put("legalProceedingsDescription",
+            data -> data.put("applicant2LegalProceedingsDetails", data.get("legalProceedingsDescription")));
+        init.put("doYouAgreeCourtHasJurisdiction",
+            data -> data.put("jurisdictionAgree", data.get("doYouAgreeCourtHasJurisdiction")));
+        init.put("serviceApplicationType",
+            data -> data.put("alternativeServiceType", data.get("serviceApplicationType")));
+        init.put("coCourtName",
+            data -> data.put("coCourt", BURY_ST_EDMUNDS.getCourtId()));
+        init.put("courtName",
+            data -> data.put("court", BURY_ST_EDMUNDS.getCourtId()));
+
+        migrations = unmodifiableMap(init);
+    }
 
     public static Map<String, Object> migrate(Map<String, Object> data) {
 
