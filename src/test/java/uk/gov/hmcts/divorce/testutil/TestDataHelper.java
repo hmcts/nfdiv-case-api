@@ -69,6 +69,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewApplicant2Notification.APPLICANT_2_SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewApplicant2Notification.APPLICANT_2_SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
+import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
@@ -274,7 +275,7 @@ public class TestDataHelper {
         CaseData caseData = validJointApplicant1CaseData();
         caseData.setApplicant2(getApplicant2(MALE));
         caseData.getApplication().setApplicant1StatementOfTruth(YES);
-        caseData.getApplication().setApplicant1PrayerHasBeenGiven(YES);
+        caseData.getApplication().setApplicant1PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
         return caseData;
     }
 
@@ -308,7 +309,7 @@ public class TestDataHelper {
 
         var application = Application.builder()
             .solSignStatementOfTruth(YES)
-            .applicant1PrayerHasBeenGiven(YES)
+            .applicant1PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM))
             .applicationFeeOrderSummary(orderSummary)
             .applicationPayments(singletonList(payment))
             .marriageDetails(getMarriageDetails())
@@ -381,7 +382,7 @@ public class TestDataHelper {
         final Application application = caseData.getApplication();
         application.setDocumentUploadComplete(YES);
         application.setMarriageDetails(marriageDetails);
-        application.setApplicant1PrayerHasBeenGiven(YES);
+        application.setApplicant1PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
         application.setApplicant1StatementOfTruth(YES);
         application.setJurisdiction(getJurisdiction());
         caseData.setApplicationType(SOLE_APPLICATION);

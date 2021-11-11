@@ -16,7 +16,7 @@
     "applicant2LastName": "test_last_name",
     "marriageApplicant1Name": "test_first_name test_last_name",
     "applicant1FinancialOrder": "No",
-    "applicant1PrayerHasBeenGiven": "Yes",
+    "applicant1PrayerHasBeenGivenCheckbox": ["Yes"],
     "solSignStatementOfTruth": "Yes",
     "jurisdictionApplicant1Residence": "Yes",
     "applicant1WantsToHavePapersServedAnotherWay": "No",
