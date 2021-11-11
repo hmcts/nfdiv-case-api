@@ -9,7 +9,6 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
-import uk.gov.hmcts.divorce.divorcecase.model.Court;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
@@ -29,6 +28,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMIGHAM;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
@@ -64,7 +64,7 @@ public class CasePronouncementServiceTest {
         var bulkActionCaseData = BulkActionCaseData
             .builder()
             .dateAndTimeOfHearing(LocalDateTime.of(2021, 11, 10, 0, 0, 0))
-            .courtName(Court.SERVICE_CENTRE)
+            .court(BIRMIGHAM)
             .bulkListCaseDetails(List.of(getBulkListCaseDetailsListValue("1")))
             .build();
 
@@ -114,7 +114,7 @@ public class CasePronouncementServiceTest {
         var bulkActionCaseData = BulkActionCaseData
             .builder()
             .dateAndTimeOfHearing(LocalDateTime.of(2021, 11, 10, 0, 0, 0))
-            .courtName(Court.SERVICE_CENTRE)
+            .court(BIRMIGHAM)
             .bulkListCaseDetails(List.of(
                 bulkListCaseDetailsListValue1,
                 bulkListCaseDetailsListValue2
@@ -176,7 +176,7 @@ public class CasePronouncementServiceTest {
         var bulkActionCaseData = BulkActionCaseData
             .builder()
             .dateAndTimeOfHearing(LocalDateTime.of(2021, 11, 10, 0, 0, 0))
-            .courtName(Court.SERVICE_CENTRE)
+            .court(BIRMIGHAM)
             .bulkListCaseDetails(List.of(
                 bulkListCaseDetailsListValue1,
                 bulkListCaseDetailsListValue2

@@ -59,7 +59,7 @@ public class PronouncementListTemplateContent {
         final DateTimeFormatter hearingTimeFormat = DateTimeFormatter.ofPattern("hh:mm a", Locale.UK);
 
         final Map<String, Object> templateContent = new HashMap<>();
-        final List<Map<String,Object>> bulkList = new ArrayList<>();
+        final List<Map<String, Object>> bulkList = new ArrayList<>();
         final Map<String, Object> caseLinkMap = new HashMap<>();
 
         log.info("Creating document content for bulk case id {} title {}", bulkListCaseId, caseData.getCaseTitle());
@@ -77,7 +77,7 @@ public class PronouncementListTemplateContent {
             bulkList.add(caseLinkMap);
         }
         templateContent.put(PRONOUNCEMENT_JUDGE, caseData.getPronouncementJudge());
-        templateContent.put(COURT_NAME, caseData.getCourtName());
+        templateContent.put(COURT_NAME, caseData.getCourt().getLabel());
         templateContent.put(DATE_OF_HEARING, caseData.getDateAndTimeOfHearing().format(hearingDateFormat));
         templateContent.put(TIME_OF_HEARING, caseData.getDateAndTimeOfHearing().format(hearingTimeFormat));
         templateContent.put(BULK_LIST, bulkList);
