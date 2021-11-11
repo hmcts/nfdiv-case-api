@@ -3,9 +3,12 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
+import java.util.Set;
 
+import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
+import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 
 class RetiredFieldsTest {
@@ -27,6 +30,7 @@ class RetiredFieldsTest {
         data.put("serviceApplicationType", "type");
         data.put("coCourtName", "serviceCentre");
         data.put("courtName", "serviceCentre");
+        data.put("applicant1PrayerHasBeenGiven", "Yes");
 
         final var result = RetiredFields.migrate(data);
 
@@ -51,12 +55,13 @@ class RetiredFieldsTest {
             entry("coCourtName", null),
             entry("courtName", null),
             entry("coCourt", BURY_ST_EDMUNDS.getCourtId()),
-            entry("court", BURY_ST_EDMUNDS.getCourtId())
+            entry("court", BURY_ST_EDMUNDS.getCourtId()),
+            entry("applicant1PrayerHasBeenGivenCheckbox", Set.of(I_CONFIRM))
         );
     }
 
     @Test
-    void shouldIgnoreFieldIfPresentAndSetToNull() {
+    void shouldIgnoreFieldIfPresentAndSetToNullOrEmpty() {
         final var data = new HashMap<String, Object>();
         data.put("courtName", null);
 
@@ -64,5 +69,17 @@ class RetiredFieldsTest {
 
         assertThat(result.get("courtName")).isNull();
         assertThat(result.get("court")).isNull();
+    }
+
+    @Test
+    void shouldSetPrayerAnswerAsNoToEmptySet() {
+        final var data = new HashMap<String, Object>();
+        data.put("applicant1PrayerHasBeenGiven", "No");
+
+        final var result = RetiredFields.migrate(data);
+
+        assertThat(data).contains(
+            entry("applicant1PrayerHasBeenGivenCheckbox", emptySet())
+        );
     }
 }

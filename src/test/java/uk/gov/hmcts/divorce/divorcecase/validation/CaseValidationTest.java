@@ -25,7 +25,6 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionTest.CANNOT_EXIST;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionTest.CONNECTION;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.notNull;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.notNullOrNo;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCaseFieldsForIssueApplication;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCasesAcceptedToListForHearing;
@@ -37,7 +36,6 @@ public class CaseValidationTest {
 
     private static final String LESS_THAN_ONE_YEAR_AGO = " can not be less than one year ago.";
     private static final String EMPTY = " cannot be empty or null";
-    private static final String MUST_BE_YES = " must be YES";
     private static final String IN_THE_FUTURE = " can not be in the future.";
     private static final String MORE_THAN_ONE_HUNDRED_YEARS_AGO = " can not be more than 100 years ago.";
 
@@ -51,20 +49,6 @@ public class CaseValidationTest {
     @Test
     public void shouldReturnErrorWhenStringIsNull() {
         List<String> response = notNull(null, "field");
-
-        assertThat(response).isEqualTo(List.of("field" + EMPTY));
-    }
-
-    @Test
-    public void shouldReturnErrorWhenYesOrNoIsNo() {
-        List<String> response = notNullOrNo(NO, "field");
-
-        assertThat(response).isEqualTo(List.of("field" + MUST_BE_YES));
-    }
-
-    @Test
-    public void shouldReturnErrorWhenYesOrNoIsInvalid() {
-        List<String> response = notNullOrNo(null, "field");
 
         assertThat(response).isEqualTo(List.of("field" + EMPTY));
     }

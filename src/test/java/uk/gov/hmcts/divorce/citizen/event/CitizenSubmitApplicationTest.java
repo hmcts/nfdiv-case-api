@@ -26,12 +26,14 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Set;
 
+import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitApplication.CITIZEN_SUBMIT;
+import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ISSUE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DIVORCE;
@@ -86,7 +88,7 @@ class CitizenSubmitApplicationTest {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = CaseData.builder().build();
-        setValidCaseData(caseData).getApplication().setApplicant1PrayerHasBeenGiven(YesOrNo.NO);
+        setValidCaseData(caseData).getApplication().setApplicant1PrayerHasBeenGivenCheckbox(emptySet());
 
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
@@ -94,7 +96,7 @@ class CitizenSubmitApplicationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getErrors().size()).isEqualTo(1);
-        assertThat(response.getErrors().get(0)).isEqualTo("Applicant1PrayerHasBeenGiven must be YES");
+        assertThat(response.getErrors().get(0)).isEqualTo("applicant1PrayerHasBeenGivenCheckbox must be YES");
     }
 
     @Test
@@ -231,7 +233,7 @@ class CitizenSubmitApplicationTest {
                 .build()
         );
 
-        caseData.getApplication().setApplicant1PrayerHasBeenGiven(YesOrNo.YES);
+        caseData.getApplication().setApplicant1PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
         caseData.getApplication().getMarriageDetails().setApplicant1Name("Full name");
         caseData.getApplication().setApplicant1StatementOfTruth(YesOrNo.YES);
         caseData.getApplication().getMarriageDetails().setDate(LocalDate.now().minus(2, ChronoUnit.YEARS));
