@@ -11,8 +11,8 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_SERVICE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.SOLICITOR_NAME;
 
 @Component
 @Slf4j
@@ -40,7 +40,7 @@ public class SolicitorServiceNotification {
 
     private Map<String, String> templateVars(final CaseData caseData, final Long caseId) {
 
-        final Map<String, String> templateVars = commonContent.commonNotificationTemplateVars(caseData, caseId);
+        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
         templateVars.put(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
         return templateVars;
     }
