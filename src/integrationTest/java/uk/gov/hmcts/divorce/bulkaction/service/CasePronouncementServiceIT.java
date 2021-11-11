@@ -16,7 +16,6 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
-import uk.gov.hmcts.divorce.divorcecase.model.Court;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdCaseDataContentProvider;
@@ -37,6 +36,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
@@ -83,7 +83,7 @@ public class CasePronouncementServiceIT {
         final var bulkActionCaseData = BulkActionCaseData
             .builder()
             .dateAndTimeOfHearing(dateAndTimeOfHearing)
-            .courtName(Court.SERVICE_CENTRE)
+            .court(BURY_ST_EDMUNDS)
             .bulkListCaseDetails(List.of(getBulkListCaseDetailsListValue(TEST_CASE_ID.toString())))
             .build();
 
@@ -178,7 +178,8 @@ public class CasePronouncementServiceIT {
             .build();
 
         return uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
-            .data(objectMapper.convertValue(caseData, new TypeReference<>(){}))
+            .data(objectMapper.convertValue(caseData, new TypeReference<>() {
+            }))
             .build();
     }
 }

@@ -11,7 +11,6 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.Court;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -26,6 +25,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.BULK_LIST;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURT_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE_OF_HEARING;
@@ -74,7 +74,7 @@ public class PronouncementListTemplateContentTest {
         final BulkActionCaseData bulkActionCaseData = BulkActionCaseData
             .builder()
             .dateAndTimeOfHearing(dateAndTimeOfHearing)
-            .courtName(Court.SERVICE_CENTRE)
+            .court(BURY_ST_EDMUNDS)
             .pronouncementJudge("District Judge")
             .bulkListCaseDetails(List.of(getBulkListCaseDetailsListValue(TEST_CASE_ID.toString())))
             .build();
@@ -99,7 +99,7 @@ public class PronouncementListTemplateContentTest {
 
         assertThat(templateContent).contains(
             entry(PRONOUNCEMENT_JUDGE, "District Judge"),
-            entry(COURT_NAME, Court.SERVICE_CENTRE),
+            entry(COURT_NAME, BURY_ST_EDMUNDS.getLabel()),
             entry(DATE_OF_HEARING, "10 November 2021"),
             entry(TIME_OF_HEARING, "12:45 pm"));
 
@@ -119,7 +119,7 @@ public class PronouncementListTemplateContentTest {
             CaseDetails
                 .builder()
                 .caseTypeId(NoFaultDivorce.CASE_TYPE)
-                .data(Map.of("",caseData))
+                .data(Map.of("", caseData))
                 .build();
 
         when(objectMapper.convertValue(mainCaseDetails.getData(), CaseData.class)).thenReturn(caseData);

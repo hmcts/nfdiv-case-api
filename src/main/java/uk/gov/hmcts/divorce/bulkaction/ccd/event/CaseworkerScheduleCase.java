@@ -51,7 +51,7 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE))
             .page("scheduleForListing")
             .pageLabel("Schedule cases for listing")
-            .mandatory(BulkActionCaseData::getCourtName)
+            .mandatory(BulkActionCaseData::getCourt)
             .mandatory(BulkActionCaseData::getDateAndTimeOfHearing)
             .mandatoryNoSummary(BulkActionCaseData::getBulkListCaseDetails);
     }

@@ -179,7 +179,7 @@ public class ConditionalOrder {
     @CCD(
         label = "Court name"
     )
-    private Court courtName;
+    private ConditionalOrderCourt court;
 
     @CCD(
         label = "Date and time of hearing"
