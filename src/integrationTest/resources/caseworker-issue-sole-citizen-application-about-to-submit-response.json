@@ -35,7 +35,7 @@
     ],
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "divorceWho": "wife",
-    "applicant1PrayerHasBeenGiven": "Yes",
+    "applicant1PrayerHasBeenGivenCheckbox": ["Yes"],
     "applicant1StatementOfTruth": "Yes",
     "applicationFeeOrderSummary": {
       "PaymentTotal": "55000"
