@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 
 class RetiredFieldsTest {
@@ -29,27 +30,29 @@ class RetiredFieldsTest {
 
         final var result = RetiredFields.migrate(data);
 
-        assertThat(result.get("applicant1FirstName")).isEqualTo("This will be nulled");
-        assertThat(result.get("exampleRetiredField")).isNull();
-        assertThat(result.get("applicant1LastName")).isEqualTo("This will be left alone");
-        assertThat(result.get("applicant1ContactDetailsConfidential")).isNull();
-        assertThat(result.get("applicant2ContactDetailsConfidential")).isNull();
-        assertThat(result.get("applicant1FinancialOrderForRemoved")).isNull();
-        assertThat(result.get("applicant2FinancialOrderForRemoved")).isNull();
-        assertThat(result.get("dateConditionalOrderSubmitted")).isNull();
-        assertThat(result.get("coDateSubmitted")).isEqualTo("2021-11-11");
-        assertThat(result.get("legalProceedingsExist")).isNull();
-        assertThat(result.get("applicant2LegalProceedings")).isEqualTo("YES");
-        assertThat(result.get("legalProceedingsDescription")).isNull();
-        assertThat(result.get("applicant2LegalProceedingsDetails")).isEqualTo("value");
-        assertThat(result.get("doYouAgreeCourtHasJurisdiction")).isNull();
-        assertThat(result.get("jurisdictionAgree")).isEqualTo("YES");
-        assertThat(result.get("serviceApplicationType")).isNull();
-        assertThat(result.get("alternativeServiceType")).isEqualTo("type");
-        assertThat(result.get("coCourtName")).isNull();
-        assertThat(result.get("courtName")).isNull();
-        assertThat(result.get("coCourt")).isEqualTo(BURY_ST_EDMUNDS.getCourtId());
-        assertThat(result.get("court")).isEqualTo(BURY_ST_EDMUNDS.getCourtId());
+        assertThat(result).contains(
+            entry("applicant1FirstName", "This will be nulled"),
+            entry("exampleRetiredField", null),
+            entry("applicant1LastName", "This will be left alone"),
+            entry("applicant1ContactDetailsConfidential", null),
+            entry("applicant2ContactDetailsConfidential", null),
+            entry("applicant1FinancialOrderForRemoved", null),
+            entry("applicant2FinancialOrderForRemoved", null),
+            entry("dateConditionalOrderSubmitted", null),
+            entry("coDateSubmitted", "2021-11-11"),
+            entry("legalProceedingsExist", null),
+            entry("applicant2LegalProceedings", "YES"),
+            entry("legalProceedingsDescription", null),
+            entry("applicant2LegalProceedingsDetails", "value"),
+            entry("doYouAgreeCourtHasJurisdiction", null),
+            entry("jurisdictionAgree", "YES"),
+            entry("serviceApplicationType", null),
+            entry("alternativeServiceType", "type"),
+            entry("coCourtName", null),
+            entry("courtName", null),
+            entry("coCourt", BURY_ST_EDMUNDS.getCourtId()),
+            entry("court", BURY_ST_EDMUNDS.getCourtId())
+        );
     }
 
     @Test
