@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
+import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
@@ -14,7 +15,8 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
-import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
+import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
+import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
@@ -63,6 +65,9 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 public class NoticeOfProceedingContentTest {
 
     @Autowired
+    private CommonContent commonContent;
+
+    @Autowired
     private NoticeOfProceedingContent noticeOfProceedingContent;
 
     @Test
@@ -70,9 +75,11 @@ public class NoticeOfProceedingContentTest {
         CaseData caseData = caseData();
         caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);
         caseData.getApplicant1().setLastName(TEST_LAST_NAME);
+        caseData.getApplicant1().setGender(MALE);
+        caseData.getApplicant2().setGender(FEMALE);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         caseData.setDueDate(LocalDate.of(2021, 6, 19));
-        caseData.getApplication().setDivorceWho(WIFE);
+
 
         var ctscContactDetails = CtscContactDetails
             .builder()
@@ -116,9 +123,10 @@ public class NoticeOfProceedingContentTest {
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);
         caseData.getApplicant1().setLastName(TEST_LAST_NAME);
+        caseData.getApplicant1().setGender(MALE);
+        caseData.getApplicant2().setGender(FEMALE);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         caseData.setDueDate(LocalDate.of(2021, 6, 19));
-        caseData.getApplication().setDivorceWho(WIFE);
 
         var ctscContactDetails = CtscContactDetails
             .builder()

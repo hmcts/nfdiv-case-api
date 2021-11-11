@@ -1,13 +1,14 @@
 package uk.gov.hmcts.divorce.document.content;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
+import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
@@ -56,6 +57,8 @@ public class NoticeOfProceedingContent {
 
     private static final int HOLDING_DUE_DATE_OFFSET_DAYS = 141;
 
+    @Autowired
+    private CommonContent commonContent;
 
     @Value("${court.locations.serviceCentre.serviceCentreName}")
     private String serviceCentre;
@@ -95,7 +98,7 @@ public class NoticeOfProceedingContent {
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, DIVORCE_PROCEEDINGS);
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, FOR_A_DIVORCE);
-            templateContent.put(RELATION, caseData.getApplication().getDivorceWho().getLabel().toLowerCase(Locale.ROOT));
+            templateContent.put(RELATION, commonContent.getPartner(caseData,caseData.getApplicant2()));
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION, DIVORCE_APPLICATION);
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_PROCESS, DIVORCE_PROCESS);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_APPLICATION, YOUR_DIVORCE);
