@@ -15,7 +15,7 @@
   "marriageApplicant1Name": "test_first_name test_last_name",
   "applicant1FinancialOrder": "NO",
   "applicant2FinancialOrder": "NO",
-  "applicant1PrayerHasBeenGiven": "YES",
+  "applicant1PrayerHasBeenGivenCheckbox": ["Yes"],
   "applicant1StatementOfTruth": "YES",
   "applicant2PrayerHasBeenGiven": "YES",
   "applicant2StatementOfTruth": "YES",

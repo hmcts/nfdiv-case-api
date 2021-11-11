@@ -74,7 +74,6 @@ public class SystemMigrateCaseIT {
                 .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().json(expectedResponse(RESPONSE)));
-
     }
 
 }

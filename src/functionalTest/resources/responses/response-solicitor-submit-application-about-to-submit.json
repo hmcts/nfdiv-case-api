@@ -32,7 +32,7 @@
     "applicant1LegalProceedings": "Yes",
     "applicant1FinancialOrder": "No",
     "applicant2FinancialOrder": "No",
-    "applicant1PrayerHasBeenGiven": "Yes",
+    "applicant1PrayerHasBeenGivenCheckbox": ["Yes"],
     "applicant1StatementOfTruth": "Yes",
     "documentUploadComplete": "Yes",
     "applicant1SolicitorReference": "customerRef1",

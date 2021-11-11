@@ -14,7 +14,7 @@
     "Applicant2Gender cannot be empty or null",
     "MarriageApplicant1Name cannot be empty or null",
     "Applicant1KeepContactDetailsConfidential cannot be empty or null",
-    "Applicant1PrayerHasBeenGiven cannot be empty or null",
+    "applicant1PrayerHasBeenGivenCheckbox cannot be empty or null",
     "MarriageDate cannot be empty or null",
     "JurisdictionConnections cannot be empty or null",
     "MarriageApplicant2Name cannot be empty or null",

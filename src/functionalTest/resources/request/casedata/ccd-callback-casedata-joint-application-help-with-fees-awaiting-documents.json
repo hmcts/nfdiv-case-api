@@ -18,7 +18,7 @@
   "jurisdictionApplicant1Residence": "YES",
   "jurisdictionApplicant2Residence": "YES",
   "jurisdictionConnections": ["A"],
-  "applicant1PrayerHasBeenGiven": "YES",
+  "applicant1PrayerHasBeenGivenCheckbox": ["Yes"],
   "applicant1StatementOfTruth": "YES",
   "applicant2PrayerHasBeenGiven": "YES",
   "applicant2StatementOfTruth": "YES",

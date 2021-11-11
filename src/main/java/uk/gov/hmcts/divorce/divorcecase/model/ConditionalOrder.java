@@ -204,4 +204,9 @@ public class ConditionalOrder {
         typeOverride = TextArea
     )
     private String judgeCostsOrderAdditionalInfo;
+
+    @CCD(
+        label = "Link to certificate of entitlement"
+    )
+    private DivorceDocument certificateOfEntitlementDocument;
 }
