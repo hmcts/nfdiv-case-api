@@ -87,7 +87,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field(CaseData::getGeneralOrders)
             .field(CaseData::getDocumentsUploaded)
             .field("certificateOfServiceDocument")
-            .field("coCertificateOfEntitlement");
+            .field("coCertificateOfEntitlementDocument");
     }
 
     private void buildConfidentialTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -219,6 +219,6 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 "## Judge costs decision")
             .field("coJudgeCostsClaimGranted")
             .field("coJudgeCostsOrderAdditionalInfo")
-            .field("coCertificateOfEntitlement");
+            .field("coCertificateOfEntitlementDocument");
     }
 }

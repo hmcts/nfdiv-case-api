@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.CertificateOfEntitlementContent;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
 
 @Component
 @Slf4j
@@ -47,7 +49,14 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
             formatDocumentName(caseId, CERTIFICATE_OF_ENTITLEMENT_NAME, LocalDateTime.now(clock))
         );
 
-        caseData.getConditionalOrder().setCertificateOfEntitlement(certificateOfEntitlement);
+        final DivorceDocument coeDivorceDocument = DivorceDocument
+            .builder()
+            .documentLink(certificateOfEntitlement)
+            .documentFileName(certificateOfEntitlement.getFilename())
+            .documentType(CERTIFICATE_OF_ENTITLEMENT)
+            .build();
+
+        caseData.getConditionalOrder().setCertificateOfEntitlementDocument(coeDivorceDocument);
 
         return caseDetails;
     }

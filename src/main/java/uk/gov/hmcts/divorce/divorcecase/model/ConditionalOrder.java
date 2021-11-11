@@ -208,5 +208,5 @@ public class ConditionalOrder {
     @CCD(
         label = "Link to certificate of entitlement"
     )
-    private Document certificateOfEntitlement;
+    private DivorceDocument certificateOfEntitlementDocument;
 }

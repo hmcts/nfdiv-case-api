@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.CertificateOfEntitlementContent;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -19,13 +20,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
@@ -57,7 +58,9 @@ class GenerateCertificateOfEntitlementTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
-        final Document document = mock(Document.class);
+        final Document document = Document.builder()
+            .filename("filename")
+            .build();
 
         setMockClock(clock);
         when(certificateOfEntitlementContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
@@ -72,6 +75,12 @@ class GenerateCertificateOfEntitlementTest {
 
         final CaseDetails<CaseData, State> result = generateCertificateOfEntitlement.apply(caseDetails);
 
-        assertThat(result.getData().getConditionalOrder().getCertificateOfEntitlement()).isSameAs(document);
+        final DivorceDocument certificateOfEntitlementDocument = result.getData()
+            .getConditionalOrder()
+            .getCertificateOfEntitlementDocument();
+        
+        assertThat(certificateOfEntitlementDocument.getDocumentLink()).isSameAs(document);
+        assertThat(certificateOfEntitlementDocument.getDocumentFileName()).isEqualTo("filename");
+        assertThat(certificateOfEntitlementDocument.getDocumentType()).isEqualTo(CERTIFICATE_OF_ENTITLEMENT);
     }
 }
