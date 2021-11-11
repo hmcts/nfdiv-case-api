@@ -4,11 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.CertificateOfEntitlementContent;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -39,15 +41,22 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
 
         log.info("Generating certificate of entitlement pdf for CaseID: {}", caseDetails.getId());
 
-        caseDataDocumentService.renderDocumentAndUpdateCaseData(
-            caseData,
-            CERTIFICATE_OF_ENTITLEMENT,
+        final Document certificateOfEntitlement = caseDataDocumentService.renderDocument(
             certificateOfEntitlementContent.apply(caseData, caseId),
             caseId,
             CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID,
             caseData.getApplicant1().getLanguagePreference(),
             formatDocumentName(caseId, CERTIFICATE_OF_ENTITLEMENT_NAME, LocalDateTime.now(clock))
         );
+
+        final DivorceDocument coeDivorceDocument = DivorceDocument
+            .builder()
+            .documentLink(certificateOfEntitlement)
+            .documentFileName(certificateOfEntitlement.getFilename())
+            .documentType(CERTIFICATE_OF_ENTITLEMENT)
+            .build();
+
+        caseData.getConditionalOrder().setCertificateOfEntitlementDocument(coeDivorceDocument);
 
         return caseDetails;
     }

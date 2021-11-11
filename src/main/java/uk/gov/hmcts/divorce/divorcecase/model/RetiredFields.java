@@ -13,11 +13,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableMap;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer;
+import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 
 @Data
@@ -103,6 +106,10 @@ public class RetiredFields {
     )
     private Court courtName;
 
+
+    @CCD(label = "Retired YesNo field used for prayer")
+    private YesOrNo applicant1PrayerHasBeenGiven;
+
     @JsonIgnore
     private static final Consumer<Map<String, Object>> DO_NOTHING = data -> {
     };
@@ -141,6 +148,8 @@ public class RetiredFields {
             data -> data.put("coCourt", BURY_ST_EDMUNDS.getCourtId()));
         init.put("courtName",
             data -> data.put("court", BURY_ST_EDMUNDS.getCourtId()));
+        init.put("applicant1PrayerHasBeenGiven",
+            data -> data.put("applicant1PrayerHasBeenGivenCheckbox", transformApplicant1PrayerHasBeenGivenField(data)));
 
         migrations = unmodifiableMap(init);
     }
@@ -166,5 +175,12 @@ public class RetiredFields {
     private static YesOrNo transformContactDetailsConfidentialField(String confidentialFieldName, Map<String, Object> data) {
         String confidentialFieldValue = (String) data.get(confidentialFieldName);
         return ConfidentialAddress.KEEP.getLabel().equalsIgnoreCase(confidentialFieldValue) ? YES : NO;
+    }
+
+    private static Set<ThePrayer> transformApplicant1PrayerHasBeenGivenField(Map<String, Object> data) {
+        String value = (String) data.get("applicant1PrayerHasBeenGiven");
+        return YES.getValue().equalsIgnoreCase(value)
+            ? Set.of(I_CONFIRM)
+            : emptySet();
     }
 }
