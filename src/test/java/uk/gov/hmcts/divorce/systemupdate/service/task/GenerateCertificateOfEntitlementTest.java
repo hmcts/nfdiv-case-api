@@ -6,11 +6,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.CertificateOfEntitlementContent;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -18,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
@@ -57,21 +58,29 @@ class GenerateCertificateOfEntitlementTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
+        final Document document = Document.builder()
+            .filename("filename")
+            .build();
 
         setMockClock(clock);
         when(certificateOfEntitlementContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
-        final CaseDetails<CaseData, State> result = generateCertificateOfEntitlement.apply(caseDetails);
-
-        assertThat(result).isSameAs(caseDetails);
-
-        verify(caseDataDocumentService).renderDocumentAndUpdateCaseData(
-            caseData,
-            CERTIFICATE_OF_ENTITLEMENT,
+        when(caseDataDocumentService.renderDocument(
             templateContent,
             TEST_CASE_ID,
             CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID,
             ENGLISH,
-            formatDocumentName(TEST_CASE_ID, CERTIFICATE_OF_ENTITLEMENT_NAME, LocalDateTime.now(clock)));
+            formatDocumentName(TEST_CASE_ID, CERTIFICATE_OF_ENTITLEMENT_NAME, LocalDateTime.now(clock))))
+            .thenReturn(document);
+
+        final CaseDetails<CaseData, State> result = generateCertificateOfEntitlement.apply(caseDetails);
+
+        final DivorceDocument certificateOfEntitlementDocument = result.getData()
+            .getConditionalOrder()
+            .getCertificateOfEntitlementDocument();
+        
+        assertThat(certificateOfEntitlementDocument.getDocumentLink()).isSameAs(document);
+        assertThat(certificateOfEntitlementDocument.getDocumentFileName()).isEqualTo("filename");
+        assertThat(certificateOfEntitlementDocument.getDocumentType()).isEqualTo(CERTIFICATE_OF_ENTITLEMENT);
     }
 }
