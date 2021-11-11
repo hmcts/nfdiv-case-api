@@ -145,6 +145,7 @@ docmosis:
       SERVICE_ORDER: NFD_Service_Order.docx #TODO: update content
       BULK_CASE_PRONOUNCEMENT: NFD_Pronouncement_List.docx
       NOTICE_OF_PROCEEDINGS: NFD_Notice_Of_Proceedings_Sole.docx
+      CERTIFICATE_OF_ENTITLEMENT: NFD_Certificate_Of_Entitlement.docx #TODO: update content
     welsh:
       DIVORCE_APPLICATION_SOLE: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
@@ -157,6 +158,7 @@ docmosis:
       SERVICE_ORDER: NFD_Service_Order.docx #TODO: update content
       BULK_CASE_PRONOUNCEMENT: NFD_Pronouncement_List.docx  #TODO: update content
       NOTICE_OF_PROCEEDINGS: NFD_Notice_Of_Proceedings_Sole.docx  #TODO: update content
+      CERTIFICATE_OF_ENTITLEMENT: NFD_Certificate_Of_Entitlement.docx #TODO: update content
 
 doc_assembly:
   url: ${DOC_ASSEMBLY_URL:http://dg-docassembly-aat.service.core-compute-aat.internal}
@@ -191,6 +193,19 @@ court:
       postCode: 'CM20 9QT'
       email: 'divorcecase@justice.gov.uk'
       phoneNumber: '0300 303 0642'
+
+conditional-order-court:
+  locations:
+    birmingham:
+      name: "Birmingham Civil and Family Justice Centre"
+      address: "Priory Courts\n33 Bull Street\nBirmingham\nB4 6DS"
+      email: "divorcecase@justice.gov.uk"
+      phone: "0300 303 0642"
+    buryStEdmunds:
+      name: "Bury St. Edmunds Regional Divorce Centre"
+      address: "2nd Floor\nTriton House\nSt. Andrews Street North\nBury St. Edmunds\nIP33 1TR"
+      email: "divorcecase@justice.gov.uk"
+      phone: "0300 303 0642"
 
 pba:
   ref:
