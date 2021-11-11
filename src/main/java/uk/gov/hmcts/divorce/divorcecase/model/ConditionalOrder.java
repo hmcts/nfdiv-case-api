@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
@@ -41,7 +42,7 @@ public class ConditionalOrder {
     private Document respondentAnswersLink;
 
     @CCD(
-        label = "Does the petitioner want to continue with the divorce and apply for a conditional order?"
+        label = "Does the applicant want to continue with the divorce and apply for a conditional order?"
     )
     private YesOrNo applyForConditionalOrder;
 
@@ -58,21 +59,9 @@ public class ConditionalOrder {
     private YesOrNo changeOrAddToApplication;
 
     @CCD(
-        label = "Is everything stated in this divorce petition true?"
+        label = "Is everything stated in this divorce application true?"
     )
-    private YesOrNo isEverythingInPetitionTrue;
-
-    @CCD(
-        label = "Do you need to upload any other documents?"
-    )
-    private YesOrNo addNewDocuments;
-
-    @CCD(
-        label = "Documents uploaded at CO stage",
-        typeOverride = Collection,
-        typeParameterOverride = "DivorceDocument"
-    )
-    private List<ListValue<DivorceDocument>> documentsUploaded;
+    private YesOrNo isEverythingInApplicationTrue;
 
     @CCD(
         label = "Solicitor’s name"
@@ -209,4 +198,10 @@ public class ConditionalOrder {
         label = "Link to certificate of entitlement"
     )
     private DivorceDocument certificateOfEntitlementDocument;
+
+    @CCD(
+        label = "The applicant believes that the facts stated in this application are true.",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo applicantStatementOfTruth;
 }

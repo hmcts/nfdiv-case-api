@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -30,7 +31,14 @@ class RetiredFieldsTest {
         data.put("serviceApplicationType", "type");
         data.put("coCourtName", "serviceCentre");
         data.put("courtName", "serviceCentre");
+<<<<<<< HEAD
         data.put("applicant1PrayerHasBeenGiven", "Yes");
+=======
+        data.put("coAddNewDocuments", "YES");
+        data.put("coDocumentsUploaded", Collections.emptyList());
+        data.put("coIsEverythingInPetitionTrue", "YES");
+        data.put("coIsEverythingInApplicationTrue", "YES");
+>>>>>>> Updates to conditional order
 
         final var result = RetiredFields.migrate(data);
 
@@ -56,7 +64,15 @@ class RetiredFieldsTest {
             entry("courtName", null),
             entry("coCourt", BURY_ST_EDMUNDS.getCourtId()),
             entry("court", BURY_ST_EDMUNDS.getCourtId()),
+<<<<<<< HEAD
             entry("applicant1PrayerHasBeenGivenCheckbox", Set.of(I_CONFIRM))
+=======
+
+            entry("coAddNewDocuments", null),
+            entry("coDocumentsUploaded", null),
+            entry("coIsEverythingInPetitionTrue", null),
+            entry("coIsEverythingInApplicationTrue","YES")
+>>>>>>> Updates to conditional order
         );
     }
 

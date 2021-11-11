@@ -19,7 +19,7 @@ public class ConditionalOrderReviewApplicant1 implements CcdPageConfiguration {
                 .done()
             .complex(CaseData::getConditionalOrder)
                 .mandatory(ConditionalOrder::getChangeOrAddToApplication)
-                .mandatory(ConditionalOrder::getIsEverythingInPetitionTrue)
+                .mandatory(ConditionalOrder::getIsEverythingInApplicationTrue)
             .done();
 
     }

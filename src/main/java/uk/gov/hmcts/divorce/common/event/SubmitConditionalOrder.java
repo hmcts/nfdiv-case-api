@@ -52,9 +52,8 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
                 LEGAL_ADVISOR))
             .page("ConditionalOrderSoT")
             .pageLabel("Statement of Truth - submit conditional order")
-            .label("LabelConditionalOrderSoT-SoTStatement",
-                "The applicant believes that the facts stated in the application for a conditional order are true")
             .complex(CaseData::getConditionalOrder)
+                .mandatory(ConditionalOrder::getApplicantStatementOfTruth)
                 .mandatory(ConditionalOrder::getSolicitorName)
                 .mandatory(ConditionalOrder::getSolicitorFirm)
                 .optional(ConditionalOrder::getSolicitorAdditionalComments)
