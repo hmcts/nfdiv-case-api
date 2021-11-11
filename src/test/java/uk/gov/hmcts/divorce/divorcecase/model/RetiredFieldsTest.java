@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Set;
 
+import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
@@ -68,5 +69,17 @@ class RetiredFieldsTest {
 
         assertThat(result.get("courtName")).isNull();
         assertThat(result.get("court")).isNull();
+    }
+
+    @Test
+    void shouldSetPrayerAnswerAsNoToEmptySet() {
+        final var data = new HashMap<String, Object>();
+        data.put("applicant1PrayerHasBeenGiven", "No");
+
+        final var result = RetiredFields.migrate(data);
+
+        assertThat(data).contains(
+            entry("applicant1PrayerHasBeenGivenCheckbox", emptySet())
+        );
     }
 }
