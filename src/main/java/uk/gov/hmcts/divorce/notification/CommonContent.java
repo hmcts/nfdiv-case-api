@@ -82,4 +82,8 @@ public class CommonContent {
     public static boolean isDivorce(CaseData caseData) {
         return caseData.getDivorceOrDissolution().isDivorce();
     }
+
+    public String getPartner(CaseData caseData, Applicant partner) {
+        return isDivorce(caseData) ? partner.getGender() == Gender.MALE ? "husband" : "wife" : "civil partner";
+    }
 }

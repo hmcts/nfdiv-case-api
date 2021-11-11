@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 
 import java.util.Map;
 
@@ -60,5 +61,17 @@ class CommonContentTest {
 
         caseData.setDivorceOrDissolution(DISSOLUTION);
         assertFalse(isDivorce(caseData));
+    }
+
+    @Test
+    void shouldGetPartner() {
+        CaseData caseData = caseData();
+        assertThat(commonContent.getPartner(caseData, caseData.getApplicant2())).isEqualTo("wife");
+
+        caseData.getApplicant2().setGender(Gender.MALE);
+        assertThat(commonContent.getPartner(caseData, caseData.getApplicant2())).isEqualTo("husband");
+
+        caseData.setDivorceOrDissolution(DISSOLUTION);
+        assertThat(commonContent.getPartner(caseData, caseData.getApplicant2())).isEqualTo("civil partner");
     }
 }
