@@ -44,7 +44,7 @@ public class SolStatementOfTruth implements CcdPageConfiguration {
                     "- end their civil partnership",
                     "divorceOrDissolution=\"dissolution\"")
                 .label("LabelSolStatementOTruth-PrayerBullet",
-                    "- The applicant wishes to apply for a financial order")
+                    "- The applicant wishes to apply for a financial order", "applicant1FinancialOrder=\"Yes\"")
                 .label("LabelSolStatementOfTruth-SOT", "## Statement of truth ##")
                 .mandatory(Application::getApplicant1StatementOfTruth)
                 .mandatory(Application::getSolSignStatementOfTruth)
