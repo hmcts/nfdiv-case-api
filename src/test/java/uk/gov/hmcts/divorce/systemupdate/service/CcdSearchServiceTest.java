@@ -458,8 +458,9 @@ class CcdSearchServiceTest {
 
         final QueryBuilder query = boolQuery()
             .must(stateQuery)
-            .should(boolQuery().must(errorCasesExist))
-            .should(boolQuery().mustNot(processedCases));
+            .must(boolQuery()
+                .should(boolQuery().must(errorCasesExist))
+                .should(boolQuery().mustNot(processedCases)));
 
         return SearchSourceBuilder
             .searchSource()
