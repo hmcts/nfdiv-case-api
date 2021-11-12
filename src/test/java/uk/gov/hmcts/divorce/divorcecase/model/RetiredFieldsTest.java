@@ -2,9 +2,11 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
@@ -31,6 +33,10 @@ class RetiredFieldsTest {
         data.put("coCourtName", "serviceCentre");
         data.put("courtName", "serviceCentre");
         data.put("applicant1PrayerHasBeenGiven", "Yes");
+        data.put("coAddNewDocuments", "YES");
+        data.put("coDocumentsUploaded", Collections.emptyList());
+        data.put("coIsEverythingInPetitionTrue", "YES");
+        data.put("coIsEverythingInApplicationTrue", "YES");
 
         final var result = RetiredFields.migrate(data);
 
@@ -56,7 +62,12 @@ class RetiredFieldsTest {
             entry("courtName", null),
             entry("coCourt", BURY_ST_EDMUNDS.getCourtId()),
             entry("court", BURY_ST_EDMUNDS.getCourtId()),
-            entry("applicant1PrayerHasBeenGivenCheckbox", Set.of(I_CONFIRM))
+            entry("applicant1PrayerHasBeenGivenCheckbox", Set.of(I_CONFIRM)),
+            entry("coAddNewDocuments", "YES"),
+            entry("coDocumentsUploaded", emptyList()),
+            entry("coIsEverythingInPetitionTrue", null),
+            entry("coIsEverythingInApplicationTrue", "YES")
+
         );
     }
 

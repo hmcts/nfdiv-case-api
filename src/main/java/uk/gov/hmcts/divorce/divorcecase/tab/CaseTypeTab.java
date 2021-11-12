@@ -177,7 +177,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("coApplyForConditionalOrder")
             .field("coDateSubmitted")
             .field("coChangeOrAddToApplication")
-            .field("LabelConditionalOrderSoT-SoTStatement")
+            .field("coApplicantStatementOfTruth")
             .field("coSolicitorName")
             .field("coSolicitorFirm")
             .field("coSolicitorAdditionalComments")

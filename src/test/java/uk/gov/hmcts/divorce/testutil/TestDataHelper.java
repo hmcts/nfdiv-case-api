@@ -362,8 +362,7 @@ public class TestDataHelper {
         conditionalOrder.setDateSubmitted(LocalDateTime.now());
         conditionalOrder.setApplyForConditionalOrder(YES);
         conditionalOrder.setChangeOrAddToApplication(NO);
-        conditionalOrder.setIsEverythingInPetitionTrue(YES);
-        conditionalOrder.setAddNewDocuments(NO);
+        conditionalOrder.setIsEverythingInApplicationTrue(YES);
         return conditionalOrder;
     }
 
