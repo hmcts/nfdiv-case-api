@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.Permission;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 
 public class CaseworkerBetaAndSuperUserAccess implements HasAccessControl {
 
@@ -16,6 +17,7 @@ public class CaseworkerBetaAndSuperUserAccess implements HasAccessControl {
         SetMultimap<HasRole, Permission> grants = HashMultimap.create();
         grants.putAll(SUPER_USER, Permissions.CREATE_READ_UPDATE_DELETE);
         grants.putAll(CASE_WORKER, Permissions.CREATE_READ_UPDATE);
+        grants.putAll(SYSTEMUPDATE, Permissions.CREATE_READ_UPDATE);
         return grants;
     }
 }
