@@ -5,7 +5,6 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.common.event.page.ConditionalOrderNewDocuments;
 import uk.gov.hmcts.divorce.common.event.page.ConditionalOrderReviewAoS;
 import uk.gov.hmcts.divorce.common.event.page.ConditionalOrderReviewApplicant1;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -30,8 +29,7 @@ public class UpdateConditionalOrder implements CCDConfig<CaseData, State, UserRo
 
     private final List<CcdPageConfiguration> pages = asList(
         new ConditionalOrderReviewAoS(),
-        new ConditionalOrderReviewApplicant1(),
-        new ConditionalOrderNewDocuments()
+        new ConditionalOrderReviewApplicant1()
     );
 
     @Override
@@ -44,9 +42,9 @@ public class UpdateConditionalOrder implements CCDConfig<CaseData, State, UserRo
         return new PageBuilder(configBuilder
             .event(UPDATE_CONDITIONAL_ORDER)
             .forStateTransition(ConditionalOrderDrafted, ConditionalOrderDrafted)
-            .name("Update Conditional Order")
-            .description("Update Conditional Order")
-            .endButtonLabel("Save Conditional Order")
+            .name("Update conditional order")
+            .description("Update conditional order")
+            .endButtonLabel("Save conditional order")
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, CREATOR)
             .grant(READ,

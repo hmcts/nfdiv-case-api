@@ -13,8 +13,6 @@ import java.util.Map;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_AMENDED_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_APPLICATION_SUBMITTED;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
 
 @Slf4j
 @Component
@@ -36,9 +34,8 @@ public class ApplicantSubmittedNotification {
     public void send(final CaseData caseData, final Long caseId) {
 
         final String applicant1Email = caseData.getApplicant1().getEmail();
-        final Map<String, String> templateVars = commonContent.templateVarsForApplicant(
-            caseData, caseData.getApplicant1(), caseData.getApplicant2());
-        templateVars.put(APPLICATION_REFERENCE, formatId(caseId));
+        final Map<String, String> templateVars =
+            commonContent.mainTemplateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2());
 
         if (isNotEmpty(applicant1Email)) {
 

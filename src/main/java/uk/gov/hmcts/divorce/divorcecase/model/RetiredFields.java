@@ -5,16 +5,20 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.collections4.map.HashedMap;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
 import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableMap;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -110,6 +114,24 @@ public class RetiredFields {
     @CCD(label = "Retired YesNo field used for prayer")
     private YesOrNo applicant1PrayerHasBeenGiven;
 
+    @CCD(
+        label = "Upload new documents page removed hence field retired"
+    )
+    private YesOrNo coAddNewDocuments;
+
+    @CCD(
+        label = "Upload new documents page removed hence field retired",
+        typeOverride = Collection,
+        typeParameterOverride = "DivorceDocument"
+    )
+    private List<ListValue<DivorceDocument>> coDocumentsUploaded;
+
+    @CCD(
+        label = "Renamed petition to application"
+    )
+    private YesOrNo coIsEverythingInPetitionTrue;
+
+
     @JsonIgnore
     private static final Consumer<Map<String, Object>> DO_NOTHING = data -> {
     };
@@ -150,6 +172,8 @@ public class RetiredFields {
             data -> data.put("court", BURY_ST_EDMUNDS.getCourtId()));
         init.put("applicant1PrayerHasBeenGiven",
             data -> data.put("applicant1PrayerHasBeenGivenCheckbox", transformApplicant1PrayerHasBeenGivenField(data)));
+        init.put("coIsEverythingInPetitionTrue",
+            data -> data.put("coIsEverythingInApplicationTrue", data.get("coIsEverythingInPetitionTrue")));
 
         migrations = unmodifiableMap(init);
     }

@@ -18,18 +18,18 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.caseworker.service.notification.NoticeOfProceedingsNotification.CASE_ID;
+import static uk.gov.hmcts.divorce.caseworker.service.notification.NoticeOfProceedingsNotification.SOLICITOR_ORGANISATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_NAME;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.CASE_ID;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.RESPONDENT_NAME;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.SOLICITOR_NAME;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.SOLICITOR_ORGANISATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
@@ -63,7 +63,7 @@ class NoticeOfProceedingsNotificationTest {
             .applicant2(respondent())
             .build();
 
-        when(commonContent.commonNotificationTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
 
         noticeOfProceedingsNotification.send(caseData, TEST_CASE_ID);
 
@@ -88,7 +88,7 @@ class NoticeOfProceedingsNotificationTest {
             .applicant2(respondent())
             .build();
 
-        when(commonContent.commonNotificationTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
 
         noticeOfProceedingsNotification.send(caseData, TEST_CASE_ID);
 
@@ -110,7 +110,7 @@ class NoticeOfProceedingsNotificationTest {
             .applicant2(respondentWithDigitalSolicitor())
             .build();
 
-        when(commonContent.commonNotificationTemplateVars(caseData, TEST_CASE_ID))
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID))
             .thenReturn(commonTemplateVars())
             .thenReturn(commonTemplateVars());
 

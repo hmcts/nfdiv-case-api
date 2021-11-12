@@ -15,12 +15,12 @@ import static java.lang.String.join;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_AWAITING_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_NAME;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.CCD_REFERENCE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.RESPONDENT_NAME;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.SOLICITOR_NAME;
 
 @Component
 @Slf4j
@@ -49,7 +49,7 @@ public class AwaitingConditionalOrderNotification {
         templateVars.put(APPLICANT_NAME, join(" ", applicant1FirstName, applicant1LastName));
         templateVars.put(RESPONDENT_NAME, join(" ", applicant2FirstName, applicant2LastName));
         templateVars.put(SOLICITOR_NAME, applicant1SolicitorName);
-        templateVars.put(CCD_REFERENCE, formatId(caseId));
+        templateVars.put(APPLICATION_REFERENCE, formatId(caseId));
 
         notificationService.sendEmail(
             applicant1SolicitorEmail,
