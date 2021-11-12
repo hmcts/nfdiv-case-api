@@ -4,11 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.HashMap;
@@ -18,19 +17,10 @@ import java.util.Set;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE_TRANSLATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.CommonContent.isDivorce;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_ACTIONS;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.COURT_EMAIL;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.DISSOLUTION_COURT_EMAIL;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.DIVORCE_COURT_EMAIL;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.FIRST_NAME;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.IS_DISSOLUTION;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.IS_DIVORCE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.LAST_NAME;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.NO;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.YES;
 
 @Component
 @Slf4j
@@ -54,7 +44,7 @@ public class ApplicationOutstandingActionNotification {
     private NotificationService notificationService;
 
     @Autowired
-    private EmailTemplatesConfig configVars;
+    private CommonContent commonContent;
 
     public void sendToApplicant1(CaseData caseData, Long id) {
         log.info("Sending application outstanding actions notification to applicant 1 for case : {}", id);
@@ -79,7 +69,7 @@ public class ApplicationOutstandingActionNotification {
     }
 
     private Map<String, String> applicant1TemplateVars(final CaseData caseData, Long id) {
-        Map<String, String> templateVars = commonTemplateVars(caseData, id, caseData.getApplicant1());
+        Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
         templateVars.putAll(
             missingDocsTemplateVars(caseData, caseData.getApplication().getApplicant1CannotUploadSupportingDocument())
         );
@@ -90,7 +80,7 @@ public class ApplicationOutstandingActionNotification {
     }
 
     private Map<String, String> applicant2TemplateVars(final CaseData caseData, Long id) {
-        Map<String, String> templateVars = commonTemplateVars(caseData, id, caseData.getApplicant2());
+        Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
         templateVars.putAll(missingDocsTemplateVars(caseData, caseData.getApplication().getApplicant2CannotUploadSupportingDocument()));
         templateVars.putAll(serveAnotherWayTemplateVars(false, caseData));
         return templateVars;
@@ -127,18 +117,6 @@ public class ApplicationOutstandingActionNotification {
         templateVars.put(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION,
             nonNullMissingDocs && missingDocTypes.contains(MARRIAGE_CERTIFICATE_TRANSLATION) && !isDivorce(caseData) ? YES : NO);
         templateVars.put(MISSING_NAME_CHANGE_PROOF, nonNullMissingDocs && missingDocTypes.contains(NAME_CHANGE_EVIDENCE) ? YES : NO);
-        return  templateVars;
-    }
-
-    private Map<String, String> commonTemplateVars(CaseData caseData, Long id, Applicant applicant) {
-        Map<String, String> templateVars = new HashMap<>();
-        templateVars.put(IS_DIVORCE, isDivorce(caseData) ? YES : NO);
-        templateVars.put(IS_DISSOLUTION, !isDivorce(caseData) ? YES : NO);
-        templateVars.put(APPLICATION_REFERENCE, formatId(id));
-        templateVars.put(FIRST_NAME, applicant.getFirstName());
-        templateVars.put(LAST_NAME, applicant.getLastName());
-        templateVars.put(COURT_EMAIL,
-            configVars.getTemplateVars().get(isDivorce(caseData) ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
         return  templateVars;
     }
 }

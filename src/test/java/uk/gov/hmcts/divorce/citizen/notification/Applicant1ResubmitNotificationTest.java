@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
@@ -19,13 +20,13 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
+import static uk.gov.hmcts.divorce.citizen.notification.Applicant1ResubmitNotification.THEIR_EMAIL_ADDRESS;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL_NOTIFY_KEY;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT1_CHANGES_MADE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_URL_NOTIFY_KEY;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.THEIR_EMAIL_ADDRESS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DISSOLUTION_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DIVORCE_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
@@ -55,10 +56,10 @@ class Applicant1ResubmitNotificationTest {
     void shouldSendEmailToApplicant1WithDivorceContent() {
         CaseData data = validApplicant2CaseData();
         data.setDueDate(LOCAL_DATE);
-
-        final HashMap<String, String> templateVars = new HashMap<>();
-
-        when(commonContent.templateVarsForApplicant(data, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+        final Map<String, String> templateVars = new HashMap<>();
+        templateVars.putAll(getConfigTemplateVars());
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(templateVars);
 
         notification.sendToApplicant1(data, 1234567890123456L);
 

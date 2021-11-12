@@ -4,29 +4,31 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_OTHER_PARTY;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_PETITIONER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_PETITIONER_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_RESPONDENT;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_RESPONDENT_SOLICITOR;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICANT_NAME;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.CCD_REFERENCE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.GENERAL_EMAIL_DETAILS;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.GENERAL_OTHER_RECIPIENT_NAME;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.RESPONDENT_NAME;
 
 @Component
 @Slf4j
 public class GeneralEmailNotification {
+
+    public static final String GENERAL_EMAIL_DETAILS = "general email details";
+    public static final String GENERAL_OTHER_RECIPIENT_NAME = "general other recipient name";
+
+    @Autowired
+    private CommonContent commonContent;
 
     @Autowired
     private NotificationService notificationService;
@@ -44,7 +46,7 @@ public class GeneralEmailNotification {
                 log.info("Sending General Email Notification to petitioner solicitor for case id: {}", caseId);
                 emailTo = caseData.getApplicant1().getSolicitor().getEmail();
                 templateId = GENERAL_EMAIL_PETITIONER_SOLICITOR;
-                templateVars.put("solicitor name", caseData.getApplicant1().getSolicitor().getName());
+                templateVars.put(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
             } else {
                 log.info("Sending General Email Notification to petitioner for case id: {}", caseId);
                 emailTo = caseData.getApplicant1().getEmail();
@@ -55,7 +57,7 @@ public class GeneralEmailNotification {
                 log.info("Sending General Email Notification to respondent solicitor for case id: {}", caseId);
                 emailTo = caseData.getApplicant2().getSolicitor().getEmail();
                 templateId = GENERAL_EMAIL_RESPONDENT_SOLICITOR;
-                templateVars.put("solicitor name", caseData.getApplicant2().getSolicitor().getName());
+                templateVars.put(SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName());
             } else {
                 log.info("Sending General Email Notification to respondent for case id: {}", caseId);
                 emailTo = caseData.getApplicant2().getEmail();
@@ -81,10 +83,7 @@ public class GeneralEmailNotification {
     }
 
     private Map<String, String> templateVars(final CaseData caseData, final Long caseId) {
-        final Map<String, String> templateVars = new HashMap<>();
-        templateVars.put(APPLICANT_NAME, caseData.getApplication().getMarriageDetails().getApplicant1Name());
-        templateVars.put(RESPONDENT_NAME, caseData.getApplication().getMarriageDetails().getApplicant2Name());
-        templateVars.put(CCD_REFERENCE, String.valueOf(caseId));
+        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
         templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, caseData.getGeneralEmail().getGeneralEmailOtherRecipientName());
         templateVars.put(GENERAL_EMAIL_DETAILS, caseData.getGeneralEmail().getGeneralEmailDetails());
         return templateVars;

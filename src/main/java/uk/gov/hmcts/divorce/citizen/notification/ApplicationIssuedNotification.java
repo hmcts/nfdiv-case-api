@@ -9,9 +9,15 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
-import java.util.HashMap;
 import java.util.Map;
 
+import static uk.gov.hmcts.divorce.notification.CommonContent.ACCESS_CODE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.CREATE_ACCOUNT_LINK;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.REVIEW_DEADLINE_DATE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.CommonContent.isDivorce;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OVERSEAS_RESPONDENT_HAS_EMAIL_APPLICATION_ISSUED;
@@ -20,31 +26,14 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_PARTNER_HAS_NOT_RESPONDED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.ACCESS_CODE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.COURT_EMAIL;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.CREATE_ACCOUNT_LINK;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.DISSOLUTION_COURT_EMAIL;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.FIRST_NAME;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.IS_DISSOLUTION;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.IS_DIVORCE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.IS_REMINDER;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.LAST_NAME;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.NO;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.PARTNER;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.RESPONDENT_SIGN_IN_DISSOLUTION_URL;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.RESPONDENT_SIGN_IN_DIVORCE_URL;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.REVIEW_DEADLINE_DATE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DISSOLUTION_URL;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_DIVORCE_URL;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.SIGN_IN_URL_NOTIFY_KEY;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.SUBMISSION_RESPONSE_DATE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.YES;
 
 @Component
 @Slf4j
 public class ApplicationIssuedNotification {
+
+    public static final String RESPONDENT_SIGN_IN_DIVORCE_URL = "respondentSignInDivorceUrl";
+    public static final String RESPONDENT_SIGN_IN_DISSOLUTION_URL = "respondentSignInDissolutionUrl";
+
 
     @Autowired
     private NotificationService notificationService;
@@ -53,7 +42,7 @@ public class ApplicationIssuedNotification {
     private CommonContent commonContent;
 
     @Autowired
-    private EmailTemplatesConfig emailTemplatesConfig;
+    private EmailTemplatesConfig config;
 
     public void sendToSoleApplicant1(CaseData caseData, Long id) {
         log.info("Sending sole application issued notification to applicant 1 for case : {}", id);
@@ -94,7 +83,7 @@ public class ApplicationIssuedNotification {
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
             SOLE_APPLICANT_PARTNER_HAS_NOT_RESPONDED,
-            partnerNotRespondedToSoleApplicantTemplateVars(caseData, id),
+            commonTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
             caseData.getApplicant1().getLanguagePreference()
         );
     }
@@ -105,7 +94,7 @@ public class ApplicationIssuedNotification {
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
             JOINT_APPLICATION_ACCEPTED,
-            jointApplicantTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
+            commonTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
             caseData.getApplicant1().getLanguagePreference()
         );
     }
@@ -116,7 +105,7 @@ public class ApplicationIssuedNotification {
         notificationService.sendEmail(
             caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
             JOINT_APPLICATION_ACCEPTED,
-            jointApplicantTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
+            commonTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
             caseData.getApplicant1().getLanguagePreference()
         );
     }
@@ -137,9 +126,6 @@ public class ApplicationIssuedNotification {
     private Map<String, String> soleApplicant1TemplateVars(final CaseData caseData, Long id) {
         final Map<String, String> templateVars = commonTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
         templateVars.put(REVIEW_DEADLINE_DATE, caseData.getApplication().getIssueDate().plusDays(14).format(DATE_TIME_FORMATTER));
-        templateVars.put(SIGN_IN_URL_NOTIFY_KEY,
-            emailTemplatesConfig.getTemplateVars().get(isDivorce(caseData) ? SIGN_IN_DIVORCE_URL : SIGN_IN_DISSOLUTION_URL));
-        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         return templateVars;
     }
 
@@ -149,7 +135,7 @@ public class ApplicationIssuedNotification {
         templateVars.put(REVIEW_DEADLINE_DATE, caseData.getApplication().getIssueDate().plusDays(16).format(DATE_TIME_FORMATTER));
         templateVars.put(
             CREATE_ACCOUNT_LINK,
-            emailTemplatesConfig.getTemplateVars()
+            config.getTemplateVars()
                 .get(isDivorce(caseData) ? RESPONDENT_SIGN_IN_DIVORCE_URL : RESPONDENT_SIGN_IN_DISSOLUTION_URL)
         );
         templateVars.put(ACCESS_CODE, caseData.getCaseInvite().getAccessCode());
@@ -162,22 +148,6 @@ public class ApplicationIssuedNotification {
         return templateVars;
     }
 
-    private Map<String, String> partnerNotRespondedToSoleApplicantTemplateVars(final CaseData caseData, Long id) {
-        final Map<String, String> templateVars = commonTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
-        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
-        templateVars.put(SIGN_IN_URL_NOTIFY_KEY,
-            emailTemplatesConfig.getTemplateVars().get(isDivorce(caseData) ? SIGN_IN_DIVORCE_URL : SIGN_IN_DISSOLUTION_URL));
-        return templateVars;
-    }
-
-    private Map<String, String> jointApplicantTemplateVars(final CaseData caseData, Long id, Applicant applicant, Applicant partner) {
-        final Map<String, String> templateVars = commonTemplateVars(caseData, id, applicant, partner);
-        templateVars.put(SIGN_IN_URL_NOTIFY_KEY,
-            emailTemplatesConfig.getTemplateVars().get(isDivorce(caseData) ? SIGN_IN_DIVORCE_URL : SIGN_IN_DISSOLUTION_URL));
-        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
-        return templateVars;
-    }
-
     private Map<String, String> overseasRespondentTemplateVars(final CaseData caseData, Long id) {
         final Map<String, String> templateVars = commonTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
         templateVars.put(REVIEW_DEADLINE_DATE, caseData.getApplication().getIssueDate().plusDays(28).format(DATE_TIME_FORMATTER));
@@ -185,14 +155,8 @@ public class ApplicationIssuedNotification {
     }
 
     private Map<String, String> commonTemplateVars(final CaseData caseData, Long id, Applicant applicant, Applicant partner) {
-        final Map<String, String> templateVars = new HashMap<>();
-        templateVars.put(IS_DIVORCE,  isDivorce(caseData) ? YES : NO);
-        templateVars.put(IS_DISSOLUTION,  isDivorce(caseData) ? NO : YES);
-        templateVars.put(APPLICATION_REFERENCE, formatId(id));
-        templateVars.put(FIRST_NAME, applicant.getFirstName());
-        templateVars.put(LAST_NAME, applicant.getLastName());
-        templateVars.put(PARTNER, commonContent.getPartner(caseData, partner));
-        templateVars.put(COURT_EMAIL, emailTemplatesConfig.getTemplateVars().get(DISSOLUTION_COURT_EMAIL));
+        final Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
+        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         return templateVars;
     }
 }

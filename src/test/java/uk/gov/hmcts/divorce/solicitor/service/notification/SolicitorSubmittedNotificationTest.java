@@ -20,11 +20,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.FIRST_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_SOLICITOR_AMENDED_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.APPLICATION_REFERENCE;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.FIRST_NAME;
-import static uk.gov.hmcts.divorce.notification.NotificationConstants.LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 
 @ExtendWith(MockitoExtension.class)

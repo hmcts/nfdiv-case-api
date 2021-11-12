@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmail;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import static org.mockito.ArgumentMatchers.anyMap;
@@ -37,6 +38,9 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 
 @ExtendWith(MockitoExtension.class)
 public class GeneralEmailNotificationTest {
+
+    @Mock
+    private CommonContent commonContent;
 
     @Mock
     private NotificationService notificationService;
@@ -207,7 +211,7 @@ public class GeneralEmailNotificationTest {
             .generalEmailParties(OTHER)
             .build()
         );
-        
+
         generalEmailNotification.send(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
