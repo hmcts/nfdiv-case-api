@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
@@ -62,10 +63,10 @@ class RetiredFieldsTest {
             entry("coCourt", BURY_ST_EDMUNDS.getCourtId()),
             entry("court", BURY_ST_EDMUNDS.getCourtId()),
             entry("applicant1PrayerHasBeenGivenCheckbox", Set.of(I_CONFIRM)),
-            entry("coAddNewDocuments", null),
-            entry("coDocumentsUploaded", null),
+            entry("coAddNewDocuments", "YES"),
+            entry("coDocumentsUploaded", emptyList()),
             entry("coIsEverythingInPetitionTrue", null),
-            entry("coIsEverythingInApplicationTrue","YES")
+            entry("coIsEverythingInApplicationTrue", "YES")
 
         );
     }

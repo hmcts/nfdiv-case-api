@@ -172,8 +172,6 @@ public class RetiredFields {
             data -> data.put("court", BURY_ST_EDMUNDS.getCourtId()));
         init.put("applicant1PrayerHasBeenGiven",
             data -> data.put("applicant1PrayerHasBeenGivenCheckbox", transformApplicant1PrayerHasBeenGivenField(data)));
-        init.put("coAddNewDocuments", DO_NOTHING);
-        init.put("coDocumentsUploaded", DO_NOTHING);
         init.put("coIsEverythingInPetitionTrue",
             data -> data.put("coIsEverythingInApplicationTrue", data.get("coIsEverythingInPetitionTrue")));
 
