@@ -26,7 +26,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOL
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_COURT_CASE_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_EMAIL;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FINANCIAL_ORDER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
@@ -34,7 +33,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_POSTAL_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_COURT_CASE_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_EMAIL;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FINANCIAL_ORDER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
@@ -128,7 +126,6 @@ class DivorceApplicationJointTemplateContentTest {
             entry(APPLICANT_1_POSTAL_ADDRESS, null),
             entry(APPLICANT_1_EMAIL, TEST_USER_EMAIL),
             entry(HAS_FINANCIAL_ORDER_APPLICANT_1, false),
-            entry(APPLICANT_1_FINANCIAL_ORDER, null),
             entry(HAS_OTHER_COURT_CASES_APPLICANT_1, false),
             entry(APPLICANT_1_COURT_CASE_DETAILS, null),
             entry(APPLICANT_2_FIRST_NAME, TEST_FIRST_NAME),
@@ -138,14 +135,12 @@ class DivorceApplicationJointTemplateContentTest {
             entry(APPLICANT_2_POSTAL_ADDRESS, null),
             entry(APPLICANT_2_EMAIL, TEST_USER_EMAIL),
             entry(HAS_FINANCIAL_ORDER_APPLICANT_2, false),
-            entry(APPLICANT_2_FINANCIAL_ORDER, null),
             entry(HAS_OTHER_COURT_CASES_APPLICANT_2, false),
             entry(APPLICANT_2_COURT_CASE_DETAILS, null),
             entry(PLACE_OF_MARRIAGE, null),
             entry(MARRIAGE_DATE, null)
         );
 
-        verify(applicantTemplateDataProvider, times(2)).deriveJointFinancialOrder(any(Applicant.class));
         verify(applicantTemplateDataProvider, times(2)).deriveApplicantPostalAddress(any(Applicant.class));
         verify(applicationTemplateDataProvider).deriveJointJurisdictionList(any(Application.class), eq(TEST_CASE_ID));
     }
@@ -202,7 +197,6 @@ class DivorceApplicationJointTemplateContentTest {
             entry(APPLICANT_1_POSTAL_ADDRESS, null),
             entry(APPLICANT_1_EMAIL, TEST_USER_EMAIL),
             entry(HAS_FINANCIAL_ORDER_APPLICANT_1, false),
-            entry(APPLICANT_1_FINANCIAL_ORDER, null),
             entry(HAS_OTHER_COURT_CASES_APPLICANT_1, false),
             entry(APPLICANT_1_COURT_CASE_DETAILS, null),
             entry(APPLICANT_2_FIRST_NAME, TEST_FIRST_NAME),
@@ -212,14 +206,12 @@ class DivorceApplicationJointTemplateContentTest {
             entry(APPLICANT_2_POSTAL_ADDRESS, null),
             entry(APPLICANT_2_EMAIL, TEST_USER_EMAIL),
             entry(HAS_FINANCIAL_ORDER_APPLICANT_2, false),
-            entry(APPLICANT_2_FINANCIAL_ORDER, null),
             entry(HAS_OTHER_COURT_CASES_APPLICANT_2, false),
             entry(APPLICANT_2_COURT_CASE_DETAILS, null),
             entry(PLACE_OF_MARRIAGE, null),
             entry(MARRIAGE_DATE, null)
         );
 
-        verify(applicantTemplateDataProvider, times(2)).deriveJointFinancialOrder(any(Applicant.class));
         verify(applicantTemplateDataProvider, times(2)).deriveApplicantPostalAddress(any(Applicant.class));
         verify(applicationTemplateDataProvider).deriveJointJurisdictionList(any(Application.class), eq(TEST_CASE_ID));
     }

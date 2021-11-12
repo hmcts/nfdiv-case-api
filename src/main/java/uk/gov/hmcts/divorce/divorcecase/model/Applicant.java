@@ -123,11 +123,6 @@ public class Applicant {
     private YesOrNo financialOrder;
 
     @CCD(
-        label = "Who is the financial order for?"
-    )
-    private Set<FinancialOrderFor> financialOrderFor;
-
-    @CCD(
         label = "Are there any existing or previous court proceedings relating to the marriage?"
     )
     private YesOrNo legalProceedings;

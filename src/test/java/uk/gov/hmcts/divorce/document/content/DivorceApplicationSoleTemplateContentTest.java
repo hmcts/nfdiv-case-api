@@ -25,7 +25,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOL
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_COURT_CASE_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_EMAIL;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FINANCIAL_ORDER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
@@ -121,7 +120,6 @@ public class DivorceApplicationSoleTemplateContentTest {
             entry(APPLICANT_1_POSTAL_ADDRESS, null),
             entry(APPLICANT_1_EMAIL, TEST_USER_EMAIL),
             entry(HAS_FINANCIAL_ORDER_APPLICANT_1, false),
-            entry(APPLICANT_1_FINANCIAL_ORDER, null),
             entry(HAS_OTHER_COURT_CASES_APPLICANT_1, false),
             entry(APPLICANT_1_COURT_CASE_DETAILS, null),
             entry(APPLICANT_2_FIRST_NAME, TEST_FIRST_NAME),
@@ -134,7 +132,6 @@ public class DivorceApplicationSoleTemplateContentTest {
             entry(MARRIAGE_DATE, null)
         );
 
-        verify(applicantTemplateDataProvider).deriveSoleFinancialOrder(any(Applicant.class));
         verify(applicantTemplateDataProvider).deriveApplicantPostalAddress(any(Applicant.class));
         verify(applicantTemplateDataProvider).deriveApplicant2PostalAddress(any(Applicant.class), any(Application.class));
         verify(applicationTemplateDataProvider).deriveSoleJurisdictionList(any(Application.class), eq(TEST_CASE_ID));
@@ -190,7 +187,6 @@ public class DivorceApplicationSoleTemplateContentTest {
             entry(APPLICANT_1_POSTAL_ADDRESS, null),
             entry(APPLICANT_1_EMAIL, TEST_USER_EMAIL),
             entry(HAS_FINANCIAL_ORDER_APPLICANT_1, false),
-            entry(APPLICANT_1_FINANCIAL_ORDER, null),
             entry(HAS_OTHER_COURT_CASES_APPLICANT_1, false),
             entry(APPLICANT_1_COURT_CASE_DETAILS, null),
             entry(APPLICANT_2_FIRST_NAME, TEST_FIRST_NAME),
@@ -203,7 +199,6 @@ public class DivorceApplicationSoleTemplateContentTest {
             entry(MARRIAGE_DATE, null)
         );
 
-        verify(applicantTemplateDataProvider).deriveSoleFinancialOrder(any(Applicant.class));
         verify(applicantTemplateDataProvider).deriveApplicantPostalAddress(any(Applicant.class));
         verify(applicantTemplateDataProvider).deriveApplicant2PostalAddress(any(Applicant.class), any(Application.class));
         verify(applicationTemplateDataProvider).deriveSoleJurisdictionList(any(Application.class), eq(TEST_CASE_ID));
