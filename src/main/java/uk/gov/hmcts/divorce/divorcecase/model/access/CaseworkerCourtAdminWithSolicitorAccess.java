@@ -10,6 +10,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 
 public class CaseworkerCourtAdminWithSolicitorAccess implements HasAccessControl {
 
@@ -21,7 +22,7 @@ public class CaseworkerCourtAdminWithSolicitorAccess implements HasAccessControl
         grants.putAll(SOLICITOR, Permissions.READ);
 
         grants.putAll(CASE_WORKER, Permissions.CREATE_READ_UPDATE);
-
+        grants.putAll(SYSTEMUPDATE, Permissions.CREATE_READ_UPDATE);
         return grants;
     }
 }
