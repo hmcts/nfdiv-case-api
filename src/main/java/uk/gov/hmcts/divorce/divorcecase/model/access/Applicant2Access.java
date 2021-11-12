@@ -25,7 +25,7 @@ public class Applicant2Access implements HasAccessControl {
         grants.putAll(CREATOR, Permissions.READ);
         grants.putAll(APPLICANT_2_SOLICITOR, Permissions.CREATE_READ_UPDATE);
         grants.putAll(APPLICANT_2, Permissions.CREATE_READ_UPDATE);
-
+        grants.putAll(SYSTEMUPDATE, Permissions.CREATE_READ_UPDATE);
         return grants;
     }
 }
