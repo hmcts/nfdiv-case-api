@@ -63,9 +63,9 @@ public class SystemCreateBulkCaseListTask implements Runnable {
         final String serviceAuth = authTokenGenerator.generate();
 
         try {
-            final List<CaseDetails> casesAwaitingPronouncement = ccdSearchService.searchAwaitingPronouncementCases(user, serviceAuth);
+            List<CaseDetails> casesAwaitingPronouncement = ccdSearchService.searchAwaitingPronouncementCases(user, serviceAuth);
 
-            if (minimumCasesToProcess <= casesAwaitingPronouncement.size()) {
+            while (minimumCasesToProcess <= casesAwaitingPronouncement.size()) {
 
                 List<ListValue<BulkListCaseDetails>> bulkListCaseDetails = createBulkCaseListDetails(casesAwaitingPronouncement);
 
@@ -93,7 +93,10 @@ public class SystemCreateBulkCaseListTask implements Runnable {
                     serviceAuth
                 );
 
-            } else {
+                casesAwaitingPronouncement = ccdSearchService.searchAwaitingPronouncementCases(user, serviceAuth);
+            }
+
+            if (!casesAwaitingPronouncement.isEmpty()) {
                 log.info("Number of cases do not reach the minimum for awaiting pronouncement processing,"
                     + " Case list size {}", casesAwaitingPronouncement.size());
             }
