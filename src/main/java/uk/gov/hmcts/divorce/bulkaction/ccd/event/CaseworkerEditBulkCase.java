@@ -44,6 +44,7 @@ public class CaseworkerEditBulkCase implements CCDConfig<BulkActionCaseData, Bul
             .description("Edit bulk case")
             .showSummary()
             .showEventNotes()
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE))
