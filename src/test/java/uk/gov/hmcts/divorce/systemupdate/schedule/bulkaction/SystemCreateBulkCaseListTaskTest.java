@@ -32,9 +32,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Collections.emptyList;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -114,7 +116,8 @@ public class SystemCreateBulkCaseListTaskTest {
         when(mapper.convertValue(caseData2Map, CaseData.class)).thenReturn(caseData2);
 
         when(ccdSearchService.searchAwaitingPronouncementCases(user, SERVICE_AUTHORIZATION))
-            .thenReturn(List.of(caseDetails1, caseDetails2));
+            .thenReturn(List.of(caseDetails1, caseDetails2))
+            .thenReturn(emptyList());
 
         var bulkListCaseDetails1 =
             bulkListCaseDetailsListValue("app1fname1 app1lname1 vs app2fname1 app2lname1", 1L);
@@ -141,12 +144,138 @@ public class SystemCreateBulkCaseListTaskTest {
 
         systemCreateBulkCaseListTask.run();
 
-        verify(ccdSearchService).searchAwaitingPronouncementCases(user, SERVICE_AUTHORIZATION);
+        verify(ccdSearchService, times(2)).searchAwaitingPronouncementCases(user, SERVICE_AUTHORIZATION);
         verify(ccdCreateService).createBulkCase(bulkActionCaseDetails, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService)
             .submitEventWithRetry(caseDetails1, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService)
             .submitEventWithRetry(caseDetails2, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
+
+        verifyNoMoreInteractions(ccdSearchService, ccdUpdateService);
+    }
+
+    @Test
+    void shouldCreateTwoBulkCaseWhenThereAreMoreThanMaxCasesAvailable() {
+        ReflectionTestUtils.setField(systemCreateBulkCaseListTask, "minimumCasesToProcess", 2);
+
+        final CaseDetails caseDetails1 = mock(CaseDetails.class);
+        final CaseDetails caseDetails2 = mock(CaseDetails.class);
+        final CaseDetails caseDetails3 = mock(CaseDetails.class);
+        final CaseDetails caseDetails4 = mock(CaseDetails.class);
+
+        final CaseData caseData1 =
+            caseDataWithApplicant("app1fname1", "app1lname1", "app2fname1", "app2lname1");
+
+        final CaseData caseData2 =
+            caseDataWithApplicant("app1fname2", "app1lname2", "app2fname2", "app2lname2");
+
+        final CaseData caseData3 =
+            caseDataWithApplicant("app1fname3", "app1lname3", "app2fname3", "app2lname3");
+
+        final CaseData caseData4 =
+            caseDataWithApplicant("app1fname4", "app1lname4", "app2fname4", "app2lname4");
+
+        final Map<String, Object> caseData1Map = new HashMap<>();
+        caseData1Map.put("applicant1FirstName", "app1fname1");
+        caseData1Map.put("applicant1LastName", "app1lname1");
+        caseData1Map.put("applicant2FirstName", "app2fname1");
+        caseData1Map.put("applicant2LastName", "app2lname1");
+
+        when(caseDetails1.getData()).thenReturn(caseData1Map);
+        when(caseDetails1.getId()).thenReturn(1L);
+
+        final Map<String, Object> caseData2Map = new HashMap<>();
+        caseData2Map.put("applicant1FirstName", "app1fname2");
+        caseData2Map.put("applicant1LastName", "app1lname2");
+        caseData2Map.put("applicant2FirstName", "app2fname2");
+        caseData2Map.put("applicant2LastName", "app2lname2");
+
+        when(caseDetails2.getData()).thenReturn(caseData2Map);
+        when(caseDetails2.getId()).thenReturn(2L);
+
+        final Map<String, Object> caseData3Map = new HashMap<>();
+        caseData3Map.put("applicant1FirstName", "app1fname3");
+        caseData3Map.put("applicant1LastName", "app1lname3");
+        caseData3Map.put("applicant2FirstName", "app2fname3");
+        caseData3Map.put("applicant2LastName", "app2lname3");
+
+        when(caseDetails3.getData()).thenReturn(caseData3Map);
+        when(caseDetails3.getId()).thenReturn(3L);
+
+        final Map<String, Object> caseData4Map = new HashMap<>();
+        caseData4Map.put("applicant1FirstName", "app1fname4");
+        caseData4Map.put("applicant1LastName", "app1lname4");
+        caseData4Map.put("applicant2FirstName", "app2fname4");
+        caseData4Map.put("applicant2LastName", "app2lname4");
+
+        when(caseDetails4.getData()).thenReturn(caseData4Map);
+        when(caseDetails4.getId()).thenReturn(4L);
+
+        when(mapper.convertValue(caseData1Map, CaseData.class)).thenReturn(caseData1);
+        when(mapper.convertValue(caseData2Map, CaseData.class)).thenReturn(caseData2);
+        when(mapper.convertValue(caseData3Map, CaseData.class)).thenReturn(caseData3);
+        when(mapper.convertValue(caseData4Map, CaseData.class)).thenReturn(caseData4);
+
+        when(ccdSearchService.searchAwaitingPronouncementCases(user, SERVICE_AUTHORIZATION))
+            .thenReturn(List.of(caseDetails1, caseDetails2))
+            .thenReturn(List.of(caseDetails3, caseDetails4))
+            .thenReturn(emptyList());
+
+        var bulkListCaseDetails1 =
+            bulkListCaseDetailsListValue("app1fname1 app1lname1 vs app2fname1 app2lname1", 1L);
+        var bulkListCaseDetails2 =
+            bulkListCaseDetailsListValue("app1fname2 app1lname2 vs app2fname2 app2lname2", 2L);
+        var bulkListCaseDetails3 =
+            bulkListCaseDetailsListValue("app1fname3 app1lname3 vs app2fname3 app2lname3", 3L);
+        var bulkListCaseDetails4 =
+            bulkListCaseDetailsListValue("app1fname4 app1lname4 vs app2fname4 app2lname4", 4L);
+
+        var bulkActionCaseDetails1 =
+            CaseDetails
+                .builder()
+                .caseTypeId(BulkActionCaseTypeConfig.CASE_TYPE)
+                .data(Map.of("bulkListCaseDetails", List.of(bulkListCaseDetails1, bulkListCaseDetails2)))
+                .build();
+        var bulkActionCaseDetails2 =
+            CaseDetails
+                .builder()
+                .caseTypeId(BulkActionCaseTypeConfig.CASE_TYPE)
+                .data(Map.of("bulkListCaseDetails", List.of(bulkListCaseDetails3, bulkListCaseDetails4)))
+                .build();
+
+        CaseDetails caseDetailsBulkCase1 = CaseDetails.builder().id(5L).build();
+        CaseDetails caseDetailsBulkCase2 = CaseDetails.builder().id(6L).build();
+
+        when(ccdCreateService.createBulkCase(bulkActionCaseDetails1, user, SERVICE_AUTHORIZATION))
+            .thenReturn(caseDetailsBulkCase1);
+
+        when(ccdCreateService.createBulkCase(bulkActionCaseDetails2, user, SERVICE_AUTHORIZATION))
+            .thenReturn(caseDetailsBulkCase2);
+
+        doNothing().when(ccdUpdateService)
+            .submitEventWithRetry(caseDetails1, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
+
+        doNothing().when(ccdUpdateService)
+            .submitEventWithRetry(caseDetails2, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
+
+        doNothing().when(ccdUpdateService)
+            .submitEventWithRetry(caseDetails3, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
+
+        doNothing().when(ccdUpdateService)
+            .submitEventWithRetry(caseDetails4, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
+
+        systemCreateBulkCaseListTask.run();
+
+        verify(ccdSearchService, times(3)).searchAwaitingPronouncementCases(user, SERVICE_AUTHORIZATION);
+        verify(ccdCreateService).createBulkCase(bulkActionCaseDetails1, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService)
+            .submitEventWithRetry(caseDetails1, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService)
+            .submitEventWithRetry(caseDetails2, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService)
+            .submitEventWithRetry(caseDetails3, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService)
+            .submitEventWithRetry(caseDetails4, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
 
         verifyNoMoreInteractions(ccdSearchService, ccdUpdateService);
     }
@@ -202,7 +331,8 @@ public class SystemCreateBulkCaseListTaskTest {
         when(mapper.convertValue(caseData2Map, CaseData.class)).thenReturn(caseData2);
 
         when(ccdSearchService.searchAwaitingPronouncementCases(user, SERVICE_AUTHORIZATION))
-            .thenReturn(List.of(caseDetails1, caseDetails2));
+            .thenReturn(List.of(caseDetails1, caseDetails2))
+            .thenReturn(emptyList());
 
         var bulkListCaseDetails1 =
             bulkListCaseDetailsListValue("app1fname1 app1lname1 vs app2fname1 app2lname1", 1L);
@@ -243,7 +373,7 @@ public class SystemCreateBulkCaseListTaskTest {
                 .data(Map.of("bulkListCaseDetails", List.of(bulkListCaseDetails1, bulkListCaseDetails2)))
                 .build();
 
-        verify(ccdSearchService).searchAwaitingPronouncementCases(user, SERVICE_AUTHORIZATION);
+        verify(ccdSearchService, times(2)).searchAwaitingPronouncementCases(user, SERVICE_AUTHORIZATION);
         verify(ccdCreateService).createBulkCase(caseDetailsForBulkCaseCreation, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService)
             .submitEventWithRetry(caseDetails2, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
@@ -290,7 +420,8 @@ public class SystemCreateBulkCaseListTaskTest {
         when(mapper.convertValue(caseData2Map, CaseData.class)).thenReturn(caseData2);
 
         when(ccdSearchService.searchAwaitingPronouncementCases(user, SERVICE_AUTHORIZATION))
-            .thenReturn(List.of(caseDetails1, caseDetails2));
+            .thenReturn(List.of(caseDetails1, caseDetails2))
+            .thenReturn(emptyList());
 
         var bulkListCaseDetails2 =
             bulkListCaseDetailsListValue("app1fname2 app1lname2 vs app2fname2 app2lname2", 2L);
@@ -312,7 +443,7 @@ public class SystemCreateBulkCaseListTaskTest {
 
         systemCreateBulkCaseListTask.run();
 
-        verify(ccdSearchService).searchAwaitingPronouncementCases(user, SERVICE_AUTHORIZATION);
+        verify(ccdSearchService, times(2)).searchAwaitingPronouncementCases(user, SERVICE_AUTHORIZATION);
         verify(ccdCreateService).createBulkCase(bulkActionCaseDetails, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService)
             .submitEventWithRetry(caseDetails2, SYSTEM_LINK_WITH_BULK_CASE, user, SERVICE_AUTHORIZATION);
