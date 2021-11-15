@@ -138,7 +138,6 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1LegalProceedings")
             .field("applicant1LegalProceedingsDetails", "applicant1LegalProceedings=\"Yes\"")
             .field("applicant1FinancialOrder")
-            .field("applicant1FinancialOrderFor", "applicant1FinancialOrder=\"Yes\"")
             .field("solUrgentCase")
             .field("solUrgentCaseSupportingInformation", "solUrgentCase=\"Yes\"")
             .field("solStatementOfReconciliationCertify")

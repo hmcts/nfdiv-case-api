@@ -22,7 +22,6 @@ public final class DocmosisTemplateConstants {
     public static final String PLACE_OF_MARRIAGE = "placeOfMarriage";
     public static final String COURT_CASE_DETAILS = "courtCaseDetails";
     public static final String HAS_FINANCIAL_ORDERS = "hasFinancialOrders";
-    public static final String HAS_FINANCIAL_ORDERS_FOR_CHILD = "hasFinancialOrdersForChild";
     public static final String FINANCIAL_ORDER_CHILD = "financialOrderChild";
     public static final String APPLICANT_1_POSTAL_ADDRESS = "applicant1PostalAddress";
     public static final String APPLICANT_2_POSTAL_ADDRESS = "applicant2PostalAddress";
@@ -43,9 +42,7 @@ public final class DocmosisTemplateConstants {
     public static final String CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP = "conditionalOrderDivorceOrCivilPartnership";
     public static final String JOINT_APPLICATION = "Joint application";
     public static final String HAS_FINANCIAL_ORDER_APPLICANT_1 = "hasFinancialOrderApplicant1";
-    public static final String APPLICANT_1_FINANCIAL_ORDER = "applicant1FinancialOrder";
     public static final String HAS_FINANCIAL_ORDER_APPLICANT_2 = "hasFinancialOrderApplicant2";
-    public static final String APPLICANT_2_FINANCIAL_ORDER = "applicant2FinancialOrder";
     public static final String GENERAL_ORDER_DATE = "generalOrderDate";
     public static final String GENERAL_ORDER_DETAILS = "generalOrderDetails";
     public static final String GENERAL_ORDER_RECITALS = "generalOrderRecitals";
