@@ -42,7 +42,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FINANCIAL_ORDER_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_FINANCIAL_ORDERS;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_FINANCIAL_ORDERS_FOR_CHILD;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_DATE;
@@ -92,7 +91,6 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(FINANCIAL_ORDER_CHILD, CHILDREN_OF_THE_APPLICANT_1_AND_APPLICANT_2),
             entry(FINANCIAL_ORDER_OR_DISSOLUTION, CONDITIONAL_ORDER_OF_DIVORCE_FROM),
             entry(HAS_FINANCIAL_ORDERS, false),
-            entry(HAS_FINANCIAL_ORDERS_FOR_CHILD, false),
             entry(ISSUE_DATE, "28 April 2021"),
             entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE),
             entry(MARRIAGE_OR_RELATIONSHIP, MARRIAGE),
@@ -130,7 +128,6 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             entry(FINANCIAL_ORDER_CHILD, CHILDREN_OF_THE_APPLICANT_1_AND_APPLICANT_2),
             entry(FINANCIAL_ORDER_OR_DISSOLUTION, DISSOLUTION_OF_THE_CIVIL_PARTNERSHIP_WITH),
             entry(HAS_FINANCIAL_ORDERS, false),
-            entry(HAS_FINANCIAL_ORDERS_FOR_CHILD, false),
             entry(ISSUE_DATE, "28 April 2021"),
             entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP),
             entry(MARRIAGE_OR_RELATIONSHIP, RELATIONSHIP),
