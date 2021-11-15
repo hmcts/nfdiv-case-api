@@ -51,6 +51,7 @@ public class PronouncementListTemplateContent {
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Map<String, Object> apply(final BulkActionCaseData caseData,
                                      final Long bulkListCaseId,
                                      final LocalDate createdDate) {
@@ -60,11 +61,12 @@ public class PronouncementListTemplateContent {
 
         final Map<String, Object> templateContent = new HashMap<>();
         final List<Map<String, Object>> bulkList = new ArrayList<>();
-        final Map<String, Object> caseLinkMap = new HashMap<>();
 
         log.info("Creating document content for bulk case id {} title {}", bulkListCaseId, caseData.getCaseTitle());
 
         for (CaseDetails mainCase : retrieveBulkListCases(bulkListCaseId)) {
+
+            Map<String, Object> caseLinkMap = new HashMap<>();
 
             var mainCaseData = objectMapper.convertValue(mainCase.getData(), CaseData.class);
 
