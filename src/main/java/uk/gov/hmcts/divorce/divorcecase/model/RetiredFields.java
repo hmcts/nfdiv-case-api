@@ -131,6 +131,15 @@ public class RetiredFields {
     )
     private YesOrNo coIsEverythingInPetitionTrue;
 
+    @CCD(
+        label = "Retired applicant 1 who is the financial order for?"
+    )
+    private Set<FinancialOrderFor> applicant1FinancialOrderFor;
+
+    @CCD(
+        label = "Retired applicant 2 who is the financial order for?"
+    )
+    private Set<FinancialOrderFor> applicant2FinancialOrderFor;
 
     @JsonIgnore
     private static final Consumer<Map<String, Object>> DO_NOTHING = data -> {

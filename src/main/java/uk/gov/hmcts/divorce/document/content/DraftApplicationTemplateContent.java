@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.FinancialOrderFor;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -37,7 +36,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FINANCIAL_ORDER_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_FINANCIAL_ORDERS;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_FINANCIAL_ORDERS_FOR_CHILD;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_DATE;
@@ -103,11 +101,6 @@ public class DraftApplicationTemplateContent {
 
         templateContent.put(HAS_FINANCIAL_ORDERS, applicant1.getFinancialOrder().toBoolean());
 
-        boolean hasFinancialOrdersForChild =
-            null != applicant1.getFinancialOrderFor()
-                && applicant1.getFinancialOrderFor().contains(FinancialOrderFor.CHILDREN);
-
-        templateContent.put(HAS_FINANCIAL_ORDERS_FOR_CHILD, hasFinancialOrdersForChild);
         templateContent.put(FINANCIAL_ORDER_CHILD, CHILDREN_OF_THE_APPLICANT_1_AND_APPLICANT_2);
 
         String applicant2PostalAddress;
