@@ -13,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
+import uk.gov.hmcts.divorce.divorcecase.model.access.BulkCaseListAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
@@ -95,7 +96,7 @@ public class BulkActionCaseData {
         label = "Case list",
         typeOverride = Collection,
         typeParameterOverride = "BulkListCaseDetails",
-        access = {CaseworkerAccess.class}
+        access = {BulkCaseListAccess.class}
     )
     private List<ListValue<BulkListCaseDetails>> bulkListCaseDetails;
 
