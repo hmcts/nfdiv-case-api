@@ -24,17 +24,7 @@ public class SystemMigrateCase implements CCDConfig<CaseData, State, UserRole> {
             .forAllStates()
             .name("Migrate case data")
             .description("Migrate case data to the latest version")
-            .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
-            .aboutToSubmitCallback(this::aboutToSubmit);
+            .grant(CREATE_READ_UPDATE, SYSTEMUPDATE);
     }
 
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
-                                                                       CaseDetails<CaseData, State> beforeDetails) {
-
-        // the RetiredFields::migrate method runs as a pre-event hook to all events so all we need to do is return the migrated data.
-
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
-            .build();
-    }
 }

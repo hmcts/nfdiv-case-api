@@ -1,8 +1,10 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.RetiredFields;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
@@ -32,6 +34,9 @@ public class SystemMigrateCasesTask implements Runnable {
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Override
     public void run() {
         log.info("Migrate cases scheduled task started");
@@ -52,12 +57,18 @@ public class SystemMigrateCasesTask implements Runnable {
 
     private void migrateCase(final CaseDetails caseDetails, final User user, final String serviceAuthorization) {
         try {
+            final var data = RetiredFields.migrate(caseDetails.getData());
+            objectMapper.convertValue(data, CaseData.class);
+
+            caseDetails.setData(data);
             ccdUpdateService.submitEvent(caseDetails, SYSTEM_MIGRATE_CASE, user, serviceAuthorization);
             log.info("Migration complete for case id: {}", caseDetails.getId());
         } catch (final CcdConflictException e) {
             log.error("Could not get lock for case id: {}, continuing to next case", caseDetails.getId());
         } catch (final CcdManagementException e) {
             log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
+        } catch (final IllegalArgumentException e) {
+            log.error("Could not deserialize case id: {}, continuing to next case", caseDetails.getId());
         }
     }
 
