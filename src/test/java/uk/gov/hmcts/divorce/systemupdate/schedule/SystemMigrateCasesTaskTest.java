@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,6 +43,9 @@ class SystemMigrateCasesTaskTest {
 
     @Mock
     private CcdSearchService ccdSearchService;
+
+    @Mock
+    private ObjectMapper objectMapper;
 
     @InjectMocks
     private SystemMigrateCasesTask systemMigrateCasesTask;
