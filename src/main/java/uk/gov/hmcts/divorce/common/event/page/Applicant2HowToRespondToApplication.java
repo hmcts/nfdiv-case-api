@@ -16,7 +16,8 @@ public class Applicant2HowToRespondToApplication implements CcdPageConfiguration
             .label("label-HaveLegalPowerBullet",
                 "- they do not think the courts of England and Wales have the legal power (jurisdiction) to grant the application")
             .label("label-DoNotBelieveMarriageValidBullet",
-                "- they do not believe their marriage is legally valid. For example, if one of them was already married or in a civil partnership when they got married")
+                "- they do not believe their marriage is legally valid. For example, if one of them was already married"
+                    + " or in a civil partnership when they got married")
             .label("label-MarriageLegallyEndedBullet",
                 "- the marriage has already been legally ended")
             .complex(CaseData::getAcknowledgementOfService)
