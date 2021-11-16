@@ -255,6 +255,34 @@ class CcdSearchServiceTest {
     }
 
     @Test
+    void shouldReturnBulkCasesWithVersionOlderThan() {
+
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final SearchResult expected1 = SearchResult.builder().total(PAGE_SIZE).cases(createCaseDetailsList(PAGE_SIZE)).build();
+
+        SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+            .searchSource()
+            .query(
+                boolQuery()
+                    .should(boolQuery().mustNot(existsQuery("data.bulkCaseDataVersion")))
+                    .should(boolQuery().must(rangeQuery("data.bulkCaseDataVersion").lt(1)))
+            )
+            .from(0)
+            .size(2000);
+
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            BulkActionCaseTypeConfig.CASE_TYPE,
+            sourceBuilder.toString()))
+            .thenReturn(expected1);
+
+        final List<CaseDetails> searchResult = ccdSearchService.searchForBulkCasesWithVersionLessThan(1, user, SERVICE_AUTHORIZATION);
+
+        assertThat(searchResult.size()).isEqualTo(100);
+    }
+
+    @Test
     void shouldThrowCcdSearchFailedExceptionIfSearchFails() {
         final BoolQueryBuilder query = boolQuery()
             .must(matchQuery("state", Submitted))

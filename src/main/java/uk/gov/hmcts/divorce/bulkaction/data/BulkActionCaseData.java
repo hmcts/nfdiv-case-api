@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.bulkaction.data;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -130,6 +131,10 @@ public class BulkActionCaseData {
         access = {CaseworkerAccess.class}
     )
     private List<ListValue<BulkListCaseDetails>> casesToBeRemoved;
+
+    @CCD(access = {CaseworkerAccess.class})
+    @JsonUnwrapped
+    private BulkCaseRetiredFields retiredFields;
 
     @JsonIgnore
     public LocalDate getDateFinalOrderEligibleFrom(LocalDateTime dateTime) {

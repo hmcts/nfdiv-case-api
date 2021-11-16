@@ -123,6 +123,26 @@ public class CcdSearchService {
         ).getCases();
     }
 
+    public List<CaseDetails> searchForBulkCasesWithVersionLessThan(int latestVersion, User user, String serviceAuth) {
+
+        final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+            .searchSource()
+            .query(
+                boolQuery()
+                    .should(boolQuery().mustNot(existsQuery("data.bulkCaseDataVersion")))
+                    .should(boolQuery().must(rangeQuery("data.bulkCaseDataVersion").lt(latestVersion)))
+            )
+            .from(0)
+            .size(2000);
+
+        return coreCaseDataApi.searchCases(
+            user.getAuthToken(),
+            serviceAuth,
+            BulkActionCaseTypeConfig.CASE_TYPE,
+            sourceBuilder.toString()
+        ).getCases();
+    }
+
     public List<CaseDetails> searchAwaitingPronouncementCases(User user, String serviceAuth) {
         try {
             int from = 0;

@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
+import uk.gov.hmcts.divorce.bulkaction.data.BulkCaseRetiredFields;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
@@ -20,6 +21,7 @@ public class BulkActionCaseTypeConfig implements CCDConfig<BulkActionCaseData, B
 
     @Override
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
+        configBuilder.addPreEventHook(BulkCaseRetiredFields::migrate);
         configBuilder.setCallbackHost(System.getenv().getOrDefault("CASE_API_URL", "http://nfdiv-case-api:4013"));
 
         configBuilder.caseType(CASE_TYPE, CASE_TYPE, "Handling of the dissolution of marriage");
