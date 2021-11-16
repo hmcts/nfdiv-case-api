@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule.bulkaction;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkCaseRetiredFields;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
@@ -24,7 +26,9 @@ import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -42,6 +46,9 @@ public class SystemMigrateBulkCasesTaskTest {
 
     @Mock
     private CcdSearchService ccdSearchService;
+
+    @Mock
+    private ObjectMapper objectMapper;
 
     @InjectMocks
     private SystemMigrateBulkCasesTask systemMigrateBulkCasesTask;
@@ -119,5 +126,23 @@ public class SystemMigrateBulkCasesTaskTest {
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_BULK_CASE, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_BULK_CASE, user, SERVICE_AUTHORIZATION);
+    }
+
+    @Test
+    void shouldContinueToNextCaseIfExceptionIsThrownWhileDeserializingCase() {
+        final CaseDetails caseDetails1 = mock(CaseDetails.class);
+        final CaseDetails caseDetails2 = mock(CaseDetails.class);
+
+        final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
+
+        when(ccdSearchService.searchForCasesWithVersionLessThan(BulkCaseRetiredFields.getVersion(), user, SERVICE_AUTHORIZATION))
+            .thenReturn(caseDetailsList);
+
+        when(objectMapper.convertValue(any(), eq(CaseData.class)))
+            .thenThrow(new IllegalArgumentException("Failed to deserialize"));
+
+        systemMigrateBulkCasesTask.run();
+
+        verifyNoInteractions(ccdUpdateService);
     }
 }

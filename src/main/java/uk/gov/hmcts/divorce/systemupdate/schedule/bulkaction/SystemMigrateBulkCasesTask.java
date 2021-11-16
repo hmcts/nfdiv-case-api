@@ -1,9 +1,11 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule.bulkaction;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkCaseRetiredFields;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
@@ -32,6 +34,9 @@ public class SystemMigrateBulkCasesTask implements Runnable {
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Override
     public void run() {
         log.info("Migrate cases scheduled task started");
@@ -52,6 +57,10 @@ public class SystemMigrateBulkCasesTask implements Runnable {
 
     private void migrateCase(final CaseDetails caseDetails, final User user, final String serviceAuthorization) {
         try {
+            final var data = BulkCaseRetiredFields.migrate(caseDetails.getData());
+            objectMapper.convertValue(data, CaseData.class);
+
+            caseDetails.setData(data);
             ccdUpdateService.submitEvent(caseDetails, SYSTEM_MIGRATE_BULK_CASE, user, serviceAuthorization);
             log.info("Migration complete for case id: {}", caseDetails.getId());
         } catch (final CcdConflictException e) {
