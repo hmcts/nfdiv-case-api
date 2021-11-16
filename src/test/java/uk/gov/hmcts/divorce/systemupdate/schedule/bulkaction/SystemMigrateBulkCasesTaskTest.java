@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.systemupdate.schedule;
+package uk.gov.hmcts.divorce.systemupdate.schedule.bulkaction;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
@@ -10,8 +10,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import uk.gov.hmcts.divorce.bulkaction.data.BulkCaseRetiredFields;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.RetiredFields;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
@@ -26,20 +26,20 @@ import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemMigrateCase.SYSTEM_MIGRATE_CASE;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemMigrateBulkCase.SYSTEM_MIGRATE_BULK_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class SystemMigrateCasesTaskTest {
+public class SystemMigrateBulkCasesTaskTest {
 
     @Mock
     private CcdUpdateService ccdUpdateService;
@@ -51,7 +51,7 @@ class SystemMigrateCasesTaskTest {
     private ObjectMapper objectMapper;
 
     @InjectMocks
-    private SystemMigrateCasesTask systemMigrateCasesTask;
+    private SystemMigrateBulkCasesTask systemMigrateBulkCasesTask;
 
     @Mock
     private IdamService idamService;
@@ -69,23 +69,23 @@ class SystemMigrateCasesTaskTest {
     }
 
     @Test
-    void shouldMigrateCase() {
+    void shouldMigrateBulkCase() {
         final CaseDetails caseDetails = mock(CaseDetails.class);
 
-        when(ccdSearchService.searchForCasesWithVersionLessThan(RetiredFields.getVersion(), user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForBulkCasesWithVersionLessThan(BulkCaseRetiredFields.getVersion(), user, SERVICE_AUTHORIZATION))
             .thenReturn(singletonList(caseDetails));
 
-        systemMigrateCasesTask.run();
+        systemMigrateBulkCasesTask.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(caseDetails, SYSTEM_MIGRATE_BULK_CASE, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
     void shouldNotSubmitEventIfSearchFails() {
-        when(ccdSearchService.searchForCasesWithVersionLessThan(3, user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForBulkCasesWithVersionLessThan(3, user, SERVICE_AUTHORIZATION))
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
-        systemMigrateCasesTask.run();
+        systemMigrateBulkCasesTask.run();
 
         verifyNoInteractions(ccdUpdateService);
     }
@@ -96,16 +96,16 @@ class SystemMigrateCasesTaskTest {
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForCasesWithVersionLessThan(RetiredFields.getVersion(), user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForBulkCasesWithVersionLessThan(BulkCaseRetiredFields.getVersion(), user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_BULK_CASE, user, SERVICE_AUTHORIZATION);
 
-        systemMigrateCasesTask.run();
+        systemMigrateBulkCasesTask.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_BULK_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_BULK_CASE, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -115,17 +115,17 @@ class SystemMigrateCasesTaskTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForCasesWithVersionLessThan(RetiredFields.getVersion(), user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForBulkCasesWithVersionLessThan(BulkCaseRetiredFields.getVersion(), user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdManagementException("Failed processing of case", mock(FeignException.class)))
             .doNothing()
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_BULK_CASE, user, SERVICE_AUTHORIZATION);
 
-        systemMigrateCasesTask.run();
+        systemMigrateBulkCasesTask.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_BULK_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_BULK_CASE, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -135,13 +135,13 @@ class SystemMigrateCasesTaskTest {
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForCasesWithVersionLessThan(RetiredFields.getVersion(), user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForCasesWithVersionLessThan(BulkCaseRetiredFields.getVersion(), user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
         when(objectMapper.convertValue(any(), eq(CaseData.class)))
             .thenThrow(new IllegalArgumentException("Failed to deserialize"));
 
-        systemMigrateCasesTask.run();
+        systemMigrateBulkCasesTask.run();
 
         verifyNoInteractions(ccdUpdateService);
     }
