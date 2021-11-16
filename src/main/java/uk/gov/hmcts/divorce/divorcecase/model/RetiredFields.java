@@ -7,7 +7,6 @@ import org.apache.commons.collections4.map.HashedMap;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDateTime;
@@ -104,13 +103,6 @@ public class RetiredFields {
     )
     private Court coCourtName;
 
-    @CCD(
-        label = "retiredBulkActionCourtName",
-        access = {CaseworkerAccess.class}
-    )
-    private Court courtName;
-
-
     @CCD(label = "Retired YesNo field used for prayer")
     private YesOrNo applicant1PrayerHasBeenGiven;
 
@@ -177,8 +169,6 @@ public class RetiredFields {
             data -> data.put("alternativeServiceType", data.get("serviceApplicationType")));
         init.put("coCourtName",
             data -> data.put("coCourt", BURY_ST_EDMUNDS.getCourtId()));
-        init.put("courtName",
-            data -> data.put("court", BURY_ST_EDMUNDS.getCourtId()));
         init.put("applicant1PrayerHasBeenGiven",
             data -> data.put("applicant1PrayerHasBeenGivenCheckbox", transformApplicant1PrayerHasBeenGivenField(data)));
         init.put("coIsEverythingInPetitionTrue",

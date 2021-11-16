@@ -31,7 +31,6 @@ class RetiredFieldsTest {
         data.put("doYouAgreeCourtHasJurisdiction", "YES");
         data.put("serviceApplicationType", "type");
         data.put("coCourtName", "serviceCentre");
-        data.put("courtName", "serviceCentre");
         data.put("applicant1PrayerHasBeenGiven", "Yes");
         data.put("coAddNewDocuments", "YES");
         data.put("coDocumentsUploaded", Collections.emptyList());
@@ -59,9 +58,7 @@ class RetiredFieldsTest {
             entry("serviceApplicationType", null),
             entry("alternativeServiceType", "type"),
             entry("coCourtName", null),
-            entry("courtName", null),
             entry("coCourt", BURY_ST_EDMUNDS.getCourtId()),
-            entry("court", BURY_ST_EDMUNDS.getCourtId()),
             entry("applicant1PrayerHasBeenGivenCheckbox", Set.of(I_CONFIRM)),
             entry("coAddNewDocuments", "YES"),
             entry("coDocumentsUploaded", emptyList()),
@@ -74,12 +71,12 @@ class RetiredFieldsTest {
     @Test
     void shouldIgnoreFieldIfPresentAndSetToNullOrEmpty() {
         final var data = new HashMap<String, Object>();
-        data.put("courtName", null);
+        data.put("coCourtName", null);
 
         final var result = RetiredFields.migrate(data);
 
-        assertThat(result.get("courtName")).isNull();
-        assertThat(result.get("court")).isNull();
+        assertThat(result.get("coCourtName")).isNull();
+        assertThat(result.get("coCourt")).isNull();
     }
 
     @Test
@@ -87,7 +84,7 @@ class RetiredFieldsTest {
         final var data = new HashMap<String, Object>();
         data.put("applicant1PrayerHasBeenGiven", "No");
 
-        final var result = RetiredFields.migrate(data);
+        RetiredFields.migrate(data);
 
         assertThat(data).contains(
             entry("applicant1PrayerHasBeenGivenCheckbox", emptySet())
