@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.RetiredFields;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
@@ -25,6 +26,8 @@ import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -123,5 +126,23 @@ class SystemMigrateCasesTaskTest {
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+    }
+
+    @Test
+    void shouldContinueToNextCaseIfExceptionIsThrownWhileDeserializingCase() {
+        final CaseDetails caseDetails1 = mock(CaseDetails.class);
+        final CaseDetails caseDetails2 = mock(CaseDetails.class);
+
+        final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
+
+        when(ccdSearchService.searchForCasesWithVersionLessThan(RetiredFields.getVersion(), user, SERVICE_AUTHORIZATION))
+            .thenReturn(caseDetailsList);
+
+        when(objectMapper.convertValue(any(), eq(CaseData.class)))
+            .thenThrow(new IllegalArgumentException("Failed to deserialize"));
+
+        systemMigrateCasesTask.run();
+
+        verifyNoInteractions(ccdUpdateService);
     }
 }
