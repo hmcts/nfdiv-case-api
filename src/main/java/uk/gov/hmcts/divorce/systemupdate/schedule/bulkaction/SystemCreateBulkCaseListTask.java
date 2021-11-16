@@ -21,6 +21,7 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -63,42 +64,44 @@ public class SystemCreateBulkCaseListTask implements Runnable {
         final String serviceAuth = authTokenGenerator.generate();
 
         try {
-            List<CaseDetails> casesAwaitingPronouncement = ccdSearchService.searchAwaitingPronouncementCases(user, serviceAuth);
+            final Deque<List<CaseDetails>> pages = ccdSearchService.searchAwaitingPronouncementCasesAllPages(user, serviceAuth);
 
-            while (minimumCasesToProcess <= casesAwaitingPronouncement.size()) {
+            while (!pages.isEmpty()) {
 
-                List<ListValue<BulkListCaseDetails>> bulkListCaseDetails = createBulkCaseListDetails(casesAwaitingPronouncement);
+                final List<CaseDetails> casesAwaitingPronouncement = pages.poll();
 
-                var bulkActionCaseDetails =
-                    CaseDetails
-                        .builder()
-                        .caseTypeId(BulkActionCaseTypeConfig.CASE_TYPE)
-                        .data(Map.of("bulkListCaseDetails", bulkListCaseDetails))
-                        .build();
+                if (minimumCasesToProcess <= casesAwaitingPronouncement.size()) {
 
-                CaseDetails caseDetailsBulkCase = ccdCreateService.createBulkCase(bulkActionCaseDetails, user, serviceAuth);
+                    List<ListValue<BulkListCaseDetails>> bulkListCaseDetails = createBulkCaseListDetails(casesAwaitingPronouncement);
 
-                List<Long> failedAwaitingPronouncementCaseIds = updateCasesWithBulkListingCaseId(
-                    casesAwaitingPronouncement,
-                    retrieveCaseIds(bulkListCaseDetails),
-                    caseDetailsBulkCase.getId(),
-                    user,
-                    serviceAuth
-                );
+                    var bulkActionCaseDetails =
+                        CaseDetails
+                            .builder()
+                            .caseTypeId(BulkActionCaseTypeConfig.CASE_TYPE)
+                            .data(Map.of("bulkListCaseDetails", bulkListCaseDetails))
+                            .build();
 
-                failedBulkCaseRemover.removeFailedCasesFromBulkListCaseDetails(
-                    failedAwaitingPronouncementCaseIds,
-                    caseDetailsBulkCase,
-                    user,
-                    serviceAuth
-                );
+                    CaseDetails caseDetailsBulkCase = ccdCreateService.createBulkCase(bulkActionCaseDetails, user, serviceAuth);
 
-                casesAwaitingPronouncement = ccdSearchService.searchAwaitingPronouncementCases(user, serviceAuth);
-            }
+                    List<Long> failedAwaitingPronouncementCaseIds = updateCasesWithBulkListingCaseId(
+                        casesAwaitingPronouncement,
+                        retrieveCaseIds(bulkListCaseDetails),
+                        caseDetailsBulkCase.getId(),
+                        user,
+                        serviceAuth
+                    );
 
-            if (!casesAwaitingPronouncement.isEmpty()) {
-                log.info("Number of cases do not reach the minimum for awaiting pronouncement processing,"
-                    + " Case list size {}", casesAwaitingPronouncement.size());
+                    failedBulkCaseRemover.removeFailedCasesFromBulkListCaseDetails(
+                        failedAwaitingPronouncementCaseIds,
+                        caseDetailsBulkCase,
+                        user,
+                        serviceAuth
+                    );
+
+                } else {
+                    log.info("Number of cases do not reach the minimum for awaiting pronouncement processing,"
+                        + " Case list size {}", casesAwaitingPronouncement.size());
+                }
             }
 
             log.info("Awaiting pronouncement scheduled task complete.");
