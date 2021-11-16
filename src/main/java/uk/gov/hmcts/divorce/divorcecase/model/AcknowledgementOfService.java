@@ -106,6 +106,13 @@ public class AcknowledgementOfService {
     )
     private YesOrNo prayerHasBeenGiven;
 
+    @CCD(
+        label = "How do you want to respond ?",
+        access = {AosAccess.class}
+    )
+    private HowToRespondApplication howToRespondApplication;
+
+
     @JsonIgnore
     public void setNoticeOfProceedings(final Solicitor solicitor) {
         digitalNoticeOfProceedings = YES;
