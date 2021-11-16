@@ -62,7 +62,7 @@ public class SystemMigrateBulkCasesTaskTest {
     }
 
     @Test
-    void shouldNotTriggerAosOverdueTaskOnEachCaseWhenCaseDueDateIsAfterCurrentDate() {
+    void shouldMigrateBulkCase() {
         final CaseDetails caseDetails = mock(CaseDetails.class);
 
         when(ccdSearchService.searchForBulkCasesWithVersionLessThan(BulkCaseRetiredFields.getVersion(), user, SERVICE_AUTHORIZATION))
