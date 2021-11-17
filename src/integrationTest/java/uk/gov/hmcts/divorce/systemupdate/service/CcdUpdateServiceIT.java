@@ -116,6 +116,65 @@ public class CcdUpdateServiceIT {
     }
 
     @Test
+    void shouldInvokeCcdMaximumThreeTimesWhenSubmitEventFailsForModelCaseDetails() {
+        final User user = systemUpdateUser();
+        final CaseData caseData = CaseData.builder().build();
+        final uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails = new uk.gov.hmcts.ccd.sdk.api.CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+        final Map<String, Object> convertedCaseData = new HashMap<>();
+        final CaseDetails convertedCaseDetails = getCaseDetails(convertedCaseData);
+        final StartEventResponse startEventResponse = getStartEventResponse();
+        final CaseDataContent caseDataContent = mock(CaseDataContent.class);
+
+        when(coreCaseDataApi
+            .startEventForCaseWorker(
+                SYSTEM_UPDATE_AUTH_TOKEN,
+                SERVICE_AUTHORIZATION,
+                SYSTEM_USER_USER_ID,
+                JURISDICTION,
+                CASE_TYPE,
+                TEST_CASE_ID.toString(),
+                CREATE_BULK_LIST
+            )
+        ).thenReturn(startEventResponse);
+
+        when(ccdCaseDataContentProvider
+            .createCaseDataContent(
+                startEventResponse,
+                DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY,
+                DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION,
+                convertedCaseData
+            )
+        ).thenReturn(caseDataContent);
+
+        when(caseDetailsConverter.convertToReformModelFromCaseDetails(caseDetails)).thenReturn(convertedCaseDetails);
+
+        doThrow(feignException(409, "some error"))
+            .when(coreCaseDataApi).submitEventForCaseWorker(
+                SYSTEM_UPDATE_AUTH_TOKEN,
+                SERVICE_AUTHORIZATION,
+                SYSTEM_USER_USER_ID,
+                JURISDICTION,
+                CASE_TYPE,
+                TEST_CASE_ID.toString(),
+                true,
+                caseDataContent
+            );
+
+        assertThrows(
+            CcdConflictException.class,
+            () -> ccdUpdateService.submitEventWithRetry(convertedCaseDetails, CREATE_BULK_LIST, user, SERVICE_AUTHORIZATION));
+
+        verify(ccdCaseDataContentProvider, times(3))
+            .createCaseDataContent(
+                startEventResponse,
+                DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY,
+                DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION,
+                convertedCaseData);
+    }
+
+    @Test
     void shouldInvokeCcdMaximumThreeTimesWhenSubmitEventFailsForGivenCaseIdString() {
 
         final User user = systemUpdateUser();
