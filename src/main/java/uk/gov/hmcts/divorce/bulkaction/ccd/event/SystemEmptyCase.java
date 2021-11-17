@@ -14,7 +14,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
-public class SystemDropEmptyCase implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
+public class SystemEmptyCase implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
 
     public static final String SYSTEM_EMPTY_CASE = "system-empty-case";
 
