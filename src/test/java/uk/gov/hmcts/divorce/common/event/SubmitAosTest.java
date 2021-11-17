@@ -14,15 +14,27 @@ import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.idam.client.models.User;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SubmitAos.SUBMIT_AOS;
+import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorAosDisputed.SYSTEM_ISSUE_SOLICITOR_AOS_DISPUTED;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorAosUnDisputed.SYSTEM_ISSUE_SOLICITOR_AOS_UNDISPUTED;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,6 +42,15 @@ class SubmitAosTest {
 
     @Mock
     private SubmitAosService submitAosService;
+
+    @Mock
+    private CcdUpdateService ccdUpdateService;
+
+    @Mock
+    private IdamService idamService;
+
+    @Mock
+    private AuthTokenGenerator authTokenGenerator;
 
     @InjectMocks
     private SubmitAos submitAos;
@@ -98,5 +119,63 @@ class SubmitAosTest {
         assertThat(response.getData()).isSameAs(expectedCaseData);
         assertThat(response.getState()).isEqualTo(Holding);
         assertThat(response.getErrors()).isNull();
+    }
+
+    @Test
+    void shouldTriggerEventForAosDisputedWhenSolicitorHasSelectedToDisputeApplication() {
+
+        final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
+            .statementOfTruth(YES)
+            .prayerHasBeenGiven(YES)
+            .confirmReadPetition(YES)
+            .howToRespondApplication(DISPUTE_DIVORCE)
+            .build();
+
+        final CaseData caseData = caseData();
+        caseData.setAcknowledgementOfService(acknowledgementOfService);
+
+        final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        var user = mock(User.class);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
+
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        doNothing().when(ccdUpdateService).submitEvent(caseDetails, SYSTEM_ISSUE_SOLICITOR_AOS_DISPUTED, user, TEST_SERVICE_AUTH_TOKEN);
+
+        submitAos.submitted(caseDetails, beforeDetails);
+
+        verify(ccdUpdateService).submitEvent(caseDetails, SYSTEM_ISSUE_SOLICITOR_AOS_DISPUTED, user, TEST_SERVICE_AUTH_TOKEN);
+    }
+
+    @Test
+    void shouldTriggerEventForAosUnDisputedWhenSolicitorHasSelectedNotToDisputeApplication() {
+
+        final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
+            .statementOfTruth(YES)
+            .prayerHasBeenGiven(YES)
+            .confirmReadPetition(YES)
+            .howToRespondApplication(WITHOUT_DISPUTE_DIVORCE)
+            .build();
+
+        final CaseData caseData = caseData();
+        caseData.setAcknowledgementOfService(acknowledgementOfService);
+
+        final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        var user = mock(User.class);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
+
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        doNothing().when(ccdUpdateService).submitEvent(caseDetails, SYSTEM_ISSUE_SOLICITOR_AOS_UNDISPUTED, user, TEST_SERVICE_AUTH_TOKEN);
+
+        submitAos.submitted(caseDetails, beforeDetails);
+
+        verify(ccdUpdateService).submitEvent(caseDetails, SYSTEM_ISSUE_SOLICITOR_AOS_UNDISPUTED, user, TEST_SERVICE_AUTH_TOKEN);
     }
 }

@@ -13,14 +13,10 @@ import uk.gov.hmcts.divorce.common.event.page.Applicant2SolStatementOfTruth;
 import uk.gov.hmcts.divorce.common.event.page.SolicitorDetailsWithStatementOfTruth;
 import uk.gov.hmcts.divorce.common.service.SubmitAosService;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
-import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorAosDisputed;
-import uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorAosUnDisputed;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
@@ -42,7 +38,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorAosDisputed.SYSTEM_ISSUE_SOLICITOR_AOS_DISPUTED;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorAosUnDisputed.SYSTEM_ISSUE_SOLICITOR_AOS_UNDISPUTED;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorServicePack.SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK;
 
 @Component
 @Slf4j
@@ -141,7 +136,6 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
         String eventId;
         if (DISPUTE_DIVORCE.equals(acknowledgementOfService.getHowToRespondApplication())) {
             eventId = SYSTEM_ISSUE_SOLICITOR_AOS_DISPUTED;
-
         } else {
             eventId = SYSTEM_ISSUE_SOLICITOR_AOS_UNDISPUTED;
         }
@@ -149,7 +143,7 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
         final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuthorization = authTokenGenerator.generate();
 
-        log.info("Submitting solicitor event id {} for case id {}", eventId, details.getId());
+        log.info("Submitting event id {} for case id {}", eventId, details.getId());
         ccdUpdateService.submitEvent(details, eventId, user, serviceAuthorization);
 
         return SubmittedCallbackResponse.builder().build();
