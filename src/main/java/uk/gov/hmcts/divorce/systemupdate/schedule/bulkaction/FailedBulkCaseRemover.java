@@ -46,7 +46,7 @@ public class FailedBulkCaseRemover {
             updateBulkCaseToRemoveCases(caseDetailsBulkCase, user, serviceAuth, bulkCaseId);
 
             if (bulkCaseDetailsListValues.isEmpty()) {
-                dropEmptyBulkCase(caseDetailsBulkCase, user, serviceAuth, bulkCaseId);
+                setBulkCaseToEmptyState(caseDetailsBulkCase, user, serviceAuth, bulkCaseId);
             }
 
         } else {
@@ -86,12 +86,12 @@ public class FailedBulkCaseRemover {
         }
     }
 
-    private void dropEmptyBulkCase(final CaseDetails<BulkActionCaseData, BulkActionState> caseDetailsBulkCase,
-                                   final User user,
-                                   final String serviceAuth,
-                                   final Long bulkCaseId) {
+    private void setBulkCaseToEmptyState(final CaseDetails<BulkActionCaseData, BulkActionState> caseDetailsBulkCase,
+                                         final User user,
+                                         final String serviceAuth,
+                                         final Long bulkCaseId) {
 
-        log.info("Dropping empty bulk case for bulk case id {}", bulkCaseId);
+        log.info("Setting empty bulk case to Empty state for bulk case id {}", bulkCaseId);
 
         try {
             ccdUpdateService.submitBulkActionEvent(
@@ -100,7 +100,7 @@ public class FailedBulkCaseRemover {
                 user,
                 serviceAuth);
         } catch (final CcdManagementException e) {
-            log.error("Drop empty bulk case failed for bulk case id {} ", bulkCaseId);
+            log.error("Setting empty bulk case to Empty state failed for bulk case id {} ", bulkCaseId);
         }
     }
 }

@@ -65,7 +65,7 @@ class FailedBulkCaseRemoverTest {
     }
 
     @Test
-    void shouldRemoveGivenCaseIdsFromBulkCaseListAndDropBulkCaseIfAllCasesAreRemoved() {
+    void shouldRemoveGivenCaseIdsFromBulkCaseListAndSetBulkCaseStateToEmptyIfAllCasesFailed() {
 
         final User user = mock(User.class);
         final List<Long> failedCaseIds = List.of(1L, 2L, 3L, 4L, 5L);
