@@ -7,10 +7,8 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
-import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
-import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.List;
@@ -26,13 +24,11 @@ public class FailedBulkCaseRemover {
     @Autowired
     private CcdUpdateService ccdUpdateService;
 
-    @Autowired
-    private CaseDetailsConverter caseDetailsConverter;
-
-    public void removeFailedCasesFromBulkListCaseDetails(final List<Long> failedCaseIds,
-                                                         final CaseDetails caseDetailsBulkCase,
-                                                         final User user,
-                                                         final String serviceAuth) {
+    public void removeFailedCasesFromBulkListCaseDetails(
+        final List<Long> failedCaseIds,
+        final uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState> caseDetailsBulkCase,
+        final User user,
+        final String serviceAuth) {
 
         if (!isEmpty(failedCaseIds)) {
             log.info(
@@ -41,10 +37,7 @@ public class FailedBulkCaseRemover {
                 caseDetailsBulkCase.getId()
             );
 
-            final uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState> bulkActionCaseDetails =
-                caseDetailsConverter.convertToBulkActionCaseDetailsFromReformModel(caseDetailsBulkCase);
-
-            final List<ListValue<BulkListCaseDetails>> bulkCaseDetailsListValues = bulkActionCaseDetails.getData().getBulkListCaseDetails();
+            final List<ListValue<BulkListCaseDetails>> bulkCaseDetailsListValues = caseDetailsBulkCase.getData().getBulkListCaseDetails();
 
             final Predicate<ListValue<BulkListCaseDetails>> listValuePredicate = lv -> {
                 Long caseId = Long.valueOf(lv.getValue().getCaseReference().getCaseReference());
@@ -55,7 +48,7 @@ public class FailedBulkCaseRemover {
 
             try {
                 ccdUpdateService.submitBulkActionEvent(
-                    bulkActionCaseDetails,
+                    caseDetailsBulkCase,
                     SYSTEM_REMOVE_FAILED_CASES,
                     user,
                     serviceAuth);

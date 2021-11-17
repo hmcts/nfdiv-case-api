@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
@@ -144,7 +145,9 @@ public class CcdSearchService {
         ).getCases();
     }
 
-    public Deque<List<CaseDetails>> searchAwaitingPronouncementCasesAllPages(final User user, final String serviceAuth) {
+    public Deque<List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State>>> searchAwaitingPronouncementCasesAllPages(
+        final User user,
+        final String serviceAuth) {
 
         final QueryBuilder stateQuery = matchQuery(STATE, AwaitingPronouncement);
         final QueryBuilder bulkListingCaseId = existsQuery("data.bulkListCaseReference");
@@ -153,7 +156,7 @@ public class CcdSearchService {
             .must(stateQuery)
             .mustNot(bulkListingCaseId);
 
-        final Deque<List<CaseDetails>> pageQueue = new LinkedList<>();
+        final Deque<List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State>>> pageQueue = new LinkedList<>();
         int from = 0;
         int totalResults = bulkActionPageSize;
 
@@ -172,7 +175,9 @@ public class CcdSearchService {
                     CASE_TYPE,
                     sourceBuilder.toString());
 
-                pageQueue.offer(searchResult.getCases());
+                pageQueue.offer(searchResult.getCases().stream()
+                    .map(caseDetailsConverter::convertToCaseDetailsFromReformModel)
+                    .collect(toList()));
 
                 from += bulkActionPageSize;
                 totalResults = searchResult.getTotal();

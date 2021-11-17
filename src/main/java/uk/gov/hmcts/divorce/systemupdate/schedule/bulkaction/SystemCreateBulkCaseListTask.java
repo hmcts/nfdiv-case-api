@@ -1,15 +1,18 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule.bulkaction;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
+import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
+import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdCreateService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
@@ -17,13 +20,11 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYSTEM_LINK_WITH_BULK_CASE;
@@ -45,9 +46,6 @@ public class SystemCreateBulkCaseListTask implements Runnable {
     private CcdSearchService ccdSearchService;
 
     @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
     private IdamService idamService;
 
     @Autowired
@@ -64,26 +62,23 @@ public class SystemCreateBulkCaseListTask implements Runnable {
         final String serviceAuth = authTokenGenerator.generate();
 
         try {
-            final Deque<List<CaseDetails>> pages = ccdSearchService.searchAwaitingPronouncementCasesAllPages(user, serviceAuth);
+            final Deque<List<CaseDetails<CaseData, State>>> pages =
+                ccdSearchService.searchAwaitingPronouncementCasesAllPages(user, serviceAuth);
 
             while (!pages.isEmpty()) {
 
-                final List<CaseDetails> casesAwaitingPronouncement = pages.poll();
+                final List<CaseDetails<CaseData, State>> casesAwaitingPronouncement = pages.poll();
 
                 if (minimumCasesToProcess <= casesAwaitingPronouncement.size()) {
 
-                    List<ListValue<BulkListCaseDetails>> bulkListCaseDetails = createBulkCaseListDetails(casesAwaitingPronouncement);
+                    final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails = createBulkCaseListDetails(casesAwaitingPronouncement);
 
-                    var bulkActionCaseDetails =
-                        CaseDetails
-                            .builder()
-                            .caseTypeId(BulkActionCaseTypeConfig.CASE_TYPE)
-                            .data(Map.of("bulkListCaseDetails", bulkListCaseDetails))
-                            .build();
+                    final CaseDetails<BulkActionCaseData, BulkActionState> caseDetailsBulkCase = createBulkCase(
+                        user,
+                        serviceAuth,
+                        bulkListCaseDetails);
 
-                    CaseDetails caseDetailsBulkCase = ccdCreateService.createBulkCase(bulkActionCaseDetails, user, serviceAuth);
-
-                    List<Long> failedAwaitingPronouncementCaseIds = updateCasesWithBulkListingCaseId(
+                    final List<Long> failedAwaitingPronouncementCaseIds = updateCasesWithBulkListingCaseId(
                         casesAwaitingPronouncement,
                         retrieveCaseIds(bulkListCaseDetails),
                         caseDetailsBulkCase.getId(),
@@ -112,6 +107,20 @@ public class SystemCreateBulkCaseListTask implements Runnable {
         }
     }
 
+    private CaseDetails<BulkActionCaseData, BulkActionState> createBulkCase(
+        final User user,
+        final String serviceAuth,
+        final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails) {
+
+        final CaseDetails<BulkActionCaseData, BulkActionState> bulkActionCaseDetails = new CaseDetails<>();
+        bulkActionCaseDetails.setCaseTypeId(BulkActionCaseTypeConfig.CASE_TYPE);
+        bulkActionCaseDetails.setData(BulkActionCaseData.builder()
+            .bulkListCaseDetails(bulkListCaseDetails)
+            .build());
+
+        return ccdCreateService.createBulkCase(bulkActionCaseDetails, user, serviceAuth);
+    }
+
     private List<Long> retrieveCaseIds(List<ListValue<BulkListCaseDetails>> bulkListCaseDetails) {
         return bulkListCaseDetails
             .stream()
@@ -122,7 +131,7 @@ public class SystemCreateBulkCaseListTask implements Runnable {
             .collect(Collectors.toList());
     }
 
-    private List<Long> updateCasesWithBulkListingCaseId(final List<CaseDetails> casesAwaitingPronouncement,
+    private List<Long> updateCasesWithBulkListingCaseId(final List<CaseDetails<CaseData, State>> casesAwaitingPronouncement,
                                                         final List<Long> bulkListCaseIds,
                                                         final Long bulkListCaseId,
                                                         final User user,
@@ -130,12 +139,12 @@ public class SystemCreateBulkCaseListTask implements Runnable {
 
         List<Long> failedToUpdateAwaitingPronouncementIds = new ArrayList<>();
 
-        for (CaseDetails caseDetails : casesAwaitingPronouncement) {
+        for (CaseDetails<CaseData, State> caseDetails : casesAwaitingPronouncement) {
             final Long awaitingPronouncementCaseId = caseDetails.getId();
 
             try {
                 if (bulkListCaseIds.contains(awaitingPronouncementCaseId)) {
-                    caseDetails.getData().put("bulkListCaseReference", String.valueOf(bulkListCaseId));
+                    caseDetails.getData().setBulkListCaseReference(String.valueOf(bulkListCaseId));
                     ccdUpdateService.submitEventWithRetry(caseDetails, SYSTEM_LINK_WITH_BULK_CASE, user, serviceAuth);
                     log.info("Successfully updated case id {} with bulk case id {} ", awaitingPronouncementCaseId, bulkListCaseId);
                 } else {
@@ -156,12 +165,14 @@ public class SystemCreateBulkCaseListTask implements Runnable {
         return failedToUpdateAwaitingPronouncementIds;
     }
 
-    private List<ListValue<BulkListCaseDetails>> createBulkCaseListDetails(final List<CaseDetails> casesAwaitingPronouncement) {
-        List<ListValue<BulkListCaseDetails>> bulkListCaseDetails = new ArrayList<>();
+    private List<ListValue<BulkListCaseDetails>> createBulkCaseListDetails(
+        final List<CaseDetails<CaseData, State>> casesAwaitingPronouncement) {
 
-        for (final CaseDetails caseDetails : casesAwaitingPronouncement) {
+        final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails = new ArrayList<>();
+
+        for (final CaseDetails<CaseData, State> caseDetails : casesAwaitingPronouncement) {
             try {
-                final CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
+                final CaseData caseData = caseDetails.getData();
                 String caseParties = String.format("%s %s vs %s %s",
                     caseData.getApplicant1().getFirstName(),
                     caseData.getApplicant1().getLastName(),
