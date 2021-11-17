@@ -236,8 +236,13 @@ class CcdSearchServiceTest {
             .sort("data.issueDate", ASC)
             .query(
                 boolQuery()
-                    .should(boolQuery().mustNot(existsQuery("data.dataVersion")))
-                    .should(boolQuery().must(rangeQuery("data.dataVersion").lt(1)))
+                    .must(boolQuery()
+                        .mustNot(matchQuery("data.dataVersion", 0))
+                    )
+                    .must(boolQuery()
+                        .should(boolQuery().mustNot(existsQuery("data.dataVersion")))
+                        .should(boolQuery().must(rangeQuery("data.dataVersion").lt(1)))
+                    )
             )
             .from(0)
             .size(2000);
@@ -264,8 +269,13 @@ class CcdSearchServiceTest {
             .searchSource()
             .query(
                 boolQuery()
-                    .should(boolQuery().mustNot(existsQuery("data.bulkCaseDataVersion")))
-                    .should(boolQuery().must(rangeQuery("data.bulkCaseDataVersion").lt(1)))
+                    .must(boolQuery()
+                        .mustNot(matchQuery("data.bulkCaseDataVersion", 0))
+                    )
+                    .must(boolQuery()
+                        .should(boolQuery().mustNot(existsQuery("data.bulkCaseDataVersion")))
+                        .should(boolQuery().must(rangeQuery("data.bulkCaseDataVersion").lt(1)))
+                    )
             )
             .from(0)
             .size(2000);

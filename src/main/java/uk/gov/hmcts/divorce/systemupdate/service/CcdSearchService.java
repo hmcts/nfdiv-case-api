@@ -109,8 +109,13 @@ public class CcdSearchService {
             .sort("data.issueDate", ASC)
             .query(
                 boolQuery()
-                    .should(boolQuery().mustNot(existsQuery("data.dataVersion")))
-                    .should(boolQuery().must(rangeQuery("data.dataVersion").lt(latestVersion)))
+                    .must(boolQuery()
+                        .mustNot(matchQuery("data.dataVersion", 0))
+                    )
+                    .must(boolQuery()
+                        .should(boolQuery().mustNot(existsQuery("data.dataVersion")))
+                        .should(boolQuery().must(rangeQuery("data.dataVersion").lt(latestVersion)))
+                    )
             )
             .from(0)
             .size(2000);
@@ -129,8 +134,13 @@ public class CcdSearchService {
             .searchSource()
             .query(
                 boolQuery()
-                    .should(boolQuery().mustNot(existsQuery("data.bulkCaseDataVersion")))
-                    .should(boolQuery().must(rangeQuery("data.bulkCaseDataVersion").lt(latestVersion)))
+                    .must(boolQuery()
+                        .mustNot(matchQuery("data.bulkCaseDataVersion", 0))
+                    )
+                    .must(boolQuery()
+                        .should(boolQuery().mustNot(existsQuery("data.bulkCaseDataVersion")))
+                        .should(boolQuery().must(rangeQuery("data.bulkCaseDataVersion").lt(latestVersion)))
+                    )
             )
             .from(0)
             .size(2000);
