@@ -78,7 +78,9 @@ public class SystemMigrateCasesTask implements Runnable {
         try {
             objectMapper.convertValue(data, CaseData.class);
         } catch (final IllegalArgumentException e) {
-            log.info("Migration failed for case id {} due deserialization error", id);
+            log.info("Migration failed for case id {} due to deserialization error", id);
+            log.info("Deserialization error caused by {}", e.getMessage());
+
             data.put("dataVersion", 0);
         }
     }

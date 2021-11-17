@@ -76,7 +76,9 @@ public class SystemMigrateBulkCasesTask implements Runnable {
         try {
             objectMapper.convertValue(data, BulkActionCaseData.class);
         } catch (final Exception e) {
-            log.info("Migration failed for case id {} due deserialization error", id);
+            log.info("Migration failed for case id {} due to deserialization error", id);
+            log.info("Deserialization error caused by {}", e.getMessage());
+
             data.put("bulkCaseDataVersion", 0);
         }
     }

@@ -106,7 +106,6 @@ public class CcdSearchService {
 
         final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
             .searchSource()
-            .sort("data.issueDate", ASC)
             .query(
                 boolQuery()
                     .must(boolQuery()
