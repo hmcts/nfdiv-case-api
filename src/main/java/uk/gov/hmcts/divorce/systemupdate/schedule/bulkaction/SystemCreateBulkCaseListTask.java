@@ -171,38 +171,34 @@ public class SystemCreateBulkCaseListTask implements Runnable {
         final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails = new ArrayList<>();
 
         for (final CaseDetails<CaseData, State> caseDetails : casesAwaitingPronouncement) {
-            try {
-                final CaseData caseData = caseDetails.getData();
-                String caseParties = String.format("%s %s vs %s %s",
-                    caseData.getApplicant1().getFirstName(),
-                    caseData.getApplicant1().getLastName(),
-                    caseData.getApplicant2().getFirstName(),
-                    caseData.getApplicant2().getLastName()
-                );
 
-                var bulkCaseDetails = BulkListCaseDetails
-                    .builder()
-                    .caseParties(caseParties)
-                    .caseReference(
-                        CaseLink
-                            .builder()
-                            .caseReference(String.valueOf(caseDetails.getId()))
-                            .build()
-                    )
-                    .decisionDate(caseData.getConditionalOrder().getDecisionDate())
+            final CaseData caseData = caseDetails.getData();
+            String caseParties = String.format("%s %s vs %s %s",
+                caseData.getApplicant1().getFirstName(),
+                caseData.getApplicant1().getLastName(),
+                caseData.getApplicant2().getFirstName(),
+                caseData.getApplicant2().getLastName()
+            );
+
+            var bulkCaseDetails = BulkListCaseDetails
+                .builder()
+                .caseParties(caseParties)
+                .caseReference(
+                    CaseLink
+                        .builder()
+                        .caseReference(String.valueOf(caseDetails.getId()))
+                        .build()
+                )
+                .decisionDate(caseData.getConditionalOrder().getDecisionDate())
+                .build();
+
+            var bulkListCaseDetailsListValue =
+                ListValue
+                    .<BulkListCaseDetails>builder()
+                    .value(bulkCaseDetails)
                     .build();
 
-                var bulkListCaseDetailsListValue =
-                    ListValue
-                        .<BulkListCaseDetails>builder()
-                        .value(bulkCaseDetails)
-                        .build();
-
-                bulkListCaseDetails.add(bulkListCaseDetailsListValue);
-
-            } catch (final IllegalArgumentException e) {
-                log.error("Deserialization failed for case id: {}, continuing to next case", caseDetails.getId());
-            }
+            bulkListCaseDetails.add(bulkListCaseDetailsListValue);
         }
         return bulkListCaseDetails;
     }

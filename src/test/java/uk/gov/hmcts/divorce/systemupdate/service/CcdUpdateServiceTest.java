@@ -302,13 +302,6 @@ class CcdUpdateServiceTest {
             caseDataContent);
     }
 
-    private CaseDetails getCaseDetails(final Map<String, Object> caseData) {
-        return CaseDetails.builder()
-            .id(TEST_CASE_ID)
-            .data(caseData)
-            .build();
-    }
-
     @Test
     void shouldSubmitBulkActionEvent() {
         final User user = systemUpdateUser();
@@ -356,6 +349,92 @@ class CcdUpdateServiceTest {
             caseDataContent);
     }
 
+    @Test
+    void shouldSubmitEventWithRetryForCaseDetailsModel() {
+
+        final uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails = new uk.gov.hmcts.ccd.sdk.api.CaseDetails<>();
+        caseDetails.setData(CaseData.builder().build());
+
+        final User user = getCaseworkerDetails();
+        final Map<String, Object> caseData = new HashMap<>();
+        final CaseDetails reformCaseDetails = getCaseDetails(caseData);
+        final StartEventResponse startEventResponse = getStartEventResponse();
+        final CaseDataContent caseDataContent = mock(CaseDataContent.class);
+
+        when(caseDetailsConverter.convertToReformModelFromCaseDetails(caseDetails)).thenReturn(reformCaseDetails);
+        when(coreCaseDataApi
+            .startEventForCaseWorker(
+                CASEWORKER_AUTH_TOKEN,
+                SERVICE_AUTHORIZATION,
+                CASEWORKER_USER_ID,
+                JURISDICTION,
+                CASE_TYPE,
+                TEST_CASE_ID.toString(),
+                SYSTEM_PROGRESS_HELD_CASE))
+            .thenReturn(startEventResponse);
+
+        when(ccdCaseDataContentProvider
+            .createCaseDataContent(
+                startEventResponse,
+                DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY,
+                DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION,
+                caseData))
+            .thenReturn(caseDataContent);
+
+        ccdUpdateService.submitEventWithRetry(caseDetails, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
+
+        verify(coreCaseDataApi).submitEventForCaseWorker(
+            CASEWORKER_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            CASEWORKER_USER_ID,
+            JURISDICTION,
+            CASE_TYPE,
+            TEST_CASE_ID.toString(),
+            true,
+            caseDataContent);
+    }
+
+    @Test
+    void shouldSubmitEventWithRetryForCase() {
+
+        final User user = getCaseworkerDetails();
+        final Map<String, Object> caseData = new HashMap<>();
+        final CaseDetails caseDetails = getCaseDetails(caseData);
+        final StartEventResponse startEventResponse = getStartEventResponse();
+        final CaseDataContent caseDataContent = mock(CaseDataContent.class);
+
+        when(coreCaseDataApi
+            .startEventForCaseWorker(
+                CASEWORKER_AUTH_TOKEN,
+                SERVICE_AUTHORIZATION,
+                CASEWORKER_USER_ID,
+                JURISDICTION,
+                CASE_TYPE,
+                TEST_CASE_ID.toString(),
+                SYSTEM_PROGRESS_HELD_CASE))
+            .thenReturn(startEventResponse);
+
+        when(ccdCaseDataContentProvider
+            .createCaseDataContent(
+                startEventResponse,
+                DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY,
+                DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION,
+                caseData))
+            .thenReturn(caseDataContent);
+
+        ccdUpdateService.submitEventWithRetry(caseDetails, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
+
+        verify(coreCaseDataApi).submitEventForCaseWorker(
+            CASEWORKER_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            CASEWORKER_USER_ID,
+            JURISDICTION,
+            CASE_TYPE,
+            TEST_CASE_ID.toString(),
+            true,
+            caseDataContent);
+    }
+
     private StartEventResponse getStartEventResponse() {
         return StartEventResponse.builder()
             .eventId(SYSTEM_PROGRESS_HELD_CASE)
@@ -369,6 +448,13 @@ class CcdUpdateServiceTest {
             UserDetails.builder()
                 .id(CASEWORKER_USER_ID)
                 .build());
+    }
+
+    private CaseDetails getCaseDetails(final Map<String, Object> caseData) {
+        return CaseDetails.builder()
+            .id(TEST_CASE_ID)
+            .data(caseData)
+            .build();
     }
 
     private User systemUpdateUser() {
