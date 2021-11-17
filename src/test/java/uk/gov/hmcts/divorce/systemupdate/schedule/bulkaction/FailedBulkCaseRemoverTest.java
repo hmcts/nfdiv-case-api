@@ -26,7 +26,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemDropEmptyCase.SYSTEM_DROP_EMPTY_CASE;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemDropEmptyCase.SYSTEM_EMPTY_CASE;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemRemoveFailedCases.SYSTEM_REMOVE_FAILED_CASES;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 
@@ -88,7 +88,7 @@ class FailedBulkCaseRemoverTest {
 
         verify(ccdUpdateService).submitBulkActionEvent(
             bulkCaseDetails,
-            SYSTEM_DROP_EMPTY_CASE,
+            SYSTEM_EMPTY_CASE,
             user,
             SERVICE_AUTHORIZATION);
     }

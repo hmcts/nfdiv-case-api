@@ -11,7 +11,7 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemDropEmptyCase.SYSTEM_DROP_EMPTY_CASE;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemDropEmptyCase.SYSTEM_EMPTY_CASE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createBulkActionConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
@@ -29,6 +29,6 @@ class SystemDropEmptyCaseTest {
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(SYSTEM_DROP_EMPTY_CASE);
+            .contains(SYSTEM_EMPTY_CASE);
     }
 }

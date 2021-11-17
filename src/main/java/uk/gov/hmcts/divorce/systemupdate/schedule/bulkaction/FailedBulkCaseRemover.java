@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
-import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemDropEmptyCase.SYSTEM_DROP_EMPTY_CASE;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemDropEmptyCase.SYSTEM_EMPTY_CASE;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemRemoveFailedCases.SYSTEM_REMOVE_FAILED_CASES;
 
 @Component
@@ -96,7 +96,7 @@ public class FailedBulkCaseRemover {
         try {
             ccdUpdateService.submitBulkActionEvent(
                 caseDetailsBulkCase,
-                SYSTEM_DROP_EMPTY_CASE,
+                SYSTEM_EMPTY_CASE,
                 user,
                 serviceAuth);
         } catch (final CcdManagementException e) {
