@@ -25,6 +25,8 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemDropEmptyCase.SYSTEM_DROP_EMPTY_CASE;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemRemoveFailedCases.SYSTEM_REMOVE_FAILED_CASES;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 
@@ -56,6 +58,37 @@ class FailedBulkCaseRemoverTest {
         verify(ccdUpdateService).submitBulkActionEvent(
             bulkCaseDetails,
             SYSTEM_REMOVE_FAILED_CASES,
+            user,
+            SERVICE_AUTHORIZATION);
+
+        verifyNoMoreInteractions(ccdUpdateService);
+    }
+
+    @Test
+    void shouldRemoveGivenCaseIdsFromBulkCaseListAndDropBulkCaseIfAllCasesAreRemoved() {
+
+        final User user = mock(User.class);
+        final List<Long> failedCaseIds = List.of(1L, 2L, 3L, 4L, 5L);
+        final List<ListValue<BulkListCaseDetails>> listValues = getBulkListCaseDetailsListValueForCaseIds("1", "2", "3", "4", "5");
+        final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails = new CaseDetails<>();
+        bulkCaseDetails.setId(1L);
+        bulkCaseDetails.setData(BulkActionCaseData.builder().bulkListCaseDetails(listValues).build());
+
+        failedBulkCaseRemover.removeFailedCasesFromBulkListCaseDetails(
+            failedCaseIds,
+            bulkCaseDetails,
+            user,
+            SERVICE_AUTHORIZATION);
+
+        verify(ccdUpdateService).submitBulkActionEvent(
+            bulkCaseDetails,
+            SYSTEM_REMOVE_FAILED_CASES,
+            user,
+            SERVICE_AUTHORIZATION);
+
+        verify(ccdUpdateService).submitBulkActionEvent(
+            bulkCaseDetails,
+            SYSTEM_DROP_EMPTY_CASE,
             user,
             SERVICE_AUTHORIZATION);
     }
