@@ -21,6 +21,7 @@ import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.fail;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -135,6 +136,41 @@ class FailedBulkCaseRemoverTest {
                 SERVICE_AUTHORIZATION);
         } catch (Exception e) {
             fail("No exception should be thrown");
+        }
+    }
+
+    @Test
+    void shouldNotThrowExceptionAndCompleteNormallyIfCcdManagementExceptionIfThrownWhenSettingEmptyState() {
+
+        final User user = mock(User.class);
+        final List<Long> failedCaseIds = List.of(1L, 2L, 3L, 4L, 5L);
+        final List<ListValue<BulkListCaseDetails>> listValues = getBulkListCaseDetailsListValueForCaseIds("1", "2", "3", "4", "5");
+        final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails = new CaseDetails<>();
+        bulkCaseDetails.setId(1L);
+        bulkCaseDetails.setData(BulkActionCaseData.builder().bulkListCaseDetails(listValues).build());
+
+        doNothing()
+            .when(ccdUpdateService).submitBulkActionEvent(
+                bulkCaseDetails,
+                SYSTEM_REMOVE_FAILED_CASES,
+                user,
+                SERVICE_AUTHORIZATION);
+
+        doThrow(new CcdManagementException("Message", null))
+            .when(ccdUpdateService).submitBulkActionEvent(
+                bulkCaseDetails,
+                SYSTEM_EMPTY_CASE,
+                user,
+                SERVICE_AUTHORIZATION);
+
+        try {
+            failedBulkCaseRemover.removeFailedCasesFromBulkListCaseDetails(
+                failedCaseIds,
+                bulkCaseDetails,
+                user,
+                SERVICE_AUTHORIZATION);
+        } catch (Exception e) {
+            fail("No exception should be thrown", e);
         }
     }
 
