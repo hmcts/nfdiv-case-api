@@ -1,16 +1,12 @@
 package uk.gov.hmcts.divorce.common.event.page;
 
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.ccd.sdk.type.Organisation;
-import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
-
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 
 @Component
 public class SolicitorDetailsWithStatementOfTruth implements CcdPageConfiguration {
@@ -27,13 +23,7 @@ public class SolicitorDetailsWithStatementOfTruth implements CcdPageConfiguratio
                 .done()
             .complex(CaseData::getApplicant2)
                 .complex(Applicant::getSolicitor)
-                    .complex(Solicitor::getOrganisationPolicy, null, "Your firm's address or DX number")
-                        .complex(OrganisationPolicy::getOrganisation)
-                            .mandatory(Organisation::getOrganisationId)
-                            .done()
-                    .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole, NEVER_SHOW, APPLICANT_1_SOLICITOR)
-                    .optional(OrganisationPolicy::getOrgPolicyReference, NEVER_SHOW)
-                    .done()
+                    .mandatory(Solicitor::getAddress)
                 .done()
             .done()
             .complex(CaseData::getAcknowledgementOfService)

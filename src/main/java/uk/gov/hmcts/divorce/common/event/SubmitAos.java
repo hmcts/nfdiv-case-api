@@ -133,12 +133,9 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
 
         final AcknowledgementOfService acknowledgementOfService = details.getData().getAcknowledgementOfService();
 
-        String eventId;
-        if (DISPUTE_DIVORCE.equals(acknowledgementOfService.getHowToRespondApplication())) {
-            eventId = SYSTEM_ISSUE_SOLICITOR_AOS_DISPUTED;
-        } else {
-            eventId = SYSTEM_ISSUE_SOLICITOR_AOS_UNDISPUTED;
-        }
+        String eventId = DISPUTE_DIVORCE.equals(acknowledgementOfService.getHowToRespondApplication())
+            ? SYSTEM_ISSUE_SOLICITOR_AOS_DISPUTED
+            : SYSTEM_ISSUE_SOLICITOR_AOS_UNDISPUTED;
 
         final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuthorization = authTokenGenerator.generate();
