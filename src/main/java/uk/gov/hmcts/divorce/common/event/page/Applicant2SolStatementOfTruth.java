@@ -26,12 +26,6 @@ public class Applicant2SolStatementOfTruth implements CcdPageConfiguration {
             .complex(CaseData::getApplicant2)
                 .readonlyNoSummary(Applicant::getLegalProceedings)
                 .readonlyNoSummary(Applicant::getLegalProceedingsDetails)
-            .done()
-            .complex(CaseData::getAcknowledgementOfService)
-                .label("LabelApplicant2SolStatementOfTruth-SOT", "## Statement of truth")
-                .mandatory(AcknowledgementOfService::getStatementOfTruth)
-                .label("LabelApplicant2SolStatementOfTruth-Prayer", "## Prayer")
-                .mandatory(AcknowledgementOfService::getPrayerHasBeenGiven)
-                .done();
+            .done();
     }
 }

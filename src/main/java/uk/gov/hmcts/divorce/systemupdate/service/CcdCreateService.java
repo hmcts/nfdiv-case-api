@@ -4,6 +4,9 @@ import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
+import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
+import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
@@ -27,14 +30,17 @@ public class CcdCreateService {
     @Autowired
     private CcdCaseDataContentProvider ccdCaseDataContentProvider;
 
-    public CaseDetails createBulkCase(final CaseDetails caseDetails,
-                                      final User user,
-                                      final String serviceAuth) {
+    @Autowired
+    private CaseDetailsConverter caseDetailsConverter;
+
+    public uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState> createBulkCase(
+        final uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState> caseDetails,
+        final User user,
+        final String serviceAuth) {
 
         final String userId = user.getUserDetails().getId();
         final String authorization = user.getAuthToken();
 
-        CaseDetails bulkListCaseDetails = null;
         try {
 
             final StartEventResponse startEventResponse = coreCaseDataApi.startForCaseworker(
@@ -52,18 +58,19 @@ public class CcdCreateService {
                 DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION,
                 caseDetails.getData());
 
-            bulkListCaseDetails = coreCaseDataApi.submitForCaseworker(
+            final CaseDetails bulkCaseDetails = coreCaseDataApi.submitForCaseworker(
                 authorization,
                 serviceAuth,
                 userId,
                 JURISDICTION,
                 CASE_TYPE,
                 true,
-                caseDataContent
-            );
+                caseDataContent);
+
+            return caseDetailsConverter.convertToBulkActionCaseDetailsFromReformModel(bulkCaseDetails);
+
         } catch (final FeignException e) {
             throw new CcdManagementException("Bulk case creation failed", e);
         }
-        return bulkListCaseDetails;
     }
 }
