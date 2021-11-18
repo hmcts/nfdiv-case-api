@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationIssuedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import static org.mockito.ArgumentMatchers.eq;
@@ -53,12 +54,26 @@ class SendApplicationIssueNotificationsTest {
         CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.setApplication(Application.builder().applicant1KnowsApplicant2EmailAddress(YES).build());
+        caseData.setCaseInvite(CaseInvite.builder().applicant2InviteEmailAddress("test@email.com").build());
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
 
         underTest.apply(caseDetails);
 
         verify(notification).sendToJointApplicant1(eq(caseData), eq(caseDetails.getId()));
         verify(notification).sendToJointApplicant2(eq(caseData), eq(caseDetails.getId()));
+    }
+
+    @Test
+    void shouldNotSendJointNotificationsIfApplicant2EmailAddressIsNull() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.setApplication(Application.builder().applicant1KnowsApplicant2EmailAddress(YES).build());
+        CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
+
+        underTest.apply(caseDetails);
+
+        verify(notification).sendToJointApplicant1(eq(caseData), eq(caseDetails.getId()));
+        verify(notification, never()).sendToJointApplicant2(eq(caseData), eq(caseDetails.getId()));
     }
 
     @Test
