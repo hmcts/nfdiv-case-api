@@ -10,7 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceOutcome;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -85,7 +85,7 @@ class CaseworkerMakeBailiffDecisionTest {
 
         assertThat(aboutToStartOrSubmitResponse.getState()).isEqualTo(AwaitingAos);
 
-        ListValue<AlternativeService> listValue = aboutToStartOrSubmitResponse.getData().getAlternativeServiceApplications().get(0);
+        ListValue<AlternativeServiceOutcome> listValue = aboutToStartOrSubmitResponse.getData().getAlternativeServiceApplications().get(0);
         assertThat(listValue.getValue().getServiceApplicationDecisionDate())
             .isNull();
     }

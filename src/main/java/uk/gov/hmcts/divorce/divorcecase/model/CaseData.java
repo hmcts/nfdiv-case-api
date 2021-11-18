@@ -110,10 +110,10 @@ public class CaseData {
     @CCD(
         label = "Previous Service Applications",
         typeOverride = Collection,
-        typeParameterOverride = "AlternativeService",
+        typeParameterOverride = "AlternativeServiceOutcome",
         access = {CaseworkerAccessBetaOnlyAccess.class}
     )
-    private List<ListValue<AlternativeService>> alternativeServiceApplications;
+    private List<ListValue<AlternativeServiceOutcome>> alternativeServiceApplications;
 
     @JsonUnwrapped
     @Builder.Default
@@ -333,14 +333,16 @@ public class CaseData {
 
             alternativeService.setReceivedServiceAddedDate(LocalDate.now());
 
+            AlternativeServiceOutcome alternativeServiceOutcome = buildAlternativeServiceOutcome(alternativeService);
+
             if (isEmpty(this.getAlternativeServiceApplications())) {
 
-                List<ListValue<AlternativeService>> listValues = new ArrayList<>();
+                List<ListValue<AlternativeServiceOutcome>> listValues = new ArrayList<>();
 
                 var listValue = ListValue
-                    .<AlternativeService>builder()
+                    .<AlternativeServiceOutcome>builder()
                     .id("1")
-                    .value(alternativeService)
+                    .value(alternativeServiceOutcome)
                     .build();
 
                 listValues.add(listValue);
@@ -349,13 +351,13 @@ public class CaseData {
             } else {
 
                 var listValue = ListValue
-                    .<AlternativeService>builder()
-                    .value(alternativeService)
+                    .<AlternativeServiceOutcome>builder()
+                    .value(alternativeServiceOutcome)
                     .build();
 
                 int listValueIndex = 0;
                 this.getAlternativeServiceApplications().add(0, listValue);
-                for (ListValue<AlternativeService> asListValue : this.getAlternativeServiceApplications()) {
+                for (ListValue<AlternativeServiceOutcome> asListValue : this.getAlternativeServiceApplications()) {
                     asListValue.setId(String.valueOf(listValueIndex++));
                 }
             }
@@ -364,4 +366,24 @@ public class CaseData {
         }
     }
 
+    @SuppressWarnings("PMD")
+    public AlternativeServiceOutcome buildAlternativeServiceOutcome(AlternativeService alternativeService) {
+        return AlternativeServiceOutcome.builder()
+            .alternativeServiceType(alternativeService.getAlternativeServiceType())
+            .receivedServiceApplicationDate(alternativeService.getReceivedServiceApplicationDate())
+            .receivedServiceAddedDate(alternativeService.getReceivedServiceAddedDate())
+            .alternativeServiceType(alternativeService.getAlternativeServiceType())
+            .paymentMethod(alternativeService.getPaymentMethod())
+            .serviceApplicationGranted(alternativeService.getServiceApplicationGranted())
+            .serviceApplicationRefusalReason(alternativeService.getServiceApplicationRefusalReason())
+            .serviceApplicationDecisionDate(alternativeService.getServiceApplicationDecisionDate())
+            .deemedServiceDate(alternativeService.getDeemedServiceDate())
+            .localCourtName(alternativeService.getBailiff().getLocalCourtName())
+            .localCourtEmail(alternativeService.getBailiff().getLocalCourtEmail())
+            .certificateOfServiceDocument(alternativeService.getBailiff().getCertificateOfServiceDocument())
+            .certificateOfServiceDate(alternativeService.getBailiff().getCertificateOfServiceDate())
+            .successfulServedByBailiff(alternativeService.getBailiff().getSuccessfulServedByBailiff())
+            .reasonFailureToServeByBailiff(alternativeService.getBailiff().getReasonFailureToServeByBailiff())
+            .build();
+    }
 }

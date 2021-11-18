@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceOutcome;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -113,7 +114,7 @@ class LegalAdvisorMakeServiceDecisionTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             makeServiceDecision.aboutToSubmit(caseDetails, caseDetails);
 
-        ListValue<AlternativeService> listValue = response.getData().getAlternativeServiceApplications().get(0);
+        ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceApplications().get(0);
         assertThat(listValue.getValue().getServiceApplicationDecisionDate())
             .isEqualTo(getExpectedLocalDate());
 
@@ -175,7 +176,7 @@ class LegalAdvisorMakeServiceDecisionTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             makeServiceDecision.aboutToSubmit(caseDetails, caseDetails);
 
-        ListValue<AlternativeService> listValue = response.getData().getAlternativeServiceApplications().get(0);
+        ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceApplications().get(0);
         assertThat(listValue.getValue().getServiceApplicationDecisionDate())
             .isEqualTo(getExpectedLocalDate());
 
@@ -216,7 +217,7 @@ class LegalAdvisorMakeServiceDecisionTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             makeServiceDecision.aboutToSubmit(caseDetails, null);
 
-        ListValue<AlternativeService> listValue = response.getData().getAlternativeServiceApplications().get(0);
+        ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceApplications().get(0);
         assertThat(listValue.getValue().getServiceApplicationDecisionDate())
             .isNull();
 
