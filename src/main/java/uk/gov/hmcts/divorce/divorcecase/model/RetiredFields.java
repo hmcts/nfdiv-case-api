@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.collections4.map.HashedMap;
@@ -193,7 +194,7 @@ public class RetiredFields {
         for (String key : migrations.keySet()) {
             if (data.containsKey(key) && null != data.get(key)) {
                 migrations.get(key).accept(data);
-                data.put(key, null);
+                //data.put(key, null);
             }
         }
 
@@ -230,11 +231,13 @@ public class RetiredFields {
 
         //dataMap.stream().forEach(e -> System.out.println(e.toString()));
 
+        ObjectMapper objectMapper = new ObjectMapper();
         for (LinkedHashMap<String, Object> obj : dataMap) {
             System.out.println(obj.get("id"));
+            LinkedHashMap<String, Object> entry = (LinkedHashMap<String, Object>) obj.get("value");
+            AlternativeService alternativeService = objectMapper.convertValue(entry, AlternativeService.class);
+            System.out.println(alternativeService.getAlternativeServiceType());
         }
-
-
 
         /*
         List<ListValue<AlternativeServiceOutcome>> newListValues = new ArrayList<>();
