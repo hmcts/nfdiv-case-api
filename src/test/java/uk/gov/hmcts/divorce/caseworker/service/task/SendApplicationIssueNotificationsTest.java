@@ -16,7 +16,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -40,12 +39,42 @@ class SendApplicationIssueNotificationsTest {
         caseData.getCaseInvite().setApplicant2InviteEmailAddress("applicant2Invite@email.com");
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
         caseDetails.setState(AwaitingAos);
-        caseDetails.setState(AwaitingAos);
 
         underTest.apply(caseDetails);
 
         verify(notification).sendToSoleApplicant1(eq(caseData), eq(caseDetails.getId()));
         verify(notification).sendToSoleRespondent(eq(caseData), eq(caseDetails.getId()));
+        verify(notification).notifyApplicantOfServiceToOverseasRespondent(eq(caseData), eq(caseDetails.getId()));
+    }
+
+    @Test
+    void shouldNotSendSoleNotificationsIfApplicant2EmailAddressIsNull() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplicant2().setHomeAddress(AddressGlobalUK.builder().country("Spain").build());
+        CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        caseDetails.setState(AwaitingAos);
+
+        underTest.apply(caseDetails);
+
+        verify(notification).sendToSoleApplicant1(eq(caseData), eq(caseDetails.getId()));
+        verify(notification, never()).sendToSoleRespondent(eq(caseData), eq(caseDetails.getId()));
+        verify(notification).notifyApplicantOfServiceToOverseasRespondent(eq(caseData), eq(caseDetails.getId()));
+    }
+
+    @Test
+    void shouldNotSendSoleNotificationsIfApplicant2EmailAddressIsEmpty() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplicant2().setHomeAddress(AddressGlobalUK.builder().country("Spain").build());
+        caseData.getCaseInvite().setApplicant2InviteEmailAddress("");
+        CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        caseDetails.setState(AwaitingAos);
+
+        underTest.apply(caseDetails);
+
+        verify(notification).sendToSoleApplicant1(eq(caseData), eq(caseDetails.getId()));
+        verify(notification, never()).sendToSoleRespondent(eq(caseData), eq(caseDetails.getId()));
         verify(notification).notifyApplicantOfServiceToOverseasRespondent(eq(caseData), eq(caseDetails.getId()));
     }
 
@@ -67,7 +96,6 @@ class SendApplicationIssueNotificationsTest {
     void shouldNotSendJointNotificationsIfApplicant2EmailAddressIsNull() {
         CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.setApplication(Application.builder().applicant1KnowsApplicant2EmailAddress(YES).build());
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
 
         underTest.apply(caseDetails);
@@ -77,23 +105,10 @@ class SendApplicationIssueNotificationsTest {
     }
 
     @Test
-    void shouldNotSendJointNotificationsIfApplicant2EmailIsNotKnown() {
+    void shouldNotSendJointNotificationsIfApplicant2EmailAddressIsEmpty() {
         CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.setApplication(Application.builder().applicant1KnowsApplicant2EmailAddress(NO).build());
-        CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
-
-        underTest.apply(caseDetails);
-
-        verify(notification).sendToJointApplicant1(eq(caseData), eq(caseDetails.getId()));
-        verify(notification, never()).sendToJointApplicant2(eq(caseData), eq(caseDetails.getId()));
-    }
-
-    @Test
-    void shouldNotSendJointNotificationsIfApplicant2EmailKnownIsNull() {
-        CaseData caseData = caseData();
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.setApplication(Application.builder().applicant1KnowsApplicant2EmailAddress(null).build());
+        caseData.setCaseInvite(CaseInvite.builder().applicant2InviteEmailAddress("").build());
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
 
         underTest.apply(caseDetails);

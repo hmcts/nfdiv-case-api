@@ -25,10 +25,13 @@ public class SendApplicationIssueNotifications implements CaseTask {
 
             final CaseData caseData = caseDetails.getData();
             final Long caseId = caseDetails.getId();
+            final boolean isApplicant2EmailValid =
+                Objects.nonNull(caseData.getCaseInvite().getApplicant2InviteEmailAddress())
+                && !caseData.getCaseInvite().getApplicant2InviteEmailAddress().isEmpty();
 
             if (caseData.getApplicationType().isSole()) {
                 applicationIssuedNotification.sendToSoleApplicant1(caseData, caseId);
-                if (Objects.nonNull(caseData.getCaseInvite().getApplicant2InviteEmailAddress())) {
+                if (isApplicant2EmailValid) {
                     applicationIssuedNotification.sendToSoleRespondent(caseData, caseId);
                 }
                 if (caseDetails.getState() == AwaitingAos
@@ -37,10 +40,7 @@ public class SendApplicationIssueNotifications implements CaseTask {
                 }
             } else {
                 applicationIssuedNotification.sendToJointApplicant1(caseData, caseId);
-                if (Objects.nonNull(caseData.getApplication().getApplicant1KnowsApplicant2EmailAddress())
-                    && caseData.getApplication().getApplicant1KnowsApplicant2EmailAddress().toBoolean()
-                    && Objects.nonNull(caseData.getCaseInvite().getApplicant2InviteEmailAddress())
-                ) {
+                if (isApplicant2EmailValid) {
                     applicationIssuedNotification.sendToJointApplicant2(caseData, caseId);
                 }
             }
