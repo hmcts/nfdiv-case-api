@@ -8,11 +8,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationIssuedNotification;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
@@ -48,6 +50,7 @@ class SendApplicationIssueNotificationsTest {
     void shouldSendJointNotifications() {
         CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.setApplication(Application.builder().applicant1KnowsApplicant2EmailAddress(YES).build());
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
 
         underTest.apply(caseDetails);
@@ -55,5 +58,4 @@ class SendApplicationIssueNotificationsTest {
         verify(notification).sendToJointApplicant1(eq(caseData), eq(caseDetails.getId()));
         verify(notification).sendToJointApplicant2(eq(caseData), eq(caseDetails.getId()));
     }
-
 }

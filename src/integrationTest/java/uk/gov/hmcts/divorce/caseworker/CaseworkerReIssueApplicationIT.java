@@ -236,6 +236,7 @@ public class CaseworkerReIssueApplicationIT {
         caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("London");
         caseData.getApplication().setReissueOption(reissueOption);
         caseData.getApplication().setIssueDate(LocalDate.now());
+        caseData.getApplication().setApplicant1KnowsApplicant2EmailAddress(YES);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
