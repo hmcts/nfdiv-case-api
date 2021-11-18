@@ -37,7 +37,8 @@ public class SendApplicationIssueNotifications implements CaseTask {
                 }
             } else {
                 applicationIssuedNotification.sendToJointApplicant1(caseData, caseId);
-                if (caseData.getApplication().getApplicant1KnowsApplicant2EmailAddress().toBoolean()) {
+                if (Objects.nonNull(caseData.getApplication().getApplicant1KnowsApplicant2EmailAddress())
+                    && caseData.getApplication().getApplicant1KnowsApplicant2EmailAddress().toBoolean()) {
                     applicationIssuedNotification.sendToJointApplicant2(caseData, caseId);
                 }
             }
