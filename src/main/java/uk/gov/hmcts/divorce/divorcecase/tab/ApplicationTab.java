@@ -88,12 +88,12 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
                 "applicant2KeepContactDetailsConfidential=\"Yes\"",
                 "#### ${labelContentTheApplicant2UC}'s contact details are confidential")
             .label("LabelApplicant2DetailsAreShareable-Heading",
-                "applicant2KeepContactDetailsConfidential=\"No\"",
+                "applicant2KeepContactDetailsConfidential!=\"Yes\"",
                 "#### ${labelContentTheApplicant2UC}'s contact details may be shared")
-            .field("applicant2PhoneNumber", "applicant2KeepContactDetailsConfidential=\"No\"")
-            .field("applicant2Email", "applicant2KeepContactDetailsConfidential=\"No\"")
-            .field("applicant2HomeAddress", "applicant2KeepContactDetailsConfidential=\"No\"")
-            .field("applicant2CorrespondenceAddress", "applicant2KeepContactDetailsConfidential=\"No\"")
+            .field("applicant2PhoneNumber", "applicant2KeepContactDetailsConfidential!=\"Yes\"")
+            .field("applicant2Email", "applicant2KeepContactDetailsConfidential!=\"Yes\"")
+            .field("applicant2HomeAddress", "applicant2KeepContactDetailsConfidential!=\"Yes\"")
+            .field("applicant2CorrespondenceAddress", "applicant2KeepContactDetailsConfidential!=\"Yes\"")
             .field("applicant2AgreedToReceiveEmails")
 
             //Applicant 2 Solicitor
