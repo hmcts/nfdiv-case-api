@@ -113,6 +113,16 @@ public class AcknowledgementOfService {
     private HowToRespondApplication howToRespondApplication;
 
     @CCD(
+        label = "Solicitor’s name"
+    )
+    private String solicitorName;
+
+    @CCD(
+        label = "Solicitor’s firm"
+    )
+    private String solicitorFirm;
+
+    @CCD(
         label = "Additional Comments",
         hint = "For the attention of court staff. These comments will not form part of the AOS",
         typeOverride = TextArea,
