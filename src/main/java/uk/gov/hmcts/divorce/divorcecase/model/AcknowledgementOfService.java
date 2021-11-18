@@ -112,6 +112,13 @@ public class AcknowledgementOfService {
     )
     private HowToRespondApplication howToRespondApplication;
 
+    @CCD(
+        label = "Additional Comments",
+        hint = "For the attention of court staff. These comments will not form part of the AOS",
+        typeOverride = TextArea,
+        access = {AosAccess.class}
+    )
+    private String additionalComments;
 
     @JsonIgnore
     public void setNoticeOfProceedings(final Solicitor solicitor) {
