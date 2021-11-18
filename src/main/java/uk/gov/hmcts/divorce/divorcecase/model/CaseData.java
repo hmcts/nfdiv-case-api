@@ -113,7 +113,7 @@ public class CaseData {
         typeParameterOverride = "AlternativeServiceOutcome",
         access = {CaseworkerAccessBetaOnlyAccess.class}
     )
-    private List<ListValue<AlternativeServiceOutcome>> alternativeServiceApplications;
+    private List<ListValue<AlternativeServiceOutcome>> alternativeServiceOutcomes;
 
     @JsonUnwrapped
     @Builder.Default
@@ -335,7 +335,7 @@ public class CaseData {
 
             AlternativeServiceOutcome alternativeServiceOutcome = buildAlternativeServiceOutcome(alternativeService);
 
-            if (isEmpty(this.getAlternativeServiceApplications())) {
+            if (isEmpty(this.getAlternativeServiceOutcomes())) {
 
                 List<ListValue<AlternativeServiceOutcome>> listValues = new ArrayList<>();
 
@@ -346,7 +346,7 @@ public class CaseData {
                     .build();
 
                 listValues.add(listValue);
-                this.setAlternativeServiceApplications(listValues);
+                this.setAlternativeServiceOutcomes(listValues);
 
             } else {
 
@@ -356,8 +356,8 @@ public class CaseData {
                     .build();
 
                 int listValueIndex = 0;
-                this.getAlternativeServiceApplications().add(0, listValue);
-                for (ListValue<AlternativeServiceOutcome> asListValue : this.getAlternativeServiceApplications()) {
+                this.getAlternativeServiceOutcomes().add(0, listValue);
+                for (ListValue<AlternativeServiceOutcome> asListValue : this.getAlternativeServiceOutcomes()) {
                     asListValue.setId(String.valueOf(listValueIndex++));
                 }
             }

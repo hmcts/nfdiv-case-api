@@ -114,7 +114,7 @@ class LegalAdvisorMakeServiceDecisionTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             makeServiceDecision.aboutToSubmit(caseDetails, caseDetails);
 
-        ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceApplications().get(0);
+        ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().get(0);
         assertThat(listValue.getValue().getServiceApplicationDecisionDate())
             .isEqualTo(getExpectedLocalDate());
 
@@ -176,7 +176,7 @@ class LegalAdvisorMakeServiceDecisionTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             makeServiceDecision.aboutToSubmit(caseDetails, caseDetails);
 
-        ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceApplications().get(0);
+        ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().get(0);
         assertThat(listValue.getValue().getServiceApplicationDecisionDate())
             .isEqualTo(getExpectedLocalDate());
 
@@ -217,7 +217,7 @@ class LegalAdvisorMakeServiceDecisionTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             makeServiceDecision.aboutToSubmit(caseDetails, null);
 
-        ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceApplications().get(0);
+        ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().get(0);
         assertThat(listValue.getValue().getServiceApplicationDecisionDate())
             .isNull();
 

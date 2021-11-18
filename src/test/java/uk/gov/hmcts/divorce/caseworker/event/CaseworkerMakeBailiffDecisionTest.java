@@ -85,7 +85,7 @@ class CaseworkerMakeBailiffDecisionTest {
 
         assertThat(aboutToStartOrSubmitResponse.getState()).isEqualTo(AwaitingAos);
 
-        ListValue<AlternativeServiceOutcome> listValue = aboutToStartOrSubmitResponse.getData().getAlternativeServiceApplications().get(0);
+        ListValue<AlternativeServiceOutcome> listValue = aboutToStartOrSubmitResponse.getData().getAlternativeServiceOutcomes().get(0);
         assertThat(listValue.getValue().getServiceApplicationDecisionDate())
             .isNull();
     }

@@ -10,6 +10,8 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -133,6 +135,13 @@ public class RetiredFields {
     )
     private Set<FinancialOrderFor> applicant2FinancialOrderFor;
 
+    @CCD(
+        label = "Previous Service Applications",
+        typeOverride = Collection,
+        typeParameterOverride = "AlternativeService"
+    )
+    private List<ListValue<AlternativeService>> alternativeServiceApplications;
+
     @JsonIgnore
     private static final Consumer<Map<String, Object>> DO_NOTHING = data -> {
     };
@@ -173,6 +182,8 @@ public class RetiredFields {
             data -> data.put("applicant1PrayerHasBeenGivenCheckbox", transformApplicant1PrayerHasBeenGivenField(data)));
         init.put("coIsEverythingInPetitionTrue",
             data -> data.put("coIsEverythingInApplicationTrue", data.get("coIsEverythingInPetitionTrue")));
+        init.put("alternativeServiceApplications",
+            data -> data.put("alternativeServiceOutcomes", transformAlternativeServiceApplications(data)));
 
         migrations = unmodifiableMap(init);
     }
@@ -205,5 +216,59 @@ public class RetiredFields {
         return YES.getValue().equalsIgnoreCase(value)
             ? Set.of(I_CONFIRM)
             : emptySet();
+    }
+
+    @SuppressWarnings({"unchecked", "PMD"})
+    private static List<ListValue<AlternativeServiceOutcome>> transformAlternativeServiceApplications(Map<String, Object> data) {
+
+        System.out.println("in transformAlternativeServiceApplications");
+
+        ArrayList<LinkedHashMap<String,Object>> dataMap =
+            (ArrayList<LinkedHashMap<String,Object>>) data.get("alternativeServiceApplications");
+
+        System.out.println("after assignment");
+
+        //dataMap.stream().forEach(e -> System.out.println(e.toString()));
+
+        for (LinkedHashMap<String, Object> obj : dataMap) {
+            System.out.println(obj.get("id"));
+        }
+
+
+
+        /*
+        List<ListValue<AlternativeServiceOutcome>> newListValues = new ArrayList<>();
+
+        for (ListValue<AlternativeService> oldListValue : oldListValues) {
+
+            var oldAlternativeService = oldListValue.getValue();
+
+            AlternativeServiceOutcome alternativeServiceOutcome = AlternativeServiceOutcome.builder()
+                .alternativeServiceType(oldAlternativeService.getAlternativeServiceType())
+                .receivedServiceApplicationDate(oldAlternativeService.getReceivedServiceApplicationDate())
+                .receivedServiceAddedDate(oldAlternativeService.getReceivedServiceAddedDate())
+                .alternativeServiceType(oldAlternativeService.getAlternativeServiceType())
+                .paymentMethod(oldAlternativeService.getPaymentMethod())
+                .serviceApplicationGranted(oldAlternativeService.getServiceApplicationGranted())
+                .serviceApplicationRefusalReason(oldAlternativeService.getServiceApplicationRefusalReason())
+                .serviceApplicationDecisionDate(oldAlternativeService.getServiceApplicationDecisionDate())
+                .deemedServiceDate(oldAlternativeService.getDeemedServiceDate())
+                .localCourtName(oldAlternativeService.getBailiff().getLocalCourtName())
+                .localCourtEmail(oldAlternativeService.getBailiff().getLocalCourtEmail())
+                .certificateOfServiceDocument(oldAlternativeService.getBailiff().getCertificateOfServiceDocument())
+                .certificateOfServiceDate(oldAlternativeService.getBailiff().getCertificateOfServiceDate())
+                .successfulServedByBailiff(oldAlternativeService.getBailiff().getSuccessfulServedByBailiff())
+                .reasonFailureToServeByBailiff(oldAlternativeService.getBailiff().getReasonFailureToServeByBailiff())
+                .build();
+
+            var listValue = ListValue
+                .<AlternativeServiceOutcome>builder()
+                .value(alternativeServiceOutcome)
+                .build();
+            newListValues.add(listValue);
+        }
+        return newListValues;
+         */
+        return null;
     }
 }
