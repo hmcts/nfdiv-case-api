@@ -21,7 +21,7 @@ public class SolicitorDetailsWithStatementOfTruth implements CcdPageConfiguratio
                 .mandatory(AcknowledgementOfService::getSolicitorName)
                 .mandatory(AcknowledgementOfService::getSolicitorFirm)
                 .optional(AcknowledgementOfService::getAdditionalComments)
-                .done()
+            .done()
             .label("warning-ProceedingForContent",
                 "*Proceedings for contempt of court may be brought against anyone who makes, or causes to be made, "
                     + "a false statement verified by a statement of truth without an honest belief in its truth*");
