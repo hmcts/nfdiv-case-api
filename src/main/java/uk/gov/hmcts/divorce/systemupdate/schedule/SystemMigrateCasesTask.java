@@ -16,6 +16,8 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
+import java.util.Map;
+
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemMigrateCase.SYSTEM_MIGRATE_CASE;
 
 @Component
@@ -58,7 +60,7 @@ public class SystemMigrateCasesTask implements Runnable {
     private void migrateCase(final CaseDetails caseDetails, final User user, final String serviceAuthorization) {
         try {
             final var data = RetiredFields.migrate(caseDetails.getData());
-            objectMapper.convertValue(data, CaseData.class);
+            verifyData(data, caseDetails.getId());
 
             caseDetails.setData(data);
             ccdUpdateService.submitEvent(caseDetails, SYSTEM_MIGRATE_CASE, user, serviceAuthorization);
@@ -69,6 +71,17 @@ public class SystemMigrateCasesTask implements Runnable {
             log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
         } catch (final IllegalArgumentException e) {
             log.error("Could not deserialize case id: {}, continuing to next case", caseDetails.getId());
+        }
+    }
+
+    private void verifyData(Map<String, Object> data, Long id) {
+        try {
+            objectMapper.convertValue(data, CaseData.class);
+        } catch (final IllegalArgumentException e) {
+            log.info("Migration failed for case id {} due to deserialization error", id);
+            log.info("Deserialization error caused by {}", e.getMessage());
+
+            data.put("dataVersion", 0);
         }
     }
 }

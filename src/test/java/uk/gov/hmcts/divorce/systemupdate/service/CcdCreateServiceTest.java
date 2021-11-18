@@ -5,16 +5,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
+import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
-import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -53,8 +52,8 @@ class CcdCreateServiceTest {
     void shouldSubmitEventForCaseAsSystemUpdateUser() {
 
         final User user = systemUpdateUser();
-        final Map<String, Object> caseData = new HashMap<>();
-        final CaseDetails caseDetails = getCaseDetails(caseData);
+        final BulkActionCaseData caseData = BulkActionCaseData.builder().build();
+        final CaseDetails<BulkActionCaseData, BulkActionState> caseDetails = getCaseDetails(caseData);
         final StartEventResponse startEventResponse = getStartEventResponse();
         final CaseDataContent caseDataContent = mock(CaseDataContent.class);
 
@@ -94,8 +93,8 @@ class CcdCreateServiceTest {
     void shouldThrowCcdManagementExceptionIfSubmitEventFails() {
 
         final User user = systemUpdateUser();
-        final Map<String, Object> caseData = new HashMap<>();
-        final CaseDetails caseDetails = getCaseDetails(caseData);
+        final BulkActionCaseData caseData = BulkActionCaseData.builder().build();
+        final CaseDetails<BulkActionCaseData, BulkActionState> caseDetails = getCaseDetails(caseData);
         final StartEventResponse startEventResponse = getStartEventResponse();
         final CaseDataContent caseDataContent = mock(CaseDataContent.class);
 
@@ -137,11 +136,11 @@ class CcdCreateServiceTest {
             .contains("Bulk case creation failed");
     }
 
-    private CaseDetails getCaseDetails(final Map<String, Object> caseData) {
-        return CaseDetails.builder()
-            .id(TEST_CASE_ID)
-            .data(caseData)
-            .build();
+    private CaseDetails<BulkActionCaseData, BulkActionState> getCaseDetails(final BulkActionCaseData caseData) {
+        final CaseDetails<BulkActionCaseData, BulkActionState> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+        return caseDetails;
     }
 
     private StartEventResponse getStartEventResponse() {

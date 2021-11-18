@@ -77,6 +77,15 @@ public class CcdUpdateService {
     }
 
     @Retryable(value = {FeignException.class, RuntimeException.class})
+    public void submitEventWithRetry(final uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails,
+                                     final String eventId,
+                                     final User user,
+                                     final String serviceAuth) {
+
+        submitEvent(caseDetails, eventId, user, serviceAuth);
+    }
+
+    @Retryable(value = {FeignException.class, RuntimeException.class})
     public void submitEventWithRetry(final CaseDetails caseDetails,
                                      final String eventId,
                                      final User user,

@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkCaseRetiredFields;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
@@ -15,6 +15,8 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
+
+import java.util.Map;
 
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemMigrateBulkCase.SYSTEM_MIGRATE_BULK_CASE;
 
@@ -58,7 +60,7 @@ public class SystemMigrateBulkCasesTask implements Runnable {
     private void migrateCase(final CaseDetails caseDetails, final User user, final String serviceAuthorization) {
         try {
             final var data = BulkCaseRetiredFields.migrate(caseDetails.getData());
-            objectMapper.convertValue(data, CaseData.class);
+            verifyData(data, caseDetails.getId());
 
             caseDetails.setData(data);
             ccdUpdateService.submitEvent(caseDetails, SYSTEM_MIGRATE_BULK_CASE, user, serviceAuthorization);
@@ -67,6 +69,17 @@ public class SystemMigrateBulkCasesTask implements Runnable {
             log.error("Could not get lock for case id: {}, continuing to next case", caseDetails.getId());
         } catch (final CcdManagementException e) {
             log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
+        }
+    }
+
+    private void verifyData(Map<String, Object> data, Long id) {
+        try {
+            objectMapper.convertValue(data, BulkActionCaseData.class);
+        } catch (final Exception e) {
+            log.info("Migration failed for case id {} due to deserialization error", id);
+            log.info("Deserialization error caused by {}", e.getMessage());
+
+            data.put("bulkCaseDataVersion", 0);
         }
     }
 }

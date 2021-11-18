@@ -10,8 +10,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkCaseRetiredFields;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
@@ -23,10 +23,12 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Collections.singletonList;
-import static org.mockito.Mockito.any;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
@@ -129,20 +131,23 @@ public class SystemMigrateBulkCasesTaskTest {
     }
 
     @Test
-    void shouldContinueToNextCaseIfExceptionIsThrownWhileDeserializingCase() {
-        final CaseDetails caseDetails1 = mock(CaseDetails.class);
+    void shouldSetDataVersionToZeroIfExceptionIsThrownWhileDeserializingCase() {
+        final CaseDetails caseDetails1 =
+            CaseDetails.builder()
+                .data(new HashMap<>())
+                .build();
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        when(ccdSearchService.searchForCasesWithVersionLessThan(BulkCaseRetiredFields.getVersion(), user, SERVICE_AUTHORIZATION))
+        when(ccdSearchService.searchForBulkCasesWithVersionLessThan(BulkCaseRetiredFields.getVersion(), user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
-        when(objectMapper.convertValue(any(), eq(CaseData.class)))
+        when(objectMapper.convertValue(eq(caseDetails1.getData()), eq(BulkActionCaseData.class)))
             .thenThrow(new IllegalArgumentException("Failed to deserialize"));
 
         systemMigrateBulkCasesTask.run();
 
-        verifyNoInteractions(ccdUpdateService);
+        assertThat(caseDetails1.getData()).isEqualTo(Map.of("bulkCaseDataVersion", 0));
     }
 }
