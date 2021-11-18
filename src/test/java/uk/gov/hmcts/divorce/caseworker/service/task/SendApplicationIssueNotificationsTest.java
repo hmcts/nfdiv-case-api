@@ -13,7 +13,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -57,5 +59,31 @@ class SendApplicationIssueNotificationsTest {
 
         verify(notification).sendToJointApplicant1(eq(caseData), eq(caseDetails.getId()));
         verify(notification).sendToJointApplicant2(eq(caseData), eq(caseDetails.getId()));
+    }
+
+    @Test
+    void shouldNotSendJointNotificationsIfApplicant2EmailIsNotKnown() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.setApplication(Application.builder().applicant1KnowsApplicant2EmailAddress(NO).build());
+        CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
+
+        underTest.apply(caseDetails);
+
+        verify(notification).sendToJointApplicant1(eq(caseData), eq(caseDetails.getId()));
+        verify(notification, never()).sendToJointApplicant2(eq(caseData), eq(caseDetails.getId()));
+    }
+
+    @Test
+    void shouldNotSendJointNotificationsIfApplicant2EmailKnownIsNull() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.setApplication(Application.builder().applicant1KnowsApplicant2EmailAddress(null).build());
+        CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
+
+        underTest.apply(caseDetails);
+
+        verify(notification).sendToJointApplicant1(eq(caseData), eq(caseDetails.getId()));
+        verify(notification, never()).sendToJointApplicant2(eq(caseData), eq(caseDetails.getId()));
     }
 }
