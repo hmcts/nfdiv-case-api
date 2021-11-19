@@ -51,7 +51,7 @@ public class AlternativeServiceOutcome {
     private ServicePaymentMethod paymentMethod;
 
     @CCD(
-        label = "## Outcome of service application",
+        label = "Outcome of service application",
         displayOrder = "5"
     )
     private String serviceApplicationOutcomeLabel;
