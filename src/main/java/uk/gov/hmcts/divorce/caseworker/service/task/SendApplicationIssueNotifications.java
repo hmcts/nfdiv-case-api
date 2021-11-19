@@ -8,8 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
-import java.util.Objects;
-
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 
 @Component
@@ -28,7 +27,7 @@ public class SendApplicationIssueNotifications implements CaseTask {
 
             if (caseData.getApplicationType().isSole()) {
                 applicationIssuedNotification.sendToSoleApplicant1(caseData, caseId);
-                if (Objects.nonNull(caseData.getCaseInvite().getApplicant2InviteEmailAddress())) {
+                if (isNotBlank(caseData.getCaseInvite().getApplicant2InviteEmailAddress())) {
                     applicationIssuedNotification.sendToSoleRespondent(caseData, caseId);
                 }
                 if (caseDetails.getState() == AwaitingAos
@@ -37,10 +36,7 @@ public class SendApplicationIssueNotifications implements CaseTask {
                 }
             } else {
                 applicationIssuedNotification.sendToJointApplicant1(caseData, caseId);
-                if (Objects.nonNull(caseData.getApplication().getApplicant1KnowsApplicant2EmailAddress())
-                    && caseData.getApplication().getApplicant1KnowsApplicant2EmailAddress().toBoolean()
-                    && Objects.nonNull(caseData.getCaseInvite().getApplicant2InviteEmailAddress())
-                ) {
+                if (isNotBlank(caseData.getCaseInvite().getApplicant2InviteEmailAddress())) {
                     applicationIssuedNotification.sendToJointApplicant2(caseData, caseId);
                 }
             }
