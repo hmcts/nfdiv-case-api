@@ -63,7 +63,7 @@ class CitizenSwitchedToSoleTest {
     }
 
     @Test
-    void givenEventStartedWithValidJointCaseAndCaseStateIsAwaitingApplicant2ResponseShouldSetApplicationTypeToSoleAndSendNotifications() {
+    void givenEventStartedWithValidJointCaseForApplicant1SwitchToSoleShouldSetApplicationTypeToSoleAndSendNotifications() {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setState(State.AwaitingApplicant2Response);
@@ -83,7 +83,7 @@ class CitizenSwitchedToSoleTest {
     }
 
     @Test
-    void givenEventStartedWithValidJointCaseAndCaseStateIsApplicant2ApprovedResponseShouldSetApplicationTypeToSoleAndSendNotifications() {
+    void givenEventStartedWithValidJointCaseForApplicant2SwitchToSoleShouldSetApplicationTypeToSoleAndSendNotifications() {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setState(State.Applicant2Approved);
