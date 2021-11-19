@@ -249,7 +249,43 @@ public class CaseworkerRemoveCasesFromBulkListTest {
         details.getData().setCasesAcceptedToListForHearing(singletonList(caseLinkListValue1));
         details.setId(1L);
 
-        final List<ListValue<BulkListCaseDetails>> casesToRemove = List.of(bulkListCaseDetailsListValue2);
+        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response =
+            caseworkerRemoveCasesFromBulkList.aboutToSubmit(details, details);
+
+        assertThat(response.getData().getCasesToBeRemoved()).isNotEmpty();
+        assertThat(response.getData().getCasesToBeRemoved()).hasSize(1);
+        assertThat(response.getData().getCasesToBeRemoved()).contains(bulkListCaseDetailsListValue2);
+
+        assertThat(response.getData().getBulkListCaseDetails()).hasSize(1);
+        assertThat(response.getData().getBulkListCaseDetails()).contains(bulkListCaseDetailsListValue1);
+    }
+
+    @Test
+    void shouldUpdateBulkCaseAfterBulkTriggerForSubmittedCallback() {
+        final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
+        final CaseLink caseLink1 = CaseLink.builder()
+            .caseReference("12345")
+            .build();
+        final CaseLink caseLink2 = CaseLink.builder()
+            .caseReference("98765")
+            .build();
+        final ListValue<BulkListCaseDetails> bulkListCaseDetailsListValue =
+            ListValue.<BulkListCaseDetails>builder()
+                .value(BulkListCaseDetails.builder()
+                    .caseReference(caseLink2)
+                    .build())
+                .build();
+        final ListValue<CaseLink> caseLinkListValue =
+            ListValue.<CaseLink>builder()
+                .value(caseLink1)
+                .build();
+        final List<ListValue<BulkListCaseDetails>> casesToRemove = List.of(bulkListCaseDetailsListValue);
+
+        details.setData(BulkActionCaseData.builder().build());
+        details.getData().setCasesToBeRemoved(casesToRemove);
+        details.getData().setCasesAcceptedToListForHearing(singletonList(caseLinkListValue));
+        details.setId(1L);
+
 
         when(request.getHeader(AUTHORIZATION)).thenReturn(CASEWORKER_AUTH_TOKEN);
 
