@@ -8,7 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.citizen.notification.Applicant1SwitchToSoleNotification;
+import uk.gov.hmcts.divorce.citizen.notification.SwitchToSoleNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -40,7 +40,7 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
     private HttpServletRequest httpServletRequest;
 
     @Autowired
-    private Applicant1SwitchToSoleNotification applicant1SwitchToSoleNotification;
+    private SwitchToSoleNotification switchToSoleNotification;
 
     public static final String SWITCH_TO_SOLE = "switch-to-sole";
 
@@ -75,9 +75,15 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
             data.getCaseInvite().getApplicant2UserId()
         );
 
-        applicant1SwitchToSoleNotification.sendToApplicant1(data, details.getId());
-        if (data.getApplication().getApplicant2ScreenHasMarriageBroken() != YesOrNo.NO) {
-            applicant1SwitchToSoleNotification.sendToApplicant2(data, details.getId());
+        if (details.getState() == AwaitingApplicant1Response || details.getState() == Applicant2Approved) {
+            switchToSoleNotification.sendApplicant2SwitchToSoleNotificationToApplicant1(data, details.getId());
+            switchToSoleNotification.sendApplicant2SwitchToSoleNotificationToApplicant2(data, details.getId());
+
+        } else {
+            switchToSoleNotification.sendApplicant1SwitchToSoleNotificationToApplicant1(data, details.getId());
+            if (data.getApplication().getApplicant2ScreenHasMarriageBroken() != YesOrNo.NO) {
+                switchToSoleNotification.sendApplicant1SwitchToSoleNotificationToApplicant2(data, details.getId());
+            }
         }
 
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
@@ -108,6 +114,7 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
         caseData.setApplicant2DocumentsUploaded(null);
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(null);
         caseData.getApplication().setApplicant2HelpWithFees(null);
+        caseData.getApplication().setApplicant2PrayerHasBeenGiven(null);
         caseData.getApplication().setApplicant2StatementOfTruth(null);
         caseData.getApplication().setApplicant2AgreeToReceiveEmails(null);
         caseData.getApplication().setApplicant2CannotUploadSupportingDocument(null);
