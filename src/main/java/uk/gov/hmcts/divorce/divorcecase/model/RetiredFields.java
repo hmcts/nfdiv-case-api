@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.collections4.map.HashedMap;
@@ -10,10 +10,15 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
+import java.lang.reflect.Field;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -194,7 +199,7 @@ public class RetiredFields {
         for (String key : migrations.keySet()) {
             if (data.containsKey(key) && null != data.get(key)) {
                 migrations.get(key).accept(data);
-                //data.put(key, null);
+                data.put(key, null);
             }
         }
 
@@ -222,56 +227,66 @@ public class RetiredFields {
     @SuppressWarnings({"unchecked", "PMD"})
     private static List<ListValue<AlternativeServiceOutcome>> transformAlternativeServiceApplications(Map<String, Object> data) {
 
-        System.out.println("in transformAlternativeServiceApplications");
-
-        ArrayList<LinkedHashMap<String,Object>> dataMap =
+        ArrayList<LinkedHashMap<String,Object>> oldListValues =
             (ArrayList<LinkedHashMap<String,Object>>) data.get("alternativeServiceApplications");
 
-        System.out.println("after assignment");
-
-        //dataMap.stream().forEach(e -> System.out.println(e.toString()));
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        for (LinkedHashMap<String, Object> obj : dataMap) {
-            System.out.println(obj.get("id"));
-            LinkedHashMap<String, Object> entry = (LinkedHashMap<String, Object>) obj.get("value");
-            AlternativeService alternativeService = objectMapper.convertValue(entry, AlternativeService.class);
-            System.out.println(alternativeService.getAlternativeServiceType());
-        }
-
-        /*
         List<ListValue<AlternativeServiceOutcome>> newListValues = new ArrayList<>();
 
-        for (ListValue<AlternativeService> oldListValue : oldListValues) {
+        for (LinkedHashMap<String, Object> obj : oldListValues) {
 
-            var oldAlternativeService = oldListValue.getValue();
+            LinkedHashMap<String, Object> entry = (LinkedHashMap<String, Object>) obj.get("value");
 
             AlternativeServiceOutcome alternativeServiceOutcome = AlternativeServiceOutcome.builder()
-                .alternativeServiceType(oldAlternativeService.getAlternativeServiceType())
-                .receivedServiceApplicationDate(oldAlternativeService.getReceivedServiceApplicationDate())
-                .receivedServiceAddedDate(oldAlternativeService.getReceivedServiceAddedDate())
-                .alternativeServiceType(oldAlternativeService.getAlternativeServiceType())
-                .paymentMethod(oldAlternativeService.getPaymentMethod())
-                .serviceApplicationGranted(oldAlternativeService.getServiceApplicationGranted())
-                .serviceApplicationRefusalReason(oldAlternativeService.getServiceApplicationRefusalReason())
-                .serviceApplicationDecisionDate(oldAlternativeService.getServiceApplicationDecisionDate())
-                .deemedServiceDate(oldAlternativeService.getDeemedServiceDate())
-                .localCourtName(oldAlternativeService.getBailiff().getLocalCourtName())
-                .localCourtEmail(oldAlternativeService.getBailiff().getLocalCourtEmail())
-                .certificateOfServiceDocument(oldAlternativeService.getBailiff().getCertificateOfServiceDocument())
-                .certificateOfServiceDate(oldAlternativeService.getBailiff().getCertificateOfServiceDate())
-                .successfulServedByBailiff(oldAlternativeService.getBailiff().getSuccessfulServedByBailiff())
-                .reasonFailureToServeByBailiff(oldAlternativeService.getBailiff().getReasonFailureToServeByBailiff())
+                .alternativeServiceType(
+                    getEnumValueFromJsonProperty(AlternativeServiceType.class, (String) entry.get("alternativeServiceType")))
+                .serviceApplicationRefusalReason((String) entry.get("serviceApplicationRefusalReason"))
+                .localCourtName((String) entry.get("localCourtName"))
+                .localCourtEmail((String) entry.get("localCourtEmail"))
+                .reasonFailureToServeByBailiff((String) entry.get("reasonFailureToServeByBailiff"))
+                .paymentMethod(
+                    getEnumValueFromJsonProperty(ServicePaymentMethod.class, (String) entry.get("paymentMethod")))
+                .serviceApplicationGranted(
+                    getEnumValueFromJsonProperty(YesOrNo.class, (String) entry.get("serviceApplicationGranted")))
+                .successfulServedByBailiff(
+                    getEnumValueFromJsonProperty(YesOrNo.class, (String) entry.get("successfulServedByBailiff")))
+                .receivedServiceApplicationDate(getFormattedLocalDate((String) entry.get("receivedServiceApplicationDate")))
+                .receivedServiceAddedDate(getFormattedLocalDate((String) entry.get("receivedServiceAddedDate")))
+                .serviceApplicationDecisionDate(getFormattedLocalDate((String) entry.get("serviceApplicationDecisionDate")))
+                .deemedServiceDate(getFormattedLocalDate((String) entry.get("deemedServiceDate")))
+                .certificateOfServiceDate(getFormattedLocalDate((String) entry.get("certificateOfServiceDate")))
                 .build();
 
             var listValue = ListValue
                 .<AlternativeServiceOutcome>builder()
+                .id((String) obj.get("id"))
                 .value(alternativeServiceOutcome)
                 .build();
             newListValues.add(listValue);
         }
         return newListValues;
-         */
+    }
+
+    public static LocalDate getFormattedLocalDate(String dateToParse) {
+
+        if (null != dateToParse) {
+            DateTimeFormatter localDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.UK);
+            try {
+                return LocalDate.parse((CharSequence) dateToParse, localDateFormatter);
+            } catch (DateTimeParseException ex) {
+                // If the date stored in CCD fails validation, just store a null date in the migrated data
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    public static <T extends Enum<T>> T getEnumValueFromJsonProperty(Class<T> enumClass, String jsonPropertyValue) {
+        for (Field field : enumClass.getFields()) {
+            if (field.getAnnotation(JsonProperty.class).value().equals(jsonPropertyValue)) {
+                return Enum.valueOf(enumClass, field.getName());
+            }
+        }
         return null;
     }
 }

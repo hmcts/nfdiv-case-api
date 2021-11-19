@@ -2,8 +2,14 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import static java.util.Collections.emptyList;
@@ -13,7 +19,7 @@ import static org.assertj.core.api.Assertions.entry;
 import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 
-class RetiredFieldsTest {
+public class RetiredFieldsTest {
 
     @Test
     void migrateShouldMigrateSomeFieldsAndLeaveOthersAlone() {
@@ -36,6 +42,7 @@ class RetiredFieldsTest {
         data.put("coDocumentsUploaded", Collections.emptyList());
         data.put("coIsEverythingInPetitionTrue", "YES");
         data.put("coIsEverythingInApplicationTrue", "YES");
+        data.put("alternativeServiceApplications", new ArrayList<LinkedHashMap<String, Object>>());
 
         final var result = RetiredFields.migrate(data);
 
@@ -63,7 +70,8 @@ class RetiredFieldsTest {
             entry("coAddNewDocuments", "YES"),
             entry("coDocumentsUploaded", emptyList()),
             entry("coIsEverythingInPetitionTrue", null),
-            entry("coIsEverythingInApplicationTrue", "YES")
+            entry("coIsEverythingInApplicationTrue", "YES"),
+            entry("alternativeServiceApplications", null)
 
         );
     }
@@ -90,4 +98,55 @@ class RetiredFieldsTest {
             entry("applicant1PrayerHasBeenGivenCheckbox", emptySet())
         );
     }
+
+    @Test
+    void shouldReturnValidLocalDateIfFormatCorrect() {
+        DateTimeFormatter localDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.UK);
+        LocalDate expectedDate = LocalDate.now();
+        LocalDate localDate = RetiredFields.getFormattedLocalDate(expectedDate.format(localDateFormatter));
+        assertThat(localDate).isEqualTo(expectedDate);
+    }
+
+    @Test
+    void shouldReturnNullLocalDateIfFormatInvalid() {
+        DateTimeFormatter localDateFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd", Locale.UK);
+        LocalDate expectedDate = LocalDate.now();
+        LocalDate localDate = RetiredFields.getFormattedLocalDate(expectedDate.format(localDateFormatter));
+        assertThat(localDate).isNull();
+    }
+
+    @Test
+    void shouldReturnNullLocalDateIfNullStringSent() {
+        LocalDate localDate = RetiredFields.getFormattedLocalDate(null);
+        assertThat(localDate).isNull();
+    }
+
+    @Test
+    void shouldReturnValidEnumForValidEnumJsonProperty() {
+        AlternativeServiceType expectedAlternativeServiceType = AlternativeServiceType.BAILIFF;
+        AlternativeServiceType alternativeServiceType =
+            RetiredFields.getEnumValueFromJsonProperty(AlternativeServiceType.class, "bailiff");
+        assertThat(alternativeServiceType).isEqualTo(expectedAlternativeServiceType);
+
+        ServicePaymentMethod expectedServicePaymentMethod = ServicePaymentMethod.FEE_PAY_BY_HWF;
+        ServicePaymentMethod servicePaymentMethod =
+            RetiredFields.getEnumValueFromJsonProperty(ServicePaymentMethod.class, "feePayByHelp");
+        assertThat(servicePaymentMethod).isEqualTo(expectedServicePaymentMethod);
+    }
+
+    @Test
+    void shouldReturnNullForInvalidEnumJsonProperty() {
+        AlternativeServiceType alternativeServiceType =
+            RetiredFields.getEnumValueFromJsonProperty(AlternativeServiceType.class, "xxxxx");
+        assertThat(alternativeServiceType).isNull();
+    }
+
+    @Test
+    void shouldReturnNullForNullEnumJsonProperty() {
+        AlternativeServiceType alternativeServiceType =
+            RetiredFields.getEnumValueFromJsonProperty(AlternativeServiceType.class, null);
+        assertThat(alternativeServiceType).isNull();
+    }
+
+
 }
