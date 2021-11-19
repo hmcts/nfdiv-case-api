@@ -12,6 +12,7 @@
   "applicant2MiddleName": "test_middle_name",
   "applicant2LastName": "test_last_name",
   "applicant2Email": "applicant2@example.com",
+  "applicant1KnowsApplicant2EmailAddress": "Yes",
   "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
   "applicant1HomeAddress": {
     "addressLine1": "221a Baker Street",

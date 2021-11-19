@@ -65,7 +65,7 @@ public class CaseRemovalServiceTest {
             .builder()
             .dateAndTimeOfHearing(LocalDateTime.of(2021, 11, 10, 0, 0, 0))
             .court(BURY_ST_EDMUNDS)
-            .bulkListCaseDetails(List.of(getBulkListCaseDetailsListValue("1"), getBulkListCaseDetailsListValue("2")))
+            .bulkListCaseDetails(List.of(getBulkListCaseDetailsListValue("1")))
             .casesAcceptedToListForHearing(List.of(getCaseLinkListValue("1")))
             .build();
 
@@ -108,9 +108,6 @@ public class CaseRemovalServiceTest {
             eq(SERVICE_AUTHORIZATION)
         );
 
-        assertThat(bulkActionCaseDetails.getData().getBulkListCaseDetails()).hasSize(1);
-        assertThat(bulkActionCaseDetails.getData().getBulkListCaseDetails()).contains(getBulkListCaseDetailsListValue("1"));
-
         assertThat(bulkActionCaseDetails.getData().getCasesAcceptedToListForHearing()).hasSize(1);
         assertThat(bulkActionCaseDetails.getData().getCasesAcceptedToListForHearing()).contains(getCaseLinkListValue("1"));
 
@@ -123,14 +120,7 @@ public class CaseRemovalServiceTest {
             .builder()
             .dateAndTimeOfHearing(LocalDateTime.of(2021, 11, 10, 0, 0, 0))
             .court(BURY_ST_EDMUNDS)
-            .bulkListCaseDetails(
-                List.of(
-                    getBulkListCaseDetailsListValue("1"),
-                    getBulkListCaseDetailsListValue("2"),
-                    getBulkListCaseDetailsListValue("3"),
-                    getBulkListCaseDetailsListValue("4")
-                )
-            )
+            .bulkListCaseDetails(List.of(getBulkListCaseDetailsListValue("1")))
             .casesAcceptedToListForHearing(
                 List.of(
                     getCaseLinkListValue("1")
@@ -182,10 +172,6 @@ public class CaseRemovalServiceTest {
             eq(SERVICE_AUTHORIZATION)
         );
 
-        assertThat(bulkActionCaseDetails.getData().getBulkListCaseDetails()).hasSize(1);
-        assertThat(bulkActionCaseDetails.getData().getBulkListCaseDetails())
-            .contains(getBulkListCaseDetailsListValue("1"));
-
         assertThat(bulkActionCaseDetails.getData().getCasesAcceptedToListForHearing()).hasSize(1);
         assertThat(bulkActionCaseDetails.getData().getBulkListCaseDetails())
             .contains(getBulkListCaseDetailsListValue("1"));
@@ -201,14 +187,7 @@ public class CaseRemovalServiceTest {
             .builder()
             .dateAndTimeOfHearing(LocalDateTime.of(2021, 11, 10, 0, 0, 0))
             .court(BIRMIGHAM)
-            .bulkListCaseDetails(
-                List.of(
-                    getBulkListCaseDetailsListValue("1"),
-                    getBulkListCaseDetailsListValue("2"),
-                    getBulkListCaseDetailsListValue("3"),
-                    getBulkListCaseDetailsListValue("4")
-                )
-            )
+            .bulkListCaseDetails(List.of(getBulkListCaseDetailsListValue("1")))
             .casesAcceptedToListForHearing(
                 List.of(
                     getCaseLinkListValue("1")
@@ -259,10 +238,6 @@ public class CaseRemovalServiceTest {
             eq(user),
             eq(SERVICE_AUTHORIZATION)
         );
-
-        assertThat(bulkActionCaseDetails.getData().getBulkListCaseDetails()).hasSize(1);
-        assertThat(bulkActionCaseDetails.getData().getBulkListCaseDetails())
-            .contains(getBulkListCaseDetailsListValue("1"));
 
         assertThat(bulkActionCaseDetails.getData().getCasesAcceptedToListForHearing()).hasSize(1);
         assertThat(bulkActionCaseDetails.getData().getBulkListCaseDetails())

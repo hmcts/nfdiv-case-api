@@ -87,24 +87,42 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
             .build();
     }
 
+    public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToSubmit(
+        final CaseDetails<BulkActionCaseData, BulkActionState> details,
+        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails
+    ) {
+        BulkActionCaseData bulkActionCaseData = details.getData();
+
+        List<String> casesAcceptedToListForHearing =
+            bulkActionCaseData.fromListValueToList(bulkActionCaseData.getCasesAcceptedToListForHearing())
+                .stream()
+                .map(CaseLink::getCaseReference)
+                .collect(toList());
+
+        List<ListValue<BulkListCaseDetails>> casesToRemove =
+            bulkActionCaseData.getBulkListCaseDetails().stream()
+                .filter(c -> !casesAcceptedToListForHearing.contains(c.getValue().getCaseReference().getCaseReference()))
+                .collect(toList());
+
+        bulkActionCaseData.setBulkListCaseDetails(
+            bulkActionCaseData.getBulkListCaseDetails().stream()
+                .filter(lv -> !casesToRemove.contains(lv))
+                .collect(toList()));
+        bulkActionCaseData.setCasesToBeRemoved(casesToRemove);
+
+        return AboutToStartOrSubmitResponse
+            .<BulkActionCaseData, BulkActionState>builder()
+            .data(bulkActionCaseData)
+            .build();
+    }
+
     public SubmittedCallbackResponse submitted(
         CaseDetails<BulkActionCaseData, BulkActionState> details,
         CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails
     ) {
         BulkActionCaseData caseData = details.getData();
 
-        List<String> casesAcceptedToListForHearing =
-            caseData.fromListValueToList(caseData.getCasesAcceptedToListForHearing())
-                .stream()
-                .map(CaseLink::getCaseReference)
-                .collect(toList());
-
-        List<ListValue<BulkListCaseDetails>> casesToRemove =
-            caseData.getBulkListCaseDetails().stream()
-                .filter(c -> !casesAcceptedToListForHearing.contains(c.getValue().getCaseReference().getCaseReference()))
-                .collect(toList());
-
-        caseRemovalService.removeCases(details, casesToRemove, request.getHeader(AUTHORIZATION));
+        caseRemovalService.removeCases(details, caseData.getCasesToBeRemoved(), request.getHeader(AUTHORIZATION));
 
         return SubmittedCallbackResponse.builder().build();
     }

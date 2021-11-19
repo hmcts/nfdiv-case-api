@@ -18,7 +18,6 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemoveBulkCase.SYSTEM_REMOVE_BULK_CASE;
 
@@ -58,11 +57,6 @@ public class CaseRemovalService {
                 user,
                 serviceAuth
             );
-
-        bulkActionCaseData.setBulkListCaseDetails(
-            bulkActionCaseData.getBulkListCaseDetails().stream()
-                .filter(lv -> !casesToRemove.contains(lv))
-                .collect(toList()));
         bulkActionCaseData.setCasesToBeRemoved(unprocessedCases);
 
         try {
