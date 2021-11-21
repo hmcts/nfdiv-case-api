@@ -22,6 +22,7 @@ public final class DocumentConstants {
 
     public static final String NOTICE_OF_PROCEEDINGS_DOCUMENT_NAME = "noticeOfProceedings";
     public static final String NOTICE_OF_PROCEEDINGS_TEMPLATE_ID = "NOTICE_OF_PROCEEDINGS";
+    public static final String NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP_TEMPLATE_ID = "NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP";
 
     public static final String GENERAL_ORDER = "generalOrder";
     public static final String DIVORCE_GENERAL_ORDER = "DIVORCE_GENERAL_ORDER";

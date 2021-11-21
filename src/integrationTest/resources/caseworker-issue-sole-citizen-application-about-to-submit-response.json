@@ -20,7 +20,8 @@
     "applicant2HomeAddress": {
       "AddressLine1": "line 1",
       "PostTown": "town",
-      "PostCode": "postcode"
+      "PostCode": "postcode",
+      "Country": "UK"
     },
     "applicant2Gender": "male",
     "applicant2FinancialOrder": "No",
@@ -35,7 +36,9 @@
     ],
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "divorceWho": "wife",
-    "applicant1PrayerHasBeenGivenCheckbox": ["Yes"],
+    "applicant1PrayerHasBeenGivenCheckbox": [
+      "Yes"
+    ],
     "applicant1StatementOfTruth": "Yes",
     "applicationFeeOrderSummary": {
       "PaymentTotal": "55000"
