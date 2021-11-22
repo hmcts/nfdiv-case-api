@@ -32,9 +32,11 @@ public class NoticeOfProceedingContent {
     public static final String DIVORCE_OR_END_CIVIL_PARTNERSHIP_PROCESS = "divorceOrEndCivilPartnershipProcess";
     public static final String DIVORCE_OR_CIVIL_PARTNERSHIP_APPLICATION = "divorceOrCivilPartnershipApplication";
     public static final String DIVORCE_OR_CIVIL_PARTNERSHIP = "divorceOrCivilPartnership";
+    public static final String DIVORCE_OR_END_A_CIVIL_PARTNERSHIP = "divorceOrEndACivilPartnership";
     public static final String DIVORCE_OR_CIVIL_PARTNERSHIP_URL = "divorceOrCivilPartnershipUrl";
     public static final String DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE = "divorceOrCivilPartnershipService";
     public static final String DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE_HEADER = "divorceOrCivilPartnershipServiceHeader";
+    public static final String DIVORCE_OR_CIVIL_PARTNERSHIP_PAPERS = "divorceOrCivilPartnershipPapers";
     public static final String END_A_CIVIL_PARTNERSHIP_SERVICE = "End A Civil Partnership Service";
     public static final String CONTACT_DIVORCE_JUSTICE_GOV_UK = "contactdivorce@justice.gov.uk";
     public static final String DIVORCE_PROCEEDINGS = "divorce proceedings";
@@ -45,7 +47,7 @@ public class NoticeOfProceedingContent {
     public static final String DIVORCE_URL = "https://www.gov.uk/divorce";
     public static final String DIVORCE_SERVICE = "Divorce service";
     public static final String THE_DIVORCE_SERVICE = "The Divorce service";
-    public static final String CIVILPARTNERSHIP_CASE_JUSTICE_GOV_UK = "civilpartnership.case@justice.gov.uk";
+    public static final String CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK = "civilpartnership.case@justice.gov.uk";
     public static final String PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP = "proceedings to end your civil partnership";
     public static final String TO_END_YOUR_CIVIL_PARTNERSHIP = "to end your civil partnership";
     public static final String CIVIL_PARTNER = "civil partner";
@@ -53,9 +55,14 @@ public class NoticeOfProceedingContent {
     public static final String PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP = "process to end your civil partnership";
     public static final String YOUR_APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP = "your application to end your civil partnership";
     public static final String ENDING_YOUR_CIVIL_PARTNERSHIP = "ending your civil partnership";
+    public static final String ENDING_A_CIVIL_PARTNERSHIP = "ending a civil partnership";
     public static final String CIVIL_PARTNERSHIP_EMAIL = "https://www.gov.uk/end-civil-partnership";
+    public static final String DIVORCE_PAPERS = "divorce papers";
+    public static final String PAPERS_TO_END_YOUR_CIVIL_PARTNERSHIP = "papers to end your civil partnership";
+    public static final String SERVE_PAPERS_BEFORE_DATE = "servePapersBeforeDate";
 
     private static final int HOLDING_DUE_DATE_OFFSET_DAYS = 141;
+    private static final int PAPER_SERVE_OFFSET_DAYS = 28;
 
     @Autowired
     private CommonContent commonContent;
@@ -94,31 +101,42 @@ public class NoticeOfProceedingContent {
             caseData.getApplication().getIssueDate().plusDays(HOLDING_DUE_DATE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)
         );
 
+        templateContent.put(
+            SERVE_PAPERS_BEFORE_DATE,
+            caseData.getApplication().getIssueDate().plusDays(PAPER_SERVE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)
+        );
+
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_JUSTICE_GOV_UK);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, DIVORCE_PROCEEDINGS);
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, FOR_A_DIVORCE);
-            templateContent.put(RELATION, commonContent.getPartner(caseData,caseData.getApplicant2()));
+            templateContent.put(RELATION, commonContent.getPartner(caseData, caseData.getApplicant2()));
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION, DIVORCE_APPLICATION);
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_PROCESS, DIVORCE_PROCESS);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_APPLICATION, YOUR_DIVORCE);
+            templateContent.put(DIVORCE_OR_END_A_CIVIL_PARTNERSHIP, DIVORCE);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP, DIVORCE);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_URL, DIVORCE_URL);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE, DIVORCE_SERVICE);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE_HEADER, THE_DIVORCE_SERVICE);
+            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PAPERS, DIVORCE_PAPERS);
 
         } else {
-            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CIVILPARTNERSHIP_CASE_JUSTICE_GOV_UK);
+            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP);
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, TO_END_YOUR_CIVIL_PARTNERSHIP);
             templateContent.put(RELATION, CIVIL_PARTNER);
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION, APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP);
             templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP_PROCESS, PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_APPLICATION, YOUR_APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP);
+
+            templateContent.put(DIVORCE_OR_END_A_CIVIL_PARTNERSHIP, ENDING_A_CIVIL_PARTNERSHIP);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP, ENDING_YOUR_CIVIL_PARTNERSHIP);
+
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_URL, CIVIL_PARTNERSHIP_EMAIL);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE, END_A_CIVIL_PARTNERSHIP_SERVICE);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE_HEADER, END_A_CIVIL_PARTNERSHIP_SERVICE);
+            templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PAPERS, PAPERS_TO_END_YOUR_CIVIL_PARTNERSHIP);
         }
         final var ctscContactDetails = CtscContactDetails
             .builder()
