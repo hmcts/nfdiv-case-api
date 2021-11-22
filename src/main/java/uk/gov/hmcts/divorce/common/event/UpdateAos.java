@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.common.event.page.Applicant2SolAosJurisdiction;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2SolAosOtherProceedings;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2SolUpdateAosApplicant1Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
@@ -82,9 +83,9 @@ public class UpdateAos implements CCDConfig<CaseData, State, UserRole> {
         CaseData data = details.getData();
 
         if (data.getAcknowledgementOfService().getConfirmDisputeApplication() == YesOrNo.NO
-            && data.getAcknowledgementOfService().getDisputeApplication() == YesOrNo.YES) {
+            && data.getAcknowledgementOfService().getHowToRespondApplication() == HowToRespondApplication.DISPUTE_DIVORCE) {
 
-            data.getAcknowledgementOfService().setDisputeApplication(null);
+            data.getAcknowledgementOfService().setHowToRespondApplication(null);
             data.getAcknowledgementOfService().setConfirmDisputeApplication(null);
         }
 

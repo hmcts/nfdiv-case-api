@@ -8,7 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 
 @Component
 public class SendCitizenAosNotifications implements CaseTask {
@@ -20,12 +20,7 @@ public class SendCitizenAosNotifications implements CaseTask {
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> details) {
         final var data = details.getData();
 
-        /**
-         * Replace if with if(data.getAcknowledgementOfService().getHowToRespondApplication() == HowToRespondApplication.DISPUTE_DIVORCE)
-         * when front end field is made consistent with backend
-         */
-
-        if (data.getAcknowledgementOfService().getDisputeApplication() == YES) {
+        if (DISPUTE_DIVORCE.equals(data.getAcknowledgementOfService().getHowToRespondApplication())) {
             if (!data.getApplicant1().isRepresented()) {
                 soleAosSubmittedNotification.sendApplicationDisputedToApplicant(data, details.getId());
             }

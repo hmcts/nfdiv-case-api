@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
@@ -65,7 +66,7 @@ class UpdateAosTest {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().build();
-        caseData.getAcknowledgementOfService().setDisputeApplication(YesOrNo.YES);
+        caseData.getAcknowledgementOfService().setHowToRespondApplication(HowToRespondApplication.DISPUTE_DIVORCE);
         caseData.getAcknowledgementOfService().setConfirmDisputeApplication(YesOrNo.NO);
 
         caseDetails.setData(caseData);
@@ -73,7 +74,7 @@ class UpdateAosTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = updateAos.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getData().getAcknowledgementOfService().getDisputeApplication()).isNull();
+        assertThat(response.getData().getAcknowledgementOfService().getHowToRespondApplication()).isNull();
         assertThat(response.getData().getAcknowledgementOfService().getConfirmDisputeApplication()).isNull();
 
     }
