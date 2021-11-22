@@ -9,7 +9,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
@@ -29,7 +31,7 @@ public class SystemIssueSolicitorAosUnDisputed implements CCDConfig<CaseData, St
 
         new PageBuilder(configBuilder
             .event(SYSTEM_ISSUE_SOLICITOR_AOS_UNDISPUTED)
-            .forState(AwaitingAos)
+            .forStates(AwaitingAos, Holding, AosOverdue)
             .name("Aos undisputed")
             .description("Aos undisputed")
             .explicitGrants()
