@@ -108,4 +108,24 @@ public class AlternativeService {
     @CCD(access = {CaseworkerAccessBetaOnlyAccess.class})
     private Bailiff bailiff = new Bailiff();
 
+    @SuppressWarnings("PMD")
+    public AlternativeServiceOutcome getOutcome() {
+        return AlternativeServiceOutcome.builder()
+            .alternativeServiceType(this.getAlternativeServiceType())
+            .receivedServiceApplicationDate(this.getReceivedServiceApplicationDate())
+            .receivedServiceAddedDate(this.getReceivedServiceAddedDate())
+            .alternativeServiceType(this.getAlternativeServiceType())
+            .paymentMethod(this.getPaymentMethod())
+            .serviceApplicationGranted(this.getServiceApplicationGranted())
+            .serviceApplicationRefusalReason(this.getServiceApplicationRefusalReason())
+            .serviceApplicationDecisionDate(this.getServiceApplicationDecisionDate())
+            .deemedServiceDate(this.getDeemedServiceDate())
+            .localCourtName(this.getBailiff().getLocalCourtName())
+            .localCourtEmail(this.getBailiff().getLocalCourtEmail())
+            .certificateOfServiceDocument(this.getBailiff().getCertificateOfServiceDocument())
+            .certificateOfServiceDate(this.getBailiff().getCertificateOfServiceDate())
+            .successfulServedByBailiff(this.getBailiff().getSuccessfulServedByBailiff())
+            .reasonFailureToServeByBailiff(this.getBailiff().getReasonFailureToServeByBailiff())
+            .build();
+    }
 }

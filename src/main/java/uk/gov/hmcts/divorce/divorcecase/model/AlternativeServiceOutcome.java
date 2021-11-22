@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,14 +24,14 @@ public class AlternativeServiceOutcome {
 
     @CCD(
         label = "Application date",
-        displayOrder = "1"
+        displayOrder = 1
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate receivedServiceApplicationDate;
 
     @CCD(
         label = "Added date",
-        displayOrder = "2"
+        displayOrder = 2
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate receivedServiceAddedDate;
@@ -38,7 +39,7 @@ public class AlternativeServiceOutcome {
     @CCD(
         label = "What type of service application was received",
         typeParameterOverride = "AlternativeServiceType",
-        displayOrder = "3"
+        displayOrder = 3
     )
     private AlternativeServiceType alternativeServiceType;
 
@@ -46,19 +47,19 @@ public class AlternativeServiceOutcome {
         label = "How was payment made?",
         typeOverride = FixedList,
         typeParameterOverride = "ServicePaymentMethod",
-        displayOrder = "4"
+        displayOrder = 4
     )
     private ServicePaymentMethod paymentMethod;
 
     @CCD(
-        label = "Outcome of service application",
-        displayOrder = "5"
+        label = "##Outcome of service application",
+        displayOrder = 5
     )
     private String serviceApplicationOutcomeLabel;
 
     @CCD(
         label = "Service Application Granted",
-        displayOrder = "6"
+        displayOrder = 6
     )
     private YesOrNo serviceApplicationGranted;
 
@@ -68,20 +69,20 @@ public class AlternativeServiceOutcome {
     @CCD(
         label = "Reason for refusal",
         typeOverride = TextArea,
-        displayOrder = "7"
+        displayOrder = 7
     )
     private String serviceApplicationRefusalReason;
 
     @CCD(
         label = "Service Application Decision date",
-        displayOrder = "8"
+        displayOrder = 8
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate serviceApplicationDecisionDate;
 
     @CCD(
         label = "Deemed service date",
-        displayOrder = "9"
+        displayOrder = 9
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate deemedServiceDate;
@@ -91,43 +92,44 @@ public class AlternativeServiceOutcome {
      */
     @CCD(
         label = "Court name",
-        displayOrder = "10"
+        displayOrder = 10
     )
     private String localCourtName;
 
     @CCD(
         label = "Email address",
         typeOverride = Email,
-        displayOrder = "11"
+        displayOrder = 11
     )
     private String localCourtEmail;
 
     @CCD(
         label = "Certificate of Service",
-        displayOrder = "12"
+        displayOrder = 12
     )
     private DivorceDocument certificateOfServiceDocument;
 
     @CCD(
         label = "Certificate of service date",
-        displayOrder = "13"
+        displayOrder = 13
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate certificateOfServiceDate;
 
     @CCD(
         label = "Did bailiff serve successfully?",
-        displayOrder = "14"
+        displayOrder = 14
     )
     private YesOrNo successfulServedByBailiff;
 
     @CCD(
         label = "Reason for failure to serve",
         typeOverride = TextArea,
-        displayOrder = "15"
+        displayOrder = 15
     )
     private String reasonFailureToServeByBailiff;
 
+    @JsonIgnore
     public String getServiceApplicationOutcomeLabel() {
         return " ";
     }
