@@ -216,10 +216,10 @@ public class RetiredFields {
             : emptySet();
     }
 
-    private static HowToRespondApplication transformDisputeApplication(Map<String, Object> data) {
+    private static String transformDisputeApplication(Map<String, Object> data) {
         String value = (String) data.get("disputeApplication");
         return YES.getValue().equalsIgnoreCase(value)
-            ? DISPUTE_DIVORCE
-            : WITHOUT_DISPUTE_DIVORCE;
+            ? DISPUTE_DIVORCE.getType()
+            : WITHOUT_DISPUTE_DIVORCE.getType();
     }
 }
