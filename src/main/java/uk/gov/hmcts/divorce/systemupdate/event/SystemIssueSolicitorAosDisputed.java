@@ -32,8 +32,8 @@ public class SystemIssueSolicitorAosDisputed implements CCDConfig<CaseData, Stat
         new PageBuilder(configBuilder
             .event(SYSTEM_ISSUE_SOLICITOR_AOS_DISPUTED)
             .forStates(AwaitingAos, Holding, AosOverdue)
-            .name("Aos disputed")
-            .description("Aos disputed")
+            .name("AoS disputed")
+            .description("AoS disputed")
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .grant(READ, SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR)
