@@ -1,6 +1,8 @@
 package uk.gov.hmcts.divorce.caseworker;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -178,12 +180,13 @@ public class CaseworkerIssueApplicationIT {
     }
 
     @Test
-    void shouldSendApplicationIssueNotificationsForSoleCitizenApplication() throws Exception {
+    void shouldSendApplicationIssueNotificationsForSoleCitizenApplicationWhenRespondentIsUkBased() throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         caseData.setDueDate(LocalDate.of(2021, 6, 20));
         caseData.getApplication().setSolSignStatementOfTruth(null);
         caseData.getApplication().setDivorceWho(WIFE);
+        caseData.getApplicant2().getHomeAddress().setCountry("UK");
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Divorce application").thenReturn("Notice of proceeding");
@@ -212,6 +215,62 @@ public class CaseworkerIssueApplicationIT {
 
         assertThatJson(response)
             .isEqualTo(json(expectedResponse(SOLE_CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT)));
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_USER_EMAIL),
+                eq(SOLE_APPLICANT_APPLICATION_ACCEPTED),
+                anyMap(),
+                eq(ENGLISH));
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_APPLICANT_2_USER_EMAIL),
+                eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
+                anyMap(),
+                eq(ENGLISH));
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendApplicationIssueNotificationsForSoleCitizenApplicationWhenRespondentIsOverseasBased() throws Exception {
+        final CaseData caseData = validCaseDataForIssueApplication();
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        caseData.setDueDate(LocalDate.of(2021, 6, 20));
+        caseData.getApplication().setSolSignStatementOfTruth(null);
+        caseData.getApplication().setDivorceWho(WIFE);
+        caseData.getApplicant2().getHomeAddress().setCountry("France");
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(documentIdProvider.documentId()).thenReturn("Divorce application").thenReturn("Notice of proceeding");
+
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_ID, "NFD_CP_Application_Sole.docx");
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "NFD_Notice_Of_Proceedings_Overseas_Sole.docx");
+        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+
+        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                    callbackRequest(
+                        caseData,
+                        CASEWORKER_ISSUE_APPLICATION)))
+                .accept(APPLICATION_JSON))
+            .andExpect(
+                status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        DocumentContext jsonDocument = JsonPath.parse(expectedResponse(SOLE_CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT));
+        jsonDocument.set("data.applicant2HomeAddress.Country", "France");
+
+        assertThatJson(response).isEqualTo(jsonDocument.json());
 
         verify(notificationService)
             .sendEmail(

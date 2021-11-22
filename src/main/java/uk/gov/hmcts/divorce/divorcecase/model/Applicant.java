@@ -155,4 +155,10 @@ public class Applicant {
     public boolean isConfidentialContactDetails() {
         return null != keepContactDetailsConfidential && keepContactDetailsConfidential.toBoolean();
     }
+
+    @JsonIgnore
+    public boolean isBasedOverseas() {
+        return !("UK").equalsIgnoreCase(homeAddress.getCountry());
+    }
+
 }

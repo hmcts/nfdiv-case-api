@@ -236,7 +236,7 @@ dependencies {
 
   implementation group: 'io.springfox', name: 'springfox-swagger2', version: versions.springfoxSwagger
 
-  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-hystrix', version: '2.2.9.RELEASE'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-hystrix', version: '2.2.10.RELEASE'
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: '3.0.4'
 
   implementation group: 'uk.gov.service.notify', name: 'notifications-java-client', version: '3.17.2-RELEASE'
@@ -246,7 +246,7 @@ dependencies {
   implementation group: 'uk.gov.hmcts.reform', name: 'logging-spring', version: versions.reformsJavaLogging
 
   implementation group: 'uk.gov.hmcts.reform', name: 'idam-client', version: '2.0.0'
-  implementation group: 'com.github.hmcts', name: 'ccd-client', version: '4.8.1'
+  implementation group: 'com.github.hmcts', name: 'ccd-client', version: '4.8.3'
 
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: versions.jackson
@@ -290,7 +290,7 @@ dependencies {
 
   testImplementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
-  testImplementation group: 'org.mockito', name: 'mockito-inline', version: '4.0.0'
+  testImplementation group: 'org.mockito', name: 'mockito-inline', version: '4.1.0'
 
   testImplementation group: 'com.jayway.awaitility', name: 'awaitility', version: versions.awaitility
 
