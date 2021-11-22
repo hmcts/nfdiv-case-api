@@ -4,7 +4,7 @@
     "applicant1FirstName": "John",
     "applicant1LastName": "Smith",
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
-    "alternativeServiceApplications": [
+    "alternativeServiceOutcomes": [
       {
         "id": "1",
         "value": {
