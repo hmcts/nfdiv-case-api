@@ -10,8 +10,11 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
+import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_AOS_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_AOS_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
@@ -32,7 +35,7 @@ public class SoleAosSubmittedNotification {
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
             SOLE_APPLICANT_AOS_SUBMITTED,
-            nonDisputedTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
+            nonDdisputedTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
             caseData.getApplicant1().getLanguagePreference()
         );
     }
@@ -43,14 +46,42 @@ public class SoleAosSubmittedNotification {
         notificationService.sendEmail(
             caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
             SOLE_RESPONDENT_AOS_SUBMITTED,
-            nonDisputedTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
+            nonDdisputedTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
             caseData.getApplicant2().getLanguagePreference()
         );
     }
 
-    private Map<String, String> nonDisputedTemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
+    public void sendApplicationDisputedToApplicant(CaseData caseData, Long id) {
+        log.info("Sending Aos disputed notification to applicant");
+
+        notificationService.sendEmail(
+            caseData.getApplicant1().getEmail(),
+            SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED,
+            disputedTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
+            caseData.getApplicant1().getLanguagePreference()
+        );
+    }
+
+    public void sendApplicationDisputedToRespondent(CaseData caseData, Long id) {
+        log.info("Sending Aos submitted disputed notification to respondent");
+
+        notificationService.sendEmail(
+            caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
+            SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED,
+            disputedTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
+            caseData.getApplicant2().getLanguagePreference()
+        );
+    }
+
+    private Map<String, String> nonDdisputedTemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
         templateVars.put(APPLY_FOR_CO_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
+        return templateVars;
+    }
+
+    private Map<String, String> disputedTemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
+        Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
+        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         return templateVars;
     }
 }
