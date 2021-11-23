@@ -60,6 +60,7 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.TH
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.YOUR_APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.YOUR_DIVORCE;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
@@ -98,7 +99,7 @@ public class NoticeOfProceedingContentTest {
             .build();
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
-        expectedEntries.put(CASE_REFERENCE, 1616591401473378L);
+        expectedEntries.put(CASE_REFERENCE, formatId(1616591401473378L));
         expectedEntries.put(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME);
         expectedEntries.put(APPLICANT_1_LAST_NAME, TEST_LAST_NAME);
         expectedEntries.put(ISSUE_DATE, "18 June 2021");
@@ -148,7 +149,7 @@ public class NoticeOfProceedingContentTest {
             .build();
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
-        expectedEntries.put(CASE_REFERENCE, 1616591401473378L);
+        expectedEntries.put(CASE_REFERENCE, formatId(1616591401473378L));
         expectedEntries.put(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME);
         expectedEntries.put(APPLICANT_1_LAST_NAME, TEST_LAST_NAME);
         expectedEntries.put(ISSUE_DATE, "18 June 2021");
