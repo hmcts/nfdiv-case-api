@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.util.ResourceUtils.getFile;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSwitchedToSole.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT1_APPLICANT1_SWITCH_TO_SOLE;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ENDED;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
@@ -43,6 +43,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(SpringExtension.class)
@@ -73,13 +74,13 @@ public class CitizenSwitchToSoleApplicationIT {
     }
 
     @Test
-    public void givenValidCaseDataWhenCallbackIsInvokedThenCaseIsWithdrawnAndNotificationsSent() throws Exception {
+    public void givenValidCaseDataWhenCallbackIsInvokedForApplicant1SwitchToSoleThenCaseIsWithdrawnAndNotificationsSent() throws Exception {
         CaseData data = validJointApplicant1CaseData();
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE)))
+            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE, "AwaitingApplicant2Response")))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
@@ -94,9 +95,37 @@ public class CitizenSwitchToSoleApplicationIT {
             .isEqualTo(ApplicationType.SOLE_APPLICATION);
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(APPLICANT1_APPLICANT1_SWITCH_TO_SOLE), anyMap(), eq(ENGLISH));
+            .sendEmail(eq(TEST_USER_EMAIL), eq(APPLICANT_SWITCH_TO_SOLE), anyMap(), eq(ENGLISH));
         verify(notificationService)
             .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(JOINT_APPLICATION_ENDED), anyMap(), eq(ENGLISH));
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    public void givenValidCaseDataWhenCallbackIsInvokedForApplicant2SwitchToSoleThenCaseIsWithdrawnAndNotificationsSent() throws Exception {
+        CaseData data = validApplicant2CaseData();
+
+        String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE, "Applicant2Approved")))
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        assertThatJson(actualResponse)
+            .when(TREATING_NULL_AS_ABSENT)
+            .isEqualTo(json(expectedCcdAboutToSubmitCallbackSuccessfulResponse()));
+        assertThatJson(actualResponse)
+            .inPath("$.data.applicationType")
+            .isEqualTo(ApplicationType.SOLE_APPLICATION);
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(APPLICANT_SWITCH_TO_SOLE), anyMap(), eq(ENGLISH));
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(JOINT_APPLICATION_ENDED), anyMap(), eq(ENGLISH));
         verifyNoMoreInteractions(notificationService);
     }
 
