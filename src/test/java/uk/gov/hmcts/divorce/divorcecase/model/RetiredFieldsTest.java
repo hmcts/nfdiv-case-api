@@ -36,6 +36,7 @@ class RetiredFieldsTest {
         data.put("coDocumentsUploaded", Collections.emptyList());
         data.put("coIsEverythingInPetitionTrue", "YES");
         data.put("coIsEverythingInApplicationTrue", "YES");
+        data.put("disputeApplication", "YES");
 
         final var result = RetiredFields.migrate(data);
 
@@ -63,7 +64,8 @@ class RetiredFieldsTest {
             entry("coAddNewDocuments", "YES"),
             entry("coDocumentsUploaded", emptyList()),
             entry("coIsEverythingInPetitionTrue", null),
-            entry("coIsEverythingInApplicationTrue", "YES")
+            entry("coIsEverythingInApplicationTrue", "YES"),
+            entry("howToRespondApplication", "disputeDivorce")
 
         );
     }
@@ -88,6 +90,18 @@ class RetiredFieldsTest {
 
         assertThat(data).contains(
             entry("applicant1PrayerHasBeenGivenCheckbox", emptySet())
+        );
+    }
+
+    @Test
+    void shouldMigrateDisputeApplicationWhenDisputeApplicationValueIsNo() {
+        final var data = new HashMap<String, Object>();
+        data.put("disputeApplication", "No");
+
+        RetiredFields.migrate(data);
+
+        assertThat(data).contains(
+            entry("howToRespondApplication", "withoutDisputeDivorce")
         );
     }
 }

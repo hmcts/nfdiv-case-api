@@ -8,8 +8,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingDispute;
-
 @Component
 public class SendCitizenAosNotifications implements CaseTask {
 
@@ -20,7 +18,7 @@ public class SendCitizenAosNotifications implements CaseTask {
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> details) {
         final var data = details.getData();
 
-        if (PendingDispute.equals(details.getState())) {
+        if (data.getAcknowledgementOfService().isDisputed()) {
             if (!data.getApplicant1().isRepresented()) {
                 soleAosSubmittedNotification.sendApplicationDisputedToApplicant(data, details.getId());
             }

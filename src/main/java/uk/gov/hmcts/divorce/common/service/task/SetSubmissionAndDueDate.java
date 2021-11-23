@@ -13,8 +13,6 @@ import java.time.Clock;
 import java.time.LocalDate;
 
 import static java.time.LocalDateTime.now;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingDispute;
 
 @Component
 @Slf4j
@@ -31,23 +29,13 @@ public class SetSubmissionAndDueDate implements CaseTask {
 
         final CaseData caseData = caseDetails.getData();
 
-        if (Holding.equals(caseDetails.getState())) {
-            final LocalDate issueDate = caseData.getApplication().getIssueDate();
-            caseData.setDueDate(holdingPeriodService.getDueDateFor(issueDate));
+        final LocalDate issueDate = caseData.getApplication().getIssueDate();
+        caseData.setDueDate(holdingPeriodService.getDueDateFor(issueDate));
 
-            log.info("Setting dueDate of {}, for CaseId: {}, State: {}",
-                caseData.getDueDate(),
-                caseDetails.getId(),
-                caseDetails.getState());
-        } else if (PendingDispute.equals(caseDetails.getState())) {
-            caseData.setDueDate(LocalDate.now(clock).plusDays(21));
-
-            log.info("Setting dueDate of {}, for CaseId: {}, State: {}",
-                caseData.getDueDate(),
-                caseDetails.getId(),
-                caseDetails.getState());
-
-        }
+        log.info("Setting dueDate of {}, for CaseId: {}, State: {}",
+            caseData.getDueDate(),
+            caseDetails.getId(),
+            caseDetails.getState());
 
         caseData.getAcknowledgementOfService().setDateAosSubmitted(now(clock));
 
