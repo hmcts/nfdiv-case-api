@@ -92,4 +92,16 @@ class RetiredFieldsTest {
             entry("applicant1PrayerHasBeenGivenCheckbox", emptySet())
         );
     }
+
+    @Test
+    void shouldMigrateDisputeApplicationWhenDisputeApplicationValueIsNo() {
+        final var data = new HashMap<String, Object>();
+        data.put("disputeApplication", "No");
+
+        RetiredFields.migrate(data);
+
+        assertThat(data).contains(
+            entry("howToRespondApplication", "withoutDisputeDivorce")
+        );
+    }
 }
