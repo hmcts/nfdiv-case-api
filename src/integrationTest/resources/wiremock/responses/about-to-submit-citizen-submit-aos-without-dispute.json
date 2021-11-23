@@ -41,7 +41,7 @@
       }
     ],
     "applicationType": "soleApplication",
-    "disputeApplication": "No",
+    "howToRespondApplication": "withoutDisputeDivorce",
     "divorceOrDissolution": "divorce",
     "documentUploadComplete": "Yes",
     "dueDate": "2021-09-15",

@@ -25,6 +25,8 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer;
 import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
+import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE;
 
 @Data
 @NoArgsConstructor
@@ -133,6 +135,11 @@ public class RetiredFields {
     )
     private Set<FinancialOrderFor> applicant2FinancialOrderFor;
 
+    @CCD(
+        label = "Retired respondent wants to dispute the application"
+    )
+    private YesOrNo disputeApplication;
+
     @JsonIgnore
     private static final Consumer<Map<String, Object>> DO_NOTHING = data -> {
     };
@@ -174,6 +181,8 @@ public class RetiredFields {
         init.put("coIsEverythingInPetitionTrue",
             data -> data.put("coIsEverythingInApplicationTrue", data.get("coIsEverythingInPetitionTrue")));
 
+        init.put("disputeApplication",
+            data -> data.put("howToRespondApplication", transformDisputeApplication(data)));
         migrations = unmodifiableMap(init);
     }
 
@@ -205,5 +214,12 @@ public class RetiredFields {
         return YES.getValue().equalsIgnoreCase(value)
             ? Set.of(I_CONFIRM)
             : emptySet();
+    }
+
+    private static String transformDisputeApplication(Map<String, Object> data) {
+        String value = (String) data.get("disputeApplication");
+        return YES.getValue().equalsIgnoreCase(value)
+            ? DISPUTE_DIVORCE.getType()
+            : WITHOUT_DISPUTE_DIVORCE.getType();
     }
 }

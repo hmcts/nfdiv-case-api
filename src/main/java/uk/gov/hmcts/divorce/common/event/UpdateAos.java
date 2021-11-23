@@ -82,9 +82,9 @@ public class UpdateAos implements CCDConfig<CaseData, State, UserRole> {
         CaseData data = details.getData();
 
         if (data.getAcknowledgementOfService().getConfirmDisputeApplication() == YesOrNo.NO
-            && data.getAcknowledgementOfService().getDisputeApplication() == YesOrNo.YES) {
+            && data.getAcknowledgementOfService().isDisputed()) {
 
-            data.getAcknowledgementOfService().setDisputeApplication(null);
+            data.getAcknowledgementOfService().setHowToRespondApplication(null);
             data.getAcknowledgementOfService().setConfirmDisputeApplication(null);
         }
 
