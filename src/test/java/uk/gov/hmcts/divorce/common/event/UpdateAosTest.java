@@ -19,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.common.event.UpdateAos.UPDATE_AOS;
+import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
@@ -65,7 +66,7 @@ class UpdateAosTest {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().build();
-        caseData.getAcknowledgementOfService().setDisputeApplication(YesOrNo.YES);
+        caseData.getAcknowledgementOfService().setHowToRespondApplication(DISPUTE_DIVORCE);
         caseData.getAcknowledgementOfService().setConfirmDisputeApplication(YesOrNo.NO);
 
         caseDetails.setData(caseData);
@@ -73,7 +74,7 @@ class UpdateAosTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = updateAos.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getData().getAcknowledgementOfService().getDisputeApplication()).isNull();
+        assertThat(response.getData().getAcknowledgementOfService().getHowToRespondApplication()).isNull();
         assertThat(response.getData().getAcknowledgementOfService().getConfirmDisputeApplication()).isNull();
 
     }
