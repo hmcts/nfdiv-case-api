@@ -18,20 +18,16 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
 
-import static java.time.temporal.ChronoUnit.*;
+import static java.time.temporal.ChronoUnit.DAYS;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingDispute;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyApplicantDisputeFormOverdue.SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.AOS_RESPONSE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
-import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DUE_DATE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
@@ -39,7 +35,12 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 @Slf4j
 public class SystemNotifyApplicantDisputeFormOverdueTask implements Runnable {
 
-    private static final String NOTIFICATION_SENT_FLAG = "disputeNotSubmittedNotificationSent";
+    static final String NOTIFICATION_SENT_FLAG = "disputeNotSubmittedNotificationSent";
+    private static final String SUBMIT_EVENT_ERROR = "Submit event failed for case id: {}, continuing to next case";
+    private static final String DESERIALIZATION_ERROR = "Deserialization failed for case id: {}, continuing to next case";
+    private static final String CCD_SEARCH_ERROR = "NotifyApplicantDisputeFormOverdue schedule task stopped after search error";
+    private static final String TASK_CONFLICT_ERROR =
+        "NotifyApplicantDisputeFormOverdue scheduled task stopping due to conflict with another running task";
 
     @Autowired
     private CcdSearchService ccdSearchService;
@@ -61,7 +62,7 @@ public class SystemNotifyApplicantDisputeFormOverdueTask implements Runnable {
         log.info("NotifyApplicantDisputeFormOverdue scheduled task started");
 
         final User user = idamService.retrieveSystemUpdateUserDetails();
-        final String serviceAuthorization = authTokenGenerator.generate();
+        final String serviceAuth = authTokenGenerator.generate();
 
         try {
             final BoolQueryBuilder query =
@@ -71,33 +72,26 @@ public class SystemNotifyApplicantDisputeFormOverdueTask implements Runnable {
                     .filter(rangeQuery(ISSUE_DATE).lte(LocalDate.now().minus(37, DAYS)))
                     .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YesOrNo.YES));
 
-            final List<CaseDetails> overdueDisputedCases =
-                ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, serviceAuthorization);
+            ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, serviceAuth)
+                .forEach(caseDetails -> notifyApplicant(caseDetails, user, serviceAuth));
 
-            for (final CaseDetails caseDetails : overdueDisputedCases) {
-                try {
-                    final CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
-                    if (caseData.getApplication().hasApplicantBeenNotifiedDisputeFormOverdue()) {
-                        log.info("SystemNotifyApplicantDisputeFormOverdueTask already triggered  for Case ({})", caseDetails.getId());
-                    } else {
-                        notifyApplicant(caseDetails, caseData.getDueDate(), user, serviceAuthorization);
-                    }
-                } catch (final CcdManagementException e) {
-                    log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
-                } catch (final IllegalArgumentException e) {
-                    log.error("Deserialization failed for case id: {}, continuing to next case", caseDetails.getId());
-                }
-            }
             log.info("NotifyApplicantDisputeFormOverdue scheduled task complete.");
-        } catch (final CcdSearchCaseException e) {
-            log.error("NotifyApplicantDisputeFormOverdue schedule task stopped after search error", e);
-        } catch (final CcdConflictException e) {
-            log.info("NotifyApplicantDisputeFormOverdue scheduled task stopping due to conflict with another running task");
+        } catch (final CcdSearchCaseException | CcdConflictException e) {
+            log.error(e instanceof CcdConflictException ? TASK_CONFLICT_ERROR : CCD_SEARCH_ERROR, e);
         }
     }
 
-    private void notifyApplicant(CaseDetails caseDetails, LocalDate dueDate, User user, String serviceAuth) {
-        log.info("Dispute form due date {} for Case id {} is on/before current date - notifying Applicant", dueDate, caseDetails.getId());
-        ccdUpdateService.submitEvent(caseDetails, SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE, user, serviceAuth);
+    private void notifyApplicant(CaseDetails caseDetails, User user, String serviceAuth) {
+        try {
+            final CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
+            if (caseData.getApplication().hasApplicantBeenNotifiedDisputeFormOverdue()) {
+                log.info("Applicant already notified of overdue dispute form for Case ({})", caseDetails.getId());
+            } else {
+                log.info("Dispute form for Case id {} is due on/before current date - raising notification event", caseDetails.getId());
+                ccdUpdateService.submitEvent(caseDetails, SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE, user, serviceAuth);
+            }
+        } catch (final CcdManagementException | IllegalArgumentException e) {
+            log.error(e instanceof CcdManagementException ? SUBMIT_EVENT_ERROR : DESERIALIZATION_ERROR, caseDetails.getId());
+        }
     }
 }

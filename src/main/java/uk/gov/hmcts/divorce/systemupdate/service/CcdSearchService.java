@@ -45,7 +45,7 @@ public class CcdSearchService {
     public static final String ISSUE_DATE = "data.issueDate";
     public static final String DATA = "data.%s";
     public static final String STATE = "state";
-    public static final String AOS_RESPONSE = "data.acknowledgementOfService.howToRespondApplication";
+    public static final String AOS_RESPONSE = "data.howToRespondApplication";
 
     @Value("${core_case_data.search.page_size}")
     private int pageSize;
