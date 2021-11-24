@@ -17,7 +17,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
-import java.util.EnumSet;
 import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Objects.isNull;
