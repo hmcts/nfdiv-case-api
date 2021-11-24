@@ -40,7 +40,7 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
     @Autowired
     private AddMiniApplicationLink addMiniApplicationLink;
 
-    private final List<CcdPageConfiguration> pages = asList(
+    public static final List<CcdPageConfiguration> pages = asList(
         new Applicant2SolConfirmContactDetails(),
         new Applicant2SolReviewApplicant1Application(),
         new Applicant2HowToRespondToApplication(),
