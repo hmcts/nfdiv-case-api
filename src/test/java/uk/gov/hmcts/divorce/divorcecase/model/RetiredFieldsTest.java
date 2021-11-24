@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.entry;
 import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 
-public class RetiredFieldsTest {
+class RetiredFieldsTest {
 
     @Test
     void migrateShouldMigrateSomeFieldsAndLeaveOthersAlone() {
@@ -42,6 +42,7 @@ public class RetiredFieldsTest {
         data.put("coIsEverythingInPetitionTrue", "YES");
         data.put("coIsEverythingInApplicationTrue", "YES");
         data.put("alternativeServiceApplications", new ArrayList<LinkedHashMap<String, Object>>());
+        data.put("disputeApplication", "YES");
 
         final var result = RetiredFields.migrate(data);
 
@@ -70,6 +71,8 @@ public class RetiredFieldsTest {
             entry("coDocumentsUploaded", emptyList()),
             entry("coIsEverythingInPetitionTrue", null),
             entry("coIsEverythingInApplicationTrue", "YES"),
+            entry("howToRespondApplication", "disputeDivorce"),
+            entry("coIsEverythingInApplicationTrue", "YES"),
             entry("alternativeServiceApplications", null)
 
         );
@@ -95,6 +98,18 @@ public class RetiredFieldsTest {
 
         assertThat(data).contains(
             entry("applicant1PrayerHasBeenGivenCheckbox", emptySet())
+        );
+    }
+
+    @Test
+    void shouldMigrateDisputeApplicationWhenDisputeApplicationValueIsNo() {
+        final var data = new HashMap<String, Object>();
+        data.put("disputeApplication", "No");
+
+        RetiredFields.migrate(data);
+
+        assertThat(data).contains(
+            entry("howToRespondApplication", "withoutDisputeDivorce")
         );
     }
 

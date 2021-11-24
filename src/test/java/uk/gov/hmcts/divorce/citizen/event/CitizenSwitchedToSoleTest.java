@@ -10,7 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
-import uk.gov.hmcts.divorce.citizen.notification.Applicant1SwitchToSoleNotification;
+import uk.gov.hmcts.divorce.citizen.notification.SwitchToSoleNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
@@ -29,18 +29,18 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSwitchedToSole.SWITCH_TO_SOLE;
-import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
 class CitizenSwitchedToSoleTest {
 
     @Mock
-    private Applicant1SwitchToSoleNotification applicant1SwitchToSoleNotification;
+    private SwitchToSoleNotification switchToSoleNotification;
 
     @Mock
     private CcdAccessService ccdAccessService;
@@ -63,20 +63,60 @@ class CitizenSwitchedToSoleTest {
     }
 
     @Test
-    void givenEventStartedWithValidJointCaseAndApplicant2ScreenHasMarriageBrokenIsNullShouldSetApplicationTypeToSoleAndSendNotifications() {
+    void givenEventStartedWithValidJointCaseForApplicant1SwitchToSoleShouldSetApplicationTypeToSoleAndSendNotifications() {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setState(State.AwaitingApplicant2Response);
         CaseData caseData = validJointApplicant1CaseData();
-        caseData.setApplicationType(JOINT_APPLICATION);
 
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(applicant1SwitchToSoleNotification).sendToApplicant1(caseData, caseDetails.getId());
-        verify(applicant1SwitchToSoleNotification).sendToApplicant2(caseData, caseDetails.getId());
-        verifyNoMoreInteractions(applicant1SwitchToSoleNotification);
+        verify(switchToSoleNotification).sendApplicant1SwitchToSoleNotificationToApplicant1(caseData, caseDetails.getId());
+        verify(switchToSoleNotification).sendApplicant1SwitchToSoleNotificationToApplicant2(caseData, caseDetails.getId());
+        verifyNoMoreInteractions(switchToSoleNotification);
+
+        assertThat(response.getData().getApplicationType()).isEqualTo(SOLE_APPLICATION);
+    }
+
+    @Test
+    void givenEventStartedWithValidJointCaseForApplicant1SwitchToSoleWithApplicant2NotLinkedShouldRemoveAccessCodeAndSendNotifications() {
+        final long caseId = 1L;
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setState(State.AwaitingApplicant2Response);
+        CaseData caseData = validJointApplicant1CaseData();
+        caseData.getCaseInvite().setAccessCode(ACCESS_CODE);
+
+        caseDetails.setData(caseData);
+        caseDetails.setId(caseId);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetails);
+
+        verify(switchToSoleNotification).sendApplicant1SwitchToSoleNotificationToApplicant1(caseData, caseDetails.getId());
+        verify(switchToSoleNotification).sendApplicant1SwitchToSoleNotificationToApplicant2(caseData, caseDetails.getId());
+        verifyNoMoreInteractions(switchToSoleNotification);
+
+        assertThat(response.getData().getApplicationType()).isEqualTo(SOLE_APPLICATION);
+        assertThat(response.getData().getCaseInvite().getAccessCode()).isNull();
+    }
+
+    @Test
+    void givenEventStartedWithValidJointCaseForApplicant2SwitchToSoleShouldSetApplicationTypeToSoleAndSendNotifications() {
+        final long caseId = 1L;
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setState(State.Applicant2Approved);
+        CaseData caseData = validJointApplicant1CaseData();
+
+        caseDetails.setData(caseData);
+        caseDetails.setId(caseId);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetails);
+
+        verify(switchToSoleNotification).sendApplicant2SwitchToSoleNotificationToApplicant1(caseData, caseDetails.getId());
+        verify(switchToSoleNotification).sendApplicant2SwitchToSoleNotificationToApplicant2(caseData, caseDetails.getId());
+        verifyNoMoreInteractions(switchToSoleNotification);
 
         assertThat(response.getData().getApplicationType()).isEqualTo(SOLE_APPLICATION);
     }
@@ -87,15 +127,14 @@ class CitizenSwitchedToSoleTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = validJointApplicant1CaseData();
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(NO);
-        caseData.setApplicationType(JOINT_APPLICATION);
 
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(applicant1SwitchToSoleNotification).sendToApplicant1(caseData, caseDetails.getId());
-        verifyNoMoreInteractions(applicant1SwitchToSoleNotification);
+        verify(switchToSoleNotification).sendApplicant1SwitchToSoleNotificationToApplicant1(caseData, caseDetails.getId());
+        verifyNoMoreInteractions(switchToSoleNotification);
 
         assertThat(response.getData().getApplicationType()).isEqualTo(SOLE_APPLICATION);
     }
@@ -105,7 +144,6 @@ class CitizenSwitchedToSoleTest {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = validJointApplicant1CaseData();
-        caseData.setApplicationType(JOINT_APPLICATION);
         caseData.setApplicant2(
             Applicant.builder()
                 .homeAddress(
@@ -133,7 +171,6 @@ class CitizenSwitchedToSoleTest {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = validJointApplicant1CaseData();
-        caseData.setApplicationType(JOINT_APPLICATION);
         caseData.setApplicant2(
             Applicant.builder()
                 .homeAddress(
@@ -170,7 +207,6 @@ class CitizenSwitchedToSoleTest {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = validJointApplicant1CaseData();
-        caseData.setApplicationType(JOINT_APPLICATION);
         caseData.setCaseInvite(
             CaseInvite.builder()
                 .accessCode("QA34TR89")
@@ -202,6 +238,7 @@ class CitizenSwitchedToSoleTest {
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(YES);
         caseData.getApplication().setApplicant2HelpWithFees(HelpWithFees.builder().build());
         caseData.getApplication().setApplicant2StatementOfTruth(YES);
+        caseData.getApplication().setApplicant2PrayerHasBeenGiven(YES);
         caseData.getApplication().setApplicant2AgreeToReceiveEmails(YES);
         caseData.getApplication().setApplicant2CannotUploadSupportingDocument(new HashSet<>());
         caseData.getApplication().setApplicant2ConfirmApplicant1Information(YES);
@@ -231,6 +268,7 @@ class CitizenSwitchedToSoleTest {
         assertThat(response.getData().getApplication().getApplicant2ScreenHasMarriageBroken()).isNull();
         assertThat(response.getData().getApplication().getApplicant2HelpWithFees()).isNull();
         assertThat(response.getData().getApplication().getApplicant2StatementOfTruth()).isNull();
+        assertThat(response.getData().getApplication().getApplicant2PrayerHasBeenGiven()).isNull();
         assertThat(response.getData().getApplication().getApplicant2AgreeToReceiveEmails()).isNull();
         assertThat(response.getData().getApplication().getApplicant2CannotUploadSupportingDocument()).isNull();
         assertThat(response.getData().getApplication().getApplicant2CannotUploadSupportingDocument()).isNull();

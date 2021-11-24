@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 
 @Data
 @AllArgsConstructor
@@ -29,12 +30,6 @@ public class AcknowledgementOfService {
         access = AosAccess.class
     )
     private YesOrNo confirmReadPetition;
-
-    @CCD(
-        label = "Respondent wants to dispute the application",
-        access = AosAccess.class
-    )
-    private YesOrNo disputeApplication;
 
     @CCD(
         label = "Respondent confirms that they want to dispute the application",
@@ -135,5 +130,10 @@ public class AcknowledgementOfService {
         digitalNoticeOfProceedings = YES;
         noticeOfProceedingsEmail = solicitor.getEmail();
         noticeOfProceedingsSolicitorFirm = solicitor.getOrganisationPolicy().getOrganisation().getOrganisationName();
+    }
+
+    @JsonIgnore
+    public boolean isDisputed() {
+        return DISPUTE_DIVORCE.equals(howToRespondApplication);
     }
 }

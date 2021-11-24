@@ -7,12 +7,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT1_APPLICANT1_SWITCH_TO_SOLE;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ENDED;
 
 @Component
 @Slf4j
-public class Applicant1SwitchToSoleNotification {
+public class SwitchToSoleNotification {
 
     @Autowired
     private NotificationService notificationService;
@@ -20,23 +20,45 @@ public class Applicant1SwitchToSoleNotification {
     @Autowired
     private CommonContent commonContent;
 
-    public void sendToApplicant1(CaseData caseData, Long id) {
+    public void sendApplicant1SwitchToSoleNotificationToApplicant1(CaseData caseData, Long id) {
         log.info("Sending applicant 1 switch to sole notification to applicant 1 for case : {}", id);
 
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
-            APPLICANT1_APPLICANT1_SWITCH_TO_SOLE,
+            APPLICANT_SWITCH_TO_SOLE,
             commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
             caseData.getApplicant1().getLanguagePreference()
         );
     }
 
-    public void sendToApplicant2(CaseData caseData, Long id) {
+    public void sendApplicant1SwitchToSoleNotificationToApplicant2(CaseData caseData, Long id) {
         log.info("Sending applicant 1 switch to sole notification to applicant 2 for case : {}", id);
 
         notificationService.sendEmail(
             caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
             JOINT_APPLICATION_ENDED,
+            commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
+            caseData.getApplicant1().getLanguagePreference()
+        );
+    }
+
+    public void sendApplicant2SwitchToSoleNotificationToApplicant1(CaseData caseData, Long id) {
+        log.info("Sending applicant 2 switch to sole notification to applicant 1 for case : {}", id);
+
+        notificationService.sendEmail(
+            caseData.getApplicant1().getEmail(),
+            JOINT_APPLICATION_ENDED,
+            commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
+            caseData.getApplicant1().getLanguagePreference()
+        );
+    }
+
+    public void sendApplicant2SwitchToSoleNotificationToApplicant2(CaseData caseData, Long id) {
+        log.info("Sending applicant 2 switch to sole notification to applicant 2 for case : {}", id);
+
+        notificationService.sendEmail(
+            caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
+            APPLICANT_SWITCH_TO_SOLE,
             commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
             caseData.getApplicant1().getLanguagePreference()
         );
