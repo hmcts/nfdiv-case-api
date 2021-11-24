@@ -12,7 +12,8 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2HowToRespondToApplication;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2SolAosJurisdiction;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2SolAosOtherProceedings;
-import uk.gov.hmcts.divorce.common.event.page.Applicant2SolUpdateAosApplicant1Application;
+import uk.gov.hmcts.divorce.common.event.page.Applicant2SolConfirmContactDetails;
+import uk.gov.hmcts.divorce.common.event.page.Applicant2SolReviewApplicant1Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -39,7 +40,8 @@ public class UpdateAos implements CCDConfig<CaseData, State, UserRole> {
     private AddMiniApplicationLink addMiniApplicationLink;
 
     private final List<CcdPageConfiguration> pages = asList(
-        new Applicant2SolUpdateAosApplicant1Application(),
+        new Applicant2SolConfirmContactDetails(),
+        new Applicant2SolReviewApplicant1Application(),
         new Applicant2HowToRespondToApplication(),
         new Applicant2SolAosJurisdiction(),
         new Applicant2SolAosOtherProceedings()
