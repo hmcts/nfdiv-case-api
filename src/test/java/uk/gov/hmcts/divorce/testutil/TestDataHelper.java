@@ -268,11 +268,13 @@ public class TestDataHelper {
             .caseInvite(CaseInvite.builder().applicant2InviteEmailAddress(TEST_APPLICANT_2_USER_EMAIL).build())
             .divorceOrDissolution(DIVORCE)
             .application(application)
+            .applicationType(JOINT_APPLICATION)
             .build();
     }
 
     public static CaseData validApplicant1CaseData() {
         CaseData caseData = validJointApplicant1CaseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
         caseData.setApplicant2(getApplicant2(MALE));
         caseData.getApplication().setApplicant1StatementOfTruth(YES);
         caseData.getApplication().setApplicant1PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
@@ -280,8 +282,9 @@ public class TestDataHelper {
     }
 
     public static CaseData validApplicant2CaseData() {
-        CaseData caseData = validApplicant1CaseData();
-        caseData.setApplicationType(JOINT_APPLICATION);
+        CaseData caseData = validJointApplicant1CaseData();
+        caseData.getApplication().setApplicant1StatementOfTruth(YES);
+        caseData.getApplication().setApplicant1PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
         caseData.setApplicant2(getApplicantWithAddress());
         caseData.getApplication().setApplicant2HelpWithFees(HelpWithFees.builder()
             .needHelp(NO)

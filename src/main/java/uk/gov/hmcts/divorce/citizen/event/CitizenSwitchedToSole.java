@@ -20,6 +20,7 @@ import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import java.util.EnumSet;
 import javax.servlet.http.HttpServletRequest;
 
+import static java.util.Objects.isNull;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
@@ -68,12 +69,17 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
         log.info("Applicant 1 switched to sole about to submit callback invoked");
         CaseData data = details.getData();
 
-        log.info("Unlinking Applicant 2 from Case");
-        ccdAccessService.unlinkUserFromApplication(
-            httpServletRequest.getHeader(AUTHORIZATION),
-            details.getId(),
-            data.getCaseInvite().getApplicant2UserId()
-        );
+        if (isNull(data.getCaseInvite().getAccessCode())) {
+            log.info("Unlinking Applicant 2 from Case");
+            ccdAccessService.unlinkUserFromApplication(
+                httpServletRequest.getHeader(AUTHORIZATION),
+                details.getId(),
+                data.getCaseInvite().getApplicant2UserId()
+            );
+        } else {
+            log.info("Removing the case invite access code for Applicant 2");
+            data.getCaseInvite().setAccessCode(null);
+        }
 
         if (details.getState() == AwaitingApplicant1Response || details.getState() == Applicant2Approved) {
             switchToSoleNotification.sendApplicant2SwitchToSoleNotificationToApplicant1(data, details.getId());
