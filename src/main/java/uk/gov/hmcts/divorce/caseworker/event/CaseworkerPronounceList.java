@@ -14,8 +14,12 @@ import uk.gov.hmcts.divorce.bulkaction.service.CasePronouncementService;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
+import static java.time.LocalDateTime.now;
 import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -40,6 +44,9 @@ public class CaseworkerPronounceList implements CCDConfig<BulkActionCaseData, Bu
 
     @Autowired
     private HttpServletRequest request;
+
+    @Autowired
+    private Clock clock;
 
     @Override
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
@@ -76,14 +83,22 @@ public class CaseworkerPronounceList implements CCDConfig<BulkActionCaseData, Bu
     }
 
     public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToSubmit(
-        CaseDetails<BulkActionCaseData, BulkActionState> details,
-        CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails
+        final CaseDetails<BulkActionCaseData, BulkActionState> details,
+        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails
     ) {
 
         final BulkActionCaseData caseData = details.getData();
+        final LocalDateTime dateAndTimeOfHearing = caseData.getDateAndTimeOfHearing();
 
-        caseData.setPronouncedDate(caseData.getDateAndTimeOfHearing().toLocalDate());
-        caseData.setDateFinalOrderEligibleFrom(caseData.getDateFinalOrderEligibleFrom(caseData.getDateAndTimeOfHearing()));
+        if (now(clock).isBefore(dateAndTimeOfHearing)) {
+            return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder()
+                .data(caseData)
+                .errors(List.of("You cannot pronounce a case before the hearing date"))
+                .build();
+        }
+
+        caseData.setPronouncedDate(dateAndTimeOfHearing.toLocalDate());
+        caseData.setDateFinalOrderEligibleFrom(caseData.getDateFinalOrderEligibleFrom(dateAndTimeOfHearing));
 
         return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder()
             .data(caseData)
