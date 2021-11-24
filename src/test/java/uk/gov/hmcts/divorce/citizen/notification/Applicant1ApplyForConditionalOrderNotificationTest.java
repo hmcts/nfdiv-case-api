@@ -6,7 +6,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1ApplyForConditionalOrderNotification;
-import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -33,6 +32,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLY_
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getCommonTemplateVars;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(SpringExtension.class)
@@ -49,8 +49,7 @@ public class Applicant1ApplyForConditionalOrderNotificationTest {
 
     @Test
     void shouldSendEmailToApplicant1WithDivorceContent() {
-        CaseData data = validJointApplicant1CaseData();
-        data.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        CaseData data = validApplicant1CaseData();
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getCommonTemplateVars());
 
@@ -71,9 +70,8 @@ public class Applicant1ApplyForConditionalOrderNotificationTest {
 
     @Test
     void shouldSendEmailToApplicant1WithDissolutionContent() {
-        CaseData data = validJointApplicant1CaseData();
+        CaseData data = validApplicant1CaseData();
         data.setDivorceOrDissolution(DISSOLUTION);
-        data.setApplicationType(ApplicationType.SOLE_APPLICATION);
         final Map<String, String> templateVars = getCommonTemplateVars();
         templateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
@@ -97,7 +95,6 @@ public class Applicant1ApplyForConditionalOrderNotificationTest {
     @Test
     void shouldSendEmailToApplicant1WithJointDivorceHusbandContent() {
         CaseData data = validJointApplicant1CaseData();
-        data.setApplicationType(ApplicationType.JOINT_APPLICATION);
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getCommonTemplateVars());
 
@@ -119,7 +116,6 @@ public class Applicant1ApplyForConditionalOrderNotificationTest {
     @Test
     void shouldSendEmailToApplicant1WithJointDivorceWifeContent() {
         CaseData data = validJointApplicant1CaseData();
-        data.setApplicationType(ApplicationType.JOINT_APPLICATION);
         data.getApplicant2().setGender(FEMALE);
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getCommonTemplateVars());
@@ -144,7 +140,6 @@ public class Applicant1ApplyForConditionalOrderNotificationTest {
     void shouldSendEmailToApplicant1WithJointDissolutionContent() {
         CaseData data = validJointApplicant1CaseData();
         data.setDivorceOrDissolution(DISSOLUTION);
-        data.setApplicationType(ApplicationType.JOINT_APPLICATION);
         final Map<String, String> templateVars = getCommonTemplateVars();
         templateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
