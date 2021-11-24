@@ -58,9 +58,14 @@ public class CertificateOfEntitlementContent {
         templateContent.put(DATE_OF_HEARING, dateAndTimeOfHearing.format(DATE_TIME_FORMATTER));
         templateContent.put(TIME_OF_HEARING, dateAndTimeOfHearing.format(TIME_FORMATTER));
 
-        templateContent.put(HAS_FINANCIAL_ORDERS, applicant1.getFinancialOrder().toBoolean());
-        templateContent.put(COSTS_GRANTED, conditionalOrder.getClaimsGranted().toBoolean());
-        templateContent.put("claimsCostsOrderInformation", conditionalOrder.getClaimsCostsOrderInformation());
+        templateContent.put(HAS_FINANCIAL_ORDERS, applicant1.appliedForFinancialOrder());
+
+        final boolean claimsGranted = conditionalOrder.areClaimsGranted();
+        templateContent.put(COSTS_GRANTED, claimsGranted);
+        if (claimsGranted) {
+            templateContent.put("claimsCostsOrderInformation", conditionalOrder.getClaimsCostsOrderInformation());
+        }
+
         templateContent.put("divorceWho", caseData.getApplication().getDivorceWho().getLabel().toLowerCase(UK));
 
         return templateContent;

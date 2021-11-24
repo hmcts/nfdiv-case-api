@@ -14,6 +14,7 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 
 import java.util.Set;
 
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
@@ -161,4 +162,8 @@ public class Applicant {
         return !("UK").equalsIgnoreCase(homeAddress.getCountry());
     }
 
+    @JsonIgnore
+    public boolean appliedForFinancialOrder() {
+        return nonNull(financialOrder) && financialOrder.toBoolean();
+    }
 }
