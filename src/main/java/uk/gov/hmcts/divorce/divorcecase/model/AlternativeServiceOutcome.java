@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -52,7 +51,7 @@ public class AlternativeServiceOutcome {
     private ServicePaymentMethod paymentMethod;
 
     @CCD(
-        label = "##Outcome of service application",
+        label = "Outcome of service application",
         displayOrder = 5
     )
     private String serviceApplicationOutcomeLabel;
@@ -129,7 +128,6 @@ public class AlternativeServiceOutcome {
     )
     private String reasonFailureToServeByBailiff;
 
-    @JsonIgnore
     public String getServiceApplicationOutcomeLabel() {
         return " ";
     }
