@@ -33,13 +33,23 @@ public class LabelContent {
     @CCD(label = "Divorce or Dissolution")
     private String unionTypeUC;
 
+    @CCD(label = "Divorce or civil partnership application")
+    private String divorceOrCivilPartnershipApplication;
+
+    @CCD(label = "Divorce or end civil partnership")
+    private String divorceOrEndCivilPartnership;
+
     public void setUnionType(DivorceOrDissolution divorceOrDissolution) {
         if (divorceOrDissolution != null && divorceOrDissolution.isDivorce()) {
             unionType = "divorce";
             unionTypeUC = "Divorce";
+            divorceOrCivilPartnershipApplication = "divorce application";
+            divorceOrEndCivilPartnership = "for divorce";
         } else {
             unionType = "dissolution";
             unionTypeUC = "Dissolution";
+            divorceOrCivilPartnershipApplication = "application to end the civil partnership";
+            divorceOrEndCivilPartnership = "to end the civil partnership";
         }
     }
 

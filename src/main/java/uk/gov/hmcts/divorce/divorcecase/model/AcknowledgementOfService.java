@@ -26,7 +26,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DIS
 public class AcknowledgementOfService {
 
     @CCD(
-        label = "Has the respondent read the application for divorce?",
+        label = "Has the respondent read the application ${labelContentDivorceOrEndCivilPartnership}?",
         access = AosAccess.class
     )
     private YesOrNo confirmReadPetition;
