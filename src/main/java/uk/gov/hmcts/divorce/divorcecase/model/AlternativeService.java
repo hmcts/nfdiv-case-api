@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -109,6 +110,7 @@ public class AlternativeService {
     private Bailiff bailiff = new Bailiff();
 
     @SuppressWarnings("PMD")
+    @JsonIgnore
     public AlternativeServiceOutcome getOutcome() {
         return AlternativeServiceOutcome.builder()
             .alternativeServiceType(this.getAlternativeServiceType())
