@@ -249,12 +249,9 @@ public class RetiredFields {
     private static String transformGeneralReferralDetails(Map<String, Object> data, String retiredFieldName) {
         String retiredFieldValue = (String) data.get(retiredFieldName);
         String newFieldValue = (String) data.get("generalReferralJudgeOrLegalAdvisorDetails");
-        if (null != retiredFieldValue) {
-            if (null != newFieldValue) {
-                return retiredFieldValue.concat(" ").concat(newFieldValue);
-            }
-            return retiredFieldValue;
+        if (null != newFieldValue) {
+            return retiredFieldValue.concat(" ").concat(newFieldValue);
         }
-        return newFieldValue;
+        return retiredFieldValue;
     }
 }
