@@ -2,9 +2,7 @@ package uk.gov.hmcts.divorce.caseworker.event;
 
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
-import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
-import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.event.page.AlternativeServicePaymentConfirmation;
 import uk.gov.hmcts.divorce.caseworker.event.page.AlternativeServicePaymentSummary;
 import uk.gov.hmcts.divorce.caseworker.event.page.AnswerReceivedUploadDocument;
