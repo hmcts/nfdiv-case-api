@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import org.junit.jupiter.api.Test;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -8,7 +9,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import static java.util.Collections.emptyList;
@@ -215,6 +218,30 @@ class RetiredFieldsTest {
         assertThat(data).doesNotContain(
             entry("generalReferralJudgeOrLegalAdvisorDetails", null)
         );
+    }
+
+    @Test
+    void shouldMigrateServiceApplications() {
+
+        final Map<String,Object> alternativeServiceObject = new LinkedHashMap<>();
+        alternativeServiceObject.put("alternativeServiceType", "deemed");
+
+        final HashMap<String,Object> listValueMap = new LinkedHashMap<>();
+        listValueMap.put("id", "1");
+        listValueMap.put("value", alternativeServiceObject);
+
+        final ArrayList<LinkedHashMap<String,Object>> listValues = new ArrayList<>();
+        listValues.add((LinkedHashMap<String, Object>) listValueMap);
+
+        final var data = new HashMap<String, Object>();
+        data.put("alternativeServiceApplications", listValues);
+
+        List<ListValue<AlternativeServiceOutcome>> alternativeServiceOutcomes =
+            RetiredFields.transformAlternativeServiceApplications(data);
+
+        assertThat(alternativeServiceOutcomes.size()).isEqualTo(1);
+        assertThat(alternativeServiceOutcomes.get(0).getValue().getAlternativeServiceType()).isEqualTo(AlternativeServiceType.DEEMED);
+
     }
 
 }

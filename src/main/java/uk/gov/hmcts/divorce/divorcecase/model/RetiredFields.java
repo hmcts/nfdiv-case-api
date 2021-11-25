@@ -257,7 +257,7 @@ public class RetiredFields {
     }
 
     @SuppressWarnings({"unchecked", "PMD"})
-    private static List<ListValue<AlternativeServiceOutcome>> transformAlternativeServiceApplications(Map<String, Object> data) {
+    public static List<ListValue<AlternativeServiceOutcome>> transformAlternativeServiceApplications(Map<String, Object> data) {
 
         ArrayList<LinkedHashMap<String,Object>> oldListValues =
             (ArrayList<LinkedHashMap<String,Object>>) data.get("alternativeServiceApplications");
