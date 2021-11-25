@@ -212,13 +212,6 @@ public enum State {
     AwaitingPronouncement("AwaitingPronouncement"),
 
     @CCD(
-        name = "Pending Hearing",
-        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
-        access = {CaseAccessAdministrator.class}
-    )
-    PendingHearing("PendingHearing"),
-
-    @CCD(
         name = "Removed from bulk case",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
