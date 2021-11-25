@@ -17,7 +17,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
-import java.util.EnumSet;
 import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Objects.isNull;
@@ -48,15 +47,9 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
-        EnumSet<State> stateSet = EnumSet.noneOf(State.class);
-        stateSet.add(AwaitingApplicant1Response);
-        stateSet.add(AwaitingApplicant2Response);
-        stateSet.add(Applicant2Approved);
-        stateSet.add(AwaitingPayment);
-
         configBuilder
             .event(SWITCH_TO_SOLE)
-            .forStateTransition(stateSet, Draft)
+            .forStates(AwaitingApplicant1Response, AwaitingApplicant2Response, Applicant2Approved, AwaitingPayment)
             .name("Application switched to sole")
             .description("Application type switched to sole")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
@@ -66,7 +59,7 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Applicant 1 switched to sole about to submit callback invoked");
+        log.info("Citizen switched to sole about to submit callback invoked");
         CaseData data = details.getData();
 
         if (isNull(data.getCaseInvite().getAccessCode())) {

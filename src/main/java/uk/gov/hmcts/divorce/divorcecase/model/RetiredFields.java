@@ -28,6 +28,7 @@ import static java.util.Collections.unmodifiableMap;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer;
@@ -155,6 +156,18 @@ public class RetiredFields {
     )
     private YesOrNo disputeApplication;
 
+    @CCD(
+        label = "Retired further details for Judge",
+        typeOverride = TextArea
+    )
+    private String generalReferralJudgeDetails;
+
+    @CCD(
+        label = "Retired further details for Legal Advisor",
+        typeOverride = TextArea
+    )
+    private String generalReferralLegalAdvisorDetails;
+
     @JsonIgnore
     private static final Consumer<Map<String, Object>> DO_NOTHING = data -> {
     };
@@ -197,9 +210,19 @@ public class RetiredFields {
             data -> data.put("coIsEverythingInApplicationTrue", data.get("coIsEverythingInPetitionTrue")));
         init.put("alternativeServiceApplications",
             data -> data.put("alternativeServiceOutcomes", transformAlternativeServiceApplications(data)));
-
         init.put("disputeApplication",
             data -> data.put("howToRespondApplication", transformDisputeApplication(data)));
+        init.put("generalReferralJudgeDetails",
+            data -> data.put(
+                "generalReferralJudgeOrLegalAdvisorDetails",
+                transformGeneralReferralDetails(data, "generalReferralJudgeDetails")
+            ));
+        init.put("generalReferralLegalAdvisorDetails",
+            data -> data.put(
+                "generalReferralJudgeOrLegalAdvisorDetails",
+                transformGeneralReferralDetails(data, "generalReferralLegalAdvisorDetails")
+            ));
+
         migrations = unmodifiableMap(init);
     }
 
@@ -304,5 +327,14 @@ public class RetiredFields {
         return YES.getValue().equalsIgnoreCase(value)
             ? DISPUTE_DIVORCE.getType()
             : WITHOUT_DISPUTE_DIVORCE.getType();
+    }
+
+    private static String transformGeneralReferralDetails(Map<String, Object> data, String retiredFieldName) {
+        String retiredFieldValue = (String) data.get(retiredFieldName);
+        String newFieldValue = (String) data.get("generalReferralJudgeOrLegalAdvisorDetails");
+        if (null != newFieldValue) {
+            return retiredFieldValue.concat(" ").concat(newFieldValue);
+        }
+        return retiredFieldValue;
     }
 }

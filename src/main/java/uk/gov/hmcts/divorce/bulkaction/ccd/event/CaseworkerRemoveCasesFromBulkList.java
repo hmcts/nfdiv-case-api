@@ -48,6 +48,7 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
             .description("Remove cases from bulk list")
             .showSummary()
             .aboutToStartCallback(this::aboutToStart)
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .showEventNotes()
             .explicitGrants()

@@ -163,4 +163,58 @@ class RetiredFieldsTest {
     }
 
 
+
+    @Test
+    void shouldMigrateGeneralReferralJudgeAndLegalAdvisorDetailsWhenBothValuesArePresent() {
+        final var data = new HashMap<String, Object>();
+        data.put("generalReferralJudgeDetails", "judge");
+        data.put("generalReferralLegalAdvisorDetails", "la");
+
+        RetiredFields.migrate(data);
+
+        assertThat(data).contains(
+            entry("generalReferralJudgeOrLegalAdvisorDetails", "judge la")
+        );
+    }
+
+    @Test
+    void shouldMigrateGeneralReferralJudgeAndLegalAdvisorDetailsWhenJudgeDetailsIsNull() {
+        final var data = new HashMap<String, Object>();
+        data.put("generalReferralJudgeDetails", null);
+        data.put("generalReferralLegalAdvisorDetails", "la");
+
+        RetiredFields.migrate(data);
+
+        assertThat(data).contains(
+            entry("generalReferralJudgeOrLegalAdvisorDetails", "la")
+        );
+    }
+
+
+    @Test
+    void shouldMigrateGeneralReferralJudgeAndLegalAdvisorDetailsWhenLegalAdvisorDetailsIsNull() {
+        final var data = new HashMap<String, Object>();
+        data.put("generalReferralJudgeDetails", "judge");
+        data.put("generalReferralLegalAdvisorDetails", null);
+
+        RetiredFields.migrate(data);
+
+        assertThat(data).contains(
+            entry("generalReferralJudgeOrLegalAdvisorDetails", "judge")
+        );
+    }
+
+    @Test
+    void shouldMigrateGeneralReferralJudgeAndLegalAdvisorDetailsWhenNoValuesArePresent() {
+        final var data = new HashMap<String, Object>();
+        data.put("generalReferralJudgeDetails", null);
+        data.put("generalReferralLegalAdvisorDetails", null);
+
+        RetiredFields.migrate(data);
+
+        assertThat(data).doesNotContain(
+            entry("generalReferralJudgeOrLegalAdvisorDetails", null)
+        );
+    }
+
 }

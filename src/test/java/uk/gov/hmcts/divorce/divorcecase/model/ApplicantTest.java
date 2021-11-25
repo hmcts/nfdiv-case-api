@@ -83,4 +83,33 @@ class ApplicantTest {
 
         assertThat(applicant.isConfidentialContactDetails()).isFalse();
     }
+
+    @Test
+    void shouldReturnTrueIfAppliedForFinancialOrder() {
+
+        final Applicant applicant = Applicant.builder()
+            .financialOrder(YES)
+            .build();
+
+        assertThat(applicant.appliedForFinancialOrder()).isTrue();
+    }
+
+    @Test
+    void shouldReturnFalseIfNotAppliedForFinancialOrder() {
+
+        final Applicant applicant = Applicant.builder()
+            .financialOrder(NO)
+            .build();
+
+        assertThat(applicant.appliedForFinancialOrder()).isFalse();
+    }
+
+    @Test
+    void shouldReturnFalseIfAppliedForFinancialOrderIsSetToNull() {
+
+        final Applicant applicant = Applicant.builder()
+            .build();
+
+        assertThat(applicant.appliedForFinancialOrder()).isFalse();
+    }
 }
