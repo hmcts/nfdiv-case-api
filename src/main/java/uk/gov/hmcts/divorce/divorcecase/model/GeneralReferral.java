@@ -61,16 +61,10 @@ public class GeneralReferral {
     private AlternativeServiceMediumType alternativeServiceMedium;
 
     @CCD(
-        label = "Further details for Judge",
+        label = "Further details for Judge or Legal Advisor",
         typeOverride = TextArea
     )
-    private String generalReferralJudgeDetails;
-
-    @CCD(
-        label = "Further details for Legal Advisor",
-        typeOverride = TextArea
-    )
-    private String generalReferralLegalAdvisorDetails;
+    private String generalReferralJudgeOrLegalAdvisorDetails;
 
     @CCD(
         label = "Is fee payment required?"
