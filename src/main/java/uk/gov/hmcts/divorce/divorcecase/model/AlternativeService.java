@@ -121,12 +121,12 @@ public class AlternativeService {
             .serviceApplicationRefusalReason(serviceApplicationRefusalReason)
             .serviceApplicationDecisionDate(serviceApplicationDecisionDate)
             .deemedServiceDate(deemedServiceDate)
-            .localCourtName(this.getBailiff().getLocalCourtName())
-            .localCourtEmail(this.getBailiff().getLocalCourtEmail())
-            .certificateOfServiceDocument(this.getBailiff().getCertificateOfServiceDocument())
-            .certificateOfServiceDate(this.getBailiff().getCertificateOfServiceDate())
-            .successfulServedByBailiff(this.getBailiff().getSuccessfulServedByBailiff())
-            .reasonFailureToServeByBailiff(this.getBailiff().getReasonFailureToServeByBailiff())
+            .localCourtName(bailiff.getLocalCourtName())
+            .localCourtEmail(bailiff.getLocalCourtEmail())
+            .certificateOfServiceDocument(bailiff.getCertificateOfServiceDocument())
+            .certificateOfServiceDate(bailiff.getCertificateOfServiceDate())
+            .successfulServedByBailiff(bailiff.getSuccessfulServedByBailiff())
+            .reasonFailureToServeByBailiff(bailiff.getReasonFailureToServeByBailiff())
             .build();
     }
 }
