@@ -56,7 +56,6 @@ public class SystemNotifyApplicantDisputeFormOverdueTest {
             .id(1L)
             .data(caseData)
             .build();
-
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("auth header");
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = underTest.aboutToSubmit(details, details);

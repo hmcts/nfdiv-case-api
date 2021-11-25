@@ -19,7 +19,6 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.time.LocalDate;
 
-import static java.time.temporal.ChronoUnit.DAYS;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
@@ -69,7 +68,7 @@ public class SystemNotifyApplicantDisputeFormOverdueTask implements Runnable {
                 boolQuery()
                     .must(matchQuery(STATE, Holding))
                     .must(matchQuery(AOS_RESPONSE, DISPUTE_DIVORCE))
-                    .filter(rangeQuery(ISSUE_DATE).lte(LocalDate.now().minus(37, DAYS)))
+                    .filter(rangeQuery(ISSUE_DATE).lte(LocalDate.now().minusDays(37)))
                     .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YesOrNo.YES));
 
             ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, serviceAuth)
@@ -84,9 +83,8 @@ public class SystemNotifyApplicantDisputeFormOverdueTask implements Runnable {
     private void notifyApplicant(CaseDetails caseDetails, User user, String serviceAuth) {
         try {
             final CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
-            if (caseData.getApplication().hasApplicantBeenNotifiedDisputeFormOverdue()) {
-                log.info("Applicant already notified of overdue dispute form for Case ({})", caseDetails.getId());
-            } else {
+            if (!caseData.getApplication().hasApplicantBeenNotifiedDisputeFormOverdue()
+                && !caseData.getApplication().getIssueDate().plusDays(37).isAfter(LocalDate.now())) {
                 log.info("Dispute form for Case id {} is due on/before current date - raising notification event", caseDetails.getId());
                 ccdUpdateService.submitEvent(caseDetails, SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE, user, serviceAuth);
             }
