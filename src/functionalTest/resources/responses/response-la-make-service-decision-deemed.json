@@ -11,6 +11,7 @@
           "receivedServiceApplicationDate": "2021-06-18",
           "alternativeServiceType": "deemed",
           "receivedServiceAddedDate": "${json-unit.any-string}",
+          "serviceApplicationOutcomeLabel": "${json-unit.any-string}",
           "serviceApplicationGranted": "Yes",
           "serviceApplicationDecisionDate": "${json-unit.any-string}",
           "deemedServiceDate": "2021-06-20"
