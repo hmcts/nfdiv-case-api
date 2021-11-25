@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
@@ -29,7 +30,7 @@ public class SystemNotifyApplicantDisputeFormOverdue implements CCDConfig<CaseDa
 
         configBuilder
             .event(SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE)
-            .forState(Applicant2Approved)
+            .forState(Holding)
             .name("Dispute Form Overdue")
             .description("Notify applicant that Dispute Form is overdue")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)

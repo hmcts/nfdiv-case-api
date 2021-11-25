@@ -75,8 +75,10 @@ public class SystemNotifyApplicantDisputeFormOverdueTask implements Runnable {
                 .forEach(caseDetails -> notifyApplicant(caseDetails, user, serviceAuth));
 
             log.info("NotifyApplicantDisputeFormOverdue scheduled task complete.");
-        } catch (final CcdSearchCaseException | CcdConflictException e) {
-            log.error(e instanceof CcdConflictException ? TASK_CONFLICT_ERROR : CCD_SEARCH_ERROR, e);
+        } catch (final CcdSearchCaseException e) {
+            log.error(CCD_SEARCH_ERROR, e);
+        } catch (CcdConflictException e) {
+            log.error(TASK_CONFLICT_ERROR, e);
         }
     }
 
@@ -88,8 +90,10 @@ public class SystemNotifyApplicantDisputeFormOverdueTask implements Runnable {
                 log.info("Dispute form for Case id {} is due on/before current date - raising notification event", caseDetails.getId());
                 ccdUpdateService.submitEvent(caseDetails, SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE, user, serviceAuth);
             }
-        } catch (final CcdManagementException | IllegalArgumentException e) {
-            log.error(e instanceof CcdManagementException ? SUBMIT_EVENT_ERROR : DESERIALIZATION_ERROR, caseDetails.getId());
+        } catch (final CcdManagementException e) {
+            log.error(SUBMIT_EVENT_ERROR, caseDetails.getId());
+        } catch (final IllegalArgumentException e) {
+            log.error(DESERIALIZATION_ERROR, caseDetails.getId());
         }
     }
 }

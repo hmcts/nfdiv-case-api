@@ -166,7 +166,8 @@ public class SystemNotifyApplicantDisputeFormOverdueTaskTest {
         underTest.run();
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService, never()).submitEvent(caseDetails2, SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService, never())
+            .submitEvent(caseDetails2, SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
