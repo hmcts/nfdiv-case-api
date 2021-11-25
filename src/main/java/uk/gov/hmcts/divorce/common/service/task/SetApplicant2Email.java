@@ -5,9 +5,11 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
+import static java.util.Objects.nonNull;
 import static org.apache.groovy.parser.antlr4.util.StringUtils.isEmpty;
 
 @Component
@@ -18,13 +20,16 @@ public class SetApplicant2Email implements CaseTask {
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
 
         final CaseData caseData = caseDetails.getData();
-        final String applicant2InviteEmailAddress = caseData.getCaseInvite().getApplicant2InviteEmailAddress();
-        final Applicant applicant2 = caseData.getApplicant2();
+        final CaseInvite caseInvite = caseData.getCaseInvite();
 
-        if (!isEmpty(applicant2InviteEmailAddress) && isEmpty(applicant2.getEmail())) {
-            applicant2.setEmail(applicant2InviteEmailAddress);
+        if (nonNull(caseInvite)) {
+            final String applicant2InviteEmailAddress = caseInvite.getApplicant2InviteEmailAddress();
+            final Applicant applicant2 = caseData.getApplicant2();
+
+            if (!isEmpty(applicant2InviteEmailAddress) && isEmpty(applicant2.getEmail())) {
+                applicant2.setEmail(applicant2InviteEmailAddress);
+            }
         }
-
         return caseDetails;
     }
 }

@@ -59,7 +59,7 @@ public class Applicant2ApprovedNotification {
         log.info("Sending applicant 2 approved notification to applicant 2 for case : {}", id);
 
         notificationService.sendEmail(
-            caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
+            caseData.getApplicant2EmailAddress(),
             JOINT_APPLICANT2_APPLICANT2_APPROVED,
             applicant2TemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
             caseData.getApplicant2().getLanguagePreference()

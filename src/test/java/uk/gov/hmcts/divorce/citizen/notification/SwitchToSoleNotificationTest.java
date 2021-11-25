@@ -87,6 +87,8 @@ class SwitchToSoleNotificationTest {
     @Test
     void shouldSendApplicant1SwitchToSoleEmailToApplicant2WithDivorceContent() {
         CaseData data = validApplicant2CaseData();
+        data.getApplicant2().setEmail(null);
+
         final Map<String, String> templateVars = Map.of(IS_DIVORCE, YES, IS_DISSOLUTION, NO);
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(templateVars);
@@ -109,6 +111,8 @@ class SwitchToSoleNotificationTest {
     void shouldSendApplicant1SwitchToSoleEmailToApplicant2WithDissolutionContent() {
         CaseData data = validApplicant2CaseData();
         data.setDivorceOrDissolution(DISSOLUTION);
+        data.getApplicant2().setEmail(null);
+
         final Map<String, String> templateVars = Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES);
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(templateVars);
@@ -171,6 +175,8 @@ class SwitchToSoleNotificationTest {
     @Test
     void shouldSendApplicant2SwitchToSoleEmailToApplicant2WithDivorceContent() {
         CaseData data = validApplicant2CaseData();
+        data.getApplicant2().setEmail(null);
+
         final Map<String, String> templateVars = Map.of(IS_DIVORCE, YES, IS_DISSOLUTION, NO);
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
 
@@ -192,6 +198,8 @@ class SwitchToSoleNotificationTest {
     void shouldSendApplicant2SwitchToSoleEmailToApplicant2WithDissolutionContent() {
         CaseData data = validApplicant2CaseData();
         data.setDivorceOrDissolution(DISSOLUTION);
+        data.getApplicant2().setEmail(null);
+
         final Map<String, String> templateVars = Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES);
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
 

@@ -35,7 +35,7 @@ public class Applicant2NotBrokenNotification {
         log.info("Sending applicant 2 reject notification to applicant 1 for case : {}", id);
 
         notificationService.sendEmail(
-            caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
+            caseData.getApplicant2EmailAddress(),
             JOINT_APPLICANT2_APPLICANT2_REJECTED,
             commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
             caseData.getApplicant1().getLanguagePreference()

@@ -114,4 +114,23 @@ class SetApplicant2EmailTest {
 
         assertThat(result.getData().getApplicant2().getEmail()).isEqualTo(email);
     }
+
+    @Test
+    void shouldNotSetApplicant2EmailIfCaseInviteIsNull() {
+
+        final String email = "app2@email";
+
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder()
+                .email("")
+                .build())
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final CaseDetails<CaseData, State> result = setApplicant2Email.apply(caseDetails);
+
+        assertThat(result.getData().getApplicant2().getEmail()).isEqualTo("");
+    }
 }

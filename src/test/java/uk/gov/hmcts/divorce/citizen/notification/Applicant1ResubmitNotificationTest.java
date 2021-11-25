@@ -56,6 +56,7 @@ class Applicant1ResubmitNotificationTest {
     void shouldSendEmailToApplicant1WithDivorceContent() {
         CaseData data = validApplicant2CaseData();
         data.setDueDate(LOCAL_DATE);
+        data.getApplicant2().setEmail(null);
         final Map<String, String> templateVars = new HashMap<>();
         templateVars.putAll(getConfigTemplateVars());
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
@@ -79,6 +80,7 @@ class Applicant1ResubmitNotificationTest {
         CaseData data = validApplicant2CaseData();
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         data.setDueDate(LOCAL_DATE);
+        data.getApplicant2().setEmail(null);
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
@@ -97,6 +99,7 @@ class Applicant1ResubmitNotificationTest {
     void shouldSendEmailToApplicant2WithDivorceContent() {
         CaseData data = validApplicant2CaseData();
         data.setDueDate(LOCAL_DATE);
+        data.getApplicant2().setEmail(null);
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
         notification.sendToApplicant2(data, 1234567890123456L);
@@ -117,6 +120,7 @@ class Applicant1ResubmitNotificationTest {
         CaseData data = validApplicant2CaseData();
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         data.setDueDate(LOCAL_DATE);
+        data.getApplicant2().setEmail(null);
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
         notification.sendToApplicant2(data, 1234567890123456L);

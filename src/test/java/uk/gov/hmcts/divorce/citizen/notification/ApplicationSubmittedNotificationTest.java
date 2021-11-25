@@ -64,6 +64,8 @@ class ApplicationSubmittedNotificationTest {
     void shouldSendEmailToApplicant2WithSubmissionResponseDate() {
         CaseData data = jointCaseDataWithOrderSummary();
         data.setDueDate(LocalDate.of(2021, 4, 21));
+        data.getApplicant2().setEmail(null);
+
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getCommonTemplateVars());
 
