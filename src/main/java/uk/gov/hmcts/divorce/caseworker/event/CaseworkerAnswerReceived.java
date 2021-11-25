@@ -14,18 +14,26 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.util.EnumSet;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.*;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.*;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingHearing;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 public class CaseworkerAnswerReceived implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String CASEWORKER_ANSWER_RECEIVED = "caseworker-answer-received";
+    public static final String CASEWORKER_ADD_ANSWER = "caseworker-add-answer";
 
 
     @Override
@@ -42,8 +50,11 @@ public class CaseworkerAnswerReceived implements CCDConfig<CaseData, State, User
 
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
-            .event(CASEWORKER_ANSWER_RECEIVED)
-            .forStates(Holding, AwaitingAos, AosOverdue, AwaitingConditionalOrder, AwaitingPronouncement)
+            .event(CASEWORKER_ADD_ANSWER)
+            .forStateTransition(
+                EnumSet.of(Holding, AwaitingAos, AosOverdue, AwaitingConditionalOrder, AwaitingPronouncement),
+                PendingHearing
+            )
             .name("Answer received")
             .description("Answer received")
             .showSummary()
