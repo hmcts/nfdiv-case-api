@@ -1,0 +1,32 @@
+{
+  "data": {
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "paymentMethod": "feePayByAccount",
+    "feeAccountNumber": "FEE0233",
+    "feeAccountReferenceNumber": "Ref1",
+    "documentsUploaded": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentDateAdded": "2021-11-25",
+          "documentType": "d11",
+          "documentLink": {
+            "document_url": "http://localhost:4200/assets/d11",
+            "document_filename": "d11.pdf",
+            "document_binary_url": "d11.pdf/binary"
+          }
+        }
+      }
+    ],
+    "uploadD11Document": {
+      "documentDateAdded": "2021-11-25",
+      "documentType": "d11",
+      "documentLink": {
+        "document_url": "http://localhost:4200/assets/d11",
+        "document_filename": "d11.pdf",
+        "document_binary_url": "d11.pdf/binary"
+      }
+    },
+    "dataVersion": 16
+  }
+}
