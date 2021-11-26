@@ -24,43 +24,33 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 @Builder
 public class Solicitor {
 
-    @CCD(
-        label = "Solicitor’s name",
-        access = {DefaultAccess.class}
-    )
+    @CCD(label = "Solicitor’s name")
     private String name;
 
-    @CCD(
-        label = "Solicitor’s reference number",
-        access = {DefaultAccess.class}
-    )
+    @CCD(label = "Solicitor’s reference number")
     private String reference;
 
     @CCD(
         label = "Solicitor’s Phone number",
-        regex = "^[0-9 +().-]{9,}$",
-        access = {DefaultAccess.class}
+        regex = "^[0-9 +().-]{9,}$"
     )
     private String phone;
 
     @CCD(
         label = "Solicitor’s Email",
-        typeOverride = Email,
-        access = {DefaultAccess.class}
+        typeOverride = Email
     )
     private String email;
 
     @CCD(
         label = "Solicitor’s firm/ DX address",
-        typeOverride = TextArea,
-        access = {DefaultAccess.class}
+        typeOverride = TextArea
     )
     private String address;
 
     @CCD(
         label = "I confirm I am willing to accept service of all correspondence and orders by email at the email address "
-            + "stated above.",
-        access = {DefaultAccess.class}
+            + "stated above."
     )
     private YesOrNo agreeToReceiveEmails;
 
