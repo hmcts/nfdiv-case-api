@@ -27,6 +27,6 @@
         "document_binary_url": "d11.pdf/binary"
       }
     },
-    "dataVersion": 16
+    "dataVersion": "${json-unit.any-number}"
   }
 }
