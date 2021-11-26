@@ -67,6 +67,7 @@ public class NoticeOfProceedingContent {
     public static final String BEEN_MARRIED_TO = "been married to";
     public static final String MARRIAGE_OR_CIVIL_PARTNER = "marriageOrCivilPartner";
     public static final String MARRIAGE = "marriage";
+    public static final String CIVIL_PARTNERSHIP = "civil partnership";
 
     private static final int HOLDING_DUE_DATE_OFFSET_DAYS = 141;
     private static final int PAPER_SERVE_OFFSET_DAYS = 28;
@@ -149,7 +150,7 @@ public class NoticeOfProceedingContent {
 
             templateContent.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP);
             templateContent.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, ENTERED_INTO_A_CIVIL_PARTNERSHIP_WITH);
-            templateContent.put(MARRIAGE_OR_CIVIL_PARTNER, CIVIL_PARTNER);
+            templateContent.put(MARRIAGE_OR_CIVIL_PARTNER, CIVIL_PARTNERSHIP);
         }
         final var ctscContactDetails = CtscContactDetails
             .builder()
