@@ -17,7 +17,6 @@ public class AosAccess implements HasAccessControl {
     @Override
     public SetMultimap<HasRole, Permission> getGrants() {
         SetMultimap<HasRole, Permission> grants = HashMultimap.create();
-        grants.putAll(SYSTEMUPDATE, Permissions.CREATE_READ_UPDATE);
         grants.putAll(CASE_WORKER, Permissions.READ);
         grants.putAll(LEGAL_ADVISOR, Permissions.READ);
         grants.putAll(CITIZEN, Permissions.READ);
