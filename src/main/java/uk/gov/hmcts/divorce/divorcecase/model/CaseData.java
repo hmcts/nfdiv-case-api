@@ -110,10 +110,10 @@ public class CaseData {
     @CCD(
         label = "Previous Service Applications",
         typeOverride = Collection,
-        typeParameterOverride = "AlternativeService",
+        typeParameterOverride = "AlternativeServiceOutcome",
         access = {CaseworkerAccessBetaOnlyAccess.class}
     )
-    private List<ListValue<AlternativeService>> alternativeServiceApplications;
+    private List<ListValue<AlternativeServiceOutcome>> alternativeServiceOutcomes;
 
     @JsonUnwrapped
     @Builder.Default
@@ -333,29 +333,31 @@ public class CaseData {
 
             alternativeService.setReceivedServiceAddedDate(LocalDate.now());
 
-            if (isEmpty(this.getAlternativeServiceApplications())) {
+            AlternativeServiceOutcome alternativeServiceOutcome = alternativeService.getOutcome();
 
-                List<ListValue<AlternativeService>> listValues = new ArrayList<>();
+            if (isEmpty(this.getAlternativeServiceOutcomes())) {
+
+                List<ListValue<AlternativeServiceOutcome>> listValues = new ArrayList<>();
 
                 var listValue = ListValue
-                    .<AlternativeService>builder()
+                    .<AlternativeServiceOutcome>builder()
                     .id("1")
-                    .value(alternativeService)
+                    .value(alternativeServiceOutcome)
                     .build();
 
                 listValues.add(listValue);
-                this.setAlternativeServiceApplications(listValues);
+                this.setAlternativeServiceOutcomes(listValues);
 
             } else {
 
                 var listValue = ListValue
-                    .<AlternativeService>builder()
-                    .value(alternativeService)
+                    .<AlternativeServiceOutcome>builder()
+                    .value(alternativeServiceOutcome)
                     .build();
 
                 int listValueIndex = 0;
-                this.getAlternativeServiceApplications().add(0, listValue);
-                for (ListValue<AlternativeService> asListValue : this.getAlternativeServiceApplications()) {
+                this.getAlternativeServiceOutcomes().add(0, listValue);
+                for (ListValue<AlternativeServiceOutcome> asListValue : this.getAlternativeServiceOutcomes()) {
                     asListValue.setId(String.valueOf(listValueIndex++));
                 }
             }
@@ -363,5 +365,4 @@ public class CaseData {
             this.setAlternativeService(null);
         }
     }
-
 }
