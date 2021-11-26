@@ -29,7 +29,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildPaymentTab(configBuilder);
         buildLanguageTab(configBuilder);
         buildDocumentsTab(configBuilder);
-        buildConfidentialTab(configBuilder);
+        buildConfidentialApplicantTab(configBuilder);
+        buildConfidentialRespondentTab(configBuilder);
         buildMarriageCertificateTab(configBuilder);
         buildNotesTab(configBuilder);
         buildGeneralReferralTab(configBuilder);
@@ -90,14 +91,24 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("coCertificateOfEntitlementDocument");
     }
 
-    private void buildConfidentialTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        configBuilder.tab("Confidential", "Confidential Address")
+    private void buildConfidentialApplicantTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("ConfidentialApplicant", "Confidential Address")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR)
-            .showCondition("applicant1KeepContactDetailsConfidential=\"keep\"")
+            .showCondition("applicant1KeepContactDetailsConfidential=\"Yes\"")
             .field("applicant1CorrespondenceAddress")
             .field("applicant1PhoneNumber")
             .field("applicant1Email")
             .field("applicant1HomeAddress");
+    }
+
+    private void buildConfidentialRespondentTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("ConfidentialRespondent", "Confidential Address")
+            .forRoles(CASE_WORKER, LEGAL_ADVISOR)
+            .showCondition("applicant2KeepContactDetailsConfidential=\"Yes\"")
+            .field("applicant2CorrespondenceAddress")
+            .field("applicant2PhoneNumber")
+            .field("applicant2Email")
+            .field("applicant2HomeAddress");
     }
 
     private void buildMarriageCertificateTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -221,4 +232,6 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("coJudgeCostsOrderAdditionalInfo")
             .field("coCertificateOfEntitlementDocument");
     }
+
+
 }
