@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.collections4.map.HashedMap;
@@ -9,8 +10,15 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
+import java.lang.reflect.Field;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -137,6 +145,13 @@ public class RetiredFields {
     private Set<FinancialOrderFor> applicant2FinancialOrderFor;
 
     @CCD(
+        label = "Previous Service Applications",
+        typeOverride = Collection,
+        typeParameterOverride = "AlternativeService"
+    )
+    private List<ListValue<AlternativeService>> alternativeServiceApplications;
+
+    @CCD(
         label = "Retired respondent wants to dispute the application"
     )
     private YesOrNo disputeApplication;
@@ -193,6 +208,8 @@ public class RetiredFields {
             data -> data.put("applicant1PrayerHasBeenGivenCheckbox", transformApplicant1PrayerHasBeenGivenField(data)));
         init.put("coIsEverythingInPetitionTrue",
             data -> data.put("coIsEverythingInApplicationTrue", data.get("coIsEverythingInPetitionTrue")));
+        init.put("alternativeServiceApplications",
+            data -> data.put("alternativeServiceOutcomes", transformAlternativeServiceApplications(data)));
         init.put("disputeApplication",
             data -> data.put("howToRespondApplication", transformDisputeApplication(data)));
         init.put("generalReferralJudgeDetails",
@@ -237,6 +254,72 @@ public class RetiredFields {
         return YES.getValue().equalsIgnoreCase(value)
             ? Set.of(I_CONFIRM)
             : emptySet();
+    }
+
+    @SuppressWarnings({"unchecked", "PMD"})
+    public static List<ListValue<AlternativeServiceOutcome>> transformAlternativeServiceApplications(Map<String, Object> data) {
+
+        ArrayList<LinkedHashMap<String,Object>> oldListValues =
+            (ArrayList<LinkedHashMap<String,Object>>) data.get("alternativeServiceApplications");
+
+        List<ListValue<AlternativeServiceOutcome>> newListValues = new ArrayList<>();
+
+        for (LinkedHashMap<String, Object> obj : oldListValues) {
+
+            LinkedHashMap<String, Object> entry = (LinkedHashMap<String, Object>) obj.get("value");
+
+            AlternativeServiceOutcome alternativeServiceOutcome = AlternativeServiceOutcome.builder()
+                .alternativeServiceType(
+                    getEnumValueFromJsonProperty(AlternativeServiceType.class, (String) entry.get("alternativeServiceType")))
+                .serviceApplicationRefusalReason((String) entry.get("serviceApplicationRefusalReason"))
+                .localCourtName((String) entry.get("localCourtName"))
+                .localCourtEmail((String) entry.get("localCourtEmail"))
+                .reasonFailureToServeByBailiff((String) entry.get("reasonFailureToServeByBailiff"))
+                .paymentMethod(
+                    getEnumValueFromJsonProperty(ServicePaymentMethod.class, (String) entry.get("paymentMethod")))
+                .serviceApplicationGranted(
+                    getEnumValueFromJsonProperty(YesOrNo.class, (String) entry.get("serviceApplicationGranted")))
+                .successfulServedByBailiff(
+                    getEnumValueFromJsonProperty(YesOrNo.class, (String) entry.get("successfulServedByBailiff")))
+                .receivedServiceApplicationDate(getFormattedLocalDate((String) entry.get("receivedServiceApplicationDate")))
+                .receivedServiceAddedDate(getFormattedLocalDate((String) entry.get("receivedServiceAddedDate")))
+                .serviceApplicationDecisionDate(getFormattedLocalDate((String) entry.get("serviceApplicationDecisionDate")))
+                .deemedServiceDate(getFormattedLocalDate((String) entry.get("deemedServiceDate")))
+                .certificateOfServiceDate(getFormattedLocalDate((String) entry.get("certificateOfServiceDate")))
+                .build();
+
+            var listValue = ListValue
+                .<AlternativeServiceOutcome>builder()
+                .id((String) obj.get("id"))
+                .value(alternativeServiceOutcome)
+                .build();
+            newListValues.add(listValue);
+        }
+        return newListValues;
+    }
+
+    public static LocalDate getFormattedLocalDate(String dateToParse) {
+
+        if (null != dateToParse) {
+            DateTimeFormatter localDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.UK);
+            try {
+                return LocalDate.parse((CharSequence) dateToParse, localDateFormatter);
+            } catch (DateTimeParseException ex) {
+                // If the date stored in CCD fails validation, just store a null date in the migrated data
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    public static <T extends Enum<T>> T getEnumValueFromJsonProperty(Class<T> enumClass, String jsonPropertyValue) {
+        for (Field field : enumClass.getFields()) {
+            if (field.getAnnotation(JsonProperty.class).value().equals(jsonPropertyValue)) {
+                return Enum.valueOf(enumClass, field.getName());
+            }
+        }
+        return null;
     }
 
     private static String transformDisputeApplication(Map<String, Object> data) {
