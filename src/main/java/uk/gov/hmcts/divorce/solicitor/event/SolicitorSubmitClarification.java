@@ -27,7 +27,7 @@ public class SolicitorSubmitClarification implements CCDConfig<CaseData, State, 
         new PageBuilder(configBuilder
             .event(SOLICITOR_SUBMIT_CLARIFICATION)
             .forStateTransition(AwaitingClarification, ClarificationSubmitted)
-            .name("Submit clarification for conditional order")
+            .name("Submit clarification for CO")
             .description("Submit clarification for conditional order")
             .showSummary()
             .explicitGrants()
