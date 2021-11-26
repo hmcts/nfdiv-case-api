@@ -27,9 +27,15 @@ public class SetApplicant2Email implements CaseTask {
             final Applicant applicant2 = caseData.getApplicant2();
 
             if (!isEmpty(applicant2InviteEmailAddress) && isEmpty(applicant2.getEmail())) {
+                log.info("Setting applicant2 email to the same as applicant2 invite email for Case ID: {}", caseDetails.getId());
                 applicant2.setEmail(applicant2InviteEmailAddress);
+            } else {
+                log.info("Not setting applicant2 email, it is already set or invite email is not set for Case ID: {}", caseDetails.getId());
             }
+        } else {
+            log.info("Not setting applicant2 email, there is no case invite for Case ID: {}", caseDetails.getId());
         }
+
         return caseDetails;
     }
 }
