@@ -68,7 +68,7 @@ public class CaseworkerAnswerReceivedTest {
             )
             .documentType(DocumentType.D11)
             .build();
-        caseData.setUploadD11Document(d11);
+        caseData.setD11Document(d11);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);

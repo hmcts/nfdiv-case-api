@@ -164,7 +164,7 @@ public class CaseData {
         label = "Upload D11 Document",
         access = {CaseworkerAccessBetaOnlyAccess.class}
     )
-    private DivorceDocument uploadD11Document;
+    private DivorceDocument d11Document;
 
     @CCD(
         label = "Confidential documents uploaded",

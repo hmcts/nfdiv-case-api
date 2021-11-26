@@ -25,7 +25,7 @@ public class AnswerReceivedUploadDocumentTest {
     @Test
     public void shouldNotReturnErrorsIfDocumentUploadedIsD11Type() {
         final CaseData caseData = caseData();
-        caseData.setUploadD11Document(
+        caseData.setD11Document(
             DivorceDocument.builder()
                 .documentType(DocumentType.D11)
                 .build()
@@ -44,7 +44,7 @@ public class AnswerReceivedUploadDocumentTest {
     @Test
     public void shouldReturnErrorsIfDocumentUploadedIsNotD11Type() {
         final CaseData caseData = caseData();
-        caseData.setUploadD11Document(
+        caseData.setD11Document(
             DivorceDocument.builder()
                 .documentType(DocumentType.D9H)
                 .build()
@@ -58,6 +58,6 @@ public class AnswerReceivedUploadDocumentTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
         assertThat(response.getErrors().size()).isEqualTo(1);
-        assertThat(response.getErrors()).contains("The D11 document that was emailed to you needs to be uploaded");
+        assertThat(response.getErrors()).contains("Please upload a D11 document type");
     }
 }

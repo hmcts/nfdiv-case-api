@@ -16,7 +16,7 @@ public class AnswerReceivedUploadDocument implements CcdPageConfiguration {
     public void addTo(final PageBuilder pageBuilder) {
         pageBuilder.page("answerReceivedUploadDocument", this::midEvent)
             .pageLabel("Upload document")
-            .mandatory(CaseData::getUploadD11Document)
+            .mandatory(CaseData::getD11Document)
             .done();
     }
 
@@ -25,11 +25,11 @@ public class AnswerReceivedUploadDocument implements CcdPageConfiguration {
         CaseDetails<CaseData, State> detailsBefore
     ) {
         CaseData caseData = details.getData();
-        DocumentType documentType = caseData.getUploadD11Document().getDocumentType();
+        DocumentType documentType = caseData.getD11Document().getDocumentType();
 
         if (!DocumentType.D11.equals(documentType)) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(singletonList("The D11 document that was emailed to you needs to be uploaded"))
+                .errors(singletonList("Please upload a D11 document type"))
                 .build();
         }
 
