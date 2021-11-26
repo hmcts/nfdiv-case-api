@@ -76,6 +76,7 @@ public class CitizenApplicant1ResubmitIT {
         var marriageDetails = data.getApplication().getMarriageDetails();
         marriageDetails.setDate(LocalDate.of(2020, 1, 1));
         data.setNote("Marriage date incorrect, correct date: 1/1/2020");
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
