@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -108,4 +109,24 @@ public class AlternativeService {
     @CCD(access = {CaseworkerAccessBetaOnlyAccess.class})
     private Bailiff bailiff = new Bailiff();
 
+    @SuppressWarnings("PMD")
+    @JsonIgnore
+    public AlternativeServiceOutcome getOutcome() {
+        return AlternativeServiceOutcome.builder()
+            .alternativeServiceType(alternativeServiceType)
+            .receivedServiceApplicationDate(receivedServiceApplicationDate)
+            .receivedServiceAddedDate(receivedServiceAddedDate)
+            .paymentMethod(paymentMethod)
+            .serviceApplicationGranted(serviceApplicationGranted)
+            .serviceApplicationRefusalReason(serviceApplicationRefusalReason)
+            .serviceApplicationDecisionDate(serviceApplicationDecisionDate)
+            .deemedServiceDate(deemedServiceDate)
+            .localCourtName(bailiff.getLocalCourtName())
+            .localCourtEmail(bailiff.getLocalCourtEmail())
+            .certificateOfServiceDocument(bailiff.getCertificateOfServiceDocument())
+            .certificateOfServiceDate(bailiff.getCertificateOfServiceDate())
+            .successfulServedByBailiff(bailiff.getSuccessfulServedByBailiff())
+            .reasonFailureToServeByBailiff(bailiff.getReasonFailureToServeByBailiff())
+            .build();
+    }
 }
