@@ -277,7 +277,7 @@ public class Application {
     private YesOrNo documentUploadComplete;
 
     @CCD(
-        label = "Link to online petition",
+        label = "Link to online application",
         access = {DefaultAccess.class}
     )
     private Document miniApplicationLink;
