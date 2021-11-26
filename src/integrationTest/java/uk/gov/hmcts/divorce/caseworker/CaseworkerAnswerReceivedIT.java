@@ -71,7 +71,7 @@ public class CaseworkerAnswerReceivedIT {
     }
 
     @Test
-    public void shouldChangeCaseStateToHoldingAndSetDueDateIfSuccessfullyServed() throws Exception {
+    public void shouldAddD11DocumentToDocumentsUploaded() throws Exception {
 
         final DivorceDocument d11 = DivorceDocument.builder()
             .documentDateAdded(LocalDate.now())

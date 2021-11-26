@@ -8,7 +8,7 @@
       {
         "id": "${json-unit.any-string}",
         "value": {
-          "documentDateAdded": "2021-11-25",
+          "documentDateAdded": "${json-unit.any-string}",
           "documentType": "d11",
           "documentLink": {
             "document_url": "http://localhost:4200/assets/d11",
@@ -19,7 +19,7 @@
       }
     ],
     "d11Document": {
-      "documentDateAdded": "2021-11-25",
+      "documentDateAdded": "${json-unit.any-string}",
       "documentType": "d11",
       "documentLink": {
         "document_url": "http://localhost:4200/assets/d11",
