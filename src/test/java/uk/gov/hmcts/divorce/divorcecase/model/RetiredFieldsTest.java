@@ -1,9 +1,17 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import org.junit.jupiter.api.Test;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import static java.util.Collections.emptyList;
@@ -36,6 +44,7 @@ class RetiredFieldsTest {
         data.put("coDocumentsUploaded", Collections.emptyList());
         data.put("coIsEverythingInPetitionTrue", "YES");
         data.put("coIsEverythingInApplicationTrue", "YES");
+        data.put("alternativeServiceApplications", new ArrayList<LinkedHashMap<String, Object>>());
         data.put("disputeApplication", "YES");
 
         final var result = RetiredFields.migrate(data);
@@ -65,7 +74,9 @@ class RetiredFieldsTest {
             entry("coDocumentsUploaded", emptyList()),
             entry("coIsEverythingInPetitionTrue", null),
             entry("coIsEverythingInApplicationTrue", "YES"),
-            entry("howToRespondApplication", "disputeDivorce")
+            entry("howToRespondApplication", "disputeDivorce"),
+            entry("coIsEverythingInApplicationTrue", "YES"),
+            entry("alternativeServiceApplications", null)
 
         );
     }
@@ -104,6 +115,57 @@ class RetiredFieldsTest {
             entry("howToRespondApplication", "withoutDisputeDivorce")
         );
     }
+
+    @Test
+    void shouldReturnValidLocalDateIfFormatCorrect() {
+        DateTimeFormatter localDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.UK);
+        LocalDate expectedDate = LocalDate.now();
+        LocalDate localDate = RetiredFields.getFormattedLocalDate(expectedDate.format(localDateFormatter));
+        assertThat(localDate).isEqualTo(expectedDate);
+    }
+
+    @Test
+    void shouldReturnNullLocalDateIfFormatInvalid() {
+        DateTimeFormatter localDateFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd", Locale.UK);
+        LocalDate expectedDate = LocalDate.now();
+        LocalDate localDate = RetiredFields.getFormattedLocalDate(expectedDate.format(localDateFormatter));
+        assertThat(localDate).isNull();
+    }
+
+    @Test
+    void shouldReturnNullLocalDateIfNullStringSent() {
+        LocalDate localDate = RetiredFields.getFormattedLocalDate(null);
+        assertThat(localDate).isNull();
+    }
+
+    @Test
+    void shouldReturnValidEnumForValidEnumJsonProperty() {
+        AlternativeServiceType expectedAlternativeServiceType = AlternativeServiceType.BAILIFF;
+        AlternativeServiceType alternativeServiceType =
+            RetiredFields.getEnumValueFromJsonProperty(AlternativeServiceType.class, "bailiff");
+        assertThat(alternativeServiceType).isEqualTo(expectedAlternativeServiceType);
+
+        ServicePaymentMethod expectedServicePaymentMethod = ServicePaymentMethod.FEE_PAY_BY_HWF;
+        ServicePaymentMethod servicePaymentMethod =
+            RetiredFields.getEnumValueFromJsonProperty(ServicePaymentMethod.class, "feePayByHelp");
+        assertThat(servicePaymentMethod).isEqualTo(expectedServicePaymentMethod);
+    }
+
+    @Test
+    void shouldReturnNullForInvalidEnumJsonProperty() {
+        AlternativeServiceType alternativeServiceType =
+            RetiredFields.getEnumValueFromJsonProperty(AlternativeServiceType.class, "xxxxx");
+        assertThat(alternativeServiceType).isNull();
+    }
+
+    @Test
+    void shouldReturnNullForNullEnumJsonProperty() {
+        AlternativeServiceType alternativeServiceType =
+            RetiredFields.getEnumValueFromJsonProperty(AlternativeServiceType.class, null);
+        assertThat(alternativeServiceType).isNull();
+    }
+
+
 
     @Test
     void shouldMigrateGeneralReferralJudgeAndLegalAdvisorDetailsWhenBothValuesArePresent() {
@@ -156,6 +218,30 @@ class RetiredFieldsTest {
         assertThat(data).doesNotContain(
             entry("generalReferralJudgeOrLegalAdvisorDetails", null)
         );
+    }
+
+    @Test
+    void shouldMigrateServiceApplications() {
+
+        final Map<String,Object> alternativeServiceObject = new LinkedHashMap<>();
+        alternativeServiceObject.put("alternativeServiceType", "deemed");
+
+        final HashMap<String,Object> listValueMap = new LinkedHashMap<>();
+        listValueMap.put("id", "1");
+        listValueMap.put("value", alternativeServiceObject);
+
+        final ArrayList<LinkedHashMap<String,Object>> listValues = new ArrayList<>();
+        listValues.add((LinkedHashMap<String, Object>) listValueMap);
+
+        final var data = new HashMap<String, Object>();
+        data.put("alternativeServiceApplications", listValues);
+
+        List<ListValue<AlternativeServiceOutcome>> alternativeServiceOutcomes =
+            RetiredFields.transformAlternativeServiceApplications(data);
+
+        assertThat(alternativeServiceOutcomes.size()).isEqualTo(1);
+        assertThat(alternativeServiceOutcomes.get(0).getValue().getAlternativeServiceType()).isEqualTo(AlternativeServiceType.DEEMED);
+
     }
 
 }

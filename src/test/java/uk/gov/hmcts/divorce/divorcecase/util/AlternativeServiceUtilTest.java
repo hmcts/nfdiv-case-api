@@ -22,8 +22,8 @@ class AlternativeServiceUtilTest {
 
         caseData.archiveAlternativeServiceApplicationOnCompletion();
 
-        assertThat(caseData.getAlternativeServiceApplications()).isNotNull();
-        assertThat(caseData.getAlternativeServiceApplications().size()).isEqualTo(1);
+        assertThat(caseData.getAlternativeServiceOutcomes()).isNotNull();
+        assertThat(caseData.getAlternativeServiceOutcomes().size()).isEqualTo(1);
         assertThat(caseData.getAlternativeService()).isNull();
     }
 
@@ -43,12 +43,12 @@ class AlternativeServiceUtilTest {
         caseData.getAlternativeService().getBailiff().setSuccessfulServedByBailiff(YesOrNo.YES);
         caseData.archiveAlternativeServiceApplicationOnCompletion();
 
-        assertThat(caseData.getAlternativeServiceApplications().size()).isEqualTo(3);
-        assertThat(caseData.getAlternativeServiceApplications().get(0).getValue().getAlternativeServiceType()).isEqualTo(BAILIFF);
-        assertThat(caseData.getAlternativeServiceApplications().get(0).getValue().getBailiff().getSuccessfulServedByBailiff())
+        assertThat(caseData.getAlternativeServiceOutcomes().size()).isEqualTo(3);
+        assertThat(caseData.getAlternativeServiceOutcomes().get(0).getValue().getAlternativeServiceType()).isEqualTo(BAILIFF);
+        assertThat(caseData.getAlternativeServiceOutcomes().get(0).getValue().getSuccessfulServedByBailiff())
             .isEqualTo(YesOrNo.YES);
-        assertThat(caseData.getAlternativeServiceApplications().get(1).getValue().getAlternativeServiceType()).isEqualTo(DISPENSED);
-        assertThat(caseData.getAlternativeServiceApplications().get(2).getValue().getAlternativeServiceType()).isEqualTo(DEEMED);
+        assertThat(caseData.getAlternativeServiceOutcomes().get(1).getValue().getAlternativeServiceType()).isEqualTo(DISPENSED);
+        assertThat(caseData.getAlternativeServiceOutcomes().get(2).getValue().getAlternativeServiceType()).isEqualTo(DEEMED);
         assertThat(caseData.getAlternativeService()).isNull();
     }
 
@@ -57,7 +57,7 @@ class AlternativeServiceUtilTest {
         final CaseData caseData = caseData();
         caseData.setAlternativeService(null);
         caseData.archiveAlternativeServiceApplicationOnCompletion();
-        assertThat(caseData.getAlternativeServiceApplications()).isNull();
+        assertThat(caseData.getAlternativeServiceOutcomes()).isNull();
     }
 
 }
