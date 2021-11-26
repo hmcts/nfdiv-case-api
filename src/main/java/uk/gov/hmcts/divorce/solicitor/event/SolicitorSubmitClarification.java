@@ -45,7 +45,6 @@ public class SolicitorSubmitClarification implements CCDConfig<CaseData, State, 
                 .mandatory(ConditionalOrder::getClarificationResponse)
                 .mandatory(ConditionalOrder::getClarificationUploadDocuments)
             .done();
-        ;
     }
 
 }
