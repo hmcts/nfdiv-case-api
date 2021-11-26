@@ -157,6 +157,13 @@ public enum State {
     AwaitingServicePayment("AwaitingServicePayment"),
 
     @CCD(
+        name = "Clarification response submitted",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    ClarificationSubmitted("ClarificationSubmitted"),
+
+    @CCD(
         name = "Conditional order drafted",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
