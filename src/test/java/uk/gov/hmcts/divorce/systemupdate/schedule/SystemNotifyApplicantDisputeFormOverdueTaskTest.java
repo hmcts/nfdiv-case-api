@@ -88,10 +88,7 @@ public class SystemNotifyApplicantDisputeFormOverdueTaskTest {
     @Test
     void shouldSubmitNotificationEventIfNotAlreadyDone() {
         final CaseData caseData = CaseData.builder()
-            .application(Application.builder()
-                .applicantNotifiedDisputeFormOverdue(NO)
-                .issueDate(LocalDate.now().minusDays(37))
-                .build())
+            .application(Application.builder().applicantNotifiedDisputeFormOverdue(NO).build())
             .build();
         when(mapper.convertValue(anyMap(), eq(CaseData.class))).thenReturn(caseData);
         final CaseDetails case1 = CaseDetails.builder().data(new HashMap<>()).id(1L).build();
@@ -106,27 +103,7 @@ public class SystemNotifyApplicantDisputeFormOverdueTaskTest {
     @Test
     void shouldNotSubmitNotificationEventIfAlreadyDone() {
         final CaseData caseData = CaseData.builder()
-            .application(Application.builder()
-                .applicantNotifiedDisputeFormOverdue(YES)
-                .issueDate(LocalDate.now().minusDays(37))
-                .build())
-            .build();
-        when(mapper.convertValue(anyMap(), eq(CaseData.class))).thenReturn(caseData);
-        when(ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, SERVICE_AUTHORIZATION))
-            .thenReturn(List.of(CaseDetails.builder().data(new HashMap<>()).id(1L).build()));
-
-        underTest.run();
-
-        verifyNoInteractions(ccdUpdateService);
-    }
-
-    @Test
-    void shouldNotSubmitNotificationEventBefore37Days() {
-        final CaseData caseData = CaseData.builder()
-            .application(Application.builder()
-                .applicantNotifiedDisputeFormOverdue(NO)
-                .issueDate(LocalDate.now().minusDays(20))
-                .build())
+            .application(Application.builder().applicantNotifiedDisputeFormOverdue(YES).build())
             .build();
         when(mapper.convertValue(anyMap(), eq(CaseData.class))).thenReturn(caseData);
         when(ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, SERVICE_AUTHORIZATION))
@@ -150,10 +127,7 @@ public class SystemNotifyApplicantDisputeFormOverdueTaskTest {
     @Test
     void shouldStopProcessingIfThereIsConflictDuringSubmission() {
         final CaseData caseData = CaseData.builder()
-            .application(Application.builder()
-                .applicantNotifiedDisputeFormOverdue(NO)
-                .issueDate(LocalDate.now().minusDays(37))
-                .build())
+            .application(Application.builder().applicantNotifiedDisputeFormOverdue(NO).build())
             .build();
         when(mapper.convertValue(anyMap(), eq(CaseData.class))).thenReturn(caseData);
         CaseDetails caseDetails1 = CaseDetails.builder().data(new HashMap<>()).id(1L).build();
@@ -173,10 +147,7 @@ public class SystemNotifyApplicantDisputeFormOverdueTaskTest {
     @Test
     void shouldContinueToNextCaseIfExceptionIsThrownWhileProcessingPreviousCase() {
         final CaseData caseData = CaseData.builder()
-            .application(Application.builder()
-                .applicantNotifiedDisputeFormOverdue(NO)
-                .issueDate(LocalDate.now().minusDays(37))
-                .build())
+            .application(Application.builder().applicantNotifiedDisputeFormOverdue(NO).build())
             .build();
         when(mapper.convertValue(anyMap(), eq(CaseData.class))).thenReturn(caseData);
         CaseDetails caseDetails1 = CaseDetails.builder().data(new HashMap<>()).id(1L).build();
