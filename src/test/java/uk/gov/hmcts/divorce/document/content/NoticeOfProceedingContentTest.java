@@ -23,6 +23,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.BEEN_MARRIED_TO;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.CIVIL_PARTNER;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.CIVIL_PARTNERSHIP_EMAIL;
@@ -41,6 +43,7 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DI
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_END_CIVIL_PARTNERSHIP_PROCESS;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_PAPERS;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DIVORCE_PROCESS;
@@ -50,6 +53,9 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DU
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.ENDING_A_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.ENDING_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.END_A_CIVIL_PARTNERSHIP_SERVICE;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.ENTERED_INTO_A_CIVIL_PARTNERSHIP_WITH;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.MARRIAGE;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.MARRIAGE_OR_CIVIL_PARTNER;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.PAPERS_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP;
@@ -119,6 +125,9 @@ public class NoticeOfProceedingContentTest {
         expectedEntries.put(DIVORCE_OR_END_A_CIVIL_PARTNERSHIP, DIVORCE);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PAPERS, DIVORCE_PAPERS);
         expectedEntries.put(SERVE_PAPERS_BEFORE_DATE, "16 July 2021");
+        expectedEntries.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, DIVORCE);
+        expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO);
+        expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
         expectedEntries.put("ctscContactDetails", ctscContactDetails);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID);
@@ -169,6 +178,9 @@ public class NoticeOfProceedingContentTest {
         expectedEntries.put(DIVORCE_OR_END_A_CIVIL_PARTNERSHIP, ENDING_A_CIVIL_PARTNERSHIP);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PAPERS, PAPERS_TO_END_YOUR_CIVIL_PARTNERSHIP);
         expectedEntries.put(SERVE_PAPERS_BEFORE_DATE, "16 July 2021");
+        expectedEntries.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP);
+        expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, ENTERED_INTO_A_CIVIL_PARTNERSHIP_WITH);
+        expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, CIVIL_PARTNER);
         expectedEntries.put("ctscContactDetails", ctscContactDetails);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(caseData, TEST_CASE_ID);

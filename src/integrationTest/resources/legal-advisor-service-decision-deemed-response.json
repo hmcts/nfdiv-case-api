@@ -1,7 +1,7 @@
 {
   "data": {
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
-    "alternativeServiceApplications": [
+    "alternativeServiceOutcomes": [
       {
         "id": "1",
         "value": {
@@ -10,7 +10,8 @@
           "receivedServiceAddedDate": "${json-unit.any-string}",
           "serviceApplicationGranted": "Yes",
           "serviceApplicationDecisionDate": "${json-unit.any-string}",
-          "deemedServiceDate": "${json-unit.any-string}"
+          "deemedServiceDate": "${json-unit.any-string}",
+          "serviceApplicationOutcomeLabel":"${json-unit.any-string}"
         }
       }],
     "documentsGenerated": [
