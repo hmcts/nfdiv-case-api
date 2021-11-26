@@ -61,6 +61,12 @@ public class NoticeOfProceedingContent {
     public static final String DIVORCE_PAPERS = "divorce papers";
     public static final String PAPERS_TO_END_YOUR_CIVIL_PARTNERSHIP = "papers to end your civil partnership";
     public static final String SERVE_PAPERS_BEFORE_DATE = "servePapersBeforeDate";
+    public static final String DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP = "divorceOrEndYourCivilPartnership";
+    public static final String BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP = "beenMarriedOrEnteredIntoCivilPartnership";
+    public static final String ENTERED_INTO_A_CIVIL_PARTNERSHIP_WITH = "entered into a civil partnership with";
+    public static final String BEEN_MARRIED_TO = "been married to";
+    public static final String MARRIAGE_OR_CIVIL_PARTNER = "marriageOrCivilPartner";
+    public static final String MARRIAGE = "marriage";
 
     private static final int HOLDING_DUE_DATE_OFFSET_DAYS = 141;
     private static final int PAPER_SERVE_OFFSET_DAYS = 28;
@@ -121,7 +127,9 @@ public class NoticeOfProceedingContent {
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE, DIVORCE_SERVICE);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE_HEADER, THE_DIVORCE_SERVICE);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PAPERS, DIVORCE_PAPERS);
-
+            templateContent.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, DIVORCE);
+            templateContent.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO);
+            templateContent.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
         } else {
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, PROCEEDINGS_TO_END_YOUR_CIVIL_PARTNERSHIP);
@@ -138,6 +146,10 @@ public class NoticeOfProceedingContent {
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE, END_A_CIVIL_PARTNERSHIP_SERVICE);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE_HEADER, END_A_CIVIL_PARTNERSHIP_SERVICE);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PAPERS, PAPERS_TO_END_YOUR_CIVIL_PARTNERSHIP);
+
+            templateContent.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP);
+            templateContent.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, ENTERED_INTO_A_CIVIL_PARTNERSHIP_WITH);
+            templateContent.put(MARRIAGE_OR_CIVIL_PARTNER, CIVIL_PARTNER);
         }
         final var ctscContactDetails = CtscContactDetails
             .builder()
