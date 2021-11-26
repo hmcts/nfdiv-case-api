@@ -24,7 +24,7 @@ public class CaseworkerAccessBetaOnlyAccess implements HasAccessControl {
         grants.putAll(LEGAL_ADVISOR, Permissions.READ);
 
         grants.putAll(CASE_WORKER, Permissions.CREATE_READ_UPDATE);
-        grants.putAll(SYSTEMUPDATE, Permissions.CREATE_READ_UPDATE);
+        grants.putAll(SYSTEMUPDATE, Permissions.CREATE_READ_UPDATE_DELETE);
         return grants;
     }
 }

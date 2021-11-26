@@ -18,7 +18,6 @@ public class Applicant2Access implements HasAccessControl {
     @Override
     public SetMultimap<HasRole, Permission> getGrants() {
         SetMultimap<HasRole, Permission> grants = HashMultimap.create();
-        grants.putAll(SYSTEMUPDATE, Permissions.READ);
         grants.putAll(CASE_WORKER, Permissions.READ);
         grants.putAll(LEGAL_ADVISOR, Permissions.READ);
         grants.putAll(CITIZEN, Permissions.READ);

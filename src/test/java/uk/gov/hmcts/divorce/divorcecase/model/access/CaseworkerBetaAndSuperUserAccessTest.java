@@ -23,7 +23,7 @@ class CaseworkerBetaAndSuperUserAccessTest {
         final SetMultimap<HasRole, Permission> grants = new CaseworkerBetaAndSuperUserAccess().getGrants();
 
         assertThat(grants)
-            .hasSize(10)
+            .hasSize(11)
             .contains(
                 entry(SUPER_USER, C),
                 entry(SUPER_USER, R),
@@ -34,7 +34,8 @@ class CaseworkerBetaAndSuperUserAccessTest {
                 entry(CASE_WORKER, U),
                 entry(SYSTEMUPDATE, C),
                 entry(SYSTEMUPDATE, R),
-                entry(SYSTEMUPDATE, U)
+                entry(SYSTEMUPDATE, U),
+                entry(SYSTEMUPDATE, D)
             );
     }
 }
