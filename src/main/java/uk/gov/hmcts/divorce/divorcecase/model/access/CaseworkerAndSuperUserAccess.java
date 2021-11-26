@@ -23,7 +23,7 @@ public class CaseworkerAndSuperUserAccess implements HasAccessControl {
         grants.putAll(SUPER_USER, Permissions.CREATE_READ_UPDATE_DELETE);
 
         grants.putAll(CASE_WORKER, Permissions.CREATE_READ_UPDATE);
-        grants.putAll(SYSTEMUPDATE, Permissions.CREATE_READ_UPDATE);
+        grants.putAll(SYSTEMUPDATE, Permissions.CREATE_READ_UPDATE_DELETE);
         return grants;
     }
 }
