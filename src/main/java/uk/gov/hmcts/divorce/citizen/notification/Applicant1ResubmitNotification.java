@@ -50,7 +50,7 @@ public class Applicant1ResubmitNotification {
         log.info("Sending applicant 1 made changes notification to applicant 2 for case : {}", id);
 
         notificationService.sendEmail(
-            caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
+            caseData.getApplicant2EmailAddress(),
             JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE,
             applicant2TemplateVars(caseData, id),
             caseData.getApplicant2().getLanguagePreference()
@@ -59,7 +59,7 @@ public class Applicant1ResubmitNotification {
 
     private Map<String, String> applicant1TemplateVars(CaseData caseData, Long id) {
         Map<String, String> templateVars = resubmitTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
-        templateVars.put(THEIR_EMAIL_ADDRESS, caseData.getCaseInvite().getApplicant2InviteEmailAddress());
+        templateVars.put(THEIR_EMAIL_ADDRESS, caseData.getApplicant2EmailAddress());
         return templateVars;
     }
 

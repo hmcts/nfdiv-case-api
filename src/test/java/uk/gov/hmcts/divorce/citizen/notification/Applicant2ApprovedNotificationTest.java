@@ -85,6 +85,7 @@ class Applicant2ApprovedNotificationTest {
         CaseData data = validApplicant2CaseData();
         data.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.NO);
         data.setDueDate(LOCAL_DATE);
+        data.getApplicant2().setEmail(null);
 
         notification.sendToApplicant2(data, 1234567890123456L);
 
@@ -105,6 +106,7 @@ class Applicant2ApprovedNotificationTest {
         data.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
         data.getApplication().getApplicant2HelpWithFees().setNeedHelp(YesOrNo.YES);
         data.setDueDate(LOCAL_DATE);
+        data.getApplicant2().setEmail(null);
 
         notification.sendToApplicant2(data, 1234567890123456L);
 
@@ -144,6 +146,7 @@ class Applicant2ApprovedNotificationTest {
         data.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
         data.getApplication().getApplicant2HelpWithFees().setNeedHelp(YesOrNo.NO);
         data.setDueDate(LOCAL_DATE);
+        data.getApplicant2().setEmail(null);
 
         notification.sendToApplicant2(data, 1234567890123456L);
 

@@ -78,6 +78,7 @@ public class SystemProgressCaseToAosOverdueIT {
         data.setDueDate(LOCAL_DATE);
         data.getApplication().setIssueDate(LOCAL_DATE);
         data.getCaseInvite().setAccessCode("1234-1234-1234-1234");
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)

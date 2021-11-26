@@ -39,7 +39,7 @@ public class ApplicationSubmittedNotification {
         log.info("Sending application submitted notification to applicant 2 for case : {}", id);
 
         notificationService.sendEmail(
-            caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
+            caseData.getApplicant2EmailAddress(),
             APPLICATION_SUBMITTED,
             templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
             caseData.getApplicant1().getLanguagePreference()
