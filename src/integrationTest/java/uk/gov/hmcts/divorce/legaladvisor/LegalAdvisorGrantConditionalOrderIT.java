@@ -23,6 +23,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorGrantConditionalOrder.LEGAL_ADVISOR_GRANT_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
@@ -52,7 +54,7 @@ public class LegalAdvisorGrantConditionalOrderIT {
     private WebMvcConfig webMvcConfig;
 
     @Test
-    public void shouldSetDecisionDateWhenAboutToSubmit() throws Exception {
+    public void shouldSetDecisionDateAndStateToAwaitingPronouncementWhenConditionalOrderIsGranted() throws Exception {
 
         setMockClock(clock);
 
@@ -78,6 +80,38 @@ public class LegalAdvisorGrantConditionalOrderIT {
                 status().isOk())
             .andExpect(
                 jsonPath("$.data.coDecisionDate").value(getExpectedLocalDate().toString())
+            )
+            .andExpect(
+                jsonPath("$.state").value(AwaitingPronouncement.getName())
+            );
+    }
+
+    @Test
+    public void shouldSetStateToAwaitingClarificationWhenConditionalOrderIsNotGranted() throws Exception {
+
+        setMockClock(clock);
+
+        final CaseData caseData = caseData();
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .granted(NO)
+            .build());
+
+        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            LEGAL_ADVISOR_GRANT_CONDITIONAL_ORDER)
+                    )
+                )
+                .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(
+                status().isOk())
+            .andExpect(
+                jsonPath("$.state").value(AwaitingClarification.getName())
             );
     }
 }
