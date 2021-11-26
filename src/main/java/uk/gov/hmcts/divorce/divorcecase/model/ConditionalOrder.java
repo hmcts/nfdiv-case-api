@@ -211,4 +211,9 @@ public class ConditionalOrder {
     public boolean areClaimsGranted() {
         return nonNull(claimsGranted) && claimsGranted.toBoolean();
     }
+
+    @JsonIgnore
+    public boolean hasConditionalOrderBeenGranted() {
+        return YesOrNo.YES.equals(granted);
+    }
 }

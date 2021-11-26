@@ -17,6 +17,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import java.time.Clock;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorGrantConditionalOrder.LEGAL_ADVISOR_GRANT_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
@@ -44,12 +48,12 @@ class LegalAdvisorGrantConditionalOrderTest {
     }
 
     @Test
-    void shouldSetGrantedDateIfConditionalOrderIsGranted() {
+    void shouldSetGrantedDateAndStateToAwaitingPronouncementIfConditionalOrderIsGranted() {
 
         setMockClock(clock);
 
         final CaseData caseData = CaseData.builder()
-            .conditionalOrder(ConditionalOrder.builder().build())
+            .conditionalOrder(ConditionalOrder.builder().granted(YES).build())
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -59,5 +63,23 @@ class LegalAdvisorGrantConditionalOrderTest {
             legalAdvisorGrantConditionalOrder.aboutToSubmit(caseDetails, null);
 
         assertThat(response.getData().getConditionalOrder().getDecisionDate()).isEqualTo(getExpectedLocalDate());
+        assertThat(response.getState()).isEqualTo(AwaitingPronouncement);
+    }
+
+    @Test
+    void shouldSetStateToAwaitingClarificationIfConditionalOrderIsNotGranted() {
+
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(ConditionalOrder.builder().granted(NO).build())
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            legalAdvisorGrantConditionalOrder.aboutToSubmit(caseDetails, null);
+
+        assertThat(response.getData().getConditionalOrder().getDecisionDate()).isNull();
+        assertThat(response.getState()).isEqualTo(AwaitingClarification);
     }
 }

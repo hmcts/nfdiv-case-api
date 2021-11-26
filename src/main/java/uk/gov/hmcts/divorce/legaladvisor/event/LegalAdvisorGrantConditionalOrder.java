@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import java.time.Clock;
 import java.time.LocalDate;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
@@ -38,7 +39,7 @@ public class LegalAdvisorGrantConditionalOrder implements CCDConfig<CaseData, St
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(LEGAL_ADVISOR_GRANT_CONDITIONAL_ORDER)
-            .forStateTransition(AwaitingLegalAdvisorReferral, AwaitingPronouncement)
+            .forState(AwaitingLegalAdvisorReferral)
             .name("Make a decision")
             .description("Grant Conditional Order")
             .endButtonLabel("Submit")
@@ -62,20 +63,42 @@ public class LegalAdvisorGrantConditionalOrder implements CCDConfig<CaseData, St
             .showCondition("coClaimsGranted=\"Yes\"")
             .complex(CaseData::getConditionalOrder)
                 .mandatory(ConditionalOrder::getClaimsCostsOrderInformation)
-                .done();
+                .done()
+            .page("makeRefusalOrder")
+            .pageLabel("Make a refusal order")
+            .showCondition("coGranted=\"No\"")
+            .complex(CaseData::getConditionalOrder)
+                .mandatory(ConditionalOrder::getRefusalDecision)
+            .done()
+            .page("refusalOrderClarification")
+            .pageLabel("Refusal Order:Clarify - Make a Decision")
+            .showCondition("coRefusalDecision=\"moreInfo\"")
+            .complex(CaseData::getConditionalOrder)
+                .mandatory(ConditionalOrder::getRefusalClarificationReason)
+                .mandatory(ConditionalOrder::getRefusalClarificationAdditionalInfo)
+            .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Legal Advisor grant conditional order about to submit callback invoked. CaseID: {}", details.getId());
+        log.info("Legal advisor grant conditional order about to submit callback invoked. CaseID: {}", details.getId());
 
         final ConditionalOrder conditionalOrder = details.getData().getConditionalOrder();
 
-        conditionalOrder.setDecisionDate(LocalDate.now(clock));
+        State endState;
+
+        if (conditionalOrder.hasConditionalOrderBeenGranted()) {
+            log.info("Legal advisor conditional order granted for case id: {}", details.getId());
+            conditionalOrder.setDecisionDate(LocalDate.now(clock));
+            endState = AwaitingPronouncement;
+        } else {
+            endState = AwaitingClarification;
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
+            .state(endState)
             .build();
     }
 }
