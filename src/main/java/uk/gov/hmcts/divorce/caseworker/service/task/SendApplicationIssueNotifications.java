@@ -27,7 +27,7 @@ public class SendApplicationIssueNotifications implements CaseTask {
 
             if (caseData.getApplicationType().isSole()) {
                 applicationIssuedNotification.sendToSoleApplicant1(caseData, caseId);
-                if (isNotBlank(caseData.getCaseInvite().getApplicant2InviteEmailAddress())) {
+                if (isNotBlank(caseData.getApplicant2EmailAddress())) {
                     applicationIssuedNotification.sendToSoleRespondent(caseData, caseId);
                 }
                 if (caseDetails.getState() == AwaitingAos && caseData.getApplicant2().isBasedOverseas()) {
@@ -35,7 +35,7 @@ public class SendApplicationIssueNotifications implements CaseTask {
                 }
             } else {
                 applicationIssuedNotification.sendToJointApplicant1(caseData, caseId);
-                if (isNotBlank(caseData.getCaseInvite().getApplicant2InviteEmailAddress())) {
+                if (isNotBlank(caseData.getApplicant2EmailAddress())) {
                     applicationIssuedNotification.sendToJointApplicant2(caseData, caseId);
                 }
             }

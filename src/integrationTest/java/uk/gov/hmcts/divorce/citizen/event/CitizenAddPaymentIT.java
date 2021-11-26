@@ -185,6 +185,7 @@ public class CitizenAddPaymentIT {
         data.getApplication().getMarriageDetails().setMarriedInUk(NO);
         data.getApplication().setApplicant1CannotUploadSupportingDocument(Set.of(MARRIAGE_CERTIFICATE, MARRIAGE_CERTIFICATE_TRANSLATION));
         data.getApplication().setApplicant2CannotUploadSupportingDocument(Set.of(NAME_CHANGE_EVIDENCE));
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
         data.getApplication().setApplicationFeeOrderSummary(orderSummary);

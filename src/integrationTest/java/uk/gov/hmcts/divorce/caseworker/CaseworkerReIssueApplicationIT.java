@@ -127,8 +127,9 @@ public class CaseworkerReIssueApplicationIT {
         "classpath:caseworker-reissue-sole-citizen-application-about-to-submit-response.json";
     private static final String JOINT_CITIZEN_CASEWORKER_ABOUT_TO_SUBMIT =
         "classpath:caseworker-issue-joint-citizen-application-about-to-submit-response.json";
-    public static final String MINI_APPLICATION_ID = "5cd725e8-f053-4493-9cbe-bb69d1905ae3";
-    public static final String AOS_COVER_LETTER_ID = "c35b1868-e397-457a-aa67-ac1422bb8100";
+    private static final String MINI_APPLICATION_ID = "5cd725e8-f053-4493-9cbe-bb69d1905ae3";
+    private static final String AOS_COVER_LETTER_ID = "c35b1868-e397-457a-aa67-ac1422bb8100";
+    private static final String SOLE_APPLICATION_DOC_NAME = "NFD_CP_Application_Sole.docx";
 
     @Autowired
     private MockMvc mockMvc;
@@ -180,11 +181,12 @@ public class CaseworkerReIssueApplicationIT {
         caseData.getApplication().setSolSignStatementOfTruth(null);
         caseData.getApplication().setReissueOption(reissueOption);
         caseData.getApplication().setIssueDate(LocalDate.now());
+        caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
 
-        stubForDocAssemblyWith(MINI_APPLICATION_ID, "NFD_CP_Mini_Application_Sole_Joint.docx");
+        stubForDocAssemblyWith(MINI_APPLICATION_ID, "NFD_CP_Application_Sole.docx");
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
@@ -237,11 +239,12 @@ public class CaseworkerReIssueApplicationIT {
         caseData.getApplication().setReissueOption(reissueOption);
         caseData.getApplication().setIssueDate(LocalDate.now());
         caseData.getApplication().setApplicant1KnowsApplicant2EmailAddress(YES);
+        caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
 
-        stubForDocAssemblyWith(MINI_APPLICATION_ID, "NFD_CP_Mini_Application_Sole_Joint.docx");
+        stubForDocAssemblyWith(MINI_APPLICATION_ID, SOLE_APPLICATION_DOC_NAME);
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);

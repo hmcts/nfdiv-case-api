@@ -76,6 +76,7 @@ public class CitizenApplicant2ApproveIT {
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmailToApplicant1AndApplicant2() throws Exception {
         CaseData data = validApplicant2CaseData();
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
@@ -105,6 +106,7 @@ public class CitizenApplicant2ApproveIT {
         CaseData data = validApplicant2CaseData();
         data.getApplication().setApplicant1HelpWithFees(HelpWithFees.builder().needHelp(YES).build());
         data.getApplication().setApplicant2HelpWithFees(HelpWithFees.builder().needHelp(NO).build());
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
