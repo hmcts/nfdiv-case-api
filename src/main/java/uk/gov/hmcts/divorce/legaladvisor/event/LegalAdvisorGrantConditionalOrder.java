@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ClarificationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -39,7 +40,7 @@ public class LegalAdvisorGrantConditionalOrder implements CCDConfig<CaseData, St
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(LEGAL_ADVISOR_GRANT_CONDITIONAL_ORDER)
-            .forState(AwaitingLegalAdvisorReferral)
+            .forStates(AwaitingLegalAdvisorReferral, ClarificationSubmitted)
             .name("Make a decision")
             .description("Grant Conditional Order")
             .endButtonLabel("Submit")
