@@ -110,6 +110,13 @@ public enum State {
     AwaitingConditionalOrder("AwaitingConditionalOrder"),
 
     @CCD(
+        name = "Awaiting Final Order",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    AwaitingFinalOrder("AwaitingFinalOrder"),
+
+    @CCD(
         name = "Awaiting general consideration",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
