@@ -35,7 +35,7 @@ public class SwitchToSoleNotification {
         log.info("Sending applicant 1 switch to sole notification to applicant 2 for case : {}", id);
 
         notificationService.sendEmail(
-            caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
+            caseData.getApplicant2EmailAddress(),
             JOINT_APPLICATION_ENDED,
             commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
             caseData.getApplicant1().getLanguagePreference()
@@ -57,7 +57,7 @@ public class SwitchToSoleNotification {
         log.info("Sending applicant 2 switch to sole notification to applicant 2 for case : {}", id);
 
         notificationService.sendEmail(
-            caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
+            caseData.getApplicant2EmailAddress(),
             APPLICANT_SWITCH_TO_SOLE,
             commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
             caseData.getApplicant1().getLanguagePreference()

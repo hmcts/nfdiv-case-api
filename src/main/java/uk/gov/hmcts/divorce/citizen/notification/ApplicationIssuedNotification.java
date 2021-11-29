@@ -59,7 +59,7 @@ public class ApplicationIssuedNotification {
         log.info("Sending sole application issued notification to respondent for case : {}", id);
 
         notificationService.sendEmail(
-            caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
+            caseData.getApplicant2EmailAddress(),
             SOLE_RESPONDENT_APPLICATION_ACCEPTED,
             soleRespondentTemplateVars(caseData, id),
             caseData.getApplicant1().getLanguagePreference()
@@ -70,7 +70,7 @@ public class ApplicationIssuedNotification {
         log.info("Sending reminder to respondent to register for case : {}", id);
 
         notificationService.sendEmail(
-            caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
+            caseData.getApplicant2EmailAddress(),
             SOLE_RESPONDENT_APPLICATION_ACCEPTED,
             reminderToSoleRespondentTemplateVars(caseData, id),
             caseData.getApplicant1().getLanguagePreference()
@@ -103,7 +103,7 @@ public class ApplicationIssuedNotification {
         log.info("Sending joint application issued notification to applicant 2 for case : {}", id);
 
         notificationService.sendEmail(
-            caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
+            caseData.getApplicant2EmailAddress(),
             JOINT_APPLICATION_ACCEPTED,
             commonTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
             caseData.getApplicant1().getLanguagePreference()
@@ -113,8 +113,8 @@ public class ApplicationIssuedNotification {
     public void notifyApplicantOfServiceToOverseasRespondent(CaseData caseData, Long id) {
         log.info("Notifying sole applicant of application issue (case {}) to overseas respondent", id);
 
-        final boolean hasEmail = caseData.getCaseInvite().getApplicant2InviteEmailAddress() != null
-            && !caseData.getCaseInvite().getApplicant2InviteEmailAddress().isEmpty();
+        final boolean hasEmail = caseData.getApplicant2EmailAddress() != null
+            && !caseData.getApplicant2EmailAddress().isEmpty();
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
             hasEmail ? OVERSEAS_RESPONDENT_HAS_EMAIL_APPLICATION_ISSUED : OVERSEAS_RESPONDENT_NO_EMAIL_APPLICATION_ISSUED,

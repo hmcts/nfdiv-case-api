@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.groovy.parser.antlr4.util.StringUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -29,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toCollection;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -245,6 +247,21 @@ public class CaseData {
         } else {
             documents.add(0, listValue); // always add to start top of list
         }
+    }
+
+    @JsonIgnore
+    public String getApplicant2EmailAddress() {
+        final String applicant2Email = applicant2.getEmail();
+
+        if (StringUtils.isEmpty(applicant2Email)) {
+            if (nonNull(caseInvite)) {
+                return caseInvite.getApplicant2InviteEmailAddress();
+            } else {
+                return null;
+            }
+        }
+
+        return applicant2Email;
     }
 
     public void sortUploadedDocuments(List<ListValue<DivorceDocument>> previousDocuments) {
