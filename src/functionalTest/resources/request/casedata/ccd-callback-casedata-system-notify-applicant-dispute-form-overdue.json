@@ -1,0 +1,73 @@
+{
+  "divorceOrDissolution": "divorce",
+  "applicationType": "soleApplication",
+  "applicant1FirstName": "test_first_name",
+  "applicant1MiddleName": "test_middle_name",
+  "applicant1LastName": "test_last_name",
+  "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+  "applicant1HomeAddress": {
+    "addressLine1": "221a Baker Street",
+    "postTown": "London",
+    "county": "Greater London",
+    "postCode": "NW1 6XE",
+    "country": "United Kingdom"
+  },
+  "applicant2HomeAddress": {
+    "addressLine1": "221a Baker Street",
+    "postTown": "London",
+    "county": "Greater London",
+    "postCode": "NW1 6XE",
+    "country": "United Kingdom"
+  },
+  "dueDate": "2020-04-28",
+  "issueDate": "2020-05-28",
+  "accessCode": "",
+  "applicant1LanguagePreferenceWelsh": "No",
+  "applicant1KeepContactDetailsConfidential": "Yes",
+  "applicant1Gender": "female",
+  "applicant2FirstName": "test_first_name",
+  "applicant2MiddleName": "test_middle_name",
+  "applicant2LastName": "test_last_name",
+  "applicant2Email": "applicant2@example.com",
+  "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
+  "applicant2LanguagePreferenceWelsh": "No",
+  "applicant2KeepContactDetailsConfidential": "No",
+  "applicant2Gender": "female",
+  "marriageApplicant1Name": "test_first_name test_last_name",
+  "marriageApplicant2Name": "test_first_name test_last_name",
+  "marriagePlaceOfMarriage": "Somewhere",
+  "marriageDate": "1990-06-10",
+  "jurisdictionApplicant1Residence": "Yes",
+  "jurisdictionApplicant2Residence": "Yes",
+  "jurisdictionConnections": [
+    "J"
+  ],
+  "applicant1LegalProceedings": "Yes",
+  "applicant1FinancialOrder": "No",
+  "applicant2FinancialOrder": "No",
+  "applicant1PrayerHasBeenGivenCheckbox": ["Yes"],
+  "applicant1StatementOfTruth": "Yes",
+  "applicant2PrayerHasBeenGiven": "Yes",
+  "applicant2StatementOfTruth": "Yes",
+  "applicationFeeOrderSummary": {
+    "PaymentReference": null,
+    "Fees": null,
+    "PaymentTotal": "55000"
+  },
+  "applicationPayments": [
+    {
+      "id": null,
+      "value": {
+        "created": null,
+        "feeCode": "FEE0001",
+        "amount": 55000,
+        "status": "success",
+        "channel": "online",
+        "reference": "paymentRef",
+        "transactionId": "ge7po9h5bhbtbd466424src9tk"
+      }
+    }
+  ],
+  "documentUploadComplete": "Yes",
+  "howToRespondApplication": "disputeDivorce"
+}
