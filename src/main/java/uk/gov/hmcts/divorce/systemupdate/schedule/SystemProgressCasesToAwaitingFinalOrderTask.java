@@ -88,7 +88,7 @@ public class SystemProgressCasesToAwaitingFinalOrderTask implements Runnable {
             log.error("System progress cases to Awaiting Final Order scheduled task stopped after search error", e);
         } catch (final CcdConflictException e) {
             log.info("System progress cases to Awaiting Final Order scheduled task stopping "
-                + "due to conflict with another running awaiting aos task"
+                + "due to conflict with another running Awaiting Final Order task"
             );
         }
     }
