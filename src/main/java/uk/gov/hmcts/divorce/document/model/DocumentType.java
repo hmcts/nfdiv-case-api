@@ -17,6 +17,9 @@ public enum DocumentType implements HasLabel {
     @JsonAlias({"acknowledgeOfService", "aos"})
     ACKNOWLEDGEMENT_OF_SERVICE("Acknowledgement of service"),
 
+    @JsonProperty("amendedApplication")
+    AMENDED_APPLICATION("Amended Application"),
+
     @JsonProperty("annexA")
     ANNEX_A("Annex A"),
 
@@ -66,6 +69,9 @@ public enum DocumentType implements HasLabel {
 
     @JsonProperty("d9H")
     D9H("D9H"),
+
+    @JsonProperty("d11")
+    D11("D11"),
 
     @JsonProperty("deemedService")
     @JsonAlias({"serviceDeemed"})
