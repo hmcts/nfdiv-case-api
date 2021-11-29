@@ -229,7 +229,14 @@ public enum State {
         name = "Submitted",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
-    Submitted("Submitted");
+    Submitted("Submitted"),
+
+    @CCD(
+        name = "Awaiting Final Order",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    AwaitingFinalOrder("AwaitingFinalOrder");
 
     private final String name;
 
