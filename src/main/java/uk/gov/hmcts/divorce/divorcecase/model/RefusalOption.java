@@ -9,14 +9,14 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 @AllArgsConstructor
 public enum RefusalOption implements HasLabel {
 
-    @JsonProperty("reject")
-    REJECT("Reject - request amended petition"),
-
     @JsonProperty("moreInfo")
-    MORE_INFO("Get more information / Evidence"),
+    MORE_INFO("Get more information"),
 
     @JsonProperty("adminError")
-    ADMIN_ERROR("Admin error / send back to caseworker");
+    ADMIN_ERROR("Admin error / send back to caseworker"),
+
+    @JsonProperty("reject")
+    REJECT("Refusal - Request Amended application");
 
     private final String label;
 }
