@@ -85,7 +85,7 @@ public class SystemNotifyApplicantDisputeFormOverdueTask implements Runnable {
     private void notifyApplicant(CaseDetails caseDetails, User user, String serviceAuth) {
         try {
             final CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
-            if (!caseData.getApplication().hasApplicantBeenNotifiedDisputeFormOverdue()) {
+            if (!caseData.getAcknowledgementOfService().hasApplicantBeenNotifiedDisputeFormOverdue()) {
                 log.info("Dispute form for Case id {} is due on/before current date - raising notification event", caseDetails.getId());
                 ccdUpdateService.submitEvent(caseDetails, SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE, user, serviceAuth);
             }

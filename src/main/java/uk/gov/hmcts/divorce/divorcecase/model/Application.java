@@ -367,12 +367,6 @@ public class Application {
     private YesOrNo applicant1NotifiedCanApplyForConditionalOrder;
 
     @CCD(
-        label = "Notification sent to Applicant indicating that the dispute form is overdue",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo applicantNotifiedDisputeFormOverdue;
-
-    @CCD(
         label = "What would you like to reissue?",
         typeOverride = FixedRadioList,
         typeParameterOverride = "ReissueOption"
@@ -454,11 +448,6 @@ public class Application {
     @JsonIgnore
     public boolean hasApplicant1BeenNotifiedCanApplyForConditionalOrder() {
         return YES.equals(applicant1NotifiedCanApplyForConditionalOrder);
-    }
-
-    @JsonIgnore
-    public boolean hasApplicantBeenNotifiedDisputeFormOverdue() {
-        return YES.equals(applicantNotifiedDisputeFormOverdue);
     }
 
     @JsonIgnore

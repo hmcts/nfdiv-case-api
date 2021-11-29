@@ -61,6 +61,6 @@ public class SystemNotifyApplicantDisputeFormOverdueTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = underTest.aboutToSubmit(details, details);
 
         verify(notification).send(caseData, details.getId());
-        assertThat(response.getData().getApplication().getApplicantNotifiedDisputeFormOverdue()).isEqualTo(YesOrNo.YES);
+        assertThat(response.getData().getAcknowledgementOfService().getApplicantNotifiedDisputeFormOverdue()).isEqualTo(YesOrNo.YES);
     }
 }

@@ -41,7 +41,7 @@ public class SystemNotifyApplicantDisputeFormOverdue implements CCDConfig<CaseDa
                                                                        CaseDetails<CaseData, State> beforeDetails) {
         CaseData data = details.getData();
         notification.send(data, details.getId());
-        data.getApplication().setApplicantNotifiedDisputeFormOverdue(YesOrNo.YES);
+        data.getAcknowledgementOfService().setApplicantNotifiedDisputeFormOverdue(YesOrNo.YES);
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
             .build();

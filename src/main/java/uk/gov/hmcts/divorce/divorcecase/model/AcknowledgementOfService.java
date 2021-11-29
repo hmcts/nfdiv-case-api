@@ -38,6 +38,12 @@ public class AcknowledgementOfService {
     private YesOrNo confirmDisputeApplication;
 
     @CCD(
+        label = "Notification sent to Applicant indicating that the dispute form is overdue",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo applicantNotifiedDisputeFormOverdue;
+
+    @CCD(
         label = "Respondent agreed to claimed jurisdiction?",
         access = AosAccess.class
     )
@@ -135,5 +141,10 @@ public class AcknowledgementOfService {
     @JsonIgnore
     public boolean isDisputed() {
         return DISPUTE_DIVORCE.equals(howToRespondApplication);
+    }
+
+    @JsonIgnore
+    public boolean hasApplicantBeenNotifiedDisputeFormOverdue() {
+        return YES.equals(applicantNotifiedDisputeFormOverdue);
     }
 }

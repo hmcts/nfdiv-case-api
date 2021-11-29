@@ -9,8 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.divorcecase.model.Application;
+import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
@@ -76,7 +75,7 @@ public class SystemNotifyApplicantDisputeFormOverdueTaskTest {
             .must(matchQuery(STATE, Holding))
             .must(matchQuery(AOS_RESPONSE, DISPUTE_DIVORCE))
             .filter(rangeQuery(ISSUE_DATE).lte(LocalDate.now().minus(37, DAYS)))
-            .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YesOrNo.YES));
+            .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YES));
 
     @BeforeEach
     void setUp() {
@@ -88,7 +87,7 @@ public class SystemNotifyApplicantDisputeFormOverdueTaskTest {
     @Test
     void shouldSubmitNotificationEventIfNotAlreadyDone() {
         final CaseData caseData = CaseData.builder()
-            .application(Application.builder().applicantNotifiedDisputeFormOverdue(NO).build())
+            .acknowledgementOfService(AcknowledgementOfService.builder().applicantNotifiedDisputeFormOverdue(NO).build())
             .build();
         when(mapper.convertValue(anyMap(), eq(CaseData.class))).thenReturn(caseData);
         final CaseDetails case1 = CaseDetails.builder().data(new HashMap<>()).id(1L).build();
@@ -103,7 +102,7 @@ public class SystemNotifyApplicantDisputeFormOverdueTaskTest {
     @Test
     void shouldNotSubmitNotificationEventIfAlreadyDone() {
         final CaseData caseData = CaseData.builder()
-            .application(Application.builder().applicantNotifiedDisputeFormOverdue(YES).build())
+            .acknowledgementOfService(AcknowledgementOfService.builder().applicantNotifiedDisputeFormOverdue(YES).build())
             .build();
         when(mapper.convertValue(anyMap(), eq(CaseData.class))).thenReturn(caseData);
         when(ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, SERVICE_AUTHORIZATION))
@@ -127,7 +126,7 @@ public class SystemNotifyApplicantDisputeFormOverdueTaskTest {
     @Test
     void shouldStopProcessingIfThereIsConflictDuringSubmission() {
         final CaseData caseData = CaseData.builder()
-            .application(Application.builder().applicantNotifiedDisputeFormOverdue(NO).build())
+            .acknowledgementOfService(AcknowledgementOfService.builder().applicantNotifiedDisputeFormOverdue(NO).build())
             .build();
         when(mapper.convertValue(anyMap(), eq(CaseData.class))).thenReturn(caseData);
         CaseDetails caseDetails1 = CaseDetails.builder().data(new HashMap<>()).id(1L).build();
@@ -147,7 +146,7 @@ public class SystemNotifyApplicantDisputeFormOverdueTaskTest {
     @Test
     void shouldContinueToNextCaseIfExceptionIsThrownWhileProcessingPreviousCase() {
         final CaseData caseData = CaseData.builder()
-            .application(Application.builder().applicantNotifiedDisputeFormOverdue(NO).build())
+            .acknowledgementOfService(AcknowledgementOfService.builder().applicantNotifiedDisputeFormOverdue(NO).build())
             .build();
         when(mapper.convertValue(anyMap(), eq(CaseData.class))).thenReturn(caseData);
         CaseDetails caseDetails1 = CaseDetails.builder().data(new HashMap<>()).id(1L).build();
