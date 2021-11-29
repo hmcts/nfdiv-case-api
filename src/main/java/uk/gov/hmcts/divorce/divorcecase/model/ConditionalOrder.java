@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import static java.util.Objects.nonNull;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
@@ -127,7 +128,7 @@ public class ConditionalOrder {
         typeOverride = MultiSelectList,
         typeParameterOverride = "RejectionReason"
     )
-    private RejectionReason refusalRejectionReason;
+    private Set<RejectionReason> refusalRejectionReason;
 
     @CCD(
         label = "Rejection additional information",
@@ -141,7 +142,7 @@ public class ConditionalOrder {
         typeOverride = MultiSelectList,
         typeParameterOverride = "ClarificationReason"
     )
-    private ClarificationReason refusalClarificationReason;
+    private Set<ClarificationReason> refusalClarificationReason;
 
     @CCD(
         label = "Clarification additional information (Translated)",
