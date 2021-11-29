@@ -44,7 +44,7 @@ public class SoleAosSubmittedNotification {
         log.info("Sending Aos submitted without dispute notification to respondent");
 
         notificationService.sendEmail(
-            caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
+            caseData.getApplicant2EmailAddress(),
             SOLE_RESPONDENT_AOS_SUBMITTED,
             nonDdisputedTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
             caseData.getApplicant2().getLanguagePreference()
@@ -66,7 +66,7 @@ public class SoleAosSubmittedNotification {
         log.info("Sending Aos submitted disputed notification to respondent");
 
         notificationService.sendEmail(
-            caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
+            caseData.getApplicant2EmailAddress(),
             SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED,
             disputedTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
             caseData.getApplicant2().getLanguagePreference()

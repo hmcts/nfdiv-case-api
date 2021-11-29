@@ -11,7 +11,7 @@
     "applicant1MiddleName": "test_middle_name",
     "applicant1PrayerHasBeenGivenCheckbox": ["Yes"],
     "applicant1StatementOfTruth": "Yes",
-    "applicant2Email": "test@test.com",
+    "applicant2Email": "applicant2@test.com",
     "applicant2FinancialOrder": "No",
     "applicant2FirstName": "test_first_name",
     "applicant2Gender": "male",

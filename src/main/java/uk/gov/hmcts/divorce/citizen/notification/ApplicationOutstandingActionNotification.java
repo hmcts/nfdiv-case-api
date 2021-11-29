@@ -61,7 +61,7 @@ public class ApplicationOutstandingActionNotification {
         log.info("Sending application outstanding actions notification to applicant 2 for case : {}", id);
 
         notificationService.sendEmail(
-            caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
+            caseData.getApplicant2EmailAddress(),
             OUTSTANDING_ACTIONS,
             this.applicant2TemplateVars(caseData, id),
             caseData.getApplicant1().getLanguagePreference()
