@@ -128,7 +128,7 @@ public class ConditionalOrder {
         typeOverride = MultiSelectList,
         typeParameterOverride = "RejectionReason"
     )
-    private RejectionReason refusalRejectionReason;
+    private Set<RejectionReason> refusalRejectionReason;
 
     @CCD(
         label = "Rejection additional information",
