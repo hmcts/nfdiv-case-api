@@ -13,7 +13,7 @@ public enum RefusalOption implements HasLabel {
     MORE_INFO("Get more information"),
 
     @JsonProperty("adminError")
-    ADMIN_ERROR("Admin error / send back to caseworker"),
+    ADMIN_ERROR("Admin error"),
 
     @JsonProperty("reject")
     REJECT("Refusal - Request Amended application");
