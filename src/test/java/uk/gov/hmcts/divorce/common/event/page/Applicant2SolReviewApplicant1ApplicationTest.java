@@ -22,7 +22,7 @@ class Applicant2SolReviewApplicant1ApplicationTest {
     public void shouldPreventProgressIfRespondentHasNotReadPetition() {
         final CaseData caseData = caseData();
         caseData.getAcknowledgementOfService().setConfirmReadPetition(NO);
-        caseData.getLabelContent().setTheApplicant2("respondent");
+        caseData.getLabelContent().setTheApplicant2("the respondent");
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -32,7 +32,7 @@ class Applicant2SolReviewApplicant1ApplicationTest {
 
         assertThat(response.getErrors().size()).isEqualTo(1);
         assertThat(response.getErrors()).containsExactly(
-            "To continue,respondent must have read the application in order to respond"
+            "To continue,the respondent must have read the application in order to respond"
         );
     }
 
