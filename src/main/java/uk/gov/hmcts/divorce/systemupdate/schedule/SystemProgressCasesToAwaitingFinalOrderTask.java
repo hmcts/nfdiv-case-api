@@ -5,7 +5,11 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.divorce.systemupdate.service.*;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
@@ -24,7 +28,8 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 @Component
 @Slf4j
 /**
- * Any cases which are in Conditional Order Pronounced state and whose final order eligible from date <= current date will be moved to AwaitingFinalOrder by this task.
+ * Any cases which are in Conditional Order Pronounced state and whose
+ * final order eligible from date <= current date will be moved to AwaitingFinalOrder by this task.
  */
 public class SystemProgressCasesToAwaitingFinalOrderTask implements Runnable {
 
