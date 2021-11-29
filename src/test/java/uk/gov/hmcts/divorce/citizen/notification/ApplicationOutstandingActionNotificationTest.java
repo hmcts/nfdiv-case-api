@@ -90,6 +90,8 @@ class ApplicationOutstandingActionNotificationTest {
         CaseData data = validApplicant2CaseData();
         data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.NO);
         data.getApplication().setApplicant2CannotUploadSupportingDocument(Set.of(NAME_CHANGE_EVIDENCE));
+        data.getApplicant2().setEmail(null);
+
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getCommonTemplateVars());
 

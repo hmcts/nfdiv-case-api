@@ -187,6 +187,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplication().setSolSignStatementOfTruth(null);
         caseData.getApplication().setDivorceWho(WIFE);
         caseData.getApplicant2().getHomeAddress().setCountry("UK");
+        caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Divorce application").thenReturn("Notice of proceeding");
@@ -241,6 +242,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplication().setSolSignStatementOfTruth(null);
         caseData.getApplication().setDivorceWho(WIFE);
         caseData.getApplicant2().getHomeAddress().setCountry("France");
+        caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Divorce application").thenReturn("Notice of proceeding");
@@ -302,6 +304,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("London");
         caseData.getApplication().setApplicant1KnowsApplicant2EmailAddress(YES);
+        caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");

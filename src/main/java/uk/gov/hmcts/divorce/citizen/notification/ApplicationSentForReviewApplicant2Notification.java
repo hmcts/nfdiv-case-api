@@ -42,7 +42,7 @@ public class ApplicationSentForReviewApplicant2Notification {
         log.info("Sending application sent for review notification to applicant 2 for case : {}", id);
 
         notificationService.sendEmail(
-            caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
+            caseData.getApplicant2EmailAddress(),
             JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW,
             templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1(), false),
             caseData.getApplicant1().getLanguagePreference()
@@ -53,7 +53,7 @@ public class ApplicationSentForReviewApplicant2Notification {
         log.info("Sending reminder to applicant 2 to review case : {}", id);
 
         notificationService.sendEmail(
-            caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
+            caseData.getApplicant2EmailAddress(),
             JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW,
             templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1(), true),
             caseData.getApplicant1().getLanguagePreference()

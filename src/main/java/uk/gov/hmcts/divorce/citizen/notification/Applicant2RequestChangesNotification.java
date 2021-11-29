@@ -44,7 +44,7 @@ public class Applicant2RequestChangesNotification {
         log.info("Sending notification to applicant 2 to confirm their request for changes: {}", id);
 
         notificationService.sendEmail(
-            caseData.getCaseInvite().getApplicant2InviteEmailAddress(),
+            caseData.getApplicant2EmailAddress(),
             JOINT_APPLICANT2_REQUEST_CHANGES,
             commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
             caseData.getApplicant2().getLanguagePreference()
