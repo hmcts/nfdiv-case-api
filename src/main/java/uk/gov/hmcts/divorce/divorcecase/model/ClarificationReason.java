@@ -21,9 +21,6 @@ public enum ClarificationReason implements HasLabel {
     @JsonProperty("previousProceedingDetails")
     PREVIOUS_PROCEEDINGS_DETAILS("Previous proceedings details"),
 
-    @JsonProperty("caseDetailsStatement")
-    STATEMENT_OF_CASE_DETAILS("Statement of case details"),
-
     @JsonProperty("other")
     OTHER("Enter free Text / Make free text order");
 
