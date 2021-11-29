@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 
 import java.util.Set;
 
@@ -114,6 +115,7 @@ public class Applicant {
     private YesOrNo solicitorRepresented;
 
     @JsonUnwrapped(prefix = "Solicitor")
+    @CCD(access = {DefaultAccess.class})
     private Solicitor solicitor;
 
     @CCD(
