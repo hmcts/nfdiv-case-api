@@ -23,7 +23,6 @@ import uk.gov.hmcts.divorce.solicitor.event.page.SolPayAccount;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayment;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPaymentSummary;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolStatementOfTruth;
-import uk.gov.hmcts.divorce.solicitor.event.page.SolSummary;
 import uk.gov.hmcts.divorce.solicitor.service.notification.SolicitorSubmittedNotification;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
@@ -78,8 +77,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             solPayment,
             new HelpWithFeesPage(),
             new SolPayAccount(),
-            new SolPaymentSummary(),
-            new SolSummary());
+            new SolPaymentSummary());
 
         final PageBuilder pageBuilder = addEventConfig(configBuilder);
 

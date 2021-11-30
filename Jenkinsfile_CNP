@@ -167,6 +167,7 @@ withPipeline(type, product, component) {
         env.CASE_API_URL="http://nfdiv-case-api-aat.service.core-compute-aat.internal"
         env.CCD_DEF_NAME="aat"
         env.DEFINITION_STORE_URL_BASE="http://ccd-definition-store-api-aat.service.core-compute-aat.internal"
+        env.ELASTIC_SEARCH_ENABLED=true
 
         setCommonEnvVariables()
     }

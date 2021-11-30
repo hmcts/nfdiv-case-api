@@ -34,7 +34,7 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 @Slf4j
 public class SystemNotifyApplicantDisputeFormOverdueTask implements Runnable {
 
-    static final String NOTIFICATION_SENT_FLAG = "disputeNotSubmittedNotificationSent";
+    public static final String NOTIFICATION_SENT_FLAG = "disputeNotSubmittedNotificationSent";
     private static final String SUBMIT_EVENT_ERROR = "Submit event failed for case id: {}, continuing to next case";
     private static final String DESERIALIZATION_ERROR = "Deserialization failed for case id: {}, continuing to next case";
     private static final String CCD_SEARCH_ERROR = "NotifyApplicantDisputeFormOverdue schedule task stopped after search error";
@@ -67,7 +67,7 @@ public class SystemNotifyApplicantDisputeFormOverdueTask implements Runnable {
             final BoolQueryBuilder query =
                 boolQuery()
                     .must(matchQuery(STATE, Holding))
-                    .must(matchQuery(AOS_RESPONSE, DISPUTE_DIVORCE))
+                    .must(matchQuery(AOS_RESPONSE, DISPUTE_DIVORCE.getType()))
                     .filter(rangeQuery(ISSUE_DATE).lte(LocalDate.now().minusDays(37)))
                     .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YesOrNo.YES));
 

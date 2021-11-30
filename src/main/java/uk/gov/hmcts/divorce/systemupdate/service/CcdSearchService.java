@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
+import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsListConverter;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
@@ -25,6 +26,7 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.google.common.collect.Lists.partition;
 import static java.util.stream.Collectors.toList;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
@@ -60,6 +62,9 @@ public class CcdSearchService {
     @Autowired
     private CaseDetailsConverter caseDetailsConverter;
 
+    @Autowired
+    private CaseDetailsListConverter caseDetailsListConverter;
+
     public List<CaseDetails> searchForAllCasesWithQuery(final State state, final BoolQueryBuilder query, User user, String serviceAuth) {
 
         final List<CaseDetails> allCaseDetails = new ArrayList<>();
@@ -77,7 +82,6 @@ public class CcdSearchService {
                 totalResults = searchResult.getTotal();
             }
         } catch (final FeignException e) {
-
             final String message = String.format("Failed to complete search for Cases with state of %s", state);
             log.info(message, e);
             throw new CcdSearchCaseException(message, e);
@@ -163,43 +167,15 @@ public class CcdSearchService {
         final QueryBuilder stateQuery = matchQuery(STATE, AwaitingPronouncement);
         final QueryBuilder bulkListingCaseId = existsQuery("data.bulkListCaseReference");
 
-        final QueryBuilder query = boolQuery()
+        final BoolQueryBuilder query = boolQuery()
             .must(stateQuery)
             .mustNot(bulkListingCaseId);
 
-        final Deque<List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State>>> pageQueue = new LinkedList<>();
-        int from = 0;
-        int totalResults = bulkActionPageSize;
+        final List<CaseDetails> allCaseDetails = searchForAllCasesWithQuery(AwaitingPronouncement, query, user, serviceAuth);
 
-        try {
-            while (totalResults == bulkActionPageSize) {
-
-                final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
-                    .searchSource()
-                    .query(query)
-                    .from(from)
-                    .size(bulkActionPageSize);
-
-                final SearchResult searchResult = coreCaseDataApi.searchCases(
-                    user.getAuthToken(),
-                    serviceAuth,
-                    CASE_TYPE,
-                    sourceBuilder.toString());
-
-                pageQueue.offer(searchResult.getCases().stream()
-                    .map(caseDetailsConverter::convertToCaseDetailsFromReformModel)
-                    .collect(toList()));
-
-                from += bulkActionPageSize;
-                totalResults = searchResult.getTotal();
-            }
-        } catch (final FeignException e) {
-            final String message = "Failed to complete search for Cases with state of AwaitingPronouncement";
-            log.info(message, e);
-            throw new CcdSearchCaseException(message, e);
-        }
-
-        return pageQueue;
+        return new LinkedList<>(partition(
+            caseDetailsListConverter.convertToListOfValidCaseDetails(allCaseDetails),
+            bulkActionPageSize));
     }
 
     public List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState>> searchForUnprocessedOrErroredBulkCases(

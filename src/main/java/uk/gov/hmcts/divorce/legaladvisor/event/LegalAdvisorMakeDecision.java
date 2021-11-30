@@ -12,14 +12,19 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorClarificationSubmittedNotification;
 
 import java.time.Clock;
 import java.time.LocalDate;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.ADMIN_ERROR;
+import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAdminClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ClarificationSubmitted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderRefused;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -29,9 +34,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 @Slf4j
-public class LegalAdvisorGrantConditionalOrder implements CCDConfig<CaseData, State, UserRole> {
+public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String LEGAL_ADVISOR_GRANT_CONDITIONAL_ORDER = "legal-advisor-grant-conditional-order";
+    public static final String LEGAL_ADVISOR_MAKE_DECISION = "legal-advisor-make-decision";
+
+    @Autowired
+    private LegalAdvisorClarificationSubmittedNotification notification;
 
     @Autowired
     private Clock clock;
@@ -39,7 +47,7 @@ public class LegalAdvisorGrantConditionalOrder implements CCDConfig<CaseData, St
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(LEGAL_ADVISOR_GRANT_CONDITIONAL_ORDER)
+            .event(LEGAL_ADVISOR_MAKE_DECISION)
             .forStates(AwaitingLegalAdvisorReferral, ClarificationSubmitted)
             .name("Make a decision")
             .description("Grant Conditional Order")
@@ -77,6 +85,12 @@ public class LegalAdvisorGrantConditionalOrder implements CCDConfig<CaseData, St
             .complex(CaseData::getConditionalOrder)
                 .mandatory(ConditionalOrder::getRefusalClarificationReason)
                 .mandatory(ConditionalOrder::getRefusalClarificationAdditionalInfo)
+            .done()
+            .page("adminErrorClarification")
+            .pageLabel("Admin error - Make a Decision")
+            .showCondition("coRefusalDecision=\"adminError\"")
+            .complex(CaseData::getConditionalOrder)
+                .mandatory(ConditionalOrder::getRefusalRejectionAdditionalInfo)
             .done();
     }
 
@@ -85,7 +99,8 @@ public class LegalAdvisorGrantConditionalOrder implements CCDConfig<CaseData, St
 
         log.info("Legal advisor grant conditional order about to submit callback invoked. CaseID: {}", details.getId());
 
-        final ConditionalOrder conditionalOrder = details.getData().getConditionalOrder();
+        final CaseData caseData = details.getData();
+        final ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
 
         State endState;
 
@@ -93,12 +108,20 @@ public class LegalAdvisorGrantConditionalOrder implements CCDConfig<CaseData, St
             log.info("Legal advisor conditional order granted for case id: {}", details.getId());
             conditionalOrder.setDecisionDate(LocalDate.now(clock));
             endState = AwaitingPronouncement;
-        } else {
+
+        } else if (ADMIN_ERROR.equals(conditionalOrder.getRefusalDecision())) {
+            endState = AwaitingAdminClarification;
+        } else if (MORE_INFO.equals(conditionalOrder.getRefusalDecision())) {
+            if (caseData.getApplication().isSolicitorApplication()) {
+                notification.send(caseData, details.getId());
+            }
             endState = AwaitingClarification;
+        } else {
+            endState = ConditionalOrderRefused;
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
+            .data(caseData)
             .state(endState)
             .build();
     }

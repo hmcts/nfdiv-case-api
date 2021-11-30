@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
+import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsListConverter;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
@@ -27,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Stream.concat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
@@ -65,13 +68,16 @@ class CcdSearchServiceTest {
     @Mock
     private CaseDetailsConverter caseDetailsConverter;
 
+    @Mock
+    private CaseDetailsListConverter caseDetailsListConverter;
+
     @InjectMocks
     private CcdSearchService ccdSearchService;
 
     @BeforeEach
     void setPageSize() {
-        setField(ccdSearchService, "pageSize", 100);
-        setField(ccdSearchService, "bulkActionPageSize", 50);
+        setField(ccdSearchService, "pageSize", PAGE_SIZE);
+        setField(ccdSearchService, "bulkActionPageSize", BULK_LIST_MAX_PAGE_SIZE);
     }
 
     @Test
@@ -319,28 +325,32 @@ class CcdSearchServiceTest {
     void shouldReturnAllPagesOfCasesInStateAwaitingPronouncement() {
 
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
-        final SearchResult expected1 = SearchResult.builder().total(BULK_LIST_MAX_PAGE_SIZE)
-            .cases(createCaseDetailsList(BULK_LIST_MAX_PAGE_SIZE)).build();
-        final SearchResult expected2 = SearchResult.builder().total(1)
+        final SearchResult searchResult1 = SearchResult.builder().total(PAGE_SIZE)
+            .cases(createCaseDetailsList(PAGE_SIZE)).build();
+        final SearchResult searchResult2 = SearchResult.builder().total(1)
             .cases(createCaseDetailsList(1)).build();
+        final List<CaseDetails> expectedCases = concat(searchResult1.getCases().stream(), searchResult2.getCases().stream())
+            .collect(toList());
 
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
             CASE_TYPE,
             searchSourceBuilderForAwaitingPronouncementCases(0).toString()))
-            .thenReturn(expected1);
+            .thenReturn(searchResult1);
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
             CASE_TYPE,
-            searchSourceBuilderForAwaitingPronouncementCases(50).toString()))
-            .thenReturn(expected2);
+            searchSourceBuilderForAwaitingPronouncementCases(100).toString()))
+            .thenReturn(searchResult2);
+        when(caseDetailsListConverter.convertToListOfValidCaseDetails(expectedCases)).thenReturn(createConvertedCaseDetailsList(101));
 
         final Deque<List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State>>> allPages =
             ccdSearchService.searchAwaitingPronouncementCasesAllPages(user, SERVICE_AUTHORIZATION);
 
-        assertThat(allPages.size()).isEqualTo(2);
+        assertThat(allPages.size()).isEqualTo(3);
+        assertThat(allPages.poll().size()).isEqualTo(BULK_LIST_MAX_PAGE_SIZE);
         assertThat(allPages.poll().size()).isEqualTo(BULK_LIST_MAX_PAGE_SIZE);
         assertThat(allPages.poll().size()).isEqualTo(1);
     }
@@ -475,6 +485,18 @@ class CcdSearchServiceTest {
         return caseDetails;
     }
 
+    @SuppressWarnings("unchecked")
+    private List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State>> createConvertedCaseDetailsList(final int size) {
+
+        final List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State>> caseDetails = new ArrayList<>();
+
+        for (int index = 0; index < size; index++) {
+            caseDetails.add(mock(uk.gov.hmcts.ccd.sdk.api.CaseDetails.class));
+        }
+
+        return caseDetails;
+    }
+
     private SearchSourceBuilder getSourceBuilder(final int from, final int pageSize) {
         return SearchSourceBuilder
             .searchSource()
@@ -496,10 +518,10 @@ class CcdSearchServiceTest {
 
         return SearchSourceBuilder
             .searchSource()
+            .sort(DUE_DATE, ASC)
             .query(query)
             .from(from)
-            .size(BULK_LIST_MAX_PAGE_SIZE);
-
+            .size(PAGE_SIZE);
     }
 
     private SearchSourceBuilder searchSourceBuilderForPronouncedCasesWithCasesInError(final int from) {

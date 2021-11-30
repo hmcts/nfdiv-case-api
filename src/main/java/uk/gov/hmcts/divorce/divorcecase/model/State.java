@@ -64,6 +64,13 @@ public enum State {
     Withdrawn("Withdrawn"),
 
     @CCD(
+        name = "Awaiting admin clarification",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    AwaitingAdminClarification("AwaitingAdminClarification"),
+
+    @CCD(
         name = "Awaiting applicant",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
