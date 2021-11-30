@@ -58,7 +58,7 @@ public class CitizenUpdateContactDetails implements CCDConfig<CaseData, State, U
         CaseData updatedData = details.getData();
         CaseData data = beforeDetails.getData();
 
-        if (updatedData.getCaseInvite().getApplicant2UserId() != null
+        if (!updatedData.getCaseInvite().isApplicant2UserIdNull()
             && updatedData.getCaseInvite().getApplicant2UserId().equals(user.getUserDetails().getId())) {
             data.getApplicant2().setHomeAddress(updatedData.getApplicant2().getHomeAddress());
             data.getApplicant2().setPhoneNumber(updatedData.getApplicant2().getPhoneNumber());

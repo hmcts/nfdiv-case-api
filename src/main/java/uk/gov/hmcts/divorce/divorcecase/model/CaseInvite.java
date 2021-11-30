@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 
+import static java.util.Objects.isNull;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,4 +33,5 @@ public class CaseInvite {
     )
     private String applicant2UserId;
 
+    public boolean isApplicant2UserIdNull() { return isNull(applicant2UserId); }
 }
