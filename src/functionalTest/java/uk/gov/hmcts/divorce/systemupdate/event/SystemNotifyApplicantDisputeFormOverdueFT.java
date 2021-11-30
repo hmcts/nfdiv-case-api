@@ -22,7 +22,7 @@ import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.springframework.http.HttpStatus.OK;
-import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyApplicantDisputeFormOverdue.SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE;
 import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemNotifyApplicantDisputeFormOverdueTask.NOTIFICATION_SENT_FLAG;
@@ -61,16 +61,15 @@ public class SystemNotifyApplicantDisputeFormOverdueFT extends FunctionalTestSui
         final BoolQueryBuilder query =
             boolQuery()
                 .must(matchQuery(STATE, Holding))
-                .must(matchQuery(AOS_RESPONSE, WITHOUT_DISPUTE_DIVORCE.getType()))
+                .must(matchQuery(AOS_RESPONSE, DISPUTE_DIVORCE.getType()))
                 .filter(rangeQuery(ISSUE_DATE).lte(LocalDate.now().minusDays(10)))
                 .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YesOrNo.YES));
 
         List<CaseDetails> cases =  searchForDisputeFormOverdueCases(query);
         cases.forEach(caseDetails -> {
-            System.out.println("AOS response: " + caseDetails.getData().get("howToRespondApplication"));
             assertThat(caseDetails.getState().equals(Holding));
             assertThat(caseDetails.getData().get(NOTIFICATION_SENT_FLAG)).isNotEqualTo(YesOrNo.YES);
-            assertThat(WITHOUT_DISPUTE_DIVORCE.getType().equals(caseDetails.getData().get("howToRespondApplication")));
+            assertThat(DISPUTE_DIVORCE.getType().equals(caseDetails.getData().get("howToRespondApplication")));
         });
     }
 }
