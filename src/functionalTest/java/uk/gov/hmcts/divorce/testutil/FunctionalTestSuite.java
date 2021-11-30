@@ -169,7 +169,7 @@ public abstract class FunctionalTestSuite {
             .post(url);
     }
 
-    protected List<CaseDetails> searchForDisputeFormOverdueCases(BoolQueryBuilder query) {
+    protected List<CaseDetails> searchForCasesWithQuery(BoolQueryBuilder query) {
         return searchService.searchForAllCasesWithQuery(
             Holding,
             query,

@@ -3,14 +3,13 @@ package uk.gov.hmcts.divorce.systemupdate.event;
 import io.restassured.response.Response;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
-import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
@@ -57,19 +56,19 @@ public class SystemNotifyApplicantDisputeFormOverdueFT extends FunctionalTestSui
     }
 
     @Test
+    @EnabledIfEnvironmentVariable(named = "ELASTIC_SEARCH_ENABLED", matches = "true")
     public void shouldSearchForDisputeFormOverdueCases() {
-        final BoolQueryBuilder query =
-            boolQuery()
-                .must(matchQuery(STATE, Holding))
-                .must(matchQuery(AOS_RESPONSE, DISPUTE_DIVORCE.getType()))
-                .filter(rangeQuery(ISSUE_DATE).lte(LocalDate.now().minusDays(10)))
-                .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YesOrNo.YES));
+        final BoolQueryBuilder query = boolQuery()
+            .must(matchQuery(STATE, Holding))
+            .must(matchQuery(AOS_RESPONSE, DISPUTE_DIVORCE.getType()))
+            .filter(rangeQuery(ISSUE_DATE).lte(LocalDate.now().minusDays(10)))
+            .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YesOrNo.YES));
 
-        List<CaseDetails> cases =  searchForDisputeFormOverdueCases(query);
-        cases.forEach(caseDetails -> {
-            assertThat(caseDetails.getState().equals(Holding));
-            assertThat(caseDetails.getData().get(NOTIFICATION_SENT_FLAG)).isNotEqualTo(YesOrNo.YES);
-            assertThat(DISPUTE_DIVORCE.getType().equals(caseDetails.getData().get("howToRespondApplication")));
-        });
+        searchForCasesWithQuery(query)
+            .forEach(caseDetails -> {
+                assertThat(caseDetails.getState().equals(Holding));
+                assertThat(caseDetails.getData().get(NOTIFICATION_SENT_FLAG)).isNotEqualTo(YesOrNo.YES);
+                assertThat(DISPUTE_DIVORCE.getType().equals(caseDetails.getData().get("howToRespondApplication")));
+            });
     }
 }
