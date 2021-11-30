@@ -101,7 +101,7 @@ class LegalAdvisorMakeDecisionTest {
         caseDetails.setState(AwaitingClarification);
         caseDetails.setId(12345L);
 
-        legalAdvisorGrantConditionalOrder.submitted(caseDetails, caseDetails);
+        legalAdvisorMakeDecision.submitted(caseDetails, caseDetails);
 
         verify(notification).send(caseData, 12345L);
     }
@@ -116,7 +116,7 @@ class LegalAdvisorMakeDecisionTest {
         caseDetails.setData(caseData);
         caseDetails.setState(AwaitingClarification);
 
-        legalAdvisorGrantConditionalOrder.submitted(caseDetails, caseDetails);
+        legalAdvisorMakeDecision.submitted(caseDetails, caseDetails);
 
         verifyNoInteractions(notification);
     }
@@ -131,7 +131,7 @@ class LegalAdvisorMakeDecisionTest {
         caseDetails.setData(caseData);
         caseDetails.setState(AwaitingPronouncement);
 
-        legalAdvisorGrantConditionalOrder.submitted(caseDetails, caseDetails);
+        legalAdvisorMakeDecision.submitted(caseDetails, caseDetails);
 
         verifyNoInteractions(notification);
     }
