@@ -17,15 +17,21 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
+import uk.gov.hmcts.reform.idam.client.models.User;
+import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSwitchedToSole.SWITCH_TO_SOLE;
@@ -34,6 +40,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ACCESS_CODE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,6 +55,9 @@ class CitizenSwitchedToSoleTest {
 
     @Mock
     private HttpServletRequest httpServletRequest;
+
+    @Mock
+    private IdamService idamService;
 
     @InjectMocks
     private CitizenSwitchedToSole citizenSwitchedToSole;
@@ -66,11 +77,22 @@ class CitizenSwitchedToSoleTest {
     void givenEventStartedWithValidJointCaseForApplicant1SwitchToSoleShouldSetApplicationTypeToSoleAndSendNotifications() {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setState(State.AwaitingApplicant2Response);
         CaseData caseData = validJointApplicant1CaseData();
+        setValidCaseInviteData(caseData);
 
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
+
+        when(httpServletRequest.getHeader(AUTHORIZATION))
+            .thenReturn("token");
+
+        final var userDetails = UserDetails.builder()
+            .email(TEST_USER_EMAIL)
+            .id("app1")
+            .build();
+
+        when(idamService.retrieveUser(anyString()))
+            .thenReturn(new User("token", userDetails));
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetails);
 
@@ -85,12 +107,23 @@ class CitizenSwitchedToSoleTest {
     void givenEventStartedWithValidJointCaseForApplicant1SwitchToSoleWithApplicant2NotLinkedShouldRemoveAccessCodeAndSendNotifications() {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setState(State.AwaitingApplicant2Response);
         CaseData caseData = validJointApplicant1CaseData();
+        setValidCaseInviteData(caseData);
         caseData.getCaseInvite().setAccessCode(ACCESS_CODE);
 
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
+
+        when(httpServletRequest.getHeader(AUTHORIZATION))
+            .thenReturn(TEST_USER_EMAIL);
+
+        final var userDetails = UserDetails.builder()
+            .email(TEST_USER_EMAIL)
+            .id("app1")
+            .build();
+
+        when(idamService.retrieveUser(anyString()))
+            .thenReturn(new User("token", userDetails));
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetails);
 
@@ -106,11 +139,22 @@ class CitizenSwitchedToSoleTest {
     void givenEventStartedWithValidJointCaseForApplicant2SwitchToSoleShouldSetApplicationTypeToSoleAndSendNotifications() {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setState(State.Applicant2Approved);
         CaseData caseData = validJointApplicant1CaseData();
+        setValidCaseInviteData(caseData);
 
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
+
+        when(httpServletRequest.getHeader(AUTHORIZATION))
+            .thenReturn("token");
+
+        final var userDetails = UserDetails.builder()
+            .email(TEST_APPLICANT_2_EMAIL)
+            .id("app2")
+            .build();
+
+        when(idamService.retrieveUser(anyString()))
+            .thenReturn(new User("token", userDetails));
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetails);
 
@@ -122,14 +166,27 @@ class CitizenSwitchedToSoleTest {
     }
 
     @Test
-    void givenApplicant2ScreenHasMarriageBrokenIsNoThenOnlyApplicant1NotificationIsSent() {
+    void givenApplicant2ScreenHasMarriageBrokenIsNoThenOnlyApplicant1NotificationIsSentForApplicant1SwitchToSole() {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = validJointApplicant1CaseData();
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(NO);
+        setValidCaseInviteData(caseData);
 
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
+
+        when(httpServletRequest.getHeader(AUTHORIZATION))
+            .thenReturn("token");
+
+        final var userDetails = UserDetails.builder()
+            .email(TEST_USER_EMAIL)
+            .id("app1")
+            .build();
+
+        when(idamService.retrieveUser(anyString()))
+            .thenReturn(new User("token", userDetails));
+
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetails);
 
@@ -144,6 +201,7 @@ class CitizenSwitchedToSoleTest {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = validJointApplicant1CaseData();
+        setValidCaseInviteData(caseData);
         caseData.setApplicant2(
             Applicant.builder()
                 .homeAddress(
@@ -161,6 +219,18 @@ class CitizenSwitchedToSoleTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
+        when(httpServletRequest.getHeader(AUTHORIZATION))
+            .thenReturn("token");
+
+        final var userDetails = UserDetails.builder()
+            .email(TEST_USER_EMAIL)
+            .id("app1")
+            .build();
+
+        when(idamService.retrieveUser(anyString()))
+            .thenReturn(new User("token", userDetails));
+
+
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData().getApplicant2().getHomeAddress()).isNull();
@@ -171,6 +241,7 @@ class CitizenSwitchedToSoleTest {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = validJointApplicant1CaseData();
+        setValidCaseInviteData(caseData);
         caseData.setApplicant2(
             Applicant.builder()
                 .homeAddress(
@@ -187,6 +258,17 @@ class CitizenSwitchedToSoleTest {
 
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
+
+        when(httpServletRequest.getHeader(AUTHORIZATION))
+            .thenReturn("token");
+
+        final var userDetails = UserDetails.builder()
+            .email(TEST_USER_EMAIL)
+            .id("app1")
+            .build();
+
+        when(idamService.retrieveUser(anyString()))
+            .thenReturn(new User("token", userDetails));
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetails);
 
@@ -207,13 +289,8 @@ class CitizenSwitchedToSoleTest {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = validJointApplicant1CaseData();
-        caseData.setCaseInvite(
-            CaseInvite.builder()
-                .accessCode("QA34TR89")
-                .applicant2InviteEmailAddress("bob@buildings.com")
-                .applicant2UserId("1234")
-                .build()
-        );
+        setValidCaseInviteData(caseData);
+        caseData.getCaseInvite().setAccessCode(ACCESS_CODE);
         caseData.setApplicant2(
             Applicant.builder()
                 .firstName("Bob")
@@ -248,6 +325,17 @@ class CitizenSwitchedToSoleTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
+        when(httpServletRequest.getHeader(AUTHORIZATION))
+            .thenReturn("token");
+
+        final var userDetails = UserDetails.builder()
+            .email(TEST_USER_EMAIL)
+            .id("app1")
+            .build();
+
+        when(idamService.retrieveUser(anyString()))
+            .thenReturn(new User("token", userDetails));
+
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSwitchedToSole.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData().getApplicant2())
@@ -261,7 +349,7 @@ class CitizenSwitchedToSoleTest {
 
         assertThat(response.getData().getCaseInvite())
             .isEqualTo(CaseInvite.builder()
-                .applicant2InviteEmailAddress("bob@buildings.com")
+                .applicant2InviteEmailAddress(TEST_APPLICANT_2_EMAIL)
                 .build());
 
         assertThat(response.getData().getApplicant2DocumentsUploaded()).isNull();
@@ -274,5 +362,15 @@ class CitizenSwitchedToSoleTest {
         assertThat(response.getData().getApplication().getApplicant2CannotUploadSupportingDocument()).isNull();
         assertThat(response.getData().getApplication().getApplicant2ConfirmApplicant1Information()).isNull();
         assertThat(response.getData().getApplication().getApplicant2ReminderSent()).isNull();
+    }
+
+    private CaseData setValidCaseInviteData(CaseData caseData) {
+        caseData.setCaseInvite(
+            CaseInvite.builder()
+                .applicant2InviteEmailAddress(TEST_APPLICANT_2_EMAIL)
+                .applicant2UserId("app2")
+                .build()
+        );
+        return caseData;
     }
 }

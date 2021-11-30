@@ -25,14 +25,14 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
-import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorGrantConditionalOrder.LEGAL_ADVISOR_GRANT_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeDecision.LEGAL_ADVISOR_MAKE_DECISION;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-class LegalAdvisorGrantConditionalOrderTest {
+class LegalAdvisorMakeDecisionTest {
 
     @Mock
     private LegalAdvisorClarificationSubmittedNotification notification;
@@ -41,17 +41,17 @@ class LegalAdvisorGrantConditionalOrderTest {
     private Clock clock;
 
     @InjectMocks
-    private LegalAdvisorGrantConditionalOrder legalAdvisorGrantConditionalOrder;
+    private LegalAdvisorMakeDecision legalAdvisorMakeDecision;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        legalAdvisorGrantConditionalOrder.configure(configBuilder);
+        legalAdvisorMakeDecision.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(LEGAL_ADVISOR_GRANT_CONDITIONAL_ORDER);
+            .contains(LEGAL_ADVISOR_MAKE_DECISION);
     }
 
     @Test
@@ -67,7 +67,7 @@ class LegalAdvisorGrantConditionalOrderTest {
         caseDetails.setData(caseData);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
-            legalAdvisorGrantConditionalOrder.aboutToSubmit(caseDetails, null);
+            legalAdvisorMakeDecision.aboutToSubmit(caseDetails, null);
 
         assertThat(response.getData().getConditionalOrder().getDecisionDate()).isEqualTo(getExpectedLocalDate());
         assertThat(response.getState()).isEqualTo(AwaitingPronouncement);
@@ -84,7 +84,7 @@ class LegalAdvisorGrantConditionalOrderTest {
         caseDetails.setData(caseData);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
-            legalAdvisorGrantConditionalOrder.aboutToSubmit(caseDetails, null);
+            legalAdvisorMakeDecision.aboutToSubmit(caseDetails, null);
 
         assertThat(response.getData().getConditionalOrder().getDecisionDate()).isNull();
         assertThat(response.getState()).isEqualTo(AwaitingClarification);

@@ -31,9 +31,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 @Slf4j
-public class LegalAdvisorGrantConditionalOrder implements CCDConfig<CaseData, State, UserRole> {
+public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String LEGAL_ADVISOR_GRANT_CONDITIONAL_ORDER = "legal-advisor-grant-conditional-order";
+    public static final String LEGAL_ADVISOR_MAKE_DECISION = "legal-advisor-make-decision";
 
     @Autowired
     private LegalAdvisorClarificationSubmittedNotification notification;
@@ -44,7 +44,7 @@ public class LegalAdvisorGrantConditionalOrder implements CCDConfig<CaseData, St
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(LEGAL_ADVISOR_GRANT_CONDITIONAL_ORDER)
+            .event(LEGAL_ADVISOR_MAKE_DECISION)
             .forStates(AwaitingLegalAdvisorReferral, ClarificationSubmitted)
             .name("Make a decision")
             .description("Grant Conditional Order")
@@ -83,6 +83,12 @@ public class LegalAdvisorGrantConditionalOrder implements CCDConfig<CaseData, St
             .complex(CaseData::getConditionalOrder)
                 .mandatory(ConditionalOrder::getRefusalClarificationReason)
                 .mandatory(ConditionalOrder::getRefusalClarificationAdditionalInfo)
+            .done()
+            .page("adminErrorClarification")
+            .pageLabel("Admin error")
+            .showCondition("coRefusalDecision=\"adminError\"")
+            .complex(CaseData::getConditionalOrder)
+                .mandatory(ConditionalOrder::getRefusalRejectionAdditionalInfo)
             .done();
     }
 

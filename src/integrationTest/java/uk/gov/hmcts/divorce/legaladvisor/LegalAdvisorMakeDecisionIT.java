@@ -25,7 +25,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
-import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorGrantConditionalOrder.LEGAL_ADVISOR_GRANT_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeDecision.LEGAL_ADVISOR_MAKE_DECISION;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
@@ -39,7 +39,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @DirtiesContext
-public class LegalAdvisorGrantConditionalOrderIT {
+public class LegalAdvisorMakeDecisionIT {
 
     @Autowired
     private MockMvc mockMvc;
@@ -71,7 +71,7 @@ public class LegalAdvisorGrantConditionalOrderIT {
                 .content(objectMapper.writeValueAsString(
                         callbackRequest(
                             caseData,
-                            LEGAL_ADVISOR_GRANT_CONDITIONAL_ORDER)
+                            LEGAL_ADVISOR_MAKE_DECISION)
                     )
                 )
                 .accept(APPLICATION_JSON))
@@ -103,7 +103,7 @@ public class LegalAdvisorGrantConditionalOrderIT {
                 .content(objectMapper.writeValueAsString(
                         callbackRequest(
                             caseData,
-                            LEGAL_ADVISOR_GRANT_CONDITIONAL_ORDER)
+                            LEGAL_ADVISOR_MAKE_DECISION)
                     )
                 )
                 .accept(APPLICATION_JSON))
