@@ -81,7 +81,8 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
 
         User user = idamService.retrieveUser(httpServletRequest.getHeader(AUTHORIZATION));
 
-        if (data.getCaseInvite().getApplicant2UserId().equals(user.getUserDetails().getId())) {
+        if (data.getCaseInvite().getApplicant2UserId() != null
+            && data.getCaseInvite().getApplicant2UserId().equals(user.getUserDetails().getId())) {
             switchToSoleNotification.sendApplicant2SwitchToSoleNotificationToApplicant1(data, details.getId());
             switchToSoleNotification.sendApplicant2SwitchToSoleNotificationToApplicant2(data, details.getId());
 

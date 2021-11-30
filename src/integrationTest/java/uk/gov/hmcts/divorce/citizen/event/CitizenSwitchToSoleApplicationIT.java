@@ -163,6 +163,7 @@ public class CitizenSwitchToSoleApplicationIT {
         CaseData data = validJointApplicant1CaseData();
         data.getCaseInvite().setAccessCode(ACCESS_CODE);
         setValidCaseInviteData(data);
+        data.getCaseInvite().setApplicant2UserId(null);
 
         final var userDetails = UserDetails.builder()
             .email("test@test.com")
