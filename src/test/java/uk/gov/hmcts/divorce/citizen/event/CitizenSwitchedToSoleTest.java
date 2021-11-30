@@ -110,6 +110,7 @@ class CitizenSwitchedToSoleTest {
         CaseData caseData = validJointApplicant1CaseData();
         setValidCaseInviteData(caseData);
         caseData.getCaseInvite().setAccessCode(ACCESS_CODE);
+        caseData.getCaseInvite().setApplicant2UserId(null);
 
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
