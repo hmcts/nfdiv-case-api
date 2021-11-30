@@ -12,6 +12,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorClarificationSubmittedNotification;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -34,6 +36,9 @@ public class LegalAdvisorGrantConditionalOrder implements CCDConfig<CaseData, St
     public static final String LEGAL_ADVISOR_GRANT_CONDITIONAL_ORDER = "legal-advisor-grant-conditional-order";
 
     @Autowired
+    private LegalAdvisorClarificationSubmittedNotification notification;
+
+    @Autowired
     private Clock clock;
 
     @Override
@@ -47,6 +52,7 @@ public class LegalAdvisorGrantConditionalOrder implements CCDConfig<CaseData, St
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, LEGAL_ADVISOR)
             .grant(READ,
@@ -101,5 +107,19 @@ public class LegalAdvisorGrantConditionalOrder implements CCDConfig<CaseData, St
             .data(details.getData())
             .state(endState)
             .build();
+    }
+
+    public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,
+                                               final CaseDetails<CaseData, State> beforeDetails) {
+
+        final CaseData caseData = details.getData();
+        final State state = details.getState();
+
+        if (caseData.getApplication().isSolicitorApplication()
+            && AwaitingClarification.equals(state)) {
+            notification.send(caseData, details.getId());
+        }
+
+        return SubmittedCallbackResponse.builder().build();
     }
 }

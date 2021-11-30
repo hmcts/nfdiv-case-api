@@ -9,14 +9,18 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorClarificationSubmittedNotification;
 
 import java.time.Clock;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
@@ -29,6 +33,9 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
 class LegalAdvisorGrantConditionalOrderTest {
+
+    @Mock
+    private LegalAdvisorClarificationSubmittedNotification notification;
 
     @Mock
     private Clock clock;
@@ -81,5 +88,51 @@ class LegalAdvisorGrantConditionalOrderTest {
 
         assertThat(response.getData().getConditionalOrder().getDecisionDate()).isNull();
         assertThat(response.getState()).isEqualTo(AwaitingClarification);
+    }
+
+    @Test
+    void shouldSendEmailInSubmittedCallback() {
+        final CaseData caseData = CaseData.builder()
+            .application(Application.builder().solSignStatementOfTruth(YES).build())
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(AwaitingClarification);
+        caseDetails.setId(12345L);
+
+        legalAdvisorGrantConditionalOrder.submitted(caseDetails, caseDetails);
+
+        verify(notification).send(caseData, 12345L);
+    }
+
+    @Test
+    void shouldNotSendEmailInSubmittedCallbackIfNotSolicitorApplication() {
+        final CaseData caseData = CaseData.builder()
+            .application(Application.builder().solSignStatementOfTruth(NO).build())
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(AwaitingClarification);
+
+        legalAdvisorGrantConditionalOrder.submitted(caseDetails, caseDetails);
+
+        verifyNoInteractions(notification);
+    }
+
+    @Test
+    void shouldNotSendEmailInSubmittedCallbackIfNotInAwaitingClarificationState() {
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(ConditionalOrder.builder().granted(YES).build())
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(AwaitingPronouncement);
+
+        legalAdvisorGrantConditionalOrder.submitted(caseDetails, caseDetails);
+
+        verifyNoInteractions(notification);
     }
 }
