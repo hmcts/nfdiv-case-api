@@ -13,7 +13,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorClarificationSubmittedNotification;
-import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -52,7 +51,6 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .submittedCallback(this::submitted)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, LEGAL_ADVISOR)
             .grant(READ,
@@ -97,7 +95,8 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
 
         log.info("Legal advisor grant conditional order about to submit callback invoked. CaseID: {}", details.getId());
 
-        final ConditionalOrder conditionalOrder = details.getData().getConditionalOrder();
+        final CaseData caseData = details.getData();
+        final ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
 
         State endState;
 
@@ -109,23 +108,14 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             endState = AwaitingClarification;
         }
 
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
-            .state(endState)
-            .build();
-    }
-
-    public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,
-                                               final CaseDetails<CaseData, State> beforeDetails) {
-
-        final CaseData caseData = details.getData();
-        final State state = details.getState();
-
         if (caseData.getApplication().isSolicitorApplication()
-            && AwaitingClarification.equals(state)) {
+            && AwaitingClarification.equals(endState)) {
             notification.send(caseData, details.getId());
         }
 
-        return SubmittedCallbackResponse.builder().build();
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .state(endState)
+            .build();
     }
 }

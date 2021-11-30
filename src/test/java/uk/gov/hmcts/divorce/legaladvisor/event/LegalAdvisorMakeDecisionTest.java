@@ -93,15 +93,15 @@ class LegalAdvisorMakeDecisionTest {
     @Test
     void shouldSendEmailInSubmittedCallback() {
         final CaseData caseData = CaseData.builder()
+            .conditionalOrder(ConditionalOrder.builder().granted(NO).build())
             .application(Application.builder().solSignStatementOfTruth(YES).build())
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
-        caseDetails.setState(AwaitingClarification);
         caseDetails.setId(12345L);
 
-        legalAdvisorMakeDecision.submitted(caseDetails, caseDetails);
+        legalAdvisorMakeDecision.aboutToSubmit(caseDetails, caseDetails);
 
         verify(notification).send(caseData, 12345L);
     }
@@ -109,29 +109,31 @@ class LegalAdvisorMakeDecisionTest {
     @Test
     void shouldNotSendEmailInSubmittedCallbackIfNotSolicitorApplication() {
         final CaseData caseData = CaseData.builder()
+            .conditionalOrder(ConditionalOrder.builder().granted(NO).build())
             .application(Application.builder().solSignStatementOfTruth(NO).build())
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
-        caseDetails.setState(AwaitingClarification);
 
-        legalAdvisorMakeDecision.submitted(caseDetails, caseDetails);
+        legalAdvisorMakeDecision.aboutToSubmit(caseDetails, caseDetails);
 
         verifyNoInteractions(notification);
     }
 
     @Test
     void shouldNotSendEmailInSubmittedCallbackIfNotInAwaitingClarificationState() {
+        setMockClock(clock);
+
         final CaseData caseData = CaseData.builder()
             .conditionalOrder(ConditionalOrder.builder().granted(YES).build())
+            .application(Application.builder().solSignStatementOfTruth(YES).build())
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
-        caseDetails.setState(AwaitingPronouncement);
 
-        legalAdvisorMakeDecision.submitted(caseDetails, caseDetails);
+        legalAdvisorMakeDecision.aboutToSubmit(caseDetails, caseDetails);
 
         verifyNoInteractions(notification);
     }

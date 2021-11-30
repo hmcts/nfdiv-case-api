@@ -26,11 +26,15 @@ public class LegalAdvisorClarificationSubmittedNotification {
         final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
         templateVars.put(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
 
+        log.info("Sending Clarification Submitted notification for case : {}", caseId);
+
         notificationService.sendEmail(
             caseData.getApplicant1().getSolicitor().getEmail(),
             SOLICITOR_CLARIFICATION_SUBMITTED,
             templateVars,
             caseData.getApplicant1().getLanguagePreference()
         );
+
+        log.info("Successfully sent Clarification Submitted notification for case : {}", caseId);
     }
 }
