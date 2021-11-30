@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorClarificationSubmittedNotification;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -32,6 +33,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String LEGAL_ADVISOR_MAKE_DECISION = "legal-advisor-make-decision";
+
+    @Autowired
+    private LegalAdvisorClarificationSubmittedNotification notification;
 
     @Autowired
     private Clock clock;
@@ -91,7 +95,8 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
 
         log.info("Legal advisor grant conditional order about to submit callback invoked. CaseID: {}", details.getId());
 
-        final ConditionalOrder conditionalOrder = details.getData().getConditionalOrder();
+        final CaseData caseData = details.getData();
+        final ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
 
         State endState;
 
@@ -103,8 +108,13 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             endState = AwaitingClarification;
         }
 
+        if (caseData.getApplication().isSolicitorApplication()
+            && AwaitingClarification.equals(endState)) {
+            notification.send(caseData, details.getId());
+        }
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
+            .data(caseData)
             .state(endState)
             .build();
     }
