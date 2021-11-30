@@ -23,8 +23,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.ADMIN_ERROR;
+import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
+import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAdminClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderRefused;
 import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeDecision.LEGAL_ADVISOR_MAKE_DECISION;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
@@ -74,10 +79,10 @@ class LegalAdvisorMakeDecisionTest {
     }
 
     @Test
-    void shouldSetStateToAwaitingClarificationIfConditionalOrderIsNotGranted() {
+    void shouldSetStateToAwaitingClarificationIfConditionalOrderIsNotGrantedAndRefusalIsDueToMoreInformationRequired() {
 
         final CaseData caseData = CaseData.builder()
-            .conditionalOrder(ConditionalOrder.builder().granted(NO).build())
+            .conditionalOrder(ConditionalOrder.builder().granted(NO).refusalDecision(MORE_INFO).build())
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -88,12 +93,47 @@ class LegalAdvisorMakeDecisionTest {
 
         assertThat(response.getData().getConditionalOrder().getDecisionDate()).isNull();
         assertThat(response.getState()).isEqualTo(AwaitingClarification);
+
     }
 
     @Test
-    void shouldSendEmailInSubmittedCallback() {
+    void shouldSetStateToAwaitingAdminClarificationIfConditionalOrderIsNotGrantedAndRefusalIsDueToAdminError() {
+
         final CaseData caseData = CaseData.builder()
-            .conditionalOrder(ConditionalOrder.builder().granted(NO).build())
+            .conditionalOrder(ConditionalOrder.builder().granted(NO).refusalDecision(ADMIN_ERROR).build())
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            legalAdvisorMakeDecision.aboutToSubmit(caseDetails, null);
+
+        assertThat(response.getData().getConditionalOrder().getDecisionDate()).isNull();
+        assertThat(response.getState()).isEqualTo(AwaitingAdminClarification);
+    }
+
+    @Test
+    void shouldSetStateToConditionalOrderRefusedIfConditionalOrderIsRejected() {
+
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(ConditionalOrder.builder().granted(NO).refusalDecision(REJECT).build())
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            legalAdvisorMakeDecision.aboutToSubmit(caseDetails, null);
+
+        assertThat(response.getData().getConditionalOrder().getDecisionDate()).isNull();
+        assertThat(response.getState()).isEqualTo(ConditionalOrderRefused);
+    }
+
+    @Test
+    void shouldSendEmailIfConditionalOrderIsRejectedForMoreInfoAndIsSolicitorApplication() {
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(ConditionalOrder.builder().granted(NO).refusalDecision(MORE_INFO).build())
             .application(Application.builder().solSignStatementOfTruth(YES).build())
             .build();
 
@@ -107,27 +147,10 @@ class LegalAdvisorMakeDecisionTest {
     }
 
     @Test
-    void shouldNotSendEmailInSubmittedCallbackIfNotSolicitorApplication() {
+    void shouldNotSendEmailIfConditionalOrderIsRejectedForMoreInfoAndIsNotSolicitorApplication() {
         final CaseData caseData = CaseData.builder()
             .conditionalOrder(ConditionalOrder.builder().granted(NO).build())
             .application(Application.builder().solSignStatementOfTruth(NO).build())
-            .build();
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-
-        legalAdvisorMakeDecision.aboutToSubmit(caseDetails, caseDetails);
-
-        verifyNoInteractions(notification);
-    }
-
-    @Test
-    void shouldNotSendEmailInSubmittedCallbackIfNotInAwaitingClarificationState() {
-        setMockClock(clock);
-
-        final CaseData caseData = CaseData.builder()
-            .conditionalOrder(ConditionalOrder.builder().granted(YES).build())
-            .application(Application.builder().solSignStatementOfTruth(YES).build())
             .build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
