@@ -12,11 +12,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
-import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
+import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
+import uk.gov.hmcts.reform.idam.client.models.User;
+import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,9 +29,12 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.TREATING_NULL_AS_ABSENT;
 import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -42,6 +48,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
@@ -65,7 +72,7 @@ public class CitizenSwitchToSoleApplicationIT {
     private CcdAccessService ccdAccessService;
 
     @MockBean
-    private RequestInterceptor requestInterceptor;
+    private IdamService idamService;
 
     @MockBean
     private WebMvcConfig webMvcConfig;
@@ -78,10 +85,20 @@ public class CitizenSwitchToSoleApplicationIT {
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedForApplicant1SwitchToSoleThenCaseIsWithdrawnAndNotificationsSent() throws Exception {
         CaseData data = validJointApplicant1CaseData();
+        setValidCaseInviteData(data);
+
+        final var userDetails = UserDetails.builder()
+            .email("test@test.com")
+            .id("app1")
+            .build();
+
+        when(idamService.retrieveUser(anyString()))
+            .thenReturn(new User("token", userDetails));
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(AUTHORIZATION, AUTH_HEADER_VALUE)
             .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE, "AwaitingApplicant2Response")))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -106,11 +123,20 @@ public class CitizenSwitchToSoleApplicationIT {
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedForApplicant2SwitchToSoleThenCaseIsWithdrawnAndNotificationsSent() throws Exception {
         CaseData data = validApplicant2CaseData();
-        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        setValidCaseInviteData(data);
+
+        final var userDetails = UserDetails.builder()
+            .email("test@test.com")
+            .id("app2")
+            .build();
+
+        when(idamService.retrieveUser(anyString()))
+            .thenReturn(new User("token", userDetails));
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(AUTHORIZATION, AUTH_HEADER_VALUE)
             .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE, "Applicant2Approved")))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -136,10 +162,20 @@ public class CitizenSwitchToSoleApplicationIT {
     public void givenValidCaseDataWhenCallbackIsInvokedForApplicant1SwitchToSoleForUnlinkedApp2ThenAccessCodeSetToNull() throws Exception {
         CaseData data = validJointApplicant1CaseData();
         data.getCaseInvite().setAccessCode(ACCESS_CODE);
+        setValidCaseInviteData(data);
+
+        final var userDetails = UserDetails.builder()
+            .email("test@test.com")
+            .id("app1")
+            .build();
+
+        when(idamService.retrieveUser(anyString()))
+            .thenReturn(new User("token", userDetails));
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .header(AUTHORIZATION, AUTH_HEADER_VALUE)
             .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SWITCH_TO_SOLE, "AwaitingApplicant2Response")))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -168,5 +204,16 @@ public class CitizenSwitchToSoleApplicationIT {
             "classpath:wiremock/responses/about-to-submit-switch-to-sole-application.json");
 
         return new String(Files.readAllBytes(validCaseDataJsonFile.toPath()));
+    }
+
+    private CaseData setValidCaseInviteData(CaseData caseData) {
+        caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        caseData.setCaseInvite(
+            CaseInvite.builder()
+                .applicant2InviteEmailAddress(TEST_APPLICANT_2_EMAIL)
+                .applicant2UserId("app2")
+                .build()
+        );
+        return caseData;
     }
 }
