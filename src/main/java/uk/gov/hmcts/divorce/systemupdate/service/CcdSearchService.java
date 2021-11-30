@@ -82,7 +82,6 @@ public class CcdSearchService {
                 totalResults = searchResult.getTotal();
             }
         } catch (final FeignException e) {
-
             final String message = String.format("Failed to complete search for Cases with state of %s", state);
             log.info(message, e);
             throw new CcdSearchCaseException(message, e);
