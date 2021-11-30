@@ -33,5 +33,5 @@ public class CaseInvite {
     )
     private String applicant2UserId;
 
-    public boolean isApplicant2UserIdNull() { return isNull(applicant2UserId); }
+    public boolean isApplicant2(String userId) { return (!isNull(applicant2UserId) && userId.equals(applicant2UserId)); }
 }
