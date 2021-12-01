@@ -12,7 +12,6 @@ public class SolPaymentSummary implements CcdPageConfiguration {
 
         pageBuilder
             .page("SolPaymentSummary")
-            .pageLabel("Sign and submit")
             .label("LabelSolPaySummaryFeeAccount-CaseRef", "## Case number: ${[CASE_REFERENCE]}")
             .label("LabelSolPaySummaryFeeAccount-Joint",
                 "## ${applicant1FirstName} ${applicant1LastName} and ${applicant2FirstName} ${applicant2LastName}")
