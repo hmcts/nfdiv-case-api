@@ -4,7 +4,6 @@ const { statSync } = require("fs");
 const { readdir, mkdir, writeFile, readFile } = require("fs").promises;
 const { resolve } = require('path');
 const nfdivNamespace = "/k8s/namespaces/nfdiv/";
-const aatClusterOverlayPath = "/k8s/aat/cluster-00-overlay/nfdiv/kustomization.yaml";
 
 async function getFiles(dir) {
   const dirents = await readdir(dir, { withFileTypes: true });
@@ -19,7 +18,7 @@ function getCronName(taskName) {
   return "nfdiv-cron-" + taskName.match(/[A-Z0-9][a-z0-9]+/g).filter(part => part !== "Task" && part !== "System").join("-").toLowerCase();
 }
 
-function getClusterOverride(taskName, cronName, schedule) {
+function getClusterOverride(taskName, cronName, schedule, env) {
   return `apiVersion: helm.fluxcd.io/v1
 kind: HelmRelease
 metadata:
@@ -31,7 +30,7 @@ spec:
       jobKind: CronJob
       enableKeyVaults: true
       tenantId: "531ff96d-0ae9-462a-8d2d-bec7c0b42082"
-      environment: aat
+      environment: ${env}
 `
 }
 
@@ -70,7 +69,7 @@ spec:
 `
 }
 
-async function main(taskName, cnpFluxPath, schedule) {
+async function main(taskName, cnpFluxPath, schedule, env) {
   const cnpFluxStats = statSync(cnpFluxPath);
 
   if (!cnpFluxStats.isDirectory()) {
@@ -78,11 +77,13 @@ async function main(taskName, cnpFluxPath, schedule) {
     process.exit(-1);
   }
 
-  let aatClusterOverlay;
+  const clusterOverlayPath = `/k8s/${env}/cluster-00-overlay/nfdiv/kustomization.yaml`;
+
+  let clusterOverlay;
   try {
-    aatClusterOverlay = await readFile(cnpFluxPath + aatClusterOverlayPath, "utf8");
+    clusterOverlay = await readFile(cnpFluxPath + clusterOverlayPath, "utf8");
   } catch (err) {
-    console.error(`Cannot find ${aatClusterOverlayPath} in ${cnpFluxPath}`);
+    console.error(`Cannot find ${clusterOverlayPath} in ${cnpFluxPath}`);
     process.exit(-1);
   }
 
@@ -105,26 +106,28 @@ async function main(taskName, cnpFluxPath, schedule) {
     }
   }
 
-  const clusterOverride = getClusterOverride(taskName, cronName, schedule);
+  const clusterOverride = getClusterOverride(taskName, cronName, schedule, env);
   const chartConfig = getChartConfig(taskName, cronName, schedule);
 
   await Promise.all([
-    writeFile(cronDirectory + "aat-00.yaml", clusterOverride),
+    writeFile(cronDirectory + `${env}-00.yaml`, clusterOverride),
     writeFile(cronDirectory + cronName + ".yaml", chartConfig),
   ]);
 
-  const updatedOverlay = aatClusterOverlay
+  const updatedOverlay = clusterOverlay
                           .replace("bases:", "bases:\n" + `- ../../../namespaces/nfdiv/${cronName}/${cronName}.yaml`)
-                          .replace("patchesStrategicMerge:", "patchesStrategicMerge:\n" + `- ../../../namespaces/nfdiv/${cronName}/aat-00.yaml`);
+                          .replace("patchesStrategicMerge:", "patchesStrategicMerge:\n" + `- ../../../namespaces/nfdiv/${cronName}/${env}-00.yaml`);
 
-  writeFile(cnpFluxPath + aatClusterOverlayPath, updatedOverlay);
+  writeFile(cnpFluxPath + clusterOverlayPath, updatedOverlay);
   console.log(`Added ${taskName} to cnp-flux-config.`);
 }
 
 const [exec, scriptPath, taskName, cnpFluxPath, schedule] = process.argv;
 
 if (taskName && cnpFluxPath && schedule) {
-  main(taskName, cnpFluxPath, schedule).catch(e => console.error(e));
+  for (const env of ["aat", "ithc", "perftest", "demo"]) {
+    main(taskName, cnpFluxPath, schedule, env).catch(e => console.error(e));
+  }
 } else {
   console.log(`
 Usage: ./bin/add-cron.sh [taskName] [cnpFluxPath] [schedule]
