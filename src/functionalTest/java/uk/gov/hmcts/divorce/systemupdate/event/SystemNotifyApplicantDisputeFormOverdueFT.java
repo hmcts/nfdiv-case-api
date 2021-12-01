@@ -42,7 +42,7 @@ public class SystemNotifyApplicantDisputeFormOverdueFT extends FunctionalTestSui
 
 
     @Test
-    public void shouldPassValidationAndSendEmailsToApplicantAndRespondent() throws IOException {
+    public void shouldNotifyApplicantIfDisputeFormOverdue() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
 
         Response response = triggerCallback(request, SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE, ABOUT_TO_SUBMIT_URL);
