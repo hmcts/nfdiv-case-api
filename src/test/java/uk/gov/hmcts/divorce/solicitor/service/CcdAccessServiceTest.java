@@ -10,26 +10,19 @@ import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.authorisation.exceptions.InvalidTokenException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CaseAssignmentApi;
-import uk.gov.hmcts.reform.ccd.client.CaseUserApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesResponse;
-import uk.gov.hmcts.reform.ccd.client.model.CaseUser;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
-
-import java.util.Collections;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_1_SOL_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_2_CITIZEN_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
@@ -47,9 +40,6 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.feignException;
 public class CcdAccessServiceTest {
     @InjectMocks
     private CcdAccessService ccdAccessService;
-
-    @Mock
-    private CaseUserApi caseUserApi;
 
     @Mock
     private CaseAssignmentApi caseAssignmentApi;
@@ -106,7 +96,7 @@ public class CcdAccessServiceTest {
                 any(CaseAssignmentUserRolesRequest.class)
             );
 
-        verifyNoMoreInteractions(idamService, authTokenGenerator, caseUserApi, caseAssignmentApi);
+        verifyNoMoreInteractions(idamService, authTokenGenerator, caseAssignmentApi);
     }
 
     @Test
@@ -203,33 +193,26 @@ public class CcdAccessServiceTest {
         when(authTokenGenerator.generate())
             .thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        doNothing()
-            .when(
-                caseUserApi
+        when(caseAssignmentApi.addCaseUserRoles(
+                eq(SYSTEM_UPDATE_AUTH_TOKEN),
+                eq(TEST_SERVICE_AUTH_TOKEN),
+                any(CaseAssignmentUserRolesRequest.class)
             )
-            .updateCaseRolesForUser(
-                SYSTEM_UPDATE_AUTH_TOKEN,
-                TEST_SERVICE_AUTH_TOKEN,
-                String.valueOf(TEST_CASE_ID),
-                APP_2_CITIZEN_USER_ID,
-                new CaseUser(APP_2_CITIZEN_USER_ID, Set.of(APPLICANT_2.getRole()))
-            );
+        ).thenReturn(any());
 
         assertThatCode(() -> ccdAccessService.linkRespondentToApplication(SYSTEM_UPDATE_AUTH_TOKEN, TEST_CASE_ID, APP_2_CITIZEN_USER_ID))
             .doesNotThrowAnyException();
 
         verify(idamService).retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN);
         verify(authTokenGenerator).generate();
-        verify(caseUserApi)
-            .updateCaseRolesForUser(
-                SYSTEM_UPDATE_AUTH_TOKEN,
-                TEST_SERVICE_AUTH_TOKEN,
-                String.valueOf(TEST_CASE_ID),
-                APP_2_CITIZEN_USER_ID,
-                new CaseUser(APP_2_CITIZEN_USER_ID, Set.of(APPLICANT_2.getRole()))
+        verify(caseAssignmentApi)
+            .addCaseUserRoles(
+                eq(SYSTEM_UPDATE_AUTH_TOKEN),
+                eq(TEST_SERVICE_AUTH_TOKEN),
+                any(CaseAssignmentUserRolesRequest.class)
             );
 
-        verifyNoMoreInteractions(idamService, authTokenGenerator, caseUserApi);
+        verifyNoMoreInteractions(idamService, authTokenGenerator, caseAssignmentApi);
     }
 
     @Test
@@ -242,33 +225,26 @@ public class CcdAccessServiceTest {
         when(authTokenGenerator.generate())
             .thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        doNothing()
-            .when(
-                caseUserApi
+        when(caseAssignmentApi.removeCaseUserRoles(
+                eq(SYSTEM_UPDATE_AUTH_TOKEN),
+                eq(TEST_SERVICE_AUTH_TOKEN),
+                any(CaseAssignmentUserRolesRequest.class)
             )
-            .updateCaseRolesForUser(
-                SYSTEM_UPDATE_AUTH_TOKEN,
-                TEST_SERVICE_AUTH_TOKEN,
-                String.valueOf(TEST_CASE_ID),
-                APP_2_CITIZEN_USER_ID,
-                new CaseUser(APP_2_CITIZEN_USER_ID, Collections.emptySet())
-            );
+        ).thenReturn(any());
 
         assertThatCode(() -> ccdAccessService.unlinkUserFromApplication(SYSTEM_UPDATE_AUTH_TOKEN, TEST_CASE_ID, APP_2_CITIZEN_USER_ID))
             .doesNotThrowAnyException();
 
         verify(idamService).retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN);
         verify(authTokenGenerator).generate();
-        verify(caseUserApi)
-            .updateCaseRolesForUser(
-                SYSTEM_UPDATE_AUTH_TOKEN,
-                TEST_SERVICE_AUTH_TOKEN,
-                String.valueOf(TEST_CASE_ID),
-                APP_2_CITIZEN_USER_ID,
-                new CaseUser(APP_2_CITIZEN_USER_ID, Collections.emptySet())
+        verify(caseAssignmentApi)
+            .removeCaseUserRoles(
+                eq(SYSTEM_UPDATE_AUTH_TOKEN),
+                eq(TEST_SERVICE_AUTH_TOKEN),
+                any(CaseAssignmentUserRolesRequest.class)
             );
 
-        verifyNoMoreInteractions(idamService, authTokenGenerator, caseUserApi);
+        verifyNoMoreInteractions(idamService, authTokenGenerator, caseAssignmentApi);
     }
 
     private User getIdamUser(String authToken, String userId, String email) {
