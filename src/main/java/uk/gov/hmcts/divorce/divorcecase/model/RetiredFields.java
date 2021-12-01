@@ -33,6 +33,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer;
+import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE;
@@ -260,7 +261,7 @@ public class RetiredFields {
     private static Set<ThePrayer> transformApplicant1PrayerHasBeenGivenField(Map<String, Object> data) {
         String value = (String) data.get("applicant1PrayerHasBeenGiven");
         return YES.getValue().equalsIgnoreCase(value)
-            ? Set.of(ThePrayer.I_CONFIRM)
+            ? Set.of(I_CONFIRM)
             : emptySet();
     }
 
