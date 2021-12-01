@@ -35,7 +35,6 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toCollection;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
-import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 
@@ -49,7 +48,7 @@ public class CaseData {
     @CCD(
         label = "Application type",
         access = {DefaultAccess.class},
-        typeOverride = FixedList,
+        typeOverride = FixedRadioList,
         typeParameterOverride = "ApplicationType"
     )
     private ApplicationType applicationType;
@@ -356,6 +355,7 @@ public class CaseData {
 
             alternativeService.setReceivedServiceAddedDate(LocalDate.now());
 
+            //AlternativeServiceOutcome alternativeServiceOutcome = buildAlternativeServiceOutcome(alternativeService);
             AlternativeServiceOutcome alternativeServiceOutcome = alternativeService.getOutcome();
 
             if (isEmpty(this.getAlternativeServiceOutcomes())) {
@@ -388,4 +388,26 @@ public class CaseData {
             this.setAlternativeService(null);
         }
     }
+
+    @SuppressWarnings("PMD")
+    public AlternativeServiceOutcome buildAlternativeServiceOutcome(AlternativeService alternativeService) {
+        return AlternativeServiceOutcome.builder()
+            .alternativeServiceType(alternativeService.getAlternativeServiceType())
+            .receivedServiceApplicationDate(alternativeService.getReceivedServiceApplicationDate())
+            .receivedServiceAddedDate(alternativeService.getReceivedServiceAddedDate())
+            .alternativeServiceType(alternativeService.getAlternativeServiceType())
+            .paymentMethod(alternativeService.getPaymentMethod())
+            .serviceApplicationGranted(alternativeService.getServiceApplicationGranted())
+            .serviceApplicationRefusalReason(alternativeService.getServiceApplicationRefusalReason())
+            .serviceApplicationDecisionDate(alternativeService.getServiceApplicationDecisionDate())
+            .deemedServiceDate(alternativeService.getDeemedServiceDate())
+            .localCourtName(alternativeService.getBailiff().getLocalCourtName())
+            .localCourtEmail(alternativeService.getBailiff().getLocalCourtEmail())
+            .certificateOfServiceDocument(alternativeService.getBailiff().getCertificateOfServiceDocument())
+            .certificateOfServiceDate(alternativeService.getBailiff().getCertificateOfServiceDate())
+            .successfulServedByBailiff(alternativeService.getBailiff().getSuccessfulServedByBailiff())
+            .reasonFailureToServeByBailiff(alternativeService.getBailiff().getReasonFailureToServeByBailiff())
+            .build();
+    }
+
 }
