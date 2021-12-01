@@ -11,7 +11,6 @@ import org.springframework.http.HttpHeaders;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
@@ -65,11 +64,11 @@ public final class CaseDataWireMock {
     }
 
     public static void stubForCitizenCcdCaseRoles() {
-        CASE_DATA_SERVER.stubFor(put(urlMatching("/cases/[0-9]+/users/[0-9]+"))
+        CASE_DATA_SERVER.stubFor(post(urlMatching("/case-users"))
             .withHeader(HttpHeaders.AUTHORIZATION, new EqualToPattern(BEARER + TEST_AUTHORIZATION_TOKEN))
             .withHeader(SERVICE_AUTHORIZATION, new EqualToPattern(SERVICE_AUTHORIZATION))
             .withRequestBody(new EqualToJsonPattern(
-                "{\"user_id\" : \"3\", \"case_roles\":[\"[APPLICANTTWO]\"]}",
+                "{ \"case_users\": [{\"user_id\" : \"3\", \"case_id\" : \"1616591401473378\", \"case_role\":\"[APPLICANTTWO]\"}]}",
                 true,
                 true))
             .willReturn(aResponse().withStatus(200))
