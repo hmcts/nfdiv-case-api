@@ -109,8 +109,8 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
         return new PageBuilder(configBuilder
             .event(SOLICITOR_CREATE)
             .initialState(Draft)
-            .name("Apply for a divorce")
-            .description("Apply for a divorce")
+            .name("Apply for divorce or dissolution")
+            .description("Apply for divorce or dissolution")
             .showSummary()
             .endButtonLabel("Save Application")
             .aboutToSubmitCallback(this::aboutToSubmit)

@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
+import static uk.gov.hmcts.divorce.divorcecase.model.Solicitor.Prayer.CONFIRM;
 
 class RetiredFieldsTest {
 
@@ -46,6 +47,7 @@ class RetiredFieldsTest {
         data.put("coIsEverythingInApplicationTrue", "YES");
         data.put("alternativeServiceApplications", new ArrayList<LinkedHashMap<String, Object>>());
         data.put("disputeApplication", "YES");
+        data.put("solicitorAgreeToReceiveEmails", "Yes");
 
         final var result = RetiredFields.migrate(data);
 
@@ -76,8 +78,8 @@ class RetiredFieldsTest {
             entry("coIsEverythingInApplicationTrue", "YES"),
             entry("howToRespondApplication", "disputeDivorce"),
             entry("coIsEverythingInApplicationTrue", "YES"),
-            entry("alternativeServiceApplications", null)
-
+            entry("alternativeServiceApplications", null),
+            entry("solicitorAgreeToReceiveEmailsCheckbox", Set.of(CONFIRM))
         );
     }
 

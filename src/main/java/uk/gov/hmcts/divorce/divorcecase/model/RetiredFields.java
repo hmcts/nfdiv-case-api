@@ -8,6 +8,7 @@ import org.apache.commons.collections4.map.HashedMap;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor.Prayer;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.lang.reflect.Field;
@@ -32,10 +33,10 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer;
-import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.Solicitor.Prayer.CONFIRM;
 
 @Data
 @NoArgsConstructor
@@ -168,6 +169,11 @@ public class RetiredFields {
     )
     private String generalReferralLegalAdvisorDetails;
 
+    @CCD(
+        label = "Retired YesNo field used for solicitor agreeing to receive emails"
+    )
+    private YesOrNo solicitorAgreeToReceiveEmails;
+
     @JsonIgnore
     private static final Consumer<Map<String, Object>> DO_NOTHING = data -> {
     };
@@ -222,6 +228,8 @@ public class RetiredFields {
                 "generalReferralJudgeOrLegalAdvisorDetails",
                 transformGeneralReferralDetails(data, "generalReferralLegalAdvisorDetails")
             ));
+        init.put("solicitorAgreeToReceiveEmails",
+            data -> data.put("solicitorAgreeToReceiveEmailsCheckbox", transformSolicitorAgreeToReceiveEmailsField(data)));
 
         migrations = unmodifiableMap(init);
     }
@@ -252,15 +260,15 @@ public class RetiredFields {
     private static Set<ThePrayer> transformApplicant1PrayerHasBeenGivenField(Map<String, Object> data) {
         String value = (String) data.get("applicant1PrayerHasBeenGiven");
         return YES.getValue().equalsIgnoreCase(value)
-            ? Set.of(I_CONFIRM)
+            ? Set.of(ThePrayer.I_CONFIRM)
             : emptySet();
     }
 
     @SuppressWarnings({"unchecked", "PMD"})
     public static List<ListValue<AlternativeServiceOutcome>> transformAlternativeServiceApplications(Map<String, Object> data) {
 
-        ArrayList<LinkedHashMap<String,Object>> oldListValues =
-            (ArrayList<LinkedHashMap<String,Object>>) data.get("alternativeServiceApplications");
+        ArrayList<LinkedHashMap<String, Object>> oldListValues =
+            (ArrayList<LinkedHashMap<String, Object>>) data.get("alternativeServiceApplications");
 
         List<ListValue<AlternativeServiceOutcome>> newListValues = new ArrayList<>();
 
@@ -336,5 +344,12 @@ public class RetiredFields {
             return retiredFieldValue.concat(" ").concat(newFieldValue);
         }
         return retiredFieldValue;
+    }
+
+    private static Set<Prayer> transformSolicitorAgreeToReceiveEmailsField(Map<String, Object> data) {
+        String value = (String) data.get("solicitorAgreeToReceiveEmails");
+        return YES.getValue().equalsIgnoreCase(value)
+            ? Set.of(CONFIRM)
+            : emptySet();
     }
 }

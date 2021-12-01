@@ -37,19 +37,15 @@ public class SolAboutTheSolicitor implements CcdPageConfiguration {
         pageBuilder
             .page("SolAboutTheSolicitor", this::midEvent)
             .pageLabel("About the Solicitor")
-            .label(
-                "LabelSolAboutTheSolPara-1",
-                "Please note that the information provided will be used as evidence by the court to decide if "
-                    + "the applicant is entitled to legally end their marriage. **A copy of this form is sent to "
-                    + "${labelContentTheApplicant2}**.")
+            .label("labelSolAboutTheSol","**Enter the details of ${LabelContentApplicantOrApplicant1} solicitor**.")
             .complex(CaseData::getApplicant1)
                 .complex(Applicant::getSolicitor)
-                    .mandatoryWithLabel(Solicitor::getName, "Your name")
-                    .mandatoryWithLabel(Solicitor::getReference, "Your reference")
-                    .mandatoryWithLabel(Solicitor::getPhone,  "Your phone number")
-                    .mandatoryWithLabel(Solicitor::getEmail, "Your email address")
-                    .mandatory(Solicitor::getAgreeToReceiveEmails)
-                    .complex(Solicitor::getOrganisationPolicy, null, "Your firm's address or DX number")
+                    .mandatoryWithLabel(Solicitor::getName, "Solicitor’s full name")
+                    .optionalWithLabel(Solicitor::getReference, "Solicitor reference")
+                    .optionalWithLabel(Solicitor::getPhone,  "Solicitor’s direct phone number")
+                    .mandatoryWithLabel(Solicitor::getEmail, "Solicitor’s email address")
+                    .mandatory(Solicitor::getAgreeToReceiveEmailsCheckbox)
+                    .complex(Solicitor::getOrganisationPolicy, null, "Solicitor’s firm address")
                         .complex(OrganisationPolicy::getOrganisation)
                             .mandatory(Organisation::getOrganisationId)
                             .done()
