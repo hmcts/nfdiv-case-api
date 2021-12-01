@@ -105,7 +105,7 @@ public class CcdAccessService {
                 List.of(
                     CaseAssignmentUserRoleWithOrganisation.builder()
                         .organisationId(orgId)
-                        .caseDataId(caseId.toString())
+                        .caseDataId(String.valueOf(caseId))
                         .caseRole(role.getRole())
                         .userId(userId)
                         .build()
