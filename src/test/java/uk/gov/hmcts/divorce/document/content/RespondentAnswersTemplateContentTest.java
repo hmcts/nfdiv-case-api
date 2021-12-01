@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 
@@ -24,28 +23,33 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
 public class RespondentAnswersTemplateContentTest {
+
     @InjectMocks
     private RespondentAnswersTemplateContent respondentAnswersTemplateContent;
 
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForRespondentAnswers() {
-        CaseData caseData = caseData();
+
+        final var caseData = caseData();
         caseData.getApplication().setIssueDate(LOCAL_DATE);
         caseData.getApplicant2().setLegalProceedingsDetails("some description");
         caseData.getApplicant2().setLegalProceedings(YES);
 
-        caseData.getAcknowledgementOfService().setJurisdictionAgree(YES);
+        final var acknowledgementOfService = caseData.getAcknowledgementOfService();
+        acknowledgementOfService.setJurisdictionAgree(YES);
+        acknowledgementOfService.setReasonCourtsOfEnglandAndWalesHaveNoJurisdiction("jurisdiction reason");
+        acknowledgementOfService.setInWhichCountryIsYourLifeMainlyBased("Country");
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder().email(TEST_SOLICITOR_EMAIL).build()
         );
 
-        var marriageDetails = new MarriageDetails();
+        final var marriageDetails = new MarriageDetails();
         marriageDetails.setApplicant1Name("app1fname app1lname");
         marriageDetails.setApplicant2Name("app2fname app2lname");
 
         caseData.getApplication().setMarriageDetails(marriageDetails);
 
-        Map<String, Object> templateContent = respondentAnswersTemplateContent.apply(caseData, TEST_CASE_ID);
+        final Map<String, Object> templateContent = respondentAnswersTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).contains(
             entry(ISSUE_DATE, "28 April 2021"),
@@ -53,11 +57,11 @@ public class RespondentAnswersTemplateContentTest {
             entry(APPLICANT_1_FULL_NAME, "app1fname app1lname"),
             entry(APPLICANT_2_FULL_NAME, "app2fname app2lname"),
             entry("respJurisdictionAgree", YES.getValue()),
-            entry("respJurisdictionDisagreeReason", null),
+            entry("reasonCourtsOfEnglandAndWalesHaveNoJurisdiction", "jurisdiction reason"),
+            entry("inWhichCountryIsYourLifeMainlyBased", "Country"),
             entry("respLegalProceedingsExist", YES.getValue()),
             entry("respLegalProceedingsDescription", "some description"),
             entry("respSolicitorRepresented", YES.getValue())
         );
-
     }
 }
