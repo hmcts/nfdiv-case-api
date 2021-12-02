@@ -14,13 +14,13 @@ import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemApplicant1ApplyForConditionalOrder.SYSTEM_NOTIFY_APPLICANT1_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemJointApplicantsApplyForConditionalOrder.SYSTEM_NOTIFY_APPLICANTS_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
-public class SystemApplicant1ApplyForConditionalOrderFT extends FunctionalTestSuite {
+public class SystemJointApplicantsApplyForConditionalOrderFT extends FunctionalTestSuite {
 
     private static final String REQUEST =
         "classpath:request/casedata/ccd-callback-casedata-system-notify-applicant1-conditional-order.json";
@@ -31,7 +31,7 @@ public class SystemApplicant1ApplyForConditionalOrderFT extends FunctionalTestSu
     public void shouldPassValidationAndSendEmailsToApplicantAndRespondent() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
 
-        Response response = triggerCallback(request, SYSTEM_NOTIFY_APPLICANT1_CONDITIONAL_ORDER, ABOUT_TO_SUBMIT_URL);
+        Response response = triggerCallback(request, SYSTEM_NOTIFY_APPLICANTS_CONDITIONAL_ORDER, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 

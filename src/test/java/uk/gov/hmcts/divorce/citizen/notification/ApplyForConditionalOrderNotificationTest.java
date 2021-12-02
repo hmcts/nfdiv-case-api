@@ -5,7 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1ApplyForConditionalOrderNotification;
+import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.ApplyForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -18,8 +18,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
-import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1ApplyForConditionalOrderNotification.JOINT_CONDITIONAL_ORDER;
-import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1ApplyForConditionalOrderNotification.WIFE_JOINT;
+import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.ApplyForConditionalOrderNotification.JOINT_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.citizen.notification.conditionalorder.ApplyForConditionalOrderNotification.WIFE_JOINT;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -36,7 +36,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseDa
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(SpringExtension.class)
-public class Applicant1ApplyForConditionalOrderNotificationTest {
+public class ApplyForConditionalOrderNotificationTest {
 
     @Mock
     private NotificationService notificationService;
@@ -45,7 +45,7 @@ public class Applicant1ApplyForConditionalOrderNotificationTest {
     private CommonContent commonContent;
 
     @InjectMocks
-    private Applicant1ApplyForConditionalOrderNotification notification;
+    private ApplyForConditionalOrderNotification notification;
 
     @Test
     void shouldSendEmailToApplicant1WithDivorceContent() {
