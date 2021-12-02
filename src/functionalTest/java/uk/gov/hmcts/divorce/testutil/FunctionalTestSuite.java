@@ -169,6 +169,19 @@ public abstract class FunctionalTestSuite {
             .post(url);
     }
 
+    protected Response triggerCallback(CallbackRequest request, String url, String idamToken) throws IOException {
+        return RestAssured
+            .given()
+            .relaxedHTTPSValidation()
+            .baseUri(testUrl)
+            .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+            .header(SERVICE_AUTHORIZATION, serviceAuthenticationGenerator.generate())
+            .header(AUTHORIZATION, idamToken)
+            .body(request)
+            .when()
+            .post(url);
+    }
+
     protected List<CaseDetails> searchForCasesWithQuery(BoolQueryBuilder query) {
         return searchService.searchForAllCasesWithQuery(
             Holding,
