@@ -48,7 +48,7 @@
   "applicant2SolicitorPhone": null,
   "applicant2SolicitorEmail": "applicant2.solicitor@example.com",
   "applicant2SolicitorAddress": "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom",
-  "applicant2SolicitorAgreeToReceiveEmails": null,
+  "applicant2SolicitorAgreeToReceiveEmailsCheckbox": null,
   "applicant2SolicitorOrganisationPolicy": {
     "Organisation": {
       "OrganisationName": "Test 2 Organisation",
