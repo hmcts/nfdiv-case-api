@@ -69,9 +69,9 @@ public class CaseworkerMakeBailiffDecision implements CCDConfig<CaseData, State,
         var serviceApplication = caseDataCopy.getAlternativeService();
 
         State endState;
+        serviceApplication.setServiceApplicationDecisionDate(LocalDate.now(clock));
 
         if (serviceApplication.getServiceApplicationGranted().toBoolean()) {
-            serviceApplication.setServiceApplicationDecisionDate(LocalDate.now(clock));
             endState = AwaitingBailiffService;
             // ServiceApplication is archived after BailiffReturn if ServiceGranted is set to Yes
         } else {
