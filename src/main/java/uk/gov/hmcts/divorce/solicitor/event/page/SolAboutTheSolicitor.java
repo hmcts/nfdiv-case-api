@@ -37,7 +37,7 @@ public class SolAboutTheSolicitor implements CcdPageConfiguration {
         pageBuilder
             .page("SolAboutTheSolicitor", this::midEvent)
             .pageLabel("About the Solicitor")
-            .label("labelSolAboutTheSol","**Enter the details of ${LabelContentApplicantOrApplicant1} solicitor**.")
+            .label("labelSolAboutTheSol","**Enter the details of ${labelContentApplicantOrApplicant1} solicitor**.")
             .complex(CaseData::getApplicant1)
                 .complex(Applicant::getSolicitor)
                     .mandatoryWithLabel(Solicitor::getName, "Solicitor’s full name")
