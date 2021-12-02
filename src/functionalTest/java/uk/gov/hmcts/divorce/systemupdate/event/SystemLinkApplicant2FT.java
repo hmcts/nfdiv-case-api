@@ -15,6 +15,7 @@ import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.util.ResourceUtils.getFile;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkApplicant2.SYSTEM_LINK_APPLICANT_2;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
@@ -31,7 +32,8 @@ public class SystemLinkApplicant2FT extends FunctionalTestSuite {
     public void shouldLinkApplicant2WithoutError() throws IOException {
         var app2Token = idamTokenGenerator.generateIdamTokenForSolicitor();
         var app2User = idamService.retrieveUser(app2Token);
-        var requestJson = REQUEST.replace("place-holder", app2User.getUserDetails().getId());
+        var data = caseData(REQUEST);
+        data.put("applicant2UserId", app2User.getUserDetails().getId());
 
         CallbackRequest request = CallbackRequest
             .builder()
@@ -40,7 +42,7 @@ public class SystemLinkApplicant2FT extends FunctionalTestSuite {
                 CaseDetails
                     .builder()
                     .id(createCaseInCcd().getId())
-                    .data(caseData(requestJson))
+                    .data(data)
                     .caseTypeId(CASE_TYPE)
                     .build()
             )

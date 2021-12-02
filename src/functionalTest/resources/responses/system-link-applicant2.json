@@ -1,0 +1,6 @@
+{
+  "data": {
+    "applicant2InviteEmailAddress": "test.app2.invite@mailinator.com",
+    "applicant2UserId": "${json-unit.any-string}"
+  }
+}
