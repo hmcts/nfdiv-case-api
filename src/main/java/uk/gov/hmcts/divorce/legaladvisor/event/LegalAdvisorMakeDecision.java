@@ -97,7 +97,7 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .showCondition("coRefusalDecision=\"reject\" AND coGranted=\"No\"")
             .complex(CaseData::getConditionalOrder)
                 .mandatory(ConditionalOrder::getRefusalRejectionReason)
-            .done();;
+            .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
