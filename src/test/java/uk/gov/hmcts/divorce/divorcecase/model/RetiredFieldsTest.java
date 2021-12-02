@@ -47,7 +47,8 @@ class RetiredFieldsTest {
         data.put("coIsEverythingInApplicationTrue", "YES");
         data.put("alternativeServiceApplications", new ArrayList<LinkedHashMap<String, Object>>());
         data.put("disputeApplication", "YES");
-        data.put("solicitorAgreeToReceiveEmails", "Yes");
+        data.put("applicant1SolicitorAgreeToReceiveEmails", "Yes");
+        data.put("applicant2SolicitorAgreeToReceiveEmails", "No");
 
         final var result = RetiredFields.migrate(data);
 
@@ -79,7 +80,8 @@ class RetiredFieldsTest {
             entry("howToRespondApplication", "disputeDivorce"),
             entry("coIsEverythingInApplicationTrue", "YES"),
             entry("alternativeServiceApplications", null),
-            entry("solicitorAgreeToReceiveEmailsCheckbox", Set.of(CONFIRM))
+            entry("applicant1SolicitorAgreeToReceiveEmailsCheckbox", Set.of(CONFIRM)),
+            entry("applicant2SolicitorAgreeToReceiveEmailsCheckbox", emptySet())
         );
     }
 

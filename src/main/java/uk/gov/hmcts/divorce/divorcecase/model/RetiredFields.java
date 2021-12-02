@@ -171,9 +171,14 @@ public class RetiredFields {
     private String generalReferralLegalAdvisorDetails;
 
     @CCD(
-        label = "Retired YesNo field used for solicitor agreeing to receive emails"
+        label = "Retired applicant 1 solicitor agreeing to receive emails"
     )
-    private YesOrNo solicitorAgreeToReceiveEmails;
+    private YesOrNo applicant1SolicitorAgreeToReceiveEmails;
+
+    @CCD(
+        label = "Retired applicant 2 solicitor agreeing to receive emails"
+    )
+    private YesOrNo applicant2SolicitorAgreeToReceiveEmails;
 
     @JsonIgnore
     private static final Consumer<Map<String, Object>> DO_NOTHING = data -> {
@@ -229,8 +234,16 @@ public class RetiredFields {
                 "generalReferralJudgeOrLegalAdvisorDetails",
                 transformGeneralReferralDetails(data, "generalReferralLegalAdvisorDetails")
             ));
-        init.put("solicitorAgreeToReceiveEmails",
-            data -> data.put("solicitorAgreeToReceiveEmailsCheckbox", transformSolicitorAgreeToReceiveEmailsField(data)));
+        init.put("applicant1SolicitorAgreeToReceiveEmails",
+            data -> data.put(
+                "applicant1SolicitorAgreeToReceiveEmailsCheckbox",
+                transformSolicitorAgreeToReceiveEmailsField(data, "applicant1SolicitorAgreeToReceiveEmails"))
+        );
+        init.put("applicant2SolicitorAgreeToReceiveEmails",
+            data -> data.put(
+                "applicant2SolicitorAgreeToReceiveEmailsCheckbox",
+                transformSolicitorAgreeToReceiveEmailsField(data, "applicant2SolicitorAgreeToReceiveEmails"))
+        );
 
         migrations = unmodifiableMap(init);
     }
@@ -347,8 +360,8 @@ public class RetiredFields {
         return retiredFieldValue;
     }
 
-    private static Set<Prayer> transformSolicitorAgreeToReceiveEmailsField(Map<String, Object> data) {
-        String value = (String) data.get("solicitorAgreeToReceiveEmails");
+    private static Set<Prayer> transformSolicitorAgreeToReceiveEmailsField(Map<String, Object> data, String retiredFieldName) {
+        String value = (String) data.get(retiredFieldName);
         return YES.getValue().equalsIgnoreCase(value)
             ? Set.of(CONFIRM)
             : emptySet();
