@@ -30,7 +30,7 @@ public class Applicant2SolConfirmContactDetails implements CcdPageConfiguration 
                     .label("LabelRespSol-EmailHeader", "### Email contact details")
                     .label("LabelRespSol-Email", "Email address will be used to send case updates.")
                     .mandatoryNoSummary(Solicitor::getEmail, null, "${labelContentApplicant2UC}'s solicitor's Email")
-                    .mandatoryNoSummary(Solicitor::getAgreeToReceiveEmails)
+                    .mandatoryNoSummary(Solicitor::getAgreeToReceiveEmailsCheckbox)
                     .done()
                 .done();
     }
