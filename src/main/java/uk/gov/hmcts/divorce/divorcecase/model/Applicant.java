@@ -52,9 +52,14 @@ public class Applicant {
     private YesOrNo agreedToReceiveEmails;
 
     @CCD(
-        label = "Has the applicant confirmed the receipt"
+        label = "Has the applicant confirmed the receipt?"
     )
     private YesOrNo confirmReceipt;
+
+    @CCD(
+        label = "Has the applicant started the process to apply for conditional order?"
+    )
+    private YesOrNo applyForConditionalOrderStarted;
 
     @CCD(
         label = "Is the language preference Welsh?",
