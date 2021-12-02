@@ -91,6 +91,12 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .showCondition("coRefusalDecision=\"adminError\" AND coGranted=\"No\"")
             .complex(CaseData::getConditionalOrder)
                 .mandatory(ConditionalOrder::getRefusalRejectionAdditionalInfo)
+            .done()
+            .page("amendApplication")
+            .pageLabel("Request amended application - Make a Decision")
+            .showCondition("coRefusalDecision=\"reject\" AND coGranted=\"No\"")
+            .complex(CaseData::getConditionalOrder)
+                .mandatory(ConditionalOrder::getRefusalRejectionReason)
             .done();
     }
 
