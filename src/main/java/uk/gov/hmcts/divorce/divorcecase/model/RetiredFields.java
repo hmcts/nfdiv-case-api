@@ -180,6 +180,12 @@ public class RetiredFields {
     )
     private YesOrNo applicant2SolicitorAgreeToReceiveEmails;
 
+    @CCD(
+        label = "Reason respondent disagreed to claimed jurisdiction",
+        typeOverride = TextArea
+    )
+    private String jurisdictionDisagreeReason;
+
     @JsonIgnore
     private static final Consumer<Map<String, Object>> DO_NOTHING = data -> {
     };
@@ -244,6 +250,8 @@ public class RetiredFields {
                 "applicant2SolicitorAgreeToReceiveEmailsCheckbox",
                 transformSolicitorAgreeToReceiveEmailsField(data, "applicant2SolicitorAgreeToReceiveEmails"))
         );
+        init.put("jurisdictionDisagreeReason",
+            data -> data.put("reasonCourtsOfEnglandAndWalesHaveNoJurisdiction", data.get("jurisdictionDisagreeReason")));
 
         migrations = unmodifiableMap(init);
     }
