@@ -171,7 +171,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("certificateOfServiceDate")
             .label("serviceOutcomeLabel",
                     "serviceApplicationGranted=\"No\" OR serviceApplicationGranted=\"Yes\"",
-                                "Outcome of Service Application")
+                                "### Outcome of Service Application")
             .field("serviceApplicationGranted")
             .field("serviceApplicationDecisionDate")
             .field("serviceApplicationRefusalReason", "serviceApplicationGranted=\"No\"")
