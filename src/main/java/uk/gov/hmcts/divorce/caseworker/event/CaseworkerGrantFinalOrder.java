@@ -13,8 +13,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -56,6 +58,16 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
         CaseData caseData = details.getData();
+        LocalDate dateFinalOrderEligibleFrom = caseData.getFinalOrder().getDateFinalOrderEligibleFrom();
+
+        if (dateFinalOrderEligibleFrom != null
+            && dateFinalOrderEligibleFrom.isAfter(LocalDate.now())) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(singletonList("Case is not yet eligible for Final Order"))
+                .build();
+        }
+
         caseData.getFinalOrder().setGrantedDate(LocalDateTime.now(clock));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

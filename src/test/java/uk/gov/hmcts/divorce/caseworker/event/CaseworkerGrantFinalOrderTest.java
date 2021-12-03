@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,9 +47,14 @@ public class CaseworkerGrantFinalOrderTest {
     }
 
     @Test
-    void shouldPopulateFinalOrderGrantedDateWhenAboutToSubmitIsTriggered() {
+    void shouldPopulateFinalOrderGrantedDateIfFinalOrderIsEligible() {
         final CaseData caseData = caseData();
-        caseData.setFinalOrder(FinalOrder.builder().granted(Set.of(FinalOrder.Granted.YES)).build());
+        caseData.setFinalOrder(
+            FinalOrder.builder()
+                .granted(Set.of(FinalOrder.Granted.YES))
+                .dateFinalOrderEligibleFrom(LocalDate.now())
+                .build()
+        );
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -59,5 +65,24 @@ public class CaseworkerGrantFinalOrderTest {
 
         assertThat(response.getData().getFinalOrder().getGrantedDate()).isNotNull();
         assertThat(response.getData().getFinalOrder().getGrantedDate()).isEqualTo(getExpectedLocalDateTime());
+    }
+
+    @Test
+    void shouldReturnErrorsIfDateFinalOrderEligibleFromIsInFuture() {
+        final CaseData caseData = caseData();
+        caseData.setFinalOrder(
+            FinalOrder.builder()
+                .granted(Set.of(FinalOrder.Granted.YES))
+                .dateFinalOrderEligibleFrom(LocalDate.now().plusDays(1))
+                .build()
+        );
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerGrantFinalOrder.aboutToSubmit(details, details);
+
+        assertThat(response.getData().getFinalOrder().getGrantedDate()).isNull();
+        assertThat(response.getErrors()).contains("Case is not yet eligible for Final Order");
     }
 }
