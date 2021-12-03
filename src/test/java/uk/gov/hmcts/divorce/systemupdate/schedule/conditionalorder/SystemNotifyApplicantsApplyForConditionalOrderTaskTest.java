@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule.conditionalorder;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,7 +9,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
@@ -23,9 +21,7 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
@@ -54,9 +50,6 @@ public class SystemNotifyApplicantsApplyForConditionalOrderTaskTest {
     private CcdUpdateService ccdUpdateService;
 
     @Mock
-    private ObjectMapper mapper;
-
-    @Mock
     private IdamService idamService;
 
     @Mock
@@ -83,29 +76,8 @@ public class SystemNotifyApplicantsApplyForConditionalOrderTaskTest {
 
     @Test
     void shouldSendEmailForConditionalOrder() {
-        final CaseDetails caseDetails1 = mock(CaseDetails.class);
-        final CaseDetails caseDetails2 = mock(CaseDetails.class);
-
-        final CaseData caseData1 = CaseData.builder()
-            .dueDate(LocalDate.now().minusWeeks(21))
-            .build();
-        final CaseData caseData2 = CaseData.builder()
-            .dueDate(LocalDate.now().plusDays(5))
-            .build();
-
-        Map<String, Object> data1 = new HashMap<>();
-        data1.put("dueDate", LocalDate.now().minusWeeks(21));
-
-        Map<String, Object> data2 = new HashMap<>();
-        data2.put("dueDate", LocalDate.now().plusDays(5));
-
-        when(caseDetails1.getData()).thenReturn(data1);
-        when(caseDetails1.getId()).thenReturn(1L);
-        when(caseDetails2.getData()).thenReturn(data2);
-
-        when(mapper.convertValue(data1, CaseData.class)).thenReturn(caseData1);
-        when(mapper.convertValue(data2, CaseData.class)).thenReturn(caseData2);
-
+        final CaseDetails caseDetails1 = CaseDetails.builder().id(1L).build();
+        final CaseDetails caseDetails2 = CaseDetails.builder().id(2L).build();
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
         when(ccdSearchService.searchForAllCasesWithQuery(AwaitingConditionalOrder, query, user, SERVICE_AUTHORIZATION))
@@ -114,40 +86,6 @@ public class SystemNotifyApplicantsApplyForConditionalOrderTaskTest {
         underTest.run();
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_NOTIFY_APPLICANTS_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
-    }
-
-    @Test
-    void shouldNotSendEmailForConditionalOrder() {
-        final CaseDetails caseDetails1 = mock(CaseDetails.class);
-        final CaseDetails caseDetails2 = mock(CaseDetails.class);
-
-        final CaseData caseData1 = CaseData.builder()
-            .dueDate(LocalDate.now())
-            .build();
-        final CaseData caseData2 = CaseData.builder()
-            .dueDate(LocalDate.now().plusDays(5))
-            .build();
-
-        Map<String, Object> data1 = new HashMap<>();
-        data1.put("dueDate", LocalDate.now());
-
-        Map<String, Object> data2 = new HashMap<>();
-        data2.put("dueDate", LocalDate.now().plusDays(5));
-
-        when(caseDetails1.getData()).thenReturn(data1);
-        when(caseDetails2.getData()).thenReturn(data2);
-
-        when(mapper.convertValue(data1, CaseData.class)).thenReturn(caseData1);
-        when(mapper.convertValue(data2, CaseData.class)).thenReturn(caseData2);
-
-        final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
-
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingConditionalOrder, query, user, SERVICE_AUTHORIZATION))
-            .thenReturn(caseDetailsList);
-
-        underTest.run();
-
-        verifyNoInteractions(ccdUpdateService);
     }
 
     @Test
@@ -162,22 +100,10 @@ public class SystemNotifyApplicantsApplyForConditionalOrderTaskTest {
 
     @Test
     void shouldStopProcessingIfThereIsConflictDuringSubmission() {
-        final CaseDetails caseDetails1 = mock(CaseDetails.class);
-        final CaseDetails caseDetails2 = mock(CaseDetails.class);
+        final CaseDetails caseDetails1 = CaseDetails.builder().id(1L).build();
+        final CaseDetails caseDetails2 = CaseDetails.builder().id(2L).build();
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
-        final CaseData caseData1 = CaseData.builder()
-            .dueDate(LocalDate.now().minusWeeks(21))
-            .build();
-
-
-        Map<String, Object> data1 = new HashMap<>();
-        data1.put("dueDate", LocalDate.now().minusWeeks(21));
-
-        when(caseDetails1.getData()).thenReturn(data1);
-        when(caseDetails1.getId()).thenReturn(1L);
-
-        when(mapper.convertValue(data1, CaseData.class)).thenReturn(caseData1);
         when(ccdSearchService.searchForAllCasesWithQuery(AwaitingConditionalOrder, query, user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
@@ -193,27 +119,8 @@ public class SystemNotifyApplicantsApplyForConditionalOrderTaskTest {
 
     @Test
     void shouldContinueToNextCaseIfExceptionIsThrownWhileProcessingPreviousCase() {
-        final CaseDetails caseDetails1 = mock(CaseDetails.class);
-        final CaseDetails caseDetails2 = mock(CaseDetails.class);
-
-        final CaseData caseData1 = CaseData.builder()
-            .dueDate(LocalDate.now().minusWeeks(21))
-            .build();
-        final CaseData caseData2 = CaseData.builder()
-            .dueDate(LocalDate.now().minusWeeks(21))
-            .build();
-
-        Map<String, Object> data1 = new HashMap<>();
-        data1.put("dueDate", LocalDate.now().minusWeeks(21));
-
-        when(caseDetails1.getData()).thenReturn(data1);
-        when(caseDetails1.getId()).thenReturn(1L);
-        when(caseDetails2.getData()).thenReturn(data1);
-        when(caseDetails2.getId()).thenReturn(2L);
-
-        when(mapper.convertValue(data1, CaseData.class)).thenReturn(caseData1);
-        when(mapper.convertValue(data1, CaseData.class)).thenReturn(caseData2);
-
+        final CaseDetails caseDetails1 = CaseDetails.builder().id(1L).build();
+        final CaseDetails caseDetails2 = CaseDetails.builder().id(2L).build();
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
         when(ccdSearchService.searchForAllCasesWithQuery(AwaitingConditionalOrder, query, user, SERVICE_AUTHORIZATION))
