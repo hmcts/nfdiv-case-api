@@ -170,7 +170,6 @@ class RetiredFieldsTest {
     }
 
 
-
     @Test
     void shouldMigrateGeneralReferralJudgeAndLegalAdvisorDetailsWhenBothValuesArePresent() {
         final var data = new HashMap<String, Object>();
@@ -227,14 +226,14 @@ class RetiredFieldsTest {
     @Test
     void shouldMigrateServiceApplications() {
 
-        final Map<String,Object> alternativeServiceObject = new LinkedHashMap<>();
+        final Map<String, Object> alternativeServiceObject = new LinkedHashMap<>();
         alternativeServiceObject.put("alternativeServiceType", "deemed");
 
-        final HashMap<String,Object> listValueMap = new LinkedHashMap<>();
+        final HashMap<String, Object> listValueMap = new LinkedHashMap<>();
         listValueMap.put("id", "1");
         listValueMap.put("value", alternativeServiceObject);
 
-        final ArrayList<LinkedHashMap<String,Object>> listValues = new ArrayList<>();
+        final ArrayList<LinkedHashMap<String, Object>> listValues = new ArrayList<>();
         listValues.add((LinkedHashMap<String, Object>) listValueMap);
 
         final var data = new HashMap<String, Object>();
@@ -248,4 +247,16 @@ class RetiredFieldsTest {
 
     }
 
+    @Test
+    void shouldMigrateJurisdictionDisagreeReason() {
+        final var data = new HashMap<String, Object>();
+        data.put("jurisdictionDisagreeReason", "Jurisdiction Disagree Reason");
+
+        final var result = RetiredFields.migrate(data);
+
+        assertThat(result).contains(
+            entry("jurisdictionDisagreeReason", null),
+            entry("reasonCourtsOfEnglandAndWalesHaveNoJurisdiction", "Jurisdiction Disagree Reason")
+        );
+    }
 }
