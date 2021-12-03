@@ -48,7 +48,7 @@ public class CaseworkerGrantFinalOrderTest {
     }
 
     @Test
-    void shouldNotPopulateErrorMessageWhenHearingDateIsInFutureAndAboutToSubmitIsTriggered() {
+    void shouldPopulateFinalOrderGrantedDateWhenAboutToSubmitIsTriggered() {
         final CaseData caseData = caseData();
         caseData.setFinalOrder(FinalOrder.builder().granted(Set.of(FinalOrder.Granted.YES)).build());
 
