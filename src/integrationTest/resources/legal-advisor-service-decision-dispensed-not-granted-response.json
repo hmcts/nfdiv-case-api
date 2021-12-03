@@ -1,0 +1,20 @@
+{
+  "data": {
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "alternativeServiceOutcomes": [
+      {
+        "id": "1",
+        "value": {
+          "receivedServiceApplicationDate": "2021-06-18",
+          "alternativeServiceType": "dispensed",
+          "receivedServiceAddedDate": "${json-unit.any-string}",
+          "serviceApplicationGranted": "No",
+          "serviceApplicationDecisionDate": "${json-unit.any-string}",
+          "deemedServiceDate": "${json-unit.any-string}",
+          "serviceApplicationOutcomeLabel":"${json-unit.any-string}"
+        }
+      }],
+    "dataVersion": "${json-unit.any-number}"
+  },
+  "state": "AwaitingAos"
+}
