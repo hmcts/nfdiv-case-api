@@ -30,7 +30,7 @@ public class SystemNotifyApplicantsApplyForCO implements CCDConfig<CaseData, Sta
         configBuilder
             .event(SYSTEM_NOTIFY_APPLICANTS_CONDITIONAL_ORDER)
             .forState(AwaitingConditionalOrder)
-            .name("Joint Applicants Apply for Conditional Order")
+            .name("Joint Applicants Apply for CO")
             .description("Notify Joint Applicants they can apply for a Conditional Order")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .retries(120, 120)
