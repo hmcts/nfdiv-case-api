@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import static com.github.stefanbirkner.systemlambda.SystemLambda.withEnvironmentVariable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenUpdateCaseStateInAat.CITIZEN_UPDATE_CASE_STATE_IN_AAT;
+import static uk.gov.hmcts.divorce.citizen.event.CitizenUpdateCaseStateInAat.CITIZEN_UPDATE_CASE_STATE_AAT;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
@@ -39,7 +39,7 @@ public class CitizenUpdateCaseStateInAatTest {
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(CITIZEN_UPDATE_CASE_STATE_IN_AAT);
+            .contains(CITIZEN_UPDATE_CASE_STATE_AAT);
     }
 
     @Test

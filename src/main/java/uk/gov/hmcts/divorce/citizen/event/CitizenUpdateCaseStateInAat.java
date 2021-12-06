@@ -25,7 +25,7 @@ public class CitizenUpdateCaseStateInAat implements CCDConfig<CaseData, State, U
 
     private static final String ENVIRONMENT_AAT = "aat";
 
-    public static final String CITIZEN_UPDATE_CASE_STATE_IN_AAT = "citizen-update-case-state-in-aat";
+    public static final String CITIZEN_UPDATE_CASE_STATE_AAT = "citizen-update-case-state-aat";
 
     @Autowired
     private HttpServletRequest request;
@@ -34,7 +34,7 @@ public class CitizenUpdateCaseStateInAat implements CCDConfig<CaseData, State, U
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         configBuilder
-            .event(CITIZEN_UPDATE_CASE_STATE_IN_AAT)
+            .event(CITIZEN_UPDATE_CASE_STATE_AAT)
             .forAllStates()
             .name("Citizen update case state in AAT")
             .description("Citizen update case state in AAT")
