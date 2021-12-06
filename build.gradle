@@ -11,7 +11,7 @@ buildscript {
 
   }
   dependencies {
-    classpath group: 'cz.habarta.typescript-generator', name: 'typescript-generator-gradle-plugin', version: '2.33.956'
+    classpath group: 'cz.habarta.typescript-generator', name: 'typescript-generator-gradle-plugin', version: '2.34.976'
   }
 }
 
@@ -24,7 +24,7 @@ plugins {
   id 'org.owasp.dependencycheck' version '6.5.0.1'
   id 'org.sonarqube' version '3.3'
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-  id 'org.springframework.boot' version '2.5.6'
+  id 'org.springframework.boot' version '2.6.1'
   id 'com.github.ben-manes.versions' version '0.38.0'
   id 'hmcts.ccd.sdk' version '0.24.8'
 }
@@ -208,7 +208,6 @@ def versions = [
   lombok            : '1.18.20',
   reformsJavaLogging: '5.1.7',
   springBoot        : springBoot.class.package.implementationVersion,
-  springfoxSwagger  : '3.0.0',
   s2sClient         : '4.0.0'
 ]
 
@@ -234,10 +233,10 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: versions.springBoot
 
-  implementation group: 'io.springfox', name: 'springfox-swagger2', version: versions.springfoxSwagger
+  implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.5.13'
 
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-hystrix', version: '2.2.10.RELEASE'
-  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: '3.0.4'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: '3.1.0'
 
   implementation group: 'uk.gov.service.notify', name: 'notifications-java-client', version: '3.17.2-RELEASE'
 
@@ -261,7 +260,7 @@ dependencies {
 
   implementation group: 'uk.gov.hmcts.reform', name: 'service-auth-provider-client', version: versions.s2sClient
 
-  implementation group: 'com.github.hmcts', name: 'send-letter-client', version: '3.0.9'
+  implementation group: 'com.github.hmcts', name: 'send-letter-client', version: '3.0.10'
   implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.15.1'
 
   implementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.6.0-prerelease'
@@ -286,7 +285,7 @@ dependencies {
 
   testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.21.0'
   testImplementation group: 'org.assertj', name: 'assertj-guava', version: '3.4.0'
-  testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '3.0.4'
+  testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '3.1.0'
 
   testImplementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 

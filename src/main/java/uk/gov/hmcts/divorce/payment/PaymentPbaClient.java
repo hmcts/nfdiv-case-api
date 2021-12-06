@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.payment;
 
-import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +14,6 @@ import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUT
 @SuppressWarnings("PMD.UseObjectForClearerAPI")
 public interface PaymentPbaClient {
 
-    @ApiOperation("Handles Solicitor Payment By Account (PBA) Payments")
     @PostMapping(value = "/credit-account-payments")
     ResponseEntity<CreditAccountPaymentResponse> creditAccountPayment(
         @RequestHeader(AUTHORIZATION) String authorisation,

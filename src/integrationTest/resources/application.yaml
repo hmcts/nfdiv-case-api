@@ -1,3 +1,11 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+
+springdoc:
+  packagesToScan: uk.gov.hmcts.divorce,uk.gov.hmcts.ccd.sdk.runtime
+  pathsToMatch: /**
+
 uk:
   gov:
     notify:
@@ -48,10 +56,6 @@ core_case_data:
     url: http://localhost:4012
   search:
     page_size: 100
-
-spring:
-  main:
-    allow-bean-definition-overriding: true
 
 doc_assembly:
   url: ${DOC_ASSEMBLY_URL:http://dg-docassembly-aat.service.core-compute-aat.internal}

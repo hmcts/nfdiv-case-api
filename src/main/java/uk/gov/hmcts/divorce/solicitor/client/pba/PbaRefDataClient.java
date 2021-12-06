@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.solicitor.client.pba;
 
-import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +12,6 @@ import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUT
 @FeignClient(name = "pba-ref-data-client", url = "${pba.ref.data.service..url}")
 public interface PbaRefDataClient {
 
-    @ApiOperation("Retrieves Solicitor Pay By Account (PBA) numbers for payment")
     @GetMapping(value = "/refdata/external/v1/organisations/pbas")
     ResponseEntity<PbaOrganisationResponse> retrievePbaNumbers(
         @RequestHeader(AUTHORIZATION) String authorisation,
