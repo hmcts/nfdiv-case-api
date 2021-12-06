@@ -27,9 +27,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.ADMIN_ERROR;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAdminClarification;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAmendedApplication;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderRefused;
 import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeDecision.LEGAL_ADVISOR_MAKE_DECISION;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
@@ -114,7 +114,7 @@ class LegalAdvisorMakeDecisionTest {
     }
 
     @Test
-    void shouldSetStateToConditionalOrderRefusedIfConditionalOrderIsRejected() {
+    void shouldSetStateToAwaitingAmendedApplicationIfConditionalOrderIsRejected() {
 
         final CaseData caseData = CaseData.builder()
             .conditionalOrder(ConditionalOrder.builder().granted(NO).refusalDecision(REJECT).build())
@@ -127,7 +127,7 @@ class LegalAdvisorMakeDecisionTest {
             legalAdvisorMakeDecision.aboutToSubmit(caseDetails, null);
 
         assertThat(response.getData().getConditionalOrder().getDecisionDate()).isNull();
-        assertThat(response.getState()).isEqualTo(ConditionalOrderRefused);
+        assertThat(response.getState()).isEqualTo(AwaitingAmendedApplication);
     }
 
     @Test

@@ -27,9 +27,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.ADMIN_ERROR;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAdminClarification;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAmendedApplication;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderRefused;
 import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeDecision.LEGAL_ADVISOR_MAKE_DECISION;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
@@ -150,7 +150,7 @@ public class LegalAdvisorMakeDecisionIT {
     }
 
     @Test
-    public void shouldSetStateToConditionalOrderRefusedIfConditionalOrderIsRejected() throws Exception {
+    public void shouldSetStateToAwaitingAmendedApplicationIfConditionalOrderIsRejected() throws Exception {
 
         final CaseData caseData = caseData();
         caseData.setConditionalOrder(ConditionalOrder.builder()
@@ -173,7 +173,7 @@ public class LegalAdvisorMakeDecisionIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                jsonPath("$.state").value(ConditionalOrderRefused.getName())
+                jsonPath("$.state").value(AwaitingAmendedApplication.getName())
             );
     }
 }
