@@ -63,7 +63,8 @@ public class SystemMigrateBulkCasesTask implements Runnable {
             verifyData(data, caseDetails.getId());
 
             caseDetails.setData(data);
-            ccdUpdateService.submitEvent(caseDetails, SYSTEM_MIGRATE_BULK_CASE, user, serviceAuthorization);
+            ccdUpdateService.updateBulkCaseWithRetries(
+                caseDetails, SYSTEM_MIGRATE_BULK_CASE, user, serviceAuthorization, caseDetails.getId());
             log.info("Migration complete for case id: {}", caseDetails.getId());
         } catch (final CcdConflictException e) {
             log.error("Could not get lock for case id: {}, continuing to next case", caseDetails.getId());
