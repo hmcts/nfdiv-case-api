@@ -70,7 +70,7 @@ public class SystemNotifyApplicantDisputeFormOverdueFT extends FunctionalTestSui
                 assertThat(caseDetails.getState().equals(Holding));
                 CaseData caseData = getCaseData(caseDetails.getData());
                 assertThat(DISPUTE_DIVORCE.getType().equals(caseData.getAcknowledgementOfService().getHowToRespondApplication()));
-                assertThat(!caseData.getApplication().getIssueDate().plusDays(10).isAfter(LocalDate.now()));
+                assertThat(caseData.getApplication().getIssueDate().plusDays(10)).isBeforeOrEqualTo(LocalDate.now());
                 assertThat(caseData.getAcknowledgementOfService().getApplicantNotifiedDisputeFormOverdue()).isNotEqualTo(YesOrNo.YES);
             });
     }

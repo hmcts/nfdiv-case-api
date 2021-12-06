@@ -67,7 +67,7 @@ public class SystemNotifyApplicantsApplyForCoFT extends FunctionalTestSuite {
                 CaseData caseData = getCaseData(caseDetails.getData());
                 assertThat(caseDetails.getState().equals(AwaitingConditionalOrder));
                 assertThat(caseData.getApplication().getJointApplicantsNotifiedCanApplyForConditionalOrder()).isNotEqualTo(YesOrNo.YES);
-                assertThat(!caseData.getDueDate().isAfter(LocalDate.now()));
+                assertThat(caseData.getDueDate()).isBeforeOrEqualTo(LocalDate.now());
             });
     }
 
