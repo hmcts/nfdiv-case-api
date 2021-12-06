@@ -60,16 +60,15 @@ class ScheduleCaseServiceTest {
 
         final var user = mock(User.class);
         final CaseTask caseTask = caseDetails -> caseDetails;
-
-        when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
-        when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
-        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseData, SYSTEM_UPDATE_CASE_COURT_HEARING))
-            .thenReturn(caseTask);
-
         final var bulkActionCaseDetails = CaseDetails
             .<BulkActionCaseData, BulkActionState>builder()
             .data(bulkActionCaseData)
             .build();
+
+        when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
+        when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
+        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseDetails, SYSTEM_UPDATE_CASE_COURT_HEARING))
+            .thenReturn(caseTask);
 
         scheduleCaseService.updateCourtHearingDetailsForCasesInBulk(bulkActionCaseDetails, TEST_SYSTEM_AUTHORISATION_TOKEN);
 
@@ -94,16 +93,15 @@ class ScheduleCaseServiceTest {
 
         final var user = mock(User.class);
         final CaseTask caseTask = caseDetails -> caseDetails;
-
-        when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
-        when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
-        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseData, SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE))
-            .thenReturn(caseTask);
-
         final var bulkActionCaseDetails = CaseDetails
             .<BulkActionCaseData, BulkActionState>builder()
             .data(bulkActionCaseData)
             .build();
+
+        when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
+        when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
+        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseDetails, SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE))
+            .thenReturn(caseTask);
 
         scheduleCaseService.updatePronouncementJudgeDetailsForCasesInBulk(bulkActionCaseDetails, TEST_SYSTEM_AUTHORISATION_TOKEN);
 

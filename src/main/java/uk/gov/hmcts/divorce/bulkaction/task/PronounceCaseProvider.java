@@ -1,6 +1,8 @@
 package uk.gov.hmcts.divorce.bulkaction.task;
 
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
@@ -16,7 +18,10 @@ public class PronounceCaseProvider implements BulkActionCaseTaskProvider {
     }
 
     @Override
-    public CaseTask getCaseTask(final BulkActionCaseData bulkActionCaseData) {
+    public CaseTask getCaseTask(final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails) {
+
+        final BulkActionCaseData bulkActionCaseData = bulkCaseDetails.getData();
+
         return mainCaseDetails -> {
             final var conditionalOrder = mainCaseDetails.getData().getConditionalOrder();
             final var finalOrder = mainCaseDetails.getData().getFinalOrder();
