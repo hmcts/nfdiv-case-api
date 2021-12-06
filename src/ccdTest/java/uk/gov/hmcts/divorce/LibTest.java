@@ -1,21 +1,22 @@
 package uk.gov.hmcts.divorce;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import java.util.Locale;
+import java.util.List;
 import java.util.Map;
-import lombok.SneakyThrows;
-import org.junit.Before;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,20 +24,22 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import uk.gov.hmcts.ccd.definition.store.excel.endpoint.ImportController;
 import uk.gov.hmcts.ccd.definition.store.repository.SecurityClassification;
 import uk.gov.hmcts.ccd.definition.store.repository.model.UserRole;
 import uk.gov.hmcts.ccd.definition.store.rest.endpoint.UserRoleController;
+import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
 import uk.gov.hmcts.reform.ccd.client.model.Event;
 import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
-import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
+import uk.gov.hmcts.reform.idam.client.IdamApi;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
+@ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class LibTest {
@@ -45,16 +48,13 @@ class LibTest {
   UserRoleController roleController;
 
   @Autowired
-  WebApplicationContext context;
-
-  @MockBean
-  RequestInterceptor interceptor;
-
   MockMvc mockMvc;
 
-  @Before
-  public void setup() {
-  }
+  @MockBean
+  IdamApi idamApi;
+
+  @MockBean
+  private WebMvcConfig webMvcConfig;
 
   private static final String JURISDICTION = "DIVORCE";
   private static final String CASE_TYPE = "NFD";
@@ -65,6 +65,13 @@ class LibTest {
 
   MockMultipartFile loadNFDivDef() throws IOException {
 
+    when(idamApi.retrieveUserInfo(anyString())).thenReturn(UserInfo.builder()
+        .uid("1")
+        .givenName("A")
+        .familyName("Person")
+        .roles(List.of())
+        .build());
+
     return new MockMultipartFile(
         "file",
         "hello.txt",
@@ -73,7 +80,6 @@ class LibTest {
     );
   }
 
-  //	@WithMockUser("goat")
   @Test
   void contextLoads() throws Exception {
     createRoles(
@@ -88,19 +94,12 @@ class LibTest {
         "caseworker-caa",
         "citizen"
     );
-//		Authentication authentication = Mockito.mock(Authentication.class);
-//		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-//		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-//		SecurityContextHolder.setContext(securityContext);
-//
-//		Mockito.when(authentication.getPrincipal()).thenReturn(Mockito.mock(Jwt.class));
-    mockMvc = MockMvcBuilders
-        .webAppContextSetup(context)
-        .apply(springSecurity())
-        .build();
 
-    mockMvc.perform(multipart("/importart").file(loadNFDivDef())
-            .with(jwt().authorities(new SimpleGrantedAuthority("caseworker-divorce-solicitor"))))
+    mockMvc.perform(multipart("/import").file(loadNFDivDef())
+            .with(
+                jwt().authorities(new SimpleGrantedAuthority("caseworker-divorce-solicitor")))
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+        )
         .andExpect(status().is2xxSuccessful());
 
     String solicitorToken = "green";
@@ -134,21 +133,13 @@ class LibTest {
   ) throws Exception {
 
     MvcResult result = mockMvc.perform(
-            get("/cseworkers/ham/jurisdictions/DVORCE/case-types/D/event-triggers/solicitor-create-application/token")
+            get("/caseworkers/ham/jurisdictions/DIVORCE/case-types/NFD/event-triggers/solicitor-create-application/token")
                 .with(jwt().authorities(new SimpleGrantedAuthority("caseworker-divorce-solicitor")))
                 .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().is2xxSuccessful())
         .andReturn();
     var r = new ObjectMapper().readValue(result.getResponse().getContentAsString(), StartEventResponse.class);
     return r;
-//		coreCaseDataApi.startForCaseworker(
-//				solicitorToken,
-//				s2sToken,
-//				solicitorUserId,
-//				JURISDICTION,
-//				CASE_TYPE,
-//				SOLICITOR_CREATE
-//		);
   }
 
   private void submitNewCase(
@@ -164,17 +155,6 @@ class LibTest {
                 .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().is2xxSuccessful())
         .andReturn();
-
-//		// not including in try catch to fast fail the method
-//		return coreCaseDataApi.submitForCaseworker(
-//				solicitorToken,
-//				s2sToken,
-//				solicitorUserId,
-//				JURISDICTION,
-//				CASE_TYPE,
-//				true,
-//				caseDataContent
-//		);
   }
 
   void createRoles(String... roles) {

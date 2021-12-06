@@ -211,6 +211,9 @@ dependencyManagement {
       entry 'guava'
     }
   }
+  imports {
+    mavenBom 'com.fasterxml.jackson:jackson-bom:2.12.4'
+  }
 }
 
 repositories {
@@ -324,10 +327,16 @@ dependencies {
 
   functionalTestImplementation sourceSets.main.runtimeClasspath
   functionalTestImplementation sourceSets.test.runtimeClasspath
+
+  ccdTestImplementation sourceSets.main.runtimeClasspath
+  ccdTestImplementation sourceSets.test.runtimeClasspath
+
   functionalTestImplementation group: 'uk.gov.hmcts.reform', name: 'document-management-client', version: '7.0.0'
   functionalTestImplementation group: 'uk.gov.hmcts.reform', name: 'service-auth-provider-client', version: versions.s2sClient
 
-  ccdTestImplementation 'rse-cft-lib:ccd-lib:0.1.0'
+  ccdTestImplementation ('rse-cft-lib:ccd-lib:0.1.0') {
+    exclude group: 'io.springfox'
+  }
   ccdTestImplementation 'org.springframework.security:spring-security-test'
 }
 
