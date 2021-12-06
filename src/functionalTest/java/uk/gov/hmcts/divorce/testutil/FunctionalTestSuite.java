@@ -1,11 +1,13 @@
 package uk.gov.hmcts.divorce.testutil;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.TestPropertySource;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
@@ -52,6 +54,9 @@ public abstract class FunctionalTestSuite {
 
     @Autowired
     protected CcdSearchService searchService;
+
+    @Autowired
+    protected ObjectMapper objectMapper;
 
     protected CaseDetails createCaseInCcd() {
         String solicitorToken = idamTokenGenerator.generateIdamTokenForSolicitor();
@@ -176,5 +181,9 @@ public abstract class FunctionalTestSuite {
             idamService.retrieveSystemUpdateUserDetails(),
             serviceAuthenticationGenerator.generate()
         );
+    }
+
+    protected CaseData getCaseData(Map<String, Object> data) {
+        return objectMapper.convertValue(data, CaseData.class);
     }
 }
