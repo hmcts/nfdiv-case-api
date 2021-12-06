@@ -7,7 +7,6 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.common.AddSystemUpdateRole;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -24,13 +23,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 @Component
 public class CitizenUpdateCaseStateInAat implements CCDConfig<CaseData, State, UserRole> {
 
+    private static final String ENVIRONMENT_AAT = "aat";
+
     public static final String CITIZEN_UPDATE_CASE_STATE_IN_AAT = "citizen-update-case-state-in-aat";
 
     @Autowired
     private HttpServletRequest request;
-
-    @Autowired
-    private AddSystemUpdateRole addSystemUpdateRole;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -50,7 +48,7 @@ public class CitizenUpdateCaseStateInAat implements CCDConfig<CaseData, State, U
 
         CaseData data = beforeDetails.getData();
 
-        if (addSystemUpdateRole.isEnvironmentAat()) {
+        if (isEnvironmentAat()) {
 
             log.info("Citizen update case state in AAT about to submit callback invoked");
             State state = State.valueOf(request.getParameter("State"));
@@ -65,6 +63,11 @@ public class CitizenUpdateCaseStateInAat implements CCDConfig<CaseData, State, U
             .data(data)
             .build();
 
+    }
+
+    public boolean isEnvironmentAat() {
+        String environment = System.getenv().getOrDefault("ENVIRONMENT", null);
+        return null != environment && environment.equalsIgnoreCase(ENVIRONMENT_AAT);
     }
 }
 
