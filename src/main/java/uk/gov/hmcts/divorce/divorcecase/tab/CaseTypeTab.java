@@ -56,7 +56,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .label("LabelAosTabOnlineResponse-Heading", null, "## This is an online AoS response")
             .field("confirmReadPetition")
             .field("jurisdictionAgree")
-            .field("jurisdictionDisagreeReason")
+            .field("reasonCourtsOfEnglandAndWalesHaveNoJurisdiction", "jurisdictionAgree=\"No\"")
+            .field("inWhichCountryIsYourLifeMainlyBased", "jurisdictionAgree=\"No\"")
             .field("applicant2LegalProceedings")
             .field("applicant2LegalProceedingsDetails")
             .field("applicant2UserId")
@@ -171,7 +172,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("certificateOfServiceDate")
             .label("serviceOutcomeLabel",
                     "serviceApplicationGranted=\"No\" OR serviceApplicationGranted=\"Yes\"",
-                                "Outcome of Service Application")
+                                "### Outcome of Service Application")
             .field("serviceApplicationGranted")
             .field("serviceApplicationDecisionDate")
             .field("serviceApplicationRefusalReason", "serviceApplicationGranted=\"No\"")

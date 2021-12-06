@@ -50,13 +50,6 @@ public class AcknowledgementOfService {
     private YesOrNo jurisdictionAgree;
 
     @CCD(
-        label = "Reason respondent disagreed to claimed jurisdiction",
-        typeOverride = TextArea,
-        access = AosAccess.class
-    )
-    private String jurisdictionDisagreeReason;
-
-    @CCD(
         label = "Date AoS submitted to HMCTS",
         access = {DefaultAccess.class}
     )
@@ -82,13 +75,14 @@ public class AcknowledgementOfService {
     private String noticeOfProceedingsSolicitorFirm;
 
     @CCD(
-        label = "No jurisdiction reason",
+        label = "Reason respondent disagreed to claimed jurisdiction",
+        typeOverride = TextArea,
         access = {AosAccess.class}
     )
     private String reasonCourtsOfEnglandAndWalesHaveNoJurisdiction;
 
     @CCD(
-        label = "Which country are you mainly based",
+        label = "In which country is the respondents life mainly based?",
         access = {AosAccess.class}
     )
     private String inWhichCountryIsYourLifeMainlyBased;

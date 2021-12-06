@@ -41,7 +41,7 @@ public class SolUpdateContactDetails implements CcdPageConfiguration {
                     .mandatoryWithLabel(Solicitor::getName, "Your name")
                     .mandatoryWithLabel(Solicitor::getPhone, "Your phone number")
                     .mandatoryWithLabel(Solicitor::getEmail, "Your email")
-                    .mandatory(Solicitor::getAgreeToReceiveEmails)
+                    .mandatory(Solicitor::getAgreeToReceiveEmailsCheckbox)
                     .complex(Solicitor::getOrganisationPolicy)
                         .complex(OrganisationPolicy::getOrganisation)
                             .mandatory(Organisation::getOrganisationId)

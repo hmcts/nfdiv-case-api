@@ -219,6 +219,13 @@ public enum State {
     FinalOrderComplete("FinalOrderComplete"),
 
     @CCD(
+        name = "Final order requested",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    FinalOrderRequested("FinalOrderRequested"),
+
+    @CCD(
         name = "Issued To bailiff",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
