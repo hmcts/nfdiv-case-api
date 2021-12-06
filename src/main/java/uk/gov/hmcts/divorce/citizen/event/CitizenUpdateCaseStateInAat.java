@@ -46,7 +46,7 @@ public class CitizenUpdateCaseStateInAat implements CCDConfig<CaseData, State, U
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
-        CaseData data = beforeDetails.getData();
+        CaseData data = details.getData();
 
         if (isEnvironmentAat()) {
 
@@ -61,6 +61,7 @@ public class CitizenUpdateCaseStateInAat implements CCDConfig<CaseData, State, U
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
+            .state(details.getState())
             .build();
 
     }

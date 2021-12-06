@@ -44,7 +44,6 @@ public class CitizenUpdateCaseStateInAatTest {
 
     @Test
     public void shouldUpdateCaseStateWhenEnvironmentIsAat() throws Exception {
-
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().build();
@@ -59,5 +58,22 @@ public class CitizenUpdateCaseStateInAatTest {
             .execute(() -> citizenUpdateCaseStateInAat.aboutToSubmit(caseDetails, caseDetails));
 
         assertThat(response.getState()).isEqualTo(State.Holding);
+    }
+
+    @Test
+    public void shouldDoNothingWhenEnvironmentIsNotAat() throws Exception {
+        final long caseId = 1L;
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        final CaseData caseData = CaseData.builder().build();
+        caseDetails.setData(caseData);
+        caseDetails.setId(caseId);
+
+        caseDetails.setState(State.Draft);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            withEnvironmentVariable("ENVIRONMENT", "demo")
+                .execute(() -> citizenUpdateCaseStateInAat.aboutToSubmit(caseDetails, caseDetails));
+
+        assertThat(response.getState()).isEqualTo(State.Draft);
     }
 }
