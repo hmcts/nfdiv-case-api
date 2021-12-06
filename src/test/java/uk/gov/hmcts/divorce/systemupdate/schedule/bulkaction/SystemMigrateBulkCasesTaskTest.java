@@ -79,7 +79,8 @@ public class SystemMigrateBulkCasesTaskTest {
 
         systemMigrateBulkCasesTask.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails, SYSTEM_MIGRATE_BULK_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService)
+            .updateBulkCaseWithRetries(caseDetails, SYSTEM_MIGRATE_BULK_CASE, user, SERVICE_AUTHORIZATION, caseDetails.getId());
     }
 
     @Test
@@ -106,8 +107,10 @@ public class SystemMigrateBulkCasesTaskTest {
 
         systemMigrateBulkCasesTask.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_BULK_CASE, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_BULK_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService)
+            .updateBulkCaseWithRetries(caseDetails1, SYSTEM_MIGRATE_BULK_CASE, user, SERVICE_AUTHORIZATION, caseDetails1.getId());
+        verify(ccdUpdateService)
+            .updateBulkCaseWithRetries(caseDetails2, SYSTEM_MIGRATE_BULK_CASE, user, SERVICE_AUTHORIZATION, caseDetails2.getId());
     }
 
     @Test
@@ -126,8 +129,10 @@ public class SystemMigrateBulkCasesTaskTest {
 
         systemMigrateBulkCasesTask.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_BULK_CASE, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_BULK_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService)
+            .updateBulkCaseWithRetries(caseDetails1, SYSTEM_MIGRATE_BULK_CASE, user, SERVICE_AUTHORIZATION, caseDetails1.getId());
+        verify(ccdUpdateService)
+            .updateBulkCaseWithRetries(caseDetails2, SYSTEM_MIGRATE_BULK_CASE, user, SERVICE_AUTHORIZATION, caseDetails2.getId());
     }
 
     @Test
