@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -32,6 +33,9 @@ class UpdateCaseCourtHearingProviderTest {
             .court(BIRMIGHAM)
             .build();
 
+        final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails = new CaseDetails<>();
+        bulkCaseDetails.setData(bulkActionCaseData);
+
         final var caseData = CaseData.builder()
             .finalOrder(FinalOrder.builder().build())
             .build();
@@ -39,7 +43,7 @@ class UpdateCaseCourtHearingProviderTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
-        final CaseTask caseTask = updateCaseCourtHearingProvider.getCaseTask(bulkActionCaseData);
+        final CaseTask caseTask = updateCaseCourtHearingProvider.getCaseTask(bulkCaseDetails);
 
         final CaseDetails<CaseData, State> resultCaseDetails = caseTask.apply(caseDetails);
         final ConditionalOrder resultConditionalOrder = resultCaseDetails.getData().getConditionalOrder();

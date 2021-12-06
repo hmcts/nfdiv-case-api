@@ -7,6 +7,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
@@ -14,8 +16,6 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,9 +29,6 @@ class BulkCaseCaseTaskFactoryTest {
     @Mock
     private CaseTask caseTask;
 
-    @Mock
-    private BulkActionCaseData bulkActionCaseData;
-
     @InjectMocks
     private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
 
@@ -44,9 +41,11 @@ class BulkCaseCaseTaskFactoryTest {
     @Test
     void shouldReturnSystemUpdateCaseCourtHearingCaseTask() {
 
-        when(bulkActionCaseTaskProvider.getCaseTask(any(BulkActionCaseData.class))).thenReturn(caseTask);
+        final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails = new CaseDetails<>();
 
-        final CaseTask result = bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseData, EVENT_ID);
+        when(bulkActionCaseTaskProvider.getCaseTask(bulkCaseDetails)).thenReturn(caseTask);
+
+        final CaseTask result = bulkCaseCaseTaskFactory.getCaseTask(bulkCaseDetails, EVENT_ID);
 
         assertThat(result).isSameAs(caseTask);
     }
@@ -54,9 +53,11 @@ class BulkCaseCaseTaskFactoryTest {
     @Test
     void shouldThrowIllegalArgumentExceptionIfUnknownEventId() {
 
+        final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails = new CaseDetails<>();
+
         assertThrows(
             IllegalArgumentException.class,
-            () -> bulkCaseCaseTaskFactory.getCaseTask(mock(BulkActionCaseData.class), "unknown-event"),
+            () -> bulkCaseCaseTaskFactory.getCaseTask(bulkCaseDetails, "unknown-event"),
             "Cannot create CaseTask for Event Id: unknown-event");
     }
 }
