@@ -14,12 +14,18 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYSTEM_LINK_WITH_BULK_CASE;
 
 @ExtendWith(MockitoExtension.class)
 class LinkBulkCaseProviderTest {
 
     @InjectMocks
     private LinkBulkCaseProvider linkBulkCaseProvider;
+
+    @Test
+    void shouldReturnSystemLinkWithBulkCaseEventId() {
+        assertThat(linkBulkCaseProvider.getEventId()).isEqualTo(SYSTEM_LINK_WITH_BULK_CASE);
+    }
 
     @Test
     void shouldReturnSystemLinkWithBulkCaseCaseTask() {

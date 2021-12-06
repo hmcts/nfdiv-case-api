@@ -12,12 +12,18 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemoveBulkCase.SYSTEM_REMOVE_BULK_CASE;
 
 @ExtendWith(MockitoExtension.class)
 class UnlinkCaseProviderTest {
 
     @InjectMocks
     private UnlinkBulkCaseProvider unlinkBulkCaseProvider;
+
+    @Test
+    void shouldReturnSystemUnlinkBulkEventId() {
+        assertThat(unlinkBulkCaseProvider.getEventId()).isEqualTo(SYSTEM_REMOVE_BULK_CASE);
+    }
 
     @Test
     void shouldReturnSystemUnlinkBulkCaseTask() {

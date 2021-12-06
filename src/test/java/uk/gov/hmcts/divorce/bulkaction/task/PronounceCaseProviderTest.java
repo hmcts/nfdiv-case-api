@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
 
@@ -23,6 +24,11 @@ class PronounceCaseProviderTest {
 
     @InjectMocks
     private PronounceCaseProvider pronounceCaseProvider;
+
+    @Test
+    void shouldReturnSystemPronounceCaseEventId() {
+        assertThat(pronounceCaseProvider.getEventId()).isEqualTo(SYSTEM_PRONOUNCE_CASE);
+    }
 
     @Test
     void shouldReturnSystemPronounceCaseTask() {

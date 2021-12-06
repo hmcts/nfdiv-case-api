@@ -14,12 +14,18 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithPronouncementJudge.SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE;
 
 @ExtendWith(MockitoExtension.class)
 class UpdateCasePronouncementJudgeProviderTest {
 
     @InjectMocks
     private UpdateCasePronouncementJudgeProvider updateCasePronouncementJudgeProvider;
+
+    @Test
+    void shouldReturnSystemUpdateCasePronouncementJudgeEventId() {
+        assertThat(updateCasePronouncementJudgeProvider.getEventId()).isEqualTo(SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE);
+    }
 
     @Test
     void shouldReturnSystemUpdateCasePronouncementJudgeCaseTask() {
