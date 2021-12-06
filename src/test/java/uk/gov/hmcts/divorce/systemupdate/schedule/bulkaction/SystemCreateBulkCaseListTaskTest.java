@@ -39,6 +39,7 @@ import static java.util.Collections.emptyList;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
@@ -379,6 +380,8 @@ public class SystemCreateBulkCaseListTaskTest {
             .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
 
         systemCreateBulkCaseListTask.run();
+
+        verifyNoInteractions(ccdCreateService, bulkTriggerService, failedBulkCaseRemover);
     }
 
     @Test
