@@ -286,7 +286,7 @@ dependencies {
 
   testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.21.0'
   testImplementation group: 'org.assertj', name: 'assertj-guava', version: '3.4.0'
-  testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '3.0.4'
+  testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '3.1.0'
 
   testImplementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
