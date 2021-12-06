@@ -33,16 +33,16 @@ public class SystemJointApplicantsApplyForConditionalOrderTest {
     private HttpServletRequest httpServletRequest;
 
     @Mock
-    private ApplyForConditionalOrderNotification applicant1ApplyForConditionalOrderNotification;
+    private ApplyForConditionalOrderNotification notification;
 
     @InjectMocks
-    private SystemJointApplicantsApplyForConditionalOrder systemJointApplicantsApplyForConditionalOrder;
+    private SystemJointApplicantsApplyForConditionalOrder underTest;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        systemJointApplicantsApplyForConditionalOrder.configure(configBuilder);
+        underTest.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
@@ -52,17 +52,15 @@ public class SystemJointApplicantsApplyForConditionalOrderTest {
     @Test
     void shouldSetApplicant1NotifiedCanApplyForConditionalOrderToYes() {
         final CaseData caseData = caseData();
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(1L);
-        details.setData(caseData);
+        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
 
         when(httpServletRequest.getHeader(AUTHORIZATION))
             .thenReturn("auth header");
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            systemJointApplicantsApplyForConditionalOrder.aboutToSubmit(details, details);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = underTest.aboutToSubmit(details, details);
 
-        verify(applicant1ApplyForConditionalOrderNotification).sendToApplicant1(caseData, details.getId());
+        verify(notification).sendToApplicant1(caseData, details.getId());
+        verify(notification).sendToApplicant2(caseData, details.getId());
         assertThat(response.getData().getApplication().getJointApplicantsNotifiedCanApplyForConditionalOrder()).isEqualTo(YesOrNo.YES);
     }
 }

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 
 import java.io.IOException;
@@ -67,8 +68,10 @@ public class SystemNotifyApplicantDisputeFormOverdueFT extends FunctionalTestSui
         searchForCasesWithQuery(query)
             .forEach(caseDetails -> {
                 assertThat(caseDetails.getState().equals(Holding));
-                assertThat(caseDetails.getData().get(NOTIFICATION_SENT_FLAG)).isNotEqualTo(YesOrNo.YES);
-                assertThat(DISPUTE_DIVORCE.getType().equals(caseDetails.getData().get("howToRespondApplication")));
+                CaseData caseData = getCaseData(caseDetails.getData());
+                assertThat(DISPUTE_DIVORCE.getType().equals(caseData.getAcknowledgementOfService().getHowToRespondApplication()));
+                assertThat(!caseData.getApplication().getIssueDate().plusDays(10).isAfter(LocalDate.now()));
+                assertThat(caseData.getAcknowledgementOfService().getApplicantNotifiedDisputeFormOverdue()).isNotEqualTo(YesOrNo.YES);
             });
     }
 }

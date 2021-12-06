@@ -39,10 +39,9 @@ public class SystemJointApplicantsApplyForConditionalOrder implements CCDConfig<
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
-
         CaseData data = details.getData();
-
         notification.sendToApplicant1(data, details.getId());
+        notification.sendToApplicant2(data, details.getId());
         data.getApplication().setJointApplicantsNotifiedCanApplyForConditionalOrder(YES);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

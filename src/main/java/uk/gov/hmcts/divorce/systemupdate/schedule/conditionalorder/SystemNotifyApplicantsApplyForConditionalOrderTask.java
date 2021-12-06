@@ -30,7 +30,7 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 @Slf4j
 public class SystemNotifyApplicantsApplyForConditionalOrderTask implements Runnable {
 
-    private static final String NOTIFICATION_FLAG = "jointApplicantsNotifiedCanApplyForConditionalOrder";
+    public static final String NOTIFICATION_FLAG = "jointApplicantsNotifiedCanApplyForConditionalOrder";
     public static final String SUBMIT_EVENT_ERROR = "Submit event failed for case id: {}, continuing to next case";
     public static final String DESERIALIZATION_ERROR = "Deserialization failed for case id: {}, continuing to next case";
     public static final String CCD_SEARCH_ERROR =
