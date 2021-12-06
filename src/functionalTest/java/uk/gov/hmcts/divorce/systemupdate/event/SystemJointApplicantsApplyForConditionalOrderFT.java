@@ -56,7 +56,7 @@ public class SystemJointApplicantsApplyForConditionalOrderFT extends FunctionalT
 
     @Test
     @EnabledIfEnvironmentVariable(named = "ELASTIC_SEARCH_ENABLED", matches = "true")
-    public void shouldSearchForDisputeFormOverdueCases() {
+    public void shouldSearchForCasesReadyForCOApplication() {
         final BoolQueryBuilder query = boolQuery()
             .must(matchQuery(STATE, AwaitingConditionalOrder))
             .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
