@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.payment;
 
-import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,7 +18,6 @@ import static uk.gov.hmcts.divorce.payment.FeesAndPayConstants.SERVICE;
 @SuppressWarnings("PMD.UseObjectForClearerAPI")
 public interface FeesAndPaymentsClient {
 
-    @ApiOperation("Returns Application Issue Fee")
     @GetMapping(value = "/fees-register/fees/lookup",
         headers = CONTENT_TYPE + "=" + APPLICATION_JSON_VALUE)
     FeeResponse getPaymentServiceFee(
