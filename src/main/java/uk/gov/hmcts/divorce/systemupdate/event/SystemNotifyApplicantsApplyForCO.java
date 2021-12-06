@@ -17,7 +17,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
-public class SystemJointApplicantsApplyForConditionalOrder implements CCDConfig<CaseData, State, UserRole> {
+public class SystemNotifyApplicantsApplyForCO implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SYSTEM_NOTIFY_APPLICANTS_CONDITIONAL_ORDER = "system-notify-applicants-conditional-order";
 

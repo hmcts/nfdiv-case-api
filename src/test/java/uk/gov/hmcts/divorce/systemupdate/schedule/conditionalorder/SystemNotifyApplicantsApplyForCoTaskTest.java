@@ -33,7 +33,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemJointApplicantsApplyForConditionalOrder.SYSTEM_NOTIFY_APPLICANTS_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyApplicantsApplyForCO.SYSTEM_NOTIFY_APPLICANTS_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DUE_DATE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
@@ -41,7 +41,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 
 @ExtendWith(MockitoExtension.class)
-public class SystemNotifyApplicantsApplyForConditionalOrderTaskTest {
+public class SystemNotifyApplicantsApplyForCoTaskTest {
 
     @Mock
     private CcdSearchService ccdSearchService;
@@ -56,7 +56,7 @@ public class SystemNotifyApplicantsApplyForConditionalOrderTaskTest {
     private AuthTokenGenerator authTokenGenerator;
 
     @InjectMocks
-    private SystemNotifyApplicantsApplyForConditionalOrderTask underTest;
+    private SystemNotifyApplicantsApplyForCOtask underTest;
 
     private User user;
 

@@ -23,8 +23,8 @@ import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemJointApplicantsApplyForConditionalOrder.SYSTEM_NOTIFY_APPLICANTS_CONDITIONAL_ORDER;
-import static uk.gov.hmcts.divorce.systemupdate.schedule.conditionalorder.SystemNotifyApplicantsApplyForConditionalOrderTask.NOTIFICATION_FLAG;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyApplicantsApplyForCO.SYSTEM_NOTIFY_APPLICANTS_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.systemupdate.schedule.conditionalorder.SystemNotifyApplicantsApplyForCOtask.NOTIFICATION_FLAG;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DUE_DATE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
@@ -33,7 +33,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
-public class SystemJointApplicantsApplyForConditionalOrderFT extends FunctionalTestSuite {
+public class SystemNotifyApplicantsApplyForCoFT extends FunctionalTestSuite {
 
     private static final String REQUEST =
         "classpath:request/casedata/ccd-callback-casedata-system-notify-joint-applicants-conditional-order.json";

@@ -21,13 +21,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemJointApplicantsApplyForConditionalOrder.SYSTEM_NOTIFY_APPLICANTS_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyApplicantsApplyForCO.SYSTEM_NOTIFY_APPLICANTS_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
-public class SystemJointApplicantsApplyForConditionalOrderTest {
+public class SystemNotifyApplicantsApplyForCoTest {
 
     @Mock
     private HttpServletRequest httpServletRequest;
@@ -36,7 +36,7 @@ public class SystemJointApplicantsApplyForConditionalOrderTest {
     private ApplyForConditionalOrderNotification notification;
 
     @InjectMocks
-    private SystemJointApplicantsApplyForConditionalOrder underTest;
+    private SystemNotifyApplicantsApplyForCO underTest;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
