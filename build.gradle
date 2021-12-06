@@ -55,12 +55,21 @@ sourceSets {
       srcDir file('src/integrationTest/java')
     }
   }
+
+  ccdTest {
+    java {
+      compileClasspath += main.output
+      runtimeClasspath += main.output
+      srcDir file('src/ccdTest/java')
+    }
+  }
 }
 
 idea {
   module {
     testSourceDirs += file('src/integrationTest/java')
     testSourceDirs += file('src/functionalTest/java')
+    testSourceDirs += file('src/ccdTest/java')
   }
 }
 
@@ -69,6 +78,8 @@ configurations {
   functionalTestRuntime.extendsFrom testRuntime
   integrationTestImplementation.extendsFrom testImplementation
   integrationTestRuntime.extendsFrom testRuntime
+  ccdTestImplementation.extendsFrom testImplementation
+  ccdTestRuntime.extendsFrom testRuntime
 }
 
 tasks.withType(JavaCompile) {
@@ -100,6 +111,14 @@ task integration(type: Test) {
   group = "Verification"
   testClassesDirs = sourceSets.integrationTest.output.classesDirs
   classpath = sourceSets.integrationTest.runtimeClasspath
+  failFast = true
+}
+
+task ccdTest(type: Test) {
+  description = "Runs ccd tests"
+  group = "Verification"
+  testClassesDirs = sourceSets.ccdTest.output.classesDirs
+  classpath = sourceSets.ccdTest.runtimeClasspath
   failFast = true
 }
 
@@ -307,6 +326,9 @@ dependencies {
   functionalTestImplementation sourceSets.test.runtimeClasspath
   functionalTestImplementation group: 'uk.gov.hmcts.reform', name: 'document-management-client', version: '7.0.0'
   functionalTestImplementation group: 'uk.gov.hmcts.reform', name: 'service-auth-provider-client', version: versions.s2sClient
+
+  ccdTestImplementation 'rse-cft-lib:ccd-lib:0.1.0'
+  ccdTestImplementation 'org.springframework.security:spring-security-test'
 }
 
 mainClassName = 'uk.gov.hmcts.divorce.CaseApiApplication'
