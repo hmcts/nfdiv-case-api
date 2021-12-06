@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -38,6 +39,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKE
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.feignException;
 
 @ExtendWith(SpringExtension.class)
+@DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class CcdAccessServiceIT {
 
@@ -118,7 +120,7 @@ public class CcdAccessServiceIT {
 
         assertThrows(
             FeignException.class,
-            () -> ccdAccessService.linkRespondentToApplication(CASEWORKER_AUTH_TOKEN, TEST_CASE_ID, APP_2_CITIZEN_USER_ID)
+            () -> ccdAccessService.unlinkUserFromApplication(CASEWORKER_AUTH_TOKEN, TEST_CASE_ID, APP_2_CITIZEN_USER_ID)
         );
 
         verify(caseAssignmentApi, times(3))
