@@ -22,7 +22,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Slf4j
 @Component
-public class CitizenUpdateCaseStateInAAT implements CCDConfig<CaseData, State, UserRole> {
+public class CitizenUpdateCaseStateInAat implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CITIZEN_UPDATE_CASE_STATE_IN_AAT = "citizen-update-case-state-in-aat";
 
