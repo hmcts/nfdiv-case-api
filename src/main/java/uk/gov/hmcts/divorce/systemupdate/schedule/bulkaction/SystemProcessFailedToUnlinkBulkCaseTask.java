@@ -59,7 +59,7 @@ public class SystemProcessFailedToUnlinkBulkCaseTask implements Runnable {
                     .updateUnprocessedBulkCases(
                         caseDetailsBulkCase,
                         SYSTEM_REMOVE_BULK_CASE,
-                        bulkCaseCaseTaskFactory.getCaseTask(caseDetailsBulkCase.getData(), SYSTEM_REMOVE_BULK_CASE),
+                        bulkCaseCaseTaskFactory.getCaseTask(caseDetailsBulkCase, SYSTEM_REMOVE_BULK_CASE),
                         user,
                         serviceAuth));
 

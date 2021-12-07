@@ -63,12 +63,20 @@ public class SystemMigrateBulkCasesTask implements Runnable {
             verifyData(data, caseDetails.getId());
 
             caseDetails.setData(data);
-            ccdUpdateService.submitEvent(caseDetails, SYSTEM_MIGRATE_BULK_CASE, user, serviceAuthorization);
+            ccdUpdateService.updateBulkCaseWithRetries(
+                caseDetails, SYSTEM_MIGRATE_BULK_CASE, user, serviceAuthorization, caseDetails.getId());
             log.info("Migration complete for case id: {}", caseDetails.getId());
         } catch (final CcdConflictException e) {
             log.error("Could not get lock for case id: {}, continuing to next case", caseDetails.getId());
         } catch (final CcdManagementException e) {
             log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
+
+            caseDetails.setData(Map.of("bulkCaseDataVersion", 0));
+            log.info("Setting bulkCaseDataVersion to 0 for case id: {} after failed migration", caseDetails.getId());
+            ccdUpdateService.updateBulkCaseWithRetries(
+                caseDetails, SYSTEM_MIGRATE_BULK_CASE, user, serviceAuthorization, caseDetails.getId());
+            log.info("bulkCaseDataVersion set for case id: {}", caseDetails.getId());
+
         }
     }
 

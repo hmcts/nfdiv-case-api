@@ -15,6 +15,7 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static java.util.stream.Collectors.toList;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemEmptyCase.SYSTEM_EMPTY_CASE;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemRemoveFailedCases.SYSTEM_REMOVE_FAILED_CASES;
@@ -26,14 +27,18 @@ public class FailedBulkCaseRemover {
     @Autowired
     private CcdUpdateService ccdUpdateService;
 
-    public void removeFailedCasesFromBulkListCaseDetails(final List<Long> failedCaseIds,
+    public void removeFailedCasesFromBulkListCaseDetails(final List<ListValue<BulkListCaseDetails>> unprocessedBulkCases,
                                                          final CaseDetails<BulkActionCaseData, BulkActionState> caseDetailsBulkCase,
                                                          final User user,
                                                          final String serviceAuth) {
 
         final Long bulkCaseId = caseDetailsBulkCase.getId();
 
-        if (!isEmpty(failedCaseIds)) {
+        final List<Long> failedCaseIds = unprocessedBulkCases.stream()
+            .map(listValue -> Long.valueOf(listValue.getValue().getCaseReference().getCaseReference()))
+            .collect(toList());
+
+        if (!isEmpty(unprocessedBulkCases)) {
             log.info(
                 "There are failed awaiting pronouncement cases with ids {} for bulk list case with id {} ",
                 failedCaseIds,

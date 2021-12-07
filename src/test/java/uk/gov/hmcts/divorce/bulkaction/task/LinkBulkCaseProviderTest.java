@@ -14,29 +14,24 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithPronouncementJudge.SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYSTEM_LINK_WITH_BULK_CASE;
 
 @ExtendWith(MockitoExtension.class)
-class UpdateCasePronouncementJudgeProviderTest {
+class LinkBulkCaseProviderTest {
 
     @InjectMocks
-    private UpdateCasePronouncementJudgeProvider updateCasePronouncementJudgeProvider;
+    private LinkBulkCaseProvider linkBulkCaseProvider;
 
     @Test
-    void shouldReturnSystemUpdateCasePronouncementJudgeEventId() {
-        assertThat(updateCasePronouncementJudgeProvider.getEventId()).isEqualTo(SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE);
+    void shouldReturnSystemLinkWithBulkCaseEventId() {
+        assertThat(linkBulkCaseProvider.getEventId()).isEqualTo(SYSTEM_LINK_WITH_BULK_CASE);
     }
 
     @Test
-    void shouldReturnSystemUpdateCasePronouncementJudgeCaseTask() {
-
-        final var bulkActionCaseData = BulkActionCaseData
-            .builder()
-            .pronouncementJudge("The Judge")
-            .build();
+    void shouldReturnSystemLinkWithBulkCaseCaseTask() {
 
         final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails = new CaseDetails<>();
-        bulkCaseDetails.setData(bulkActionCaseData);
+        bulkCaseDetails.setId(1L);
 
         final var caseData = CaseData.builder()
             .finalOrder(FinalOrder.builder().build())
@@ -45,11 +40,12 @@ class UpdateCasePronouncementJudgeProviderTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
-        final CaseTask caseTask = updateCasePronouncementJudgeProvider.getCaseTask(bulkCaseDetails);
+        final CaseTask caseTask = linkBulkCaseProvider.getCaseTask(bulkCaseDetails);
 
         final CaseDetails<CaseData, State> resultCaseDetails = caseTask.apply(caseDetails);
-        final ConditionalOrder resultConditionalOrder = resultCaseDetails.getData().getConditionalOrder();
+        final CaseData resultCaseData = resultCaseDetails.getData();
+        final ConditionalOrder resultConditionalOrder = resultCaseData.getConditionalOrder();
 
-        assertThat(resultConditionalOrder.getPronouncementJudge()).isEqualTo("The Judge");
+        assertThat(resultCaseData.getBulkListCaseReference()).isEqualTo("1");
     }
 }

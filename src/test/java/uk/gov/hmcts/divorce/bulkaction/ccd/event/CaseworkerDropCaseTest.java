@@ -67,8 +67,6 @@ public class CaseworkerDropCaseTest {
     @Test
     void shouldSuccessfullyUnlinkCasesInBulkCase() {
         final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
-        final var caseData = BulkActionCaseData.builder().build();
-        details.setData(caseData);
         details.setId(1L);
 
         final var user = mock(User.class);
@@ -77,7 +75,7 @@ public class CaseworkerDropCaseTest {
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(CASEWORKER_AUTH_TOKEN);
         when(idamService.retrieveUser(CASEWORKER_AUTH_TOKEN)).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(bulkCaseCaseTaskFactory.getCaseTask(caseData, SYSTEM_REMOVE_BULK_CASE)).thenReturn(caseTask);
+        when(bulkCaseCaseTaskFactory.getCaseTask(details, SYSTEM_REMOVE_BULK_CASE)).thenReturn(caseTask);
 
         doNothing().when(bulkCaseProcessingService).updateAllBulkCases(
             details,

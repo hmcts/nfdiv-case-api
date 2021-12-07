@@ -74,7 +74,12 @@ public class CasePronouncementServiceTest {
         when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
 
         var caseTask = mock(CaseTask.class);
-        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseData, SYSTEM_PRONOUNCE_CASE)).thenReturn(caseTask);
+        var bulkActionCaseDetails = CaseDetails
+            .<BulkActionCaseData, BulkActionState>builder()
+            .data(bulkActionCaseData)
+            .build();
+
+        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseDetails, SYSTEM_PRONOUNCE_CASE)).thenReturn(caseTask);
 
         when(bulkTriggerService.bulkTrigger(
             bulkActionCaseData.getBulkListCaseDetails(),
@@ -83,11 +88,6 @@ public class CasePronouncementServiceTest {
             user,
             SERVICE_AUTHORIZATION
         )).thenReturn(emptyList());
-
-        var bulkActionCaseDetails = CaseDetails
-            .<BulkActionCaseData, BulkActionState>builder()
-            .data(bulkActionCaseData)
-            .build();
 
         casePronouncementService.pronounceCases(bulkActionCaseDetails, TEST_SYSTEM_AUTHORISATION_TOKEN);
 
@@ -134,7 +134,7 @@ public class CasePronouncementServiceTest {
         var unprocessedBulkCases = List.of(bulkListCaseDetailsListValue2);
 
         var caseTask = mock(CaseTask.class);
-        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseData, SYSTEM_PRONOUNCE_CASE)).thenReturn(caseTask);
+        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseDetails, SYSTEM_PRONOUNCE_CASE)).thenReturn(caseTask);
 
         when(bulkTriggerService.bulkTrigger(
             bulkActionCaseData.getBulkListCaseDetails(),
@@ -195,7 +195,7 @@ public class CasePronouncementServiceTest {
 
         var unprocessedBulkCases = List.of(bulkListCaseDetailsListValue2);
         var caseTask = mock(CaseTask.class);
-        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseData, SYSTEM_PRONOUNCE_CASE)).thenReturn(caseTask);
+        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseDetails, SYSTEM_PRONOUNCE_CASE)).thenReturn(caseTask);
 
         when(bulkTriggerService.bulkTrigger(
             bulkActionCaseData.getBulkListCaseDetails(),

@@ -1,7 +1,9 @@
 package uk.gov.hmcts.divorce.solicitor.service;
 
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -31,6 +33,7 @@ public class CcdAccessService {
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
+    @Retryable(value = {FeignException.class, RuntimeException.class})
     public void addApplicant1SolicitorRole(String solicitorIdamToken, Long caseId, String orgId) {
         User solicitorUser = idamService.retrieveUser(solicitorIdamToken);
         User systemUpdateUser = idamService.retrieveSystemUpdateUserDetails();
@@ -51,19 +54,7 @@ public class CcdAccessService {
         caseAssignmentApi.removeCaseUserRoles(
             idamToken,
             s2sToken,
-            CaseAssignmentUserRolesRequest
-                .builder()
-                .caseAssignmentUserRolesWithOrganisation(
-                    List.of(
-                        CaseAssignmentUserRoleWithOrganisation.builder()
-                            .caseDataId(caseId.toString())
-                            .organisationId(orgId)
-                            .caseRole(CREATOR.getRole())
-                            .userId(solicitorUserId)
-                            .build()
-                    )
-                )
-                .build()
+            getCaseAssignmentRequest(caseId, solicitorUserId, orgId, CREATOR)
         );
 
         caseAssignmentApi.addCaseUserRoles(
@@ -75,6 +66,7 @@ public class CcdAccessService {
         log.info("Successfully added the applicant's solicitor roles to case Id {} ", caseId);
     }
 
+    @Retryable(value = {FeignException.class, RuntimeException.class})
     public void linkRespondentToApplication(String caseworkerUserToken, Long caseId, String applicant2UserId) {
         User caseworkerUser = idamService.retrieveUser(caseworkerUserToken);
 
@@ -87,6 +79,7 @@ public class CcdAccessService {
         log.info("Successfully linked applicant 2 to case Id {} ", caseId);
     }
 
+    @Retryable(value = {FeignException.class, RuntimeException.class})
     public void unlinkUserFromApplication(String caseworkerUserToken, Long caseId, String userToRemoveId) {
         User caseworkerUser = idamService.retrieveUser(caseworkerUserToken);
 

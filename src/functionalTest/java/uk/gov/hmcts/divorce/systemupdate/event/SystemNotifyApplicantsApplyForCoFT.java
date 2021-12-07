@@ -22,31 +22,29 @@ import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.springframework.http.HttpStatus.OK;
-import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyApplicantDisputeFormOverdue.SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE;
-import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemNotifyApplicantDisputeFormOverdueTask.NOTIFICATION_SENT_FLAG;
-import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.AOS_RESPONSE;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyApplicantsApplyForCO.SYSTEM_NOTIFY_APPLICANTS_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.systemupdate.schedule.conditionalorder.SystemNotifyApplicantsApplyForCOtask.NOTIFICATION_FLAG;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
-import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.ISSUE_DATE;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DUE_DATE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
-public class SystemNotifyApplicantDisputeFormOverdueFT extends FunctionalTestSuite {
+public class SystemNotifyApplicantsApplyForCoFT extends FunctionalTestSuite {
 
     private static final String REQUEST =
-        "classpath:request/casedata/ccd-callback-casedata-system-notify-applicant-dispute-form-overdue.json";
-    private static final String RESPONSE = "classpath:responses/response-system-notify-applicant-dispute-form-overdue.json";
+        "classpath:request/casedata/ccd-callback-casedata-system-notify-joint-applicants-conditional-order.json";
+    private static final String RESPONSE = "classpath:responses/response-system-notify-joint-applicants-conditional-order.json";
 
 
     @Test
-    public void shouldNotifyApplicantIfDisputeFormOverdue() throws IOException {
+    public void shouldPassValidationAndSendEmailsToApplicantAndRespondent() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
 
-        Response response = triggerCallback(request, SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE, ABOUT_TO_SUBMIT_URL);
+        Response response = triggerCallback(request, SYSTEM_NOTIFY_APPLICANTS_CONDITIONAL_ORDER, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
@@ -58,20 +56,19 @@ public class SystemNotifyApplicantDisputeFormOverdueFT extends FunctionalTestSui
 
     @Test
     @EnabledIfEnvironmentVariable(named = "ELASTIC_SEARCH_ENABLED", matches = "true")
-    public void shouldSearchForDisputeFormOverdueCases() {
+    public void shouldSearchForCasesReadyToApplyForConditionalOrder() {
         final BoolQueryBuilder query = boolQuery()
-            .must(matchQuery(STATE, Holding))
-            .must(matchQuery(AOS_RESPONSE, DISPUTE_DIVORCE.getType()))
-            .filter(rangeQuery(ISSUE_DATE).lte(LocalDate.now().minusDays(10)))
-            .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YesOrNo.YES));
+            .must(matchQuery(STATE, AwaitingConditionalOrder))
+            .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
+            .mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YesOrNo.YES));
 
         searchForCasesWithQuery(query)
             .forEach(caseDetails -> {
-                assertThat(caseDetails.getState().equals(Holding));
                 CaseData caseData = getCaseData(caseDetails.getData());
-                assertThat(DISPUTE_DIVORCE.getType().equals(caseData.getAcknowledgementOfService().getHowToRespondApplication()));
-                assertThat(caseData.getApplication().getIssueDate().plusDays(10)).isBeforeOrEqualTo(LocalDate.now());
-                assertThat(caseData.getAcknowledgementOfService().getApplicantNotifiedDisputeFormOverdue()).isNotEqualTo(YesOrNo.YES);
+                assertThat(caseDetails.getState().equals(AwaitingConditionalOrder));
+                assertThat(caseData.getApplication().getJointApplicantsNotifiedCanApplyForConditionalOrder()).isNotEqualTo(YesOrNo.YES);
+                assertThat(caseData.getDueDate()).isBeforeOrEqualTo(LocalDate.now());
             });
     }
+
 }
