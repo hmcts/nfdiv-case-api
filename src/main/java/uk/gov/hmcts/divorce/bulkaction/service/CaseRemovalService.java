@@ -53,7 +53,7 @@ public class CaseRemovalService {
             bulkTriggerService.bulkTrigger(
                 casesToRemove,
                 SYSTEM_REMOVE_BULK_CASE,
-                bulkCaseCaseTaskFactory.getCaseTask(details.getData(), SYSTEM_REMOVE_BULK_CASE),
+                bulkCaseCaseTaskFactory.getCaseTask(details, SYSTEM_REMOVE_BULK_CASE),
                 user,
                 serviceAuth
             );

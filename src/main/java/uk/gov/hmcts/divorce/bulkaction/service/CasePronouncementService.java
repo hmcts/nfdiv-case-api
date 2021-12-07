@@ -52,7 +52,7 @@ public class CasePronouncementService {
             bulkTriggerService.bulkTrigger(
                 bulkActionCaseData.getBulkListCaseDetails(),
                 SYSTEM_PRONOUNCE_CASE,
-                bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseData, SYSTEM_PRONOUNCE_CASE),
+                bulkCaseCaseTaskFactory.getCaseTask(details, SYSTEM_PRONOUNCE_CASE),
                 user,
                 serviceAuth);
 
