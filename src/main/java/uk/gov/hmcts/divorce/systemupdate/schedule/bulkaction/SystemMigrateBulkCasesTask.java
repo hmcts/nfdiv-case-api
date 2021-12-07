@@ -73,7 +73,8 @@ public class SystemMigrateBulkCasesTask implements Runnable {
 
             caseDetails.setData(Map.of("bulkCaseDataVersion", 0));
             log.info("Setting bulkCaseDataVersion to 0 for case id: {} after failed migration", caseDetails.getId());
-            ccdUpdateService.submitEvent(caseDetails, SYSTEM_MIGRATE_BULK_CASE, user, serviceAuthorization);
+            ccdUpdateService.updateBulkCaseWithRetries(
+                caseDetails, SYSTEM_MIGRATE_BULK_CASE, user, serviceAuthorization, caseDetails.getId());
             log.info("bulkCaseDataVersion set for case id: {}", caseDetails.getId());
 
         }
