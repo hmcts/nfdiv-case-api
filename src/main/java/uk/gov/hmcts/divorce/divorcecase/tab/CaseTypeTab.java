@@ -213,12 +213,18 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("coRefusalRejectionAdditionalInfo","coGranted=\"No\"")
             .field("coRefusalClarificationReason","coGranted=\"No\"")
             .field("coRefusalClarificationAdditionalInfo","coGranted=\"No\"")
+<<<<<<< HEAD
             .label("labelCoClarificationResponses",
                 "coGranted=\"*\" AND coClarificationResponses=\"*\"",
                 "## Clarification Responses")
             .field("coRefusalDecision","coGranted=\"No\"")
             .field("coRefusalRejectionReason","coGranted=\"No\"")
             .field("coRefusalClarificationAdditionalInfo","coGranted=\"No\"")
+=======
+            .label("labelCoClarificationResponse",
+                "coGranted=\"*\" AND coClarificationResponses=\"*\"",
+                "## Clarification Response")
+>>>>>>> Updated field name in show condition
             .field("coClarificationResponses","coGranted=\"No\"")
             .field("coClarificationUploadDocuments","coGranted=\"No\"")
             .label("labelCoPronouncementDetails", null, "## Pronouncement Details")
