@@ -157,7 +157,7 @@ public class ConditionalOrder {
     private String clarificationResponse;
 
     @CCD(
-        label = "Upload any other documents per Clarification?",
+        label = "Documents uploaded for the Conditional Order Clarification",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument"
     )
