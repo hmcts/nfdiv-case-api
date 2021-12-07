@@ -30,8 +30,8 @@ public class CitizenUpdateCaseStateAat implements CCDConfig<CaseData, State, Use
         configBuilder
             .event(CITIZEN_UPDATE_CASE_STATE_AAT)
             .forAllStates()
-            .name("Citizen update case state in AAT")
-            .description("Citizen update case state in AAT")
+            .name("Citizen update case state AAT")
+            .description("Citizen update the case state in AAT")
             .grant(CREATE_READ_UPDATE, CITIZEN, APPLICANT_2)
             .grant(READ, SUPER_USER)
             .aboutToSubmitCallback(this::aboutToSubmit);
