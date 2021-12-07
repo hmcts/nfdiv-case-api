@@ -54,6 +54,7 @@ public class CitizenUpdateCaseStateAatTest {
             .execute(() -> citizenUpdateCaseStateAat.aboutToSubmit(caseDetails, caseDetails));
 
         assertThat(response.getState()).isEqualTo(State.Holding);
+        assertThat(response.getData().getApplicant2().getSolicitor().getAddress()).isNull();
     }
 
     @Test

@@ -42,15 +42,18 @@ public class CitizenUpdateCaseStateAat implements CCDConfig<CaseData, State, Use
         CaseData data = details.getData();
 
         if (isEnvironmentAat()) {
-
             log.info("Citizen update case state in AAT about to submit callback invoked");
             State state = State.valueOf(data.getApplicant2().getSolicitor().getAddress());
+            data.getApplicant2().getSolicitor().setAddress(null);
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(data)
                 .state(state)
                 .build();
         }
+
+        log.info("Error updating case state as environment is {}",
+            System.getenv().getOrDefault("ENVIRONMENT", null));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
