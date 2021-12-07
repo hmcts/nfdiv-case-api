@@ -217,6 +217,7 @@ dependencyManagement {
       entry 'guava'
     }
   }
+  // TODO - fix in the CFT lib by publishing platform information.
   imports {
     mavenBom 'com.fasterxml.jackson:jackson-bom:2.12.4'
   }
