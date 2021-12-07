@@ -18,7 +18,6 @@ spring:
     import: "optional:configtree:/mnt/secrets/nfdiv/"
   main:
     allow-bean-definition-overriding: true
-    allow-circular-references: true
 
 springdoc:
   packagesToScan: uk.gov.hmcts.divorce,uk.gov.hmcts.ccd.sdk.runtime
