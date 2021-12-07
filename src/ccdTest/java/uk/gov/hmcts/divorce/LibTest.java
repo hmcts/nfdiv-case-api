@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -63,6 +64,9 @@ class LibTest {
     @MockBean
     private CaseDataDocumentService documentService;
 
+    @Value("${CCD_DEF_NAME:dev}")
+    String defName;
+
     @BeforeEach
     void setup() {
         when(idamApi.retrieveUserInfo(anyString())).thenReturn(UserInfo.builder()
@@ -90,13 +94,6 @@ class LibTest {
 
         importDefinition();
 
-        // TODO - quick hack for POC purposes.
-        // Point our callbacks to localhost.
-        try (Connection c = dataStore.getConnection()) {
-            c.createStatement().execute(
-                "update definitionstore.webhook set url = replace(url, 'nfdiv-case-api', 'localhost')"
-            );
-        }
 
         StartEventResponse
             startEventResponse = startEventForCreateCase();
@@ -152,12 +149,20 @@ class LibTest {
     void importDefinition() throws Exception {
         var def = new MockMultipartFile(
             "file",
-            "NFD-dev.xlsx",
+            "NFD.xlsx",
             MediaType.MULTIPART_FORM_DATA_VALUE,
-            Files.readAllBytes(new File("build/ccd-config/ccd-NFD-dev.xlsx").toPath())
+            Files.readAllBytes(new File("build/ccd-config/ccd-NFD-" + defName + ".xlsx").toPath())
         );
         mockMvc.perform(multipart("/import").file(def)
             .with(jwt().authorities(new SimpleGrantedAuthority("caseworker-divorce-solicitor"))
             )).andExpect(status().is2xxSuccessful());
+
+        // TODO - quick hack for POC purposes.
+        // Point our callbacks to localhost.
+        try (Connection c = dataStore.getConnection()) {
+            c.createStatement().execute(
+                "update definitionstore.webhook set url = regexp_replace(url, '\\/\\/[^\\/]+\\/', '//localhost:4013/')"
+            );
+        }
     }
 }
