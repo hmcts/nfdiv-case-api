@@ -1,6 +1,8 @@
 package uk.gov.hmcts.divorce;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -9,9 +11,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
+import javax.sql.DataSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,6 +35,7 @@ import uk.gov.hmcts.ccd.definition.store.repository.SecurityClassification;
 import uk.gov.hmcts.ccd.definition.store.repository.model.UserRole;
 import uk.gov.hmcts.ccd.definition.store.rest.endpoint.UserRoleController;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
+import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
 import uk.gov.hmcts.reform.ccd.client.model.Event;
 import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
@@ -52,6 +59,12 @@ class LibTest {
   // Mocking this out stops the s2s request interceptor getting added, bypassing service auth.
   @MockBean
   private WebMvcConfig webMvcConfig;
+
+  @MockBean
+  private CaseDataDocumentService documentService;
+
+  @Autowired
+  DataSource dataStore;
 
   @BeforeEach
   void setup() {
@@ -79,10 +92,15 @@ class LibTest {
     );
 
     mockMvc.perform(multipart("/import").file(loadNFDivDef())
-            .with(
-                jwt().authorities(new SimpleGrantedAuthority("caseworker-divorce-solicitor")))
-        )
-        .andExpect(status().is2xxSuccessful());
+        .with(jwt().authorities(new SimpleGrantedAuthority("caseworker-divorce-solicitor"))
+        )).andExpect(status().is2xxSuccessful());
+
+    // TODO - quick hack for POC purposes.
+    try (Connection c = dataStore.getConnection()) {
+      c.createStatement().execute(
+          "update definitionstore.webhook set url = replace(url, 'nfdiv-case-api', 'localhost')"
+      );
+    }
 
     StartEventResponse
         startEventResponse = startEventForCreateCase();
@@ -103,6 +121,7 @@ class LibTest {
         .build();
 
     submitNewCase(caseDataContent);
+    verify(documentService).renderDocumentAndUpdateCaseData(any(), any(), any(), any(), any(), any(), any());
   }
 
   private StartEventResponse startEventForCreateCase() throws Exception {
@@ -139,7 +158,7 @@ class LibTest {
         "file",
         "NFD-dev.xlsx",
         MediaType.MULTIPART_FORM_DATA_VALUE,
-        getClass().getClassLoader().getResourceAsStream("NFD-dev.xlsx").readAllBytes()
+        Files.readAllBytes(new File("build/ccd-config/ccd-NFD-dev.xlsx").toPath())
     );
   }
 }

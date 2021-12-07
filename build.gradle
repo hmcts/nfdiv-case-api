@@ -114,7 +114,12 @@ task integration(type: Test) {
   failFast = true
 }
 
-task ccdTest(type: Test) {
+task buildCCDXlsx(type: Exec, dependsOn: generateCCDConfig) {
+  group 'ccd tasks'
+  commandLine './bin/ccd-build-definition.sh'
+}
+
+task ccdTest(type: Test, dependsOn: buildCCDXlsx) {
   description = "Runs ccd tests"
   group = "Verification"
   testClassesDirs = sourceSets.ccdTest.output.classesDirs
@@ -332,7 +337,7 @@ dependencies {
   functionalTestImplementation group: 'uk.gov.hmcts.reform', name: 'document-management-client', version: '7.0.0'
   functionalTestImplementation group: 'uk.gov.hmcts.reform', name: 'service-auth-provider-client', version: versions.s2sClient
 
-  ccdTestImplementation 'rse-cft-lib:ccd-lib:0.1.0'
+  ccdTestImplementation 'com.github.hmcts:rse-cft-lib:0.1.0'
   ccdTestImplementation 'org.springframework.security:spring-security-test'
 }
 
@@ -463,3 +468,4 @@ reloadCcd.configure {
 }
 
 generateCCDConfig.dependsOn stopCaseApiContainer
+
