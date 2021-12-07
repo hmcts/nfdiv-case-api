@@ -56,7 +56,7 @@ public class SystemProcessCasesToBeRemovedTask implements Runnable {
                     .updateCasesToBeRemoved(
                         caseDetailsBulkCase,
                         SYSTEM_REMOVE_BULK_CASE,
-                        bulkCaseCaseTaskFactory.getCaseTask(caseDetailsBulkCase.getData(), SYSTEM_REMOVE_BULK_CASE),
+                        bulkCaseCaseTaskFactory.getCaseTask(caseDetailsBulkCase, SYSTEM_REMOVE_BULK_CASE),
                         user,
                         serviceAuth));
 

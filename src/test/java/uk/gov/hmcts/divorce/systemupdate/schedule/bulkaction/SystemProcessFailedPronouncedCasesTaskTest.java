@@ -81,7 +81,8 @@ class SystemProcessFailedPronouncedCasesTaskTest {
             .thenReturn(caseDetailsList);
 
         final CaseTask caseTask = mock(CaseTask.class);
-        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseData, SYSTEM_PRONOUNCE_CASE)).thenReturn(caseTask);
+        when(bulkCaseCaseTaskFactory.getCaseTask(caseDetails1, SYSTEM_PRONOUNCE_CASE)).thenReturn(caseTask);
+        when(bulkCaseCaseTaskFactory.getCaseTask(caseDetails2, SYSTEM_PRONOUNCE_CASE)).thenReturn(caseTask);
 
         systemCreateBulkCaseListTask.run();
 

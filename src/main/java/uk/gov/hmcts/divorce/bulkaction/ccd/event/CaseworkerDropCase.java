@@ -72,7 +72,7 @@ public class CaseworkerDropCase implements CCDConfig<BulkActionCaseData, BulkAct
         bulkCaseProcessingService.updateAllBulkCases(
             bulkCaseDetails,
             SYSTEM_REMOVE_BULK_CASE,
-            bulkCaseCaseTaskFactory.getCaseTask(bulkCaseDetails.getData(), SYSTEM_REMOVE_BULK_CASE),
+            bulkCaseCaseTaskFactory.getCaseTask(bulkCaseDetails, SYSTEM_REMOVE_BULK_CASE),
             idamService.retrieveUser(request.getHeader(AUTHORIZATION)),
             authTokenGenerator.generate()
         );

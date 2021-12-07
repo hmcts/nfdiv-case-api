@@ -83,7 +83,8 @@ public class SystemProcessCasesToBeRemovedTaskTest {
             .thenReturn(caseDetailsList);
 
         final CaseTask caseTask = mock(CaseTask.class);
-        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseData, SYSTEM_REMOVE_BULK_CASE)).thenReturn(caseTask);
+        when(bulkCaseCaseTaskFactory.getCaseTask(caseDetails1, SYSTEM_REMOVE_BULK_CASE)).thenReturn(caseTask);
+        when(bulkCaseCaseTaskFactory.getCaseTask(caseDetails2, SYSTEM_REMOVE_BULK_CASE)).thenReturn(caseTask);
 
         systemProcessCasesToBeRemovedTask.run();
 
