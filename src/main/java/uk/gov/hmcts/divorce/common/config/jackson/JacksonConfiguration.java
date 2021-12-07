@@ -17,6 +17,14 @@ import static com.fasterxml.jackson.databind.MapperFeature.INFER_BUILDER_TYPE_BI
 @Configuration
 public class JacksonConfiguration {
 
+    /**
+     * Here for integration with the CFT lib.
+     *
+     * When running with the CFT lib an ObjectMapper instance is instantiated by CCD.
+     *
+     * When running without the CFT lib on the classpath (ie. in prod) we need
+     * a default instance to which our customisation is applied.
+     */
     @Primary
     @ConditionalOnMissingBean
     @Bean(name = "DefaultObjectMapper")
