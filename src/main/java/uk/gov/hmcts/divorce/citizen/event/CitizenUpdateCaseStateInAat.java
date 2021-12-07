@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -10,8 +9,6 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-
-import javax.servlet.http.HttpServletRequest;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
@@ -26,9 +23,6 @@ public class CitizenUpdateCaseStateInAat implements CCDConfig<CaseData, State, U
     private static final String ENVIRONMENT_AAT = "aat";
 
     public static final String CITIZEN_UPDATE_CASE_STATE_AAT = "citizen-update-case-state-aat";
-
-    @Autowired
-    private HttpServletRequest request;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -45,13 +39,12 @@ public class CitizenUpdateCaseStateInAat implements CCDConfig<CaseData, State, U
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
-
         CaseData data = details.getData();
 
         if (isEnvironmentAat()) {
 
             log.info("Citizen update case state in AAT about to submit callback invoked");
-            State state = State.valueOf(request.getParameter("State"));
+            State state = State.valueOf(data.getApplicant2().getSolicitor().getAddress());
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(data)
