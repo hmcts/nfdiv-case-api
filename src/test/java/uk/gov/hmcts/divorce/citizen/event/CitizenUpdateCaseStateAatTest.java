@@ -16,21 +16,21 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static com.github.stefanbirkner.systemlambda.SystemLambda.withEnvironmentVariable;
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenUpdateCaseStateInAat.CITIZEN_UPDATE_CASE_STATE_AAT;
+import static uk.gov.hmcts.divorce.citizen.event.CitizenUpdateCaseStateAat.CITIZEN_UPDATE_CASE_STATE_AAT;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-public class CitizenUpdateCaseStateInAatTest {
+public class CitizenUpdateCaseStateAatTest {
 
     @InjectMocks
-    private CitizenUpdateCaseStateInAat citizenUpdateCaseStateInAat;
+    private CitizenUpdateCaseStateAat citizenUpdateCaseStateAat;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        citizenUpdateCaseStateInAat.configure(configBuilder);
+        citizenUpdateCaseStateAat.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
@@ -51,7 +51,7 @@ public class CitizenUpdateCaseStateInAatTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             withEnvironmentVariable("ENVIRONMENT", "aat")
-            .execute(() -> citizenUpdateCaseStateInAat.aboutToSubmit(caseDetails, caseDetails));
+            .execute(() -> citizenUpdateCaseStateAat.aboutToSubmit(caseDetails, caseDetails));
 
         assertThat(response.getState()).isEqualTo(State.Holding);
     }
@@ -71,7 +71,7 @@ public class CitizenUpdateCaseStateInAatTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             withEnvironmentVariable("ENVIRONMENT", "demo")
-                .execute(() -> citizenUpdateCaseStateInAat.aboutToSubmit(caseDetails, caseDetails));
+                .execute(() -> citizenUpdateCaseStateAat.aboutToSubmit(caseDetails, caseDetails));
 
         assertThat(response.getState()).isEqualTo(State.Draft);
     }
