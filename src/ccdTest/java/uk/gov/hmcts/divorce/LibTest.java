@@ -1,23 +1,6 @@
 package uk.gov.hmcts.divorce;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.sql.Connection;
-import java.util.List;
-import java.util.Map;
-import javax.sql.DataSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,123 +25,139 @@ import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.sql.Connection;
+import java.util.List;
+import java.util.Map;
+import javax.sql.DataSource;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class LibTest {
 
-  @Autowired
-  UserRoleController roleController;
+    @Autowired
+    UserRoleController roleController;
 
-  @Autowired
-  MockMvc mockMvc;
+    @Autowired
+    MockMvc mockMvc;
 
-  @MockBean
-  IdamApi idamApi;
+    @MockBean
+    IdamApi idamApi;
+    @Autowired
+    DataSource dataStore;
+    // Mocking this out stops the s2s request interceptor getting added, bypassing service auth.
+    @MockBean
+    private WebMvcConfig webMvcConfig;
+    @MockBean
+    private CaseDataDocumentService documentService;
 
-  // Mocking this out stops the s2s request interceptor getting added, bypassing service auth.
-  @MockBean
-  private WebMvcConfig webMvcConfig;
-
-  @MockBean
-  private CaseDataDocumentService documentService;
-
-  @Autowired
-  DataSource dataStore;
-
-  @BeforeEach
-  void setup() {
-    when(idamApi.retrieveUserInfo(anyString())).thenReturn(UserInfo.builder()
-        .uid("1")
-        .givenName("A")
-        .familyName("Person")
-        .roles(List.of())
-        .build());
-  }
-
-  @Test
-  void contextLoads() throws Exception {
-    createRoles(
-        "caseworker-divorce-courtadmin_beta",
-        "caseworker-divorce-superuser",
-        "caseworker-divorce-courtadmin-la",
-        "caseworker-divorce-courtadmin",
-        "caseworker-divorce-solicitor",
-        "caseworker-divorce-pcqextractor",
-        "caseworker-divorce-systemupdate",
-        "caseworker-divorce-bulkscan",
-        "caseworker-caa",
-        "citizen"
-    );
-
-    mockMvc.perform(multipart("/import").file(loadNFDivDef())
-        .with(jwt().authorities(new SimpleGrantedAuthority("caseworker-divorce-solicitor"))
-        )).andExpect(status().is2xxSuccessful());
-
-    // TODO - quick hack for POC purposes.
-    try (Connection c = dataStore.getConnection()) {
-      c.createStatement().execute(
-          "update definitionstore.webhook set url = replace(url, 'nfdiv-case-api', 'localhost')"
-      );
+    @BeforeEach
+    void setup() {
+        when(idamApi.retrieveUserInfo(anyString())).thenReturn(UserInfo.builder()
+            .uid("1")
+            .givenName("A")
+            .familyName("Person")
+            .roles(List.of())
+            .build());
     }
 
-    StartEventResponse
-        startEventResponse = startEventForCreateCase();
+    @Test
+    void contextLoads() throws Exception {
+        createRoles(
+            "caseworker-divorce-courtadmin_beta",
+            "caseworker-divorce-superuser",
+            "caseworker-divorce-courtadmin-la",
+            "caseworker-divorce-courtadmin",
+            "caseworker-divorce-solicitor",
+            "caseworker-divorce-pcqextractor",
+            "caseworker-divorce-systemupdate",
+            "caseworker-divorce-bulkscan",
+            "caseworker-caa",
+            "citizen"
+        );
 
-    CaseDataContent caseDataContent = CaseDataContent.builder()
-        .eventToken(startEventResponse.getToken())
-        .event(Event.builder()
-            .id("solicitor-create-application")
-            .summary("Create draft case")
-            .description("Create draft case for functional tests")
-            .build())
-        .data(Map.of(
-            "applicant1SolicitorName", "functional test",
-            "applicant1LanguagePreferenceWelsh", "NO",
-            "divorceOrDissolution", "divorce",
-            "applicant1FinancialOrder", "NO"
-        ))
-        .build();
+        importDefinition();
 
-    submitNewCase(caseDataContent);
-    verify(documentService).renderDocumentAndUpdateCaseData(any(), any(), any(), any(), any(), any(), any());
-  }
+        // TODO - quick hack for POC purposes.
+        // Point our callbacks to localhost.
+        try (Connection c = dataStore.getConnection()) {
+            c.createStatement().execute(
+                "update definitionstore.webhook set url = replace(url, 'nfdiv-case-api', 'localhost')"
+            );
+        }
 
-  private StartEventResponse startEventForCreateCase() throws Exception {
-    MvcResult result = mockMvc.perform(
-            get("/caseworkers/ham/jurisdictions/DIVORCE/case-types/NFD/event-triggers/solicitor-create-application/token")
-                .with(jwt().authorities(new SimpleGrantedAuthority("caseworker-divorce-solicitor")))
-                .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().is2xxSuccessful())
-        .andReturn();
-    return new ObjectMapper().readValue(result.getResponse().getContentAsString(), StartEventResponse.class);
-  }
+        StartEventResponse
+            startEventResponse = startEventForCreateCase();
 
-  private void submitNewCase(CaseDataContent caseDataContent) throws Exception {
-    mockMvc.perform(
-            post("/caseworkers/ham/jurisdictions/DIVORCE/case-types/NFD/cases")
-                .with(jwt().authorities(new SimpleGrantedAuthority("caseworker-divorce-solicitor")))
-                .content(new ObjectMapper().writeValueAsString(caseDataContent))
-                .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().is2xxSuccessful())
-        .andReturn();
-  }
+        CaseDataContent caseDataContent = CaseDataContent.builder()
+            .eventToken(startEventResponse.getToken())
+            .event(Event.builder()
+                .id("solicitor-create-application")
+                .summary("Create draft case")
+                .description("Create draft case for functional tests")
+                .build())
+            .data(Map.of(
+                "applicant1SolicitorName", "functional test",
+                "applicant1LanguagePreferenceWelsh", "NO",
+                "divorceOrDissolution", "divorce",
+                "applicant1FinancialOrder", "NO"
+            ))
+            .build();
 
-  void createRoles(String... roles) {
-    for (String role : roles) {
-      UserRole r = new UserRole();
-      r.setRole(role);
-      r.setSecurityClassification(SecurityClassification.PUBLIC);
-      roleController.userRolePut(r);
+        submitNewCase(caseDataContent);
+        verify(documentService).renderDocumentAndUpdateCaseData(any(), any(), any(), any(), any(), any(), any());
     }
-  }
 
-  MockMultipartFile loadNFDivDef() throws IOException {
-    return new MockMultipartFile(
-        "file",
-        "NFD-dev.xlsx",
-        MediaType.MULTIPART_FORM_DATA_VALUE,
-        Files.readAllBytes(new File("build/ccd-config/ccd-NFD-dev.xlsx").toPath())
-    );
-  }
+    private StartEventResponse startEventForCreateCase() throws Exception {
+        MvcResult result = mockMvc.perform(
+                get("/caseworkers/ham/jurisdictions/DIVORCE/case-types/NFD/event-triggers/solicitor-create-application/token")
+                    .with(jwt().authorities(new SimpleGrantedAuthority("caseworker-divorce-solicitor")))
+                    .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().is2xxSuccessful())
+            .andReturn();
+        return new ObjectMapper().readValue(result.getResponse().getContentAsString(), StartEventResponse.class);
+    }
+
+    private void submitNewCase(CaseDataContent caseDataContent) throws Exception {
+        mockMvc.perform(
+                post("/caseworkers/ham/jurisdictions/DIVORCE/case-types/NFD/cases")
+                    .with(jwt().authorities(new SimpleGrantedAuthority("caseworker-divorce-solicitor")))
+                    .content(new ObjectMapper().writeValueAsString(caseDataContent))
+                    .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().is2xxSuccessful())
+            .andReturn();
+    }
+
+    void createRoles(String... roles) {
+        for (String role : roles) {
+            UserRole r = new UserRole();
+            r.setRole(role);
+            r.setSecurityClassification(SecurityClassification.PUBLIC);
+            roleController.userRolePut(r);
+        }
+    }
+
+    void importDefinition() throws Exception {
+        var def = new MockMultipartFile(
+            "file",
+            "NFD-dev.xlsx",
+            MediaType.MULTIPART_FORM_DATA_VALUE,
+            Files.readAllBytes(new File("build/ccd-config/ccd-NFD-dev.xlsx").toPath())
+        );
+        mockMvc.perform(multipart("/import").file(def)
+            .with(jwt().authorities(new SimpleGrantedAuthority("caseworker-divorce-solicitor"))
+            )).andExpect(status().is2xxSuccessful());
+    }
 }

@@ -20,9 +20,9 @@ public class JacksonConfiguration {
     /**
      * Here for integration with the CFT lib.
      *
-     * When running with the CFT lib an ObjectMapper instance is instantiated by CCD.
+     * <p>When running with the CFT lib an ObjectMapper instance is instantiated by CCD.
      *
-     * When running without the CFT lib on the classpath (ie. in prod) we need
+     * <p>When running without the CFT lib on the classpath (ie. in prod) we need
      * a default instance to which our customisation is applied.
      */
     @Primary

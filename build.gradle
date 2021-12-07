@@ -126,6 +126,7 @@ task ccdTest(type: Test, dependsOn: buildCCDXlsx) {
   classpath = sourceSets.ccdTest.runtimeClasspath
   failFast = true
 }
+check.dependsOn ccdTest
 
 task smoke(type: Test) {
   description = "Runs Smoke Tests"
