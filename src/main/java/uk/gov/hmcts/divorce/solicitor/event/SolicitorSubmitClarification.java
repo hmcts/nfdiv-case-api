@@ -43,7 +43,7 @@ public class SolicitorSubmitClarification implements CCDConfig<CaseData, State, 
                 .readonly(ConditionalOrder::getRefusalRejectionReason)
                 .readonly(ConditionalOrder::getRefusalClarificationAdditionalInfo)
                 .mandatory(ConditionalOrder::getClarificationResponse)
-                .mandatory(ConditionalOrder::getClarificationUploadDocuments)
+                .optional(ConditionalOrder::getClarificationUploadDocuments)
             .done();
     }
 
