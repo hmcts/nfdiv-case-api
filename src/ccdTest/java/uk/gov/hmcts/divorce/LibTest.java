@@ -7,14 +7,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
-
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +25,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.web.context.WebApplicationContext;
 import uk.gov.hmcts.ccd.definition.store.repository.SecurityClassification;
 import uk.gov.hmcts.ccd.definition.store.repository.model.UserRole;
 import uk.gov.hmcts.ccd.definition.store.rest.endpoint.UserRoleController;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
-import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
 import uk.gov.hmcts.reform.ccd.client.model.Event;
 import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
@@ -53,31 +49,18 @@ class LibTest {
   @MockBean
   IdamApi idamApi;
 
+  // Mocking this out stops the s2s request interceptor getting added, bypassing service auth.
   @MockBean
   private WebMvcConfig webMvcConfig;
 
-  private static final String JURISDICTION = "DIVORCE";
-  private static final String CASE_TYPE = "NFD";
-  private static final String SOLICITOR_CREATE = "solicitor-create-application";
-
-  @Autowired
-  protected CoreCaseDataApi coreCaseDataApi;
-
-  MockMultipartFile loadNFDivDef() throws IOException {
-
+  @BeforeEach
+  void setup() {
     when(idamApi.retrieveUserInfo(anyString())).thenReturn(UserInfo.builder()
         .uid("1")
         .givenName("A")
         .familyName("Person")
         .roles(List.of())
         .build());
-
-    return new MockMultipartFile(
-        "file",
-        "hello.txt",
-        MediaType.MULTIPART_FORM_DATA_VALUE,
-        getClass().getClassLoader().getResourceAsStream("NFD-dev.xlsx").readAllBytes()
-    );
   }
 
   @Test
@@ -98,15 +81,11 @@ class LibTest {
     mockMvc.perform(multipart("/import").file(loadNFDivDef())
             .with(
                 jwt().authorities(new SimpleGrantedAuthority("caseworker-divorce-solicitor")))
-            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
         )
         .andExpect(status().is2xxSuccessful());
 
-    String solicitorToken = "green";
-    String s2sTokenForCaseApi = "eggs";
-    String solicitorUserId = "ham";
     StartEventResponse
-        startEventResponse = startEventForCreateCase(solicitorToken, s2sTokenForCaseApi, solicitorUserId);
+        startEventResponse = startEventForCreateCase();
 
     CaseDataContent caseDataContent = CaseDataContent.builder()
         .eventToken(startEventResponse.getToken())
@@ -123,32 +102,21 @@ class LibTest {
         ))
         .build();
 
-    submitNewCase(caseDataContent, solicitorToken, s2sTokenForCaseApi, solicitorUserId);
+    submitNewCase(caseDataContent);
   }
 
-  private StartEventResponse startEventForCreateCase(
-      String solicitorToken,
-      String s2sToken,
-      String solicitorUserId
-  ) throws Exception {
-
+  private StartEventResponse startEventForCreateCase() throws Exception {
     MvcResult result = mockMvc.perform(
             get("/caseworkers/ham/jurisdictions/DIVORCE/case-types/NFD/event-triggers/solicitor-create-application/token")
                 .with(jwt().authorities(new SimpleGrantedAuthority("caseworker-divorce-solicitor")))
                 .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().is2xxSuccessful())
         .andReturn();
-    var r = new ObjectMapper().readValue(result.getResponse().getContentAsString(), StartEventResponse.class);
-    return r;
+    return new ObjectMapper().readValue(result.getResponse().getContentAsString(), StartEventResponse.class);
   }
 
-  private void submitNewCase(
-      CaseDataContent caseDataContent,
-      String solicitorToken,
-      String s2sToken,
-      String solicitorUserId
-  ) throws Exception {
-    MvcResult result = mockMvc.perform(
+  private void submitNewCase(CaseDataContent caseDataContent) throws Exception {
+    mockMvc.perform(
             post("/caseworkers/ham/jurisdictions/DIVORCE/case-types/NFD/cases")
                 .with(jwt().authorities(new SimpleGrantedAuthority("caseworker-divorce-solicitor")))
                 .content(new ObjectMapper().writeValueAsString(caseDataContent))
@@ -164,7 +132,14 @@ class LibTest {
       r.setSecurityClassification(SecurityClassification.PUBLIC);
       roleController.userRolePut(r);
     }
-
   }
 
+  MockMultipartFile loadNFDivDef() throws IOException {
+    return new MockMultipartFile(
+        "file",
+        "NFD-dev.xlsx",
+        MediaType.MULTIPART_FORM_DATA_VALUE,
+        getClass().getClassLoader().getResourceAsStream("NFD-dev.xlsx").readAllBytes()
+    );
+  }
 }
