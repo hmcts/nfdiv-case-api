@@ -67,6 +67,20 @@ public enum State {
     Withdrawn("Withdrawn"),
 
     @CCD(
+        name = "Awaiting admin clarification",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    AwaitingAdminClarification("AwaitingAdminClarification"),
+
+    @CCD(
+        name = "Awaiting amended application",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    AwaitingAmendedApplication("AwaitingAmendedApplication"),
+
+    @CCD(
         name = "Awaiting applicant",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )
@@ -207,6 +221,13 @@ public enum State {
         access = {CaseAccessAdministrator.class}
     )
     FinalOrderComplete("FinalOrderComplete"),
+
+    @CCD(
+        name = "Final order requested",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    FinalOrderRequested("FinalOrderRequested"),
 
     @CCD(
         name = "Issued To bailiff",

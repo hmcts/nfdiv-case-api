@@ -131,7 +131,7 @@ public class ConditionalOrder {
     private Set<RejectionReason> refusalRejectionReason;
 
     @CCD(
-        label = "Rejection additional information",
+        label = "Additional information",
         typeOverride = TextArea
     )
     private String refusalRejectionAdditionalInfo;

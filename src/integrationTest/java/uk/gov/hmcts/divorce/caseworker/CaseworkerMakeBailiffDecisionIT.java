@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,11 @@ public class CaseworkerMakeBailiffDecisionIT {
     @MockBean
     private WebMvcConfig webMvcConfig;
 
+    @BeforeEach
+    public void setUp() {
+        setMockClock(clock);
+    }
+
     @Test
     public void shouldChangeCaseStateToAwaitingBailiffServiceAndSetDecisionDateWhenServiceApplicationIsGrantedAndServiceTypeIsBailiff()
         throws Exception {
@@ -87,7 +93,7 @@ public class CaseworkerMakeBailiffDecisionIT {
     }
 
     @Test
-    public void shouldChangeCaseStateToAwaitingAosWhenServiceApplicationIsNotGranted() throws Exception {
+    public void shouldChangeCaseStateToAwaitingAosAndSetDecisionDateWhenServiceApplicationIsNotGranted() throws Exception {
         final CaseData caseData = caseData();
         caseData.getAlternativeService().setServiceApplicationGranted(NO);
 
@@ -107,6 +113,10 @@ public class CaseworkerMakeBailiffDecisionIT {
                 status().isOk())
             .andExpect(
                 jsonPath("$.state").value(AwaitingAos.getName())
+            )
+            .andExpect(
+                jsonPath("$.data.alternativeServiceOutcomes[0].value.serviceApplicationDecisionDate")
+                    .value(getExpectedLocalDate().toString())
             );
     }
 }

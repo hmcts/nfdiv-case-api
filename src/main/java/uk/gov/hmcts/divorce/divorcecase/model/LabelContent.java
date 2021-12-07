@@ -39,17 +39,30 @@ public class LabelContent {
     @CCD(label = "Divorce or end civil partnership")
     private String divorceOrEndCivilPartnership;
 
+    @CCD(label = "The applicant's or applicant 1’s")
+    private String applicantOrApplicant1;
+
+    @CCD(label = "Divorce or civil partnership")
+    private String divorceOrCivilPartnership;
+
+    @CCD(label = "Divorce or civil partnership")
+    private String finaliseDivorceOrEndCivilPartnership;
+
     public void setUnionType(DivorceOrDissolution divorceOrDissolution) {
         if (divorceOrDissolution != null && divorceOrDissolution.isDivorce()) {
             unionType = "divorce";
             unionTypeUC = "Divorce";
             divorceOrCivilPartnershipApplication = "divorce application";
             divorceOrEndCivilPartnership = "for divorce";
+            divorceOrCivilPartnership = "divorce";
+            finaliseDivorceOrEndCivilPartnership = "finalise the divorce";
         } else {
             unionType = "dissolution";
             unionTypeUC = "Dissolution";
             divorceOrCivilPartnershipApplication = "application to end the civil partnership";
             divorceOrEndCivilPartnership = "to end the civil partnership";
+            divorceOrCivilPartnership = "civil partnership";
+            finaliseDivorceOrEndCivilPartnership = "end civil partnership";
         }
     }
 
@@ -59,11 +72,13 @@ public class LabelContent {
             theApplicant2 = "the respondent";
             applicant2UC = "Respondent";
             theApplicant2UC = "The respondent";
+            applicantOrApplicant1 = "the applicant’s";
         } else {
             applicant2 = "applicant 2";
             theApplicant2 = "applicant 2";
             applicant2UC = "Applicant 2";
             theApplicant2UC = "Applicant 2";
+            applicantOrApplicant1 = "applicant 1’s";
         }
     }
 }

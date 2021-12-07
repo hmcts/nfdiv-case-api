@@ -33,6 +33,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DEEMED_AS_SERVICE_GRANTED;
@@ -196,7 +197,7 @@ class LegalAdvisorMakeServiceDecisionTest {
     }
 
     @Test
-    void shouldNotUpdateServiceApplicationDecisionDateIfServiceApplicationIsNotGranted() {
+    void shouldUpdateServiceApplicationDecisionDateIfServiceApplicationIsNotGranted() {
 
         setMockClock(clock);
 
@@ -217,9 +218,10 @@ class LegalAdvisorMakeServiceDecisionTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             makeServiceDecision.aboutToSubmit(caseDetails, null);
 
+        assertThat(response.getState()).isEqualTo(AwaitingAos);
+
         ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().get(0);
-        assertThat(listValue.getValue().getServiceApplicationDecisionDate())
-            .isNull();
+        assertThat(listValue.getValue().getServiceApplicationDecisionDate()).isEqualTo(getExpectedLocalDate());
 
     }
 }

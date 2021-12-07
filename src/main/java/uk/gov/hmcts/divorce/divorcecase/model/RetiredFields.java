@@ -8,6 +8,7 @@ import org.apache.commons.collections4.map.HashedMap;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor.Prayer;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.lang.reflect.Field;
@@ -36,6 +37,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CON
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.Solicitor.Prayer.CONFIRM;
 
 @Data
 @NoArgsConstructor
@@ -168,6 +170,22 @@ public class RetiredFields {
     )
     private String generalReferralLegalAdvisorDetails;
 
+    @CCD(
+        label = "Retired applicant 1 solicitor agreeing to receive emails"
+    )
+    private YesOrNo applicant1SolicitorAgreeToReceiveEmails;
+
+    @CCD(
+        label = "Retired applicant 2 solicitor agreeing to receive emails"
+    )
+    private YesOrNo applicant2SolicitorAgreeToReceiveEmails;
+
+    @CCD(
+        label = "Reason respondent disagreed to claimed jurisdiction",
+        typeOverride = TextArea
+    )
+    private String jurisdictionDisagreeReason;
+
     @JsonIgnore
     private static final Consumer<Map<String, Object>> DO_NOTHING = data -> {
     };
@@ -222,6 +240,18 @@ public class RetiredFields {
                 "generalReferralJudgeOrLegalAdvisorDetails",
                 transformGeneralReferralDetails(data, "generalReferralLegalAdvisorDetails")
             ));
+        init.put("applicant1SolicitorAgreeToReceiveEmails",
+            data -> data.put(
+                "applicant1SolicitorAgreeToReceiveEmailsCheckbox",
+                transformSolicitorAgreeToReceiveEmailsField(data, "applicant1SolicitorAgreeToReceiveEmails"))
+        );
+        init.put("applicant2SolicitorAgreeToReceiveEmails",
+            data -> data.put(
+                "applicant2SolicitorAgreeToReceiveEmailsCheckbox",
+                transformSolicitorAgreeToReceiveEmailsField(data, "applicant2SolicitorAgreeToReceiveEmails"))
+        );
+        init.put("jurisdictionDisagreeReason",
+            data -> data.put("reasonCourtsOfEnglandAndWalesHaveNoJurisdiction", data.get("jurisdictionDisagreeReason")));
 
         migrations = unmodifiableMap(init);
     }
@@ -259,8 +289,8 @@ public class RetiredFields {
     @SuppressWarnings({"unchecked", "PMD"})
     public static List<ListValue<AlternativeServiceOutcome>> transformAlternativeServiceApplications(Map<String, Object> data) {
 
-        ArrayList<LinkedHashMap<String,Object>> oldListValues =
-            (ArrayList<LinkedHashMap<String,Object>>) data.get("alternativeServiceApplications");
+        ArrayList<LinkedHashMap<String, Object>> oldListValues =
+            (ArrayList<LinkedHashMap<String, Object>>) data.get("alternativeServiceApplications");
 
         List<ListValue<AlternativeServiceOutcome>> newListValues = new ArrayList<>();
 
@@ -336,5 +366,12 @@ public class RetiredFields {
             return retiredFieldValue.concat(" ").concat(newFieldValue);
         }
         return retiredFieldValue;
+    }
+
+    private static Set<Prayer> transformSolicitorAgreeToReceiveEmailsField(Map<String, Object> data, String retiredFieldName) {
+        String value = (String) data.get(retiredFieldName);
+        return YES.getValue().equalsIgnoreCase(value)
+            ? Set.of(CONFIRM)
+            : emptySet();
     }
 }

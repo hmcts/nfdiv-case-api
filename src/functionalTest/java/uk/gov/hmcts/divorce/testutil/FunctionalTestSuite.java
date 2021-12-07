@@ -1,11 +1,16 @@
 package uk.gov.hmcts.divorce.testutil;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.TestPropertySource;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
@@ -15,6 +20,7 @@ import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -23,6 +29,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreateApplication.SOLICITOR_CREATE;
 
 @TestPropertySource("classpath:application.yaml")
@@ -37,10 +44,19 @@ public abstract class FunctionalTestSuite {
     protected IdamTokenGenerator idamTokenGenerator;
 
     @Autowired
+    protected IdamService idamService;
+
+    @Autowired
     protected ServiceAuthenticationGenerator serviceAuthenticationGenerator;
 
     @Autowired
     protected CoreCaseDataApi coreCaseDataApi;
+
+    @Autowired
+    protected CcdSearchService searchService;
+
+    @Autowired
+    protected ObjectMapper objectMapper;
 
     protected CaseDetails createCaseInCcd() {
         String solicitorToken = idamTokenGenerator.generateIdamTokenForSolicitor();
@@ -156,5 +172,18 @@ public abstract class FunctionalTestSuite {
             .body(request)
             .when()
             .post(url);
+    }
+
+    protected List<CaseDetails> searchForCasesWithQuery(BoolQueryBuilder query) {
+        return searchService.searchForAllCasesWithQuery(
+            Holding,
+            query,
+            idamService.retrieveSystemUpdateUserDetails(),
+            serviceAuthenticationGenerator.generate()
+        );
+    }
+
+    protected CaseData getCaseData(Map<String, Object> data) {
+        return objectMapper.convertValue(data, CaseData.class);
     }
 }

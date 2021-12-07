@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
+import static uk.gov.hmcts.divorce.divorcecase.model.Solicitor.Prayer.CONFIRM;
 
 class RetiredFieldsTest {
 
@@ -46,6 +47,8 @@ class RetiredFieldsTest {
         data.put("coIsEverythingInApplicationTrue", "YES");
         data.put("alternativeServiceApplications", new ArrayList<LinkedHashMap<String, Object>>());
         data.put("disputeApplication", "YES");
+        data.put("applicant1SolicitorAgreeToReceiveEmails", "Yes");
+        data.put("applicant2SolicitorAgreeToReceiveEmails", "No");
 
         final var result = RetiredFields.migrate(data);
 
@@ -76,8 +79,9 @@ class RetiredFieldsTest {
             entry("coIsEverythingInApplicationTrue", "YES"),
             entry("howToRespondApplication", "disputeDivorce"),
             entry("coIsEverythingInApplicationTrue", "YES"),
-            entry("alternativeServiceApplications", null)
-
+            entry("alternativeServiceApplications", null),
+            entry("applicant1SolicitorAgreeToReceiveEmailsCheckbox", Set.of(CONFIRM)),
+            entry("applicant2SolicitorAgreeToReceiveEmailsCheckbox", emptySet())
         );
     }
 
@@ -166,7 +170,6 @@ class RetiredFieldsTest {
     }
 
 
-
     @Test
     void shouldMigrateGeneralReferralJudgeAndLegalAdvisorDetailsWhenBothValuesArePresent() {
         final var data = new HashMap<String, Object>();
@@ -223,14 +226,14 @@ class RetiredFieldsTest {
     @Test
     void shouldMigrateServiceApplications() {
 
-        final Map<String,Object> alternativeServiceObject = new LinkedHashMap<>();
+        final Map<String, Object> alternativeServiceObject = new LinkedHashMap<>();
         alternativeServiceObject.put("alternativeServiceType", "deemed");
 
-        final HashMap<String,Object> listValueMap = new LinkedHashMap<>();
+        final HashMap<String, Object> listValueMap = new LinkedHashMap<>();
         listValueMap.put("id", "1");
         listValueMap.put("value", alternativeServiceObject);
 
-        final ArrayList<LinkedHashMap<String,Object>> listValues = new ArrayList<>();
+        final ArrayList<LinkedHashMap<String, Object>> listValues = new ArrayList<>();
         listValues.add((LinkedHashMap<String, Object>) listValueMap);
 
         final var data = new HashMap<String, Object>();
@@ -244,4 +247,16 @@ class RetiredFieldsTest {
 
     }
 
+    @Test
+    void shouldMigrateJurisdictionDisagreeReason() {
+        final var data = new HashMap<String, Object>();
+        data.put("jurisdictionDisagreeReason", "Jurisdiction Disagree Reason");
+
+        final var result = RetiredFields.migrate(data);
+
+        assertThat(result).contains(
+            entry("jurisdictionDisagreeReason", null),
+            entry("reasonCourtsOfEnglandAndWalesHaveNoJurisdiction", "Jurisdiction Disagree Reason")
+        );
+    }
 }

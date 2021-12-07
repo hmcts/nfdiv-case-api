@@ -17,6 +17,10 @@ import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorClarificationS
 import java.time.Clock;
 import java.time.LocalDate;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.ADMIN_ERROR;
+import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAdminClarification;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAmendedApplication;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
@@ -77,16 +81,26 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .done()
             .page("refusalOrderClarification")
             .pageLabel("Refusal Order:Clarify - Make a Decision")
-            .showCondition("coRefusalDecision=\"moreInfo\"")
+            .showCondition("coRefusalDecision=\"moreInfo\" AND coGranted=\"No\"")
             .complex(CaseData::getConditionalOrder)
                 .mandatory(ConditionalOrder::getRefusalClarificationReason)
                 .mandatory(ConditionalOrder::getRefusalClarificationAdditionalInfo)
             .done()
             .page("adminErrorClarification")
-            .pageLabel("Admin error")
-            .showCondition("coRefusalDecision=\"adminError\"")
+            .pageLabel("Admin error - Make a Decision")
+            .showCondition("coRefusalDecision=\"adminError\" AND coGranted=\"No\"")
             .complex(CaseData::getConditionalOrder)
                 .mandatory(ConditionalOrder::getRefusalRejectionAdditionalInfo)
+            .done()
+            .page("amendApplication")
+            .pageLabel("Request amended application - Make a Decision")
+            .showCondition("coRefusalDecision=\"reject\" AND coGranted=\"No\"")
+            .complex(CaseData::getConditionalOrder)
+                .mandatory(ConditionalOrder::getRefusalRejectionReason)
+                .mandatory(ConditionalOrder::getRefusalRejectionAdditionalInfo,
+                "coRefusalRejectionReason=\"other\" "
+                    + "OR coRefusalRejectionReason=\"noCriteria\"" // added for backward compatibility
+                    + " OR coRefusalRejectionReason=\"insufficentDetails\"") // added for backward compatibility
             .done();
     }
 
@@ -104,13 +118,16 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             log.info("Legal advisor conditional order granted for case id: {}", details.getId());
             conditionalOrder.setDecisionDate(LocalDate.now(clock));
             endState = AwaitingPronouncement;
-        } else {
-            endState = AwaitingClarification;
-        }
 
-        if (caseData.getApplication().isSolicitorApplication()
-            && AwaitingClarification.equals(endState)) {
-            notification.send(caseData, details.getId());
+        } else if (ADMIN_ERROR.equals(conditionalOrder.getRefusalDecision())) {
+            endState = AwaitingAdminClarification;
+        } else if (MORE_INFO.equals(conditionalOrder.getRefusalDecision())) {
+            if (caseData.getApplication().isSolicitorApplication()) {
+                notification.send(caseData, details.getId());
+            }
+            endState = AwaitingClarification;
+        } else {
+            endState = AwaitingAmendedApplication;
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

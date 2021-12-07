@@ -85,7 +85,8 @@ public class SystemProcessFailedScheduledCasesTaskTest {
             .thenReturn(caseDetailsList);
 
         final CaseTask caseTask = mock(CaseTask.class);
-        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseData, SYSTEM_UPDATE_CASE_COURT_HEARING)).thenReturn(caseTask);
+        when(bulkCaseCaseTaskFactory.getCaseTask(caseDetails1, SYSTEM_UPDATE_CASE_COURT_HEARING)).thenReturn(caseTask);
+        when(bulkCaseCaseTaskFactory.getCaseTask(caseDetails2, SYSTEM_UPDATE_CASE_COURT_HEARING)).thenReturn(caseTask);
 
         systemProcessFailedScheduledCasesTask.run();
 
