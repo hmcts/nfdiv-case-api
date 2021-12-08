@@ -9,7 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseAccessAdministrator;
 @Getter
 public enum State {
 
-    @CCD(label = " ")
+    @CCD()
     Draft("Draft"),
 
     @CCD(
