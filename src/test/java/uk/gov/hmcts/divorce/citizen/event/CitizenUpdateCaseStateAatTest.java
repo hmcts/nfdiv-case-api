@@ -27,10 +27,11 @@ public class CitizenUpdateCaseStateAatTest {
     private CitizenUpdateCaseStateAat citizenUpdateCaseStateAat;
 
     @Test
-    void shouldAddConfigurationToConfigBuilder() {
+    void shouldAddConfigurationToConfigBuilderIfEnvironmentIsAat() throws Exception {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        citizenUpdateCaseStateAat.configure(configBuilder);
+        withEnvironmentVariable("ENVIRONMENT", "aat")
+            .execute(() -> citizenUpdateCaseStateAat.configure(configBuilder));
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
@@ -38,27 +39,18 @@ public class CitizenUpdateCaseStateAatTest {
     }
 
     @Test
-    public void shouldUpdateCaseStateWhenEnvironmentIsAat() throws Exception {
-        final long caseId = 1L;
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        final CaseData caseData = CaseData.builder().build();
-        caseData.setApplicant2(new Applicant());
-        caseData.getApplicant2().setSolicitor(new Solicitor());
-        caseData.getApplicant2().getSolicitor().setAddress("Holding");
+    void shouldNotAddConfigurationToConfigBuilderIfEnvironmentIsNotAat() {
+        final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        caseDetails.setData(caseData);
-        caseDetails.setId(caseId);
+        citizenUpdateCaseStateAat.configure(configBuilder);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            withEnvironmentVariable("ENVIRONMENT", "aat")
-            .execute(() -> citizenUpdateCaseStateAat.aboutToSubmit(caseDetails, caseDetails));
-
-        assertThat(response.getState()).isEqualTo(State.Holding);
-        assertThat(response.getData().getApplicant2().getSolicitor().getAddress()).isNull();
+        assertThat(getEventsFrom(configBuilder).values())
+            .extracting(Event::getId)
+            .doesNotContain(CITIZEN_UPDATE_CASE_STATE_AAT);
     }
 
     @Test
-    public void shouldDoNothingWhenEnvironmentIsNotAat() throws Exception {
+    public void shouldUpdateCaseStateWhenEnvironmentIsAat() {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().build();
@@ -68,12 +60,10 @@ public class CitizenUpdateCaseStateAatTest {
 
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
-        caseDetails.setState(State.Draft);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            withEnvironmentVariable("ENVIRONMENT", "demo")
-                .execute(() -> citizenUpdateCaseStateAat.aboutToSubmit(caseDetails, caseDetails));
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenUpdateCaseStateAat.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getState()).isEqualTo(State.Draft);
+        assertThat(response.getState()).isEqualTo(State.Holding);
+        assertThat(response.getData().getApplicant2().getSolicitor().getAddress()).isNull();
     }
 }

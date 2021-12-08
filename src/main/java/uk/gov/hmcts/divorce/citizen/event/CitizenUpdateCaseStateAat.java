@@ -27,39 +27,31 @@ public class CitizenUpdateCaseStateAat implements CCDConfig<CaseData, State, Use
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
-        configBuilder
-            .event(CITIZEN_UPDATE_CASE_STATE_AAT)
-            .forAllStates()
-            .name("Citizen update case state AAT")
-            .description("Citizen update the case state in AAT")
-            .grant(CREATE_READ_UPDATE, CITIZEN, APPLICANT_2)
-            .grant(READ, SUPER_USER)
-            .aboutToSubmitCallback(this::aboutToSubmit);
+        if (isEnvironmentAat()) {
+            configBuilder
+                .event(CITIZEN_UPDATE_CASE_STATE_AAT)
+                .forAllStates()
+                .name("Citizen update case state AAT")
+                .description("Citizen update the case state in AAT")
+                .grant(CREATE_READ_UPDATE, CITIZEN, APPLICANT_2)
+                .grant(READ, SUPER_USER)
+                .aboutToSubmitCallback(this::aboutToSubmit);
+        }
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
+        log.info("Citizen update case state in AAT about to submit callback invoked");
+
         CaseData data = details.getData();
 
-        if (isEnvironmentAat()) {
-            log.info("Citizen update case state in AAT about to submit callback invoked");
-            State state = State.valueOf(data.getApplicant2().getSolicitor().getAddress());
-            data.getApplicant2().getSolicitor().setAddress(null);
-
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(data)
-                .state(state)
-                .build();
-        }
-
-        log.info("Error updating case state as environment is {}",
-            System.getenv().getOrDefault("ENVIRONMENT", null));
+        State state = State.valueOf(data.getApplicant2().getSolicitor().getAddress());
+        data.getApplicant2().getSolicitor().setAddress(null);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
-            .state(details.getState())
+            .state(state)
             .build();
-
     }
 
     public boolean isEnvironmentAat() {
