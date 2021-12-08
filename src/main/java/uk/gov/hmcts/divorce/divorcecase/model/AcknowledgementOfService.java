@@ -156,7 +156,10 @@ public class AcknowledgementOfService {
     )
     private String disputingFeeHelpWithFeesReferenceNumber;
 
-    @CCD(access = {CaseworkerAccessBetaOnlyAccess.class})
+    @CCD(
+        label = "Here are your order details",
+        access = {CaseworkerAccessBetaOnlyAccess.class}
+    )
     private OrderSummary disputingFee;
 
     @JsonIgnore
