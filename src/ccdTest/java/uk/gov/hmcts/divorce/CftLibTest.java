@@ -56,8 +56,10 @@ class CftLibTest {
 
     @MockBean
     IdamApi idamApi;
+
     @Autowired
     DataSource dataStore;
+
     // Mocking this out stops the s2s request interceptor getting added, bypassing service auth.
     @MockBean
     private WebMvcConfig webMvcConfig;
@@ -80,7 +82,7 @@ class CftLibTest {
     }
 
     @Test
-    void contextLoads() throws Exception {
+    void importDefinitionAndCreateCase() throws Exception {
         createRoles(
             "caseworker-divorce-courtadmin_beta",
             "caseworker-divorce-superuser",
@@ -96,7 +98,7 @@ class CftLibTest {
 
         importDefinition();
 
-        CaseDataContent caseDataContent = CaseDataContent.builder()
+        var caseDataContent = CaseDataContent.builder()
             .eventToken(startEventForCreateCase().getToken())
             .event(Event.builder()
                 .id("solicitor-create-application")
@@ -112,6 +114,8 @@ class CftLibTest {
             .build();
 
         submitNewCase(caseDataContent);
+
+        // Should be invoked by case creation callback.
         verify(documentService).renderDocumentAndUpdateCaseData(any(), any(), any(), any(), any(), any(), any());
     }
 
