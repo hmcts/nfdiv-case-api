@@ -12,8 +12,9 @@ public class SolPaymentSummary implements CcdPageConfiguration {
 
         pageBuilder
             .page("SolPaymentSummary")
-            .pageLabel("## Case number: ${[CASE_REFERENCE]}\n"
-                + "## ${applicant1FirstName} ${applicant1LastName} and ${applicant2FirstName} ${applicant2LastName}")
+            .label("LabelSolPaySummaryFeeAccount-CaseRef", "### Case number: ${[CASE_REFERENCE]}")
+            .label("LabelSolPaySummaryFeeAccount-Joint",
+                "### ${applicant1FirstName} ${applicant1LastName} and ${applicant2FirstName} ${applicant2LastName}")
             .complex(CaseData::getApplication)
                 .mandatory(Application::getApplicationFeeOrderSummary)
                 .done()
