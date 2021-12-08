@@ -8,9 +8,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationIssuedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
@@ -90,7 +90,7 @@ public class SystemProgressCaseToAosOverdueTest {
     @Test
     void shouldNotSendEmailToApplicantForSolicitorApplication() {
         final CaseData caseData = caseData();
-        caseData.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
+        caseData.getApplicant1().setSolicitor(Solicitor.builder().email("test@test.com").build());
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(1L);
         details.setData(caseData);
