@@ -98,9 +98,9 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .complex(CaseData::getConditionalOrder)
                 .mandatory(ConditionalOrder::getRefusalRejectionReason)
                 .mandatory(ConditionalOrder::getRefusalRejectionAdditionalInfo,
-                "coRefusalRejectionReason=\"other\" "
-                    + "OR coRefusalRejectionReason=\"noCriteria\"" // added for backward compatibility
-                    + " OR coRefusalRejectionReason=\"insufficentDetails\"") // added for backward compatibility
+                "coRefusalRejectionReason CONTAINS \"other\" "
+                    + "OR coRefusalRejectionReason CONTAINS \"noCriteria\"" // added for backward compatibility
+                    + " OR coRefusalRejectionReason CONTAINS \"insufficentDetails\"") // added for backward compatibility
             .done();
     }
 
