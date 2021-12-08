@@ -46,7 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-class LibTest {
+class CftLibTest {
 
     @Autowired
     UserRoleController roleController;
@@ -61,6 +61,8 @@ class LibTest {
     // Mocking this out stops the s2s request interceptor getting added, bypassing service auth.
     @MockBean
     private WebMvcConfig webMvcConfig;
+
+    // Used to verify our case creation callback is invoked.
     @MockBean
     private CaseDataDocumentService documentService;
 
@@ -94,12 +96,8 @@ class LibTest {
 
         importDefinition();
 
-
-        StartEventResponse
-            startEventResponse = startEventForCreateCase();
-
         CaseDataContent caseDataContent = CaseDataContent.builder()
-            .eventToken(startEventResponse.getToken())
+            .eventToken(startEventForCreateCase().getToken())
             .event(Event.builder()
                 .id("solicitor-create-application")
                 .summary("Create draft case")
