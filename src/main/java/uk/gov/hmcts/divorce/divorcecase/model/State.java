@@ -223,6 +223,20 @@ public enum State {
     FinalOrderComplete("FinalOrderComplete"),
 
     @CCD(
+        name = "Final order overdue",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    FinalOrderOverdue("FinalOrderOverdue"),
+
+    @CCD(
+        name = "Final order pending",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    FinalOrderPending("FinalOrderPending"),
+
+    @CCD(
         name = "Final order requested",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}

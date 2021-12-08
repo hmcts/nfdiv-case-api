@@ -69,8 +69,11 @@ public class SystemMigrateCasesTask implements Runnable {
             log.error("Could not get lock for case id: {}, continuing to next case", caseDetails.getId());
         } catch (final CcdManagementException e) {
             log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
-        } catch (final IllegalArgumentException e) {
-            log.error("Could not deserialize case id: {}, continuing to next case", caseDetails.getId());
+
+            caseDetails.setData(Map.of("dataVersion", 0));
+            log.info("Setting dataVersion to 0 for case id: {} after failed migration", caseDetails.getId());
+            ccdUpdateService.submitEvent(caseDetails, SYSTEM_MIGRATE_CASE, user, serviceAuthorization);
+            log.info("dataVersion set for case id: {}", caseDetails.getId());
         }
     }
 

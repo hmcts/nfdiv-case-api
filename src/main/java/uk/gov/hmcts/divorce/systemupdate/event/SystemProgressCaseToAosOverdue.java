@@ -12,9 +12,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import java.util.Objects;
-
 import static java.util.EnumSet.of;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
@@ -51,12 +50,11 @@ public class SystemProgressCaseToAosOverdue implements CCDConfig<CaseData, State
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
         CaseData data = details.getData();
-        if (!Objects.isNull(data.getApplicant2EmailAddress())
-            && !Objects.isNull(data.getCaseInvite().getAccessCode())) {
+        if (isNotBlank(data.getApplicant2EmailAddress()) && isNotBlank(data.getCaseInvite().getAccessCode())) {
             applicationIssuedNotification.sendReminderToSoleRespondent(data, details.getId());
         }
 
-        if (!data.getApplication().isSolicitorApplication()) {
+        if (!data.getApplicant1().isRepresented()) {
             applicationIssuedNotification.sendPartnerNotRespondedToSoleApplicant(data, details.getId());
         }
 
