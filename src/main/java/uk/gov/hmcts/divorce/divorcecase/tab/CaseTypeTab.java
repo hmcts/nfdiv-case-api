@@ -38,6 +38,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildServiceApplicationTab(configBuilder);
         buildConditionalOrderTab(configBuilder);
         buildOutcomeOfConditionalOrderTab(configBuilder);
+        buildFinalOrderTab(configBuilder);
     }
 
     private void buildStateTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -235,5 +236,15 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("coJudgeCostsClaimGranted")
             .field("coJudgeCostsOrderAdditionalInfo")
             .field("coCertificateOfEntitlementDocument");
+    }
+
+    private void buildFinalOrderTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("outcomeOfConditionalOrder", "Outcome of Conditional Order")
+            .forRoles(CASE_WORKER, LEGAL_ADVISOR, SOLICITOR, SUPER_USER)
+            .field("doesApplicantWantToApplyForFinalOrder")
+            .field("granted")
+            .field("grantedDate")
+            .field("dateFinalOrderNoLongerEligible")
+            .field("dateFinalOrderEligibleToRespondent");
     }
 }
