@@ -16,6 +16,7 @@ import java.util.Set;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
@@ -49,6 +50,7 @@ class RetiredFieldsTest {
         data.put("disputeApplication", "YES");
         data.put("applicant1SolicitorAgreeToReceiveEmails", "Yes");
         data.put("applicant2SolicitorAgreeToReceiveEmails", "No");
+        data.put("coClarificationResponse", "some text");
 
         final var result = RetiredFields.migrate(data);
 
@@ -81,7 +83,8 @@ class RetiredFieldsTest {
             entry("coIsEverythingInApplicationTrue", "YES"),
             entry("alternativeServiceApplications", null),
             entry("applicant1SolicitorAgreeToReceiveEmailsCheckbox", Set.of(CONFIRM)),
-            entry("applicant2SolicitorAgreeToReceiveEmailsCheckbox", emptySet())
+            entry("applicant2SolicitorAgreeToReceiveEmailsCheckbox", emptySet()),
+            entry("coClarificationResponses", singletonList(ListValue.<String>builder().value("some text").build()))
         );
     }
 
