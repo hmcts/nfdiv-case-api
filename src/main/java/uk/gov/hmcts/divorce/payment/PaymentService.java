@@ -53,6 +53,7 @@ public class PaymentService {
     public static final String KEYWORD_BAILIFF = "BailiffServeDoc";
     public static final String KEYWORD_DEEMED = "GeneralAppWithoutNotice";
     public static final String KEYWORD_DIVORCE = "DivorceCivPart";
+    public static final String KEYWORD_DEF = "DEF";
 
     private static final String FAMILY = "family";
     private static final String FAMILY_COURT = "family court";
