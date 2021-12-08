@@ -37,10 +37,6 @@ public class AnswerReceivedPaymentSummary implements CcdPageConfiguration {
             .label(
                 "LabelPayTelephoneHeading",
                 "Payment Method: Telephone",
-                "disputingFeePaymentMethod=\"feePayByTelephone\"")
-            .label(
-                "LabelPayChequeHeading",
-                "Payment Method: Cheque",
-                "disputingFeePaymentMethod=\"feePayByCheque\"");
+                "disputingFeePaymentMethod=\"feePayByTelephone\"");
     }
 }

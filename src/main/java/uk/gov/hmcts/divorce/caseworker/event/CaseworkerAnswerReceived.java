@@ -19,10 +19,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.payment.PaymentService;
 
-import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 import static java.util.Arrays.asList;
@@ -101,13 +99,7 @@ public class CaseworkerAnswerReceived implements CCDConfig<CaseData, State, User
             .value(caseData.getD11Document())
             .build();
 
-        if (Objects.isNull(caseData.getDocumentsUploaded())) {
-            List<ListValue<DivorceDocument>> documentsUploaded = new ArrayList<>();
-            documentsUploaded.add(d11Document);
-            caseData.setDocumentsUploaded(documentsUploaded);
-        } else {
-            caseData.getDocumentsUploaded().add(d11Document);
-        }
+        caseData.addToDocumentsUploaded(d11Document);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

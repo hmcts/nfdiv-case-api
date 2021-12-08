@@ -73,7 +73,7 @@ public class CaseworkerAnswerReceivedTest {
     }
 
     @Test
-    void shouldAddD11DocumentToDocumentsUploaded() {
+    void shouldAddD11DocumentToTheStartDocumentsUploadedList() {
         final var caseData = caseData();
         final ListValue<DivorceDocument> doc1 =
             getDivorceDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003", "co_granted.pdf", CONDITIONAL_ORDER_GRANTED);
@@ -104,7 +104,7 @@ public class CaseworkerAnswerReceivedTest {
             caseworkerAnswerReceived.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData().getDocumentsUploaded().size()).isEqualTo(2);
-        assertThat(response.getData().getDocumentsUploaded().get(1).getValue()).isSameAs(d11);
+        assertThat(response.getData().getDocumentsUploaded().get(0).getValue()).isSameAs(d11);
     }
 
     @Test
