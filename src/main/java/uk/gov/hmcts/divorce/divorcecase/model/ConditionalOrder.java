@@ -152,9 +152,10 @@ public class ConditionalOrder {
 
     @CCD(
         label = "List of responses for Conditional Order clarification",
-        typeOverride = TextArea
+        typeOverride = Collection,
+        typeParameterOverride = "TextArea"
     )
-    private String clarificationResponse;
+    private List<ListValue<String>> clarificationResponses;
 
     @CCD(
         label = "Documents uploaded for the Conditional Order Clarification",
