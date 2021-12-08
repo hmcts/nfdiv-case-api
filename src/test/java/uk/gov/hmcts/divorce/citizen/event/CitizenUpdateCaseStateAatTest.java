@@ -39,10 +39,13 @@ public class CitizenUpdateCaseStateAatTest {
     }
 
     @Test
-    void shouldNotAddConfigurationToConfigBuilderIfEnvironmentIsNotAat() {
+    void shouldNotAddConfigurationToConfigBuilderIfEnvironmentIsNotAat() throws Exception {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         citizenUpdateCaseStateAat.configure(configBuilder);
+
+        withEnvironmentVariable("ENVIRONMENT", "demo")
+            .execute(() -> citizenUpdateCaseStateAat.configure(configBuilder));
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
