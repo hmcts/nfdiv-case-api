@@ -15,7 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.divorce.solicitor.notification.AwaitingConditionalOrderNotification;
+import uk.gov.hmcts.divorce.notification.AwaitingConditionalOrderNotification;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
@@ -116,14 +116,14 @@ class SystemProgressHeldCasesTaskTest {
         when(holdingPeriodService.getHoldingPeriodInWeeks()).thenReturn(14);
         when(ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, SERVICE_AUTHORIZATION)).thenReturn(caseDetailsList);
 
-        doNothing().when(conditionalOrderNotification).send(any(CaseData.class), anyLong());
+        doNothing().when(conditionalOrderNotification).sendToSolicitor(any(CaseData.class), anyLong());
 
         awaitingConditionalOrderTask.run();
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
 
-        verify(conditionalOrderNotification, times(2)).send(any(CaseData.class), anyLong());
+        verify(conditionalOrderNotification, times(2)).sendToSolicitor(any(CaseData.class), anyLong());
         verifyNoMoreInteractions(ccdUpdateService, conditionalOrderNotification);
     }
 
@@ -206,7 +206,7 @@ class SystemProgressHeldCasesTaskTest {
         doThrow(new CcdManagementException("Failed processing of case", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
 
-        doNothing().when(conditionalOrderNotification).send(any(CaseData.class), anyLong());
+        doNothing().when(conditionalOrderNotification).sendToSolicitor(any(CaseData.class), anyLong());
 
         mockInteractions(caseDetails1, issueDate1, caseDataMap(caseDetails1, issueDate1));
         mockInteractions(caseDetails2, issueDate2, caseDataMap(caseDetails2, issueDate2));
@@ -215,7 +215,7 @@ class SystemProgressHeldCasesTaskTest {
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
-        verify(conditionalOrderNotification, times(1)).send(any(CaseData.class), anyLong());
+        verify(conditionalOrderNotification, times(1)).sendToSolicitor(any(CaseData.class), anyLong());
     }
 
     private Map<String, Object> caseDataMap(CaseDetails caseDetails, LocalDate issueDate) {

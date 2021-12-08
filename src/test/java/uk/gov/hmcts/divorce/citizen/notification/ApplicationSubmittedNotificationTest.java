@@ -24,7 +24,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICATION_SU
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getCommonTemplateVars;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.jointCaseDataWithOrderSummary;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,7 +44,7 @@ class ApplicationSubmittedNotificationTest {
         CaseData data = caseData();
         data.setDueDate(LocalDate.of(2021, 4, 21));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
-            .thenReturn(getCommonTemplateVars());
+            .thenReturn(getMainTemplateVars());
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
@@ -67,7 +67,7 @@ class ApplicationSubmittedNotificationTest {
         data.getApplicant2().setEmail(null);
 
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
-            .thenReturn(getCommonTemplateVars());
+            .thenReturn(getMainTemplateVars());
 
         notification.sendToApplicant2(data, 1234567890123456L);
 

@@ -61,9 +61,11 @@ import java.util.UUID;
 
 import static feign.Request.HttpMethod.GET;
 import static java.lang.String.format;
+import static java.lang.String.join;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewApplicant2Notification.APPLICANT_2_SIGN_IN_DISSOLUTION_URL;
@@ -79,6 +81,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_JOINT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
+import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FIRST_NAME;
@@ -86,9 +89,12 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_DIVORCE_URL;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DIVORCE_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
@@ -577,7 +583,7 @@ public class TestDataHelper {
         );
     }
 
-    public static Map<String, String> getCommonTemplateVars() {
+    public static Map<String, String> getMainTemplateVars() {
         Map<String, String> templateVars = new HashMap<>();
         templateVars.put(APPLICATION_REFERENCE, "1234-5678-9012-3456");
         templateVars.put(IS_DIVORCE, CommonContent.YES);
@@ -586,6 +592,15 @@ public class TestDataHelper {
         templateVars.put(LAST_NAME, TEST_LAST_NAME);
         templateVars.put(PARTNER, "partner");
         templateVars.put(COURT_EMAIL, "courtEmail");
+        return templateVars;
+    }
+
+    public static Map<String, String> getBasicTemplateVars() {
+        Map<String, String> templateVars = new HashMap<>();
+        templateVars.put(APPLICATION_REFERENCE, "1234-5678-9012-3456");
+        templateVars.put(SOLICITOR_NAME, TEST_SOLICITOR_NAME);
+        templateVars.put(APPLICANT_NAME, join(" ", TEST_FIRST_NAME, TEST_LAST_NAME));
+        templateVars.put(RESPONDENT_NAME, join(" ", APPLICANT_2_FIRST_NAME, APPLICANT_2_LAST_NAME));
         return templateVars;
     }
 

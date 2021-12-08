@@ -37,7 +37,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getCommonTemplateVars;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 
 @ExtendWith(SpringExtension.class)
 public class JointApplicationOverdueNotificationTest {
@@ -57,7 +57,7 @@ public class JointApplicationOverdueNotificationTest {
         data.setDueDate(LocalDate.now());
         data.setApplicant2(getApplicant(Gender.FEMALE));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
-            .thenReturn(getCommonTemplateVars());
+            .thenReturn(getMainTemplateVars());
 
         notification.sendApplicationNotReviewedEmail(data, 1234567890123456L);
 
@@ -78,7 +78,7 @@ public class JointApplicationOverdueNotificationTest {
         data.setDueDate(LocalDate.now());
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         data.setApplicant2(getApplicant(Gender.MALE));
-        final Map<String, String> templateVars = getCommonTemplateVars();
+        final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
 
@@ -103,7 +103,7 @@ public class JointApplicationOverdueNotificationTest {
         data.setDueDate(LocalDate.now());
         data.setApplicant2(getApplicant(Gender.FEMALE));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
-            .thenReturn(getCommonTemplateVars());
+            .thenReturn(getMainTemplateVars());
 
         notification.sendApplicationApprovedReminderToApplicant1(data, 1234567890123456L);
 
@@ -127,7 +127,7 @@ public class JointApplicationOverdueNotificationTest {
         HelpWithFees hwf = HelpWithFees.builder().needHelp(YesOrNo.YES).build();
         data.getApplication().setApplicant1HelpWithFees(hwf);
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
-            .thenReturn(getCommonTemplateVars());
+            .thenReturn(getMainTemplateVars());
 
         notification.sendApplicationApprovedReminderToApplicant1(data, 1234567890123456L);
 
@@ -149,7 +149,7 @@ public class JointApplicationOverdueNotificationTest {
         data.setDueDate(LocalDate.now());
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         data.setApplicant2(getApplicant(Gender.MALE));
-        final Map<String, String> templateVars = getCommonTemplateVars();
+        final Map<String, String> templateVars = getMainTemplateVars();
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
 
         notification.sendApplicationApprovedReminderToApplicant1(data, 1234567890123456L);

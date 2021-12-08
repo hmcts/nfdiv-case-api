@@ -23,8 +23,8 @@ import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyApplicantsApplyForCO.SYSTEM_NOTIFY_APPLICANTS_CONDITIONAL_ORDER;
-import static uk.gov.hmcts.divorce.systemupdate.schedule.conditionalorder.SystemNotifyApplicantsApplyForCOtask.NOTIFICATION_FLAG;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicantsApplyForCOrder.SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.systemupdate.schedule.conditionalorder.SystemRemindApplicantsApplyForCOrderTask.NOTIFICATION_FLAG;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DUE_DATE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
@@ -33,18 +33,18 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
-public class SystemNotifyApplicantsApplyForCoFT extends FunctionalTestSuite {
+public class SystemRemindApplicantsApplyForCOrderFT extends FunctionalTestSuite {
 
     private static final String REQUEST =
-        "classpath:request/casedata/ccd-callback-casedata-system-notify-joint-applicants-conditional-order.json";
-    private static final String RESPONSE = "classpath:responses/response-system-notify-joint-applicants-conditional-order.json";
+        "classpath:request/casedata/ccd-callback-casedata-system-remind-joint-applicants-conditional-order.json";
+    private static final String RESPONSE = "classpath:responses/response-system-remind-joint-applicants-conditional-order.json";
 
 
     @Test
     public void shouldPassValidationAndSendEmailsToApplicantAndRespondent() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
 
-        Response response = triggerCallback(request, SYSTEM_NOTIFY_APPLICANTS_CONDITIONAL_ORDER, ABOUT_TO_SUBMIT_URL);
+        Response response = triggerCallback(request, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
 
@@ -66,9 +66,8 @@ public class SystemNotifyApplicantsApplyForCoFT extends FunctionalTestSuite {
             .forEach(caseDetails -> {
                 CaseData caseData = getCaseData(caseDetails.getData());
                 assertThat(caseDetails.getState().equals(AwaitingConditionalOrder));
-                assertThat(caseData.getApplication().getJointApplicantsNotifiedCanApplyForConditionalOrder()).isNotEqualTo(YesOrNo.YES);
+                assertThat(caseData.getApplication().getJointApplicantsRemindedCanApplyForConditionalOrder()).isNotEqualTo(YesOrNo.YES);
                 assertThat(caseData.getDueDate()).isBeforeOrEqualTo(LocalDate.now());
             });
     }
-
 }

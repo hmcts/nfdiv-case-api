@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.divorce.solicitor.notification.AwaitingConditionalOrderNotification;
+import uk.gov.hmcts.divorce.notification.AwaitingConditionalOrderNotification;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
@@ -123,13 +123,11 @@ public class SystemProgressHeldCasesTask implements Runnable {
 
         if (applicant1SolicitorRepresented) {
             log.info("For case id {} applicant is represented by solicitor hence sending conditional order notification email", caseId);
-            conditionalOrderNotification.send(caseData, caseId);
+            conditionalOrderNotification.sendToSolicitor(caseData, caseId);
         } else {
-            log.info(
-                "For case id {} applicant is not represented by solicitor hence not sending conditional order notification email",
-                caseId
-            );
+            log.info("20wk holding period elapsed for Case({}), notifying Joint Applicants they can apply for conditional order", caseId);
+            conditionalOrderNotification.sendToApplicant1(caseData, caseId, false);
+            conditionalOrderNotification.sendToApplicant2(caseData, caseId, false);
         }
-
     }
 }

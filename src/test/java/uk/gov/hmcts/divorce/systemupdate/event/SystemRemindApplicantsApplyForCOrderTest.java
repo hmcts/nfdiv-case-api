@@ -10,10 +10,10 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.ApplyForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.AwaitingConditionalOrderNotification;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -21,22 +21,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyApplicantsApplyForCO.SYSTEM_NOTIFY_APPLICANTS_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicantsApplyForCOrder.SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
-public class SystemNotifyApplicantsApplyForCoTest {
+public class SystemRemindApplicantsApplyForCOrderTest {
 
     @Mock
     private HttpServletRequest httpServletRequest;
 
     @Mock
-    private ApplyForConditionalOrderNotification notification;
+    private AwaitingConditionalOrderNotification notification;
 
     @InjectMocks
-    private SystemNotifyApplicantsApplyForCO underTest;
+    private SystemRemindApplicantsApplyForCOrder underTest;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
@@ -46,7 +46,7 @@ public class SystemNotifyApplicantsApplyForCoTest {
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(SYSTEM_NOTIFY_APPLICANTS_CONDITIONAL_ORDER);
+            .contains(SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER);
     }
 
     @Test
@@ -59,8 +59,8 @@ public class SystemNotifyApplicantsApplyForCoTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = underTest.aboutToSubmit(details, details);
 
-        verify(notification).sendToApplicant1(caseData, details.getId());
-        verify(notification).sendToApplicant2(caseData, details.getId());
-        assertThat(response.getData().getApplication().getJointApplicantsNotifiedCanApplyForConditionalOrder()).isEqualTo(YesOrNo.YES);
+        verify(notification).sendToApplicant1(caseData, details.getId(), true);
+        verify(notification).sendToApplicant2(caseData, details.getId(), true);
+        assertThat(response.getData().getApplication().getJointApplicantsRemindedCanApplyForConditionalOrder()).isEqualTo(YesOrNo.YES);
     }
 }
