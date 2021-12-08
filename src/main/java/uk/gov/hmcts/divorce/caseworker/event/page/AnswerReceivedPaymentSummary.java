@@ -10,7 +10,7 @@ public class AnswerReceivedPaymentSummary implements CcdPageConfiguration {
     @Override
     public void addTo(final PageBuilder pageBuilder) {
         pageBuilder
-            .page("AltPaymentSummary")
+            .page("AnswerReceivedPaymentSummary")
             .complex(CaseData::getAcknowledgementOfService)
             .mandatoryNoSummary(AcknowledgementOfService::getDisputingFee)
             .done()
