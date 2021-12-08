@@ -388,4 +388,18 @@ public class CaseData {
             this.setAlternativeService(null);
         }
     }
+
+    @JsonIgnore
+    public void addToDocumentsUploaded(final ListValue<DivorceDocument> listValue) {
+
+        final List<ListValue<DivorceDocument>> documents = getDocumentsUploaded();
+
+        if (isEmpty(documents)) {
+            final List<ListValue<DivorceDocument>> documentList = new ArrayList<>();
+            documentList.add(listValue);
+            setDocumentsUploaded(documentList);
+        } else {
+            documents.add(0, listValue); // always add to start top of list
+        }
+    }
 }
