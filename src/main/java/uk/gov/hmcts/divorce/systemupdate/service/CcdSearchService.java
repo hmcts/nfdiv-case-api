@@ -125,7 +125,7 @@ public class CcdSearchService {
                     )
             )
             .from(0)
-            .size(2000);
+            .size(500);
 
         return coreCaseDataApi.searchCases(
             user.getAuthToken(),
@@ -150,7 +150,7 @@ public class CcdSearchService {
                     )
             )
             .from(0)
-            .size(2000);
+            .size(500);
 
         return coreCaseDataApi.searchCases(
             user.getAuthToken(),

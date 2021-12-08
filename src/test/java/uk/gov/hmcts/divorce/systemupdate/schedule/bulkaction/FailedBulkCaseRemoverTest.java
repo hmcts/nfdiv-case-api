@@ -44,14 +44,14 @@ class FailedBulkCaseRemoverTest {
     void shouldRemoveGivenCaseIdsFromBulkCaseListAndUpdateBulkCase() {
 
         final User user = mock(User.class);
-        final List<Long> failedCaseIds = List.of(2L, 4L);
+        final List<ListValue<BulkListCaseDetails>> failedCases = getBulkListCaseDetailsListValueForCaseIds("2", "4");
         final List<ListValue<BulkListCaseDetails>> listValues = getBulkListCaseDetailsListValueForCaseIds("1", "2", "3", "4", "5");
         final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails = new CaseDetails<>();
         bulkCaseDetails.setId(1L);
         bulkCaseDetails.setData(BulkActionCaseData.builder().bulkListCaseDetails(listValues).build());
 
         failedBulkCaseRemover.removeFailedCasesFromBulkListCaseDetails(
-            failedCaseIds,
+            failedCases,
             bulkCaseDetails,
             user,
             SERVICE_AUTHORIZATION);
@@ -69,14 +69,14 @@ class FailedBulkCaseRemoverTest {
     void shouldRemoveGivenCaseIdsFromBulkCaseListAndSetBulkCaseStateToEmptyIfAllCasesFailed() {
 
         final User user = mock(User.class);
-        final List<Long> failedCaseIds = List.of(1L, 2L, 3L, 4L, 5L);
+        final List<ListValue<BulkListCaseDetails>> failedCases = getBulkListCaseDetailsListValueForCaseIds("1", "2", "3", "4", "5");
         final List<ListValue<BulkListCaseDetails>> listValues = getBulkListCaseDetailsListValueForCaseIds("1", "2", "3", "4", "5");
         final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails = new CaseDetails<>();
         bulkCaseDetails.setId(1L);
         bulkCaseDetails.setData(BulkActionCaseData.builder().bulkListCaseDetails(listValues).build());
 
         failedBulkCaseRemover.removeFailedCasesFromBulkListCaseDetails(
-            failedCaseIds,
+            failedCases,
             bulkCaseDetails,
             user,
             SERVICE_AUTHORIZATION);
@@ -115,7 +115,7 @@ class FailedBulkCaseRemoverTest {
     void shouldNotThrowExceptionAndCompleteNormallyIfCcdManagementExceptionIfThrown() {
 
         final User user = mock(User.class);
-        final List<Long> failedCaseIds = List.of(2L, 4L);
+        final List<ListValue<BulkListCaseDetails>> failedCases = getBulkListCaseDetailsListValueForCaseIds("2", "4");
         final List<ListValue<BulkListCaseDetails>> listValues = getBulkListCaseDetailsListValueForCaseIds("1", "2", "3", "4", "5");
         final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails = new CaseDetails<>();
         bulkCaseDetails.setId(1L);
@@ -130,7 +130,7 @@ class FailedBulkCaseRemoverTest {
 
         try {
             failedBulkCaseRemover.removeFailedCasesFromBulkListCaseDetails(
-                failedCaseIds,
+                failedCases,
                 bulkCaseDetails,
                 user,
                 SERVICE_AUTHORIZATION);
@@ -143,7 +143,7 @@ class FailedBulkCaseRemoverTest {
     void shouldNotThrowExceptionAndCompleteNormallyIfCcdManagementExceptionIfThrownWhenSettingEmptyState() {
 
         final User user = mock(User.class);
-        final List<Long> failedCaseIds = List.of(1L, 2L, 3L, 4L, 5L);
+        final List<ListValue<BulkListCaseDetails>> failedCases = getBulkListCaseDetailsListValueForCaseIds("1", "2", "3", "4", "5");
         final List<ListValue<BulkListCaseDetails>> listValues = getBulkListCaseDetailsListValueForCaseIds("1", "2", "3", "4", "5");
         final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails = new CaseDetails<>();
         bulkCaseDetails.setId(1L);
@@ -165,7 +165,7 @@ class FailedBulkCaseRemoverTest {
 
         try {
             failedBulkCaseRemover.removeFailedCasesFromBulkListCaseDetails(
-                failedCaseIds,
+                failedCases,
                 bulkCaseDetails,
                 user,
                 SERVICE_AUTHORIZATION);

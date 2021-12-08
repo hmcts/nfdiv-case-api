@@ -16,7 +16,9 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -46,7 +48,7 @@ public class UpdateConditionalOrder implements CCDConfig<CaseData, State, UserRo
             .description("Update conditional order")
             .endButtonLabel("Save conditional order")
             .explicitGrants()
-            .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, CREATOR)
+            .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, CREATOR, CITIZEN, APPLICANT_2)
             .grant(READ,
                 CASE_WORKER,
                 SUPER_USER,

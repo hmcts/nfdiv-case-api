@@ -69,6 +69,8 @@ public class CaseRemovalServiceTest {
             .casesAcceptedToListForHearing(List.of(getCaseLinkListValue("1")))
             .build();
 
+        final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails = new CaseDetails<>();
+
         var casesToRemove = List.of(getBulkListCaseDetailsListValue("2"));
         var user = mock(User.class);
 
@@ -76,7 +78,12 @@ public class CaseRemovalServiceTest {
         when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
 
         var caseTask = mock(CaseTask.class);
-        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseData, SYSTEM_REMOVE_BULK_CASE)).thenReturn(caseTask);
+        var bulkActionCaseDetails = CaseDetails
+            .<BulkActionCaseData, BulkActionState>builder()
+            .data(bulkActionCaseData)
+            .build();
+
+        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseDetails, SYSTEM_REMOVE_BULK_CASE)).thenReturn(caseTask);
 
         when(bulkTriggerService.bulkTrigger(
             casesToRemove,
@@ -85,11 +92,6 @@ public class CaseRemovalServiceTest {
             user,
             SERVICE_AUTHORIZATION
         )).thenReturn(emptyList());
-
-        var bulkActionCaseDetails = CaseDetails
-            .<BulkActionCaseData, BulkActionState>builder()
-            .data(bulkActionCaseData)
-            .build();
 
         caseRemovalService.removeCases(bulkActionCaseDetails, casesToRemove, TEST_SYSTEM_AUTHORISATION_TOKEN);
 
@@ -140,7 +142,12 @@ public class CaseRemovalServiceTest {
         when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
 
         var caseTask = mock(CaseTask.class);
-        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseData, SYSTEM_REMOVE_BULK_CASE)).thenReturn(caseTask);
+        var bulkActionCaseDetails = CaseDetails
+            .<BulkActionCaseData, BulkActionState>builder()
+            .data(bulkActionCaseData)
+            .build();
+
+        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseDetails, SYSTEM_REMOVE_BULK_CASE)).thenReturn(caseTask);
 
         when(bulkTriggerService.bulkTrigger(
             casesToRemove,
@@ -149,11 +156,6 @@ public class CaseRemovalServiceTest {
             user,
             SERVICE_AUTHORIZATION
         )).thenReturn(singletonList(getBulkListCaseDetailsListValue("3")));
-
-        var bulkActionCaseDetails = CaseDetails
-            .<BulkActionCaseData, BulkActionState>builder()
-            .data(bulkActionCaseData)
-            .build();
 
         caseRemovalService.removeCases(bulkActionCaseDetails, casesToRemove, TEST_SYSTEM_AUTHORISATION_TOKEN);
 
@@ -207,7 +209,12 @@ public class CaseRemovalServiceTest {
         when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
 
         var caseTask = mock(CaseTask.class);
-        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseData, SYSTEM_REMOVE_BULK_CASE)).thenReturn(caseTask);
+        var bulkActionCaseDetails = CaseDetails
+            .<BulkActionCaseData, BulkActionState>builder()
+            .data(bulkActionCaseData)
+            .build();
+
+        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseDetails, SYSTEM_REMOVE_BULK_CASE)).thenReturn(caseTask);
 
         when(bulkTriggerService.bulkTrigger(
             casesToRemove,
@@ -216,11 +223,6 @@ public class CaseRemovalServiceTest {
             user,
             SERVICE_AUTHORIZATION
         )).thenReturn(casesToRemove);
-
-        var bulkActionCaseDetails = CaseDetails
-            .<BulkActionCaseData, BulkActionState>builder()
-            .data(bulkActionCaseData)
-            .build();
 
         caseRemovalService.removeCases(bulkActionCaseDetails, casesToRemove, TEST_SYSTEM_AUTHORISATION_TOKEN);
 
@@ -269,7 +271,12 @@ public class CaseRemovalServiceTest {
         when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
 
         var caseTask = mock(CaseTask.class);
-        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseData, SYSTEM_REMOVE_BULK_CASE)).thenReturn(caseTask);
+        var bulkActionCaseDetails = CaseDetails
+            .<BulkActionCaseData, BulkActionState>builder()
+            .data(bulkActionCaseData)
+            .build();
+
+        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseDetails, SYSTEM_REMOVE_BULK_CASE)).thenReturn(caseTask);
 
         when(bulkTriggerService.bulkTrigger(
             casesToProcess,
@@ -279,18 +286,13 @@ public class CaseRemovalServiceTest {
             SERVICE_AUTHORIZATION
         )).thenReturn(emptyList());
 
-        var bulkActionCaseDetails = CaseDetails
-            .<BulkActionCaseData, BulkActionState>builder()
-            .data(bulkActionCaseData)
-            .build();
-
         doThrow(FeignException.class)
             .when(ccdUpdateService)
             .submitBulkActionEvent(
-                eq(bulkActionCaseDetails),
-                eq(SYSTEM_UPDATE_BULK_CASE),
-                eq(user),
-                eq(SERVICE_AUTHORIZATION)
+                bulkActionCaseDetails,
+                SYSTEM_UPDATE_BULK_CASE,
+                user,
+                SERVICE_AUTHORIZATION
             );
 
         try {
@@ -299,7 +301,7 @@ public class CaseRemovalServiceTest {
                 List.of(getBulkListCaseDetailsListValue("2")),
                 TEST_SYSTEM_AUTHORISATION_TOKEN);
         } catch (Exception e) {
-            fail("No exception should be thrown by removeCases");
+            fail("No exception should be thrown by removeCases", e);
         }
     }
 }

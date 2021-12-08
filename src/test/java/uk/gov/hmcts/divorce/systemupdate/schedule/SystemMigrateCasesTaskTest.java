@@ -32,6 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -126,7 +127,7 @@ class SystemMigrateCasesTaskTest {
 
         systemMigrateCasesTask.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService, times(2)).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
     }
 
@@ -145,6 +146,27 @@ class SystemMigrateCasesTaskTest {
 
         when(objectMapper.convertValue(eq(caseDetails1.getData()), eq(CaseData.class)))
             .thenThrow(new IllegalArgumentException("Failed to deserialize"));
+
+        systemMigrateCasesTask.run();
+
+        assertThat(caseDetails1.getData()).isEqualTo(Map.of("dataVersion", 0));
+    }
+
+    @Test
+    void shouldSetDataVersionToZeroIfExceptionIsThrownWhilstSubmittingCcdUpdateEvent() {
+        final CaseDetails caseDetails1 =
+            CaseDetails.builder()
+                .data(new HashMap<>())
+                .build();
+
+        final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
+
+        when(ccdSearchService.searchForCasesWithVersionLessThan(RetiredFields.getVersion(), user, SERVICE_AUTHORIZATION))
+            .thenReturn(caseDetailsList);
+
+        doThrow(new CcdManagementException("Failed processing of case", mock(FeignException.class)))
+            .doNothing()
+            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_CASE, user, SERVICE_AUTHORIZATION);
 
         systemMigrateCasesTask.run();
 

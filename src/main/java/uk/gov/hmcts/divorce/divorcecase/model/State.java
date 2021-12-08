@@ -71,6 +71,13 @@ public enum State {
     AwaitingAdminClarification("AwaitingAdminClarification"),
 
     @CCD(
+        name = "Awaiting amended application",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    AwaitingAmendedApplication("AwaitingAmendedApplication"),
+
+    @CCD(
         name = "Awaiting applicant",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
     )

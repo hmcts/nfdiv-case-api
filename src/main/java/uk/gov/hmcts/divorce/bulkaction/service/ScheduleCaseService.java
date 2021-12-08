@@ -41,7 +41,7 @@ public class ScheduleCaseService {
         bulkCaseProcessingService.updateAllBulkCases(
             bulkCaseDetails,
             SYSTEM_UPDATE_CASE_COURT_HEARING,
-            bulkCaseCaseTaskFactory.getCaseTask(bulkCaseDetails.getData(), SYSTEM_UPDATE_CASE_COURT_HEARING),
+            bulkCaseCaseTaskFactory.getCaseTask(bulkCaseDetails, SYSTEM_UPDATE_CASE_COURT_HEARING),
             user,
             serviceAuth);
     }
@@ -56,7 +56,7 @@ public class ScheduleCaseService {
         bulkCaseProcessingService.updateAllBulkCases(
             bulkCaseDetails,
             SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE,
-            bulkCaseCaseTaskFactory.getCaseTask(bulkCaseDetails.getData(), SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE),
+            bulkCaseCaseTaskFactory.getCaseTask(bulkCaseDetails, SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE),
             user,
             serviceAuth);
     }
