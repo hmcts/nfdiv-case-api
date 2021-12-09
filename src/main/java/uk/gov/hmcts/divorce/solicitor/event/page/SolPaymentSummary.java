@@ -12,7 +12,7 @@ public class SolPaymentSummary implements CcdPageConfiguration {
 
         pageBuilder
             .page("SolPaymentSummary")
-            .pageLabel("### ${applicant1FirstName} ${applicant1LastName} and ${applicant2FirstName} ${applicant2LastName}")
+            .pageLabel("Order Summary")
             .complex(CaseData::getApplication)
                 .mandatory(Application::getApplicationFeeOrderSummary)
                 .done()
