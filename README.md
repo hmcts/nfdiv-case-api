@@ -96,4 +96,4 @@ Note that the cron will only run in the aat-00 cluster as we don't have a way to
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
