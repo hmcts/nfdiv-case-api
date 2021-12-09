@@ -22,12 +22,14 @@ public class CitizenUpdateCaseStateAat implements CCDConfig<CaseData, State, Use
 
     private static final String ENVIRONMENT_AAT = "aat";
 
+    private static final String ENVIRONMENT_PREVIEW = "preview";
+
     public static final String CITIZEN_UPDATE_CASE_STATE_AAT = "citizen-update-case-state-aat";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
-        if (isEnvironmentAat()) {
+        if (isEnvironmentAatOrPreview()) {
             configBuilder
                 .event(CITIZEN_UPDATE_CASE_STATE_AAT)
                 .forAllStates()
@@ -54,9 +56,11 @@ public class CitizenUpdateCaseStateAat implements CCDConfig<CaseData, State, Use
             .build();
     }
 
-    public boolean isEnvironmentAat() {
+    public boolean isEnvironmentAatOrPreview() {
         String environment = System.getenv().getOrDefault("ENVIRONMENT", null);
-        return null != environment && environment.equalsIgnoreCase(ENVIRONMENT_AAT);
+        String clusterName =  System.getenv().getOrDefault("CLUSTER_NAME", null);
+        return null != environment && (environment.equalsIgnoreCase(ENVIRONMENT_AAT) || environment.equalsIgnoreCase(ENVIRONMENT_PREVIEW))
+            || clusterName != null && (clusterName.contains(ENVIRONMENT_AAT) || clusterName.contains(ENVIRONMENT_PREVIEW));
     }
 }
 
