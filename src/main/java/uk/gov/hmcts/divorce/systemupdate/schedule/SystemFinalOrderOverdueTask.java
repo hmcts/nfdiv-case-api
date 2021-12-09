@@ -67,8 +67,6 @@ public class SystemFinalOrderOverdueTask implements Runnable {
                     Map<String, Object> caseDataMap = caseDetails.getData();
 
                     String pronouncedDate = (String) caseDataMap.getOrDefault(PRONOUNCED_DATE, null);
-                    log.info("pronouncedDate is {} from caseDataMap for case id {}", pronouncedDate, caseDetails.getId());
-
                     if (pronouncedDate == null) {
                         log.error("Ignoring case id {} with created on {} and modified on {}, as pronounced date is null",
                             caseDetails.getId(),
@@ -77,8 +75,6 @@ public class SystemFinalOrderOverdueTask implements Runnable {
                         );
                     } else {
                         LocalDate finalOrderOverdueDate = LocalDate.parse(pronouncedDate).plusMonths(12);
-
-                        log.info("Final Order Overdue Date {} Case {}", finalOrderOverdueDate, caseDetails.getId());
 
                         if (finalOrderOverdueDate.isBefore(LocalDate.now())) {
                             log.info("Submitting Final Order Overdue Event for Case {}", caseDetails.getId());
