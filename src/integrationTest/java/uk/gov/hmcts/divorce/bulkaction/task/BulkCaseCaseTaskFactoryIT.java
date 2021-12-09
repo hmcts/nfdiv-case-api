@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYSTEM_LINK_WITH_BULK_CASE;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithPronouncementJudge.SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE;
@@ -54,5 +55,15 @@ public class BulkCaseCaseTaskFactoryIT {
         final CaseTask caseTask = bulkCaseCaseTaskFactory.getCaseTask(bulkCaseDetails, SYSTEM_PRONOUNCE_CASE);
 
         assertThat(caseTask.getClass().toString()).contains("PronounceCaseProvider$$Lambda");
+    }
+    
+    @Test
+    void shouldReturnLinkBulkCaseProviderCaseTask() {
+
+        final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails = new CaseDetails<>();
+
+        final CaseTask caseTask = bulkCaseCaseTaskFactory.getCaseTask(bulkCaseDetails, SYSTEM_LINK_WITH_BULK_CASE);
+
+        assertThat(caseTask.getClass().toString()).contains("LinkBulkCaseProvider$$Lambda");
     }
 }
