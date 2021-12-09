@@ -63,7 +63,7 @@ class SubmitConditionalOrderTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, null);
 
-        assertThat(response.getData().getConditionalOrder().getDateSubmitted()).isEqualTo(getExpectedLocalDateTime());
+        assertThat(response.getData().getConditionalOrder().getApplicant1SubmittedDate()).isEqualTo(getExpectedLocalDateTime());
     }
 
     @Test

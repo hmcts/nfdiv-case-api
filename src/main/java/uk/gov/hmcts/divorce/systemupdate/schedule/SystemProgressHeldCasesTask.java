@@ -127,7 +127,9 @@ public class SystemProgressHeldCasesTask implements Runnable {
         } else {
             log.info("20wk holding period elapsed for Case({}), notifying Joint Applicants they can apply for conditional order", caseId);
             conditionalOrderNotification.sendToApplicant1(caseData, caseId, false);
-            conditionalOrderNotification.sendToApplicant2(caseData, caseId, false);
+            if (!caseData.getApplicationType().isSole()) {
+                conditionalOrderNotification.sendToApplicant2(caseData, caseId, false);
+            }
         }
     }
 }

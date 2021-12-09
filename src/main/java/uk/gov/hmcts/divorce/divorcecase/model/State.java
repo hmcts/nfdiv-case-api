@@ -197,6 +197,13 @@ public enum State {
     ConditionalOrderDrafted("ConditionalOrderDrafted"),
 
     @CCD(
+        name = "Conditional order pending submission",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    ConditionalOrderPending("ConditionalOrderPending"),
+
+    @CCD(
         name = "Conditional order pronounced",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
