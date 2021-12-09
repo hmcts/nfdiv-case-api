@@ -25,7 +25,8 @@ public class MarriageIrretrievablyBroken implements CcdPageConfiguration {
                 .done()
             .label(
                 "MarriageNotIrretrievablyBroken",
-                "The ${labelContentMarriageOrCivilPartnership} must have broken down irretrievably for the applicant to {labelContentDivorceOrLegallyEnd}.",
+                "The ${labelContentMarriageOrCivilPartnership} must have broken down irretrievably "
+                    + "for the applicant to {labelContentDivorceOrLegallyEnd}.",
                 "applicant1ScreenHasMarriageBroken=\"No\""
             );
     }
