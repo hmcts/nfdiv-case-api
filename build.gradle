@@ -376,6 +376,17 @@ bootRun {
         systemProperty 'IDAM_API_BASEURL', 'http://localhost:5000'
         systemProperty 'CASE_DATA_STORE_BASEURL', 'http://localhost:4452'
       }
+
+      // CCD config
+      systemProperty 'IDAM_OAUTH2_DATA_STORE_CLIENT_SECRET', getVaultSecret('idam-secret')
+      systemProperty 'IDAM_API_BASE_URL', 'https://idam-api.aat.platform.hmcts.net'
+      systemProperty 'IDAM_S2S_URL', 'http://rpe-service-auth-provider-aat.service.core-compute-aat.internal'
+      systemProperty 'IDAM_CLIENT_ID', 'nfdiv_case_api'
+
+      // from nfdiv-dev-env/.env (also in the vault)
+      systemProperty 'DATA_STORE_IDAM_KEY', ''
+      systemProperty 'DEFINITION_STORE_IDAM_KEY', ''
+
     }
   }
 }
@@ -453,21 +464,36 @@ def reloadCcd = tasks.register('reloadCcd') {
         def (key, value) = it.tokenize('=')
         environment key, value
       }
+
+      environment 'IDAM_API_URL_BASE', 'https://idam-api.aat.platform.hmcts.net'
+      environment 'DEFINITION_STORE_URL_BASE', 'http://localhost:4013'
+
       commandLine './bin/process-and-import-ccd-definition.sh'
     }
-    exec {
-      file('../.env').readLines().each() {
-        def (key, value) = it.tokenize('=')
-        environment key, value
-      }
-      commandLine 'docker-compose', '-f', '../docker-compose.yml', 'up', '--build', '-d', 'nfdiv-case-api'
-    }
+//    exec {
+//      file('../.env').readLines().each() {
+//        def (key, value) = it.tokenize('=')
+//        environment key, value
+//      }
+//      commandLine 'docker-compose', '-f', '../docker-compose.yml', 'up', '--build', '-d', 'nfdiv-case-api'
+//    }
+  }
+}
+//
+//reloadCcd.configure {
+//  dependsOn assemble, generateCCDConfig
+//}
+
+generateCCDConfig.dependsOn stopCaseApiContainer
+
+task bootWithCcd() {
+  description = "Boot application with CCD"
+  group = "application"
+
+  doFirst {
+    classpath += sourceSets.ccdTest.runtimeClasspath
   }
 }
 
-reloadCcd.configure {
-  dependsOn assemble, generateCCDConfig
-}
-
-generateCCDConfig.dependsOn stopCaseApiContainer
+bootWithCcd.dependsOn bootRun
 
