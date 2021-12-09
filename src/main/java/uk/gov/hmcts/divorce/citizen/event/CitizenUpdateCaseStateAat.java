@@ -20,16 +20,14 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 @Component
 public class CitizenUpdateCaseStateAat implements CCDConfig<CaseData, State, UserRole> {
 
-    private static final String ENVIRONMENT_AAT = "aat";
-
-    private static final String ENVIRONMENT_PREVIEW = "preview";
+    private static final String ENVIRONMENT_PROD = "prod";
 
     public static final String CITIZEN_UPDATE_CASE_STATE_AAT = "citizen-update-case-state-aat";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
-        if (isEnvironmentAatOrPreview()) {
+        if (isEnvironmentNotProd()) {
             configBuilder
                 .event(CITIZEN_UPDATE_CASE_STATE_AAT)
                 .forAllStates()
@@ -56,11 +54,11 @@ public class CitizenUpdateCaseStateAat implements CCDConfig<CaseData, State, Use
             .build();
     }
 
-    public boolean isEnvironmentAatOrPreview() {
+    public boolean isEnvironmentNotProd() {
         String environment = System.getenv().getOrDefault("ENVIRONMENT", null);
         String clusterName =  System.getenv().getOrDefault("CLUSTER_NAME", null);
-        return null != environment && (environment.equalsIgnoreCase(ENVIRONMENT_AAT) || environment.equalsIgnoreCase(ENVIRONMENT_PREVIEW))
-            || clusterName != null && (clusterName.contains(ENVIRONMENT_AAT) || clusterName.contains(ENVIRONMENT_PREVIEW));
+        return null != environment && !environment.equalsIgnoreCase(ENVIRONMENT_PROD)
+            || clusterName != null && !clusterName.contains(ENVIRONMENT_PROD);
     }
 }
 
