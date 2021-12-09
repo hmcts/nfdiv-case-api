@@ -9,7 +9,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseAccessAdministrator;
 @Getter
 public enum State {
 
-    @CCD()
+    @CCD(
+        label = "### Case number: ${[CASE_REFERENCE]}\n"
+            + "### ${applicant1FirstName} ${applicant1LastName} and ${applicant2FirstName} ${applicant2LastName}"
+    )
     Draft("Draft"),
 
     @CCD(
