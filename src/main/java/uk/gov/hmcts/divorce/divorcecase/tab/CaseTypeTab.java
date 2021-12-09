@@ -100,7 +100,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     }
 
     private void buildConfidentialApplicantTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        configBuilder.tab("ConfidentialApplicant", "Confidential Address")
+        configBuilder.tab("ConfidentialApplicant", "Confidential Applicant")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR)
             .showCondition("applicant1KeepContactDetailsConfidential=\"Yes\"")
             .field("applicant1CorrespondenceAddress")
