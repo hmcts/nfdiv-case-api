@@ -15,27 +15,27 @@ public class AnswerReceivedPaymentSummary implements CcdPageConfiguration {
             .mandatoryNoSummary(AcknowledgementOfService::getDisputingFee)
             .done()
             .label(
-                "LabelPayAccountHeading",
+                "LabelAnswerReceivedPayAccountHeading",
                 "Payment Method: Fee Account",
                 "disputingFeePaymentMethod=\"feePayByAccount\"")
             .label(
-                "LabelPayAccountReference1",
+                "LabelAnswerReceivedPayAccountReference1",
                 "Your pay account reference: **${disputingFeeAccountReferenceNumber}**",
                 "disputingFeePaymentMethod=\"feePayByAccount\"")
             .label(
-                "LabelPayAccountReference2",
+                "LabelAnswerReceivedPayAccountReference2",
                 "Fee account number: **${disputingFeeAccountNumber}**",
                 "disputingFeePaymentMethod=\"feePayByAccount\"")
             .label(
-                "LabelPayHWFHeading",
+                "LabelAnswerReceivedPayHWFHeading",
                 "Payment Method: Help with Fees",
                 "disputingFeePaymentMethod=\"feePayByHelp\"")
             .label(
-                "LabelPayHWFReference",
+                "LabelAnswerReceivedPayHWFReference",
                 "Your Help with Fees reference: **${disputingFeeHelpWithFeesReferenceNumber}**",
                 "disputingFeePaymentMethod=\"feePayByHelp\"")
             .label(
-                "LabelPayTelephoneHeading",
+                "LabelAnswerReceivedPayTelephoneHeading",
                 "Payment Method: Telephone",
                 "disputingFeePaymentMethod=\"feePayByTelephone\"");
     }
