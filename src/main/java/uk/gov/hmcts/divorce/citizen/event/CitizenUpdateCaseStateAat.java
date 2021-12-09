@@ -20,14 +20,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 @Component
 public class CitizenUpdateCaseStateAat implements CCDConfig<CaseData, State, UserRole> {
 
-    private static final String ENVIRONMENT_PROD = "prod";
-
     public static final String CITIZEN_UPDATE_CASE_STATE_AAT = "citizen-update-case-state-aat";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
-        if (isEnvironmentNotProd()) {
+        if (isCitizenUpdateCaseStateEnabled()) {
             configBuilder
                 .event(CITIZEN_UPDATE_CASE_STATE_AAT)
                 .forAllStates()
@@ -54,11 +52,8 @@ public class CitizenUpdateCaseStateAat implements CCDConfig<CaseData, State, Use
             .build();
     }
 
-    public boolean isEnvironmentNotProd() {
-        String environment = System.getenv().getOrDefault("ENVIRONMENT", null);
-        String clusterName =  System.getenv().getOrDefault("CLUSTER_NAME", null);
-        return null != environment && !environment.equalsIgnoreCase(ENVIRONMENT_PROD)
-            || clusterName != null && !clusterName.contains(ENVIRONMENT_PROD);
+    public boolean isCitizenUpdateCaseStateEnabled() {
+        String citizenUpdateCaseStateEnabled = System.getenv().getOrDefault("CITIZEN_UPDATE_CASE_STATE_ENABLED", null);
+        return null != citizenUpdateCaseStateEnabled && citizenUpdateCaseStateEnabled.equalsIgnoreCase("true");
     }
 }
-
