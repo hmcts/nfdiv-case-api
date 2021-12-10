@@ -13,13 +13,13 @@ public class MarriageCertificateDetails implements CcdPageConfiguration {
 
         pageBuilder
             .page("MarriageCertificateDetails")
-            .pageLabel("Marriage certificate details")
+            .pageLabel("Details from the certificate")
             .complex(CaseData::getApplication)
                 .complex(Application::getMarriageDetails)
-                    .mandatory(MarriageDetails::getDate)
-                    .mandatory(MarriageDetails::getApplicant1Name)
-                    .mandatory(MarriageDetails::getApplicant2Name)
-                    .mandatoryWithLabel(MarriageDetails::getMarriedInUk, "Did the marriage take place in the UK?")
+                    .mandatoryWithLabel(MarriageDetails::getDate,"Date of ${labelContentMarriageOrCivilPartnership} from the certificate")
+                    .mandatoryWithLabel(MarriageDetails::getApplicant1Name,"${labelContentApplicantsOrApplicant1s} full name")
+                    .mandatoryWithLabel(MarriageDetails::getApplicant2Name,"${labelContentRespondentsOrApplicant2s} full name")
+                    .mandatoryWithLabel(MarriageDetails::getMarriedInUk, "Did the ${labelContentMarriageOrCivilPartnership} take place in the UK?")
                     .mandatory(MarriageDetails::getPlaceOfMarriage, "marriageMarriedInUk=\"No\"")
                     .mandatory(MarriageDetails::getCountryOfMarriage, "marriageMarriedInUk=\"No\"")
                 .done()
