@@ -52,6 +52,7 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .name("Make a decision")
             .description("Grant Conditional Order")
             .endButtonLabel("Submit")
+            .aboutToStartCallback(this::aboutToStart)
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
@@ -90,7 +91,7 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .pageLabel("Admin error - Make a Decision")
             .showCondition("coRefusalDecision=\"adminError\" AND coGranted=\"No\"")
             .complex(CaseData::getConditionalOrder)
-                .mandatory(ConditionalOrder::getRefusalRejectionAdditionalInfo)
+                .mandatory(ConditionalOrder::getRefusalAdminErrorInfo)
             .done()
             .page("amendApplication")
             .pageLabel("Request amended application - Make a Decision")
@@ -98,10 +99,16 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .complex(CaseData::getConditionalOrder)
                 .mandatory(ConditionalOrder::getRefusalRejectionReason)
                 .mandatory(ConditionalOrder::getRefusalRejectionAdditionalInfo,
-                "coRefusalRejectionReason CONTAINS \"other\" "
-                    + "OR coRefusalRejectionReason CONTAINS \"noCriteria\"" // added for backward compatibility
-                    + " OR coRefusalRejectionReason CONTAINS \"insufficentDetails\"") // added for backward compatibility
+                "coRefusalRejectionReasonCONTAINS \"other\" "
+                    + "OR coRefusalRejectionReasonCONTAINS \"noCriteria\" " // added for backward compatibility
+                    + "OR coRefusalRejectionReasonCONTAINS \"insufficentDetails\"") // added for backward compatibility
             .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+        CaseData caseData = details.getData();
+        caseData.getConditionalOrder().resetRefusalFields();
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder().data(caseData).build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,

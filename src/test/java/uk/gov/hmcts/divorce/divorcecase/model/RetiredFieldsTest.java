@@ -51,6 +51,8 @@ class RetiredFieldsTest {
         data.put("applicant1SolicitorAgreeToReceiveEmails", "Yes");
         data.put("applicant2SolicitorAgreeToReceiveEmails", "No");
         data.put("coClarificationResponse", "some text");
+        data.put("marriageIsSameSexCouple", "Yes");
+        data.put("applicant2KeepContactDetailsConfidential", "Yes");
 
         final var result = RetiredFields.migrate(data);
 
@@ -84,7 +86,10 @@ class RetiredFieldsTest {
             entry("alternativeServiceApplications", null),
             entry("applicant1SolicitorAgreeToReceiveEmailsCheckbox", Set.of(CONFIRM)),
             entry("applicant2SolicitorAgreeToReceiveEmailsCheckbox", emptySet()),
-            entry("coClarificationResponses", singletonList(ListValue.<String>builder().value("some text").build()))
+            entry("coClarificationResponses", singletonList(ListValue.<String>builder().value("some text").build())),
+            entry("marriageFormationType", "sameSexCouple"),
+            entry("applicant1ContactDetailsType", "public"),
+            entry("applicant2ContactDetailsType", "private")
         );
     }
 

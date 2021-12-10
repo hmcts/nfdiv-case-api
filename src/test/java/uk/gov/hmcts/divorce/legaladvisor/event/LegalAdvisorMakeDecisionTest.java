@@ -160,4 +160,29 @@ class LegalAdvisorMakeDecisionTest {
 
         verifyNoInteractions(notification);
     }
+
+    @Test
+    void shouldResetConditionalOrderRefusalFieldsWhenAboutToStartCallbackIsInvoked() {
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(
+                ConditionalOrder
+                    .builder()
+                    .granted(NO)
+                    .refusalDecision(MORE_INFO)
+                    .refusalClarificationAdditionalInfo("some info")
+                    .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            legalAdvisorMakeDecision.aboutToStart(caseDetails);
+
+        ConditionalOrder actualConditionalOrder = response.getData().getConditionalOrder();
+        assertThat(actualConditionalOrder.getRefusalDecision()).isNull();
+        assertThat(actualConditionalOrder.getRefusalClarificationAdditionalInfo()).isNull();
+        assertThat(actualConditionalOrder.getGranted()).isNull();
+    }
 }

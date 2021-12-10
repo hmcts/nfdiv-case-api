@@ -51,6 +51,24 @@ public class LabelContent {
     @CCD(label = "Marriage or civil partnership")
     private String marriageOrCivilPartnership;
 
+    @CCD(label = "Get a divorce or legally end it")
+    private String divorceOrLegallyEnd;
+
+    @CCD(label = "applicant's or applicant 1’s")
+    private String applicantsOrApplicant1s;
+
+    @CCD(label = "The applicant's or applicant 1’s")
+    private String theApplicantsOrApplicant1s;
+
+    @CCD(label = "The applicant or applicant 1")
+    private String theApplicantOrApplicant1;
+
+    @CCD(label = "Got married or formed their civil partnership")
+    private String gotMarriedOrFormedCivilPartnership;
+
+    @CCD(label = "respondent's or applicant 2’s")
+    private String respondentsOrApplicant2s;
+
     public void setUnionType(DivorceOrDissolution divorceOrDissolution) {
         if (divorceOrDissolution != null && divorceOrDissolution.isDivorce()) {
             unionType = "divorce";
@@ -60,6 +78,8 @@ public class LabelContent {
             divorceOrCivilPartnership = "divorce";
             finaliseDivorceOrEndCivilPartnership = "finalise the divorce";
             marriageOrCivilPartnership = "marriage";
+            divorceOrLegallyEnd = "get a divorce";
+            gotMarriedOrFormedCivilPartnership = "got married";
         } else {
             unionType = "dissolution";
             unionTypeUC = "Dissolution";
@@ -68,6 +88,8 @@ public class LabelContent {
             divorceOrCivilPartnership = "civil partnership";
             finaliseDivorceOrEndCivilPartnership = "end civil partnership";
             marriageOrCivilPartnership = "civil partnership";
+            divorceOrLegallyEnd = "legally end it";
+            gotMarriedOrFormedCivilPartnership = "formed their civil partnership";
         }
     }
 
@@ -78,12 +100,20 @@ public class LabelContent {
             applicant2UC = "Respondent";
             theApplicant2UC = "The respondent";
             applicantOrApplicant1 = "the applicant’s";
+            applicantsOrApplicant1s = "Applicant’s";
+            theApplicantsOrApplicant1s = "The Applicant’s";
+            theApplicantOrApplicant1 = "the applicant";
+            respondentsOrApplicant2s = "Respondent's";
         } else {
             applicant2 = "applicant 2";
             theApplicant2 = "applicant 2";
             applicant2UC = "Applicant 2";
             theApplicant2UC = "Applicant 2";
             applicantOrApplicant1 = "applicant 1’s";
+            applicantsOrApplicant1s = "Applicant 1’s";
+            theApplicantsOrApplicant1s = "Applicant 1’s";
+            theApplicantOrApplicant1 = "applicant 1";
+            respondentsOrApplicant2s = "Applicant 2's";
         }
     }
 }

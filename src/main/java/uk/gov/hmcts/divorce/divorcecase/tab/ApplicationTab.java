@@ -46,17 +46,17 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1NameDifferentToMarriageCertificate")
             .field("applicant1NameChangedHow", "applicant1NameDifferentToMarriageCertificate=\"Yes\"")
             .field("applicant1NameChangedHowOtherDetails", "applicant1NameChangedHow=\"other\"")
-            .field("applicant1KeepContactDetailsConfidential", "applicationType=\"NEVER_SHOW\"")
+            .field("applicant1ContactDetailsType", "applicationType=\"NEVER_SHOW\"")
             .field("divorceWho")
             .field("applicant1ScreenHasMarriageBroken")
             .field("applicant1PcqId")
             .label("LabelApplicant1DetailsAreConfidential-Heading",
-                "applicant1KeepContactDetailsConfidential=\"Yes\"",
+                "applicant1ContactDetailsType=\"private\"",
                 "#### The applicant's contact details are confidential")
-            .field("applicant1PhoneNumber", "applicant1KeepContactDetailsConfidential=\"No\"")
-            .field("applicant1Email", "applicant1KeepContactDetailsConfidential=\"No\"")
-            .field("applicant1HomeAddress", "applicant1KeepContactDetailsConfidential=\"No\"")
-            .field("applicant1CorrespondenceAddress", "applicant1KeepContactDetailsConfidential=\"No\"")
+            .field("applicant1PhoneNumber", "applicant1ContactDetailsType=\"public\"")
+            .field("applicant1Email", "applicant1ContactDetailsType=\"public\"")
+            .field("applicant1HomeAddress", "applicant1ContactDetailsType=\"public\"")
+            .field("applicant1CorrespondenceAddress", "applicant1ContactDetailsType=\"public\"")
 
             //Applicant 1 Solicitor
             .field("applicant1SolicitorRepresented", "applicationType=\"NEVER_SHOW\"")
@@ -83,17 +83,17 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2ScreenHasMarriageBroken")
             .field("applicant2NameChangedHow", "applicant2NameDifferentToMarriageCertificate=\"Yes\"")
             .field("applicant2NameChangedHowOtherDetails", "applicant2NameChangedHow=\"other\"")
-            .field("applicant2KeepContactDetailsConfidential", "applicationType=\"NEVER_SHOW\"")
+            .field("applicant2ContactDetailsType", "applicationType=\"NEVER_SHOW\"")
             .label("LabelApplicant2DetailsAreConfidential-Heading",
-                "applicant2KeepContactDetailsConfidential=\"Yes\"",
+                "applicant2ContactDetailsType=\"private\"",
                 "#### ${labelContentTheApplicant2UC}'s contact details are confidential")
             .label("LabelApplicant2DetailsAreShareable-Heading",
-                "applicant2KeepContactDetailsConfidential!=\"Yes\"",
+                "applicant2ContactDetailsType!=\"private\"",
                 "#### ${labelContentTheApplicant2UC}'s contact details may be shared")
-            .field("applicant2PhoneNumber", "applicant2KeepContactDetailsConfidential!=\"Yes\"")
-            .field("applicant2Email", "applicant2KeepContactDetailsConfidential!=\"Yes\"")
-            .field("applicant2HomeAddress", "applicant2KeepContactDetailsConfidential!=\"Yes\"")
-            .field("applicant2CorrespondenceAddress", "applicant2KeepContactDetailsConfidential!=\"Yes\"")
+            .field("applicant2PhoneNumber", "applicant2ContactDetailsType!=\"private\"")
+            .field("applicant2Email", "applicant2ContactDetailsType!=\"private\"")
+            .field("applicant2HomeAddress", "applicant2ContactDetailsType!=\"private\"")
+            .field("applicant2CorrespondenceAddress", "applicant2ContactDetailsType!=\"private\"")
             .field("applicant2AgreedToReceiveEmails")
 
             //Applicant 2 Solicitor
@@ -118,7 +118,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("marriageDate")
             .field("marriageApplicant1Name")
             .field("marriageApplicant2Name")
-            .field("marriageIsSameSexCouple")
+            .field("marriageFormationType")
             .field("marriageMarriedInUk")
             .field("marriagePlaceOfMarriage", "marriageMarriedInUk=\"No\"")
             .field("marriageCountryOfMarriage", "marriageMarriedInUk=\"No\"")

@@ -11,7 +11,7 @@
     "jurisdictionConnections": [
       "A"
     ],
-    "applicant1KeepContactDetailsConfidential": "Yes",
+    "applicant1ContactDetailsType": "private",
     "applicant2FirstName": "test_first_name",
     "applicant2LastName": "test_last_name",
     "marriageApplicant1Name": "test_first_name test_last_name",

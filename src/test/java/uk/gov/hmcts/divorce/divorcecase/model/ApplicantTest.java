@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 
@@ -59,7 +61,7 @@ class ApplicantTest {
     void shouldReturnTrueIfContactDetailsAreConfidential() {
 
         final Applicant applicant = Applicant.builder()
-            .keepContactDetailsConfidential(YES)
+            .contactDetailsType(PRIVATE)
             .build();
 
         assertThat(applicant.isConfidentialContactDetails()).isTrue();
@@ -69,7 +71,7 @@ class ApplicantTest {
     void shouldReturnFalseIfContactDetailsAreNotConfidential() {
 
         final Applicant applicant = Applicant.builder()
-            .keepContactDetailsConfidential(NO)
+            .contactDetailsType(PUBLIC)
             .build();
 
         assertThat(applicant.isConfidentialContactDetails()).isFalse();

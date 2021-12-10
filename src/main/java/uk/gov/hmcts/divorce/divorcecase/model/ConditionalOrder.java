@@ -218,4 +218,16 @@ public class ConditionalOrder {
     public boolean hasConditionalOrderBeenGranted() {
         return YesOrNo.YES.equals(granted);
     }
+
+    @JsonIgnore
+    public void resetRefusalFields() {
+        this.setGranted(null);
+        this.setRefusalDecision(null);
+        this.setRefusalClarificationReason(null);
+        this.setRefusalClarificationAdditionalInfo(null);
+        this.setRefusalAdminErrorInfo(null);
+        this.setRefusalRejectionReason(null);
+        this.setRefusalRejectionAdditionalInfo(null);
+
+    }
 }
