@@ -66,6 +66,9 @@ public class LabelContent {
     @CCD(label = "Got married or formed their civil partnership")
     private String gotMarriedOrFormedCivilPartnership;
 
+    @CCD(label = "respondent's or applicant 2’s")
+    private String respondentsOrApplicant2s;
+
     public void setUnionType(DivorceOrDissolution divorceOrDissolution) {
         if (divorceOrDissolution != null && divorceOrDissolution.isDivorce()) {
             unionType = "divorce";
@@ -100,6 +103,7 @@ public class LabelContent {
             applicantsOrApplicant1s = "Applicant’s";
             theApplicantsOrApplicant1s = "The Applicant’s";
             theApplicantOrApplicant1 = "the applicant";
+            respondentsOrApplicant2s = "Respondent's";
         } else {
             applicant2 = "applicant 2";
             theApplicant2 = "applicant 2";
@@ -109,7 +113,7 @@ public class LabelContent {
             applicantsOrApplicant1s = "Applicant 1’s";
             theApplicantsOrApplicant1s = "Applicant 1’s";
             theApplicantOrApplicant1 = "applicant 1";
-
+            respondentsOrApplicant2s = "Applicant 2's";
         }
     }
 }
