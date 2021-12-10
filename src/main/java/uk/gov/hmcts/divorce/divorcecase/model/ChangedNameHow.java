@@ -10,7 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 public enum ChangedNameHow implements HasLabel {
 
     @JsonProperty("marriageCertificate")
-    MARRIAGE_CERTIFICATE("Marriage certificate"),
+    MARRIAGE_CERTIFICATE("The marriage or civil partnership certificate"),
 
     @JsonProperty("deedPoll")
     DEED_POLL("Deed poll"),

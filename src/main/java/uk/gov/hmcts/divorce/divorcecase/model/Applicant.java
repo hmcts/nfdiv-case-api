@@ -19,6 +19,7 @@ import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -104,7 +105,7 @@ public class Applicant {
     @CCD(
         label = "Gender",
         hint = "Gender is collected for statistical purposes only.",
-        typeOverride = FixedList,
+        typeOverride = FixedRadioList,
         typeParameterOverride = "Gender"
     )
     private Gender gender;
@@ -146,6 +147,13 @@ public class Applicant {
         label = "PCQ ID"
     )
     private String pcqId;
+
+    @CCD(
+        label = "Spouse Type",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "WhoDivorcing"
+    )
+    private WhoDivorcing divorceWho;
 
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
