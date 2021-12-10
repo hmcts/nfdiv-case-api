@@ -42,7 +42,7 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
                     .mandatory(MarriageDetails::getFormationType)
                     .done()
                 .done()
-            .label("contactDetails", "# The ${labelContentApplicantsOrApplicant1s} contact details")
+            .label("contactDetails", "# ${labelContentTheApplicantsOrApplicant1s} contact details")
             .complex(CaseData::getApplicant1)
                 .mandatoryWithLabel(Applicant::getEmail,
                     "${labelContentApplicantsOrApplicant1s} email address")
