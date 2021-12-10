@@ -72,6 +72,8 @@ import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
@@ -128,7 +130,7 @@ public class TestDataHelper {
             .email(TEST_USER_EMAIL)
             .gender(gender)
             .languagePreferenceWelsh(NO)
-            .keepContactDetailsConfidential(NO)
+            .contactDetailsType(PUBLIC)
             .financialOrder(NO)
             .build();
     }
@@ -247,7 +249,7 @@ public class TestDataHelper {
         jurisdiction.setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
 
         var applicant1 = getApplicant();
-        applicant1.setKeepContactDetailsConfidential(YES);
+        applicant1.setContactDetailsType(PRIVATE);
         applicant1.setFinancialOrder(NO);
         applicant1.setLegalProceedings(NO);
 

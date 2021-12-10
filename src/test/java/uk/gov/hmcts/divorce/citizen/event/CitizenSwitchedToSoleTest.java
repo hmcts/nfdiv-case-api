@@ -36,6 +36,8 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSwitchedToSole.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -213,7 +215,7 @@ class CitizenSwitchedToSoleTest {
                         .country("England")
                         .postCode("POSTCODE")
                         .build())
-                .keepContactDetailsConfidential(YES)
+                .contactDetailsType(PRIVATE)
                 .build()
         );
 
@@ -253,7 +255,7 @@ class CitizenSwitchedToSoleTest {
                         .country("England")
                         .postCode("POSTCODE")
                         .build())
-                .keepContactDetailsConfidential(NO)
+                .contactDetailsType(PUBLIC)
                 .build()
         );
 
@@ -309,7 +311,7 @@ class CitizenSwitchedToSoleTest {
                         .country("England")
                         .postCode("POSTCODE")
                         .build())
-                .keepContactDetailsConfidential(YES)
+                .contactDetailsType(PRIVATE)
                 .build()
         );
         caseData.setApplicant2DocumentsUploaded(new ArrayList<>());

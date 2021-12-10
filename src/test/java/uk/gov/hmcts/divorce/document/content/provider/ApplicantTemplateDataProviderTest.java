@@ -12,6 +12,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,7 +49,7 @@ class ApplicantTemplateDataProviderTest {
                 .postTown("Post Town")
                 .postCode("Post Code")
                 .build())
-            .keepContactDetailsConfidential(NO)
+            .contactDetailsType(PUBLIC)
             .build();
 
         assertThat(applicantTemplateDataProvider.deriveApplicantPostalAddress(applicant))
@@ -67,7 +69,7 @@ class ApplicantTemplateDataProviderTest {
                 .county("County")
                 .postCode("Post Code")
                 .build())
-            .keepContactDetailsConfidential(YES)
+            .contactDetailsType(PRIVATE)
             .build();
 
         assertThat(applicantTemplateDataProvider.deriveApplicantPostalAddress(applicant))
@@ -79,7 +81,7 @@ class ApplicantTemplateDataProviderTest {
 
         final Applicant applicant = Applicant.builder()
             .solicitorRepresented(NO)
-            .keepContactDetailsConfidential(NO)
+            .contactDetailsType(PUBLIC)
             .build();
 
         assertThat(applicantTemplateDataProvider.deriveApplicantPostalAddress(applicant))
@@ -91,7 +93,7 @@ class ApplicantTemplateDataProviderTest {
 
         final Applicant applicant = Applicant.builder()
             .solicitorRepresented(YES)
-            .keepContactDetailsConfidential(NO)
+            .contactDetailsType(PUBLIC)
             .homeAddress(AddressGlobalUK.builder()
                 .addressLine1("Home Address")
                 .addressLine2("Line 2")
@@ -129,7 +131,7 @@ class ApplicantTemplateDataProviderTest {
 
         final Applicant applicant = Applicant.builder()
             .solicitorRepresented(NO)
-            .keepContactDetailsConfidential(NO)
+            .contactDetailsType(PUBLIC)
             .correspondenceAddress(AddressGlobalUK.builder()
                 .addressLine1("Correspondence Address")
                 .addressLine2("Line 2")
@@ -153,7 +155,7 @@ class ApplicantTemplateDataProviderTest {
 
         final Applicant applicant = Applicant.builder()
             .solicitorRepresented(NO)
-            .keepContactDetailsConfidential(NO)
+            .contactDetailsType(PUBLIC)
             .homeAddress(AddressGlobalUK.builder()
                 .addressLine1("Home Address")
                 .addressLine2("Line 2")
@@ -176,7 +178,7 @@ class ApplicantTemplateDataProviderTest {
 
         final Applicant applicant = Applicant.builder()
             .solicitorRepresented(NO)
-            .keepContactDetailsConfidential(YES)
+            .contactDetailsType(PRIVATE)
             .correspondenceAddress(AddressGlobalUK.builder()
                 .addressLine1("Correspondence Address")
                 .addressLine2("Line 2")
@@ -201,7 +203,7 @@ class ApplicantTemplateDataProviderTest {
 
         final Applicant applicant = Applicant.builder()
             .solicitorRepresented(NO)
-            .keepContactDetailsConfidential(YES)
+            .contactDetailsType(PRIVATE)
             .build();
 
         final Application application = Application.builder()

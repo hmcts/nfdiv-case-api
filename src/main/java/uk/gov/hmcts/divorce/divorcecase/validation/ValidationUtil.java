@@ -45,7 +45,7 @@ public final class ValidationUtil {
             notNull(caseData.getApplicant1().getGender(), "Applicant1Gender"),
             notNull(caseData.getApplicant2().getGender(), "Applicant2Gender"),
             notNull(caseData.getApplication().getMarriageDetails().getApplicant1Name(), "MarriageApplicant1Name"),
-            notNull(caseData.getApplicant1().getKeepContactDetailsConfidential(), "Applicant1KeepContactDetailsConfidential"),
+            notNull(caseData.getApplicant1().getContactDetailsType(), "Applicant1ContactDetailsType"),
             hasStatementOfTruth(caseData.getApplication()),
             validatePrayer(caseData.getApplication().getApplicant1PrayerHasBeenGivenCheckbox()),
             validateMarriageDate(caseData.getApplication().getMarriageDetails().getDate(), "MarriageDate"),

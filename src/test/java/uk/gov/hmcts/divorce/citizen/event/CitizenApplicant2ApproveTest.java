@@ -26,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenApplicant2Approve.APPLICANT_2_APPROVE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -128,7 +129,7 @@ class CitizenApplicant2ApproveTest {
     private CaseData setValidCaseData(CaseData caseData) {
         caseData.setApplicant1(getApplicant());
         caseData.setApplicant2(getApplicant(MALE));
-        caseData.getApplicant1().setKeepContactDetailsConfidential(NO);
+        caseData.getApplicant1().setContactDetailsType(PUBLIC);
         caseData.getApplication().setApplicant1HelpWithFees(
             HelpWithFees.builder()
                 .needHelp(NO)

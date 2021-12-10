@@ -34,6 +34,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitApplication.CITIZEN_SUBMIT;
 import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
+import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ISSUE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DIVORCE;
@@ -224,7 +225,7 @@ class CitizenSubmitApplicationTest {
     private CaseData setValidCaseData(CaseData caseData) {
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         caseData.setApplicant1(getApplicant());
-        caseData.getApplicant1().setKeepContactDetailsConfidential(YES);
+        caseData.getApplicant1().setContactDetailsType(PRIVATE);
         caseData.getApplicant1().setFinancialOrder(YesOrNo.NO);
         caseData.setApplicant2(getApplicant(MALE));
         caseData.getApplication().setApplicant1HelpWithFees(
