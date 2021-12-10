@@ -14,6 +14,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
 import uk.gov.hmcts.divorce.divorcecase.model.access.BulkCaseListAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.BulkCaseRemovalAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
@@ -120,7 +121,7 @@ public class BulkActionCaseData {
         label = "Cases accepted to list for hearing",
         typeOverride = Collection,
         typeParameterOverride = "CaseLink",
-        access = {CaseworkerAccess.class}
+        access = {BulkCaseRemovalAccess.class}
     )
     private List<ListValue<CaseLink>> casesAcceptedToListForHearing;
 
@@ -160,6 +161,24 @@ public class BulkActionCaseData {
 
     @JsonIgnore
     public List<ListValue<CaseLink>> transformToCasesAcceptedToListForHearing() {
+
+        if (Objects.isNull(bulkListCaseDetails) || bulkListCaseDetails.isEmpty()) {
+            return emptyList();
+        }
+
+        final AtomicInteger counter = new AtomicInteger(1);
+        return bulkListCaseDetails.stream()
+            .map(c ->
+                ListValue.<CaseLink>builder()
+                    .id(String.valueOf(counter.getAndIncrement()))
+                    .value(c.getValue().getCaseReference())
+                    .build()
+            )
+            .collect(toList());
+    }
+
+    @JsonIgnore
+    public List<ListValue<CaseLink>> transformToCasesAcceptedToListForHearing(List<ListValue<BulkListCaseDetails>> bulkListCaseDetails) {
 
         if (Objects.isNull(bulkListCaseDetails) || bulkListCaseDetails.isEmpty()) {
             return emptyList();
