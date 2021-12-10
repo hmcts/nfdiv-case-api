@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.Permission;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.common.AddSystemUpdateRole;
@@ -33,6 +34,10 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.C;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.R;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.U;
+import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
+import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
+import static uk.gov.hmcts.divorce.divorcecase.model.MarriageFormation.OPPOSITE_SEX_COUPLE;
+import static uk.gov.hmcts.divorce.divorcecase.model.MarriageFormation.SAME_SEX_COUPLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
@@ -124,6 +129,90 @@ class SolicitorCreateApplicationTest {
         solicitorCreateApplication.aboutToSubmit(details, beforeDetails);
 
         verify(solicitorCreateApplicationService).aboutToSubmit(details);
+    }
+
+    @Test
+    public void shouldInferApp2GenderAsMaleWhenMarriageFormationIsOppositeSexAndApp1GenderIsFemale() {
+        final CaseData caseData = caseData();
+        caseData.getApplicant1().setGender(FEMALE);
+        caseData.getApplication().getMarriageDetails().setFormationType(OPPOSITE_SEX_COUPLE);
+
+        final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+        details.setCreatedDate(LOCAL_DATE_TIME);
+
+        when(solicitorCreateApplicationService.aboutToSubmit(details)).thenReturn(details);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorCreateApplication.aboutToSubmit(details, beforeDetails);
+
+        verify(solicitorCreateApplicationService).aboutToSubmit(details);
+
+        assertThat(response.getData().getApplicant2().getGender()).isEqualTo(MALE);
+    }
+
+    @Test
+    public void shouldInferApp2GenderAsFemaleWhenMarriageFormationIsOppositeSexAndApp1GenderIsMale() {
+        final CaseData caseData = caseData();
+        caseData.getApplicant1().setGender(MALE);
+        caseData.getApplication().getMarriageDetails().setFormationType(OPPOSITE_SEX_COUPLE);
+
+        final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+        details.setCreatedDate(LOCAL_DATE_TIME);
+
+        when(solicitorCreateApplicationService.aboutToSubmit(details)).thenReturn(details);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorCreateApplication.aboutToSubmit(details, beforeDetails);
+
+        verify(solicitorCreateApplicationService).aboutToSubmit(details);
+
+        assertThat(response.getData().getApplicant2().getGender()).isEqualTo(FEMALE);
+    }
+
+    @Test
+    public void shouldInferApp2GenderAsFemaleWhenMarriageFormationIsSameSexAndApp1GenderIsFemale() {
+        final CaseData caseData = caseData();
+        caseData.getApplicant1().setGender(FEMALE);
+        caseData.getApplication().getMarriageDetails().setFormationType(SAME_SEX_COUPLE);
+
+        final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+        details.setCreatedDate(LOCAL_DATE_TIME);
+
+        when(solicitorCreateApplicationService.aboutToSubmit(details)).thenReturn(details);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorCreateApplication.aboutToSubmit(details, beforeDetails);
+
+        verify(solicitorCreateApplicationService).aboutToSubmit(details);
+
+        assertThat(response.getData().getApplicant2().getGender()).isEqualTo(FEMALE);
+    }
+
+    @Test
+    public void shouldInferApp2GenderAsMaleWhenMarriageFormationIsSameSexAndApp1GenderIsMale() {
+        final CaseData caseData = caseData();
+        caseData.getApplicant1().setGender(MALE);
+        caseData.getApplication().getMarriageDetails().setFormationType(SAME_SEX_COUPLE);
+
+        final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+        details.setCreatedDate(LOCAL_DATE_TIME);
+
+        when(solicitorCreateApplicationService.aboutToSubmit(details)).thenReturn(details);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorCreateApplication.aboutToSubmit(details, beforeDetails);
+
+        verify(solicitorCreateApplicationService).aboutToSubmit(details);
+
+        assertThat(response.getData().getApplicant2().getGender()).isEqualTo(MALE);
     }
 
     @Test

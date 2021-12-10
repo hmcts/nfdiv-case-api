@@ -10,7 +10,9 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.AddSystemUpdateRole;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2ServiceDetails;
@@ -34,6 +36,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Arrays.asList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
+import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
+import static uk.gov.hmcts.divorce.divorcecase.model.MarriageFormation.OPPOSITE_SEX_COUPLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -90,6 +95,27 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
         log.info("Solicitor create application about to submit callback invoked");
 
         final CaseDetails<CaseData, State> result = solicitorCreateApplicationService.aboutToSubmit(details);
+
+        MarriageDetails marriageDetails = result.getData().getApplication().getMarriageDetails();
+
+        Applicant applicant1 = result.getData().getApplicant1();
+        Applicant applicant2 = result.getData().getApplicant2();
+
+        if (OPPOSITE_SEX_COUPLE.equals(marriageDetails.getFormationType())) {
+            if (MALE.equals(applicant1.getGender())) {
+                applicant2.setGender(FEMALE);
+            } else {
+                applicant2.setGender(MALE);
+            }
+
+        } else {
+            if (MALE.equals(applicant1.getGender())) {
+                applicant2.setGender(MALE);
+            } else {
+                applicant2.setGender(FEMALE);
+            }
+        }
+
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(result.getData())
