@@ -19,7 +19,8 @@ public class MarriageCertificateDetails implements CcdPageConfiguration {
                     .mandatoryWithLabel(MarriageDetails::getDate,"Date of ${labelContentMarriageOrCivilPartnership} from the certificate")
                     .mandatoryWithLabel(MarriageDetails::getApplicant1Name,"${labelContentApplicantsOrApplicant1s} full name")
                     .mandatoryWithLabel(MarriageDetails::getApplicant2Name,"${labelContentRespondentsOrApplicant2s} full name")
-                    .mandatoryWithLabel(MarriageDetails::getMarriedInUk, "Did the ${labelContentMarriageOrCivilPartnership} take place in the UK?")
+                    .mandatoryWithLabel(MarriageDetails::getMarriedInUk,
+                        "Did the ${labelContentMarriageOrCivilPartnership} take place in the UK?")
                     .mandatory(MarriageDetails::getPlaceOfMarriage, "marriageMarriedInUk=\"No\"")
                     .mandatory(MarriageDetails::getCountryOfMarriage, "marriageMarriedInUk=\"No\"")
                 .done()
