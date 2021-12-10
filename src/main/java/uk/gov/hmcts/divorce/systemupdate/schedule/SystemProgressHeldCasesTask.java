@@ -19,7 +19,6 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
@@ -60,7 +59,7 @@ public class SystemProgressHeldCasesTask implements Runnable {
 
     @Override
     public void run() {
-        log.info("Awaiting conditional order scheduled task started");
+        log.info("SystemProgressHeldCasesTask scheduled task started");
 
         final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuth = authTokenGenerator.generate();
@@ -70,66 +69,45 @@ public class SystemProgressHeldCasesTask implements Runnable {
                 .must(matchQuery(STATE, Holding))
                 .filter(rangeQuery(CcdSearchService.DUE_DATE).lte(LocalDate.now()));
 
-            final List<CaseDetails> casesInHoldingState = ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, serviceAuth);
+            ccdSearchService
+                .searchForAllCasesWithQuery(Holding, query, user, serviceAuth)
+                .forEach(caseDetails -> submitEvent(caseDetails, user, serviceAuth));
 
-            for (final CaseDetails caseDetails : casesInHoldingState) {
-                try {
-                    final CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
-
-                    LocalDate dateOfIssue = caseData.getApplication().getIssueDate();
-                    log.info("issueDate from caseDataMap {}", dateOfIssue);
-
-                    if (dateOfIssue == null) {
-                        log.error("Ignoring case id {} with created on {} and modified on {}, as issue date is null",
-                            caseDetails.getId(),
-                            caseDetails.getCreatedDate(),
-                            caseDetails.getLastModified()
-                        );
-                    } else {
-                        if (holdingPeriodService.isHoldingPeriodFinished(dateOfIssue)) {
-                            log.info("Case id {} has been in holding state for > {} weeks hence moving state to AwaitingConditionalOrder",
-                                caseDetails.getId(),
-                                holdingPeriodService.getHoldingPeriodInWeeks()
-                            );
-
-                            //Set due date as null
-                            caseDetails.getData().put(DUE_DATE, null);
-
-                            ccdUpdateService.submitEvent(caseDetails, SYSTEM_PROGRESS_HELD_CASE, user, serviceAuth);
-
-                            // trigger notification to applicant's solicitor
-                            triggerEmailNotification(caseData, caseDetails.getId());
-                        }
-                    }
-                } catch (final CcdManagementException e) {
-                    log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
-                } catch (final IllegalArgumentException e) {
-                    log.error("Deserialization failed for case id: {}, continuing to next case", caseDetails.getId());
-                }
-            }
-
-            log.info("Awaiting conditional order scheduled task complete.");
+            log.info("SystemProgressHeldCasesTask scheduled task complete.");
         } catch (final CcdSearchCaseException e) {
-            log.error("Awaiting conditional order schedule task stopped after search error", e);
+            log.error("SystemProgressHeldCasesTask schedule task stopped after search error", e);
         } catch (final CcdConflictException e) {
-            log.info("Awaiting conditional order schedule task stopping "
-                + "due to conflict with another running awaiting conditional order task"
+            log.info("SystemProgressHeldCasesTask schedule task stopping due to conflict with another running task"
             );
         }
     }
 
-    private void triggerEmailNotification(CaseData caseData, Long caseId) {
-        boolean applicant1SolicitorRepresented = caseData.getApplicant1().isRepresented();
+    private void submitEvent(CaseDetails caseDetails, User user, String serviceAuth) {
+        try {
+            final CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
 
-        if (applicant1SolicitorRepresented) {
-            log.info("For case id {} applicant is represented by solicitor hence sending conditional order notification email", caseId);
-            conditionalOrderNotification.sendToSolicitor(caseData, caseId);
-        } else {
-            log.info("20wk holding period elapsed for Case({}), notifying Joint Applicants they can apply for conditional order", caseId);
-            conditionalOrderNotification.sendToApplicant1(caseData, caseId, false);
-            if (!caseData.getApplicationType().isSole()) {
-                conditionalOrderNotification.sendToApplicant2(caseData, caseId, false);
+            LocalDate dateOfIssue = caseData.getApplication().getIssueDate();
+            log.info("issueDate from caseDataMap {}", dateOfIssue);
+
+            if (dateOfIssue == null) {
+                log.error("Ignoring case id {} with created on {} and modified on {}, as issue date is null",
+                    caseDetails.getId(),
+                    caseDetails.getCreatedDate(),
+                    caseDetails.getLastModified()
+                );
+            } else {
+                if (holdingPeriodService.isHoldingPeriodFinished(dateOfIssue)) {
+                    log.info("Case id {} has been in holding state for > {} weeks hence moving state to AwaitingConditionalOrder",
+                        caseDetails.getId(), holdingPeriodService.getHoldingPeriodInWeeks());
+
+                    caseDetails.getData().put(DUE_DATE, null);
+                    ccdUpdateService.submitEvent(caseDetails, SYSTEM_PROGRESS_HELD_CASE, user, serviceAuth);
+                }
             }
+        } catch (final CcdManagementException e) {
+            log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
+        } catch (final IllegalArgumentException e) {
+            log.error("Deserialization failed for case id: {}, continuing to next case", caseDetails.getId());
         }
     }
 }

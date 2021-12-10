@@ -197,7 +197,7 @@ public enum State {
     ConditionalOrderDrafted("ConditionalOrderDrafted"),
 
     @CCD(
-        name = "Conditional order pending submission",
+        name = "Awaiting joint Conditional Order",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
     )

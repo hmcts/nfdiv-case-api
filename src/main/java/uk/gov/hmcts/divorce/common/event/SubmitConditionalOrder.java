@@ -72,7 +72,7 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
         log.info("Submit conditional order about to submit callback invoked for case id: {}", details.getId());
 
         CaseData data = details.getData();
-        data.getConditionalOrder().setDateSubmitted(LocalDateTime.now(clock));
+        data.getConditionalOrder().setApplicant1SubmittedDate(LocalDateTime.now(clock));
 
         if (!data.getApplicant1().isRepresented()) {
             notification.sendToApplicant1(data, details.getId());
