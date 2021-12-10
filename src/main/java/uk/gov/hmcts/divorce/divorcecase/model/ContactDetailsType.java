@@ -10,10 +10,11 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 public enum ContactDetailsType implements HasLabel {
 
     @JsonProperty("private")
-    PRIVATE("Keep contact details private "),
+    PRIVATE("private", "Keep contact details private "),
 
     @JsonProperty("public")
-    PUBLIC("Do not need to keep contact details private");
+    PUBLIC("public", "Do not need to keep contact details private");
 
+    private String type;
     private final String label;
 }
