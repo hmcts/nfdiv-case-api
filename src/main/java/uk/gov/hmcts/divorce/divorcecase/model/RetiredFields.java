@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor.Prayer;
+import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.lang.reflect.Field;
@@ -36,8 +37,12 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer;
 import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
+import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.MarriageFormation.OPPOSITE_SEX_COUPLE;
+import static uk.gov.hmcts.divorce.divorcecase.model.MarriageFormation.SAME_SEX_COUPLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Solicitor.Prayer.CONFIRM;
 
 @Data
@@ -193,6 +198,18 @@ public class RetiredFields {
     )
     private String coClarificationResponse;
 
+    @CCD(
+        label = "Retire same sex couple",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo marriageIsSameSexCouple;
+
+    @CCD(label = "Retired applicant 1 keep contact details private")
+    private YesOrNo applicant1KeepContactDetailsConfidential;
+
+    @CCD(label = "Retired applicant 1 Keep contact details private")
+    private YesOrNo applicant2KeepContactDetailsConfidential;
+
     @JsonIgnore
     private static final Consumer<Map<String, Object>> DO_NOTHING = data -> {
     };
@@ -261,6 +278,13 @@ public class RetiredFields {
             data -> data.put("reasonCourtsOfEnglandAndWalesHaveNoJurisdiction", data.get("jurisdictionDisagreeReason")));
         init.put("coClarificationResponse",
             data -> data.put("coClarificationResponses", transformClarificationResponse(data)));
+        init.put("applicant1KeepContactDetailsConfidential",
+            data -> data.put("applicant1ContactDetailsType", transformContactDetails(data, "applicant1KeepContactDetailsConfidential")));
+        init.put("applicant2KeepContactDetailsConfidential",
+            data -> data.put("applicant2ContactDetailsType", transformContactDetails(data, "applicant2KeepContactDetailsConfidential")));
+        init.put("marriageIsSameSexCouple",
+            data -> data.put("marriageFormationType", transformSameSexToMarriageFormation(data)));
+
         migrations = unmodifiableMap(init);
     }
 
@@ -282,9 +306,9 @@ public class RetiredFields {
         return migrations.size();
     }
 
-    private static YesOrNo transformContactDetailsConfidentialField(String confidentialFieldName, Map<String, Object> data) {
+    private static String transformContactDetailsConfidentialField(String confidentialFieldName, Map<String, Object> data) {
         String confidentialFieldValue = (String) data.get(confidentialFieldName);
-        return ConfidentialAddress.KEEP.getLabel().equalsIgnoreCase(confidentialFieldValue) ? YES : NO;
+        return ConfidentialAddress.KEEP.getLabel().equalsIgnoreCase(confidentialFieldValue) ? YES.getValue() : NO.getValue();
     }
 
     private static Set<ThePrayer> transformApplicant1PrayerHasBeenGivenField(Map<String, Object> data) {
@@ -386,5 +410,19 @@ public class RetiredFields {
     private static List<ListValue<String>> transformClarificationResponse(Map<String, Object> data) {
         String clarificationResponseText = (String) data.get("coClarificationResponse");
         return singletonList(ListValue.<String>builder().value(clarificationResponseText).build());
+    }
+
+    private static String transformContactDetails(Map<String, Object> data, String contactDetailsField) {
+        String value = (String) data.get(contactDetailsField);
+        return YES.getValue().equalsIgnoreCase(value)
+            ? PRIVATE.getType()
+            : PUBLIC.getType();
+    }
+
+    private static String transformSameSexToMarriageFormation(Map<String, Object> data) {
+        String value = (String) data.get("marriageIsSameSexCouple");
+        return YES.getValue().equalsIgnoreCase(value)
+            ? SAME_SEX_COUPLE.getType()
+            : OPPOSITE_SEX_COUPLE.getType();
     }
 }

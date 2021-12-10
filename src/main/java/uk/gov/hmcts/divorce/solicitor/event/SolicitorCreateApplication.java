@@ -10,7 +10,9 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.AddSystemUpdateRole;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2ServiceDetails;
@@ -90,6 +92,12 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
         log.info("Solicitor create application about to submit callback invoked");
 
         final CaseDetails<CaseData, State> result = solicitorCreateApplicationService.aboutToSubmit(details);
+
+        MarriageDetails marriageDetails = result.getData().getApplication().getMarriageDetails();
+
+        Applicant applicant1 = result.getData().getApplicant1();
+        Applicant applicant2 = result.getData().getApplicant2();
+        applicant2.setGender(applicant1.getPartnerGender(marriageDetails.getFormationType()));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(result.getData())

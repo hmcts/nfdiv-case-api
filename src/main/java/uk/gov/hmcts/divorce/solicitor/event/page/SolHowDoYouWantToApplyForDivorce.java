@@ -32,6 +32,10 @@ public class SolHowDoYouWantToApplyForDivorce implements CcdPageConfiguration {
                 .readonly(LabelContent::getDivorceOrEndCivilPartnership, NEVER_SHOW)
                 .readonly(LabelContent::getMarriageOrCivilPartnership, NEVER_SHOW)
                 .readonly(LabelContent::getDivorceOrLegallyEnd, NEVER_SHOW)
+                .readonly(LabelContent::getApplicantsOrApplicant1s, NEVER_SHOW)
+                .readonly(LabelContent::getTheApplicantOrApplicant1, NEVER_SHOW)
+                .readonly(LabelContent::getGotMarriedOrFormedCivilPartnership, NEVER_SHOW)
+                .readonly(LabelContent::getTheApplicantsOrApplicant1s, NEVER_SHOW)
             .done()
             .label("solHowDoYouWantToApplyForDivorcePara-1",
                 "The applicant can apply for the divorce on their own (as a 'sole applicant') or with their husband "

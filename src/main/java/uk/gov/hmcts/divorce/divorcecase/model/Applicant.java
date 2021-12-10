@@ -18,11 +18,14 @@ import java.util.Set;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
-import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
+import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.divorcecase.model.MarriageFormation.OPPOSITE_SEX_COUPLE;
 
 @Data
 @AllArgsConstructor
@@ -34,7 +37,10 @@ public class Applicant {
     @CCD(label = "First name")
     private String firstName;
 
-    @CCD(label = "Middle name(s)")
+    @CCD(
+        label = "Middle name(s)",
+        hint = "If they have a middle name then you must enter it to avoid amendments later."
+    )
     private String middleName;
 
     @CCD(label = "Last name")
@@ -97,17 +103,20 @@ public class Applicant {
     )
     private String phoneNumber;
 
-
-    @CCD(label = "Keep contact details private?")
-    private YesOrNo keepContactDetailsConfidential;
-
     @CCD(
         label = "Gender",
-        hint = "Gender is collected for statistical purposes only.",
-        typeOverride = FixedList,
+        hint = "Gender is only collected for statistical purposes.",
+        typeOverride = FixedRadioList,
         typeParameterOverride = "Gender"
     )
     private Gender gender;
+
+    @CCD(
+        label = "Should ${labelContentApplicantOrApplicant1} contact details be kept private?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "ContactDetailsType"
+    )
+    private ContactDetailsType contactDetailsType;
 
     @CCD(
         label = "Service address",
@@ -161,7 +170,7 @@ public class Applicant {
 
     @JsonIgnore
     public boolean isConfidentialContactDetails() {
-        return null != keepContactDetailsConfidential && keepContactDetailsConfidential.toBoolean();
+        return ContactDetailsType.PRIVATE.equals(contactDetailsType);
     }
 
     @JsonIgnore
@@ -172,5 +181,24 @@ public class Applicant {
     @JsonIgnore
     public boolean appliedForFinancialOrder() {
         return nonNull(financialOrder) && financialOrder.toBoolean();
+    }
+
+    @JsonIgnore
+    public Gender getPartnerGender(MarriageFormation marriageFormation) {
+        if (OPPOSITE_SEX_COUPLE.equals(marriageFormation)) {
+            if (MALE.equals(this.getGender())) {
+                return FEMALE;
+            } else {
+                return MALE;
+            }
+
+        } else {
+            if (MALE.equals(this.getGender())) {
+                return MALE;
+            } else {
+                return FEMALE;
+            }
+        }
+
     }
 }

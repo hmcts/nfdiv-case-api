@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import java.time.LocalDate;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 
 @Data
 @AllArgsConstructor
@@ -77,10 +78,12 @@ public class MarriageDetails {
     private LocalDate date;
 
     @CCD(
-        label = "Were the applicant and ${labelContentTheApplicant2} a same-sex couple when they got married?",
-        access = {DefaultAccess.class}
+        label = "Were ${labelContentTheApplicantOrApplicant1} and ${labelContentTheApplicant2} a same-sex couple when "
+            + "they ${labelContentGotMarriedOrFormedCivilPartnership}?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "MarriageFormation"
     )
-    private YesOrNo isSameSexCouple;
+    private MarriageFormation formationType;
 
     @CCD(
         label = "Is the marriage certificate correct?",

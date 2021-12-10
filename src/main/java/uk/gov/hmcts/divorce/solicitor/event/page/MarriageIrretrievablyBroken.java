@@ -21,8 +21,8 @@ public class MarriageIrretrievablyBroken implements CcdPageConfiguration {
             .page("MarriageIrretrievablyBroken", this::midEvent)
             .pageLabel("Statement of irretrievable breakdown")
             .complex(CaseData::getApplication)
-                .mandatory(Application::getApplicant1ScreenHasMarriageBroken)
-                .done()
+            .mandatory(Application::getApplicant1ScreenHasMarriageBroken)
+            .done()
             .label(
                 "MarriageNotIrretrievablyBroken",
                 "The ${labelContentMarriageOrCivilPartnership} must have broken down irretrievably "
