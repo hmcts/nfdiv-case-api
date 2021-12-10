@@ -36,9 +36,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Arrays.asList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
-import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
-import static uk.gov.hmcts.divorce.divorcecase.model.MarriageFormation.OPPOSITE_SEX_COUPLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -100,22 +97,7 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
 
         Applicant applicant1 = result.getData().getApplicant1();
         Applicant applicant2 = result.getData().getApplicant2();
-
-        if (OPPOSITE_SEX_COUPLE.equals(marriageDetails.getFormationType())) {
-            if (MALE.equals(applicant1.getGender())) {
-                applicant2.setGender(FEMALE);
-            } else {
-                applicant2.setGender(MALE);
-            }
-
-        } else {
-            if (MALE.equals(applicant1.getGender())) {
-                applicant2.setGender(MALE);
-            } else {
-                applicant2.setGender(FEMALE);
-            }
-        }
-
+        applicant2.setGender(applicant1.getPartnerGender(marriageDetails.getFormationType()));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(result.getData())

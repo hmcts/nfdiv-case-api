@@ -21,8 +21,11 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
+import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.divorcecase.model.MarriageFormation.OPPOSITE_SEX_COUPLE;
 
 @Data
 @AllArgsConstructor
@@ -178,5 +181,24 @@ public class Applicant {
     @JsonIgnore
     public boolean appliedForFinancialOrder() {
         return nonNull(financialOrder) && financialOrder.toBoolean();
+    }
+
+    @JsonIgnore
+    public Gender getPartnerGender(MarriageFormation marriageFormation) {
+        if (OPPOSITE_SEX_COUPLE.equals(marriageFormation)) {
+            if (MALE.equals(this.getGender())) {
+                return FEMALE;
+            } else {
+                return MALE;
+            }
+
+        } else {
+            if (MALE.equals(this.getGender())) {
+                return MALE;
+            } else {
+                return FEMALE;
+            }
+        }
+
     }
 }
