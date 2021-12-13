@@ -17,10 +17,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(requestInterceptor)
             .excludePathPatterns(
                 "/health",
-                "/webjars/springfox-swagger-ui/**",
+                "/swagger-ui/**",
                 "/swagger-ui.html",
                 "/swagger-resources/**",
-                "/v2/**",
+                "/v3/**",
                 "/favicon.ico",
                 "/health",
                 "/mappings",

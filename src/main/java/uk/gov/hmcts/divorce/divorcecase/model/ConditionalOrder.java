@@ -131,7 +131,7 @@ public class ConditionalOrder {
     private Set<RejectionReason> refusalRejectionReason;
 
     @CCD(
-        label = "Rejection additional information",
+        label = "Additional information",
         typeOverride = TextArea
     )
     private String refusalRejectionAdditionalInfo;
@@ -152,12 +152,13 @@ public class ConditionalOrder {
 
     @CCD(
         label = "List of responses for Conditional Order clarification",
-        typeOverride = TextArea
+        typeOverride = Collection,
+        typeParameterOverride = "TextArea"
     )
-    private String clarificationResponse;
+    private List<ListValue<String>> clarificationResponses;
 
     @CCD(
-        label = "Upload any other documents per Clarification?",
+        label = "Documents uploaded for the Conditional Order Clarification",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument"
     )
@@ -216,5 +217,17 @@ public class ConditionalOrder {
     @JsonIgnore
     public boolean hasConditionalOrderBeenGranted() {
         return YesOrNo.YES.equals(granted);
+    }
+
+    @JsonIgnore
+    public void resetRefusalFields() {
+        this.setGranted(null);
+        this.setRefusalDecision(null);
+        this.setRefusalClarificationReason(null);
+        this.setRefusalClarificationAdditionalInfo(null);
+        this.setRefusalAdminErrorInfo(null);
+        this.setRefusalRejectionReason(null);
+        this.setRefusalRejectionAdditionalInfo(null);
+
     }
 }

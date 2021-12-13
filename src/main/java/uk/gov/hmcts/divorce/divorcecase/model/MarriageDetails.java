@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import java.time.LocalDate;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 
 @Data
 @AllArgsConstructor
@@ -22,8 +23,7 @@ public class MarriageDetails {
 
     @CCD(
         label = "The applicant's full name as on marriage certificate",
-        hint = "Enter the applicant's name exactly as it appears on the marriage certificate. "
-            + " Include any extra text such as \"formerly known as\"",
+        hint = "Exactly as it appears on the certificate. Include any additional text such as 'formally known as'.",
         access = {DefaultAccess.class}
     )
     private String applicant1Name;
@@ -55,15 +55,15 @@ public class MarriageDetails {
     private YesOrNo certifiedTranslation;
 
     @CCD(
-        label = "Country of marriage",
-        hint = "Enter the country in which the marriage took place",
+        label = "Country of ${labelContentMarriageOrCivilPartnership}",
+        hint = "Enter the country in which the ${labelContentMarriageOrCivilPartnership} took place",
         access = {DefaultAccess.class}
     )
     private String countryOfMarriage;
 
     @CCD(
-        label = "Place of marriage",
-        hint = "Enter the place of marriage as it appears on the marriage certificate",
+        label = "Place of ${labelContentMarriageOrCivilPartnership}",
+        hint = "Enter the place of ${labelContentMarriageOrCivilPartnership} as it appears on the marriage certificate",
         access = {DefaultAccess.class}
     )
     private String placeOfMarriage;
@@ -77,10 +77,12 @@ public class MarriageDetails {
     private LocalDate date;
 
     @CCD(
-        label = "Were the applicant and ${labelContentTheApplicant2} a same-sex couple when they got married?",
-        access = {DefaultAccess.class}
+        label = "Were ${labelContentTheApplicantOrApplicant1} and ${labelContentTheApplicant2} a same-sex couple when "
+            + "they ${labelContentGotMarriedOrFormedCivilPartnership}?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "MarriageFormation"
     )
-    private YesOrNo isSameSexCouple;
+    private MarriageFormation formationType;
 
     @CCD(
         label = "Is the marriage certificate correct?",

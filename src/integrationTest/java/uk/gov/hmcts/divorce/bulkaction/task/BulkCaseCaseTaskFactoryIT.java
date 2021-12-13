@@ -7,11 +7,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYSTEM_LINK_WITH_BULK_CASE;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithPronouncementJudge.SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE;
@@ -28,9 +30,9 @@ public class BulkCaseCaseTaskFactoryIT {
     @Test
     void shouldReturnUpdateCasePronouncementJudgeProviderCaseTask() {
 
-        final CaseTask caseTask = bulkCaseCaseTaskFactory.getCaseTask(
-            mock(BulkActionCaseData.class),
-            SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE);
+        final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails = new CaseDetails<>();
+
+        final CaseTask caseTask = bulkCaseCaseTaskFactory.getCaseTask(bulkCaseDetails, SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE);
 
         assertThat(caseTask.getClass().toString()).contains("UpdateCasePronouncementJudgeProvider$$Lambda");
     }
@@ -38,9 +40,9 @@ public class BulkCaseCaseTaskFactoryIT {
     @Test
     void shouldReturnUpdateCaseCourtHearingProviderCaseTask() {
 
-        final CaseTask caseTask = bulkCaseCaseTaskFactory.getCaseTask(
-            mock(BulkActionCaseData.class),
-            SYSTEM_UPDATE_CASE_COURT_HEARING);
+        final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails = new CaseDetails<>();
+
+        final CaseTask caseTask = bulkCaseCaseTaskFactory.getCaseTask(bulkCaseDetails, SYSTEM_UPDATE_CASE_COURT_HEARING);
 
         assertThat(caseTask.getClass().toString()).contains("UpdateCaseCourtHearingProvider$$Lambda");
     }
@@ -48,10 +50,20 @@ public class BulkCaseCaseTaskFactoryIT {
     @Test
     void shouldReturnPronounceCaseProviderCaseTask() {
 
-        final CaseTask caseTask = bulkCaseCaseTaskFactory.getCaseTask(
-            mock(BulkActionCaseData.class),
-            SYSTEM_PRONOUNCE_CASE);
+        final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails = new CaseDetails<>();
+
+        final CaseTask caseTask = bulkCaseCaseTaskFactory.getCaseTask(bulkCaseDetails, SYSTEM_PRONOUNCE_CASE);
 
         assertThat(caseTask.getClass().toString()).contains("PronounceCaseProvider$$Lambda");
+    }
+    
+    @Test
+    void shouldReturnLinkBulkCaseProviderCaseTask() {
+
+        final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails = new CaseDetails<>();
+
+        final CaseTask caseTask = bulkCaseCaseTaskFactory.getCaseTask(bulkCaseDetails, SYSTEM_LINK_WITH_BULK_CASE);
+
+        assertThat(caseTask.getClass().toString()).contains("LinkBulkCaseProvider$$Lambda");
     }
 }

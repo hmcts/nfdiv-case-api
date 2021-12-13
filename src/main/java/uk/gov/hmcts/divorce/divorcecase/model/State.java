@@ -10,6 +10,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseAccessAdministrator;
 public enum State {
 
     @CCD(
+        label = "### Case number: ${[CASE_REFERENCE]}\n ### ${applicant1LastName} & ${applicant2LastName}"
+    )
+    Draft("Draft"),
+
+    @CCD(
         name = "20 week holding period",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
@@ -62,6 +67,20 @@ public enum State {
         access = {CaseAccessAdministrator.class}
     )
     Withdrawn("Withdrawn"),
+
+    @CCD(
+        name = "Awaiting admin clarification",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    AwaitingAdminClarification("AwaitingAdminClarification"),
+
+    @CCD(
+        name = "Awaiting amended application",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    AwaitingAmendedApplication("AwaitingAmendedApplication"),
 
     @CCD(
         name = "Awaiting applicant",
@@ -199,17 +218,32 @@ public enum State {
     Disputed("Disputed"),
 
     @CCD(
-        name = "Draft",
-        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
-    )
-    Draft("Draft"),
-
-    @CCD(
         name = "Final order complete",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
     )
     FinalOrderComplete("FinalOrderComplete"),
+
+    @CCD(
+        name = "Final order overdue",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    FinalOrderOverdue("FinalOrderOverdue"),
+
+    @CCD(
+        name = "Final order pending",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    FinalOrderPending("FinalOrderPending"),
+
+    @CCD(
+        name = "Final order requested",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    FinalOrderRequested("FinalOrderRequested"),
 
     @CCD(
         name = "Issued To bailiff",

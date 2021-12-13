@@ -56,7 +56,7 @@ public class SystemProcessFailedScheduledCasesTask implements Runnable {
                     .updateUnprocessedBulkCases(
                         caseDetailsBulkCase,
                         SYSTEM_UPDATE_CASE_COURT_HEARING,
-                        bulkCaseCaseTaskFactory.getCaseTask(caseDetailsBulkCase.getData(), SYSTEM_UPDATE_CASE_COURT_HEARING),
+                        bulkCaseCaseTaskFactory.getCaseTask(caseDetailsBulkCase, SYSTEM_UPDATE_CASE_COURT_HEARING),
                         user,
                         serviceAuth));
 

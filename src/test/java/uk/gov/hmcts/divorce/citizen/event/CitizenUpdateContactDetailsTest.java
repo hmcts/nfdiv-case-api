@@ -10,7 +10,6 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -26,6 +25,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenUpdateContactDetails.CITIZEN_UPDATE_CONTACT_DETAILS;
+import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
@@ -67,7 +67,7 @@ public class CitizenUpdateContactDetailsTest {
             .postCode("POSTCODE")
             .build();
         updatedData.getApplicant1().setHomeAddress(address);
-        updatedData.getApplicant1().setKeepContactDetailsConfidential(YesOrNo.NO);
+        updatedData.getApplicant1().setContactDetailsType(PUBLIC);
         updatedData.setCaseInvite(
             CaseInvite.builder()
                 .applicant2UserId("app2")
@@ -93,7 +93,7 @@ public class CitizenUpdateContactDetailsTest {
 
         assertThat(response.getData().getApplicant1().getPhoneNumber()).isEqualTo("01234567890");
         assertThat(response.getData().getApplicant1().getHomeAddress()).isEqualTo(address);
-        assertThat(response.getData().getApplicant1().getKeepContactDetailsConfidential()).isEqualTo(YesOrNo.NO);
+        assertThat(response.getData().getApplicant1().getContactDetailsType()).isEqualTo(PUBLIC);
     }
 
     @Test
@@ -111,7 +111,7 @@ public class CitizenUpdateContactDetailsTest {
             .postCode("POSTCODE")
             .build();
         updatedData.getApplicant2().setHomeAddress(address);
-        updatedData.getApplicant2().setKeepContactDetailsConfidential(YesOrNo.NO);
+        updatedData.getApplicant2().setContactDetailsType(PUBLIC);
         updatedData.setCaseInvite(
             CaseInvite.builder()
                 .applicant2UserId("app2")
@@ -137,6 +137,6 @@ public class CitizenUpdateContactDetailsTest {
 
         assertThat(response.getData().getApplicant2().getPhoneNumber()).isEqualTo("01234567890");
         assertThat(response.getData().getApplicant2().getHomeAddress()).isEqualTo(address);
-        assertThat(response.getData().getApplicant2().getKeepContactDetailsConfidential()).isEqualTo(YesOrNo.NO);
+        assertThat(response.getData().getApplicant2().getContactDetailsType()).isEqualTo(PUBLIC);
     }
 }

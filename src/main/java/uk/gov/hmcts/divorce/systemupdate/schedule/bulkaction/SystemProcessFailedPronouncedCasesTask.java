@@ -56,7 +56,7 @@ public class SystemProcessFailedPronouncedCasesTask implements Runnable {
                     .updateUnprocessedBulkCases(
                         caseDetailsBulkCase,
                         SYSTEM_PRONOUNCE_CASE,
-                        bulkCaseCaseTaskFactory.getCaseTask(caseDetailsBulkCase.getData(), SYSTEM_PRONOUNCE_CASE),
+                        bulkCaseCaseTaskFactory.getCaseTask(caseDetailsBulkCase, SYSTEM_PRONOUNCE_CASE),
                         user,
                         serviceAuth));
 

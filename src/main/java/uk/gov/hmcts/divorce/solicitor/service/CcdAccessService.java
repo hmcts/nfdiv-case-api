@@ -1,18 +1,18 @@
 package uk.gov.hmcts.divorce.solicitor.service;
 
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CaseAssignmentApi;
-import uk.gov.hmcts.reform.ccd.client.CaseUserApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRoleWithOrganisation;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesRequest;
-import uk.gov.hmcts.reform.ccd.client.model.CaseUser;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -23,8 +23,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 @Service
 @Slf4j
 public class CcdAccessService {
-    @Autowired
-    private CaseUserApi caseUserApi;
 
     @Autowired
     private CaseAssignmentApi caseAssignmentApi;
@@ -35,6 +33,7 @@ public class CcdAccessService {
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
+    @Retryable(value = {FeignException.class, RuntimeException.class})
     public void addApplicant1SolicitorRole(String solicitorIdamToken, Long caseId, String orgId) {
         User solicitorUser = idamService.retrieveUser(solicitorIdamToken);
         User systemUpdateUser = idamService.retrieveSystemUpdateUserDetails();
@@ -55,68 +54,56 @@ public class CcdAccessService {
         caseAssignmentApi.removeCaseUserRoles(
             idamToken,
             s2sToken,
-            CaseAssignmentUserRolesRequest
-                .builder()
-                .caseAssignmentUserRolesWithOrganisation(
-                    List.of(
-                        CaseAssignmentUserRoleWithOrganisation.builder()
-                            .caseDataId(caseId.toString())
-                            .organisationId(orgId)
-                            .caseRole(CREATOR.getRole())
-                            .userId(solicitorUserId)
-                            .build()
-                    )
-                )
-                .build()
+            getCaseAssignmentRequest(caseId, solicitorUserId, orgId, CREATOR)
         );
 
         caseAssignmentApi.addCaseUserRoles(
             idamToken,
             s2sToken,
-            CaseAssignmentUserRolesRequest
-                .builder()
-                .caseAssignmentUserRolesWithOrganisation(
-                    List.of(
-                        CaseAssignmentUserRoleWithOrganisation.builder()
-                            .caseDataId(caseId.toString())
-                            .organisationId(orgId)
-                            .caseRole(APPLICANT_1_SOLICITOR.getRole())
-                            .userId(solicitorUserId)
-                            .build()
-                    )
-                )
-                .build()
+            getCaseAssignmentRequest(caseId, solicitorUserId, orgId, APPLICANT_1_SOLICITOR)
         );
 
         log.info("Successfully added the applicant's solicitor roles to case Id {} ", caseId);
     }
 
+    @Retryable(value = {FeignException.class, RuntimeException.class})
     public void linkRespondentToApplication(String caseworkerUserToken, Long caseId, String applicant2UserId) {
         User caseworkerUser = idamService.retrieveUser(caseworkerUserToken);
-        Set<String> caseRoles = Set.of(APPLICANT_2.getRole());
 
-        caseUserApi.updateCaseRolesForUser(
+        caseAssignmentApi.addCaseUserRoles(
             caseworkerUser.getAuthToken(),
             authTokenGenerator.generate(),
-            String.valueOf(caseId),
-            applicant2UserId,
-            new CaseUser(applicant2UserId, caseRoles)
+            getCaseAssignmentRequest(caseId, applicant2UserId, null, APPLICANT_2)
         );
 
         log.info("Successfully linked applicant 2 to case Id {} ", caseId);
     }
 
+    @Retryable(value = {FeignException.class, RuntimeException.class})
     public void unlinkUserFromApplication(String caseworkerUserToken, Long caseId, String userToRemoveId) {
         User caseworkerUser = idamService.retrieveUser(caseworkerUserToken);
 
-        caseUserApi.updateCaseRolesForUser(
+        caseAssignmentApi.removeCaseUserRoles(
             caseworkerUser.getAuthToken(),
             authTokenGenerator.generate(),
-            String.valueOf(caseId),
-            userToRemoveId,
-            new CaseUser(userToRemoveId, Collections.emptySet())
+            getCaseAssignmentRequest(caseId, userToRemoveId, null, APPLICANT_2)
         );
 
         log.info("Successfully unlinked applicant from case Id {} ", caseId);
+    }
+
+    private CaseAssignmentUserRolesRequest getCaseAssignmentRequest(Long caseId, String userId, String orgId, UserRole role) {
+        return CaseAssignmentUserRolesRequest.builder()
+            .caseAssignmentUserRolesWithOrganisation(
+                List.of(
+                    CaseAssignmentUserRoleWithOrganisation.builder()
+                        .organisationId(orgId)
+                        .caseDataId(String.valueOf(caseId))
+                        .caseRole(role.getRole())
+                        .userId(userId)
+                        .build()
+                )
+            )
+            .build();
     }
 }

@@ -49,7 +49,7 @@ public class Application {
     private static final int SUBMISSION_RESPONSE_DAYS = 14;
 
     @CCD(
-        label = "Has the applicant's marriage broken down irretrievably?",
+        label = "Has the applicant's ${labelContentMarriageOrCivilPartnership} broken down irretrievably?",
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant1ScreenHasMarriageBroken;
@@ -361,10 +361,10 @@ public class Application {
     private YesOrNo applicant2ReminderSent;
 
     @CCD(
-        label = "Notification sent to Applicant 1 indicating they can apply for a Conditional Order",
+        label = "Notification sent to Joint Applicants indicating they can apply for a Conditional Order",
         access = {DefaultAccess.class}
     )
-    private YesOrNo applicant1NotifiedCanApplyForConditionalOrder;
+    private YesOrNo jointApplicantsNotifiedCanApplyForConditionalOrder;
 
     @CCD(
         label = "What would you like to reissue?",
@@ -446,8 +446,8 @@ public class Application {
     }
 
     @JsonIgnore
-    public boolean hasApplicant1BeenNotifiedCanApplyForConditionalOrder() {
-        return YES.equals(applicant1NotifiedCanApplyForConditionalOrder);
+    public boolean haveJointApplicantsBeenNotifiedCanApplyForConditionalOrder() {
+        return YES.equals(jointApplicantsNotifiedCanApplyForConditionalOrder);
     }
 
     @JsonIgnore

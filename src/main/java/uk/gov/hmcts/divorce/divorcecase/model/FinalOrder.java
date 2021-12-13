@@ -2,15 +2,20 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.api.HasLabel;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -19,10 +24,16 @@ import java.time.LocalDateTime;
 public class FinalOrder {
 
     @JsonIgnore
-    private static final int FINAL_ORDER_OFFSET_WEEKS = 6;
+    private static final long FINAL_ORDER_OFFSET_WEEKS = 6L;
 
     @JsonIgnore
-    private static final int FINAL_ORDER_OFFSET_DAYS = 1;
+    private static final long FINAL_ORDER_OFFSET_DAYS = 1L;
+
+    @JsonIgnore
+    private static final long MONTHS_UNTIL_RESPONDENT_CAN_APPLY_FOR_FINAL_ORDER = 3L;
+
+    @JsonIgnore
+    private static final long MONTHS_UNTIL_CASE_IS_NO_LONGER_ELIGIBLE_FOR_FINAL_ORDER = 12L;
 
     @CCD(
         label = "Date Final Order submitted to HMCTS",
@@ -38,8 +49,61 @@ public class FinalOrder {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateFinalOrderEligibleFrom;
 
+    @CCD(
+        label = "Final Order granted?",
+        hint = "The Final Order made on ${finalOrderDateFinalOrderSubmitted} will be made absolute and the ${divorceOrDissolution} "
+            + "between ${applicant1FirstName} ${applicant1LastName} and ${applicant2FirstName} ${applicant2LastName} will be ended.",
+        access = {DefaultAccess.class}
+    )
+    private Set<Granted> granted;
+
+    @Getter
+    @AllArgsConstructor
+    public enum Granted implements HasLabel {
+
+        @JsonProperty("Yes")
+        YES("Yes");
+
+        private final String label;
+    }
+
+    @CCD(
+        label = "Final Order granted date",
+        access = {DefaultAccess.class}
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
+    private LocalDateTime grantedDate;
+
+    @CCD(
+        label = "Does the applicant want to apply for Final Order and ${labelContentFinaliseDivorceOrEndCivilPartnership}?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo doesApplicantWantToApplyForFinalOrder;
+
+    @CCD(
+        label = "Date from which ${labelContentTheApplicant2} can apply for Final Order",
+        access = {DefaultAccess.class}
+    )
+    private LocalDate dateFinalOrderEligibleToRespondent;
+
+    @CCD(
+        label = "Final date to apply for Final Order",
+        access = {DefaultAccess.class}
+    )
+    private LocalDate dateFinalOrderNoLongerEligible;
+
     @JsonIgnore
     public LocalDate getDateFinalOrderEligibleFrom(LocalDateTime dateTime) {
         return dateTime.toLocalDate().plusWeeks(FINAL_ORDER_OFFSET_WEEKS).plusDays(FINAL_ORDER_OFFSET_DAYS);
+    }
+
+    @JsonIgnore
+    public LocalDate calculateDateFinalOrderEligibleToRespondent() {
+        return dateFinalOrderEligibleFrom.plusMonths(MONTHS_UNTIL_RESPONDENT_CAN_APPLY_FOR_FINAL_ORDER);
+    }
+
+    @JsonIgnore
+    public LocalDate calculateDateFinalOrderNoLongerEligible(final LocalDate date) {
+        return date.plusMonths(MONTHS_UNTIL_CASE_IS_NO_LONGER_ELIGIBLE_FOR_FINAL_ORDER);
     }
 }

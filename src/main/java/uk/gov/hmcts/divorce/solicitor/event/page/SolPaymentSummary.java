@@ -12,6 +12,7 @@ public class SolPaymentSummary implements CcdPageConfiguration {
 
         pageBuilder
             .page("SolPaymentSummary")
+            .pageLabel("Order Summary")
             .complex(CaseData::getApplication)
                 .mandatory(Application::getApplicationFeeOrderSummary)
                 .done()

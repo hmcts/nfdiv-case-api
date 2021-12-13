@@ -72,7 +72,9 @@ class CaseworkerMakeBailiffDecisionTest {
     }
 
     @Test
-    void shouldChangeCaseStateToAwaitingAosWhenServiceApplicationIsNotGranted() {
+    void shouldChangeCaseStateToAwaitingAosAndSetDecisionDateWhenServiceApplicationIsNotGranted() {
+        setMockClock(clock);
+
         final CaseData caseData = caseData();
         caseData.getAlternativeService().setServiceApplicationGranted(NO);
 
@@ -86,7 +88,6 @@ class CaseworkerMakeBailiffDecisionTest {
         assertThat(aboutToStartOrSubmitResponse.getState()).isEqualTo(AwaitingAos);
 
         ListValue<AlternativeServiceOutcome> listValue = aboutToStartOrSubmitResponse.getData().getAlternativeServiceOutcomes().get(0);
-        assertThat(listValue.getValue().getServiceApplicationDecisionDate())
-            .isNull();
+        assertThat(listValue.getValue().getServiceApplicationDecisionDate()).isEqualTo(getExpectedLocalDate());
     }
 }

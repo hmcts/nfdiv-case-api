@@ -4,7 +4,7 @@
     "applicant1FinancialOrder": "No",
     "applicant1FirstName": "test_first_name",
     "applicant1Gender": "female",
-    "applicant1KeepContactDetailsConfidential": "No",
+    "applicant1ContactDetailsType": "public",
     "applicant1LanguagePreferenceWelsh": "No",
     "applicant1LastName": "test_last_name",
     "applicant1LegalProceedings": "No",

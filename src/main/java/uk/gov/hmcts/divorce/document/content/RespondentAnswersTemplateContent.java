@@ -19,7 +19,8 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 public class RespondentAnswersTemplateContent {
 
     private static final String RESP_JURISDICTION_AGREE = "respJurisdictionAgree";
-    private static final String RESP_JURISDICTION_DISAGREE_REASON = "respJurisdictionDisagreeReason";
+    private static final String REASON_HAVE_NO_JURISDICTION = "reasonCourtsOfEnglandAndWalesHaveNoJurisdiction";
+    private static final String IN_WHICH_COUNTRY_IS_YOUR_LIFE_MAINLY_BASED = "inWhichCountryIsYourLifeMainlyBased";
     private static final String RESP_LEGAL_PROCEEDINGS_EXIST = "respLegalProceedingsExist";
     private static final String RESP_LEGAL_PROCEEDINGS_DESCRIPTION = "respLegalProceedingsDescription";
     private static final String RESP_SOLICITOR_REPRESENTED = "respSolicitorRepresented";
@@ -42,7 +43,8 @@ public class RespondentAnswersTemplateContent {
 
         var acknowledgementOfService = caseData.getAcknowledgementOfService();
         templateContent.put(RESP_JURISDICTION_AGREE, acknowledgementOfService.getJurisdictionAgree().getValue());
-        templateContent.put(RESP_JURISDICTION_DISAGREE_REASON, acknowledgementOfService.getJurisdictionDisagreeReason());
+        templateContent.put(REASON_HAVE_NO_JURISDICTION, acknowledgementOfService.getReasonCourtsOfEnglandAndWalesHaveNoJurisdiction());
+        templateContent.put(IN_WHICH_COUNTRY_IS_YOUR_LIFE_MAINLY_BASED, acknowledgementOfService.getInWhichCountryIsYourLifeMainlyBased());
         templateContent.put(RESP_LEGAL_PROCEEDINGS_EXIST, caseData.getApplicant2().getLegalProceedings().getValue());
         templateContent.put(RESP_LEGAL_PROCEEDINGS_DESCRIPTION, caseData.getApplicant2().getLegalProceedingsDetails());
 

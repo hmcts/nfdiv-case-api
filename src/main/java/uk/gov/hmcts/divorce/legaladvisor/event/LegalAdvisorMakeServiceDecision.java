@@ -72,11 +72,17 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
             .page("makeServiceDecision")
             .pageLabel("Approve service application")
             .complex(CaseData::getAlternativeService)
-            .mandatory(AlternativeService::getServiceApplicationGranted)
-            .readonly(AlternativeService::getAlternativeServiceType, "serviceApplicationGranted=\"NEVER_SHOW\"")
-            .mandatory(AlternativeService::getDeemedServiceDate,
+                .mandatory(AlternativeService::getServiceApplicationGranted)
+                .readonly(AlternativeService::getAlternativeServiceType, "serviceApplicationGranted=\"NEVER_SHOW\"")
+                .mandatory(AlternativeService::getDeemedServiceDate,
                 "alternativeServiceType=\"deemed\" AND serviceApplicationGranted=\"Yes\"")
-            .done();
+                .done()
+            .page("makeServiceDecision-2")
+            .showCondition("serviceApplicationGranted=\"No\"")
+            .pageLabel("Reason for refusal")
+                .complex(CaseData::getAlternativeService)
+                .mandatory(AlternativeService::getServiceApplicationRefusalReason)
+                .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
@@ -92,9 +98,9 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
 
         log.info("Application end state is {}", endState);
 
+        serviceApplication.setServiceApplicationDecisionDate(LocalDate.now(clock));
         if (serviceApplication.getServiceApplicationGranted().toBoolean()) {
             log.info("Service application granted for case id {}", details.getId());
-            serviceApplication.setServiceApplicationDecisionDate(LocalDate.now(clock));
             endState = Holding;
 
             if (DISPENSED.equals(serviceApplication.getAlternativeServiceType())) {
@@ -113,10 +119,11 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
                 );
             }
         } else {
-            // TODO - implement optional state logic under ticket NFDIV-1215
-            log.info("ServiceApplication refused. Due date is {}", caseDataCopy.getDueDate());
+            // TODO - awaiting ticket to generate refusal document and notifcation
+
             endState = AwaitingAos;
         }
+        log.info("ServiceApplication decision. End State is {} Due date is {}", endState, caseDataCopy.getDueDate());
 
         caseDataCopy.archiveAlternativeServiceApplicationOnCompletion();
 

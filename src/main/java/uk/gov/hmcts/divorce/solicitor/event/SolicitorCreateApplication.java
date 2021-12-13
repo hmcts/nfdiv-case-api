@@ -10,13 +10,14 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.AddSystemUpdateRole;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2ServiceDetails;
 import uk.gov.hmcts.divorce.solicitor.event.page.FinancialOrders;
 import uk.gov.hmcts.divorce.solicitor.event.page.JurisdictionApplyForDivorce;
-import uk.gov.hmcts.divorce.solicitor.event.page.LanguagePreference;
 import uk.gov.hmcts.divorce.solicitor.event.page.MarriageCertificateDetails;
 import uk.gov.hmcts.divorce.solicitor.event.page.MarriageIrretrievablyBroken;
 import uk.gov.hmcts.divorce.solicitor.event.page.OtherLegalProceedings;
@@ -80,8 +81,7 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
             new JurisdictionApplyForDivorce(),
             new OtherLegalProceedings(),
             new FinancialOrders(),
-            new UploadDocument(),
-            new LanguagePreference()
+            new UploadDocument()
         );
 
         pages.forEach(page -> page.addTo(pageBuilder));
@@ -92,6 +92,12 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
         log.info("Solicitor create application about to submit callback invoked");
 
         final CaseDetails<CaseData, State> result = solicitorCreateApplicationService.aboutToSubmit(details);
+
+        MarriageDetails marriageDetails = result.getData().getApplication().getMarriageDetails();
+
+        Applicant applicant1 = result.getData().getApplicant1();
+        Applicant applicant2 = result.getData().getApplicant2();
+        applicant2.setGender(applicant1.getPartnerGender(marriageDetails.getFormationType()));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(result.getData())
@@ -109,8 +115,8 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
         return new PageBuilder(configBuilder
             .event(SOLICITOR_CREATE)
             .initialState(Draft)
-            .name("Apply for divorce/dissolution")
-            .description("Apply for divorce or dissolution")
+            .name("Apply: divorce or dissolution")
+            .description("Apply: divorce or dissolution")
             .showSummary()
             .endButtonLabel("Save Application")
             .aboutToSubmitCallback(this::aboutToSubmit)
