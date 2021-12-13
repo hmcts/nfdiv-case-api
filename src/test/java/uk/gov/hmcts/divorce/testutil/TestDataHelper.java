@@ -65,7 +65,6 @@ import static java.lang.String.join;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewApplicant2Notification.APPLICANT_2_SIGN_IN_DISSOLUTION_URL;
@@ -370,7 +369,7 @@ public class TestDataHelper {
 
     public static ConditionalOrder getConditionalOrder() {
         final ConditionalOrder conditionalOrder = new ConditionalOrder();
-        conditionalOrder.setDateSubmitted(LocalDateTime.now());
+        conditionalOrder.setApplicant1SubmittedDate(LocalDateTime.now());
         conditionalOrder.setApplyForConditionalOrder(YES);
         conditionalOrder.setChangeOrAddToApplication(NO);
         conditionalOrder.setIsEverythingInApplicationTrue(YES);

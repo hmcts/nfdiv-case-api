@@ -59,7 +59,7 @@ class AwaitingConditionalOrderNotificationTest {
     private AwaitingConditionalOrderNotification notification;
 
     @Test
-    void shouldSendEmailToApplicant1WithSubmissionResponseDate() {
+    void shouldSendEmailToSolicitor() {
         Applicant applicant = getApplicant();
         applicant.setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).name(TEST_SOLICITOR_NAME).build());
         var data = CaseData.builder().applicant1(applicant).build();

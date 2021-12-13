@@ -15,7 +15,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.divorce.notification.AwaitingConditionalOrderNotification;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
@@ -37,13 +36,9 @@ import static java.util.Collections.singletonList;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -66,9 +61,6 @@ class SystemProgressHeldCasesTaskTest {
 
     @Mock
     private CcdSearchService ccdSearchService;
-
-    @Mock
-    private AwaitingConditionalOrderNotification conditionalOrderNotification;
 
     @Mock
     private ObjectMapper objectMapper;
@@ -103,38 +95,28 @@ class SystemProgressHeldCasesTaskTest {
         final LocalDate issueDate1 = parse("2021-01-01");
         final LocalDate issueDate2 = parse("2021-01-02");
         final LocalDate issueDate3 = parse("2020-12-02");
-
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2, caseDetails3);
-
         mockInteractions(caseDetails1, issueDate1, caseDataMap(caseDetails1, issueDate1));
         mockInteractions(caseDetails2, issueDate2, caseDataMap(caseDetails1, issueDate2));
         mockInteractions(caseDetails3, issueDate3, caseDataMap(caseDetails1, issueDate3));
-
         when(holdingPeriodService.isHoldingPeriodFinished(issueDate1)).thenReturn(true);
         when(holdingPeriodService.isHoldingPeriodFinished(issueDate2)).thenReturn(true);
         when(holdingPeriodService.isHoldingPeriodFinished(issueDate3)).thenReturn(false);
         when(holdingPeriodService.getHoldingPeriodInWeeks()).thenReturn(14);
         when(ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, SERVICE_AUTHORIZATION)).thenReturn(caseDetailsList);
 
-        doNothing().when(conditionalOrderNotification).sendToSolicitor(any(CaseData.class), anyLong());
-
         awaitingConditionalOrderTask.run();
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
-
-        verify(conditionalOrderNotification, times(2)).sendToSolicitor(any(CaseData.class), anyLong());
-        verifyNoMoreInteractions(ccdUpdateService, conditionalOrderNotification);
+        verifyNoMoreInteractions(ccdUpdateService);
     }
 
     @Test
     void shouldIgnoreCaseWhenIssueDateIsNull() {
         final CaseDetails caseDetails = mock(CaseDetails.class);
-
         final List<CaseDetails> caseDetailsList = List.of(caseDetails);
-
         mockInteractions(caseDetails, null, caseDataMap(caseDetails, null));
-
         when(ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, SERVICE_AUTHORIZATION)).thenReturn(caseDetailsList);
 
         awaitingConditionalOrderTask.run();
@@ -145,10 +127,8 @@ class SystemProgressHeldCasesTaskTest {
     @Test
     void shouldNotTriggerAwaitingConditionalOrderWhenCaseIsInHoldingForLessThan20Weeks() {
         final CaseDetails caseDetails1 = mock(CaseDetails.class);
-
         final LocalDate issueDate = LocalDate.now();
         mockInteractions(caseDetails1, issueDate, caseDataMap(caseDetails1, issueDate));
-
         when(ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, SERVICE_AUTHORIZATION))
             .thenReturn(singletonList(caseDetails1));
 
@@ -173,13 +153,10 @@ class SystemProgressHeldCasesTaskTest {
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
         final LocalDate issueDate = parse("2021-01-01");
-
         mockInteractions(caseDetails1, issueDate, caseDataMap(caseDetails1, issueDate));
-
         when(holdingPeriodService.isHoldingPeriodFinished(issueDate)).thenReturn(true);
         when(holdingPeriodService.getHoldingPeriodInWeeks()).thenReturn(14);
         when(ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, SERVICE_AUTHORIZATION)).thenReturn(caseDetailsList);
-
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
 
@@ -195,19 +172,13 @@ class SystemProgressHeldCasesTaskTest {
         final CaseDetails caseDetails2 = mock(CaseDetails.class);
         final LocalDate issueDate1 = parse("2021-01-01");
         final LocalDate issueDate2 = parse("2021-01-02");
-
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
-
         when(holdingPeriodService.isHoldingPeriodFinished(issueDate1)).thenReturn(true);
         when(holdingPeriodService.isHoldingPeriodFinished(issueDate2)).thenReturn(true);
         when(holdingPeriodService.getHoldingPeriodInWeeks()).thenReturn(14);
         when(ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, SERVICE_AUTHORIZATION)).thenReturn(caseDetailsList);
-
         doThrow(new CcdManagementException("Failed processing of case", mock(FeignException.class)))
             .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
-
-        doNothing().when(conditionalOrderNotification).sendToSolicitor(any(CaseData.class), anyLong());
-
         mockInteractions(caseDetails1, issueDate1, caseDataMap(caseDetails1, issueDate1));
         mockInteractions(caseDetails2, issueDate2, caseDataMap(caseDetails2, issueDate2));
 
@@ -215,14 +186,12 @@ class SystemProgressHeldCasesTaskTest {
 
         verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_PROGRESS_HELD_CASE, user, SERVICE_AUTHORIZATION);
-        verify(conditionalOrderNotification, times(1)).sendToSolicitor(any(CaseData.class), anyLong());
     }
 
     private Map<String, Object> caseDataMap(CaseDetails caseDetails, LocalDate issueDate) {
         Map<String, Object> caseDataMap = new HashMap<>();
         caseDataMap.put("issueDate", issueDate);
         caseDataMap.put("applicant1SolicitorRepresented", true);
-
         return caseDataMap;
     }
 

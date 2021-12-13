@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
@@ -33,7 +34,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicantsApplyForCOrder.SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.systemupdate.schedule.conditionalorder.SystemRemindApplicantsApplyForCOrderTask.NOTIFICATION_FLAG;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DUE_DATE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
@@ -43,6 +46,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOK
 @ExtendWith(MockitoExtension.class)
 public class SystemRemindApplicantsApplyForCOrderTaskTest {
 
+    private static final int DUE_DATE_OFFSET_DAYS = 14;
     @Mock
     private CcdSearchService ccdSearchService;
 
@@ -60,18 +64,23 @@ public class SystemRemindApplicantsApplyForCOrderTaskTest {
 
     private User user;
 
-    private static final String FLAG = "jointApplicantsRemindedCanApplyForConditionalOrder";
     private static final BoolQueryBuilder query =
         boolQuery()
-            .must(matchQuery(STATE, AwaitingConditionalOrder))
-            .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
-            .mustNot(matchQuery(String.format(DATA, FLAG), YesOrNo.YES));
+            .must(
+                boolQuery()
+                    .must(matchQuery(STATE, AwaitingConditionalOrder))
+                    .must(matchQuery(STATE, ConditionalOrderPending))
+                    .minimumShouldMatch(1)
+            )
+            .filter(rangeQuery(DUE_DATE).lte(LocalDate.now().minusDays(DUE_DATE_OFFSET_DAYS)))
+            .mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YesOrNo.YES));
 
     @BeforeEach
     void setUp() {
         user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
+        ReflectionTestUtils.setField(underTest, "submitCOrderReminderOffsetDays", DUE_DATE_OFFSET_DAYS);
     }
 
     @Test

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.divorce.notification.AwaitingConditionalOrderNotification;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
@@ -42,9 +41,6 @@ public class SystemProgressHeldCasesTask implements Runnable {
 
     @Autowired
     private CcdSearchService ccdSearchService;
-
-    @Autowired
-    private AwaitingConditionalOrderNotification conditionalOrderNotification;
 
     @Autowired
     private ObjectMapper objectMapper;

@@ -53,7 +53,7 @@ public class SystemRemindApplicantsApplyForCOrderTask implements Runnable {
     private AuthTokenGenerator authTokenGenerator;
 
     @Value("${submit_co.reminder_offset_days}")
-    private int SUBMIT_CO_REMINDER_OFFSET_DAYS;
+    private int submitCOrderReminderOffsetDays;
 
     @Override
     public void run() {
@@ -69,7 +69,7 @@ public class SystemRemindApplicantsApplyForCOrderTask implements Runnable {
                             .must(matchQuery(STATE, ConditionalOrderPending))
                             .minimumShouldMatch(1)
                     )
-                    .filter(rangeQuery(DUE_DATE).lte(LocalDate.now().minusDays(SUBMIT_CO_REMINDER_OFFSET_DAYS)))
+                    .filter(rangeQuery(DUE_DATE).lte(LocalDate.now().minusDays(submitCOrderReminderOffsetDays)))
                     .mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YesOrNo.YES));
 
             ccdSearchService.searchForAllCasesWithQuery(AwaitingConditionalOrder, query, user, serviceAuthorization)

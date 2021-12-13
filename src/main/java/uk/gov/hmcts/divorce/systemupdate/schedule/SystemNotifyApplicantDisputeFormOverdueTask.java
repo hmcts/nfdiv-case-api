@@ -53,7 +53,7 @@ public class SystemNotifyApplicantDisputeFormOverdueTask implements Runnable {
     private AuthTokenGenerator authTokenGenerator;
 
     @Value("${submit_aos.dispute_offset_days}")
-    private int DISPUTE_DUE_DATE_OFFSET_DAYS;
+    private int disputeDueDateOffsetDays;
 
     @Override
     public void run() {
@@ -67,7 +67,7 @@ public class SystemNotifyApplicantDisputeFormOverdueTask implements Runnable {
                 boolQuery()
                     .must(matchQuery(STATE, Holding))
                     .must(matchQuery(AOS_RESPONSE, DISPUTE_DIVORCE.getType()))
-                    .filter(rangeQuery(ISSUE_DATE).lte(LocalDate.now().minusDays(DISPUTE_DUE_DATE_OFFSET_DAYS)))
+                    .filter(rangeQuery(ISSUE_DATE).lte(LocalDate.now().minusDays(disputeDueDateOffsetDays)))
                     .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YesOrNo.YES));
 
             ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, serviceAuth)
