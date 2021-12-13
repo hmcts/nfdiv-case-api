@@ -65,8 +65,8 @@ public class SystemRemindApplicantsApplyForCOrderTask implements Runnable {
                 boolQuery()
                     .must(
                         boolQuery()
-                            .must(matchQuery(STATE, AwaitingConditionalOrder))
-                            .must(matchQuery(STATE, ConditionalOrderPending))
+                            .should(matchQuery(STATE, AwaitingConditionalOrder))
+                            .should(matchQuery(STATE, ConditionalOrderPending))
                             .minimumShouldMatch(1)
                     )
                     .filter(rangeQuery(DUE_DATE).lte(LocalDate.now().minusDays(submitCOrderReminderOffsetDays)))
