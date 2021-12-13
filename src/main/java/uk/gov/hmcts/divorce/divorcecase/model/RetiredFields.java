@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor.Prayer;
+import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
@@ -207,7 +208,10 @@ public class RetiredFields {
     @CCD(label = "Retired applicant 1 keep contact details private")
     private YesOrNo applicant1KeepContactDetailsConfidential;
 
-    @CCD(label = "Retired applicant 1 Keep contact details private")
+    @CCD(
+        label = "Retired applicant 1 Keep contact details private",
+        access = {DefaultAccess.class, Applicant2Access.class}
+    )
     private YesOrNo applicant2KeepContactDetailsConfidential;
 
     @JsonIgnore
