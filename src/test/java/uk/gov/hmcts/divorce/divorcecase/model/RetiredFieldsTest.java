@@ -53,6 +53,8 @@ class RetiredFieldsTest {
         data.put("coClarificationResponse", "some text");
         data.put("marriageIsSameSexCouple", "Yes");
         data.put("applicant2KeepContactDetailsConfidential", "Yes");
+        data.put("applicant1Gender", "notGiven");
+        data.put("applicant2Gender", "notGiven");
 
         final var result = RetiredFields.migrate(data);
 
@@ -89,7 +91,9 @@ class RetiredFieldsTest {
             entry("coClarificationResponses", singletonList(ListValue.<String>builder().value("some text").build())),
             entry("marriageFormationType", "sameSexCouple"),
             entry("applicant1ContactDetailsType", "public"),
-            entry("applicant2ContactDetailsType", "private")
+            entry("applicant2ContactDetailsType", "private"),
+            entry("applicant1Gender", "female"),
+            entry("applicant2Gender", "female")
         );
     }
 

@@ -302,6 +302,8 @@ public class RetiredFields {
         }
 
         data.put("dataVersion", getVersion());
+        data.put("applicant1Gender", transformGender(data, "applicant1Gender"));
+        data.put("applicant2Gender", transformGender(data, "applicant2Gender"));
 
         return data;
     }
@@ -428,5 +430,12 @@ public class RetiredFields {
         return YES.getValue().equalsIgnoreCase(value)
             ? SAME_SEX_COUPLE.getType()
             : OPPOSITE_SEX_COUPLE.getType();
+    }
+
+    private static String transformGender(Map<String, Object> data, String fieldName) {
+        String value = (String) data.get(fieldName);
+        return "notGiven".equalsIgnoreCase(value)
+            ? Gender.FEMALE.getType()
+            : value;
     }
 }

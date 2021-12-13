@@ -11,11 +11,12 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 public enum Gender implements HasLabel {
 
     @JsonProperty("male")
-    MALE("Male"),
+    MALE("male", "Male"),
 
     @JsonProperty("female")
     @JsonAlias({"notGiven"})
-    FEMALE("Female");
+    FEMALE("female", "Female");
 
+    private final String type;
     private final String label;
 }
