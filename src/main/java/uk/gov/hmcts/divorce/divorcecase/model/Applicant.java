@@ -138,13 +138,14 @@ public class Applicant {
     private YesOrNo financialOrder;
 
     @CCD(
-        label = "Are there any existing or previous court proceedings relating to the marriage?"
+        label = "Are there any existing or previous court proceedings relating to the ${labelContentMarriageOrCivilPartnership}?"
     )
     private YesOrNo legalProceedings;
 
     @CCD(
-        label = "Legal proceeding details",
-        hint = "Include the case number(s), if known.",
+        label = "Provide details of the other legal proceedings",
+        hint = "Provide as much information as possible, such as the case number(s); "
+            + "the names of the people involved and if the proceedings are ongoing or if they’ve finished.",
         typeOverride = TextArea
     )
     private String legalProceedingsDetails;
