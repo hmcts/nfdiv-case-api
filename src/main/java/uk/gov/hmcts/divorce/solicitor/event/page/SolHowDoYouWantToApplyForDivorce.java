@@ -38,12 +38,12 @@ public class SolHowDoYouWantToApplyForDivorce implements CcdPageConfiguration {
                 .readonly(LabelContent::getTheApplicantsOrApplicant1s, NEVER_SHOW)
                 .readonly(LabelContent::getRespondentsOrApplicant2s, NEVER_SHOW)
             .done()
-            .mandatory(CaseData::getDivorceOrDissolution)
+            .mandatory(CaseData::getDivorceOrDissolution, null, null, " ")
             .label("soleLabelDivorce", "### Sole applications<br>"
-                    + "\nThe other party responds to the divorce application after it's issued</small>",
+                    + "\nThe other party responds to the divorce application after it's issued.",
                 "divorceOrDissolution = \"divorce\"")
             .label("soleLabelDissolution", "### Sole applications"
-                    + "\nThe other party responds to the  application to end their civil partnership after it's issued",
+                    + "\nThe other party responds to the  application to end their civil partnership after it's issued.",
                 "divorceOrDissolution = \"dissolution\"")
             .label("jointLabel", "### Joint applications"
                     + "\nThe other party joins and reviews the application before it's submitted.",
