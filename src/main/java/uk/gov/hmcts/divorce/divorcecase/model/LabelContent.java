@@ -57,6 +57,9 @@ public class LabelContent {
     @CCD(label = "applicant's or applicant 1’s")
     private String applicantsOrApplicant1s;
 
+    @CCD(label = "applicant's or applicant 1’s in lower case")
+    private String  applicantsOrApplicant1sLC;
+
     @CCD(label = "The applicant's or applicant 1’s")
     private String theApplicantsOrApplicant1s;
 
@@ -101,7 +104,8 @@ public class LabelContent {
             theApplicant2UC = "The respondent";
             applicantOrApplicant1 = "the applicant’s";
             applicantsOrApplicant1s = "Applicant’s";
-            theApplicantsOrApplicant1s = "The Applicant’s";
+            applicantsOrApplicant1sLC = "applicant’s";
+            theApplicantsOrApplicant1s = "The applicant’s";
             theApplicantOrApplicant1 = "the applicant";
             respondentsOrApplicant2s = "Respondent's";
         } else {
@@ -111,7 +115,8 @@ public class LabelContent {
             theApplicant2UC = "Applicant 2";
             applicantOrApplicant1 = "applicant 1’s";
             applicantsOrApplicant1s = "Applicant 1’s";
-            theApplicantsOrApplicant1s = "Applicant 1’s";
+            applicantsOrApplicant1sLC = "applicant 1’s";
+            theApplicantsOrApplicant1s = "The applicant 1’s";
             theApplicantOrApplicant1 = "applicant 1";
             respondentsOrApplicant2s = "Applicant 2's";
         }

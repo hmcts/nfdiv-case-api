@@ -26,7 +26,7 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
                 .mandatoryWithLabel(Applicant::getLastName,
                     "${labelContentApplicantsOrApplicant1s} last name")
                 .mandatoryWithLabel(Applicant::getNameDifferentToMarriageCertificate,
-                    "Is ${labelContentApplicantsOrApplicant1s} name different to that on the"
+                    "Is ${labelContentApplicantsOrApplicant1sLC} name different to that on the"
                         + " ${labelContentMarriageOrCivilPartnership} certificate?")
                 .mandatoryWithoutDefaultValue(Applicant::getNameChangedHow,
                 "applicant1NameDifferentToMarriageCertificate=\"Yes\"",
@@ -42,7 +42,7 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
                     .mandatory(MarriageDetails::getFormationType)
                     .done()
                 .done()
-            .label("contactDetails", "# ${labelContentTheApplicantsOrApplicant1s} contact details")
+            .label("contactDetails", "# ${labelContentApplicantsOrApplicant1sLC} contact details")
             .complex(CaseData::getApplicant1)
                 .mandatoryWithLabel(Applicant::getEmail,
                     "${labelContentApplicantsOrApplicant1s} email address")
