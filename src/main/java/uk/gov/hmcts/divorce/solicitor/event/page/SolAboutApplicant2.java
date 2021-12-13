@@ -42,7 +42,7 @@ public class SolAboutApplicant2 implements CcdPageConfiguration {
                         "Is ${labelContentTheApplicant2} male or female?")
                 .mandatory(
                     Applicant::getDivorceWho,
-                    null,
+                    "divorceOrDissolution=\"divorce\"",
                     null,
                     "What is ${labelContentTheApplicant2}"
                 )

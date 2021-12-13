@@ -79,9 +79,7 @@ public class Applicant {
     private YesOrNo lastNameChangedWhenMarried;
 
     @CCD(
-        label = "Have they changed their name since they got married?",
-        hint = "Is their current name different to their married name or the name shown on their "
-            + "marriage certificate?"
+        label = "Have they changed their name since they got married?"
     )
     private YesOrNo nameDifferentToMarriageCertificate;
 
