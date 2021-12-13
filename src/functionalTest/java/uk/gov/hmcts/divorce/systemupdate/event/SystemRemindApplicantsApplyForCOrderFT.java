@@ -4,6 +4,7 @@ import io.restassured.response.Response;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -23,6 +24,7 @@ import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicantsApplyForCOrder.SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.systemupdate.schedule.conditionalorder.SystemRemindApplicantsApplyForCOrderTask.NOTIFICATION_FLAG;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
@@ -38,6 +40,9 @@ public class SystemRemindApplicantsApplyForCOrderFT extends FunctionalTestSuite 
     private static final String REQUEST =
         "classpath:request/casedata/ccd-callback-casedata-system-remind-joint-applicants-conditional-order.json";
     private static final String RESPONSE = "classpath:responses/response-system-remind-joint-applicants-conditional-order.json";
+
+    @Value("${submit_co.reminder_offset_days}")
+    private int submitCOrderReminderOffsetDays;
 
 
     @Test
@@ -58,8 +63,13 @@ public class SystemRemindApplicantsApplyForCOrderFT extends FunctionalTestSuite 
     @EnabledIfEnvironmentVariable(named = "ELASTIC_SEARCH_ENABLED", matches = "true")
     public void shouldSearchForCasesReadyToApplyForConditionalOrder() {
         final BoolQueryBuilder query = boolQuery()
-            .must(matchQuery(STATE, AwaitingConditionalOrder))
-            .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
+            .must(
+                boolQuery()
+                    .must(matchQuery(STATE, AwaitingConditionalOrder))
+                    .must(matchQuery(STATE, ConditionalOrderPending))
+                    .minimumShouldMatch(1)
+            )
+            .filter(rangeQuery(DUE_DATE).lte(LocalDate.now().minusDays(submitCOrderReminderOffsetDays)))
             .mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YesOrNo.YES));
 
         searchForCasesWithQuery(query)

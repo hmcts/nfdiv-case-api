@@ -49,9 +49,7 @@ public class SystemProgressHeldCase implements CCDConfig<CaseData, State, UserRo
                                                                        CaseDetails<CaseData, State> beforeDetails) {
         CaseData caseData = details.getData();
         Long caseId = details.getId();
-        boolean applicant1SolicitorRepresented = caseData.getApplicant1().isRepresented();
-
-        if (applicant1SolicitorRepresented) {
+        if (caseData.getApplicant1().isRepresented()) {
             log.info("For case id {} applicant is represented by solicitor hence sending conditional order notification email", caseId);
             conditionalOrderNotification.sendToSolicitor(caseData, caseId);
         } else {
@@ -61,7 +59,6 @@ public class SystemProgressHeldCase implements CCDConfig<CaseData, State, UserRo
                 conditionalOrderNotification.sendToApplicant2(caseData, caseId, false);
             }
         }
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
