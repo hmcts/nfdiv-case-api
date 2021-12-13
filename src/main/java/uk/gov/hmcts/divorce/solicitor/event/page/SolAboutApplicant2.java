@@ -44,7 +44,7 @@ public class SolAboutApplicant2 implements CcdPageConfiguration {
                     Applicant::getDivorceWho,
                     "divorceOrDissolution=\"divorce\"",
                     null,
-                    "What is ${labelContentTheApplicant2}"
+                    "What is ${labelContentTheApplicant2}?"
                 )
                 .done();
     }
