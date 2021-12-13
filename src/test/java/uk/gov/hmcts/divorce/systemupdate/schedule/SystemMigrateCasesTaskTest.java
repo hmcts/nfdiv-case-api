@@ -29,6 +29,7 @@ import java.util.Map;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -149,7 +150,7 @@ class SystemMigrateCasesTaskTest {
 
         systemMigrateCasesTask.run();
 
-        assertThat(caseDetails1.getData()).isEqualTo(Map.of("dataVersion", 0));
+        assertThat(caseDetails1.getData()).contains(entry("dataVersion", 0));
     }
 
     @Test
