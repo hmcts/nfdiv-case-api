@@ -178,24 +178,6 @@ public class BulkActionCaseData {
     }
 
     @JsonIgnore
-    public List<ListValue<CaseLink>> transformToCasesAcceptedToListForHearing(List<ListValue<BulkListCaseDetails>> bulkListCaseDetails) {
-
-        if (Objects.isNull(bulkListCaseDetails) || bulkListCaseDetails.isEmpty()) {
-            return emptyList();
-        }
-
-        final AtomicInteger counter = new AtomicInteger(1);
-        return bulkListCaseDetails.stream()
-            .map(c ->
-                ListValue.<CaseLink>builder()
-                    .id(String.valueOf(counter.getAndIncrement()))
-                    .value(c.getValue().getCaseReference())
-                    .build()
-            )
-            .collect(toList());
-    }
-
-    @JsonIgnore
     public <T> List<T> fromListValueToList(final List<ListValue<T>> targetList) {
         return targetList.stream()
             .map(ListValue::getValue)
