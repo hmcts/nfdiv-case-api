@@ -80,7 +80,7 @@ class SubmitConditionalOrderTest {
         caseDetails.setId(1L);
         caseDetails.setData(caseData);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, null);
+        submitConditionalOrder.aboutToSubmit(caseDetails, null);
 
         verify(notification).sendToApplicant1(caseData, 1L);
     }
