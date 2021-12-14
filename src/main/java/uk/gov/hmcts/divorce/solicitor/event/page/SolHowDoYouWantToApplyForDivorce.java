@@ -37,6 +37,7 @@ public class SolHowDoYouWantToApplyForDivorce implements CcdPageConfiguration {
                 .readonly(LabelContent::getGotMarriedOrFormedCivilPartnership, NEVER_SHOW)
                 .readonly(LabelContent::getTheApplicantsOrApplicant1s, NEVER_SHOW)
                 .readonly(LabelContent::getRespondentsOrApplicant2s, NEVER_SHOW)
+                .readonly(LabelContent::getTheApplicantOrApplicant1, NEVER_SHOW)
             .done()
             .mandatory(CaseData::getDivorceOrDissolution, null, null, " ")
             .label("soleLabelDivorce", "### Sole applications<br>"
