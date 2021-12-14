@@ -7,6 +7,7 @@ java:
   ingressHost: ${SERVICE_FQDN}
   environment:
     CASE_DATA_STORE_BASEURL: "http://ccd-data-store-api-nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
+    CITIZEN_UPDATE_CASE_STATE_ENABLED: true
   keyVaults:
     nfdiv:
       secrets:
@@ -89,7 +90,7 @@ ccd:
       ingressHost: ccd-data-store-api-${SERVICE_FQDN}
   am-role-assignment-service:
     java:
-      keyVaults: 
+      keyVaults:
         am:
           secrets:
             - role-assignment-service-LD-SDK-KEY
