@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 
 import java.util.Set;
 
@@ -79,9 +78,7 @@ public class Applicant {
     private YesOrNo lastNameChangedWhenMarried;
 
     @CCD(
-        label = "Have they changed their name since they got married?",
-        hint = "Is their current name different to their married name or the name shown on their "
-            + "marriage certificate?"
+        label = "Have they changed their name since they got married?"
     )
     private YesOrNo nameDifferentToMarriageCertificate;
 
@@ -129,7 +126,6 @@ public class Applicant {
     private YesOrNo solicitorRepresented;
 
     @JsonUnwrapped(prefix = "Solicitor")
-    @CCD(access = {DefaultAccess.class})
     private Solicitor solicitor;
 
     @CCD(
@@ -140,13 +136,14 @@ public class Applicant {
     private YesOrNo financialOrder;
 
     @CCD(
-        label = "Are there any existing or previous court proceedings relating to the marriage?"
+        label = "Are there any existing or previous court proceedings relating to the ${labelContentMarriageOrCivilPartnership}?"
     )
     private YesOrNo legalProceedings;
 
     @CCD(
-        label = "Legal proceeding details",
-        hint = "Include the case number(s), if known.",
+        label = "Provide details of the other legal proceedings",
+        hint = "Provide as much information as possible, such as the case number(s); "
+            + "the names of the people involved and if the proceedings are ongoing or if they’ve finished.",
         typeOverride = TextArea
     )
     private String legalProceedingsDetails;
@@ -155,6 +152,13 @@ public class Applicant {
         label = "PCQ ID"
     )
     private String pcqId;
+
+    @CCD(
+        label = "Spouse Type",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "WhoDivorcing"
+    )
+    private WhoDivorcing divorceWho;
 
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {

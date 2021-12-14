@@ -158,6 +158,7 @@ withPipeline(type, product, component) {
       env.DEFINITION_STORE_URL_BASE = "https://ccd-definition-store-nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
       env.CASE_DATA_STORE_BASEURL = "http://ccd-data-store-api-nfdiv-case-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
       env.TEST_S2S_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+      env.CITIZEN_UPDATE_CASE_STATE_ENABLED=true
 
       setCommonEnvVariables()
     }
