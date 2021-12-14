@@ -43,8 +43,8 @@ public class CitizenUpdateCaseStateAat implements CCDConfig<CaseData, State, Use
 
         CaseData data = details.getData();
 
-        State state = State.valueOf(data.getApplicant2().getLegalProceedingsDetails());
-        data.getApplicant2().setLegalProceedingsDetails(null);
+        State state = State.valueOf(data.getApplicant2().getMiddleName());
+        data.getApplicant2().setMiddleName(null);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
