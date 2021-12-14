@@ -475,18 +475,6 @@ task reloadCcd(type: CftlibTask, dependsOn: generateCCDConfig) {
 
 generateCCDConfig.dependsOn stopCaseApiContainer
 
-task bootWithCcd() {
-  description = "Boot application with CCD"
-  group = "application"
-
-  doFirst {
-    classpath += sourceSets.ccdTest.runtimeClasspath
-  }
-}
-
-bootWithCcd.dependsOn bootRun
-
-
 task bootXui(type: CftlibTask) {
   commandLine 'docker-compose',  '-f', 'docker-compose-xui.yml', 'up'
 }
