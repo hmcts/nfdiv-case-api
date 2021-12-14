@@ -194,7 +194,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, SOLICITOR, SUPER_USER)
             .showCondition("coApplicant1SubmittedDate=\"*\"")
             .field("coApplyForConditionalOrder")
-            .field("coDateSubmitted")
+            .field("coApplicant1SubmittedDate")
             .field("coChangeOrAddToApplication")
             .field("coApplicantStatementOfTruth")
             .field("coSolicitorName")
