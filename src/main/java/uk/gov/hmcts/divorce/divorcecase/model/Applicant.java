@@ -163,6 +163,11 @@ public class Applicant {
     )
     private WhoDivorcing divorceWho;
 
+    @CCD(
+        label = "The applicant wants to continue with their application."
+    )
+    private YesOrNo continueApplication;
+
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
         return languagePreferenceWelsh == null || languagePreferenceWelsh.equals(NO)

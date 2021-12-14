@@ -209,12 +209,6 @@ public class ConditionalOrder {
     )
     private YesOrNo applicantStatementOfTruth;
 
-    @CCD(
-        label = "The applicant wants to continue with their application.",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo continueApplication;
-
     @JsonIgnore
     public boolean areClaimsGranted() {
         return nonNull(claimsGranted) && claimsGranted.toBoolean();
