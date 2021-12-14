@@ -101,7 +101,7 @@ public class LabelContent {
             theApplicant2UC = "The respondent";
             applicantOrApplicant1 = "the applicant’s";
             applicantsOrApplicant1s = "Applicant’s";
-            theApplicantsOrApplicant1s = "The Applicant’s";
+            theApplicantsOrApplicant1s = "The applicant’s";
             theApplicantOrApplicant1 = "the applicant";
             respondentsOrApplicant2s = "Respondent's";
         } else {
