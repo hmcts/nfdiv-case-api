@@ -23,10 +23,10 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 public class SubmitConditionalOrderFT extends FunctionalTestSuite {
 
     private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata-citizen-submit-conditional-order.json";
-    private static final String RESPONSE = "classpath:responses/response-legal-advisor-make-decision.json";
+    private static final String RESPONSE = "classpath:responses/response-citizen-submit-conditional-order.json";
 
     @Test
-    public void shouldSendEmailToApp1SolicitorWhenAllTemplateParamsAreValid() throws IOException {
+    public void shouldSendEmailToApp1WhenAllTemplateParamsAreValid() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
 
         Response response = triggerCallback(request, SUBMIT_CONDITIONAL_ORDER, ABOUT_TO_SUBMIT_URL);
