@@ -80,7 +80,8 @@ public class MarriageDetails {
         label = "Were ${labelContentTheApplicantOrApplicant1} and ${labelContentTheApplicant2} a same-sex couple when "
             + "they ${labelContentGotMarriedOrFormedCivilPartnership}?",
         typeOverride = FixedRadioList,
-        typeParameterOverride = "MarriageFormation"
+        typeParameterOverride = "MarriageFormation",
+        access = {DefaultAccess.class}
     )
     private MarriageFormation formationType;
 
