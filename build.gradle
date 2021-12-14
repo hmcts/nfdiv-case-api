@@ -456,33 +456,22 @@ tasks.register('stopCaseApiContainer') {
   }
 }
 
-def reloadCcd = tasks.register('reloadCcd') {
-  group = 'ccd tasks'
-  doLast {
-    exec {
-      file('../.env').readLines().each() {
+class CftlibTask extends Exec {
+  CftlibTask() {
+      project.file('../.env').readLines().each() {
         def (key, value) = it.tokenize('=')
         environment key, value
       }
-
       environment 'IDAM_API_URL_BASE', 'https://idam-api.aat.platform.hmcts.net'
       environment 'DEFINITION_STORE_URL_BASE', 'http://localhost:4013'
-
-      commandLine './bin/process-and-import-ccd-definition.sh'
+      environment 'CCD_USER_PROFILE_URL', 'http://localhost:4013'
     }
-//    exec {
-//      file('../.env').readLines().each() {
-//        def (key, value) = it.tokenize('=')
-//        environment key, value
-//      }
-//      commandLine 'docker-compose', '-f', '../docker-compose.yml', 'up', '--build', '-d', 'nfdiv-case-api'
-//    }
-  }
 }
-//
-//reloadCcd.configure {
-//  dependsOn assemble, generateCCDConfig
-//}
+
+task reloadCcd(type: CftlibTask, dependsOn: generateCCDConfig) {
+  group = 'ccd tasks'
+  commandLine './bin/process-and-import-ccd-definition.sh'
+}
 
 generateCCDConfig.dependsOn stopCaseApiContainer
 
@@ -498,16 +487,10 @@ task bootWithCcd() {
 bootWithCcd.dependsOn bootRun
 
 
-task bootXui(type: Exec) {
-
-  doFirst {
-    file('../.env').readLines().each() {
-      def (key, value) = it.tokenize('=')
-      environment key, value
-    }
-
-    environment 'IDAM_API_URL_BASE', 'https://idam-api.aat.platform.hmcts.net'
-    environment 'DEFINITION_STORE_URL_BASE', 'http://localhost:4013'
-  }
+task bootXui(type: CftlibTask) {
   commandLine 'docker-compose',  '-f', 'docker-compose-xui.yml', 'up'
+}
+
+task prepCCD(type: CftlibTask) {
+  commandLine 'bin/add-ccd-user-profiles.sh'
 }
