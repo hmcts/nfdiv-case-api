@@ -14,7 +14,8 @@ public class UploadDocument implements CcdPageConfiguration {
             .pageLabel("Upload your documents")
             .label(
                 "LabelUploadDocumentsPara-1",
-                "Upload a scan of the original ${labelContentMarriageOrCivilPartnership} certificate, or a certified copy or translation.\n\n"
+                "Upload a scan of the original ${labelContentMarriageOrCivilPartnership} certificate, "
+                    + "or a certified copy or translation.\n\n"
                     + "You can also upload any other evidence or applications, if required. "
                     + "For example a deed poll to show a change of name, or an application for ‘dispensed with’ service.\n\n"
                     + "Make sure the image you upload shows the entire document and all the text is legible.")
