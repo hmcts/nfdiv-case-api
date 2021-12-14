@@ -78,9 +78,7 @@ public class Applicant {
     private YesOrNo lastNameChangedWhenMarried;
 
     @CCD(
-        label = "Have they changed their name since they got married?",
-        hint = "Is their current name different to their married name or the name shown on their "
-            + "marriage certificate?"
+        label = "Have they changed their name since they got married?"
     )
     private YesOrNo nameDifferentToMarriageCertificate;
 
@@ -154,6 +152,13 @@ public class Applicant {
         label = "PCQ ID"
     )
     private String pcqId;
+
+    @CCD(
+        label = "Spouse Type",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "WhoDivorcing"
+    )
+    private WhoDivorcing divorceWho;
 
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
