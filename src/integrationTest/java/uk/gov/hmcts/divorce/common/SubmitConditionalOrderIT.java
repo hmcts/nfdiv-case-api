@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.time.Clock;
 
@@ -43,6 +44,9 @@ public class SubmitConditionalOrderIT {
 
     @MockBean
     private WebMvcConfig webMvcConfig;
+
+    @MockBean
+    private NotificationService notificationService;
 
     @MockBean
     private Clock clock;
