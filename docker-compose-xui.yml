@@ -1,0 +1,43 @@
+---
+version: '3.5'
+
+services:
+  xui-manage-cases:
+    image: "${XUI_MANAGE_CASES_USE_LOCAL-hmctspublic.azurecr.io/}xui/webapp:${XUI_MANAGE_CASES_TAG:-latest}"
+    environment:
+      FEATURE_APP_INSIGHTS_ENABLED: "true"
+      FEATURE_SECURE_COOKIE_ENABLED: "false"
+      FEATURE_REDIS_ENABLED: "false"
+      JURISDICTIONS: DIVORCE
+      MICROSERVICE: xui_webapp
+      PROTOCOL: http
+      XUI_ENV: local
+      DEBUG: '*:*'
+      SERVICES_DOCUMENTS_API: http://host.docker.internal:4013
+      SERVICES_PAYMENTS_URL: http://host.docker.internal:4013
+      SERVICES_EM_ANNO_API: http://host.docker.internal:4013
+      SERVICES_CCD_COMPONENT_API: http://host.docker.internal:4013
+      SERVICES_CCD_DATA_STORE_API: http://host.docker.internal:4013
+      SERVICES_IDAM_API_URL: https://idam-api.aat.platform.hmcts.net
+      SERVICES_IDAM_CLIENT_ID: xuiwebapp
+      SERVICES_IDAM_LOGIN_URL: https://idam-web-public.aat.platform.hmcts.net
+      SERVICES_IDAM_INDEX_URL: /
+      SERVICES_IDAM_OAUTH_CALLBACK_URL: /oauth2/callback
+      SERVICES_EM_DOCASSEMBLY_API: https://idam-web-public.aat.platform.hmcts.net
+      HEALTH_EM_DOCASSEMBLY_API: https://idam-web-public.aat.platform.hmcts.net/health
+
+      SERVICES_S2S: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
+      SYSTEM_USER_NAME: "${XUI_SYSTEM_USER_NAME}"
+      SYSTEM_USER_PASSWORD: "${XUI_SYSTEM_USER_PASSWORD}"
+      REDISCLOUD_URL: http://localhost:6780
+      HEALTH_CCD_COMPONENT_API: http://ccd-api-gateway:3453/health
+      HEALTH_CCD_DATA_API: http://ccd-data-store-api:4452/health
+      SERVICES_PRD_API: http://mock-rd-professional-api:8080
+      APPINSIGHTS_INSTRUMENTATIONKEY: TESTVAR
+      IDAM_SECRET: "${XUI_OAUTH_SECRET}"
+      S2S_SECRET: "${XUI_SERVICE_KEY}"
+      LAUNCH_DARKLY_CLIENT_ID: "${XUI_LD_ID}"
+      SERVICES_ROLE_ASSIGNMENT_API: http://host.docker.internal:4013
+      HEALTH_ROLE_ASSIGNMENT_API: http://host.docker.internal:4013/health
+    ports:
+      - 3000:3000

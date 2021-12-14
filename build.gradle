@@ -497,3 +497,17 @@ task bootWithCcd() {
 
 bootWithCcd.dependsOn bootRun
 
+
+task bootXui(type: Exec) {
+
+  doFirst {
+    file('../.env').readLines().each() {
+      def (key, value) = it.tokenize('=')
+      environment key, value
+    }
+
+    environment 'IDAM_API_URL_BASE', 'https://idam-api.aat.platform.hmcts.net'
+    environment 'DEFINITION_STORE_URL_BASE', 'http://localhost:4013'
+  }
+  commandLine 'docker-compose',  '-f', 'docker-compose-xui.yml', 'up'
+}
