@@ -9,7 +9,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 
 import java.util.Map;
 
-import static uk.gov.hmcts.divorce.notification.CommonContent.ACTION_REQUIRED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
@@ -77,7 +76,6 @@ public class AwaitingConditionalOrderNotification {
         templateVars.put(WIFE_JOINT,
             jointApplication && isDivorce(caseData) && partner.getGender().equals(Gender.FEMALE) ? YES : CommonContent.NO);
         templateVars.put(CIVIL_PARTNER_JOINT, jointApplication && !isDivorce(caseData) ? YES : CommonContent.NO);
-        templateVars.put(ACTION_REQUIRED, isReminder ? CommonContent.NO : YES);
         templateVars.put(IS_REMINDER, isReminder ? YES : CommonContent.NO);
         return templateVars;
     }
