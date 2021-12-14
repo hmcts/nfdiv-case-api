@@ -33,7 +33,7 @@ public class SystemRemindApplicantsApplyForCOrder implements CCDConfig<CaseData,
         configBuilder
             .event(SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER)
             .forStates(AwaitingConditionalOrder, ConditionalOrderPending)
-            .name("Remind Joint Applicants Apply for CO")
+            .name("Remind Applicants Apply for CO")
             .description("Remind Joint Applicants they can apply for a Conditional Order")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .retries(120, 120)
