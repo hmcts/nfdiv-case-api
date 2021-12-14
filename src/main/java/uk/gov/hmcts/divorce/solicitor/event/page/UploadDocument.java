@@ -11,15 +11,13 @@ public class UploadDocument implements CcdPageConfiguration {
 
         pageBuilder
             .page("UploadSupportingDocuments")
-            .pageLabel("Upload Documents")
+            .pageLabel("Upload your documents")
             .label(
                 "LabelUploadDocumentsPara-1",
-                "You need to upload a digital photo or scan of the marriage certificate.\n\n"
-                    + "You can also upload other documents that you need to send to the court, e.g.\n"
-                    + "- Certified translation of a non-English marriage certificate\n"
-                    + "- Change of name deed\n\n"
-                    + "The image must be of the entire document and has to be readable by court staff. "
-                    + "You can upload image files with jpg, jpeg, bmp, tif, tiff or PDF file extensions, maximum size 100MB per file")
+                "Upload a scan of the original ${labelContentMarriageOrCivilPartnership} certificate, or a certified copy or translation.\n\n"
+                    + "You can also upload any other evidence or applications, if required. "
+                    + "For example a deed poll to show a change of name, or an application for ‘dispensed with’ service.\n\n"
+                    + "Make sure the image you upload shows the entire document and all the text is legible.")
             .optional(CaseData::getApplicant1DocumentsUploaded);
     }
 }

@@ -122,7 +122,7 @@ public class CaseData {
     private AlternativeService alternativeService = new AlternativeService();
 
     @CCD(
-        label = "Applicant 1 Documents uploaded",
+        label = "Applicant 1 uploaded documents",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
         access = {DefaultAccess.class}
