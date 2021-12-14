@@ -23,15 +23,14 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
-@Slf4j
 @Component
+@Slf4j
 public class SystemProgressHeldCase implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SYSTEM_PROGRESS_HELD_CASE = "system-progress-held-case";
 
     @Autowired
     private AwaitingConditionalOrderNotification conditionalOrderNotification;
-
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -40,15 +39,17 @@ public class SystemProgressHeldCase implements CCDConfig<CaseData, State, UserRo
             .forStateTransition(Holding, AwaitingConditionalOrder)
             .name("Awaiting Conditional Order")
             .description("Progress held case to Awaiting Conditional Order")
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .grant(READ, SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR));
     }
 
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
-                                                                       CaseDetails<CaseData, State> beforeDetails) {
-        CaseData caseData = details.getData();
-        Long caseId = details.getId();
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
+                                                                       final CaseDetails<CaseData, State> beforeDetails) {
+        final CaseData caseData = details.getData();
+        final Long caseId = details.getId();
+
         if (caseData.getApplicant1().isRepresented()) {
             log.info("For case id {} applicant is represented by solicitor hence sending conditional order notification email", caseId);
             conditionalOrderNotification.sendToSolicitor(caseData, caseId);
@@ -61,6 +62,7 @@ public class SystemProgressHeldCase implements CCDConfig<CaseData, State, UserRo
         }
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
+            .state(details.getState())
             .build();
     }
 }

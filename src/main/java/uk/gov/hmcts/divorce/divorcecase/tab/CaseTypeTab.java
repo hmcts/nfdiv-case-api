@@ -192,7 +192,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private void buildConditionalOrderTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("conditionalOrder", "Conditional Order")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, SOLICITOR, SUPER_USER)
-            .showCondition("coDateSubmitted=\"*\"")
+            .showCondition("coApplicant1SubmittedDate=\"*\"")
             .field("coApplyForConditionalOrder")
             .field("coDateSubmitted")
             .field("coChangeOrAddToApplication")

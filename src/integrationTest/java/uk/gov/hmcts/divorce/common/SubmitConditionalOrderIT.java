@@ -69,6 +69,6 @@ public class SubmitConditionalOrderIT {
             .andExpect(
                 status().isOk()
             )
-            .andExpect(jsonPath("$.data.coDateSubmitted").value(getFormattedExpectedDateTime()));
+            .andExpect(jsonPath("$.data.coApplicant1SubmittedDate").value(getFormattedExpectedDateTime()));
     }
 }

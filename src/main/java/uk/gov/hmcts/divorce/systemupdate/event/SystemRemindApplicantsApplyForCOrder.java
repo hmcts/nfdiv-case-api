@@ -43,7 +43,7 @@ public class SystemRemindApplicantsApplyForCOrder implements CCDConfig<CaseData,
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
         CaseData data = details.getData();
-        if (details.getState().equals(AwaitingConditionalOrder)) {
+        if (AwaitingConditionalOrder.equals(details.getState())) {
             notification.sendToApplicant1(data, details.getId(), true);
             if (!data.getApplicationType().isSole()) {
                 notification.sendToApplicant2(data, details.getId(), true);

@@ -46,7 +46,7 @@ public class SystemRemindApplicantsApplyForCOrderFT extends FunctionalTestSuite 
 
 
     @Test
-    public void shouldPassValidationAndSendEmailsToApplicantAndRespondent() throws IOException {
+    public void shouldPassValidationAndSendReminderEmailToApplicants() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
 
         Response response = triggerCallback(request, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, ABOUT_TO_SUBMIT_URL);
