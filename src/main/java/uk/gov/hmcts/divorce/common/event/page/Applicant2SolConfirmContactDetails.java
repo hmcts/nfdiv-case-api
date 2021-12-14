@@ -23,6 +23,7 @@ public class Applicant2SolConfirmContactDetails implements CcdPageConfiguration 
                 .readonlyNoSummary(LabelContent::getTheApplicant2, ALWAYS_HIDE)
                 .readonlyNoSummary(LabelContent::getTheApplicant2UC, ALWAYS_HIDE)
                 .readonlyNoSummary(LabelContent::getDivorceOrCivilPartnershipApplication, ALWAYS_HIDE)
+                .readonlyNoSummary(LabelContent::getDivorceOrCivilPartnership, ALWAYS_HIDE)
             .done()
             .complex(CaseData::getApplicant2)
                 .complex(Applicant::getSolicitor)
