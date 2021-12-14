@@ -129,11 +129,14 @@ public class Applicant {
     private Solicitor solicitor;
 
     @CCD(
-        label = "Do they wish to apply for a financial order?",
-        hint = "The court will not start processing your request for a financial order until you submit the separate "
-            + "application and pay the fee."
+        label = "Do ${labelContentTheApplicantOrApplicant1} wish to apply for a financial order?"
     )
     private YesOrNo financialOrder;
+
+    @CCD(
+        label = "Who are the financial orders for?"
+    )
+    private Set<FinancialOrderFor> financialOrdersFor;
 
     @CCD(
         label = "Are there any existing or previous court proceedings relating to the ${labelContentMarriageOrCivilPartnership}?"
