@@ -29,7 +29,7 @@ public class CaseTriggerService {
             log.info("Bulk submit event completed for Case ID: {}, Event ID: {}", caseId, eventId);
             return new TriggerResult(true, bulkListCaseDetailsListValue);
         } catch (final Exception exception) {
-            log.info("Bulk submit event failed for Case ID: {}, Event ID: {}", caseId, eventId);
+            log.info("Bulk submit event failed for Case ID: {}, Event ID: {}", caseId, eventId, exception);
             return new TriggerResult(false, bulkListCaseDetailsListValue);
         }
     }
