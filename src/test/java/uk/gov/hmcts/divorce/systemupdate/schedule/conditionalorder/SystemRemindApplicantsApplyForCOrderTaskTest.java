@@ -34,6 +34,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicantsApplyForCOrder.SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.systemupdate.schedule.conditionalorder.SystemRemindApplicantsApplyForCOrderTask.NOTIFICATION_FLAG;
@@ -70,6 +71,7 @@ public class SystemRemindApplicantsApplyForCOrderTaskTest {
                 boolQuery()
                     .should(matchQuery(STATE, AwaitingConditionalOrder))
                     .should(matchQuery(STATE, ConditionalOrderPending))
+                    .should(matchQuery(STATE, ConditionalOrderDrafted))
                     .minimumShouldMatch(1)
             )
             .filter(rangeQuery(DUE_DATE).lte(LocalDate.now().minusDays(DUE_DATE_OFFSET_DAYS)))
