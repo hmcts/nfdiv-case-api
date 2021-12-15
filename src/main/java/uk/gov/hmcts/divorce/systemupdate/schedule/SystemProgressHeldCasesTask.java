@@ -43,9 +43,6 @@ public class SystemProgressHeldCasesTask implements Runnable {
     private CcdSearchService ccdSearchService;
 
     @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
     private IdamService idamService;
 
     @Autowired
@@ -80,26 +77,10 @@ public class SystemProgressHeldCasesTask implements Runnable {
 
     private void submitEvent(CaseDetails caseDetails, User user, String serviceAuth) {
         try {
-            final CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
-
-            LocalDate dateOfIssue = caseData.getApplication().getIssueDate();
-            log.info("issueDate from caseDataMap {}", dateOfIssue);
-
-            if (dateOfIssue == null) {
-                log.error("Ignoring case id {} with created on {} and modified on {}, as issue date is null",
-                    caseDetails.getId(),
-                    caseDetails.getCreatedDate(),
-                    caseDetails.getLastModified()
-                );
-            } else {
-                if (holdingPeriodService.isHoldingPeriodFinished(dateOfIssue)) {
-                    log.info("Case id {} has been in holding state for > {} weeks hence moving state to AwaitingConditionalOrder",
-                        caseDetails.getId(), holdingPeriodService.getHoldingPeriodInWeeks());
-
-                    caseDetails.getData().put(DUE_DATE, null);
-                    ccdUpdateService.submitEvent(caseDetails, SYSTEM_PROGRESS_HELD_CASE, user, serviceAuth);
-                }
-            }
+            log.info("Case id {} has been in holding state for > {} weeks hence moving state to AwaitingConditionalOrder",
+                caseDetails.getId(), holdingPeriodService.getHoldingPeriodInWeeks());
+            caseDetails.getData().put(DUE_DATE, null);
+            ccdUpdateService.submitEvent(caseDetails, SYSTEM_PROGRESS_HELD_CASE, user, serviceAuth);
         } catch (final CcdManagementException e) {
             log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
         } catch (final IllegalArgumentException e) {

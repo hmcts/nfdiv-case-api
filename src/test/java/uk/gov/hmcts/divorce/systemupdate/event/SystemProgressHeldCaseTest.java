@@ -47,11 +47,12 @@ public class SystemProgressHeldCaseTest {
     void shouldSendNotificationToSolicitor() {
         final CaseData caseData = caseData();
         caseData.setApplicant1(applicantRepresentedBySolicitor());
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().data(caseData).build();
 
         underTest.aboutToSubmit(details, details);
 
-        verify(notification).sendToSolicitor(caseData, details.getId());
+        verify(notification).sendToApplicant1(caseData, details.getId(), false);
     }
 
     @Test

@@ -31,40 +31,46 @@ public class AwaitingConditionalOrderNotification {
     @Autowired
     private NotificationService notificationService;
 
-    public void sendToSolicitor(CaseData caseData, Long caseId) {
-
-        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
-        templateVars.put(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
-
-        notificationService.sendEmail(
-            caseData.getApplicant1().getSolicitor().getEmail(),
-            SOLICITOR_AWAITING_CONDITIONAL_ORDER,
-            templateVars,
-            caseData.getApplicant1().getLanguagePreference()
-        );
-        log.info("Successfully sent awaiting conditional order notification for case : {}", caseId);
-    }
-
     public void sendToApplicant1(CaseData caseData, Long id, boolean isReminder) {
-        log.info("Notifying applicant 1 that they can apply for a conditional order: {}", id);
-
-        notificationService.sendEmail(
-            caseData.getApplicant1().getEmail(),
-            CITIZEN_APPLY_FOR_CONDITIONAL_ORDER,
-            templateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2(), isReminder),
-            caseData.getApplicant1().getLanguagePreference()
-        );
+        if (caseData.getApplicant1().isRepresented()) {
+            sendToSolicitor(caseData, id, caseData.getApplicant1());
+        } else {
+            log.info("Notifying applicant 1 that they can apply for a conditional order: {}", id);
+            sendToCitizen(caseData, id, caseData.getApplicant1(), caseData.getApplicant2(), isReminder);
+        }
     }
 
     public void sendToApplicant2(CaseData caseData, Long id, boolean isReminder) {
-        log.info("Notifying applicant 2 that they can apply for a conditional order: {}", id);
+        if (caseData.getApplicant2().isRepresented()) {
+            sendToSolicitor(caseData, id, caseData.getApplicant2());
+        } else {
+            log.info("Notifying applicant 2 that they can apply for a conditional order: {}", id);
+            sendToCitizen(caseData, id, caseData.getApplicant2(), caseData.getApplicant1(), isReminder);
+        }
+    }
+
+    private void sendToCitizen(CaseData caseData, Long id, Applicant applicant, Applicant partner, boolean isReminder) {
+        log.info("Notifying applicant that they can apply for a conditional order: {}", id);
+        notificationService.sendEmail(
+            applicant.getEmail(),
+            CITIZEN_APPLY_FOR_CONDITIONAL_ORDER,
+            templateVars(caseData, id, applicant, partner, isReminder),
+            applicant.getLanguagePreference()
+        );
+    }
+
+    private void sendToSolicitor(CaseData caseData, Long caseId, Applicant applicant) {
+
+        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
+        templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
 
         notificationService.sendEmail(
-            caseData.getApplicant2().getEmail(),
-            CITIZEN_APPLY_FOR_CONDITIONAL_ORDER,
-            templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1(), isReminder),
-            caseData.getApplicant2().getLanguagePreference()
+            applicant.getSolicitor().getEmail(),
+            SOLICITOR_AWAITING_CONDITIONAL_ORDER,
+            templateVars,
+            applicant.getLanguagePreference()
         );
+        log.info("Successfully sent awaiting conditional order notification for case : {}", caseId);
     }
 
     private Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner, boolean isReminder) {

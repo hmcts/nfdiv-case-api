@@ -49,16 +49,10 @@ public class SystemProgressHeldCase implements CCDConfig<CaseData, State, UserRo
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
         final CaseData caseData = details.getData();
         final Long caseId = details.getId();
-
-        if (caseData.getApplicant1().isRepresented()) {
-            log.info("For case id {} applicant is represented by solicitor hence sending conditional order notification email", caseId);
-            conditionalOrderNotification.sendToSolicitor(caseData, caseId);
-        } else {
-            log.info("20wk holding period elapsed for Case({}), notifying Joint Applicants they can apply for conditional order", caseId);
-            conditionalOrderNotification.sendToApplicant1(caseData, caseId, false);
-            if (!caseData.getApplicationType().isSole()) {
-                conditionalOrderNotification.sendToApplicant2(caseData, caseId, false);
-            }
+        log.info("20wk holding period elapsed for Case({}), notifying Joint Applicants they can apply for conditional order", caseId);
+        conditionalOrderNotification.sendToApplicant1(caseData, caseId, false);
+        if (!caseData.getApplicationType().isSole()) {
+            conditionalOrderNotification.sendToApplicant2(caseData, caseId, false);
         }
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

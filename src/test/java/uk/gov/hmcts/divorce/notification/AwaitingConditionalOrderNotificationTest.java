@@ -66,7 +66,7 @@ class AwaitingConditionalOrderNotificationTest {
 
         when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getBasicTemplateVars());
 
-        notification.sendToSolicitor(data, 1234567890123456L);
+        notification.sendToApplicant1(data, 1234567890123456L, false);
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
