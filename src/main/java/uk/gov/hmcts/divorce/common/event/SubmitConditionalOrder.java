@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -33,6 +34,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SUBMIT_CONDITIONAL_ORDER = "submit-conditional-order";
+
+    @Autowired
+    private AppliedForConditionalOrderNotification notification;
 
     @Autowired
     private Clock clock;
@@ -67,7 +71,12 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
 
         log.info("Submit conditional order about to submit callback invoked for case id: {}", details.getId());
 
-        details.getData().getConditionalOrder().setDateSubmitted(LocalDateTime.now(clock));
+        CaseData data = details.getData();
+        data.getConditionalOrder().setDateSubmitted(LocalDateTime.now(clock));
+
+        if (!data.getApplicant1().isRepresented()) {
+            notification.sendToApplicant1(data, details.getId());
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
