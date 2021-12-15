@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
@@ -24,6 +25,7 @@ import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicantsApplyForCOrder.SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.systemupdate.schedule.conditionalorder.SystemRemindApplicantsApplyForCOrderTask.NOTIFICATION_FLAG;
@@ -67,6 +69,7 @@ public class SystemRemindApplicantsApplyForCOrderFT extends FunctionalTestSuite 
                 boolQuery()
                     .should(matchQuery(STATE, AwaitingConditionalOrder))
                     .should(matchQuery(STATE, ConditionalOrderPending))
+                    .should(matchQuery(STATE, ConditionalOrderDrafted))
                     .minimumShouldMatch(1)
             )
             .filter(rangeQuery(DUE_DATE).lte(LocalDate.now().minusDays(submitCOrderReminderOffsetDays)))
@@ -75,7 +78,8 @@ public class SystemRemindApplicantsApplyForCOrderFT extends FunctionalTestSuite 
         searchForCasesWithQuery(query)
             .forEach(caseDetails -> {
                 CaseData caseData = getCaseData(caseDetails.getData());
-                assertThat(caseDetails.getState().equals(AwaitingConditionalOrder));
+                assertThat(caseDetails.getState())
+                    .isIn(List.of(AwaitingConditionalOrder, ConditionalOrderPending, ConditionalOrderDrafted));
                 assertThat(caseData.getApplication().getJointApplicantsRemindedCanApplyForConditionalOrder()).isNotEqualTo(YesOrNo.YES);
                 assertThat(caseData.getDueDate()).isBeforeOrEqualTo(LocalDate.now());
             });
