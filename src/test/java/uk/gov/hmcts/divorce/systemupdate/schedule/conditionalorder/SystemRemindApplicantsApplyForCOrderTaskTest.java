@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
@@ -33,7 +34,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyApplicantsApplyForCO.SYSTEM_NOTIFY_APPLICANTS_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicantsApplyForCOrder.SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.systemupdate.schedule.conditionalorder.SystemRemindApplicantsApplyForCOrderTask.NOTIFICATION_FLAG;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DUE_DATE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
@@ -41,8 +45,9 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 
 @ExtendWith(MockitoExtension.class)
-public class SystemNotifyApplicantsApplyForCoTaskTest {
+public class SystemRemindApplicantsApplyForCOrderTaskTest {
 
+    private static final int DUE_DATE_OFFSET_DAYS = 14;
     @Mock
     private CcdSearchService ccdSearchService;
 
@@ -56,22 +61,28 @@ public class SystemNotifyApplicantsApplyForCoTaskTest {
     private AuthTokenGenerator authTokenGenerator;
 
     @InjectMocks
-    private SystemNotifyApplicantsApplyForCOtask underTest;
+    private SystemRemindApplicantsApplyForCOrderTask underTest;
 
     private User user;
 
-    private static final String FLAG = "jointApplicantsNotifiedCanApplyForConditionalOrder";
     private static final BoolQueryBuilder query =
         boolQuery()
-            .must(matchQuery(STATE, AwaitingConditionalOrder))
-            .filter(rangeQuery(DUE_DATE).lte(LocalDate.now()))
-            .mustNot(matchQuery(String.format(DATA, FLAG), YesOrNo.YES));
+            .must(
+                boolQuery()
+                    .should(matchQuery(STATE, AwaitingConditionalOrder))
+                    .should(matchQuery(STATE, ConditionalOrderPending))
+                    .should(matchQuery(STATE, ConditionalOrderDrafted))
+                    .minimumShouldMatch(1)
+            )
+            .filter(rangeQuery(DUE_DATE).lte(LocalDate.now().minusDays(DUE_DATE_OFFSET_DAYS)))
+            .mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YesOrNo.YES));
 
     @BeforeEach
     void setUp() {
         user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
+        ReflectionTestUtils.setField(underTest, "submitCOrderReminderOffsetDays", DUE_DATE_OFFSET_DAYS);
     }
 
     @Test
@@ -85,7 +96,7 @@ public class SystemNotifyApplicantsApplyForCoTaskTest {
 
         underTest.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_NOTIFY_APPLICANTS_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -108,13 +119,13 @@ public class SystemNotifyApplicantsApplyForCoTaskTest {
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_NOTIFY_APPLICANTS_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
 
         underTest.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_NOTIFY_APPLICANTS_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
         verify(ccdUpdateService, never())
-            .submitEvent(caseDetails2, SYSTEM_NOTIFY_APPLICANTS_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
+            .submitEvent(caseDetails2, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
@@ -127,12 +138,12 @@ public class SystemNotifyApplicantsApplyForCoTaskTest {
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdManagementException("Failed processing of case", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_NOTIFY_APPLICANTS_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
 
         underTest.run();
 
-        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_NOTIFY_APPLICANTS_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
-        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_NOTIFY_APPLICANTS_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(caseDetails2, SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER, user, SERVICE_AUTHORIZATION);
 
     }
 }

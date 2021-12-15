@@ -34,7 +34,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getCommonTemplateVars;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForAosSubmitted;
 
 @ExtendWith(SpringExtension.class)
@@ -54,7 +54,7 @@ public class SoleAosSubmittedNotificationTest {
         CaseData data = validCaseDataForAosSubmitted();
         data.setDueDate(LocalDate.now().plusDays(141));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
-            .thenReturn(getCommonTemplateVars());
+            .thenReturn(getMainTemplateVars());
 
         notification.sendApplicationNotDisputedToApplicant(data, 1234567890123456L);
 
@@ -77,7 +77,7 @@ public class SoleAosSubmittedNotificationTest {
         CaseData data = validCaseDataForAosSubmitted();
         data.setDivorceOrDissolution(DISSOLUTION);
         data.setDueDate(LocalDate.now().plusDays(141));
-        final Map<String, String> templateVars = getCommonTemplateVars();
+        final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
 
@@ -104,7 +104,7 @@ public class SoleAosSubmittedNotificationTest {
         data.getApplicant2().setEmail(null);
 
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
-            .thenReturn(getCommonTemplateVars());
+            .thenReturn(getMainTemplateVars());
 
         notification.sendApplicationNotDisputedToRespondent(data, 1234567890123456L);
 
@@ -129,7 +129,7 @@ public class SoleAosSubmittedNotificationTest {
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplicant2().setEmail(null);
 
-        final Map<String, String> templateVars = getCommonTemplateVars();
+        final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
 
@@ -155,7 +155,7 @@ public class SoleAosSubmittedNotificationTest {
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
-            .thenReturn(getCommonTemplateVars());
+            .thenReturn(getMainTemplateVars());
 
         notification.sendApplicationDisputedToApplicant(data, 1234567890123456L);
 
@@ -179,7 +179,7 @@ public class SoleAosSubmittedNotificationTest {
         data.setDivorceOrDissolution(DISSOLUTION);
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
-        final Map<String, String> templateVars = getCommonTemplateVars();
+        final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
 
@@ -207,7 +207,7 @@ public class SoleAosSubmittedNotificationTest {
         data.getApplicant2().setEmail(null);
 
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
-            .thenReturn(getCommonTemplateVars());
+            .thenReturn(getMainTemplateVars());
 
         notification.sendApplicationDisputedToRespondent(data, 1234567890123456L);
 
@@ -233,7 +233,7 @@ public class SoleAosSubmittedNotificationTest {
         data.getApplication().setIssueDate(LocalDate.now());
         data.getApplicant2().setEmail(null);
 
-        final Map<String, String> templateVars = getCommonTemplateVars();
+        final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
 

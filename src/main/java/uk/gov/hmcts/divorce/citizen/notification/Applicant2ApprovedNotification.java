@@ -11,7 +11,6 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
-import static uk.gov.hmcts.divorce.notification.CommonContent.ACTION_REQUIRED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
@@ -69,7 +68,6 @@ public class Applicant2ApprovedNotification {
     private Map<String, String> applicant1TemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
         templateVars.put(PAYS_FEES, noFeesHelp(caseData) ? YES : NO);
-        templateVars.put(ACTION_REQUIRED, YES);
         templateVars.put(IS_REMINDER, NO);
         return templateVars;
     }

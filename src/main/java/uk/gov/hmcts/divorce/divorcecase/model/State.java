@@ -156,6 +156,13 @@ public enum State {
     AwaitingHWFDecision("AwaitingHWFDecision"),
 
     @CCD(
+        name = "Awaiting joint Conditional Order",
+        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    ConditionalOrderPending("ConditionalOrderPending"),
+
+    @CCD(
         name = "Awaiting legal advisor referral",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
