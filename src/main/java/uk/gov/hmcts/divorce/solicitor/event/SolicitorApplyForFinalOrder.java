@@ -7,8 +7,11 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
+import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
@@ -27,6 +30,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 public class SolicitorApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> {
     public static final String SOLICITOR_FINAL_ORDER_REQUESTED = "solicitor-final-order-requested";
 
+    private static final String ALWAYS_HIDE = "doesApplicantWantToApplyForFinalOrder=\"ALWAYS_HIDE\"";
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
@@ -43,6 +48,16 @@ public class SolicitorApplyForFinalOrder implements CCDConfig<CaseData, State, U
                 LEGAL_ADVISOR))
             .page("SolicitorApplyForFinalOrder", this::midEvent)
             .pageLabel("Apply for final order")
+            .complex(CaseData::getLabelContent)
+                .readonlyNoSummary(LabelContent::getDivorceOrCivilPartnership, ALWAYS_HIDE)
+                .readonlyNoSummary(LabelContent::getFinaliseDivorceOrEndCivilPartnership, ALWAYS_HIDE)
+            .done()
+            .complex(CaseData::getApplication)
+                .complex(Application::getMarriageDetails)
+                    .readonlyNoSummary(MarriageDetails::getApplicant1Name, ALWAYS_HIDE)
+                    .readonlyNoSummary(MarriageDetails::getApplicant2Name, ALWAYS_HIDE)
+                .done()
+            .done()
             .label("label-ApplyForFinalOrder",
                 "Once the court has checked that there are no outstanding applications "
                     + "or other matters which need to be resolved first, the final order will be made absolute"
