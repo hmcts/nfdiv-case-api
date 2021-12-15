@@ -33,8 +33,8 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DI
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DIVORCE_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getCommonTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConfigTemplateVars;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -57,7 +57,7 @@ class ApplicationSentForReviewApplicant2NotificationTest {
         CaseData data = validJointApplicant1CaseData();
         data.setDueDate(LOCAL_DATE);
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
-            .thenReturn(getCommonTemplateVars());
+            .thenReturn(getMainTemplateVars());
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
         notification.send(data, 1234567890123456L);
@@ -79,7 +79,7 @@ class ApplicationSentForReviewApplicant2NotificationTest {
         CaseData data = validJointApplicant1CaseData();
         data.setDueDate(LOCAL_DATE);
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
-        final Map<String, String> templateVars = getCommonTemplateVars();
+        final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
@@ -103,7 +103,7 @@ class ApplicationSentForReviewApplicant2NotificationTest {
         CaseData data = validJointApplicant1CaseData();
         data.setDueDate(LOCAL_DATE);
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
-            .thenReturn(getCommonTemplateVars());
+            .thenReturn(getMainTemplateVars());
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
         notification.sendReminder(data, 1234567890123456L);
@@ -126,7 +126,7 @@ class ApplicationSentForReviewApplicant2NotificationTest {
         CaseData data = validJointApplicant1CaseData();
         data.setDueDate(LOCAL_DATE);
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
-        final Map<String, String> templateVars = getCommonTemplateVars();
+        final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());

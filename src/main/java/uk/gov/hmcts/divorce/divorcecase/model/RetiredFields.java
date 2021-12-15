@@ -239,7 +239,7 @@ public class RetiredFields {
         init.put("applicant1FinancialOrderForRemoved", DO_NOTHING);
         init.put("applicant2FinancialOrderForRemoved", DO_NOTHING);
         init.put("dateConditionalOrderSubmitted",
-            data -> data.put("coDateSubmitted", data.get("dateConditionalOrderSubmitted")));
+            data -> data.put("coApplicant1SubmittedDate", data.get("dateConditionalOrderSubmitted")));
         init.put("legalProceedingsExist",
             data -> data.put("applicant2LegalProceedings", data.get("legalProceedingsExist")));
         init.put("legalProceedingsDescription",

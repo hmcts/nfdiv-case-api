@@ -19,10 +19,9 @@ import java.time.LocalDateTime;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -51,11 +50,8 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             .endButtonLabel("Save Conditional Order")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .explicitGrants()
-            .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, CREATOR, CITIZEN, APPLICANT_2)
-            .grant(READ,
-                CASE_WORKER,
-                SUPER_USER,
-                LEGAL_ADVISOR))
+            .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, CREATOR)
+            .grant(READ, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR))
             .page("ConditionalOrderSoT")
             .pageLabel("Statement of Truth - submit conditional order")
             .complex(CaseData::getConditionalOrder)
@@ -70,16 +66,17 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
         log.info("Submit conditional order about to submit callback invoked for case id: {}", details.getId());
-
         CaseData data = details.getData();
-        data.getConditionalOrder().setDateSubmitted(LocalDateTime.now(clock));
+        data.getConditionalOrder().setApplicant1SubmittedDate(LocalDateTime.now(clock));
+        var state = details.getData().getApplicationType().isSole() ? AwaitingLegalAdvisorReferral
+            : beforeDetails.getState() == ConditionalOrderDrafted ? ConditionalOrderPending : AwaitingLegalAdvisorReferral;
 
-        if (!data.getApplicant1().isRepresented()) {
+        if (state == AwaitingLegalAdvisorReferral && !data.getApplicant1().isRepresented()) {
             notification.sendToApplicant1(data, details.getId());
         }
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
+            .state(state)
             .build();
     }
 }
