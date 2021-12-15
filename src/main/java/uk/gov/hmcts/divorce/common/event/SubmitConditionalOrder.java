@@ -51,11 +51,8 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             .endButtonLabel("Save Conditional Order")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .explicitGrants()
-            .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, CREATOR, CITIZEN, APPLICANT_2)
-            .grant(READ,
-                CASE_WORKER,
-                SUPER_USER,
-                LEGAL_ADVISOR))
+            .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, CREATOR)
+            .grant(READ, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR))
             .page("ConditionalOrderSoT")
             .pageLabel("Statement of Truth - submit conditional order")
             .complex(CaseData::getConditionalOrder)
