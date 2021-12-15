@@ -28,8 +28,7 @@ public class MarriageDetails {
 
     @CCD(
         label = "${labelContentTheApplicant2UC} full name as on marriage certificate",
-        hint = "Enter ${labelContentTheApplicant2}'s name exactly as it appears on the marriage certificate. "
-            + " Include any extra text such as \"formerly known as\""
+        hint = "Exactly as it appears on the certificate. Include any additional text such as 'formally known as'."
     )
     private String applicant2Name;
 
@@ -57,7 +56,7 @@ public class MarriageDetails {
 
     @CCD(
         label = "Place of ${labelContentMarriageOrCivilPartnership}",
-        hint = "Enter the place of ${labelContentMarriageOrCivilPartnership} as it appears on the marriage certificate"
+        hint = "Enter the place of ${labelContentMarriageOrCivilPartnership} as it appears on the certificate"
     )
     private String placeOfMarriage;
 
