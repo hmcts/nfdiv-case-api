@@ -206,7 +206,6 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, SOLICITOR)
             .grant(READ,
                 CASE_WORKER,

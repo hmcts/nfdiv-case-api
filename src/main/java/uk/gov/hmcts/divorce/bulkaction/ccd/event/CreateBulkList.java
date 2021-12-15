@@ -24,7 +24,6 @@ public class CreateBulkList implements CCDConfig<BulkActionCaseData, BulkActionS
             .initialState(Created)
             .name("Create bulk list")
             .description("Create bulk list")
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE));
     }
 }

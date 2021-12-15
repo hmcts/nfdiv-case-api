@@ -33,7 +33,6 @@ public class CaseworkerHwfApplicationAccepted implements CCDConfig<CaseData, Sta
                 Submitted)
             .name("HWF application accepted")
             .description("HWF application accepted")
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grant(READ, SOLICITOR, SUPER_USER, LEGAL_ADVISOR));
     }

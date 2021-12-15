@@ -62,7 +62,6 @@ public class SolicitorUpdateContactDetails implements CCDConfig<CaseData, State,
             .description("Update contact details")
             .showSummary()
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, SOLICITOR)
             .grant(READ_UPDATE, SUPER_USER)
             .grant(READ,

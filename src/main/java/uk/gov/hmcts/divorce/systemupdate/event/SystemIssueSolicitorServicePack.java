@@ -32,7 +32,6 @@ public class SystemIssueSolicitorServicePack implements CCDConfig<CaseData, Stat
             .forState(AwaitingService)
             .name("Issue solicitor service pack")
             .description("Issue solicitor service pack to applicant's solicitor (if service method = Solicitor Service)")
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .grant(READ, SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR)
             .retries(120, 120));

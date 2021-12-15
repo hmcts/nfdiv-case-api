@@ -40,7 +40,6 @@ public class SolicitorApplyForFinalOrder implements CCDConfig<CaseData, State, U
             .name("Apply for final order")
             .description("Apply for final order")
             .showSummary()
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
             .grant(READ,
                 CASE_WORKER,

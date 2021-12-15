@@ -30,7 +30,6 @@ public class CaseworkerUploadDocument implements CCDConfig<CaseData, State, User
             .forAllStates()
             .name("Upload document")
             .description("Upload document")
-            .explicitGrants()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .showSummary(false)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
