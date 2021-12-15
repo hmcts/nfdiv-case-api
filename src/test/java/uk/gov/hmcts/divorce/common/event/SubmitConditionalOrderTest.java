@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.AppliedForConditionalOrderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -51,13 +52,11 @@ class SubmitConditionalOrderTest {
 
     @Test
     void shouldSetDateSubmittedOnAboutToSubmit() {
-
         setMockClock(clock);
-
         final CaseData caseData = CaseData.builder()
             .conditionalOrder(ConditionalOrder.builder().build())
+            .applicationType(ApplicationType.SOLE_APPLICATION)
             .build();
-
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
@@ -68,14 +67,12 @@ class SubmitConditionalOrderTest {
 
     @Test
     void shouldSendEmailOnAboutToSubmitIfApplicantIsNotRepresented() {
-
         setMockClock(clock);
-
         final CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder().build())
             .conditionalOrder(ConditionalOrder.builder().build())
+            .applicationType(ApplicationType.SOLE_APPLICATION)
             .build();
-
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(1L);
         caseDetails.setData(caseData);

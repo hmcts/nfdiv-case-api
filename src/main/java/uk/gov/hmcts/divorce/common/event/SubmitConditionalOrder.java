@@ -71,7 +71,7 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
         var state = details.getData().getApplicationType().isSole() ? AwaitingLegalAdvisorReferral
             : beforeDetails.getState() == ConditionalOrderDrafted ? ConditionalOrderPending : AwaitingLegalAdvisorReferral;
 
-        if (!data.getApplicant1().isRepresented()) {
+        if (state == AwaitingLegalAdvisorReferral && !data.getApplicant1().isRepresented()) {
             notification.sendToApplicant1(data, details.getId());
         }
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
