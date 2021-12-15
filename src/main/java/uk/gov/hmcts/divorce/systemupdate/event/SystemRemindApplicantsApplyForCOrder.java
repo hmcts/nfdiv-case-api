@@ -15,6 +15,7 @@ import java.util.Objects;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -32,7 +33,7 @@ public class SystemRemindApplicantsApplyForCOrder implements CCDConfig<CaseData,
 
         configBuilder
             .event(SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER)
-            .forStates(AwaitingConditionalOrder, ConditionalOrderPending)
+            .forStates(AwaitingConditionalOrder, ConditionalOrderPending, ConditionalOrderDrafted)
             .name("Remind Applicants Apply for CO")
             .description("Remind Joint Applicants they can apply for a Conditional Order")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
@@ -43,7 +44,7 @@ public class SystemRemindApplicantsApplyForCOrder implements CCDConfig<CaseData,
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
         CaseData data = details.getData();
-        if (AwaitingConditionalOrder.equals(details.getState())) {
+        if (AwaitingConditionalOrder.equals(details.getState()) || ConditionalOrderDrafted.equals(details.getState())) {
             notification.sendToApplicant1(data, details.getId(), true);
             if (!data.getApplicationType().isSole()) {
                 notification.sendToApplicant2(data, details.getId(), true);
