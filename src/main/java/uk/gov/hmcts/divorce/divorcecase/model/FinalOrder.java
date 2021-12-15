@@ -84,12 +84,14 @@ public class FinalOrder {
         label = "Date from which ${labelContentTheApplicant2} can apply for Final Order",
         access = {DefaultAccess.class}
     )
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateFinalOrderEligibleToRespondent;
 
     @CCD(
         label = "Final date to apply for Final Order",
         access = {DefaultAccess.class}
     )
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateFinalOrderNoLongerEligible;
 
     @JsonIgnore
