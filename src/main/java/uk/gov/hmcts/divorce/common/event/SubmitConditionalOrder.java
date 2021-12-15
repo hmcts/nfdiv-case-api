@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
@@ -65,16 +66,17 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
         log.info("Submit conditional order about to submit callback invoked for case id: {}", details.getId());
-
         CaseData data = details.getData();
         data.getConditionalOrder().setApplicant1SubmittedDate(LocalDateTime.now(clock));
+        var state = details.getData().getApplicationType().isSole() ? AwaitingLegalAdvisorReferral
+            : beforeDetails.getState() == ConditionalOrderDrafted ? ConditionalOrderPending : AwaitingLegalAdvisorReferral;
 
         if (!data.getApplicant1().isRepresented()) {
             notification.sendToApplicant1(data, details.getId());
         }
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
+            .state(state)
             .build();
     }
 }
