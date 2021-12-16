@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.caseworker.service.IssueApplicationService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -40,6 +41,8 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorServic
 public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_ISSUE_APPLICATION = "caseworker-issue-application";
+
+    private static final String ALWAYS_HIDE = "marriageApplicant1Name=\"ALWAYS_HIDE\"";
 
     @Autowired
     private IssueApplicationService issueApplicationService;
@@ -71,6 +74,9 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
                 LEGAL_ADVISOR))
             .page("issueApplication")
             .pageLabel("Issue Divorce Application")
+            .complex(CaseData::getLabelContent)
+                .readonlyNoSummary(LabelContent::getMarriageOrCivilPartnership, ALWAYS_HIDE)
+            .done()
             .complex(CaseData::getApplication)
                 .complex(Application::getMarriageDetails)
                     .optional(MarriageDetails::getDate)
