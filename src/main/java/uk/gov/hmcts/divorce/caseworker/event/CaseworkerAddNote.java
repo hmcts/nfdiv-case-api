@@ -54,7 +54,6 @@ public class CaseworkerAddNote implements CCDConfig<CaseData, State, UserRole> {
             .forAllStates()
             .name("Add note")
             .description("Add note")
-            .explicitGrants()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE,
                 CASE_WORKER)

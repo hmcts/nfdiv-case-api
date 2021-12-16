@@ -40,7 +40,6 @@ public class SystemUpdateCaseWithCourtHearing implements CCDConfig<CaseData, Sta
             .name("Update case with court hearing")
             .description("Update case with court hearing")
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .grant(READ, SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR));
     }

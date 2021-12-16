@@ -50,7 +50,6 @@ public class DraftConditionalOrder implements CCDConfig<CaseData, State, UserRol
             .description("Draft conditional order")
             .showSummary()
             .endButtonLabel("Save conditional order")
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, CREATOR, CITIZEN, APPLICANT_2)
             .grant(READ,
                 CASE_WORKER,

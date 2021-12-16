@@ -45,7 +45,6 @@ public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseDa
             .forStates(AosOverdue, AwaitingAos, AosDrafted, Submitted, AwaitingDocuments)
             .name("Service application received")
             .description("Service application received")
-            .explicitGrants()
             .showSummary()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)

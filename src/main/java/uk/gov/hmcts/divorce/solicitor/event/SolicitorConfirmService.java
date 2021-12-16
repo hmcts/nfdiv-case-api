@@ -88,7 +88,6 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
             .description("Solicitor confirm service")
             .showSummary()
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, SOLICITOR)
             .grant(READ,
                 CASE_WORKER,

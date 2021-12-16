@@ -30,7 +30,6 @@ public class SystemRemoveBulkCase implements CCDConfig<CaseData, State, UserRole
             .forStateTransition(allOf(State.class), BulkCaseReject)
             .name("System remove bulk case")
             .description("System remove bulk case")
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE_DELETE, SYSTEMUPDATE)
             .grant(READ, SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR));
     }
