@@ -75,7 +75,6 @@ public class PronouncementListTemplateContent {
                 mainCaseData.getApplicant1().getLastName()));
             caseLinkMap.put(RESPONDENT_HEADING, format("%s %s", mainCaseData.getApplicant2().getFirstName(),
                 mainCaseData.getApplicant2().getLastName()));
-            caseLinkMap.put(COSTS_GRANTED, mainCaseData.getConditionalOrder().getClaimsGranted());
             bulkList.add(caseLinkMap);
         }
         templateContent.put(PRONOUNCEMENT_JUDGE, caseData.getPronouncementJudge());
