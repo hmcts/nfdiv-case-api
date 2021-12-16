@@ -45,7 +45,6 @@ public class CaseworkerUploadDocumentsAndSubmit implements CCDConfig<CaseData, S
             .description("Upload documents from the applicant and submit")
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grant(READ, SOLICITOR, SUPER_USER, LEGAL_ADVISOR))
             .page("caseworkerUploadDocuments")

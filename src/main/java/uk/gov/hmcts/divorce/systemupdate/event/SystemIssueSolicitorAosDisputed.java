@@ -34,7 +34,6 @@ public class SystemIssueSolicitorAosDisputed implements CCDConfig<CaseData, Stat
             .forStates(AwaitingAos, Holding, AosOverdue)
             .name("AoS disputed")
             .description("AoS disputed")
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .grant(READ, SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR)
             .retries(120, 120));

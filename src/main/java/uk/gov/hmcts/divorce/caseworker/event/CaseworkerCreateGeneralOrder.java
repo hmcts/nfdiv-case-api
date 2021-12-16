@@ -65,7 +65,6 @@ public class CaseworkerCreateGeneralOrder implements CCDConfig<CaseData, State, 
             .forAllStates()
             .name("Create general order")
             .description("Create general order")
-            .explicitGrants()
             .showSummary()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)

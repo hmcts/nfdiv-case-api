@@ -57,7 +57,6 @@ public class CaseworkerAddBailiffReturn implements CCDConfig<CaseData, State, Us
             .description("Add bailiff return")
             .showSummary()
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grant(READ, SUPER_USER, LEGAL_ADVISOR, SOLICITOR, CITIZEN))
             .page("addBailiffReturn")
