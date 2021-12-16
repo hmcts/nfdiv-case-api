@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 
 import java.util.Map;
+import java.util.Objects;
 
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
@@ -43,7 +44,7 @@ public class AwaitingConditionalOrderNotification {
     public void sendToApplicant2(CaseData caseData, Long id, boolean isReminder) {
         if (caseData.getApplicant2().isRepresented()) {
             sendToSolicitor(caseData, id, caseData.getApplicant2());
-        } else {
+        } else if (Objects.nonNull(caseData.getApplicant2().getEmail())) {
             log.info("Notifying applicant 2 that they can apply for a conditional order: {}", id);
             sendToCitizen(caseData, id, caseData.getApplicant2(), caseData.getApplicant1(), isReminder);
         }
