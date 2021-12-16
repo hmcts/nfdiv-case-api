@@ -29,7 +29,6 @@ public class SystemLinkWithBulkCase implements CCDConfig<CaseData, State, UserRo
             .forStates(AwaitingPronouncement)
             .name("Link with bulk case")
             .description("Linked with bulk case")
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .grant(READ, SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR));
     }

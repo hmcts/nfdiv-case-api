@@ -28,7 +28,6 @@ public class CaseworkerApplicantResponded implements CCDConfig<CaseData, State, 
             .forStateTransition(AwaitingDocuments, Submitted)
             .name("Applicant responded")
             .description("Applicant responded")
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE,
                 CASE_WORKER)
             .grant(READ,

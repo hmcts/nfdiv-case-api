@@ -26,7 +26,6 @@ public class SystemRemoveFailedCases implements CCDConfig<BulkActionCaseData, Bu
             .initialState(Created)
             .name("Remove failed case links")
             .description("Removed failed case links")
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE));
     }
 }

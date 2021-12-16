@@ -56,7 +56,6 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, LEGAL_ADVISOR)
             .grant(READ,
                 CASE_WORKER,

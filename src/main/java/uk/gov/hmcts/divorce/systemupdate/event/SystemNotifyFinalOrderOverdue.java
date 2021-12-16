@@ -29,7 +29,6 @@ public class SystemNotifyFinalOrderOverdue implements CCDConfig<CaseData, State,
             .forStateTransition(AwaitingFinalOrder, FinalOrderOverdue)
             .name("Alert Applicant 1")
             .description("Alert Applicant 1 that Final Order request is overdue")
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .grant(READ, SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR);
     }

@@ -29,7 +29,6 @@ public class SystemUpdateCase implements CCDConfig<BulkActionCaseData, BulkActio
             .forStates(Listed, Pronounced, Dropped)
             .name("System update case")
             .description("System update case")
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE));
     }
 }
