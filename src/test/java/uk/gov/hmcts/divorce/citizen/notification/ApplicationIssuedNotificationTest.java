@@ -46,8 +46,8 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getCommonTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConfigTemplateVars;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssueApplication;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
@@ -73,7 +73,7 @@ public class ApplicationIssuedNotificationTest {
         data.getApplication().setIssueDate(LocalDate.now());
 
         Map<String, String> divorceTemplateVars = new HashMap<>();
-        divorceTemplateVars.putAll(getCommonTemplateVars());
+        divorceTemplateVars.putAll(getMainTemplateVars());
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(divorceTemplateVars);
 
@@ -100,7 +100,7 @@ public class ApplicationIssuedNotificationTest {
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
         Map<String, String> dissolutionTemplateVars = new HashMap<>();
-        dissolutionTemplateVars.putAll(getCommonTemplateVars());
+        dissolutionTemplateVars.putAll(getMainTemplateVars());
         dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(dissolutionTemplateVars);
@@ -129,7 +129,7 @@ public class ApplicationIssuedNotificationTest {
         data.getApplicant2().setEmail(null);
 
         Map<String, String> divorceTemplateVars = new HashMap<>();
-        divorceTemplateVars.putAll(getCommonTemplateVars());
+        divorceTemplateVars.putAll(getMainTemplateVars());
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(divorceTemplateVars);
 
@@ -159,7 +159,7 @@ public class ApplicationIssuedNotificationTest {
         data.getApplicant2().setEmail(null);
 
         Map<String, String> dissolutionTemplateVars = new HashMap<>();
-        dissolutionTemplateVars.putAll(getCommonTemplateVars());
+        dissolutionTemplateVars.putAll(getMainTemplateVars());
         dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(dissolutionTemplateVars);
@@ -189,7 +189,7 @@ public class ApplicationIssuedNotificationTest {
         data.getApplicant2().setEmail(null);
 
         Map<String, String> divorceTemplateVars = new HashMap<>();
-        divorceTemplateVars.putAll(getCommonTemplateVars());
+        divorceTemplateVars.putAll(getMainTemplateVars());
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(divorceTemplateVars);
 
@@ -220,7 +220,7 @@ public class ApplicationIssuedNotificationTest {
         data.getApplicant2().setEmail(null);
 
         Map<String, String> dissolutionTemplateVars = new HashMap<>();
-        dissolutionTemplateVars.putAll(getCommonTemplateVars());
+        dissolutionTemplateVars.putAll(getMainTemplateVars());
         dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(dissolutionTemplateVars);
@@ -249,7 +249,7 @@ public class ApplicationIssuedNotificationTest {
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
         Map<String, String> divorceTemplateVars = new HashMap<>();
-        divorceTemplateVars.putAll(getCommonTemplateVars());
+        divorceTemplateVars.putAll(getMainTemplateVars());
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(divorceTemplateVars);
 
@@ -276,7 +276,7 @@ public class ApplicationIssuedNotificationTest {
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
         Map<String, String> dissolutionTemplateVars = new HashMap<>();
-        dissolutionTemplateVars.putAll(getCommonTemplateVars());
+        dissolutionTemplateVars.putAll(getMainTemplateVars());
         dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(dissolutionTemplateVars);
@@ -303,7 +303,7 @@ public class ApplicationIssuedNotificationTest {
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
         Map<String, String> divorceTemplateVars = new HashMap<>();
-        divorceTemplateVars.putAll(getCommonTemplateVars());
+        divorceTemplateVars.putAll(getMainTemplateVars());
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(divorceTemplateVars);
 
@@ -330,7 +330,7 @@ public class ApplicationIssuedNotificationTest {
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
         Map<String, String> dissolutionTemplateVars = new HashMap<>();
-        dissolutionTemplateVars.putAll(getCommonTemplateVars());
+        dissolutionTemplateVars.putAll(getMainTemplateVars());
         dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(dissolutionTemplateVars);
@@ -357,7 +357,7 @@ public class ApplicationIssuedNotificationTest {
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
         Map<String, String> divorceTemplateVars = new HashMap<>();
-        divorceTemplateVars.putAll(getCommonTemplateVars());
+        divorceTemplateVars.putAll(getMainTemplateVars());
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(divorceTemplateVars);
 
@@ -385,7 +385,7 @@ public class ApplicationIssuedNotificationTest {
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
         Map<String, String> divorceTemplateVars = new HashMap<>();
-        divorceTemplateVars.putAll(getCommonTemplateVars());
+        divorceTemplateVars.putAll(getMainTemplateVars());
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(divorceTemplateVars);
 
@@ -420,7 +420,7 @@ public class ApplicationIssuedNotificationTest {
         data.getApplicant2().setEmail(null);
 
         Map<String, String> divorceTemplateVars = new HashMap<>();
-        divorceTemplateVars.putAll(getCommonTemplateVars());
+        divorceTemplateVars.putAll(getMainTemplateVars());
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(divorceTemplateVars);
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());

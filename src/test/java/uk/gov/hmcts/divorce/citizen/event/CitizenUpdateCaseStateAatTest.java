@@ -51,6 +51,6 @@ public class CitizenUpdateCaseStateAatTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenUpdateCaseStateAat.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getState()).isEqualTo(State.Holding);
-        assertThat(response.getData().getApplicant2().getMiddleName()).isNull();
+        assertThat(response.getData().getApplicant2().getMiddleName()).isEqualTo("");
     }
 }

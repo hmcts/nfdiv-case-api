@@ -33,7 +33,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getCommonTemplateVars;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 @ExtendWith(SpringExtension.class)
@@ -56,9 +56,9 @@ public class AppliedForConditionalOrderNotificationTest {
     @Test
     void shouldSendEmailToApplicant1WithDivorceContent() {
         CaseData data = validApplicant1CaseData();
-        data.setConditionalOrder(ConditionalOrder.builder().dateSubmitted(LocalDateTime.now()).build());
+        data.setConditionalOrder(ConditionalOrder.builder().applicant1SubmittedDate(LocalDateTime.now()).build());
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
-            .thenReturn(getCommonTemplateVars());
+            .thenReturn(getMainTemplateVars());
 
         setMockClock(clock);
 
@@ -81,9 +81,9 @@ public class AppliedForConditionalOrderNotificationTest {
     void shouldSendEmailToApplicant1WithDissolutionContent() {
         CaseData data = validApplicant1CaseData();
         data.setDivorceOrDissolution(DISSOLUTION);
-        data.setConditionalOrder(ConditionalOrder.builder().dateSubmitted(LocalDateTime.now()).build());
+        data.setConditionalOrder(ConditionalOrder.builder().applicant1SubmittedDate(LocalDateTime.now()).build());
 
-        final Map<String, String> templateVars = getCommonTemplateVars();
+        final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(templateVars);
