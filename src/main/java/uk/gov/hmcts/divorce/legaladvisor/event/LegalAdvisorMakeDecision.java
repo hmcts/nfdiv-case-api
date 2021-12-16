@@ -56,7 +56,6 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, LEGAL_ADVISOR)
             .grant(READ,
                 CASE_WORKER,
@@ -66,13 +65,6 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .pageLabel("Grant Conditional Order")
             .complex(CaseData::getConditionalOrder)
                 .mandatory(ConditionalOrder::getGranted)
-                .mandatory(ConditionalOrder::getClaimsGranted, "coGranted=\"Yes\"")
-                .done()
-            .page("conditionalOrderMakeCostsOrder")
-            .pageLabel("Make a costs order")
-            .showCondition("coClaimsGranted=\"Yes\"")
-            .complex(CaseData::getConditionalOrder)
-                .mandatory(ConditionalOrder::getClaimsCostsOrderInformation)
                 .done()
             .page("makeRefusalOrder")
             .pageLabel("Make a refusal order")

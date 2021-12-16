@@ -40,7 +40,6 @@ public class SystemProgressHeldCase implements CCDConfig<CaseData, State, UserRo
             .name("Awaiting Conditional Order")
             .description("Progress held case to Awaiting Conditional Order")
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .grant(READ, SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR));
     }
@@ -56,7 +55,6 @@ public class SystemProgressHeldCase implements CCDConfig<CaseData, State, UserRo
         }
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
-            .state(details.getState())
             .build();
     }
 }

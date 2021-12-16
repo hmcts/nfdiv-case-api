@@ -29,7 +29,6 @@ public class SystemUpdateCaseWithPronouncementJudge implements CCDConfig<CaseDat
             .forState(AwaitingPronouncement)
             .name("Update pronouncement judge")
             .description("Update case with pronouncement judge")
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .grant(READ, SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR));
     }

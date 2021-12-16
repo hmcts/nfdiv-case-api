@@ -50,7 +50,6 @@ public class CaseworkerPrintPronouncement implements CCDConfig<BulkActionCaseDat
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .aboutToStartCallback(this::aboutToStart)
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE))
             .page("printPronouncement")
             .pageLabel("Print Cases for Pronouncement")

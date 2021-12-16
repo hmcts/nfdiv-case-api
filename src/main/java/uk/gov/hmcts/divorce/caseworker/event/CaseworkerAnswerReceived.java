@@ -70,7 +70,6 @@ public class CaseworkerAnswerReceived implements CCDConfig<CaseData, State, User
             .description("Answer received")
             .showSummary()
             .showEventNotes()
-            .explicitGrants()
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
