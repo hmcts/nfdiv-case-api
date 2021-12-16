@@ -58,7 +58,6 @@ public class CaseworkerDropCase implements CCDConfig<BulkActionCaseData, BulkAct
             .showSummary()
             .showEventNotes()
             .submittedCallback(this::submitted)
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE));
     }
 

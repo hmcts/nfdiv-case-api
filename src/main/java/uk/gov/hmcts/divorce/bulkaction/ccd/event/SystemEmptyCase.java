@@ -25,7 +25,6 @@ public class SystemEmptyCase implements CCDConfig<BulkActionCaseData, BulkAction
             .forStateTransition(Created, Empty)
             .name("Set empty case")
             .description("Bulk case has an empty list of cases")
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE));
     }
 }

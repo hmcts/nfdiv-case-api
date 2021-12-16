@@ -37,7 +37,6 @@ public class CaseworkerRejected implements CCDConfig<CaseData, State, UserRole> 
             .aboutToSubmitCallback(this::aboutToSubmit)
             .name(REJECT)
             .description(REJECT)
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE,
                 CASE_WORKER)
             .grant(READ,

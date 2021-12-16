@@ -35,7 +35,6 @@ public class CaseworkerFinalOrderPending implements CCDConfig<CaseData, State, U
             .name("Final Order pending")
             .description("Final Order pending")
             .showEventNotes()
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grant(READ, SUPER_USER, LEGAL_ADVISOR, SOLICITOR, CITIZEN));
     }
