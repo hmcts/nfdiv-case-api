@@ -34,10 +34,16 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 public class ConditionalOrder {
 
     @CCD(
-        label = "Date Conditional Order submitted to HMCTS"
+        label = "Date applicant1 submitted Conditional Order to HMCTS"
     )
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
-    private LocalDateTime dateSubmitted;
+    private LocalDateTime applicant1SubmittedDate;
+
+    @CCD(
+        label = "Date applicant2 submitted Conditional Order to HMCTS"
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
+    private LocalDateTime applicant2SubmittedDate;
 
     @CCD(
         label = "Link to respondent answers"

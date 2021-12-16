@@ -11,8 +11,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.time.Clock;
 
@@ -45,6 +47,9 @@ public class SubmitConditionalOrderIT {
     private WebMvcConfig webMvcConfig;
 
     @MockBean
+    private NotificationService notificationService;
+
+    @MockBean
     private Clock clock;
 
     @Test
@@ -53,6 +58,7 @@ public class SubmitConditionalOrderIT {
         setMockClock(clock);
 
         final CaseData caseData = caseData();
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         caseData.setConditionalOrder(ConditionalOrder.builder().build());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=SolConfirmService")
@@ -65,6 +71,6 @@ public class SubmitConditionalOrderIT {
             .andExpect(
                 status().isOk()
             )
-            .andExpect(jsonPath("$.data.coDateSubmitted").value(getFormattedExpectedDateTime()));
+            .andExpect(jsonPath("$.data.coApplicant1SubmittedDate").value(getFormattedExpectedDateTime()));
     }
 }

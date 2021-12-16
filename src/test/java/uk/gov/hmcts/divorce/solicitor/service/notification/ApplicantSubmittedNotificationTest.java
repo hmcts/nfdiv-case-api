@@ -23,7 +23,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_AMENDED_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_APPLICATION_SUBMITTED;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getCommonTemplateVars;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicantSubmittedNotificationTest {
@@ -41,7 +41,7 @@ class ApplicantSubmittedNotificationTest {
     void shouldNotifyApplicantByApplicationSubmittedEmail() {
 
         final String applicant1Email = "test@somewher.com";
-        final Map<String, String> templateVars = getCommonTemplateVars();
+        final Map<String, String> templateVars = getMainTemplateVars();
         final CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder().email(applicant1Email).languagePreferenceWelsh(NO).build())
             .build();
@@ -63,7 +63,7 @@ class ApplicantSubmittedNotificationTest {
     void shouldNotifyApplicantByAmendedApplicationSubmittedEmail() {
 
         final String applicant1Email = "test@somewher.com";
-        final Map<String, String> templateVars = getCommonTemplateVars();
+        final Map<String, String> templateVars = getMainTemplateVars();
         final CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder().email(applicant1Email).languagePreferenceWelsh(NO).build())
             .previousCaseId(new CaseLink("Ref"))

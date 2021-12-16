@@ -361,10 +361,10 @@ public class Application {
     private YesOrNo applicant2ReminderSent;
 
     @CCD(
-        label = "Notification sent to Joint Applicants indicating they can apply for a Conditional Order",
+        label = "Reminder sent to Joint Applicants indicating they can apply for a Conditional Order",
         access = {DefaultAccess.class}
     )
-    private YesOrNo jointApplicantsNotifiedCanApplyForConditionalOrder;
+    private YesOrNo jointApplicantsRemindedCanApplyForConditionalOrder;
 
     @CCD(
         label = "What would you like to reissue?",
@@ -443,11 +443,6 @@ public class Application {
     @JsonIgnore
     public boolean hasApplicant1ReminderBeenSent() {
         return YES.equals(applicant1ReminderSent);
-    }
-
-    @JsonIgnore
-    public boolean haveJointApplicantsBeenNotifiedCanApplyForConditionalOrder() {
-        return YES.equals(jointApplicantsNotifiedCanApplyForConditionalOrder);
     }
 
     @JsonIgnore
