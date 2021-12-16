@@ -30,7 +30,6 @@ public class CaseworkerAwaitingApplicant implements CCDConfig<CaseData, State, U
             .forStateTransition(allOf(State.class), AwaitingDocuments)
             .name("Awaiting Applicant")
             .description("Awaiting Applicant")
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grant(READ, SUPER_USER, LEGAL_ADVISOR, SOLICITOR));
     }
