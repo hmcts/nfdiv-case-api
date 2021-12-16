@@ -168,6 +168,18 @@ public class Applicant {
     )
     private YesOrNo continueApplication;
 
+    @CCD(
+        label = "Is the information in this application still correct?"
+    )
+    private YesOrNo confirmInformationStillCorrect;
+
+    @CCD(
+        label = "Provide details of any other information that needs updating.",
+        typeOverride = TextArea
+    )
+    private String reasonInformationNotCorrect;
+
+
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
         return languagePreferenceWelsh == null || languagePreferenceWelsh.equals(NO)
