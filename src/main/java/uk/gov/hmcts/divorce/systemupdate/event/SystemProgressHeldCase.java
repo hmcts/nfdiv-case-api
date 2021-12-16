@@ -56,6 +56,7 @@ public class SystemProgressHeldCase implements CCDConfig<CaseData, State, UserRo
         }
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
+            .state(AwaitingConditionalOrder)
             .build();
     }
 }
