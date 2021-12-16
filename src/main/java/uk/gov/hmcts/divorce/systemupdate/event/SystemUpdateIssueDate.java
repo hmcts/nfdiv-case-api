@@ -26,7 +26,6 @@ public class SystemUpdateIssueDate implements CCDConfig<CaseData, State, UserRol
             .forAllStates()
             .name("Update issue date")
             .description("Update issue date")
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE))
             .page("updateIssueDate")
             .complex(CaseData::getApplication)

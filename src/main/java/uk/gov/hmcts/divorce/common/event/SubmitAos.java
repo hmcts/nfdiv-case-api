@@ -118,7 +118,6 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
             .showSummary()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR, APPLICANT_2)
             .grant(READ,
                 CASE_WORKER,

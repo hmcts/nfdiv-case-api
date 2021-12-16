@@ -121,7 +121,6 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
             .endButtonLabel("Save Application")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, updatedRoles.toArray(UserRole[]::new))
             .grant(READ_UPDATE, SUPER_USER)
             .grant(READ, CASE_WORKER, LEGAL_ADVISOR));

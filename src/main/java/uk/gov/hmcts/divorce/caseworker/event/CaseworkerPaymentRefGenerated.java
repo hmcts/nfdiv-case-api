@@ -28,7 +28,6 @@ public class CaseworkerPaymentRefGenerated implements CCDConfig<CaseData, State,
             .forStateTransition(AwaitingPayment, AwaitingPayment)
             .name("Payment reference generated")
             .description("Payment reference generated")
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, CITIZEN)
             .grant(READ, SUPER_USER, LEGAL_ADVISOR));
     }

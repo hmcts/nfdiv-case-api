@@ -33,7 +33,6 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
             .forStateTransition(AwaitingPronouncement, ConditionalOrderPronounced)
             .name("System pronounce case")
             .description("System pronounce case")
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .grant(READ, SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR));
     }

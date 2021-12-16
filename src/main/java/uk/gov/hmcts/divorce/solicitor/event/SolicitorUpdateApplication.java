@@ -94,7 +94,6 @@ public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, Us
             .description("Amend divorce application")
             .showSummary()
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, SOLICITOR)
             .grant(READ_UPDATE, SUPER_USER)
             .grant(READ,
