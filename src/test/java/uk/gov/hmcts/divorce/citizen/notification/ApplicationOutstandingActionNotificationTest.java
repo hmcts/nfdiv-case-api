@@ -40,7 +40,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant2;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getCommonTemplateVars;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -68,7 +68,7 @@ class ApplicationOutstandingActionNotificationTest {
         docs.add(NAME_CHANGE_EVIDENCE);
         data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
-            .thenReturn(getCommonTemplateVars());
+            .thenReturn(getMainTemplateVars());
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
@@ -93,7 +93,7 @@ class ApplicationOutstandingActionNotificationTest {
         data.getApplicant2().setEmail(null);
 
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
-            .thenReturn(getCommonTemplateVars());
+            .thenReturn(getMainTemplateVars());
 
         notification.sendToApplicant2(data, 1234567890123456L);
 
@@ -123,7 +123,7 @@ class ApplicationOutstandingActionNotificationTest {
         docs.add(DocumentType.NAME_CHANGE_EVIDENCE);
         data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
-            .thenReturn(getCommonTemplateVars());
+            .thenReturn(getMainTemplateVars());
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
@@ -157,7 +157,7 @@ class ApplicationOutstandingActionNotificationTest {
         docs.add(DocumentType.NAME_CHANGE_EVIDENCE);
         data.getApplication().setApplicant1CannotUploadSupportingDocument(docs);
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
-            .thenReturn(getCommonTemplateVars());
+            .thenReturn(getMainTemplateVars());
 
         notification.sendToApplicant1(data, 1234567890123456L);
 

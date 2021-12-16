@@ -1,5 +1,6 @@
 {
   "divorceOrDissolution": "divorce",
+  "applicationType": "jointApplication",
   "coDateSubmitted": null,
   "applicant1Solicitor": null,
   "applicant1Email": "test@email.com",

@@ -10,7 +10,6 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.citizen.notification.Applicant2ApprovedNotification.PAYS_FEES;
-import static uk.gov.hmcts.divorce.notification.CommonContent.ACTION_REQUIRED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.REVIEW_DEADLINE_DATE;
@@ -50,7 +49,6 @@ public class JointApplicationOverdueNotification {
         Map<String, String> templateVars =
             commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
         templateVars.put(PAYS_FEES, caseData.getApplication().isHelpWithFeesApplication() ? NO : YES);
-        templateVars.put(ACTION_REQUIRED, NO);
         templateVars.put(IS_REMINDER, YES);
 
         notificationService.sendEmail(
