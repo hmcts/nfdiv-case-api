@@ -66,7 +66,7 @@ public class SystemRemindApplicantsApplyForCOrderTest {
 
         verify(notification).sendToApplicant1(caseData, details.getId(), true);
         verify(notification).sendToApplicant2(caseData, details.getId(), true);
-        assertThat(response.getData().getApplication().getJointApplicantsRemindedCanApplyForConditionalOrder()).isEqualTo(YesOrNo.YES);
+        assertThat(response.getData().getApplication().getApplicantsRemindedCanApplyForConditionalOrder()).isEqualTo(YesOrNo.YES);
     }
 
     @Test
@@ -82,7 +82,7 @@ public class SystemRemindApplicantsApplyForCOrderTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = underTest.aboutToSubmit(details, details);
 
         verify(notification).sendToApplicant1(caseData, details.getId(), true);
-        assertThat(response.getData().getApplication().getJointApplicantsRemindedCanApplyForConditionalOrder()).isEqualTo(YesOrNo.YES);
+        assertThat(response.getData().getApplication().getApplicantsRemindedCanApplyForConditionalOrder()).isEqualTo(YesOrNo.YES);
     }
 
     @Test
@@ -100,7 +100,7 @@ public class SystemRemindApplicantsApplyForCOrderTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = underTest.aboutToSubmit(details, details);
 
         verify(notification).sendToApplicant2(caseData, details.getId(), true);
-        assertThat(response.getData().getApplication().getJointApplicantsRemindedCanApplyForConditionalOrder()).isEqualTo(YesOrNo.YES);
+        assertThat(response.getData().getApplication().getApplicantsRemindedCanApplyForConditionalOrder()).isEqualTo(YesOrNo.YES);
     }
 
     @Test
@@ -119,6 +119,6 @@ public class SystemRemindApplicantsApplyForCOrderTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = underTest.aboutToSubmit(details, details);
 
         verify(notification).sendToApplicant1(caseData, details.getId(), true);
-        assertThat(response.getData().getApplication().getJointApplicantsRemindedCanApplyForConditionalOrder()).isEqualTo(YesOrNo.YES);
+        assertThat(response.getData().getApplication().getApplicantsRemindedCanApplyForConditionalOrder()).isEqualTo(YesOrNo.YES);
     }
 }

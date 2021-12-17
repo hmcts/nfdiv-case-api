@@ -361,10 +361,10 @@ public class Application {
     private YesOrNo applicant2ReminderSent;
 
     @CCD(
-        label = "Reminder sent to Joint Applicants indicating they can apply for a Conditional Order",
+        label = "Reminder sent to Applicants indicating they can apply for Conditional Order",
         access = {DefaultAccess.class}
     )
-    private YesOrNo jointApplicantsRemindedCanApplyForConditionalOrder;
+    private YesOrNo applicantsRemindedCanApplyForConditionalOrder;
 
     @CCD(
         label = "What would you like to reissue?",

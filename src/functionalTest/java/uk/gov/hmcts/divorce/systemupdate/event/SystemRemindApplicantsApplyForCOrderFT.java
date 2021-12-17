@@ -40,8 +40,8 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 public class SystemRemindApplicantsApplyForCOrderFT extends FunctionalTestSuite {
 
     private static final String REQUEST =
-        "classpath:request/casedata/ccd-callback-casedata-system-remind-joint-applicants-conditional-order.json";
-    private static final String RESPONSE = "classpath:responses/response-system-remind-joint-applicants-conditional-order.json";
+        "classpath:request/casedata/ccd-callback-casedata-system-remind-applicants-conditional-order.json";
+    private static final String RESPONSE = "classpath:responses/response-system-remind-applicants-conditional-order.json";
 
     @Value("${submit_co.reminder_offset_days}")
     private int submitCOrderReminderOffsetDays;
@@ -84,7 +84,7 @@ public class SystemRemindApplicantsApplyForCOrderFT extends FunctionalTestSuite 
                         ConditionalOrderPending.getName(),
                         ConditionalOrderDrafted.getName()
                     ));
-                assertThat(caseData.getApplication().getJointApplicantsRemindedCanApplyForConditionalOrder()).isNotEqualTo(YesOrNo.YES);
+                assertThat(caseData.getApplication().getApplicantsRemindedCanApplyForConditionalOrder()).isNotEqualTo(YesOrNo.YES);
                 assertThat(caseData.getDueDate()).isBeforeOrEqualTo(LocalDate.now());
             });
     }

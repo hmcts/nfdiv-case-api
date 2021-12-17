@@ -228,6 +228,12 @@ public class RetiredFields {
     private YesOrNo jointApplicantsNotifiedCanApplyForConditionalOrder;
 
     @CCD(
+        label = "Retired flag indicating reminder to joint applicants they can apply for a Conditional Order already sent",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo jointApplicantsRemindedCanApplyForConditionalOrder;
+
+    @CCD(
         label = "Retired Date Conditional Order submitted to HMCTS, split into applicant1 and applicant2 submission dates"
     )
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
@@ -330,6 +336,8 @@ public class RetiredFields {
             data -> data.put("marriageFormationType", transformSameSexToMarriageFormation(data)));
         init.put("coDateSubmitted",
             data -> data.put("coApplicant1SubmittedDate", data.get("coDateSubmitted")));
+        init.put("jointApplicantsRemindedCanApplyForConditionalOrder", data ->
+            data.put("applicantsRemindedCanApplyForConditionalOrder", data.get("jointApplicantsRemindedCanApplyForConditionalOrder")));
         init.put("applicant1ApplyForConditionalOrderStarted",
             data -> data.put("coApplicant1ApplyForConditionalOrderStarted", data.get("applicant1ApplyForConditionalOrderStarted")));
         init.put("applicant2ApplyForConditionalOrderStarted",

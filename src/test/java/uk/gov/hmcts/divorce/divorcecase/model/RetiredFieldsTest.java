@@ -54,6 +54,7 @@ class RetiredFieldsTest {
         data.put("coClarificationResponse", "some text");
         data.put("marriageIsSameSexCouple", "Yes");
         data.put("applicant2KeepContactDetailsConfidential", "Yes");
+        data.put("jointApplicantsRemindedCanApplyForConditionalOrder", "Yes");
         data.put("applicant1ApplyForConditionalOrderStarted", "YES");
         data.put("applicant2ApplyForConditionalOrderStarted", "YES");
         data.put("applicant1ContinueApplication", "YES");
@@ -101,7 +102,8 @@ class RetiredFieldsTest {
             entry("coApplicant2ContinueApplication", "YES"),
             entry("coApplicant1IsEverythingInApplicationTrue", "YES"),
             entry("coApplicant1ChangeOrAddToApplication", "YES"),
-            entry("coApplicant1ApplyForConditionalOrder", "YES")
+            entry("coApplicant1ApplyForConditionalOrder", "YES"),
+            entry("applicantsRemindedCanApplyForConditionalOrder", "Yes")
         );
     }
 
