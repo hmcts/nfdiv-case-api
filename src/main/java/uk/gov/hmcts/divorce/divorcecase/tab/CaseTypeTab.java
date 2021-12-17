@@ -255,6 +255,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 FinalOrderPending,
                 FinalOrderOverdue,
                 FinalOrderComplete))
+            .field("labelContentFinaliseDivorceOrEndCivilPartnership", "doesApplicantWantToApplyForFinalOrder=\"NEVER_SHOW\"")
             .field("doesApplicantWantToApplyForFinalOrder")
             .field("granted")
             .field("grantedDate")

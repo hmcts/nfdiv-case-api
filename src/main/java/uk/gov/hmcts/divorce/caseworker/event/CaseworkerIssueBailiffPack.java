@@ -48,7 +48,6 @@ public class CaseworkerIssueBailiffPack implements CCDConfig<CaseData, State, Us
             .forStateTransition(AwaitingBailiffService, IssuedToBailiff)
             .name("Issue bailiff pack")
             .description("Issue bailiff pack")
-            .explicitGrants()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .showSummary()
             .showEventNotes()

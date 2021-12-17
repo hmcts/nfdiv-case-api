@@ -39,7 +39,6 @@ public class LegalAdvisorRequestClarification implements CCDConfig<CaseData, Sta
             .forStateTransition(AwaitingLegalAdvisorReferral, AwaitingClarification)
             .name("Request clarification")
             .description("Request clarification")
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, LEGAL_ADVISOR)
             .grant(READ,
                 CASE_WORKER,

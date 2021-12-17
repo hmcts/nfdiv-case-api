@@ -36,6 +36,7 @@ class RetiredFieldsTest {
         data.put("applicant1FinancialOrderForRemoved", "value");
         data.put("applicant2FinancialOrderForRemoved", "value");
         data.put("dateConditionalOrderSubmitted", "2021-11-11");
+        data.put("coDateSubmitted", "2021-11-13");
         data.put("legalProceedingsExist", "YES");
         data.put("legalProceedingsDescription", "value");
         data.put("doYouAgreeCourtHasJurisdiction", "YES");
@@ -65,7 +66,7 @@ class RetiredFieldsTest {
             entry("applicant1FinancialOrderForRemoved", null),
             entry("applicant2FinancialOrderForRemoved", null),
             entry("dateConditionalOrderSubmitted", null),
-            entry("coApplicant1SubmittedDate", "2021-11-11"),
+            entry("coApplicant1SubmittedDate", "2021-11-13"),
             entry("legalProceedingsExist", null),
             entry("applicant2LegalProceedings", "YES"),
             entry("legalProceedingsDescription", null),

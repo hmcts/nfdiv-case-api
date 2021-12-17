@@ -30,7 +30,6 @@ public class CaseworkerHwfRefused implements CCDConfig<CaseData, State, UserRole
             .name("HWF refused")
             .description("HWF refused")
             .showEventNotes()
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grant(READ, SOLICITOR, SUPER_USER, LEGAL_ADVISOR));
     }

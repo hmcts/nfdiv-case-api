@@ -41,7 +41,6 @@ public class CaseworkerMakeBailiffDecision implements CCDConfig<CaseData, State,
             .forState(AwaitingBailiffReferral)
             .name("Make bailiff decision")
             .description("Make bailiff decision")
-            .explicitGrants()
             .showSummary()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ, LEGAL_ADVISOR)
