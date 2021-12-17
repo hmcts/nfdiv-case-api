@@ -339,8 +339,7 @@ dependencies {
   functionalTestImplementation group: 'uk.gov.hmcts.reform', name: 'document-management-client', version: '7.0.0'
   functionalTestImplementation group: 'uk.gov.hmcts.reform', name: 'service-auth-provider-client', version: versions.s2sClient
 
-  ccdTestImplementation 'com.github.hmcts:rse-cft-lib:0.1.0'
-  ccdTestImplementation 'org.springframework.security:spring-security-test'
+  implementation 'com.github.hmcts:rse-cft-lib:0.1.0'
 }
 
 mainClassName = 'uk.gov.hmcts.divorce.CaseApiApplication'
@@ -387,6 +386,7 @@ bootRun {
       systemProperty 'DATA_STORE_IDAM_KEY', ''
       systemProperty 'DEFINITION_STORE_IDAM_KEY', ''
 
+      systemProperty 'S2S_AUTHORISED_SERVICES', 'ccd_data,xui_webapp,nfdiv_case_api,ccd_gw'
     }
   }
 }
@@ -479,6 +479,14 @@ task bootXui(type: CftlibTask) {
   commandLine 'docker-compose',  '-f', 'docker-compose-xui.yml', 'up'
 }
 
-task prepCCD(type: CftlibTask) {
+task addRoles(type: CftlibTask) {
+  commandLine 'bin/add-roles.sh'
+}
+
+task addProfiles(type: CftlibTask) {
   commandLine 'bin/add-ccd-user-profiles.sh'
+}
+
+task importDef(type: CftlibTask, dependsOn: [addRoles, addProfiles]) {
+  commandLine 'bin/ccd-import-definition.sh', 'build/ccd-config/ccd-NFD-dev.xlsx'
 }
