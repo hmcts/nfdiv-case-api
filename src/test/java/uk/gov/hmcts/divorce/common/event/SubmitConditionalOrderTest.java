@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
@@ -55,6 +56,7 @@ class SubmitConditionalOrderTest {
         setMockClock(clock);
         final CaseData caseData = CaseData.builder()
             .conditionalOrder(ConditionalOrder.builder().build())
+            .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder().build())
             .applicationType(ApplicationType.SOLE_APPLICATION)
             .build();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -62,7 +64,7 @@ class SubmitConditionalOrderTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, null);
 
-        assertThat(response.getData().getConditionalOrder().getApplicant1SubmittedDate()).isEqualTo(getExpectedLocalDateTime());
+        assertThat(response.getData().getConditionalOrderApplicant1Questions().getSubmittedDate()).isEqualTo(getExpectedLocalDateTime());
     }
 
     @Test

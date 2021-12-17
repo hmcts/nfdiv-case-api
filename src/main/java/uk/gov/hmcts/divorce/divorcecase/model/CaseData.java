@@ -92,6 +92,16 @@ public class CaseData {
     @CCD(access = {DefaultAccess.class})
     private ConditionalOrder conditionalOrder = new ConditionalOrder();
 
+    @JsonUnwrapped(prefix = "coApplicant1")
+    @Builder.Default
+    @CCD(access = {DefaultAccess.class})
+    private ConditionalOrderQuestions conditionalOrderApplicant1Questions = new ConditionalOrderQuestions();
+
+    @JsonUnwrapped(prefix = "coApplicant2")
+    @Builder.Default
+    @CCD(access = {DefaultAccess.class, Applicant2Access.class})
+    private ConditionalOrderQuestions conditionalOrderApplicant2Questions = new ConditionalOrderQuestions();
+
     @JsonUnwrapped()
     @Builder.Default
     private FinalOrder finalOrder = new FinalOrder();

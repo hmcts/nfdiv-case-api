@@ -4,6 +4,7 @@ import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 
 public class ConditionalOrderReviewAoS implements CcdPageConfiguration {
 
@@ -15,7 +16,9 @@ public class ConditionalOrderReviewAoS implements CcdPageConfiguration {
             .pageLabel("Review Acknowledgement of Service - Draft Conditional Order Application")
             .complex(CaseData::getConditionalOrder)
                 .readonly(ConditionalOrder::getRespondentAnswersLink)
-                .mandatory(ConditionalOrder::getApplyForConditionalOrder)
+            .done()
+            .complex(CaseData::getConditionalOrderApplicant1Questions)
+                .mandatory(ConditionalOrderQuestions::getApplyForConditionalOrder)
             .done();
     }
 }

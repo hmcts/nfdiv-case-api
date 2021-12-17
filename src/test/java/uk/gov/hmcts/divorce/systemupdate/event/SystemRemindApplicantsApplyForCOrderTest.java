@@ -12,7 +12,6 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.AwaitingConditionalOrderNotification;
@@ -27,7 +26,7 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicantsAppl
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConditionalOrder;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConditionalOrderQuestions;
 
 @ExtendWith(SpringExtension.class)
 public class SystemRemindApplicantsApplyForCOrderTest {
@@ -88,7 +87,7 @@ public class SystemRemindApplicantsApplyForCOrderTest {
     @Test
     void shouldSendNotificationToApplicant2WhenCOrderPending() {
         final CaseData caseData = caseData();
-        caseData.setConditionalOrder(getConditionalOrder());
+        caseData.setConditionalOrderApplicant1Questions(getConditionalOrderQuestions());
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
             .state(State.ConditionalOrderPending).id(1L).data(caseData)
             .build();
@@ -104,9 +103,8 @@ public class SystemRemindApplicantsApplyForCOrderTest {
     @Test
     void shouldSendNotificationToApplicant1WhenCOrderPending() {
         final CaseData caseData = caseData();
-        ConditionalOrder conditionalOrder = getConditionalOrder();
-        conditionalOrder.setApplicant1SubmittedDate(null);
-        caseData.setConditionalOrder(conditionalOrder);
+        caseData.setConditionalOrderApplicant1Questions(getConditionalOrderQuestions());
+        caseData.getConditionalOrderApplicant1Questions().setSubmittedDate(null);
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
             .state(State.ConditionalOrderPending).id(1L).data(caseData)
             .build();

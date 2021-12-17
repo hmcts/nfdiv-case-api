@@ -37,7 +37,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetailsListValue;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConditionalOrder;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConditionalOrderQuestions;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondent;
 
 @ExtendWith(MockitoExtension.class)
@@ -112,7 +112,7 @@ public class PronouncementListTemplateContentTest {
         final CaseData caseData = CaseData.builder()
             .applicant1(getApplicant())
             .applicant2(respondent())
-            .conditionalOrder(getConditionalOrder())
+            .conditionalOrderApplicant1Questions(getConditionalOrderQuestions())
             .build();
 
         final CaseDetails mainCaseDetails =

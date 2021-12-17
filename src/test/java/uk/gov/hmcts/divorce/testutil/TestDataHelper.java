@@ -24,7 +24,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
-import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedBeingThe;
@@ -367,15 +367,14 @@ public class TestDataHelper {
         return solicitorService;
     }
 
-    public static ConditionalOrder getConditionalOrder() {
-        final ConditionalOrder conditionalOrder = new ConditionalOrder();
-        conditionalOrder.setApplicant1SubmittedDate(LocalDateTime.now());
-        conditionalOrder.setApplyForConditionalOrder(YES);
-        conditionalOrder.setChangeOrAddToApplication(NO);
-        conditionalOrder.setIsEverythingInApplicationTrue(YES);
-        return conditionalOrder;
+    public static ConditionalOrderQuestions getConditionalOrderQuestions() {
+        final ConditionalOrderQuestions conditionalOrderQuestions = new ConditionalOrderQuestions();
+        conditionalOrderQuestions.setSubmittedDate(LocalDateTime.now());
+        conditionalOrderQuestions.setApplyForConditionalOrder(YES);
+        conditionalOrderQuestions.setChangeOrAddToApplication(NO);
+        conditionalOrderQuestions.setIsEverythingInApplicationTrue(YES);
+        return conditionalOrderQuestions;
     }
-
 
     public static CaseData validCaseDataForIssueApplication() {
         final MarriageDetails marriageDetails = new MarriageDetails();
