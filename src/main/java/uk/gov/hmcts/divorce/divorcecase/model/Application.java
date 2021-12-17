@@ -207,8 +207,8 @@ public class Application {
     private String solApplicationFeeInPounds;
 
     @CCD(
-        label = "How will payment be made?",
-        typeOverride = FixedList,
+        label = "How is payment being made?",
+        typeOverride = FixedRadioList,
         typeParameterOverride = "SolicitorPaymentMethod",
         access = {DefaultAccess.class}
     )
