@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -16,7 +17,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
-public class ApplicationSubmittedNotification {
+public class ApplicationSubmittedNotification implements ApplicantNotification {
 
     @Autowired
     private NotificationService notificationService;
@@ -24,7 +25,8 @@ public class ApplicationSubmittedNotification {
     @Autowired
     private CommonContent commonContent;
 
-    public void sendToApplicant1(CaseData caseData, Long id) {
+    @Override
+    public void sendToApplicant1(final CaseData caseData, final Long id) {
         log.info("Sending application submitted notification to applicant 1 for case : {}", id);
 
         notificationService.sendEmail(
@@ -35,15 +37,18 @@ public class ApplicationSubmittedNotification {
         );
     }
 
-    public void sendToApplicant2(CaseData caseData, Long id) {
-        log.info("Sending application submitted notification to applicant 2 for case : {}", id);
+    @Override
+    public void sendToApplicant2(final CaseData caseData, final Long id) {
+        if (!caseData.getApplicationType().isSole()) {
+            log.info("Sending application submitted notification to applicant 2 for case : {}", id);
 
-        notificationService.sendEmail(
-            caseData.getApplicant2EmailAddress(),
-            APPLICATION_SUBMITTED,
-            templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
-            caseData.getApplicant1().getLanguagePreference()
-        );
+            notificationService.sendEmail(
+                caseData.getApplicant2EmailAddress(),
+                APPLICATION_SUBMITTED,
+                templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
+                caseData.getApplicant1().getLanguagePreference()
+            );
+        }
     }
 
     private Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {

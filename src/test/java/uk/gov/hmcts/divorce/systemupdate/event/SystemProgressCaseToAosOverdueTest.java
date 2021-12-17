@@ -18,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -91,6 +92,7 @@ public class SystemProgressCaseToAosOverdueTest {
     void shouldNotSendEmailToApplicantForSolicitorApplication() {
         final CaseData caseData = caseData();
         caseData.getApplicant1().setSolicitor(Solicitor.builder().email("test@test.com").build());
+        caseData.getApplicant1().setSolicitorRepresented(YES);
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(1L);
         details.setData(caseData);

@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotificatio
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
@@ -24,6 +25,9 @@ public class SendCitizenSubmissionNotifications implements CaseTask {
     @Autowired
     private ApplicationSubmittedNotification applicationSubmittedNotification;
 
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
+
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
 
@@ -31,36 +35,14 @@ public class SendCitizenSubmissionNotifications implements CaseTask {
         final Long caseId = caseDetails.getId();
         final State state = caseDetails.getState();
 
-        if (!caseData.getApplication().isSolicitorApplication()) {
-            sendCitizenNotifications(caseData, caseId, state);
+        if (Submitted == state || AwaitingDocuments == state || AwaitingHWFDecision == state) {
+            log.info("Sending application submitted notifications for case : {}", caseId);
+            notificationDispatcher.send(applicationSubmittedNotification, caseData, caseId);
         }
+
+        log.info("Sending outstanding action notification if awaiting documents for case : {}", caseId);
+        notificationDispatcher.send(applicationOutstandingActionNotification, caseData, caseId);
 
         return caseDetails;
-    }
-
-    private void sendCitizenNotifications(final CaseData caseData, final Long caseId, final State state) {
-
-        if (Submitted.equals(state)
-            || AwaitingDocuments.equals(state)
-            || AwaitingHWFDecision.equals(state)) {
-
-            log.info("Sending application submitted notification to applicant 1 for case : {}", caseId);
-            applicationSubmittedNotification.sendToApplicant1(caseData, caseId);
-            if (!caseData.getApplicationType().isSole()) {
-
-                log.info("Sending application submitted notification to applicant 2 for case : {}", caseId);
-                applicationSubmittedNotification.sendToApplicant2(caseData, caseId);
-            }
-        }
-
-        if (caseData.getApplication().hasAwaitingApplicant1Documents()) {
-            log.info("Triggering applicant 1 has outstanding actions notification");
-            applicationOutstandingActionNotification.sendToApplicant1(caseData, caseId);
-        }
-        if (caseData.getApplication().hasAwaitingApplicant2Documents()) {
-            log.info("Triggering applicant 2 has outstanding actions notification");
-            applicationOutstandingActionNotification.sendToApplicant2(caseData, caseId);
-        }
-
     }
 }

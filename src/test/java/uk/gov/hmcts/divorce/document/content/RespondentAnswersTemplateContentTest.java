@@ -42,6 +42,7 @@ public class RespondentAnswersTemplateContentTest {
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder().email(TEST_SOLICITOR_EMAIL).build()
         );
+        caseData.getApplicant2().setSolicitorRepresented(YES);
 
         final var marriageDetails = new MarriageDetails();
         marriageDetails.setApplicant1Name("app1fname app1lname");

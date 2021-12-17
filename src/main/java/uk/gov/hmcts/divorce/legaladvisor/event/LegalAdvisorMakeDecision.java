@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorClarificationSubmittedNotification;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -40,6 +41,9 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
 
     @Autowired
     private LegalAdvisorClarificationSubmittedNotification notification;
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
 
     @Autowired
     private Clock clock;
@@ -121,9 +125,7 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
         } else if (ADMIN_ERROR.equals(conditionalOrder.getRefusalDecision())) {
             endState = AwaitingAdminClarification;
         } else if (MORE_INFO.equals(conditionalOrder.getRefusalDecision())) {
-            if (caseData.getApplication().isSolicitorApplication()) {
-                notification.send(caseData, details.getId());
-            }
+            notificationDispatcher.send(notification, caseData, details.getId());
             endState = AwaitingClarification;
         } else {
             endState = AwaitingAmendedApplication;
