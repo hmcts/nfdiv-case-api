@@ -215,6 +215,28 @@ public class ConditionalOrder {
     )
     private YesOrNo applicantStatementOfTruth;
 
+    @CCD(
+        label = "Is the information in this application still correct?"
+    )
+    private YesOrNo applicant1ConfirmInformationStillCorrect;
+
+    @CCD(
+        label = "Provide details of any other information that needs updating.",
+        typeOverride = TextArea
+    )
+    private String applicant1ReasonInformationNotCorrect;
+
+    @CCD(
+        label = "Is the information in this application still correct?"
+    )
+    private YesOrNo applicant2ConfirmInformationStillCorrect;
+
+    @CCD(
+        label = "Provide details of any other information that needs updating.",
+        typeOverride = TextArea
+    )
+    private String applicant2ReasonInformationNotCorrect;
+
     @JsonIgnore
     public boolean areClaimsGranted() {
         return nonNull(claimsGranted) && claimsGranted.toBoolean();
