@@ -233,6 +233,27 @@ public class RetiredFields {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime coDateSubmitted;
 
+    @CCD(label = "retiredApplicant1ApplyForConditionalOrderStarted")
+    private YesOrNo applicant1ApplyForConditionalOrderStarted;
+
+    @CCD(label = "retiredApplicant2ApplyForConditionalOrderStarted")
+    private YesOrNo applicant2ApplyForConditionalOrderStarted;
+
+    @CCD(label = "retiredApplicant1ContinueApplication")
+    private YesOrNo applicant1ContinueApplication;
+
+    @CCD(label = "retiredApplicant2ContinueApplication")
+    private YesOrNo applicant2ContinueApplication;
+
+    @CCD(label = "retiredCoIsEverythingInApplicationTrue")
+    private YesOrNo coIsEverythingInApplicationTrue;
+
+    @CCD(label = "retiredCoChangeOrAddToApplication")
+    private YesOrNo coChangeOrAddToApplication;
+
+    @CCD(label = "retiredCoApplyForConditionalOrder")
+    private YesOrNo coApplyForConditionalOrder;
+
     @JsonIgnore
     private static final Consumer<Map<String, Object>> DO_NOTHING = data -> {
     };
@@ -309,6 +330,20 @@ public class RetiredFields {
             data -> data.put("marriageFormationType", transformSameSexToMarriageFormation(data)));
         init.put("coDateSubmitted",
             data -> data.put("coApplicant1SubmittedDate", data.get("coDateSubmitted")));
+        init.put("applicant1ApplyForConditionalOrderStarted",
+            data -> data.put("coApplicant1ApplyForConditionalOrderStarted", data.get("applicant1ApplyForConditionalOrderStarted")));
+        init.put("applicant2ApplyForConditionalOrderStarted",
+            data -> data.put("coApplicant2ApplyForConditionalOrderStarted", data.get("applicant2ApplyForConditionalOrderStarted")));
+        init.put("applicant1ContinueApplication",
+            data -> data.put("coApplicant1ContinueApplication", data.get("applicant1ContinueApplication")));
+        init.put("applicant2ContinueApplication",
+            data -> data.put("coApplicant2ContinueApplication", data.get("applicant2ContinueApplication")));
+        init.put("coIsEverythingInApplicationTrue",
+            data -> data.put("coApplicant1IsEverythingInApplicationTrue", data.get("coIsEverythingInApplicationTrue")));
+        init.put("coChangeOrAddToApplication",
+            data -> data.put("coApplicant1ChangeOrAddToApplication", data.get("coChangeOrAddToApplication")));
+        init.put("coApplyForConditionalOrder",
+            data -> data.put("coApplicant1ApplyForConditionalOrder", data.get("coApplyForConditionalOrder")));
 
         migrations = unmodifiableMap(init);
     }

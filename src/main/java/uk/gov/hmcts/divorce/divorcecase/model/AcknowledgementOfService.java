@@ -105,7 +105,7 @@ public class AcknowledgementOfService {
     private YesOrNo prayerHasBeenGiven;
 
     @CCD(
-        label = "How do you want to respond ?",
+        label = "How do you want to respond?",
         access = {AosAccess.class}
     )
     private HowToRespondApplication howToRespondApplication;

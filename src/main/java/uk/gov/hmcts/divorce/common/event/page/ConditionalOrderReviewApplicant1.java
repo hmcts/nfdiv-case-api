@@ -5,6 +5,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 
 public class ConditionalOrderReviewApplicant1 implements CcdPageConfiguration {
 
@@ -18,9 +19,10 @@ public class ConditionalOrderReviewApplicant1 implements CcdPageConfiguration {
                 .readonly(Application::getMiniApplicationLink)
                 .done()
             .complex(CaseData::getConditionalOrder)
-                .mandatory(ConditionalOrder::getChangeOrAddToApplication)
-                .mandatory(ConditionalOrder::getIsEverythingInApplicationTrue)
+                .complex(ConditionalOrder::getConditionalOrderApplicant1Questions)
+                .mandatory(ConditionalOrderQuestions::getChangeOrAddToApplication)
+                .mandatory(ConditionalOrderQuestions::getIsEverythingInApplicationTrue)
+                .done()
             .done();
-
     }
 }

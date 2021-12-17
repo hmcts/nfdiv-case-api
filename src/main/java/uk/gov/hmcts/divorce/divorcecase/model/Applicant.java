@@ -62,11 +62,6 @@ public class Applicant {
     private YesOrNo confirmReceipt;
 
     @CCD(
-        label = "Has the applicant started the process to apply for conditional order?"
-    )
-    private YesOrNo applyForConditionalOrderStarted;
-
-    @CCD(
         label = "Is the language preference Welsh?",
         hint = "Select \"No\" for English or \"Yes\" for bilingual"
     )
@@ -162,11 +157,6 @@ public class Applicant {
         typeParameterOverride = "WhoDivorcing"
     )
     private WhoDivorcing divorceWho;
-
-    @CCD(
-        label = "The applicant wants to continue with their application."
-    )
-    private YesOrNo continueApplication;
 
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
