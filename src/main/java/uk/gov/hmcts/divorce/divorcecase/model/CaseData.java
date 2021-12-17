@@ -220,6 +220,23 @@ public class CaseData {
     @JsonUnwrapped
     private RetiredFields retiredFields;
 
+    @CCD(
+        label = "hyphenatedCaseReference",
+        access = {CaseworkerAccess.class}
+    )
+    private String hyphenatedCaseRef;
+
+    @JsonIgnore
+    public String formatCaseRef(long caseId) {
+        String temp = String.format("%016d", caseId);
+        return String.format("%4s-%4s-%4s-%4s",
+            temp.substring(0, 4),
+            temp.substring(4, 8),
+            temp.substring(8, 12),
+            temp.substring(12, 16)
+        );
+    }
+
     @JsonIgnore
     public boolean isAmendedCase() {
         return null != previousCaseId;
