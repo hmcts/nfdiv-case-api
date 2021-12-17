@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -214,6 +215,24 @@ public class RetiredFields {
     )
     private YesOrNo applicant2KeepContactDetailsConfidential;
 
+    @CCD(
+        label = "Retired flag indicating notification to applicant 1 they can apply for a Conditional Order already sent",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo applicant1NotifiedCanApplyForConditionalOrder;
+
+    @CCD(
+        label = "Retired flag indicating notification to joint applicants they can apply for a Conditional Order already sent",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo jointApplicantsNotifiedCanApplyForConditionalOrder;
+
+    @CCD(
+        label = "Retired Date Conditional Order submitted to HMCTS, split into applicant1 and applicant2 submission dates"
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
+    private LocalDateTime coDateSubmitted;
+
     @JsonIgnore
     private static final Consumer<Map<String, Object>> DO_NOTHING = data -> {
     };
@@ -288,6 +307,8 @@ public class RetiredFields {
             data -> data.put("applicant2ContactDetailsType", transformContactDetails(data, "applicant2KeepContactDetailsConfidential")));
         init.put("marriageIsSameSexCouple",
             data -> data.put("marriageFormationType", transformSameSexToMarriageFormation(data)));
+        init.put("coDateSubmitted",
+            data -> data.put("coApplicant1SubmittedDate", data.get("coDateSubmitted")));
 
         migrations = unmodifiableMap(init);
     }
