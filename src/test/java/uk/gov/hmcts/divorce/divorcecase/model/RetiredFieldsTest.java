@@ -54,6 +54,7 @@ class RetiredFieldsTest {
         data.put("coClarificationResponse", "some text");
         data.put("marriageIsSameSexCouple", "Yes");
         data.put("applicant2KeepContactDetailsConfidential", "Yes");
+        data.put("jointApplicantsRemindedCanApplyForConditionalOrder", "Yes");
         data.put("applicant1ApplyForConditionalOrderStarted", "YES");
         data.put("applicant2ApplyForConditionalOrderStarted", "YES");
         data.put("applicant1ContinueApplication", "YES");
@@ -95,6 +96,9 @@ class RetiredFieldsTest {
             entry("applicant2SolicitorAgreeToReceiveEmailsCheckbox", emptySet()),
             entry("coClarificationResponses", singletonList(ListValue.<String>builder().value("some text").build())),
             entry("marriageFormationType", "sameSexCouple"),
+            entry("applicant1ContactDetailsType", "public"),
+            entry("applicant2ContactDetailsType", "private"),
+            entry("applicantsRemindedCanApplyForConditionalOrder", "yes"),
             entry("coApplicant1ApplyForConditionalOrderStarted", "YES"),
             entry("coApplicant2ApplyForConditionalOrderStarted", "YES"),
             entry("coApplicant1ContinueApplication", "YES"),
