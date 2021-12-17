@@ -106,6 +106,7 @@ class RetiredFieldsTest {
             entry("coApplicant1IsEverythingInApplicationTrue", "YES"),
             entry("coApplicant1ChangeOrAddToApplication", "YES"),
             entry("coApplicant1ApplyForConditionalOrder", "YES")
+            entry("applicantsRemindedCanApplyForConditionalOrder", "Yes")
         );
     }
 
