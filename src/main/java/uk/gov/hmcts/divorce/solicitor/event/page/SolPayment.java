@@ -49,7 +49,7 @@ public class SolPayment implements CcdPageConfiguration {
         pageBuilder
             .page("SolPayment", this::midEvent)
             .page("SolPayment")
-            .pageLabel("Payment")
+            .pageLabel("Payment for this application")
             .label(
                 "LabelSolPaymentPara-1",
                 "Amount to pay: **£${solApplicationFeeInPounds}**")
