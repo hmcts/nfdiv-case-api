@@ -54,9 +54,11 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             .grant(READ, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR))
             .page("ConditionalOrderSoT")
             .pageLabel("Statement of Truth - submit conditional order")
-            .complex(CaseData::getConditionalOrderApplicant1Questions)
+            .complex(CaseData::getConditionalOrder)
+                .complex(ConditionalOrder::getConditionalOrderApplicant1Questions)
                 .mandatory(ConditionalOrderQuestions::getStatementOfTruth)
                 .done()
+            .done()
             .complex(CaseData::getConditionalOrder)
                 .mandatory(ConditionalOrder::getSolicitorName)
                 .mandatory(ConditionalOrder::getSolicitorFirm)
@@ -69,7 +71,7 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
 
         log.info("Submit conditional order about to submit callback invoked for case id: {}", details.getId());
         CaseData data = details.getData();
-        data.getConditionalOrderApplicant1Questions().setSubmittedDate(LocalDateTime.now(clock));
+        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setSubmittedDate(LocalDateTime.now(clock));
         var state = details.getData().getApplicationType().isSole() ? AwaitingLegalAdvisorReferral
             : beforeDetails.getState() == ConditionalOrderDrafted ? ConditionalOrderPending : AwaitingLegalAdvisorReferral;
 

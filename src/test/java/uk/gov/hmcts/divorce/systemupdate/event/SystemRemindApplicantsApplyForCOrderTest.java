@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.AwaitingConditionalOrderNotification;
@@ -87,7 +88,9 @@ public class SystemRemindApplicantsApplyForCOrderTest {
     @Test
     void shouldSendNotificationToApplicant2WhenCOrderPending() {
         final CaseData caseData = caseData();
-        caseData.setConditionalOrderApplicant1Questions(getConditionalOrderQuestions());
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .conditionalOrderApplicant1Questions(getConditionalOrderQuestions())
+            .build());
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
             .state(State.ConditionalOrderPending).id(1L).data(caseData)
             .build();
@@ -103,8 +106,10 @@ public class SystemRemindApplicantsApplyForCOrderTest {
     @Test
     void shouldSendNotificationToApplicant1WhenCOrderPending() {
         final CaseData caseData = caseData();
-        caseData.setConditionalOrderApplicant1Questions(getConditionalOrderQuestions());
-        caseData.getConditionalOrderApplicant1Questions().setSubmittedDate(null);
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .conditionalOrderApplicant1Questions(getConditionalOrderQuestions())
+            .build());
+        caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setSubmittedDate(null);
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
             .state(State.ConditionalOrderPending).id(1L).data(caseData)
             .build();

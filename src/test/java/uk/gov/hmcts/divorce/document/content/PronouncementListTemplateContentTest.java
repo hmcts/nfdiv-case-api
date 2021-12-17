@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -112,7 +113,10 @@ public class PronouncementListTemplateContentTest {
         final CaseData caseData = CaseData.builder()
             .applicant1(getApplicant())
             .applicant2(respondent())
-            .conditionalOrderApplicant1Questions(getConditionalOrderQuestions())
+            .conditionalOrder(
+                ConditionalOrder.builder()
+                    .conditionalOrderApplicant1Questions(getConditionalOrderQuestions())
+                    .build())
             .build();
 
         final CaseDetails mainCaseDetails =

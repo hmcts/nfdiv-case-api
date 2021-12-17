@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -56,7 +57,12 @@ public class AppliedForConditionalOrderNotificationTest {
     @Test
     void shouldSendEmailToApplicant1WithDivorceContent() {
         CaseData data = validApplicant1CaseData();
-        data.setConditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder().submittedDate(LocalDateTime.now()).build());
+        data.setConditionalOrder(ConditionalOrder.builder()
+            .conditionalOrderApplicant1Questions(
+                ConditionalOrderQuestions.builder()
+                    .submittedDate(LocalDateTime.now())
+                    .build())
+            .build());
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
@@ -81,7 +87,12 @@ public class AppliedForConditionalOrderNotificationTest {
     void shouldSendEmailToApplicant1WithDissolutionContent() {
         CaseData data = validApplicant1CaseData();
         data.setDivorceOrDissolution(DISSOLUTION);
-        data.setConditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder().submittedDate(LocalDateTime.now()).build());
+        data.setConditionalOrder(ConditionalOrder.builder()
+            .conditionalOrderApplicant1Questions(
+                ConditionalOrderQuestions.builder()
+                    .submittedDate(LocalDateTime.now())
+                    .build())
+            .build());
 
         final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));

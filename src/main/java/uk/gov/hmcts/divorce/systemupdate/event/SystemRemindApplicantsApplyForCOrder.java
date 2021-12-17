@@ -50,7 +50,7 @@ public class SystemRemindApplicantsApplyForCOrder implements CCDConfig<CaseData,
                 notification.sendToApplicant2(data, details.getId(), true);
             }
         } else {
-            if (Objects.isNull(data.getConditionalOrderApplicant1Questions().getSubmittedDate())) {
+            if (Objects.isNull(data.getConditionalOrder().getConditionalOrderApplicant1Questions().getSubmittedDate())) {
                 notification.sendToApplicant1(data, details.getId(), true);
             } else {
                 notification.sendToApplicant2(data, details.getId(), true);

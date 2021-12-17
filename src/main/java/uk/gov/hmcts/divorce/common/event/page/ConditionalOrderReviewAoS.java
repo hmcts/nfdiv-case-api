@@ -17,8 +17,10 @@ public class ConditionalOrderReviewAoS implements CcdPageConfiguration {
             .complex(CaseData::getConditionalOrder)
                 .readonly(ConditionalOrder::getRespondentAnswersLink)
             .done()
-            .complex(CaseData::getConditionalOrderApplicant1Questions)
+            .complex(CaseData::getConditionalOrder)
+                .complex(ConditionalOrder::getConditionalOrderApplicant1Questions)
                 .mandatory(ConditionalOrderQuestions::getApplyForConditionalOrder)
+                .done()
             .done();
     }
 }
