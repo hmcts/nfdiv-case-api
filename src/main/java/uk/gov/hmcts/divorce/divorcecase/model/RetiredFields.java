@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor.Prayer;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessBetaOnlyAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
@@ -30,6 +31,7 @@ import java.util.function.Consumer;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableMap;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
@@ -260,6 +262,24 @@ public class RetiredFields {
     @CCD(label = "retiredCoApplyForConditionalOrder")
     private YesOrNo coApplyForConditionalOrder;
 
+    @CCD(
+        label = "Retire select judge",
+        typeOverride = FixedList,
+        typeParameterOverride = "GeneralOrderJudgeOrLegalAdvisorType"
+    )
+    private GeneralOrderJudgeOrLegalAdvisorType generalOrderJudgeType;
+
+    @CCD(
+        label = "Retire name of Judge",
+        access = {CaseworkerAccessBetaOnlyAccess.class}
+    )
+    private String generalOrderJudgeName;
+
+    @CCD(
+        label = "Retire name of Legal Advisor"
+    )
+    private String generalOrderLegalAdvisorName;
+
     @JsonIgnore
     private static final Consumer<Map<String, Object>> DO_NOTHING = data -> {
     };
@@ -352,6 +372,18 @@ public class RetiredFields {
             data -> data.put("coApplicant1ChangeOrAddToApplication", data.get("coChangeOrAddToApplication")));
         init.put("coApplyForConditionalOrder",
             data -> data.put("coApplicant1ApplyForConditionalOrder", data.get("coApplyForConditionalOrder")));
+        init.put("generalOrderJudgeType",
+            data -> data.put("generalOrderJudgeOrLegalAdvisorType", data.get("generalOrderJudgeType")));
+        init.put("generalOrderJudgeName",
+            data -> data.put("generalOrderJudgeOrLegalAdvisorName",
+                transformJudgeOrLegalAdvisorName(data, "generalOrderJudgeName")
+            )
+        );
+        init.put("generalOrderLegalAdvisorName",
+            data -> data.put("generalOrderJudgeOrLegalAdvisorName",
+                transformJudgeOrLegalAdvisorName(data, "generalOrderLegalAdvisorName")
+            )
+        );
 
         migrations = unmodifiableMap(init);
     }
@@ -492,5 +524,16 @@ public class RetiredFields {
         return YES.getValue().equalsIgnoreCase(value)
             ? SAME_SEX_COUPLE.getType()
             : OPPOSITE_SEX_COUPLE.getType();
+    }
+
+
+    private static String transformJudgeOrLegalAdvisorName(Map<String, Object> data, String retiredField) {
+        String newJudgeOrLaFieldNameValue = (String) data.get("generalOrderJudgeOrLegalAdvisorName");
+        String retiredJudgeOrLaFieldNameValue = (String) data.get(retiredField);
+
+        if (isNotEmpty(newJudgeOrLaFieldNameValue)) {
+            return newJudgeOrLaFieldNameValue + " " + retiredJudgeOrLaFieldNameValue;
+        }
+        return retiredJudgeOrLaFieldNameValue;
     }
 }

@@ -33,7 +33,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedWhere;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderDivorceParties;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderJudge;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderJudgeOrLegalAdvisorType;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.Jurisdiction;
 import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
@@ -608,11 +608,10 @@ public class TestDataHelper {
             .generalOrderDate(LocalDate.of(2021, 1, 1))
             .generalOrderDetails("some details")
             .generalOrderDivorceParties(Set.of(GeneralOrderDivorceParties.RESPONDENT))
-            .generalOrderJudgeType(GeneralOrderJudge.RECORDER)
+            .generalOrderJudgeOrLegalAdvisorType(GeneralOrderJudgeOrLegalAdvisorType.DISTRICT_JUDGE)
             .generalOrderRecitals("test recitals")
             .generalOrderDraft(ccdDocument)
-            .generalOrderJudgeName("some name")
-            .generalOrderLegalAdvisorName("legal name")
+            .generalOrderJudgeOrLegalAdvisorName("some name")
             .build();
     }
 

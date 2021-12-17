@@ -57,8 +57,8 @@ public class GeneralOrderTemplateContent {
         templateContent.put(PETITIONER_FULL_NAME, caseData.getApplication().getMarriageDetails().getApplicant1Name());
         templateContent.put(RESPONDENT_FULL_NAME, caseData.getApplication().getMarriageDetails().getApplicant2Name());
         templateContent.put(GENERAL_ORDER_RECITALS, generalOrder.getGeneralOrderRecitals());
-        templateContent.put(JUDGE_TYPE, generalOrder.getGeneralOrderJudgeType().getLabel());
-        templateContent.put(JUDGE_NAME, generalOrder.getGeneralOrderJudgeName());
+        templateContent.put(JUDGE_TYPE, generalOrder.getGeneralOrderJudgeOrLegalAdvisorType().getLabel());
+        templateContent.put(JUDGE_NAME, generalOrder.getGeneralOrderJudgeOrLegalAdvisorName());
         templateContent.put(GENERAL_ORDER_DETAILS, generalOrder.getGeneralOrderDetails());
 
         var ctscContactDetails = CtscContactDetails
