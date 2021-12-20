@@ -1,5 +1,6 @@
 {
   "applicationType": "soleApplication",
+  "divorceOrDissolution": "divorce",
   "applicant1Gender": "female",
   "applicant2Gender": "male",
   "marriageDate": "2020-04-28",
@@ -9,6 +10,8 @@
   "applicant1ContactDetailsType": "private",
   "applicant2FirstName": "test_first_name",
   "applicant2LastName": "test_last_name",
+  "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
+  "applicant2Email": "simulate-delivered@notifications.service.gov.uk",
   "marriageApplicant1Name": "test_first_name test_last_name",
   "applicant1FinancialOrder": "NO",
   "applicant1HWFNeedHelp": "NO",

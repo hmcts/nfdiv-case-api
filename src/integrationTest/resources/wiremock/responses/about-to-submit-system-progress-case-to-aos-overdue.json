@@ -1,5 +1,6 @@
 {
   "data": {
+    "applicationType": "soleApplication",
     "applicant1Email": "test@test.com",
     "applicant1FinancialOrder": "No",
     "applicant1FirstName": "test_first_name",
@@ -41,7 +42,6 @@
       }
     ],
     "accessCode": "1234-1234-1234-1234",
-    "applicationType": "soleApplication",
     "divorceOrDissolution": "divorce",
     "documentUploadComplete": "Yes",
     "dueDate": "2021-04-28",
