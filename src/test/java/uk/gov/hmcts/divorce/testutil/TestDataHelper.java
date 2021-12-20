@@ -186,6 +186,7 @@ public class TestDataHelper {
             .name(TEST_SOLICITOR_NAME)
             .email(TEST_SOLICITOR_EMAIL)
             .build());
+        applicant.setSolicitorRepresented(YES);
         return applicant;
     }
 
@@ -204,6 +205,7 @@ public class TestDataHelper {
             .email(TEST_SOLICITOR_EMAIL)
             .organisationPolicy(organisationPolicy())
             .build());
+        applicant.setSolicitorRepresented(YES);
         return applicant;
     }
 
@@ -316,6 +318,7 @@ public class TestDataHelper {
 
         var applicant1 = getApplicant();
         applicant1.setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).build());
+        applicant1.setSolicitorRepresented(YES);
 
         var application = Application.builder()
             .solSignStatementOfTruth(YES)
@@ -328,6 +331,7 @@ public class TestDataHelper {
 
         return CaseData
             .builder()
+            .applicationType(SOLE_APPLICATION)
             .applicant1(applicant1)
             .applicant2(getApplicant2(FEMALE))
             .divorceOrDissolution(DIVORCE)

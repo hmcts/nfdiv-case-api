@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
@@ -28,7 +29,6 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
-import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLY_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_AWAITING_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -62,6 +62,7 @@ class AwaitingConditionalOrderNotificationTest {
     void shouldSendEmailToSolicitor() {
         Applicant applicant = getApplicant();
         applicant.setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).name(TEST_SOLICITOR_NAME).build());
+        applicant.setSolicitorRepresented(YesOrNo.YES);
         var data = CaseData.builder().applicant1(applicant).build();
 
         when(commonContent.basicTemplateVars(data, 1234567890123456L)).thenReturn(getBasicTemplateVars());
@@ -94,7 +95,7 @@ class AwaitingConditionalOrderNotificationTest {
             eq(CITIZEN_APPLY_FOR_CONDITIONAL_ORDER),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(IS_DIVORCE, YES),
+                hasEntry(IS_DIVORCE, CommonContent.YES),
                 hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.NO)
             )),
             eq(ENGLISH)
@@ -107,7 +108,7 @@ class AwaitingConditionalOrderNotificationTest {
         CaseData data = validApplicant1CaseData();
         data.setDivorceOrDissolution(DISSOLUTION);
         final Map<String, String> templateVars = getMainTemplateVars();
-        templateVars.putAll(Map.of(IS_DIVORCE, CommonContent.NO, IS_DISSOLUTION, YES));
+        templateVars.putAll(Map.of(IS_DIVORCE, CommonContent.NO, IS_DISSOLUTION, CommonContent.YES));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(templateVars);
 
@@ -118,7 +119,7 @@ class AwaitingConditionalOrderNotificationTest {
             eq(CITIZEN_APPLY_FOR_CONDITIONAL_ORDER),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(IS_DISSOLUTION, YES),
+                hasEntry(IS_DISSOLUTION, CommonContent.YES),
                 hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.NO)
             )),
             eq(ENGLISH)
@@ -139,8 +140,8 @@ class AwaitingConditionalOrderNotificationTest {
             eq(CITIZEN_APPLY_FOR_CONDITIONAL_ORDER),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(IS_DIVORCE, YES),
-                hasEntry(JOINT_CONDITIONAL_ORDER, YES)
+                hasEntry(IS_DIVORCE, CommonContent.YES),
+                hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES)
             )),
             eq(ENGLISH)
         );
@@ -161,9 +162,9 @@ class AwaitingConditionalOrderNotificationTest {
             eq(CITIZEN_APPLY_FOR_CONDITIONAL_ORDER),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(IS_DIVORCE, YES),
-                hasEntry(JOINT_CONDITIONAL_ORDER, YES),
-                hasEntry(WIFE_JOINT, YES)
+                hasEntry(IS_DIVORCE, CommonContent.YES),
+                hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES),
+                hasEntry(WIFE_JOINT, CommonContent.YES)
             )),
             eq(ENGLISH)
         );
@@ -175,7 +176,7 @@ class AwaitingConditionalOrderNotificationTest {
         CaseData data = validJointApplicant1CaseData();
         data.setDivorceOrDissolution(DISSOLUTION);
         final Map<String, String> templateVars = getMainTemplateVars();
-        templateVars.putAll(Map.of(IS_DIVORCE, CommonContent.NO, IS_DISSOLUTION, YES));
+        templateVars.putAll(Map.of(IS_DIVORCE, CommonContent.NO, IS_DISSOLUTION, CommonContent.YES));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(templateVars);
 
@@ -186,8 +187,8 @@ class AwaitingConditionalOrderNotificationTest {
             eq(CITIZEN_APPLY_FOR_CONDITIONAL_ORDER),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(IS_DISSOLUTION, YES),
-                hasEntry(JOINT_CONDITIONAL_ORDER, YES)
+                hasEntry(IS_DISSOLUTION, CommonContent.YES),
+                hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES)
             )),
             eq(ENGLISH)
         );
@@ -207,8 +208,8 @@ class AwaitingConditionalOrderNotificationTest {
             eq(CITIZEN_APPLY_FOR_CONDITIONAL_ORDER),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(IS_DIVORCE, YES),
-                hasEntry(JOINT_CONDITIONAL_ORDER, YES)
+                hasEntry(IS_DIVORCE, CommonContent.YES),
+                hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES)
             )),
             eq(ENGLISH)
         );
@@ -220,7 +221,7 @@ class AwaitingConditionalOrderNotificationTest {
         CaseData data = validApplicant1CaseData();
         data.setDivorceOrDissolution(DISSOLUTION);
         final Map<String, String> templateVars = getMainTemplateVars();
-        templateVars.putAll(Map.of(IS_DIVORCE, CommonContent.NO, IS_DISSOLUTION, YES));
+        templateVars.putAll(Map.of(IS_DIVORCE, CommonContent.NO, IS_DISSOLUTION, CommonContent.YES));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(templateVars);
 
@@ -231,7 +232,7 @@ class AwaitingConditionalOrderNotificationTest {
             eq(CITIZEN_APPLY_FOR_CONDITIONAL_ORDER),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(IS_DISSOLUTION, YES),
+                hasEntry(IS_DISSOLUTION, CommonContent.YES),
                 hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.NO)
             )),
             eq(ENGLISH)
@@ -252,8 +253,8 @@ class AwaitingConditionalOrderNotificationTest {
             eq(CITIZEN_APPLY_FOR_CONDITIONAL_ORDER),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(IS_DIVORCE, YES),
-                hasEntry(JOINT_CONDITIONAL_ORDER, YES)
+                hasEntry(IS_DIVORCE, CommonContent.YES),
+                hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES)
             )),
             eq(ENGLISH)
         );
@@ -274,9 +275,9 @@ class AwaitingConditionalOrderNotificationTest {
             eq(CITIZEN_APPLY_FOR_CONDITIONAL_ORDER),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(IS_DIVORCE, YES),
-                hasEntry(JOINT_CONDITIONAL_ORDER, YES),
-                hasEntry(WIFE_JOINT, YES)
+                hasEntry(IS_DIVORCE, CommonContent.YES),
+                hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES),
+                hasEntry(WIFE_JOINT, CommonContent.YES)
             )),
             eq(ENGLISH)
         );
@@ -288,7 +289,7 @@ class AwaitingConditionalOrderNotificationTest {
         CaseData data = validJointApplicant1CaseData();
         data.setDivorceOrDissolution(DISSOLUTION);
         final Map<String, String> templateVars = getMainTemplateVars();
-        templateVars.putAll(Map.of(IS_DIVORCE, CommonContent.NO, IS_DISSOLUTION, YES));
+        templateVars.putAll(Map.of(IS_DIVORCE, CommonContent.NO, IS_DISSOLUTION, CommonContent.YES));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(templateVars);
 
@@ -299,8 +300,8 @@ class AwaitingConditionalOrderNotificationTest {
             eq(CITIZEN_APPLY_FOR_CONDITIONAL_ORDER),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(IS_DISSOLUTION, YES),
-                hasEntry(JOINT_CONDITIONAL_ORDER, YES)
+                hasEntry(IS_DISSOLUTION, CommonContent.YES),
+                hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES)
             )),
             eq(ENGLISH)
         );

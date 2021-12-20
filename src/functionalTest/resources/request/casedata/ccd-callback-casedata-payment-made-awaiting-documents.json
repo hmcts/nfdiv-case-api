@@ -19,6 +19,7 @@
   "jurisdictionConnections": ["A"],
   "applicant1CannotUploadSupportingDocument": ["marriageCertificate", "nameChangeEvidence"],
   "marriageMarriedInUk": "YES",
+  "applicationType": "soleApplication",
   "applicationFeeOrderSummary": {
     "PaymentTotal": "55000",
     "PaymentReference": null,

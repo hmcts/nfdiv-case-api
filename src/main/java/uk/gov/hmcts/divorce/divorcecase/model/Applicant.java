@@ -15,7 +15,6 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import java.util.Set;
 
 import static java.util.Objects.nonNull;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
@@ -167,7 +166,7 @@ public class Applicant {
 
     @JsonIgnore
     public boolean isRepresented() {
-        return null != solicitor && isNotEmpty(solicitor.getEmail());
+        return null != solicitorRepresented && solicitorRepresented.toBoolean();
     }
 
     @JsonIgnore

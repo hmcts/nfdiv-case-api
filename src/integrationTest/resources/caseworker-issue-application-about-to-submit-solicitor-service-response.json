@@ -12,6 +12,7 @@
     "applicant1ContactDetailsType": "public",
     "applicant1Gender": "female",
     "applicant1SolicitorEmail": "solicitor@test.com",
+    "applicant1SolicitorRepresented": "Yes",
     "applicant1LegalProceedings":"No",
     "applicant2FirstName": "test_first_name",
     "applicant2MiddleName": "test_middle_name",

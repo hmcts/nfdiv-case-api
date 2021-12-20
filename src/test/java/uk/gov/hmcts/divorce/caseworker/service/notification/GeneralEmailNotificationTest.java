@@ -16,6 +16,7 @@ import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
@@ -137,6 +138,7 @@ public class GeneralEmailNotificationTest {
 
         final var applicant1 = getApplicant();
         applicant1.setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).name(TEST_SOLICITOR_NAME).build());
+        applicant1.setSolicitorRepresented(YES);
         caseData.setApplicant1(applicant1);
 
         final var marriageDetails = new MarriageDetails();
@@ -168,6 +170,7 @@ public class GeneralEmailNotificationTest {
 
         final var applicant2 = getApplicant();
         applicant2.setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).name(TEST_SOLICITOR_NAME).build());
+        applicant2.setSolicitorRepresented(YES);
         caseData.setApplicant2(applicant2);
 
         final var marriageDetails = new MarriageDetails();

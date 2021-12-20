@@ -360,6 +360,28 @@ class ApplicationTest {
             .isSolicitorApplication()).isFalse();
     }
 
+    @Test
+    void shouldReturnFalseForIsApplicant1Offline() {
+        assertThat(Application.builder().build().isApplicant1OffLine()).isFalse();
+    }
+
+    @Test
+    void shouldReturnTrueForIsApplicant2OfflineIfApplicant1DoesNotKnowApplicant2Email() {
+        assertThat(Application.builder().applicant1KnowsApplicant2EmailAddress(NO).build()
+            .isApplicant2OffLine()).isTrue();
+    }
+
+    @Test
+    void shouldReturnFalseForIsApplicant2OfflineIfApplicant1DoesKnowApplicant2Email() {
+        assertThat(Application.builder().applicant1KnowsApplicant2EmailAddress(YES).build()
+            .isApplicant2OffLine()).isFalse();
+    }
+
+    @Test
+    void shouldReturnFalseForIsApplicant2OfflineIfApplicant1KnowApplicant2EmailIsNotSet() {
+        assertThat(Application.builder().build().isApplicant2OffLine()).isFalse();
+    }
+
     private ListValue<Payment> paymentValue(final Payment payment) {
         return ListValue.<Payment>builder()
             .value(payment)

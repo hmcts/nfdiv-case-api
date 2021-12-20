@@ -15,8 +15,10 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
@@ -81,5 +83,16 @@ class ApplicationSubmittedNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldNotSendEmailToApplicant2IfApplicationTypeIsSole() {
+        CaseData data = CaseData.builder().applicationType(SOLE_APPLICATION).build();
+        data.setDueDate(LocalDate.of(2021, 4, 21));
+        data.getApplicant2().setEmail(null);
+
+        notification.sendToApplicant2(data, 1234567890123456L);
+
+        verifyNoInteractions(notificationService, commonContent);
     }
 }

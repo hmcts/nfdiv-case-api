@@ -39,6 +39,7 @@ class ApplicantTest {
             .solicitor(Solicitor.builder()
                 .email("solicitor@example.com")
                 .build())
+            .solicitorRepresented(YES)
             .build();
 
         assertThat(applicant.isRepresented()).isTrue();
