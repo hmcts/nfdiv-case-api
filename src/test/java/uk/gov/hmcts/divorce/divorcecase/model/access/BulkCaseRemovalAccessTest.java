@@ -18,7 +18,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 
-public class BulkCaseRemovalAccessTest {
+class BulkCaseRemovalAccessTest {
 
     @Test
     void shouldBulkCaseRemovalAccess() {

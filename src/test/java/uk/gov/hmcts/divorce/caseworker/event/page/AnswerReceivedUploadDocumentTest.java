@@ -17,7 +17,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class AnswerReceivedUploadDocumentTest {
+class AnswerReceivedUploadDocumentTest {
 
     @InjectMocks
     private AnswerReceivedUploadDocument page;
