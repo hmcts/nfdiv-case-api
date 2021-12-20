@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
@@ -279,6 +280,31 @@ class RetiredFieldsTest {
         assertThat(result).contains(
             entry("jurisdictionDisagreeReason", null),
             entry("reasonCourtsOfEnglandAndWalesHaveNoJurisdiction", "Jurisdiction Disagree Reason")
+        );
+    }
+
+    @Test
+    void shouldMigrateGeneralOrderJudgeNameWhenLaNameIsNotPresent() {
+        final var data = new HashMap<String, Object>();
+        data.put("generalOrderJudgeName", "some judge name");
+
+        final var result = RetiredFields.migrate(data);
+
+        assertThat(result).contains(
+            entry("generalOrderJudgeOrLegalAdvisorName", "some judge name")
+        );
+    }
+
+    @Test
+    void shouldMigrateGeneralOrderJudgeAndLaNameWhenBothLaAndJudgeNamesArePresent() {
+        final var data = new TreeMap<String, Object>();
+        data.put("generalOrderJudgeName", "judge");
+        data.put("generalOrderLegalAdvisorName", "la");
+
+        final var result = RetiredFields.migrate(data);
+
+        assertThat(result).contains(
+            entry("generalOrderJudgeOrLegalAdvisorName", "la judge")
         );
     }
 }
