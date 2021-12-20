@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.notification;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
@@ -17,6 +18,9 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 @ExtendWith(MockitoExtension.class)
 class NotificationDispatcherTest {
 
+    @Spy
+    private ApplicantNotification applicantNotification = new TestNotification();
+
     @InjectMocks
     private NotificationDispatcher notificationDispatcher;
 
@@ -29,8 +33,6 @@ class NotificationDispatcherTest {
                 .solicitorRepresented(YES)
                 .build())
             .build();
-
-        final ApplicantNotification applicantNotification = mock(ApplicantNotification.class);
 
         notificationDispatcher.send(applicantNotification, caseData, caseId);
 
@@ -45,7 +47,6 @@ class NotificationDispatcherTest {
         final Applicant applicant1 = mock(Applicant.class);
         final Applicant applicant2 = mock(Applicant.class);
         final Application application = mock(Application.class);
-        final ApplicantNotification applicantNotification = mock(ApplicantNotification.class);
 
         when(caseData.getApplicant1()).thenReturn(applicant1);
         when(applicant1.isRepresented()).thenReturn(false);
@@ -69,8 +70,6 @@ class NotificationDispatcherTest {
                 .build())
             .build();
 
-        final ApplicantNotification applicantNotification = mock(ApplicantNotification.class);
-
         notificationDispatcher.send(applicantNotification, caseData, caseId);
 
         verify(applicantNotification).sendToApplicant1(caseData, caseId);
@@ -85,8 +84,6 @@ class NotificationDispatcherTest {
                 .solicitorRepresented(YES)
                 .build())
             .build();
-
-        final ApplicantNotification applicantNotification = mock(ApplicantNotification.class);
 
         notificationDispatcher.send(applicantNotification, caseData, caseId);
 
@@ -106,8 +103,6 @@ class NotificationDispatcherTest {
                 .build())
             .build();
 
-        final ApplicantNotification applicantNotification = mock(ApplicantNotification.class);
-
         notificationDispatcher.send(applicantNotification, caseData, caseId);
 
         verify(applicantNotification).sendToApplicant2Offline(caseData, caseId);
@@ -123,10 +118,11 @@ class NotificationDispatcherTest {
                 .build())
             .build();
 
-        final ApplicantNotification applicantNotification = mock(ApplicantNotification.class);
-
         notificationDispatcher.send(applicantNotification, caseData, caseId);
 
         verify(applicantNotification).sendToApplicant2(caseData, caseId);
+    }
+
+    public static class TestNotification implements ApplicantNotification {
     }
 }
