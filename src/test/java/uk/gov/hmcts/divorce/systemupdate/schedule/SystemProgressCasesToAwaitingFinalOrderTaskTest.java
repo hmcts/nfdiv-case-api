@@ -43,7 +43,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 
 @ExtendWith(MockitoExtension.class)
-public class SystemProgressCasesToAwaitingFinalOrderTaskTest {
+class SystemProgressCasesToAwaitingFinalOrderTaskTest {
 
     @Mock
     private CcdUpdateService ccdUpdateService;
@@ -66,8 +66,8 @@ public class SystemProgressCasesToAwaitingFinalOrderTaskTest {
     private User user;
 
     private static final BoolQueryBuilder query = boolQuery()
-            .must(matchQuery(STATE, ConditionalOrderPronounced))
-            .filter(rangeQuery(DATA_DATE_FINAL_ORDER_ELIGIBLE_FROM).lte(LocalDate.now()));
+        .must(matchQuery(STATE, ConditionalOrderPronounced))
+        .filter(rangeQuery(DATA_DATE_FINAL_ORDER_ELIGIBLE_FROM).lte(LocalDate.now()));
 
     @BeforeEach
     void setUp() {

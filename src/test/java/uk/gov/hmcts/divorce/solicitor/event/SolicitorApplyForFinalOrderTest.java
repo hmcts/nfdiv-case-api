@@ -39,7 +39,7 @@ public class SolicitorApplyForFinalOrderTest {
     }
 
     @Test
-    public void shouldReturnErrorWhenApplyForFinalOrderIsNoAndMidEventIsInvoked() {
+    void shouldReturnErrorWhenApplyForFinalOrderIsNoAndMidEventIsInvoked() {
         final CaseData caseData = caseData();
         caseData.getFinalOrder().setDoesApplicantWantToApplyForFinalOrder(NO);
 
@@ -54,7 +54,7 @@ public class SolicitorApplyForFinalOrderTest {
     }
 
     @Test
-    public void shouldNotReturnErrorWhenApplyForFinalOrderIsYesAndMidEventIsInvoked() {
+    void shouldNotReturnErrorWhenApplyForFinalOrderIsYesAndMidEventIsInvoked() {
         final CaseData caseData = caseData();
         caseData.getFinalOrder().setDoesApplicantWantToApplyForFinalOrder(YES);
 

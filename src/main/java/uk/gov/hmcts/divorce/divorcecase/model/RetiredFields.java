@@ -287,6 +287,16 @@ public class RetiredFields {
     @JsonIgnore
     private static final Map<String, Consumer<Map<String, Object>>> migrations;
 
+    private static final String APPLICANT_1_KEEP_CONTACT_DETAILS_CONFIDENTIAL = "applicant1KeepContactDetailsConfidential";
+
+    private static final String APPLICANT_2_KEEP_CONTACT_DETAILS_CONFIDENTIAL = "applicant2KeepContactDetailsConfidential";
+
+    private static final String CO_IS_EVERYTHING_IN_APPLICATION_TRUE = "coIsEverythingInApplicationTrue";
+
+    private static final String GENERAL_REFERRAL_JUDGE_OR_LEGAL_ADVISOR_DETAILS = "generalReferralJudgeOrLegalAdvisorDetails";
+
+    private static final String GENERAL_ORDER_JUDGE_OR_LEGAL_ADVISOR_NAME = "generalOrderJudgeOrLegalAdvisorName";
+
     static {
         final Map<String, Consumer<Map<String, Object>>> init = new HashedMap<>();
 
@@ -294,12 +304,12 @@ public class RetiredFields {
             data -> data.put("applicant1FirstName", data.get("exampleRetiredField")));
         init.put("applicant1ContactDetailsConfidential",
             data -> data.put(
-                "applicant1KeepContactDetailsConfidential",
+                APPLICANT_1_KEEP_CONTACT_DETAILS_CONFIDENTIAL,
                 transformContactDetailsConfidentialField("applicant1ContactDetailsConfidential", data)
             ));
         init.put("applicant2ContactDetailsConfidential",
             data -> data.put(
-                "applicant2KeepContactDetailsConfidential",
+                APPLICANT_2_KEEP_CONTACT_DETAILS_CONFIDENTIAL,
                 transformContactDetailsConfidentialField("applicant2ContactDetailsConfidential", data)
             ));
         init.put("applicant1FinancialOrderForRemoved", DO_NOTHING);
@@ -319,19 +329,19 @@ public class RetiredFields {
         init.put("applicant1PrayerHasBeenGiven",
             data -> data.put("applicant1PrayerHasBeenGivenCheckbox", transformApplicant1PrayerHasBeenGivenField(data)));
         init.put("coIsEverythingInPetitionTrue",
-            data -> data.put("coIsEverythingInApplicationTrue", data.get("coIsEverythingInPetitionTrue")));
+            data -> data.put(CO_IS_EVERYTHING_IN_APPLICATION_TRUE, data.get("coIsEverythingInPetitionTrue")));
         init.put("alternativeServiceApplications",
             data -> data.put("alternativeServiceOutcomes", transformAlternativeServiceApplications(data)));
         init.put("disputeApplication",
             data -> data.put("howToRespondApplication", transformDisputeApplication(data)));
         init.put("generalReferralJudgeDetails",
             data -> data.put(
-                "generalReferralJudgeOrLegalAdvisorDetails",
+                GENERAL_REFERRAL_JUDGE_OR_LEGAL_ADVISOR_DETAILS,
                 transformGeneralReferralDetails(data, "generalReferralJudgeDetails")
             ));
         init.put("generalReferralLegalAdvisorDetails",
             data -> data.put(
-                "generalReferralJudgeOrLegalAdvisorDetails",
+                GENERAL_REFERRAL_JUDGE_OR_LEGAL_ADVISOR_DETAILS,
                 transformGeneralReferralDetails(data, "generalReferralLegalAdvisorDetails")
             ));
         init.put("applicant1SolicitorAgreeToReceiveEmails",
@@ -348,10 +358,10 @@ public class RetiredFields {
             data -> data.put("reasonCourtsOfEnglandAndWalesHaveNoJurisdiction", data.get("jurisdictionDisagreeReason")));
         init.put("coClarificationResponse",
             data -> data.put("coClarificationResponses", transformClarificationResponse(data)));
-        init.put("applicant1KeepContactDetailsConfidential",
-            data -> data.put("applicant1ContactDetailsType", transformContactDetails(data, "applicant1KeepContactDetailsConfidential")));
-        init.put("applicant2KeepContactDetailsConfidential",
-            data -> data.put("applicant2ContactDetailsType", transformContactDetails(data, "applicant2KeepContactDetailsConfidential")));
+        init.put(APPLICANT_1_KEEP_CONTACT_DETAILS_CONFIDENTIAL,
+            data -> data.put("applicant1ContactDetailsType", transformContactDetails(data, APPLICANT_1_KEEP_CONTACT_DETAILS_CONFIDENTIAL)));
+        init.put(APPLICANT_2_KEEP_CONTACT_DETAILS_CONFIDENTIAL,
+            data -> data.put("applicant2ContactDetailsType", transformContactDetails(data, APPLICANT_2_KEEP_CONTACT_DETAILS_CONFIDENTIAL)));
         init.put("marriageIsSameSexCouple",
             data -> data.put("marriageFormationType", transformSameSexToMarriageFormation(data)));
         init.put("coDateSubmitted",
@@ -366,8 +376,8 @@ public class RetiredFields {
             data -> data.put("coApplicant1ContinueApplication", data.get("applicant1ContinueApplication")));
         init.put("applicant2ContinueApplication",
             data -> data.put("coApplicant2ContinueApplication", data.get("applicant2ContinueApplication")));
-        init.put("coIsEverythingInApplicationTrue",
-            data -> data.put("coApplicant1IsEverythingInApplicationTrue", data.get("coIsEverythingInApplicationTrue")));
+        init.put(CO_IS_EVERYTHING_IN_APPLICATION_TRUE,
+            data -> data.put("coApplicant1IsEverythingInApplicationTrue", data.get(CO_IS_EVERYTHING_IN_APPLICATION_TRUE)));
         init.put("coChangeOrAddToApplication",
             data -> data.put("coApplicant1ChangeOrAddToApplication", data.get("coChangeOrAddToApplication")));
         init.put("coApplyForConditionalOrder",
@@ -375,12 +385,12 @@ public class RetiredFields {
         init.put("generalOrderJudgeType",
             data -> data.put("generalOrderJudgeOrLegalAdvisorType", data.get("generalOrderJudgeType")));
         init.put("generalOrderJudgeName",
-            data -> data.put("generalOrderJudgeOrLegalAdvisorName",
+            data -> data.put(GENERAL_ORDER_JUDGE_OR_LEGAL_ADVISOR_NAME,
                 transformJudgeOrLegalAdvisorName(data, "generalOrderJudgeName")
             )
         );
         init.put("generalOrderLegalAdvisorName",
-            data -> data.put("generalOrderJudgeOrLegalAdvisorName",
+            data -> data.put(GENERAL_ORDER_JUDGE_OR_LEGAL_ADVISOR_NAME,
                 transformJudgeOrLegalAdvisorName(data, "generalOrderLegalAdvisorName")
             )
         );
@@ -493,7 +503,7 @@ public class RetiredFields {
 
     private static String transformGeneralReferralDetails(Map<String, Object> data, String retiredFieldName) {
         String retiredFieldValue = (String) data.get(retiredFieldName);
-        String newFieldValue = (String) data.get("generalReferralJudgeOrLegalAdvisorDetails");
+        String newFieldValue = (String) data.get(GENERAL_REFERRAL_JUDGE_OR_LEGAL_ADVISOR_DETAILS);
         if (null != newFieldValue) {
             return retiredFieldValue.concat(" ").concat(newFieldValue);
         }
@@ -528,7 +538,7 @@ public class RetiredFields {
 
 
     private static String transformJudgeOrLegalAdvisorName(Map<String, Object> data, String retiredField) {
-        String newJudgeOrLaFieldNameValue = (String) data.get("generalOrderJudgeOrLegalAdvisorName");
+        String newJudgeOrLaFieldNameValue = (String) data.get(GENERAL_ORDER_JUDGE_OR_LEGAL_ADVISOR_NAME);
         String retiredJudgeOrLaFieldNameValue = (String) data.get(retiredField);
 
         if (isNotEmpty(newJudgeOrLaFieldNameValue)) {

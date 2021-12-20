@@ -1,6 +1,9 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 
 import java.time.LocalDate;
@@ -14,6 +17,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
@@ -193,43 +197,16 @@ class RetiredFieldsTest {
     }
 
 
-    @Test
-    void shouldMigrateGeneralReferralJudgeAndLegalAdvisorDetailsWhenBothValuesArePresent() {
-        final var data = new HashMap<String, Object>();
-        data.put("generalReferralJudgeDetails", "judge");
-        data.put("generalReferralLegalAdvisorDetails", "la");
+    @ParameterizedTest
+    @MethodSource("judgeAndLaParametersWithOutput")
+    void shouldMigrateGeneralReferralJudgeAndLegalAdvisorDetails(
+        Map<String, Object> inputData, String output
+    ) {
 
-        RetiredFields.migrate(data);
+        RetiredFields.migrate(inputData);
 
-        assertThat(data).contains(
-            entry("generalReferralJudgeOrLegalAdvisorDetails", "judge la")
-        );
-    }
-
-    @Test
-    void shouldMigrateGeneralReferralJudgeAndLegalAdvisorDetailsWhenJudgeDetailsIsNull() {
-        final var data = new HashMap<String, Object>();
-        data.put("generalReferralJudgeDetails", null);
-        data.put("generalReferralLegalAdvisorDetails", "la");
-
-        RetiredFields.migrate(data);
-
-        assertThat(data).contains(
-            entry("generalReferralJudgeOrLegalAdvisorDetails", "la")
-        );
-    }
-
-
-    @Test
-    void shouldMigrateGeneralReferralJudgeAndLegalAdvisorDetailsWhenLegalAdvisorDetailsIsNull() {
-        final var data = new HashMap<String, Object>();
-        data.put("generalReferralJudgeDetails", "judge");
-        data.put("generalReferralLegalAdvisorDetails", null);
-
-        RetiredFields.migrate(data);
-
-        assertThat(data).contains(
-            entry("generalReferralJudgeOrLegalAdvisorDetails", "judge")
+        assertThat(inputData).contains(
+            entry("generalReferralJudgeOrLegalAdvisorDetails", output)
         );
     }
 
@@ -307,4 +284,25 @@ class RetiredFieldsTest {
             entry("generalOrderJudgeOrLegalAdvisorName", "la judge")
         );
     }
+
+    private static Stream<Arguments> judgeAndLaParametersWithOutput() {
+        final var judgeAndLaDataMap = new HashMap<String, Object>();
+        judgeAndLaDataMap.put("generalReferralJudgeDetails", "judge");
+        judgeAndLaDataMap.put("generalReferralLegalAdvisorDetails", "la");
+
+        final var onlyLaMap = new HashMap<String, Object>();
+        onlyLaMap.put("generalReferralJudgeDetails", null);
+        onlyLaMap.put("generalReferralLegalAdvisorDetails", "la");
+
+        final var onlyJudgeMap = new HashMap<String, Object>();
+        onlyJudgeMap.put("generalReferralJudgeDetails", "judge");
+        onlyJudgeMap.put("generalReferralLegalAdvisorDetails", null);
+
+        return Stream.of(
+            Arguments.of(judgeAndLaDataMap, "judge la"),
+            Arguments.of(onlyLaMap, "la"),
+            Arguments.of(onlyJudgeMap, "judge")
+        );
+    }
+
 }

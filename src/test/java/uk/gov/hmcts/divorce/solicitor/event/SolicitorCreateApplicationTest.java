@@ -116,7 +116,7 @@ class SolicitorCreateApplicationTest {
     }
 
     @Test
-    public void shouldPopulateMissingRequirementsFieldsInCaseData() {
+    void shouldPopulateMissingRequirementsFieldsInCaseData() {
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -132,7 +132,7 @@ class SolicitorCreateApplicationTest {
     }
 
     @Test
-    public void shouldInferApp2GenderAsMaleWhenMarriageFormationIsOppositeSexAndApp1GenderIsFemale() {
+    void shouldInferApp2GenderAsMaleWhenMarriageFormationIsOppositeSexAndApp1GenderIsFemale() {
         final CaseData caseData = caseData();
         caseData.getApplicant1().setGender(FEMALE);
         caseData.getApplication().getMarriageDetails().setFormationType(OPPOSITE_SEX_COUPLE);
@@ -153,7 +153,7 @@ class SolicitorCreateApplicationTest {
     }
 
     @Test
-    public void shouldInferApp2GenderAsFemaleWhenMarriageFormationIsOppositeSexAndApp1GenderIsMale() {
+    void shouldInferApp2GenderAsFemaleWhenMarriageFormationIsOppositeSexAndApp1GenderIsMale() {
         final CaseData caseData = caseData();
         caseData.getApplicant1().setGender(MALE);
         caseData.getApplication().getMarriageDetails().setFormationType(OPPOSITE_SEX_COUPLE);
@@ -174,7 +174,7 @@ class SolicitorCreateApplicationTest {
     }
 
     @Test
-    public void shouldInferApp2GenderAsFemaleWhenMarriageFormationIsSameSexAndApp1GenderIsFemale() {
+    void shouldInferApp2GenderAsFemaleWhenMarriageFormationIsSameSexAndApp1GenderIsFemale() {
         final CaseData caseData = caseData();
         caseData.getApplicant1().setGender(FEMALE);
         caseData.getApplication().getMarriageDetails().setFormationType(SAME_SEX_COUPLE);

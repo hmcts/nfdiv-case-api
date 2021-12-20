@@ -31,14 +31,15 @@ public class SolicitorApplyForFinalOrder implements CCDConfig<CaseData, State, U
     public static final String SOLICITOR_FINAL_ORDER_REQUESTED = "solicitor-final-order-requested";
 
     private static final String ALWAYS_HIDE = "doesApplicantWantToApplyForFinalOrder=\"ALWAYS_HIDE\"";
+    private static final String APPLY_FOR_FINAL_ORDER = "Apply for final order";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(SOLICITOR_FINAL_ORDER_REQUESTED)
             .forStateTransition(AwaitingFinalOrder, FinalOrderRequested)
-            .name("Apply for final order")
-            .description("Apply for final order")
+            .name(APPLY_FOR_FINAL_ORDER)
+            .description(APPLY_FOR_FINAL_ORDER)
             .showSummary()
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
             .grant(READ,
@@ -46,7 +47,7 @@ public class SolicitorApplyForFinalOrder implements CCDConfig<CaseData, State, U
                 SUPER_USER,
                 LEGAL_ADVISOR))
             .page("SolicitorApplyForFinalOrder", this::midEvent)
-            .pageLabel("Apply for final order")
+            .pageLabel(APPLY_FOR_FINAL_ORDER)
             .complex(CaseData::getLabelContent)
                 .readonlyNoSummary(LabelContent::getDivorceOrCivilPartnership, ALWAYS_HIDE)
                 .readonlyNoSummary(LabelContent::getFinaliseDivorceOrEndCivilPartnership, ALWAYS_HIDE)

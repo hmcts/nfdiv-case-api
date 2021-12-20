@@ -63,29 +63,7 @@ public class SystemFinalOrderOverdueTask implements Runnable {
                 ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, serviceAuth);
 
             for (final CaseDetails caseDetails : casesInAwaitingFinalOrderState) {
-                try {
-                    Map<String, Object> caseDataMap = caseDetails.getData();
-
-                    String pronouncedDate = (String) caseDataMap.getOrDefault(PRONOUNCED_DATE, null);
-                    if (pronouncedDate == null) {
-                        log.error("Ignoring case id {} with created on {} and modified on {}, as pronounced date is null",
-                            caseDetails.getId(),
-                            caseDetails.getCreatedDate(),
-                            caseDetails.getLastModified()
-                        );
-                    } else {
-                        LocalDate finalOrderOverdueDate = LocalDate.parse(pronouncedDate).plusMonths(12);
-
-                        if (finalOrderOverdueDate.isBefore(LocalDate.now())) {
-                            log.info("Submitting Final Order Overdue Event for Case {}", caseDetails.getId());
-                            ccdUpdateService.submitEvent(caseDetails, SYSTEM_FINAL_ORDER_OVERDUE, user, serviceAuth);
-                        }
-                    }
-                } catch (final CcdManagementException e) {
-                    log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
-                } catch (final IllegalArgumentException e) {
-                    log.error("Deserialization failed for case id: {}, continuing to next case", caseDetails.getId());
-                }
+                triggerFinalOrderEventForEligibleCases(user, serviceAuth, caseDetails);
             }
 
             log.info("Final Order overdue scheduled task complete.");
@@ -95,6 +73,32 @@ public class SystemFinalOrderOverdueTask implements Runnable {
             log.info("Final Order overdue schedule task stopping "
                 + "due to conflict with another running task"
             );
+        }
+    }
+
+    private void triggerFinalOrderEventForEligibleCases(User user, String serviceAuth, CaseDetails caseDetails) {
+        try {
+            Map<String, Object> caseDataMap = caseDetails.getData();
+
+            String pronouncedDate = (String) caseDataMap.getOrDefault(PRONOUNCED_DATE, null);
+            if (pronouncedDate == null) {
+                log.error("Ignoring case id {} with created on {} and modified on {}, as pronounced date is null",
+                    caseDetails.getId(),
+                    caseDetails.getCreatedDate(),
+                    caseDetails.getLastModified()
+                );
+            } else {
+                LocalDate finalOrderOverdueDate = LocalDate.parse(pronouncedDate).plusMonths(12);
+
+                if (finalOrderOverdueDate.isBefore(LocalDate.now())) {
+                    log.info("Submitting Final Order Overdue Event for Case {}", caseDetails.getId());
+                    ccdUpdateService.submitEvent(caseDetails, SYSTEM_FINAL_ORDER_OVERDUE, user, serviceAuth);
+                }
+            }
+        } catch (final CcdManagementException e) {
+            log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
+        } catch (final IllegalArgumentException e) {
+            log.error("Deserialization failed for case id: {}, continuing to next case", caseDetails.getId());
         }
     }
 }

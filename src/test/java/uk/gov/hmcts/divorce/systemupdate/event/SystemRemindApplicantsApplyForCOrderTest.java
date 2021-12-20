@@ -30,7 +30,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConditionalOrderQuestions;
 
 @ExtendWith(SpringExtension.class)
-public class SystemRemindApplicantsApplyForCOrderTest {
+class SystemRemindApplicantsApplyForCOrderTest {
 
     @Mock
     private HttpServletRequest httpServletRequest;
