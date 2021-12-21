@@ -47,9 +47,9 @@ public class SystemNotifyRespondentApplyFinalOrderTask implements Runnable {
     private AuthTokenGenerator authTokenGenerator;
 
     public static final String APPLICATION_TYPE = "applicationType";
-    public static final String RESP_ELIGIBLE_DATE = "dateFinalOrderEligibleToRespondent";
     public static final String NOT_NOTIFIED_FLAG = "applicant2FinalOrderReminderSent";
     public static final String APP_ELIGIBLE_DATE = "dateFinalOrderEligibleFrom";
+    public static final String RESP_ELIGIBLE_DATE = "dateFinalOrderEligibleToRespondent";
 
     @Override
     public void run() {
@@ -90,23 +90,11 @@ public class SystemNotifyRespondentApplyFinalOrderTask implements Runnable {
                     } else {
 
                         LocalDate parsedRespondentEligibleDate = LocalDate.parse(respondentCanApplyFromDate);
-
-                        log.info("Will check Reminder Sent {} and respondent Eligible Date {}",
-                            finalOrderReminderSent, parsedRespondentEligibleDate);
-
-                        if (finalOrderReminderSent == YesOrNo.YES) {
-                            log.info("finalOrderReminderSent is Yes - Ignore");
-                        } else {
-                            log.info("finalOrderReminderSent is No - Has date passed?");
-                            log.info("Will check respondent reminder Eligible date......");
-
-                            if (LocalDate.now().isAfter(parsedRespondentEligibleDate)) {
-                                log.info("Need to send reminder to respondent for Case {}", caseDetails.getId());
-                                ccdUpdateService.submitEvent(caseDetails, SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER, user, serviceAuth);
-                            } else {
-                                log.info("Case not yet eligible to apply for Final Order {}", respondentCanApplyFromDate);
-                            }
+                        if (finalOrderReminderSent == YesOrNo.NO && LocalDate.now().isAfter(parsedRespondentEligibleDate)) {
+                            log.info("Need to send reminder to respondent for Case {}", caseDetails.getId());
+                            ccdUpdateService.submitEvent(caseDetails, SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER, user, serviceAuth);
                         }
+
                     }
                 } catch (final CcdManagementException e) {
                     log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
