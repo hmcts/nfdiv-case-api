@@ -46,6 +46,7 @@ public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseDa
             .name("Service application received")
             .description("Service application received")
             .showSummary()
+            .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grant(READ, SUPER_USER, LEGAL_ADVISOR, SOLICITOR, CITIZEN))

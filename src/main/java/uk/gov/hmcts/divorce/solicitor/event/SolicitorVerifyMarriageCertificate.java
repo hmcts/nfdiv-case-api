@@ -30,6 +30,7 @@ public class SolicitorVerifyMarriageCertificate implements CCDConfig<CaseData, S
             .name("Verify marriage certificate")
             .description("Verify marriage certificate")
             .showSummary()
+            .showEventNotes()
             .grant(CREATE_READ_UPDATE, SOLICITOR)
             .grant(READ,
                 SUPER_USER,

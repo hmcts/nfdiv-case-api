@@ -56,6 +56,7 @@ public class CaseworkerPronounceList implements CCDConfig<BulkActionCaseData, Bu
             .name("Pronounce list")
             .description("Pronounce list")
             .showSummary()
+            .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)

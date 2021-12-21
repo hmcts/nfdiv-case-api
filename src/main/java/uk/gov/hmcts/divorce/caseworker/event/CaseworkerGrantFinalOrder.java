@@ -42,6 +42,7 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
             .name("Grant Final order")
             .description("Grant Final order")
             .showSummary()
+            .showEventNotes()
             .endButtonLabel("Submit")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)

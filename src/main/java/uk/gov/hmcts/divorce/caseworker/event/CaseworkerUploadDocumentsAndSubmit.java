@@ -43,6 +43,7 @@ public class CaseworkerUploadDocumentsAndSubmit implements CCDConfig<CaseData, S
             .forState(AwaitingDocuments)
             .name("Upload documents and submit")
             .description("Upload documents from the applicant and submit")
+            .showEventNotes()
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)

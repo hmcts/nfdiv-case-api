@@ -61,6 +61,7 @@ public class SolicitorUpdateContactDetails implements CCDConfig<CaseData, State,
             .name("Update contact details")
             .description("Update contact details")
             .showSummary()
+            .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, SOLICITOR)
             .grant(READ_UPDATE, SUPER_USER)

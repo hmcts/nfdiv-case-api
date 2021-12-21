@@ -56,6 +56,7 @@ public class CaseworkerAddBailiffReturn implements CCDConfig<CaseData, State, Us
             .name("Add bailiff return")
             .description("Add bailiff return")
             .showSummary()
+            .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grant(READ, SUPER_USER, LEGAL_ADVISOR, SOLICITOR, CITIZEN))

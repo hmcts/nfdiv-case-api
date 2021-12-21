@@ -202,6 +202,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             .name("Sign and submit")
             .description("Agree statement of truth, pay & submit")
             .showSummary()
+            .showEventNotes()
             .endButtonLabel("Submit Application")
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)

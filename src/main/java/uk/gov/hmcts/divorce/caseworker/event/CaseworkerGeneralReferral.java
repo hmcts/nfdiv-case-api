@@ -42,6 +42,7 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
             .name("General referral")
             .description("General referral")
             .showSummary(false)
+            .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grant(READ, SUPER_USER, LEGAL_ADVISOR, SOLICITOR, CITIZEN))

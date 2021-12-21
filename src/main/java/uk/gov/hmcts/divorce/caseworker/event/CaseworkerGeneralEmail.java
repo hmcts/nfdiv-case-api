@@ -38,6 +38,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
             .name("Create general email")
             .description("Create general email")
             .showSummary()
+            .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grant(READ, SUPER_USER, LEGAL_ADVISOR, SOLICITOR, CITIZEN))
