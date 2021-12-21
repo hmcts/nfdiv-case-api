@@ -30,6 +30,7 @@ public class SolicitorSubmitClarification implements CCDConfig<CaseData, State, 
             .name("Submit clarification for CO")
             .description("Submit clarification for conditional order")
             .showSummary()
+            .showEventNotes()
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
             .grant(READ,
                 CASE_WORKER,

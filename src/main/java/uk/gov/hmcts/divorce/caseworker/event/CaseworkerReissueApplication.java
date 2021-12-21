@@ -54,6 +54,7 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
             .name("Reissued")
             .description("Application reissued")
             .showSummary()
+            .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grant(READ,

@@ -28,6 +28,7 @@ public class CaseworkerWithdrawn implements CCDConfig<CaseData, State, UserRole>
             .forStateTransition(allOf(State.class), Withdrawn)
             .name("Withdrawn")
             .description("Withdrawn")
+            .showEventNotes()
             .grant(CREATE_READ_UPDATE,
                 CASE_WORKER)
             .grant(READ,

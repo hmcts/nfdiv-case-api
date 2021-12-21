@@ -32,6 +32,7 @@ public class CaseworkerUploadDocument implements CCDConfig<CaseData, State, User
             .description("Upload document")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .showSummary(false)
+            .showEventNotes()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grant(READ, SOLICITOR, SUPER_USER, LEGAL_ADVISOR))
             .page("uploadDocument")

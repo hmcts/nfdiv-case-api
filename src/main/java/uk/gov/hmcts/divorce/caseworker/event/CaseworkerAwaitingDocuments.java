@@ -31,6 +31,7 @@ public class CaseworkerAwaitingDocuments implements CCDConfig<CaseData, State, U
         new PageBuilder(configBuilder
             .event(CASEWORKER_AWAITING_DOCUMENTS)
             .forStateTransition(EnumSet.of(AwaitingPayment, AwaitingHWFDecision, Submitted), AwaitingDocuments)
+            .showEventNotes()
             .name("Awaiting documents")
             .description("Awaiting documents from the applicant")
             .grant(CREATE_READ_UPDATE, CASE_WORKER)

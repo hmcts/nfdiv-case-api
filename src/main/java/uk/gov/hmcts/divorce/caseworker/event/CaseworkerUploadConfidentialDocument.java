@@ -31,6 +31,7 @@ public class CaseworkerUploadConfidentialDocument implements CCDConfig<CaseData,
             .description("Upload confidential document")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .showSummary(false)
+            .showEventNotes()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grant(READ, SUPER_USER, LEGAL_ADVISOR))
             .page("uploadConfidentialDocuments")

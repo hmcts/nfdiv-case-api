@@ -28,6 +28,7 @@ public class CaseworkerAwaitingApplicant implements CCDConfig<CaseData, State, U
         new PageBuilder(configBuilder
             .event(CASEWORKER_AWAITING_APPLICANT)
             .forStateTransition(allOf(State.class), AwaitingDocuments)
+            .showEventNotes()
             .name("Awaiting Applicant")
             .description("Awaiting Applicant")
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
