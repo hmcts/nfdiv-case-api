@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor.Prayer;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessBetaOnlyAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
@@ -30,6 +31,7 @@ import java.util.function.Consumer;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableMap;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
@@ -228,10 +230,55 @@ public class RetiredFields {
     private YesOrNo jointApplicantsNotifiedCanApplyForConditionalOrder;
 
     @CCD(
+        label = "Retired flag indicating reminder to joint applicants they can apply for a Conditional Order already sent",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo jointApplicantsRemindedCanApplyForConditionalOrder;
+
+    @CCD(
         label = "Retired Date Conditional Order submitted to HMCTS, split into applicant1 and applicant2 submission dates"
     )
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime coDateSubmitted;
+
+    @CCD(label = "retiredApplicant1ApplyForConditionalOrderStarted")
+    private YesOrNo applicant1ApplyForConditionalOrderStarted;
+
+    @CCD(label = "retiredApplicant2ApplyForConditionalOrderStarted")
+    private YesOrNo applicant2ApplyForConditionalOrderStarted;
+
+    @CCD(label = "retiredApplicant1ContinueApplication")
+    private YesOrNo applicant1ContinueApplication;
+
+    @CCD(label = "retiredApplicant2ContinueApplication")
+    private YesOrNo applicant2ContinueApplication;
+
+    @CCD(label = "retiredCoIsEverythingInApplicationTrue")
+    private YesOrNo coIsEverythingInApplicationTrue;
+
+    @CCD(label = "retiredCoChangeOrAddToApplication")
+    private YesOrNo coChangeOrAddToApplication;
+
+    @CCD(label = "retiredCoApplyForConditionalOrder")
+    private YesOrNo coApplyForConditionalOrder;
+
+    @CCD(
+        label = "Retire select judge",
+        typeOverride = FixedList,
+        typeParameterOverride = "GeneralOrderJudgeOrLegalAdvisorType"
+    )
+    private GeneralOrderJudgeOrLegalAdvisorType generalOrderJudgeType;
+
+    @CCD(
+        label = "Retire name of Judge",
+        access = {CaseworkerAccessBetaOnlyAccess.class}
+    )
+    private String generalOrderJudgeName;
+
+    @CCD(
+        label = "Retire name of Legal Advisor"
+    )
+    private String generalOrderLegalAdvisorName;
 
     @JsonIgnore
     private static final Consumer<Map<String, Object>> DO_NOTHING = data -> {
@@ -309,6 +356,34 @@ public class RetiredFields {
             data -> data.put("marriageFormationType", transformSameSexToMarriageFormation(data)));
         init.put("coDateSubmitted",
             data -> data.put("coApplicant1SubmittedDate", data.get("coDateSubmitted")));
+        init.put("jointApplicantsRemindedCanApplyForConditionalOrder", data ->
+            data.put("applicantsRemindedCanApplyForConditionalOrder", data.get("jointApplicantsRemindedCanApplyForConditionalOrder")));
+        init.put("applicant1ApplyForConditionalOrderStarted",
+            data -> data.put("coApplicant1ApplyForConditionalOrderStarted", data.get("applicant1ApplyForConditionalOrderStarted")));
+        init.put("applicant2ApplyForConditionalOrderStarted",
+            data -> data.put("coApplicant2ApplyForConditionalOrderStarted", data.get("applicant2ApplyForConditionalOrderStarted")));
+        init.put("applicant1ContinueApplication",
+            data -> data.put("coApplicant1ContinueApplication", data.get("applicant1ContinueApplication")));
+        init.put("applicant2ContinueApplication",
+            data -> data.put("coApplicant2ContinueApplication", data.get("applicant2ContinueApplication")));
+        init.put("coIsEverythingInApplicationTrue",
+            data -> data.put("coApplicant1IsEverythingInApplicationTrue", data.get("coIsEverythingInApplicationTrue")));
+        init.put("coChangeOrAddToApplication",
+            data -> data.put("coApplicant1ChangeOrAddToApplication", data.get("coChangeOrAddToApplication")));
+        init.put("coApplyForConditionalOrder",
+            data -> data.put("coApplicant1ApplyForConditionalOrder", data.get("coApplyForConditionalOrder")));
+        init.put("generalOrderJudgeType",
+            data -> data.put("generalOrderJudgeOrLegalAdvisorType", data.get("generalOrderJudgeType")));
+        init.put("generalOrderJudgeName",
+            data -> data.put("generalOrderJudgeOrLegalAdvisorName",
+                transformJudgeOrLegalAdvisorName(data, "generalOrderJudgeName")
+            )
+        );
+        init.put("generalOrderLegalAdvisorName",
+            data -> data.put("generalOrderJudgeOrLegalAdvisorName",
+                transformJudgeOrLegalAdvisorName(data, "generalOrderLegalAdvisorName")
+            )
+        );
 
         migrations = unmodifiableMap(init);
     }
@@ -449,5 +524,16 @@ public class RetiredFields {
         return YES.getValue().equalsIgnoreCase(value)
             ? SAME_SEX_COUPLE.getType()
             : OPPOSITE_SEX_COUPLE.getType();
+    }
+
+
+    private static String transformJudgeOrLegalAdvisorName(Map<String, Object> data, String retiredField) {
+        String newJudgeOrLaFieldNameValue = (String) data.get("generalOrderJudgeOrLegalAdvisorName");
+        String retiredJudgeOrLaFieldNameValue = (String) data.get(retiredField);
+
+        if (isNotEmpty(newJudgeOrLaFieldNameValue)) {
+            return newJudgeOrLaFieldNameValue + " " + retiredJudgeOrLaFieldNameValue;
+        }
+        return retiredJudgeOrLaFieldNameValue;
     }
 }

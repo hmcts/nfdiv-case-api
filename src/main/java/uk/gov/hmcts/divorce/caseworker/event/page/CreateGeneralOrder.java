@@ -43,11 +43,10 @@ public class CreateGeneralOrder implements CcdPageConfiguration {
                 .mandatory(GeneralOrder::getGeneralOrderDate)
                 .mandatory(GeneralOrder::getGeneralOrderDivorceParties)
                 .optional(GeneralOrder::getGeneralOrderRecitals)
-                .optional(GeneralOrder::getGeneralOrderJudgeType)
-                .optional(GeneralOrder::getGeneralOrderJudgeName)
-                .optional(GeneralOrder::getGeneralOrderLegalAdvisorName)
+                .optional(GeneralOrder::getGeneralOrderJudgeOrLegalAdvisorType)
+                .optional(GeneralOrder::getGeneralOrderJudgeOrLegalAdvisorName)
                 .mandatory(GeneralOrder::getGeneralOrderDetails)
-                .done();
+            .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(

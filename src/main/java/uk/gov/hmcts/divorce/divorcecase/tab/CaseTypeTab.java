@@ -28,6 +28,8 @@ import static uk.gov.hmcts.divorce.divorcecase.tab.TabShowCondition.showForState
 @Component
 public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
+    private static final String CO_GRANTED_NO = "coGranted=\"No\"";
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         buildStateTab(configBuilder);
@@ -193,10 +195,10 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("conditionalOrder", "Conditional Order")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, SOLICITOR, SUPER_USER)
             .showCondition("coApplicant1SubmittedDate=\"*\"")
-            .field("coApplyForConditionalOrder")
+            .field("coApplicant1ApplyForConditionalOrder")
             .field("coApplicant1SubmittedDate")
-            .field("coChangeOrAddToApplication")
-            .field("coApplicantStatementOfTruth")
+            .field("coApplicant1ChangeOrAddToApplication")
+            .field("coApplicant1StatementOfTruth")
             .field("coSolicitorName")
             .field("coSolicitorFirm")
             .field("coSolicitorAdditionalComments")
@@ -214,22 +216,22 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("coGranted")
             .field("coClaimsGranted")
             .field("coClaimsCostsOrderInformation")
-            .field("coRefusalDecision", "coGranted=\"No\"")
-            .field("coRefusalAdminErrorInfo", "coGranted=\"No\"")
-            .field("coRefusalRejectionReason", "coGranted=\"No\"")
-            .field("coRefusalRejectionAdditionalInfo", "coGranted=\"No\"")
-            .field("coRefusalClarificationReason", "coGranted=\"No\"")
-            .field("coRefusalClarificationAdditionalInfo", "coGranted=\"No\"")
+            .field("coRefusalDecision", CO_GRANTED_NO)
+            .field("coRefusalAdminErrorInfo", CO_GRANTED_NO)
+            .field("coRefusalRejectionReason", CO_GRANTED_NO)
+            .field("coRefusalRejectionAdditionalInfo", CO_GRANTED_NO)
+            .field("coRefusalClarificationReason", CO_GRANTED_NO)
+            .field("coRefusalClarificationAdditionalInfo", CO_GRANTED_NO)
             .label("labelCoClarificationResponses",
                 "coGranted=\"*\" AND coClarificationResponses=\"*\"",
                 "## Clarification Responses")
-            .field("coRefusalDecision", "coGranted=\"No\"")
-            .field("coRefusalRejectionReason", "coGranted=\"No\"")
-            .field("coRefusalClarificationAdditionalInfo", "coGranted=\"No\"")
-            .field("coRefusalAdminErrorInfo", "coGranted=\"No\"")
-            .field("coRefusalRejectionAdditionalInfo", "coGranted=\"No\"")
-            .field("coClarificationResponses", "coGranted=\"No\"")
-            .field("coClarificationUploadDocuments", "coGranted=\"No\"")
+            .field("coRefusalDecision", CO_GRANTED_NO)
+            .field("coRefusalRejectionReason", CO_GRANTED_NO)
+            .field("coRefusalClarificationAdditionalInfo", CO_GRANTED_NO)
+            .field("coRefusalAdminErrorInfo", CO_GRANTED_NO)
+            .field("coRefusalRejectionAdditionalInfo", CO_GRANTED_NO)
+            .field("coClarificationResponses", CO_GRANTED_NO)
+            .field("coClarificationUploadDocuments", CO_GRANTED_NO)
             .label("labelCoPronouncementDetails", null, "## Pronouncement Details")
             .field("bulkListCaseReference")
             .field("coCourt")

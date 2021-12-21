@@ -15,7 +15,6 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import java.util.Set;
 
 import static java.util.Objects.nonNull;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
@@ -60,11 +59,6 @@ public class Applicant {
         label = "Has the applicant confirmed the receipt?"
     )
     private YesOrNo confirmReceipt;
-
-    @CCD(
-        label = "Has the applicant started the process to apply for conditional order?"
-    )
-    private YesOrNo applyForConditionalOrderStarted;
 
     @CCD(
         label = "Is the language preference Welsh?",
@@ -182,7 +176,7 @@ public class Applicant {
 
     @JsonIgnore
     public boolean isRepresented() {
-        return null != solicitor && isNotEmpty(solicitor.getEmail());
+        return null != solicitorRepresented && solicitorRepresented.toBoolean();
     }
 
     @JsonIgnore

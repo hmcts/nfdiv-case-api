@@ -27,10 +27,10 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicantsAppl
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConditionalOrder;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConditionalOrderQuestions;
 
 @ExtendWith(SpringExtension.class)
-public class SystemRemindApplicantsApplyForCOrderTest {
+class SystemRemindApplicantsApplyForCOrderTest {
 
     @Mock
     private HttpServletRequest httpServletRequest;
@@ -66,7 +66,7 @@ public class SystemRemindApplicantsApplyForCOrderTest {
 
         verify(notification).sendToApplicant1(caseData, details.getId(), true);
         verify(notification).sendToApplicant2(caseData, details.getId(), true);
-        assertThat(response.getData().getApplication().getJointApplicantsRemindedCanApplyForConditionalOrder()).isEqualTo(YesOrNo.YES);
+        assertThat(response.getData().getApplication().getApplicantsRemindedCanApplyForConditionalOrder()).isEqualTo(YesOrNo.YES);
     }
 
     @Test
@@ -82,13 +82,15 @@ public class SystemRemindApplicantsApplyForCOrderTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = underTest.aboutToSubmit(details, details);
 
         verify(notification).sendToApplicant1(caseData, details.getId(), true);
-        assertThat(response.getData().getApplication().getJointApplicantsRemindedCanApplyForConditionalOrder()).isEqualTo(YesOrNo.YES);
+        assertThat(response.getData().getApplication().getApplicantsRemindedCanApplyForConditionalOrder()).isEqualTo(YesOrNo.YES);
     }
 
     @Test
     void shouldSendNotificationToApplicant2WhenCOrderPending() {
         final CaseData caseData = caseData();
-        caseData.setConditionalOrder(getConditionalOrder());
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .conditionalOrderApplicant1Questions(getConditionalOrderQuestions())
+            .build());
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
             .state(State.ConditionalOrderPending).id(1L).data(caseData)
             .build();
@@ -98,15 +100,16 @@ public class SystemRemindApplicantsApplyForCOrderTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = underTest.aboutToSubmit(details, details);
 
         verify(notification).sendToApplicant2(caseData, details.getId(), true);
-        assertThat(response.getData().getApplication().getJointApplicantsRemindedCanApplyForConditionalOrder()).isEqualTo(YesOrNo.YES);
+        assertThat(response.getData().getApplication().getApplicantsRemindedCanApplyForConditionalOrder()).isEqualTo(YesOrNo.YES);
     }
 
     @Test
     void shouldSendNotificationToApplicant1WhenCOrderPending() {
         final CaseData caseData = caseData();
-        ConditionalOrder conditionalOrder = getConditionalOrder();
-        conditionalOrder.setApplicant1SubmittedDate(null);
-        caseData.setConditionalOrder(conditionalOrder);
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .conditionalOrderApplicant1Questions(getConditionalOrderQuestions())
+            .build());
+        caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setSubmittedDate(null);
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
             .state(State.ConditionalOrderPending).id(1L).data(caseData)
             .build();
@@ -116,6 +119,6 @@ public class SystemRemindApplicantsApplyForCOrderTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = underTest.aboutToSubmit(details, details);
 
         verify(notification).sendToApplicant1(caseData, details.getId(), true);
-        assertThat(response.getData().getApplication().getJointApplicantsRemindedCanApplyForConditionalOrder()).isEqualTo(YesOrNo.YES);
+        assertThat(response.getData().getApplication().getApplicantsRemindedCanApplyForConditionalOrder()).isEqualTo(YesOrNo.YES);
     }
 }

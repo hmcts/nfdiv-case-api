@@ -24,7 +24,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
-import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedBeingThe;
@@ -33,7 +33,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedWhere;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderDivorceParties;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderJudge;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderJudgeOrLegalAdvisorType;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.Jurisdiction;
 import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
@@ -186,6 +186,7 @@ public class TestDataHelper {
             .name(TEST_SOLICITOR_NAME)
             .email(TEST_SOLICITOR_EMAIL)
             .build());
+        applicant.setSolicitorRepresented(YES);
         return applicant;
     }
 
@@ -204,6 +205,7 @@ public class TestDataHelper {
             .email(TEST_SOLICITOR_EMAIL)
             .organisationPolicy(organisationPolicy())
             .build());
+        applicant.setSolicitorRepresented(YES);
         return applicant;
     }
 
@@ -316,6 +318,7 @@ public class TestDataHelper {
 
         var applicant1 = getApplicant();
         applicant1.setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).build());
+        applicant1.setSolicitorRepresented(YES);
 
         var application = Application.builder()
             .solSignStatementOfTruth(YES)
@@ -328,6 +331,7 @@ public class TestDataHelper {
 
         return CaseData
             .builder()
+            .applicationType(SOLE_APPLICATION)
             .applicant1(applicant1)
             .applicant2(getApplicant2(FEMALE))
             .divorceOrDissolution(DIVORCE)
@@ -367,15 +371,14 @@ public class TestDataHelper {
         return solicitorService;
     }
 
-    public static ConditionalOrder getConditionalOrder() {
-        final ConditionalOrder conditionalOrder = new ConditionalOrder();
-        conditionalOrder.setApplicant1SubmittedDate(LocalDateTime.now());
-        conditionalOrder.setApplyForConditionalOrder(YES);
-        conditionalOrder.setChangeOrAddToApplication(NO);
-        conditionalOrder.setIsEverythingInApplicationTrue(YES);
-        return conditionalOrder;
+    public static ConditionalOrderQuestions getConditionalOrderQuestions() {
+        final ConditionalOrderQuestions conditionalOrderQuestions = new ConditionalOrderQuestions();
+        conditionalOrderQuestions.setSubmittedDate(LocalDateTime.now());
+        conditionalOrderQuestions.setApplyForConditionalOrder(YES);
+        conditionalOrderQuestions.setChangeOrAddToApplication(NO);
+        conditionalOrderQuestions.setIsEverythingInApplicationTrue(YES);
+        return conditionalOrderQuestions;
     }
-
 
     public static CaseData validCaseDataForIssueApplication() {
         final MarriageDetails marriageDetails = new MarriageDetails();
@@ -609,11 +612,10 @@ public class TestDataHelper {
             .generalOrderDate(LocalDate.of(2021, 1, 1))
             .generalOrderDetails("some details")
             .generalOrderDivorceParties(Set.of(GeneralOrderDivorceParties.RESPONDENT))
-            .generalOrderJudgeType(GeneralOrderJudge.RECORDER)
+            .generalOrderJudgeOrLegalAdvisorType(GeneralOrderJudgeOrLegalAdvisorType.DISTRICT_JUDGE)
             .generalOrderRecitals("test recitals")
             .generalOrderDraft(ccdDocument)
-            .generalOrderJudgeName("some name")
-            .generalOrderLegalAdvisorName("legal name")
+            .generalOrderJudgeOrLegalAdvisorName("some name")
             .build();
     }
 

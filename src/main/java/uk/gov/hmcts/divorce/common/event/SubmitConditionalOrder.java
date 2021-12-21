@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.AppliedForCond
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
@@ -54,7 +55,11 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             .page("ConditionalOrderSoT")
             .pageLabel("Statement of Truth - submit conditional order")
             .complex(CaseData::getConditionalOrder)
-                .mandatory(ConditionalOrder::getApplicantStatementOfTruth)
+                .complex(ConditionalOrder::getConditionalOrderApplicant1Questions)
+                .mandatory(ConditionalOrderQuestions::getStatementOfTruth)
+                .done()
+            .done()
+            .complex(CaseData::getConditionalOrder)
                 .mandatory(ConditionalOrder::getSolicitorName)
                 .mandatory(ConditionalOrder::getSolicitorFirm)
                 .optional(ConditionalOrder::getSolicitorAdditionalComments)
@@ -66,7 +71,7 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
 
         log.info("Submit conditional order about to submit callback invoked for case id: {}", details.getId());
         CaseData data = details.getData();
-        data.getConditionalOrder().setApplicant1SubmittedDate(LocalDateTime.now(clock));
+        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setSubmittedDate(LocalDateTime.now(clock));
         var state = details.getData().getApplicationType().isSole() ? AwaitingLegalAdvisorReferral
             : beforeDetails.getState() == ConditionalOrderDrafted ? ConditionalOrderPending : AwaitingLegalAdvisorReferral;
 
