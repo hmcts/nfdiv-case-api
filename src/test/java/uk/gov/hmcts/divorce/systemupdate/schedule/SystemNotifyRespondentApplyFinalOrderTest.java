@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.systemupdate.schedule;
 
 import feign.FeignException;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
+import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -59,10 +61,12 @@ public class SystemNotifyRespondentApplyFinalOrderTest {
 
     private User user;
 
+    private static final QueryBuilder dateFinalOrderEligibleToRespondentExists = existsQuery("data.dateFinalOrderEligibleToRespondent");
     private static final BoolQueryBuilder query =
         boolQuery()
             .must(matchQuery(STATE, AwaitingFinalOrder))
-            .must(matchQuery(String.format(DATA, APPLICATION_TYPE), "soleApplication"));
+            .must(matchQuery(String.format(DATA, APPLICATION_TYPE), "soleApplication"))
+            .must(boolQuery().must(dateFinalOrderEligibleToRespondentExists));
 
     @BeforeEach
     void setUp() {
@@ -78,24 +82,6 @@ public class SystemNotifyRespondentApplyFinalOrderTest {
         Map<String, Object> data1 = new HashMap<>();
         data1.put("dateFinalOrderEligibleToRespondent", LocalDate.now().plusMonths(3).toString());
         data1.put("applicant2FinalOrderReminderSent", YesOrNo.NO);
-        when(caseDetails1.getData()).thenReturn(data1);
-
-        final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
-
-        when(ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, SERVICE_AUTHORIZATION))
-            .thenReturn(caseDetailsList);
-
-        systemNotifyRespondentApplyFinalOrder.run();
-
-        verifyNoInteractions(ccdUpdateService);
-    }
-
-    @Test
-    void shouldNotTriggerNotifyRespondentTaskWhenDateFinalOrderEligibleToRespondentIsNull() {
-        final CaseDetails caseDetails1 = mock(CaseDetails.class);
-
-        Map<String, Object> data1 = new HashMap<>();
-        data1.put("dateFinalOrderEligibleToRespondent", null);
         when(caseDetails1.getData()).thenReturn(data1);
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
