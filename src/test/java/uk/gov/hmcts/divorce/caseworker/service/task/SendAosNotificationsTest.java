@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.caseworker.service.notification.NoticeOfProceedingsN
 import uk.gov.hmcts.divorce.caseworker.service.notification.SolicitorServiceNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -30,6 +31,9 @@ class SendAosNotificationsTest {
 
     @Mock
     private NoticeOfProceedingsNotification noticeOfProceedingsNotification;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
 
     @InjectMocks
     private SendAosNotifications sendAosNotifications;
@@ -69,7 +73,7 @@ class SendAosNotificationsTest {
         final CaseDetails<CaseData, State> result = sendAosNotifications.apply(caseDetails);
 
         assertThat(result.getData()).isEqualTo(caseData);
-        verify(noticeOfProceedingsNotification).send(caseData, TEST_CASE_ID);
+        verify(notificationDispatcher).send(noticeOfProceedingsNotification, caseData, TEST_CASE_ID);
         verifyNoInteractions(solicitorServiceNotification);
     }
 }

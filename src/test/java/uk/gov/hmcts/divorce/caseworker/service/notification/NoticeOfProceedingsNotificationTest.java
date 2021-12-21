@@ -56,7 +56,7 @@ class NoticeOfProceedingsNotificationTest {
     private NoticeOfProceedingsNotification noticeOfProceedingsNotification;
 
     @Test
-    void shouldSendNotificationToApplicantSolicitorIfApplicantIsRepresentedBySolicitor() {
+    void shouldSendNotificationToApplicantSolicitor() {
 
         final CaseData caseData = CaseData.builder()
             .applicant1(applicantRepresentedBySolicitor())
@@ -65,7 +65,7 @@ class NoticeOfProceedingsNotificationTest {
 
         when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
 
-        noticeOfProceedingsNotification.send(caseData, TEST_CASE_ID);
+        noticeOfProceedingsNotification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,
@@ -78,7 +78,7 @@ class NoticeOfProceedingsNotificationTest {
     }
 
     @Test
-    void shouldSendNotificationToApplicantIfApplicantIsNotRepresentedBySolicitor() {
+    void shouldSendNotificationToApplicant() {
 
         final Applicant applicant = getApplicant();
         applicant.setLanguagePreferenceWelsh(YES);
@@ -90,7 +90,7 @@ class NoticeOfProceedingsNotificationTest {
 
         when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
 
-        noticeOfProceedingsNotification.send(caseData, TEST_CASE_ID);
+        noticeOfProceedingsNotification.sendToApplicant1(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             TEST_USER_EMAIL,
@@ -103,7 +103,7 @@ class NoticeOfProceedingsNotificationTest {
     }
 
     @Test
-    void shouldSendNotificationToRespondentSolicitorIfRespondentIsRepresented() {
+    void shouldSendNotificationToRespondentSolicitor() {
 
         final CaseData caseData = CaseData.builder()
             .applicant1(getApplicant())
@@ -114,19 +114,12 @@ class NoticeOfProceedingsNotificationTest {
             .thenReturn(commonTemplateVars())
             .thenReturn(commonTemplateVars());
 
-        noticeOfProceedingsNotification.send(caseData, TEST_CASE_ID);
+        noticeOfProceedingsNotification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,
             RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
             respondentSolicitorTemplateVars(),
-            ENGLISH
-        );
-
-        verify(notificationService).sendEmail(
-            TEST_USER_EMAIL,
-            APPLICANT_NOTICE_OF_PROCEEDINGS,
-            commonTemplateVars(),
             ENGLISH
         );
 

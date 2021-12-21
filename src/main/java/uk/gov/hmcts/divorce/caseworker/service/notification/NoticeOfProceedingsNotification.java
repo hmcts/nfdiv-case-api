@@ -3,9 +3,9 @@ package uk.gov.hmcts.divorce.caseworker.service.notification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -19,11 +19,10 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOL
 
 @Component
 @Slf4j
-public class NoticeOfProceedingsNotification {
+public class NoticeOfProceedingsNotification implements ApplicantNotification {
 
     public static final String CASE_ID = "case id";
     public static final String SOLICITOR_ORGANISATION = "solicitor organisation";
-
 
     @Autowired
     private NotificationService notificationService;
@@ -31,48 +30,44 @@ public class NoticeOfProceedingsNotification {
     @Autowired
     private CommonContent commonContent;
 
-    public void send(final CaseData caseData, final Long caseId) {
+    @Override
+    public void sendToApplicant1(final CaseData caseData, final Long caseId) {
 
-        final Applicant applicant = caseData.getApplicant1();
-        final Applicant respondent = caseData.getApplicant2();
-        final Solicitor applicantSolicitor = applicant.getSolicitor();
-        final Solicitor respondentSolicitor = respondent.getSolicitor();
+        log.info("Sending Notice Of Proceedings email to applicant.  Case ID: {}", caseId);
 
-        if (respondent.isRepresented()) {
-
-            log.info("Sending Notice Of Proceedings email to respondent solicitor.  Case ID: {}", caseId);
-
-            notificationService.sendEmail(
-                respondentSolicitor.getEmail(),
-                RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
-                respondentSolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
-                ENGLISH
-            );
-        }
-
-        if (applicant.isRepresented()) {
-
-            log.info("Sending Notice Of Proceedings email to applicant solicitor.  Case ID: {}", caseId);
-
-            notificationService.sendEmail(
-                applicantSolicitor.getEmail(),
-                APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
-                solicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
-                ENGLISH);
-        } else {
-
-            log.info("Sending Notice Of Proceedings email to applicant.  Case ID: {}", caseId);
-
-            notificationService.sendEmail(
-                applicant.getEmail(),
-                APPLICANT_NOTICE_OF_PROCEEDINGS,
-                commonContent.basicTemplateVars(caseData, caseId),
-                applicant.getLanguagePreference());
-        }
+        notificationService.sendEmail(
+            caseData.getApplicant1().getEmail(),
+            APPLICANT_NOTICE_OF_PROCEEDINGS,
+            commonContent.basicTemplateVars(caseData, caseId),
+            caseData.getApplicant1().getLanguagePreference());
     }
 
-    private Map<String, String> respondentSolicitorNoticeOfProceedingsTemplateVars(final CaseData caseData,
-                                                                                   final Long caseId) {
+    @Override
+    public void sendToApplicant1Solicitor(final CaseData caseData, final Long caseId) {
+
+        log.info("Sending Notice Of Proceedings email to applicant solicitor.  Case ID: {}", caseId);
+
+        notificationService.sendEmail(
+            caseData.getApplicant1().getSolicitor().getEmail(),
+            APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
+            solicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
+            ENGLISH);
+    }
+
+    @Override
+    public void sendToApplicant2Solicitor(final CaseData caseData, final Long caseId) {
+
+        log.info("Sending Notice Of Proceedings email to respondent solicitor.  Case ID: {}", caseId);
+
+        notificationService.sendEmail(
+            caseData.getApplicant2().getSolicitor().getEmail(),
+            RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
+            respondentSolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
+            ENGLISH
+        );
+    }
+
+    private Map<String, String> respondentSolicitorNoticeOfProceedingsTemplateVars(final CaseData caseData, final Long caseId) {
 
         final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
         final Solicitor respondentSolicitor = caseData.getApplicant2().getSolicitor();

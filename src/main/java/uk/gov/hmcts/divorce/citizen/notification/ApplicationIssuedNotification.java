@@ -6,34 +6,34 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
+import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CREATE_ACCOUNT_LINK;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.REVIEW_DEADLINE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.CommonContent.isDivorce;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OVERSEAS_RESPONDENT_HAS_EMAIL_APPLICATION_ISSUED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OVERSEAS_RESPONDENT_NO_EMAIL_APPLICATION_ISSUED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_APPLICATION_ACCEPTED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_PARTNER_HAS_NOT_RESPONDED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
-public class ApplicationIssuedNotification {
+public class ApplicationIssuedNotification implements ApplicantNotification {
 
-    public static final String RESPONDENT_SIGN_IN_DIVORCE_URL = "respondentSignInDivorceUrl";
-    public static final String RESPONDENT_SIGN_IN_DISSOLUTION_URL = "respondentSignInDissolutionUrl";
-
+    private static final String RESPONDENT_SIGN_IN_DIVORCE_URL = "respondentSignInDivorceUrl";
+    private static final String RESPONDENT_SIGN_IN_DISSOLUTION_URL = "respondentSignInDissolutionUrl";
 
     @Autowired
     private NotificationService notificationService;
@@ -44,70 +44,60 @@ public class ApplicationIssuedNotification {
     @Autowired
     private EmailTemplatesConfig config;
 
-    public void sendToSoleApplicant1(CaseData caseData, Long id) {
-        log.info("Sending sole application issued notification to applicant 1 for case : {}", id);
+    @Override
+    public void sendToApplicant1(final CaseData caseData, final Long caseId) {
 
-        notificationService.sendEmail(
-            caseData.getApplicant1().getEmail(),
-            SOLE_APPLICANT_APPLICATION_ACCEPTED,
-            soleApplicant1TemplateVars(caseData, id),
-            caseData.getApplicant1().getLanguagePreference()
-        );
+        final String email = caseData.getApplicant1().getEmail();
+        final LanguagePreference languagePreference = caseData.getApplicant1().getLanguagePreference();
+
+        if (caseData.getApplicationType().isSole()) {
+            log.info("Sending sole application issued notification to applicant 1 for case : {}", caseId);
+
+            notificationService.sendEmail(
+                email,
+                SOLE_APPLICANT_APPLICATION_ACCEPTED,
+                soleApplicant1TemplateVars(caseData, caseId),
+                languagePreference
+            );
+        } else {
+            log.info("Sending joint application issued notification to applicant 1 for case : {}", caseId);
+
+            notificationService.sendEmail(
+                email,
+                JOINT_APPLICATION_ACCEPTED,
+                commonTemplateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
+                languagePreference
+            );
+        }
     }
 
-    public void sendToSoleRespondent(CaseData caseData, Long id) {
-        log.info("Sending sole application issued notification to respondent for case : {}", id);
+    @Override
+    public void sendToApplicant2(final CaseData caseData, final Long caseId) {
 
-        notificationService.sendEmail(
-            caseData.getApplicant2EmailAddress(),
-            SOLE_RESPONDENT_APPLICATION_ACCEPTED,
-            soleRespondentTemplateVars(caseData, id),
-            caseData.getApplicant1().getLanguagePreference()
-        );
-    }
+        final String email = caseData.getApplicant2EmailAddress();
+        final LanguagePreference languagePreference = caseData.getApplicant1().getLanguagePreference();
 
-    public void sendReminderToSoleRespondent(CaseData caseData, Long id) {
-        log.info("Sending reminder to respondent to register for case : {}", id);
+        if (caseData.getApplicationType().isSole()) {
+            if (isNotBlank(email)) {
+                log.info("Sending sole application issued notification to respondent for case : {}", caseId);
 
-        notificationService.sendEmail(
-            caseData.getApplicant2EmailAddress(),
-            SOLE_RESPONDENT_APPLICATION_ACCEPTED,
-            reminderToSoleRespondentTemplateVars(caseData, id),
-            caseData.getApplicant1().getLanguagePreference()
-        );
-    }
+                notificationService.sendEmail(
+                    email,
+                    SOLE_RESPONDENT_APPLICATION_ACCEPTED,
+                    soleRespondentTemplateVars(caseData, caseId),
+                    languagePreference
+                );
+            }
+        } else {
+            log.info("Sending joint application issued notification to applicant 2 for case : {}", caseId);
 
-    public void sendPartnerNotRespondedToSoleApplicant(CaseData caseData, Long id) {
-        log.info("Sending the respondent has not responded notification to the applicant for case : {}", id);
-
-        notificationService.sendEmail(
-            caseData.getApplicant1().getEmail(),
-            SOLE_APPLICANT_PARTNER_HAS_NOT_RESPONDED,
-            commonTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
-            caseData.getApplicant1().getLanguagePreference()
-        );
-    }
-
-    public void sendToJointApplicant1(CaseData caseData, Long id) {
-        log.info("Sending joint application issued notification to applicant 1 for case : {}", id);
-
-        notificationService.sendEmail(
-            caseData.getApplicant1().getEmail(),
-            JOINT_APPLICATION_ACCEPTED,
-            commonTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
-            caseData.getApplicant1().getLanguagePreference()
-        );
-    }
-
-    public void sendToJointApplicant2(CaseData caseData, Long id) {
-        log.info("Sending joint application issued notification to applicant 2 for case : {}", id);
-
-        notificationService.sendEmail(
-            caseData.getApplicant2EmailAddress(),
-            JOINT_APPLICATION_ACCEPTED,
-            commonTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
-            caseData.getApplicant1().getLanguagePreference()
-        );
+            notificationService.sendEmail(
+                email,
+                JOINT_APPLICATION_ACCEPTED,
+                commonTemplateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
+                languagePreference
+            );
+        }
     }
 
     public void notifyApplicantOfServiceToOverseasRespondent(CaseData caseData, Long id) {
@@ -131,7 +121,7 @@ public class ApplicationIssuedNotification {
 
     private Map<String, String> soleRespondentTemplateVars(final CaseData caseData, Long id) {
         final Map<String, String> templateVars = commonTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
-        templateVars.put(IS_REMINDER,  NO);
+        templateVars.put(IS_REMINDER, NO);
         templateVars.put(REVIEW_DEADLINE_DATE, caseData.getApplication().getIssueDate().plusDays(16).format(DATE_TIME_FORMATTER));
         templateVars.put(
             CREATE_ACCOUNT_LINK,
@@ -139,12 +129,6 @@ public class ApplicationIssuedNotification {
                 .get(isDivorce(caseData) ? RESPONDENT_SIGN_IN_DIVORCE_URL : RESPONDENT_SIGN_IN_DISSOLUTION_URL)
         );
         templateVars.put(ACCESS_CODE, caseData.getCaseInvite().getAccessCode());
-        return templateVars;
-    }
-
-    private Map<String, String> reminderToSoleRespondentTemplateVars(final CaseData caseData, Long id) {
-        final Map<String, String> templateVars = soleRespondentTemplateVars(caseData, id);
-        templateVars.put(IS_REMINDER,  YES);
         return templateVars;
     }
 

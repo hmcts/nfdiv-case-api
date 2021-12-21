@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.caseworker.service.notification.SolicitorServiceNoti
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 @Component
 public class SendAosNotifications implements CaseTask {
@@ -17,6 +18,9 @@ public class SendAosNotifications implements CaseTask {
 
     @Autowired
     private NoticeOfProceedingsNotification noticeOfProceedingsNotification;
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
 
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
@@ -29,7 +33,7 @@ public class SendAosNotifications implements CaseTask {
             if (caseData.getApplication().isSolicitorServiceMethod()) {
                 solicitorServiceNotification.send(caseData, caseId);
             } else {
-                noticeOfProceedingsNotification.send(caseData, caseId);
+                notificationDispatcher.send(noticeOfProceedingsNotification, caseData, caseId);
             }
         }
 

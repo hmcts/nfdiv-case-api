@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -27,7 +27,6 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FIRST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
@@ -38,7 +37,6 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICAT
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OVERSEAS_RESPONDENT_HAS_EMAIL_APPLICATION_ISSUED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OVERSEAS_RESPONDENT_NO_EMAIL_APPLICATION_ISSUED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_APPLICATION_ACCEPTED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_PARTNER_HAS_NOT_RESPONDED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -51,7 +49,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssueApplication;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
 public class ApplicationIssuedNotificationTest {
 
     @Mock
@@ -77,7 +75,7 @@ public class ApplicationIssuedNotificationTest {
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(divorceTemplateVars);
 
-        notification.sendToSoleApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -105,7 +103,7 @@ public class ApplicationIssuedNotificationTest {
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(dissolutionTemplateVars);
 
-        notification.sendToSoleApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -135,7 +133,7 @@ public class ApplicationIssuedNotificationTest {
 
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
-        notification.sendToSoleRespondent(data, 1234567890123456L);
+        notification.sendToApplicant2(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -166,75 +164,13 @@ public class ApplicationIssuedNotificationTest {
 
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
-        notification.sendToSoleRespondent(data, 1234567890123456L);
+        notification.sendToApplicant2(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(IS_DIVORCE, NO),
-                hasEntry(IS_DISSOLUTION, YES)
-            )),
-            eq(ENGLISH)
-        );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
-    }
-
-    @Test
-    void shouldSendReminderEmailToSoleRespondentWithDivorceContent() {
-        CaseData data = validCaseDataForIssueApplication();
-        data.setDueDate(LocalDate.now().plusDays(141));
-        data.getApplication().setIssueDate(LocalDate.now());
-        data.getApplicant2().setEmail(null);
-
-        Map<String, String> divorceTemplateVars = new HashMap<>();
-        divorceTemplateVars.putAll(getMainTemplateVars());
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
-            .thenReturn(divorceTemplateVars);
-
-        when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
-
-        notification.sendReminderToSoleRespondent(data, 1234567890123456L);
-
-        verify(notificationService).sendEmail(
-            eq(TEST_APPLICANT_2_USER_EMAIL),
-            eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
-            argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(IS_REMINDER,  YES),
-                hasEntry(IS_DIVORCE, YES),
-                hasEntry(IS_DISSOLUTION, NO)
-            )),
-            eq(ENGLISH)
-        );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
-    }
-
-    @Test
-    void shouldSendReminderEmailToSoleRespondentWithDissolutionContent() {
-        CaseData data = validCaseDataForIssueApplication();
-        data.setDivorceOrDissolution(DISSOLUTION);
-        data.setDueDate(LocalDate.now().plusDays(141));
-        data.getApplication().setIssueDate(LocalDate.now());
-        data.getApplicant2().setEmail(null);
-
-        Map<String, String> dissolutionTemplateVars = new HashMap<>();
-        dissolutionTemplateVars.putAll(getMainTemplateVars());
-        dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
-            .thenReturn(dissolutionTemplateVars);
-
-        when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
-
-        notification.sendReminderToSoleRespondent(data, 1234567890123456L);
-
-        verify(notificationService).sendEmail(
-            eq(TEST_APPLICANT_2_USER_EMAIL),
-            eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
-            argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(IS_REMINDER,  YES),
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES)
             )),
@@ -253,7 +189,7 @@ public class ApplicationIssuedNotificationTest {
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(divorceTemplateVars);
 
-        notification.sendToJointApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -281,7 +217,7 @@ public class ApplicationIssuedNotificationTest {
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(dissolutionTemplateVars);
 
-        notification.sendToJointApplicant1(data, 1234567890123456L);
+        notification.sendToApplicant1(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -307,7 +243,7 @@ public class ApplicationIssuedNotificationTest {
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(divorceTemplateVars);
 
-        notification.sendToJointApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -335,7 +271,7 @@ public class ApplicationIssuedNotificationTest {
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(dissolutionTemplateVars);
 
-        notification.sendToJointApplicant2(data, 1234567890123456L);
+        notification.sendToApplicant2(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -352,34 +288,6 @@ public class ApplicationIssuedNotificationTest {
     }
 
     @Test
-    void shouldSendPartnerNotRespondedToSoleApplicantEmail() {
-        CaseData data = validCaseDataForIssueApplication();
-        data.setDueDate(LocalDate.now().plusDays(141));
-        data.getApplication().setIssueDate(LocalDate.now());
-        Map<String, String> divorceTemplateVars = new HashMap<>();
-        divorceTemplateVars.putAll(getMainTemplateVars());
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
-            .thenReturn(divorceTemplateVars);
-
-        when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
-
-        notification.sendPartnerNotRespondedToSoleApplicant(data, 1234567890123456L);
-
-        verify(notificationService).sendEmail(
-            eq(TEST_USER_EMAIL),
-            eq(SOLE_APPLICANT_PARTNER_HAS_NOT_RESPONDED),
-            argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
-                hasEntry(SUBMISSION_RESPONSE_DATE, data.getDueDate().format(DATE_TIME_FORMATTER)),
-                hasEntry(IS_DIVORCE, YES),
-                hasEntry(IS_DISSOLUTION, NO)
-            )),
-            eq(ENGLISH)
-        );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
-    }
-
-    @Test
     void shouldNotifyApplicantOfServiceToOverseasRespondentWithEmail() {
         CaseData data = validCaseDataForIssueApplication();
         data.setDueDate(LocalDate.now().plusDays(141));
@@ -388,8 +296,6 @@ public class ApplicationIssuedNotificationTest {
         divorceTemplateVars.putAll(getMainTemplateVars());
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(divorceTemplateVars);
-
-        when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
         notification.notifyApplicantOfServiceToOverseasRespondent(data, 1234567890123456L);
 
@@ -423,7 +329,6 @@ public class ApplicationIssuedNotificationTest {
         divorceTemplateVars.putAll(getMainTemplateVars());
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(divorceTemplateVars);
-        when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
         notification.notifyApplicantOfServiceToOverseasRespondent(data, 1234567890123456L);
 

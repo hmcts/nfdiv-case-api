@@ -62,18 +62,21 @@ public class IssueApplicationService {
     public CaseDetails<CaseData, State> issueApplication(final CaseDetails<CaseData, State> caseDetails) {
         return caseTasks(
             setPostIssueState,
-            generateRespondentSolicitorAosInvitation,
-            generateCitizenRespondentAosInvitation,
-            divorceApplicationRemover,
-            generateDivorceApplication,
-            sendAosPack,
-            sendAosNotifications,
             setDueDateAfterIssue,
             details -> {
                 details.getData().getApplication().setIssueDate(LocalDate.now(clock));
                 return details;
             },
+
+            generateRespondentSolicitorAosInvitation,
+            generateCitizenRespondentAosInvitation,
+            divorceApplicationRemover,
+            generateDivorceApplication,
             generateNoticeOfProceeding,
+            sendAosPack,
+
+            //Combine
+            sendAosNotifications,
             sendApplicationIssueNotifications
         ).run(caseDetails);
     }
