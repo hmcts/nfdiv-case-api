@@ -23,7 +23,7 @@ class AnswerReceivedUploadDocumentTest {
     private AnswerReceivedUploadDocument page;
 
     @Test
-    public void shouldNotReturnErrorsIfDocumentUploadedIsD11Type() {
+    void shouldNotReturnErrorsIfDocumentUploadedIsD11Type() {
         final CaseData caseData = caseData();
         caseData.setD11Document(
             DivorceDocument.builder()
@@ -42,7 +42,7 @@ class AnswerReceivedUploadDocumentTest {
     }
 
     @Test
-    public void shouldReturnErrorsIfDocumentUploadedIsNotD11Type() {
+    void shouldReturnErrorsIfDocumentUploadedIsNotD11Type() {
         final CaseData caseData = caseData();
         caseData.setD11Document(
             DivorceDocument.builder()

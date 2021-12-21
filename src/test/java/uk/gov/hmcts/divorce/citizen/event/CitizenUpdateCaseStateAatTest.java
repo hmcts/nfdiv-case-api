@@ -20,7 +20,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigB
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-public class CitizenUpdateCaseStateAatTest {
+class CitizenUpdateCaseStateAatTest {
 
     @InjectMocks
     private CitizenUpdateCaseStateAat citizenUpdateCaseStateAat;
@@ -38,7 +38,7 @@ public class CitizenUpdateCaseStateAatTest {
     }
 
     @Test
-    public void shouldUpdateCaseStateWhenCitizenUpdateCaseStateIsEnabled() {
+    void shouldUpdateCaseStateWhenCitizenUpdateCaseStateIsEnabled() {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().build();

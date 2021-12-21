@@ -72,31 +72,7 @@ public class SystemNotifyRespondentApplyFinalOrderTask implements Runnable {
                 ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, serviceAuth);
 
             for (final CaseDetails caseDetails : validCasesInAwaitingFinalOrderState) {
-                try {
-
-                    Map<String, Object> caseDataMap = caseDetails.getData();
-                    YesOrNo finalOrderReminderSentApplicant2 = (YesOrNo) caseDataMap.getOrDefault(NOT_NOTIFIED_FLAG, YesOrNo.NO);
-                    String respondentCanApplyFromDate = (String) caseDataMap.getOrDefault(RESP_ELIGIBLE_DATE, null);
-                    String applicantCanApplyFromDate = (String) caseDataMap.getOrDefault(APP_ELIGIBLE_DATE, null);
-                    String applicationType = (String) caseDataMap.get(APPLICATION_TYPE);
-
-                    log.info("Found Case Id {} Application Type {} Eligible From {} Reminder Sent? {}",
-                        caseDetails.getId(),
-                        applicationType,
-                        applicantCanApplyFromDate,
-                        finalOrderReminderSentApplicant2);
-
-                    LocalDate parsedRespondentEligibleDate = LocalDate.parse(respondentCanApplyFromDate);
-                    if (finalOrderReminderSentApplicant2 == YesOrNo.NO && LocalDate.now().isAfter(parsedRespondentEligibleDate)) {
-                        log.info("Need to send reminder to respondent for Case {}", caseDetails.getId());
-                        ccdUpdateService.submitEvent(caseDetails, SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER, user, serviceAuth);
-
-                    }
-                } catch (final CcdManagementException e) {
-                    log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
-                } catch (final IllegalArgumentException e) {
-                    log.error("Deserialization failed for case id: {}, continuing to next case", caseDetails.getId());
-                }
+                sendReminderToRespondentIfEligible(user, serviceAuth, caseDetails);
             }
 
             log.info("SystemNotifyRespondentApplyFinalOrder scheduled task complete.");
@@ -107,6 +83,34 @@ public class SystemNotifyRespondentApplyFinalOrderTask implements Runnable {
             log.info("SystemNotifyRespondentApplyFinalOrder schedule task stopping "
                 + "due to conflict with another running task"
             );
+        }
+    }
+
+    private void sendReminderToRespondentIfEligible(User user, String serviceAuth, CaseDetails caseDetails) {
+        try {
+
+            Map<String, Object> caseDataMap = caseDetails.getData();
+            YesOrNo finalOrderReminderSentApplicant2 = (YesOrNo) caseDataMap.getOrDefault(NOT_NOTIFIED_FLAG, YesOrNo.NO);
+            String respondentCanApplyFromDate = (String) caseDataMap.getOrDefault(RESP_ELIGIBLE_DATE, null);
+            String applicantCanApplyFromDate = (String) caseDataMap.getOrDefault(APP_ELIGIBLE_DATE, null);
+            String applicationType = (String) caseDataMap.get(APPLICATION_TYPE);
+
+            log.info("Found Case Id {} Application Type {} Eligible From {} Reminder Sent? {}",
+                caseDetails.getId(),
+                applicationType,
+                applicantCanApplyFromDate,
+                finalOrderReminderSentApplicant2);
+
+            LocalDate parsedRespondentEligibleDate = LocalDate.parse(respondentCanApplyFromDate);
+            if (finalOrderReminderSentApplicant2 == YesOrNo.NO && LocalDate.now().isAfter(parsedRespondentEligibleDate)) {
+                log.info("Need to send reminder to respondent for Case {}", caseDetails.getId());
+                ccdUpdateService.submitEvent(caseDetails, SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER, user, serviceAuth);
+
+            }
+        } catch (final CcdManagementException e) {
+            log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
+        } catch (final IllegalArgumentException e) {
+            log.error("Deserialization failed for case id: {}, continuing to next case", caseDetails.getId());
         }
     }
 }

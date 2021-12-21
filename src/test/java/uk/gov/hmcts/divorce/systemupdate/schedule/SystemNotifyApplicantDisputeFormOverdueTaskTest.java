@@ -47,7 +47,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 
 @ExtendWith(MockitoExtension.class)
-public class SystemNotifyApplicantDisputeFormOverdueTaskTest {
+class SystemNotifyApplicantDisputeFormOverdueTaskTest {
 
     private static final int DISPUTE_DUE_DATE_OFFSET_DAYS = 37;
     @Mock

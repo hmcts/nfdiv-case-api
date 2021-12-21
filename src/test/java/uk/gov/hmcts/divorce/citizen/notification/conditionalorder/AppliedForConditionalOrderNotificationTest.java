@@ -38,7 +38,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 @ExtendWith(SpringExtension.class)
-public class AppliedForConditionalOrderNotificationTest {
+class AppliedForConditionalOrderNotificationTest {
 
     @Mock
     private NotificationService notificationService;
