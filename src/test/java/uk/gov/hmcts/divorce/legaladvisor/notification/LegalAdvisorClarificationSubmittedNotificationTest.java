@@ -40,7 +40,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 
 @ExtendWith(MockitoExtension.class)
-public class LegalAdvisorClarificationSubmittedNotificationTest {
+class LegalAdvisorClarificationSubmittedNotificationTest {
 
     @Mock
     private NotificationService notificationService;
@@ -89,7 +89,7 @@ public class LegalAdvisorClarificationSubmittedNotificationTest {
             join(" ", data.getApplicant2().getFirstName(), data.getApplicant2().getLastName()));
         templateVars.put(APPLICATION_REFERENCE, formatId(1234567890123456L));
 
-        when(commonContent.basicTemplateVars(eq(data), eq(1234567890123456L)))
+        when(commonContent.basicTemplateVars(data, 1234567890123456L))
             .thenReturn(templateVars);
 
         notification.sendToApplicant1Solicitor(data, 1234567890123456L);
