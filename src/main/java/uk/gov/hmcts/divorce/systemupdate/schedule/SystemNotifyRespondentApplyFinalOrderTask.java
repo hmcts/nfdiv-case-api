@@ -24,7 +24,7 @@ import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyRespondentFinalOrderApply.SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyRespondentApplyFinalOrder.SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
@@ -99,12 +99,12 @@ public class SystemNotifyRespondentApplyFinalOrderTask implements Runnable {
                 }
             }
 
-            log.info("SystemNotifyRespondentFinalOrderApply scheduled task complete.");
+            log.info("SystemNotifyRespondentApplyFinalOrder scheduled task complete.");
 
         } catch (final CcdSearchCaseException e) {
-            log.error("SystemNotifyRespondentFinalOrderApply schedule task stopped after search error", e);
+            log.error("SystemNotifyRespondentApplyFinalOrder schedule task stopped after search error", e);
         } catch (final CcdConflictException e) {
-            log.info("SystemNotifyRespondentFinalOrderApply schedule task stopping "
+            log.info("SystemNotifyRespondentApplyFinalOrder schedule task stopping "
                 + "due to conflict with another running task"
             );
         }

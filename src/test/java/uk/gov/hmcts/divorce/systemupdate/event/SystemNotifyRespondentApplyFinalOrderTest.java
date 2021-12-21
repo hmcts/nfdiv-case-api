@@ -1,0 +1,65 @@
+package uk.gov.hmcts.divorce.systemupdate.event;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.api.Event;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+
+import javax.servlet.http.HttpServletRequest;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyRespondentApplyFinalOrder.SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
+import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondent;
+
+@ExtendWith(SpringExtension.class)
+class SystemNotifyRespondentApplyFinalOrderTest {
+
+    @Mock
+    private HttpServletRequest httpServletRequest;
+
+    @InjectMocks
+    private SystemNotifyRespondentApplyFinalOrder systemNotifyRespondentApplyFinalOrder;
+
+    @Test
+    void shouldAddConfigurationToConfigBuilder() {
+        final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
+
+        systemNotifyRespondentApplyFinalOrder.configure(configBuilder);
+
+        assertThat(getEventsFrom(configBuilder).values())
+            .extracting(Event::getId)
+            .contains(SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER);
+    }
+
+    @Test
+    void aboutToSubmit() {
+        final CaseData caseData = caseData();
+        caseData.setApplicant2(respondent());
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(1L);
+        details.setData(caseData);
+
+        when(httpServletRequest.getHeader(AUTHORIZATION))
+            .thenReturn("auth header");
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            systemNotifyRespondentApplyFinalOrder.aboutToSubmit(details, details);
+
+        assertThat(response.getData().getApplicant2().getFinalOrderReminderSent()).isEqualTo(YesOrNo.YES);
+
+    }
+}

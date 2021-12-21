@@ -15,7 +15,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
-public class SystemNotifyRespondentFinalOrderApply implements CCDConfig<CaseData, State, UserRole> {
+public class SystemNotifyRespondentApplyFinalOrder implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER = "system-notify-respondent-apply-final-order";
 
