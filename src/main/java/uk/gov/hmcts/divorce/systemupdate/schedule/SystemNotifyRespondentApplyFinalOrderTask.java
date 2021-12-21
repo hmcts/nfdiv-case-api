@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.systemupdate.schedule;
 
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
+import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyRespondentFinalOrderApply.SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER;
@@ -59,10 +61,12 @@ public class SystemNotifyRespondentApplyFinalOrderTask implements Runnable {
         final String serviceAuth = authTokenGenerator.generate();
 
         try {
+            final QueryBuilder dateFinalOrderEligibleToRespondentExists = existsQuery("data.dateFinalOrderEligibleToRespondent");
             final BoolQueryBuilder query =
                 boolQuery()
                     .must(matchQuery(STATE, AwaitingFinalOrder))
-                    .must(matchQuery(String.format(DATA, APPLICATION_TYPE), "soleApplication"));
+                    .must(matchQuery(String.format(DATA, APPLICATION_TYPE), "soleApplication"))
+                    .must(boolQuery().must(dateFinalOrderEligibleToRespondentExists));
 
             final List<CaseDetails> validCasesInAwaitingFinalOrderState =
                 ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, serviceAuth);
@@ -82,18 +86,10 @@ public class SystemNotifyRespondentApplyFinalOrderTask implements Runnable {
                         applicantCanApplyFromDate,
                         finalOrderReminderSent);
 
-                    if (respondentCanApplyFromDate == null) {
-                        log.error("Ignoring case id {} with applicant FO Eligible on {}. Respondent Eligible date is null",
-                            caseDetails.getId(),
-                            applicantCanApplyFromDate
-                        );
-                    } else {
-
-                        LocalDate parsedRespondentEligibleDate = LocalDate.parse(respondentCanApplyFromDate);
-                        if (finalOrderReminderSent == YesOrNo.NO && LocalDate.now().isAfter(parsedRespondentEligibleDate)) {
-                            log.info("Need to send reminder to respondent for Case {}", caseDetails.getId());
-                            ccdUpdateService.submitEvent(caseDetails, SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER, user, serviceAuth);
-                        }
+                    LocalDate parsedRespondentEligibleDate = LocalDate.parse(respondentCanApplyFromDate);
+                    if (finalOrderReminderSent == YesOrNo.NO && LocalDate.now().isAfter(parsedRespondentEligibleDate)) {
+                        log.info("Need to send reminder to respondent for Case {}", caseDetails.getId());
+                        ccdUpdateService.submitEvent(caseDetails, SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER, user, serviceAuth);
 
                     }
                 } catch (final CcdManagementException e) {
