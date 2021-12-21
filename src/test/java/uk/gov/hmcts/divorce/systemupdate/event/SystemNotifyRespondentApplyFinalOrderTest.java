@@ -59,7 +59,7 @@ class SystemNotifyRespondentApplyFinalOrderTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             systemNotifyRespondentApplyFinalOrder.aboutToSubmit(details, details);
 
-        assertThat(response.getData().getFinalOrder().getFinalOrderReminderSent()).isEqualTo(YesOrNo.YES);
+        assertThat(response.getData().getFinalOrder().getFinalOrderReminderSentApplicant2()).isEqualTo(YesOrNo.YES);
 
     }
 }

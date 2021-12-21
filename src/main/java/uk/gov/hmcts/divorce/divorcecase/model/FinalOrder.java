@@ -95,9 +95,14 @@ public class FinalOrder {
     private LocalDate dateFinalOrderNoLongerEligible;
 
     @CCD(
+        label = "Has the applicant been sent a reminder to apply for the Final Order?"
+    )
+    private YesOrNo finalOrderReminderSentApplicant1;
+
+    @CCD(
         label = "Has the respondent been sent a reminder to apply for the Final Order?"
     )
-    private YesOrNo finalOrderReminderSent;
+    private YesOrNo finalOrderReminderSentApplicant2;
 
     @JsonIgnore
     public LocalDate getDateFinalOrderEligibleFrom(LocalDateTime dateTime) {

@@ -36,7 +36,7 @@ public class SystemNotifyRespondentApplyFinalOrder implements CCDConfig<CaseData
                                                                        CaseDetails<CaseData, State> beforeDetails) {
         // TODO send respondent apply reminder notification
         CaseData data = details.getData();
-        data.getFinalOrder().setFinalOrderReminderSent(YesOrNo.YES);
+        data.getFinalOrder().setFinalOrderReminderSentApplicant2(YesOrNo.YES);
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
             .build();

@@ -49,7 +49,7 @@ public class SystemNotifyRespondentApplyFinalOrderTask implements Runnable {
     private AuthTokenGenerator authTokenGenerator;
 
     public static final String APPLICATION_TYPE = "applicationType";
-    public static final String NOT_NOTIFIED_FLAG = "finalOrderReminderSent";
+    public static final String NOT_NOTIFIED_FLAG = "finalOrderReminderSentApplicant2";
     public static final String APP_ELIGIBLE_DATE = "dateFinalOrderEligibleFrom";
     public static final String RESP_ELIGIBLE_DATE = "dateFinalOrderEligibleToRespondent";
 
@@ -75,7 +75,7 @@ public class SystemNotifyRespondentApplyFinalOrderTask implements Runnable {
                 try {
 
                     Map<String, Object> caseDataMap = caseDetails.getData();
-                    YesOrNo finalOrderReminderSent = (YesOrNo) caseDataMap.getOrDefault(NOT_NOTIFIED_FLAG, YesOrNo.NO);
+                    YesOrNo finalOrderReminderSentApplicant2 = (YesOrNo) caseDataMap.getOrDefault(NOT_NOTIFIED_FLAG, YesOrNo.NO);
                     String respondentCanApplyFromDate = (String) caseDataMap.getOrDefault(RESP_ELIGIBLE_DATE, null);
                     String applicantCanApplyFromDate = (String) caseDataMap.getOrDefault(APP_ELIGIBLE_DATE, null);
                     String applicationType = (String) caseDataMap.get(APPLICATION_TYPE);
@@ -84,10 +84,10 @@ public class SystemNotifyRespondentApplyFinalOrderTask implements Runnable {
                         caseDetails.getId(),
                         applicationType,
                         applicantCanApplyFromDate,
-                        finalOrderReminderSent);
+                        finalOrderReminderSentApplicant2);
 
                     LocalDate parsedRespondentEligibleDate = LocalDate.parse(respondentCanApplyFromDate);
-                    if (finalOrderReminderSent == YesOrNo.NO && LocalDate.now().isAfter(parsedRespondentEligibleDate)) {
+                    if (finalOrderReminderSentApplicant2 == YesOrNo.NO && LocalDate.now().isAfter(parsedRespondentEligibleDate)) {
                         log.info("Need to send reminder to respondent for Case {}", caseDetails.getId());
                         ccdUpdateService.submitEvent(caseDetails, SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER, user, serviceAuth);
 
