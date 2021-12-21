@@ -81,7 +81,7 @@ public class SystemNotifyRespondentApplyFinalOrderTest {
 
         Map<String, Object> data1 = new HashMap<>();
         data1.put("dateFinalOrderEligibleToRespondent", LocalDate.now().plusMonths(3).toString());
-        data1.put("applicant2FinalOrderReminderSent", YesOrNo.NO);
+        data1.put("finalOrderReminderSent", YesOrNo.NO);
         when(caseDetails1.getData()).thenReturn(data1);
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
@@ -100,7 +100,7 @@ public class SystemNotifyRespondentApplyFinalOrderTest {
 
         Map<String, Object> data1 = new HashMap<>();
         data1.put("dateFinalOrderEligibleToRespondent", LocalDate.now().minusMonths(1).toString());
-        data1.put("applicant2FinalOrderReminderSent", YesOrNo.YES);
+        data1.put("finalOrderReminderSent", YesOrNo.YES);
         when(caseDetails1.getData()).thenReturn(data1);
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
@@ -130,7 +130,7 @@ public class SystemNotifyRespondentApplyFinalOrderTest {
 
         Map<String, Object> data1 = new HashMap<>();
         data1.put("dateFinalOrderEligibleToRespondent", LocalDate.now().minusMonths(1).toString());
-        data1.put("applicant2FinalOrderReminderSent", YesOrNo.NO);
+        data1.put("finalOrderReminderSent", YesOrNo.NO);
         when(caseDetails1.getData()).thenReturn(data1);
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
@@ -149,7 +149,7 @@ public class SystemNotifyRespondentApplyFinalOrderTest {
 
         Map<String, Object> data1 = new HashMap<>();
         data1.put("dateFinalOrderEligibleToRespondent", LocalDate.now().minusMonths(1).toString());
-        data1.put("applicant2FinalOrderReminderSent", YesOrNo.YES);
+        data1.put("finalOrderReminderSent", YesOrNo.YES);
         when(caseDetails1.getData()).thenReturn(data1);
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
@@ -180,7 +180,7 @@ public class SystemNotifyRespondentApplyFinalOrderTest {
 
         Map<String, Object> data1 = new HashMap<>();
         data1.put("dateFinalOrderEligibleToRespondent", LocalDate.now().minusMonths(1).toString());
-        data1.put("applicant2FinalOrderReminderSent", YesOrNo.NO);
+        data1.put("finalOrderReminderSent", YesOrNo.NO);
         when(caseDetails1.getData()).thenReturn(data1);
 
         when(ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, SERVICE_AUTHORIZATION))
@@ -206,12 +206,12 @@ public class SystemNotifyRespondentApplyFinalOrderTest {
 
         Map<String, Object> data1 = new HashMap<>();
         data1.put("dateFinalOrderEligibleToRespondent", LocalDate.now().minusMonths(1).toString());
-        data1.put("applicant2FinalOrderReminderSent", YesOrNo.NO);
+        data1.put("finalOrderReminderSent", YesOrNo.NO);
         when(caseDetails1.getData()).thenReturn(data1);
 
         Map<String, Object> data2 = new HashMap<>();
         data2.put("dateFinalOrderEligibleToRespondent", LocalDate.now().minusMonths(1).toString());
-        data2.put("applicant2FinalOrderReminderSent", YesOrNo.NO);
+        data2.put("finalOrderReminderSent", YesOrNo.NO);
         when(caseDetails2.getData()).thenReturn(data2);
 
         when(ccdSearchService.searchForAllCasesWithQuery(AwaitingFinalOrder, query, user, SERVICE_AUTHORIZATION))

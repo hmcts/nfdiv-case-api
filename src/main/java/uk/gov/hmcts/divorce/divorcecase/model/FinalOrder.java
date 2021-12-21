@@ -94,6 +94,11 @@ public class FinalOrder {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateFinalOrderNoLongerEligible;
 
+    @CCD(
+        label = "Has the respondent been sent a reminder to apply for the Final Order?"
+    )
+    private YesOrNo finalOrderReminderSent;
+
     @JsonIgnore
     public LocalDate getDateFinalOrderEligibleFrom(LocalDateTime dateTime) {
         return dateTime.toLocalDate().plusWeeks(FINAL_ORDER_OFFSET_WEEKS).plusDays(FINAL_ORDER_OFFSET_DAYS);

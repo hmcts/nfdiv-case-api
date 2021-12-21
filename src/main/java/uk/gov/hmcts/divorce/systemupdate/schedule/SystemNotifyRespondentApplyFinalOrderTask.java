@@ -49,7 +49,7 @@ public class SystemNotifyRespondentApplyFinalOrderTask implements Runnable {
     private AuthTokenGenerator authTokenGenerator;
 
     public static final String APPLICATION_TYPE = "applicationType";
-    public static final String NOT_NOTIFIED_FLAG = "applicant2FinalOrderReminderSent";
+    public static final String NOT_NOTIFIED_FLAG = "finalOrderReminderSent";
     public static final String APP_ELIGIBLE_DATE = "dateFinalOrderEligibleFrom";
     public static final String RESP_ELIGIBLE_DATE = "dateFinalOrderEligibleToRespondent";
 
