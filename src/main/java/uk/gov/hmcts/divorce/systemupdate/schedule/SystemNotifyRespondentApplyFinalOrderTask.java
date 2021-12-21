@@ -32,7 +32,7 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
   As a system, I want to notify the respondent that they can apply for the Final Order IF the applicant hasn't
   applied after 3 months so that the case can be progressed
 */
-public class SystemNotifyRespondentApplyFinalOrder implements Runnable {
+public class SystemNotifyRespondentApplyFinalOrderTask implements Runnable {
 
     @Autowired
     private CcdUpdateService ccdUpdateService;
@@ -46,10 +46,10 @@ public class SystemNotifyRespondentApplyFinalOrder implements Runnable {
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
-    private static final String RESP_ELIGIBLE_DATE = "dateFinalOrderEligibleToRespondent";
-    private static final String APPLICATION_TYPE = "applicationType";
-    private static final String NOT_NOTIFIED_FLAG = "applicant2FinalOrderReminderSent";
-    private static final String APP_ELIGIBLE_DATE = "dateFinalOrderEligibleFrom";
+    public static final String APPLICATION_TYPE = "applicationType";
+    public static final String RESP_ELIGIBLE_DATE = "dateFinalOrderEligibleToRespondent";
+    public static final String NOT_NOTIFIED_FLAG = "applicant2FinalOrderReminderSent";
+    public static final String APP_ELIGIBLE_DATE = "dateFinalOrderEligibleFrom";
 
     @Override
     public void run() {
