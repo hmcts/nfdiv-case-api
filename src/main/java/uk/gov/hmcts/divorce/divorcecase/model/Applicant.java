@@ -168,6 +168,11 @@ public class Applicant {
     )
     private YesOrNo continueApplication;
 
+    @CCD(
+        label = "Has the applicant been sent a reminder to apply for the Final Order?"
+    )
+    private YesOrNo finalOrderReminderSent;
+
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
         return languagePreferenceWelsh == null || languagePreferenceWelsh.equals(NO)
