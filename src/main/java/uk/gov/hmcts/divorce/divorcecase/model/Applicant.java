@@ -181,7 +181,8 @@ public class Applicant {
 
     @JsonIgnore
     public boolean isBasedOverseas() {
-        return !("UK").equalsIgnoreCase(homeAddress.getCountry());
+        return !("UK").equalsIgnoreCase(homeAddress.getCountry())
+            && !("United Kingdom").equalsIgnoreCase(homeAddress.getCountry());
     }
 
     @JsonIgnore
