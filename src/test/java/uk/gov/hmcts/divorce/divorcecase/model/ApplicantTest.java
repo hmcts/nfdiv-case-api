@@ -121,7 +121,7 @@ class ApplicantTest {
         assertThat(applicant1.appliedForFinancialOrder()).isFalse();
         assertThat(applicant2.appliedForFinancialOrder()).isFalse();
     }
-    
+
     @Test
     void shouldReturnTrueIfNotUkOrUnitedKingdom() {
         final Applicant applicant = Applicant.builder()

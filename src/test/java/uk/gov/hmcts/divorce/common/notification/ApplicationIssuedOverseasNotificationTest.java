@@ -17,7 +17,6 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -58,7 +57,6 @@ class ApplicationIssuedOverseasNotificationTest {
         final CaseData data = validCaseDataForIssueApplication();
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
-        data.getApplicant2().getHomeAddress().setCountry("France");
         final Map<String, String> divorceTemplateVars = new HashMap<>();
         divorceTemplateVars.putAll(getMainTemplateVars());
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
@@ -91,7 +89,6 @@ class ApplicationIssuedOverseasNotificationTest {
         data.getApplication().setIssueDate(LocalDate.now());
         data.getCaseInvite().setApplicant2InviteEmailAddress(null);
         data.getApplicant2().setEmail(null);
-        data.getApplicant2().getHomeAddress().setCountry("France");
 
         final Map<String, String> divorceTemplateVars = new HashMap<>();
         divorceTemplateVars.putAll(getMainTemplateVars());
@@ -116,18 +113,5 @@ class ApplicationIssuedOverseasNotificationTest {
             eq(ENGLISH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
-    }
-
-    @Test
-    void shouldNotNotifyIfNotOverSeasApplicant2() {
-        final CaseData data = validCaseDataForIssueApplication();
-        data.setDueDate(LocalDate.now().plusDays(141));
-        data.getApplication().setIssueDate(LocalDate.now());
-        data.getCaseInvite().setApplicant2InviteEmailAddress(null);
-        data.getApplicant2().setEmail(null);
-
-        applicationIssuedOverseasNotification.sendToApplicant1(data, 1234567890123456L);
-
-        verifyNoInteractions(notificationService);
     }
 }

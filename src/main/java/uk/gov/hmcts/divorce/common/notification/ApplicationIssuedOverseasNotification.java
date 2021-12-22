@@ -29,18 +29,16 @@ public class ApplicationIssuedOverseasNotification implements ApplicantNotificat
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
 
-        if (caseData.getApplicationType().isSole() && caseData.getApplicant2().isBasedOverseas()) {
-            log.info("Notifying sole applicant of application issue (case {}) to overseas respondent", id);
+        log.info("Notifying sole applicant of application issue (case {}) to overseas respondent", id);
 
-            final boolean hasEmail = caseData.getApplicant2EmailAddress() != null
-                && !caseData.getApplicant2EmailAddress().isEmpty();
-            notificationService.sendEmail(
-                caseData.getApplicant1().getEmail(),
-                hasEmail ? OVERSEAS_RESPONDENT_HAS_EMAIL_APPLICATION_ISSUED : OVERSEAS_RESPONDENT_NO_EMAIL_APPLICATION_ISSUED,
-                overseasRespondentTemplateVars(caseData, id),
-                caseData.getApplicant1().getLanguagePreference()
-            );
-        }
+        final boolean hasEmail = caseData.getApplicant2EmailAddress() != null
+            && !caseData.getApplicant2EmailAddress().isEmpty();
+        notificationService.sendEmail(
+            caseData.getApplicant1().getEmail(),
+            hasEmail ? OVERSEAS_RESPONDENT_HAS_EMAIL_APPLICATION_ISSUED : OVERSEAS_RESPONDENT_NO_EMAIL_APPLICATION_ISSUED,
+            overseasRespondentTemplateVars(caseData, id),
+            caseData.getApplicant1().getLanguagePreference()
+        );
     }
 
     private Map<String, String> overseasRespondentTemplateVars(final CaseData caseData, Long id) {

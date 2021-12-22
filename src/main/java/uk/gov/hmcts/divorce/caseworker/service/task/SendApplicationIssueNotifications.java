@@ -32,7 +32,9 @@ public class SendApplicationIssueNotifications implements CaseTask {
 
         notificationDispatcher.send(applicationIssuedNotification, caseData, caseId);
 
-        if (caseDetails.getState() == AwaitingAos) {
+        if (caseDetails.getState() == AwaitingAos
+            && caseData.getApplicationType().isSole()
+            && caseData.getApplicant2().isBasedOverseas()) {
             notificationDispatcher.send(applicationIssuedOverseasNotification, caseData, caseId);
         }
 
