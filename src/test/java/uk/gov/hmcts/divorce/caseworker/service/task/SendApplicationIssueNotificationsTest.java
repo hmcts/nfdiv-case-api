@@ -8,13 +8,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.common.notification.ApplicationIssuedNotification;
+import uk.gov.hmcts.divorce.common.notification.ApplicationIssuedOverseasNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
@@ -26,7 +26,10 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 class SendApplicationIssueNotificationsTest {
 
     @Mock
-    private ApplicationIssuedNotification notification;
+    private ApplicationIssuedNotification applicationIssuedNotification;
+
+    @Mock
+    private ApplicationIssuedOverseasNotification applicationIssuedOverseasNotification;
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
@@ -45,8 +48,8 @@ class SendApplicationIssueNotificationsTest {
 
         underTest.apply(caseDetails);
 
-        verify(notificationDispatcher).send(notification, caseData, caseDetails.getId());
-        verify(notification).notifyApplicantOfServiceToOverseasRespondent(eq(caseData), eq(caseDetails.getId()));
+        verify(notificationDispatcher).send(applicationIssuedNotification, caseData, caseDetails.getId());
+        verify(notificationDispatcher).send(applicationIssuedOverseasNotification, caseData, caseDetails.getId());
     }
 
     @Test
@@ -59,8 +62,8 @@ class SendApplicationIssueNotificationsTest {
 
         underTest.apply(caseDetails);
 
-        verify(notificationDispatcher).send(notification, caseData, caseDetails.getId());
-        verify(notification).notifyApplicantOfServiceToOverseasRespondent(eq(caseData), eq(caseDetails.getId()));
+        verify(notificationDispatcher).send(applicationIssuedNotification, caseData, caseDetails.getId());
+        verify(notificationDispatcher).send(applicationIssuedOverseasNotification, caseData, caseDetails.getId());
     }
 
     @Test
@@ -74,8 +77,8 @@ class SendApplicationIssueNotificationsTest {
 
         underTest.apply(caseDetails);
 
-        verify(notificationDispatcher).send(notification, caseData, caseDetails.getId());
-        verify(notification).notifyApplicantOfServiceToOverseasRespondent(eq(caseData), eq(caseDetails.getId()));
+        verify(notificationDispatcher).send(applicationIssuedNotification, caseData, caseDetails.getId());
+        verify(notificationDispatcher).send(applicationIssuedOverseasNotification, caseData, caseDetails.getId());
     }
 
     @Test
@@ -88,7 +91,7 @@ class SendApplicationIssueNotificationsTest {
 
         underTest.apply(caseDetails);
 
-        verify(notificationDispatcher).send(notification, caseData, caseDetails.getId());
+        verify(notificationDispatcher).send(applicationIssuedNotification, caseData, caseDetails.getId());
     }
 
     @Test
@@ -99,7 +102,7 @@ class SendApplicationIssueNotificationsTest {
 
         underTest.apply(caseDetails);
 
-        verify(notificationDispatcher).send(notification, caseData, caseDetails.getId());
+        verify(notificationDispatcher).send(applicationIssuedNotification, caseData, caseDetails.getId());
     }
 
     @Test
@@ -111,6 +114,6 @@ class SendApplicationIssueNotificationsTest {
 
         underTest.apply(caseDetails);
 
-        verify(notificationDispatcher).send(notification, caseData, caseDetails.getId());
+        verify(notificationDispatcher).send(applicationIssuedNotification, caseData, caseDetails.getId());
     }
 }

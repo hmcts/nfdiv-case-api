@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.common.notification.ApplicationIssuedNotification;
+import uk.gov.hmcts.divorce.common.notification.ApplicationIssuedOverseasNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
@@ -18,6 +19,9 @@ public class SendApplicationIssueNotifications implements CaseTask {
     private ApplicationIssuedNotification applicationIssuedNotification;
 
     @Autowired
+    private ApplicationIssuedOverseasNotification applicationIssuedOverseasNotification;
+
+    @Autowired
     private NotificationDispatcher notificationDispatcher;
 
     @Override
@@ -28,10 +32,8 @@ public class SendApplicationIssueNotifications implements CaseTask {
 
         notificationDispatcher.send(applicationIssuedNotification, caseData, caseId);
 
-        if (caseData.getApplicationType().isSole()
-            && caseDetails.getState() == AwaitingAos
-            && caseData.getApplicant2().isBasedOverseas()) {
-            applicationIssuedNotification.notifyApplicantOfServiceToOverseasRespondent(caseData, caseId);
+        if (caseDetails.getState() == AwaitingAos) {
+            notificationDispatcher.send(applicationIssuedOverseasNotification, caseData, caseId);
         }
 
         return caseDetails;

@@ -27,8 +27,6 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.isDivorce;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OVERSEAS_RESPONDENT_HAS_EMAIL_APPLICATION_ISSUED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OVERSEAS_RESPONDENT_NO_EMAIL_APPLICATION_ISSUED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLICATION_ACCEPTED;
@@ -146,19 +144,6 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         );
     }
 
-    public void notifyApplicantOfServiceToOverseasRespondent(CaseData caseData, Long id) {
-        log.info("Notifying sole applicant of application issue (case {}) to overseas respondent", id);
-
-        final boolean hasEmail = caseData.getApplicant2EmailAddress() != null
-            && !caseData.getApplicant2EmailAddress().isEmpty();
-        notificationService.sendEmail(
-            caseData.getApplicant1().getEmail(),
-            hasEmail ? OVERSEAS_RESPONDENT_HAS_EMAIL_APPLICATION_ISSUED : OVERSEAS_RESPONDENT_NO_EMAIL_APPLICATION_ISSUED,
-            overseasRespondentTemplateVars(caseData, id),
-            caseData.getApplicant1().getLanguagePreference()
-        );
-    }
-
     private Map<String, String> soleApplicant1TemplateVars(final CaseData caseData, Long id) {
         final Map<String, String> templateVars = commonTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
         templateVars.put(REVIEW_DEADLINE_DATE, caseData.getApplication().getIssueDate().plusDays(14).format(DATE_TIME_FORMATTER));
@@ -175,12 +160,6 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
                 .get(isDivorce(caseData) ? RESPONDENT_SIGN_IN_DIVORCE_URL : RESPONDENT_SIGN_IN_DISSOLUTION_URL)
         );
         templateVars.put(ACCESS_CODE, caseData.getCaseInvite().getAccessCode());
-        return templateVars;
-    }
-
-    private Map<String, String> overseasRespondentTemplateVars(final CaseData caseData, Long id) {
-        final Map<String, String> templateVars = commonTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
-        templateVars.put(REVIEW_DEADLINE_DATE, caseData.getApplication().getIssueDate().plusDays(28).format(DATE_TIME_FORMATTER));
         return templateVars;
     }
 
