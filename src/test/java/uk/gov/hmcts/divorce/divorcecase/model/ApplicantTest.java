@@ -121,7 +121,7 @@ class ApplicantTest {
         assertThat(applicant1.appliedForFinancialOrder()).isFalse();
         assertThat(applicant2.appliedForFinancialOrder()).isFalse();
     }
-
+    
     @Test
     void shouldReturnTrueIfNotUkOrUnitedKingdom() {
         final Applicant applicant = Applicant.builder()
@@ -133,6 +133,14 @@ class ApplicantTest {
 
     @Test
     void shouldReturnFalseIfUkOrUnitedKingdom() {
+        final Applicant applicant1 = Applicant.builder()
+            .homeAddress(AddressGlobalUK.builder().country("UK").build())
+            .build();
+        final Applicant applicant2 = Applicant.builder()
+            .homeAddress(AddressGlobalUK.builder().country("United Kingdom").build())
+            .build();
 
+        assertThat(applicant1.appliedForFinancialOrder()).isFalse();
+        assertThat(applicant2.appliedForFinancialOrder()).isFalse();
     }
 }

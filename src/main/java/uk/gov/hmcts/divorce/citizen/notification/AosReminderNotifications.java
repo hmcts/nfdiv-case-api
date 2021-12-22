@@ -61,7 +61,7 @@ public class AosReminderNotifications {
         );
     }
 
-    private Map<String, String> soleRespondentTemplateVars(final CaseData caseData, Long id) {
+    private Map<String, String> reminderToSoleRespondentTemplateVars(final CaseData caseData, Long id) {
         final Map<String, String> templateVars = commonTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
         templateVars.put(IS_REMINDER, NO);
         templateVars.put(REVIEW_DEADLINE_DATE, caseData.getApplication().getIssueDate().plusDays(16).format(DATE_TIME_FORMATTER));
@@ -71,11 +71,6 @@ public class AosReminderNotifications {
                 .get(isDivorce(caseData) ? RESPONDENT_SIGN_IN_DIVORCE_URL : RESPONDENT_SIGN_IN_DISSOLUTION_URL)
         );
         templateVars.put(ACCESS_CODE, caseData.getCaseInvite().getAccessCode());
-        return templateVars;
-    }
-
-    private Map<String, String> reminderToSoleRespondentTemplateVars(final CaseData caseData, Long id) {
-        final Map<String, String> templateVars = soleRespondentTemplateVars(caseData, id);
         templateVars.put(IS_REMINDER, YES);
         return templateVars;
     }
