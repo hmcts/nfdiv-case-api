@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
@@ -30,7 +31,7 @@ public class SolicitorConfirmReceipt implements CCDConfig<CaseData, State, UserR
             .description("Confirm Receipt")
             .showSummary()
             .showEventNotes()
-            .grant(CREATE_READ_UPDATE, SOLICITOR)
+            .grant(CREATE_READ_UPDATE, SOLICITOR, APPLICANT_2_SOLICITOR)
             .grant(READ,
                 SUPER_USER,
                 CASE_WORKER,
