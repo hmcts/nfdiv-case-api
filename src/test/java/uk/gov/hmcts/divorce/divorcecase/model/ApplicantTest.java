@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import org.junit.jupiter.api.Test;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -110,9 +111,52 @@ class ApplicantTest {
     @Test
     void shouldReturnFalseIfAppliedForFinancialOrderIsSetToNull() {
 
-        final Applicant applicant = Applicant.builder()
+        final Applicant applicant1 = Applicant.builder()
+            .homeAddress(AddressGlobalUK.builder().country("UK").build())
+            .build();
+        final Applicant applicant2 = Applicant.builder()
+            .homeAddress(AddressGlobalUK.builder().country("United Kingdom").build())
             .build();
 
-        assertThat(applicant.appliedForFinancialOrder()).isFalse();
+        assertThat(applicant1.appliedForFinancialOrder()).isFalse();
+        assertThat(applicant2.appliedForFinancialOrder()).isFalse();
+    }
+
+    @Test
+    void shouldReturnTrueIfNotUkOrUnitedKingdom() {
+        final Applicant applicant = Applicant.builder()
+            .homeAddress(AddressGlobalUK.builder().country("France").build())
+            .build();
+
+        assertThat(applicant.isBasedOverseas()).isTrue();
+    }
+
+    @Test
+    void shouldReturnFalseIfUkOrUnitedKingdom() {
+        final Applicant applicant1 = Applicant.builder()
+            .homeAddress(AddressGlobalUK.builder().country("UK").build())
+            .build();
+        final Applicant applicant2 = Applicant.builder()
+            .homeAddress(AddressGlobalUK.builder().country("United Kingdom").build())
+            .build();
+
+        assertThat(applicant1.isBasedOverseas()).isFalse();
+        assertThat(applicant2.isBasedOverseas()).isFalse();
+    }
+
+    @Test
+    void shouldReturnFalseIfHomeAddressNotSet() {
+        final Applicant applicant = Applicant.builder().build();
+
+        assertThat(applicant.isBasedOverseas()).isFalse();
+    }
+
+    @Test
+    void shouldReturnFalseIfCountryIsBlank() {
+        final Applicant applicant = Applicant.builder()
+            .homeAddress(AddressGlobalUK.builder().build())
+            .build();
+
+        assertThat(applicant.isBasedOverseas()).isFalse();
     }
 }

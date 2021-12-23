@@ -186,6 +186,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.setDueDate(LocalDate.of(2021, 6, 20));
         caseData.getApplication().setSolSignStatementOfTruth(null);
         caseData.getApplication().setDivorceWho(WIFE);
+        caseData.getApplicant1().setSolicitorRepresented(NO);
         caseData.getApplicant2().getHomeAddress().setCountry("UK");
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
@@ -241,6 +242,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.setDueDate(LocalDate.of(2021, 6, 20));
         caseData.getApplication().setSolSignStatementOfTruth(null);
         caseData.getApplication().setDivorceWho(WIFE);
+        caseData.getApplicant1().setSolicitorRepresented(NO);
         caseData.getApplicant2().getHomeAddress().setCountry("France");
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
@@ -442,6 +444,13 @@ public class CaseworkerIssueApplicationIT {
                 anyMap(),
                 eq(ENGLISH));
 
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_USER_EMAIL),
+                eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
+                anyMap(),
+                eq(ENGLISH));
+
         verifyNoMoreInteractions(notificationService);
     }
 
@@ -497,6 +506,13 @@ public class CaseworkerIssueApplicationIT {
             .sendEmail(
                 eq(TEST_SOLICITOR_EMAIL),
                 eq(APPLICANT_SOLICITOR_SERVICE),
+                anyMap(),
+                eq(ENGLISH));
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_SOLICITOR_EMAIL),
+                eq(RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
                 anyMap(),
                 eq(ENGLISH));
 
@@ -598,6 +614,13 @@ public class CaseworkerIssueApplicationIT {
             .sendEmail(
                 eq(TEST_SOLICITOR_EMAIL),
                 eq(APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
+                anyMap(),
+                eq(ENGLISH));
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_USER_EMAIL),
+                eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
                 anyMap(),
                 eq(ENGLISH));
 

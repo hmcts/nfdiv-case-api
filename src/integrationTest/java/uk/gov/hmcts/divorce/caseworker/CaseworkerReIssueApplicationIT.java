@@ -64,7 +64,6 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OVERSEAS_RESPONDENT_HAS_EMAIL_APPLICATION_ISSUED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLICATION_ACCEPTED;
@@ -181,6 +180,7 @@ public class CaseworkerReIssueApplicationIT {
         caseData.getApplication().setSolSignStatementOfTruth(null);
         caseData.getApplication().setReissueOption(reissueOption);
         caseData.getApplication().setIssueDate(LocalDate.now());
+        caseData.getApplicant1().setSolicitorRepresented(NO);
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -218,13 +218,6 @@ public class CaseworkerReIssueApplicationIT {
             .sendEmail(
                 eq(TEST_APPLICANT_2_USER_EMAIL),
                 eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
-                anyMap(),
-                eq(ENGLISH));
-
-        verify(notificationService)
-            .sendEmail(
-                eq(TEST_USER_EMAIL),
-                eq(OVERSEAS_RESPONDENT_HAS_EMAIL_APPLICATION_ISSUED),
                 anyMap(),
                 eq(ENGLISH));
 
@@ -380,6 +373,19 @@ public class CaseworkerReIssueApplicationIT {
                 content().json(expectedResponse(CASEWORKER_REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_SOL_REP_OFFLINE_AOS))
             );
 
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_SOLICITOR_EMAIL),
+                eq(APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
+                anyMap(),
+                eq(ENGLISH));
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_SOLICITOR_EMAIL),
+                eq(RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
+                anyMap(),
+                eq(ENGLISH));
+
         verifyNoMoreInteractions(notificationService);
     }
 
@@ -481,6 +487,12 @@ public class CaseworkerReIssueApplicationIT {
                 eq(APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
                 anyMap(),
                 eq(ENGLISH));
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_USER_EMAIL),
+                eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
+                anyMap(),
+                eq(ENGLISH));
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -518,6 +530,19 @@ public class CaseworkerReIssueApplicationIT {
             .andExpect(
                 content().json(expectedResponse(REISSUE_APPLICATION_ABOUT_TO_SUBMIT_APP_2_NOT_SOL_REP_OFFLINE_AOS))
             );
+
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_SOLICITOR_EMAIL),
+                eq(APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
+                anyMap(),
+                eq(ENGLISH));
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_USER_EMAIL),
+                eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
+                anyMap(),
+                eq(ENGLISH));
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -561,6 +586,12 @@ public class CaseworkerReIssueApplicationIT {
             .sendEmail(
                 eq(TEST_SOLICITOR_EMAIL),
                 eq(APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
+                anyMap(),
+                eq(ENGLISH));
+        verify(notificationService)
+            .sendEmail(
+                eq(TEST_USER_EMAIL),
+                eq(SOLE_RESPONDENT_APPLICATION_ACCEPTED),
                 anyMap(),
                 eq(ENGLISH));
 

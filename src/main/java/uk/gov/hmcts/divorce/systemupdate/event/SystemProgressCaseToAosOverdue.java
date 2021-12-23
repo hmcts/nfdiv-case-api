@@ -6,7 +6,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.citizen.notification.ApplicationIssuedNotification;
+import uk.gov.hmcts.divorce.citizen.notification.AosReminderNotifications;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -31,7 +31,7 @@ public class SystemProgressCaseToAosOverdue implements CCDConfig<CaseData, State
     public static final String SYSTEM_PROGRESS_TO_AOS_OVERDUE = "system-progress-to-aos-overdue";
 
     @Autowired
-    private ApplicationIssuedNotification applicationIssuedNotification;
+    private AosReminderNotifications aosReminderNotifications;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -50,11 +50,11 @@ public class SystemProgressCaseToAosOverdue implements CCDConfig<CaseData, State
 
         CaseData data = details.getData();
         if (isNotBlank(data.getApplicant2EmailAddress()) && isNotBlank(data.getCaseInvite().getAccessCode())) {
-            applicationIssuedNotification.sendReminderToSoleRespondent(data, details.getId());
+            aosReminderNotifications.sendReminderToSoleRespondent(data, details.getId());
         }
 
         if (!data.getApplicant1().isRepresented()) {
-            applicationIssuedNotification.sendPartnerNotRespondedToSoleApplicant(data, details.getId());
+            aosReminderNotifications.sendPartnerNotRespondedToSoleApplicant(data, details.getId());
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

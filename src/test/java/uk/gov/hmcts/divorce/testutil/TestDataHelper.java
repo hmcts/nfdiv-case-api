@@ -152,6 +152,7 @@ public class TestDataHelper {
                 .addressLine1("line 1")
                 .postTown("town")
                 .postCode("postcode")
+                .country("UK")
                 .build())
             .build();
     }
