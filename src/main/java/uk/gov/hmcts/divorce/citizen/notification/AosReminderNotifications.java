@@ -14,7 +14,6 @@ import java.util.Map;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CREATE_ACCOUNT_LINK;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
-import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.REVIEW_DEADLINE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
@@ -63,7 +62,6 @@ public class AosReminderNotifications {
 
     private Map<String, String> reminderToSoleRespondentTemplateVars(final CaseData caseData, Long id) {
         final Map<String, String> templateVars = commonTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
-        templateVars.put(IS_REMINDER, NO);
         templateVars.put(REVIEW_DEADLINE_DATE, caseData.getApplication().getIssueDate().plusDays(16).format(DATE_TIME_FORMATTER));
         templateVars.put(
             CREATE_ACCOUNT_LINK,
