@@ -10,7 +10,6 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCitizenRespondentAos
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateNoticeOfProceeding;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentSolicitorAosInvitation;
-import uk.gov.hmcts.divorce.caseworker.service.task.SendAosNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPack;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDateAfterIssue;
@@ -59,9 +58,6 @@ class CaseworkerIssueApplicationServiceTest {
     private SendApplicationIssueNotifications sendApplicationIssueNotifications;
 
     @Mock
-    private SendAosNotifications sendAosNotifications;
-
-    @Mock
     private SetDueDateAfterIssue setDueDateAfterIssue;
 
     @Mock
@@ -89,7 +85,6 @@ class CaseworkerIssueApplicationServiceTest {
         when(divorceApplicationRemover.apply(caseDetails)).thenReturn(caseDetails);
         when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosPack.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendAosNotifications.apply(caseDetails)).thenReturn(caseDetails);
         when(setDueDateAfterIssue.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply((caseDetails))).thenReturn(caseDetails);
 
@@ -129,7 +124,6 @@ class CaseworkerIssueApplicationServiceTest {
         when(divorceApplicationRemover.apply(caseDetails)).thenReturn(caseDetails);
         when(generateDivorceApplication.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosPack.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendAosNotifications.apply(caseDetails)).thenReturn(caseDetails);
         when(setDueDateAfterIssue.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply((caseDetails))).thenReturn(caseDetails);
 

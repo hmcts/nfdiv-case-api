@@ -19,7 +19,8 @@
     "applicant2HomeAddress": {
       "AddressLine1": "line 1",
       "PostCode": "postcode",
-      "PostTown": "town"
+      "PostTown": "town",
+      "Country": "UK"
     },
     "applicant2InviteEmailAddress": "applicant2@test.com",
     "applicant2LanguagePreferenceWelsh": "No",
