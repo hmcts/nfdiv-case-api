@@ -15,6 +15,7 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import java.util.Set;
 
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
@@ -181,7 +182,10 @@ public class Applicant {
 
     @JsonIgnore
     public boolean isBasedOverseas() {
-        return !("UK").equalsIgnoreCase(homeAddress.getCountry());
+        return nonNull(homeAddress)
+            && !isBlank(homeAddress.getCountry())
+            && !("UK").equalsIgnoreCase(homeAddress.getCountry())
+            && !("United Kingdom").equalsIgnoreCase(homeAddress.getCountry());
     }
 
     @JsonIgnore

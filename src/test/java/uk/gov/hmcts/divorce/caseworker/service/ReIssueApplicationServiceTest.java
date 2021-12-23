@@ -9,7 +9,6 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCitizenRespondentAosInvitation;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentSolicitorAosInvitation;
-import uk.gov.hmcts.divorce.caseworker.service.task.SendAosNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPack;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
@@ -56,9 +55,6 @@ class ReIssueApplicationServiceTest {
     private SendApplicationIssueNotifications sendApplicationIssueNotifications;
 
     @Mock
-    private SendAosNotifications sendAosNotifications;
-
-    @Mock
     private SetReIssueAndDueDate setReIssueAndDueDate;
 
     @InjectMocks
@@ -78,7 +74,6 @@ class ReIssueApplicationServiceTest {
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(generateRespondentSolicitorAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
         when(generateCitizenRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendAosNotifications.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
 
@@ -129,7 +124,6 @@ class ReIssueApplicationServiceTest {
         when(generateRespondentSolicitorAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
         when(generateCitizenRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosPack.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendAosNotifications.apply(caseDetails)).thenReturn(caseDetails);
         when(generateMiniApplication.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
@@ -164,7 +158,6 @@ class ReIssueApplicationServiceTest {
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(generateRespondentSolicitorAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
         when(generateCitizenRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendAosNotifications.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
 
@@ -239,7 +232,6 @@ class ReIssueApplicationServiceTest {
         when(generateRespondentSolicitorAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
         when(generateCitizenRespondentAosInvitation.apply(caseDetails)).thenReturn(caseDetails);
         when(generateMiniApplication.apply(caseDetails)).thenReturn(caseDetails);
-        when(sendAosNotifications.apply(caseDetails)).thenReturn(caseDetails);
         when(sendAosPack.apply(caseDetails)).thenReturn(caseDetails);
         when(sendApplicationIssueNotifications.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
