@@ -136,13 +136,18 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
         log.info("Sending Notice Of Proceedings email to respondent solicitor.  Case ID: {}", caseId);
 
-        notificationService.sendEmail(
-            caseData.getApplicant2().getSolicitor().getEmail(),
-            RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
-            respondentSolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
-            ENGLISH
-        );
+        final String email = caseData.getApplicant2().getSolicitor().getEmail();
+
+        if (caseData.getApplicationType().isSole() && isNotBlank(email)) {
+            notificationService.sendEmail(
+                email,
+                RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
+                respondentSolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
+                ENGLISH
+            );
+        }
     }
+
 
     private Map<String, String> soleApplicant1TemplateVars(final CaseData caseData, Long id) {
         final Map<String, String> templateVars = commonTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());

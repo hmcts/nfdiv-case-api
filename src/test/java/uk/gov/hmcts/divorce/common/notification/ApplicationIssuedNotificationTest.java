@@ -6,8 +6,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -20,10 +22,13 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
+import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
@@ -54,6 +59,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedBySolicitor;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant2;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConfigTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondent;
@@ -325,9 +331,10 @@ public class ApplicationIssuedNotificationTest {
     }
 
     @Test
-    void shouldSendNotificationToRespondentSolicitor() {
+    void shouldSendNotificationToRespondentSolicitorIfSoleApplication() {
 
         final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
             .applicant1(getApplicant())
             .applicant2(respondentWithDigitalSolicitor())
             .build();
@@ -346,6 +353,22 @@ public class ApplicationIssuedNotificationTest {
         );
 
         verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    void shouldNotSendNotificationToRespondentSolicitorIfSolicitorEmailIsNotSet() {
+
+        final Applicant applicant2 = getApplicant2(FEMALE);
+        applicant2.setSolicitor(Solicitor.builder().build());
+        final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .applicant1(getApplicant())
+            .applicant2(applicant2)
+            .build();
+
+        notification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
+
+        verifyNoInteractions(notificationService);
     }
 
     @Test
