@@ -140,7 +140,23 @@ class ApplicantTest {
             .homeAddress(AddressGlobalUK.builder().country("United Kingdom").build())
             .build();
 
-        assertThat(applicant1.appliedForFinancialOrder()).isFalse();
-        assertThat(applicant2.appliedForFinancialOrder()).isFalse();
+        assertThat(applicant1.isBasedOverseas()).isFalse();
+        assertThat(applicant2.isBasedOverseas()).isFalse();
+    }
+
+    @Test
+    void shouldReturnFalseIfHomeAddressNotSet() {
+        final Applicant applicant = Applicant.builder().build();
+
+        assertThat(applicant.isBasedOverseas()).isFalse();
+    }
+
+    @Test
+    void shouldReturnFalseIfCountryIsBlank() {
+        final Applicant applicant = Applicant.builder()
+            .homeAddress(AddressGlobalUK.builder().build())
+            .build();
+
+        assertThat(applicant.isBasedOverseas()).isFalse();
     }
 }
