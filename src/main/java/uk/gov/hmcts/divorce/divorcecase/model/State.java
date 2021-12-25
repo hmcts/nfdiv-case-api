@@ -10,6 +10,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseAccessAdministrator;
 public enum State {
 
     @CCD(
+        label = "### Case number: ${[CASE_REFERENCE]}\n ### ${applicant1LastName} & ${applicant2LastName}"
+    )
+    Draft("Draft"),
+
+    @CCD(
         name = "20 week holding period",
         label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n",
         access = {CaseAccessAdministrator.class}
@@ -211,12 +216,6 @@ public enum State {
         access = {CaseAccessAdministrator.class}
     )
     Disputed("Disputed"),
-
-    @CCD(
-        name = "Draft",
-        label = "# **${[CASE_REFERENCE]}** ${applicant1LastName} **&** ${applicant2LastName}\n### **${[STATE]}**\n"
-    )
-    Draft("Draft"),
 
     @CCD(
         name = "Final order complete",

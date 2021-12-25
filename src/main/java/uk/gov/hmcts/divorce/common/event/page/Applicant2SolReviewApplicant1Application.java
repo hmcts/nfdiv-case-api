@@ -25,7 +25,7 @@ public class Applicant2SolReviewApplicant1Application implements CcdPageConfigur
                 .readonly(Application::getMiniApplicationLink)
                 .done()
             .label("LabelRespSol-AOSRespond",
-                "### Respond to ${labelContentDivorceOrCivilPartnershipApplication} \n\n"
+                "### Respond to ${labelContentDivorceOrCivilPartnershipApplication}\n\n"
                     + "# Reference number\n"
                     + "${[CASE_REFERENCE]}\n\n"
                     + "# ${labelContentApplicant2UC}\n"

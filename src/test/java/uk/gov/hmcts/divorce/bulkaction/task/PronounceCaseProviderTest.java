@@ -34,8 +34,10 @@ class PronounceCaseProviderTest {
     void shouldReturnSystemPronounceCaseTask() {
 
         final var localDateTime = getExpectedLocalDateTime();
-        final var localDate = getExpectedLocalDate();
-        final var expectedDate = FinalOrder.builder().build().getDateFinalOrderEligibleFrom(localDateTime);
+        final var expectedGrantedDate = getExpectedLocalDate();
+        final var expectedFinalOrderEligibleFrom = FinalOrder.builder().build().getDateFinalOrderEligibleFrom(localDateTime);
+        final var expectedFinalOrderEligibleToRespondent = expectedFinalOrderEligibleFrom.plusMonths(3L);
+        final var expectedFinalOrderNoLongerEligible = expectedGrantedDate.plusMonths(12L);
         final var bulkActionCaseData = BulkActionCaseData
             .builder()
             .dateAndTimeOfHearing(localDateTime)
@@ -57,9 +59,12 @@ class PronounceCaseProviderTest {
         final CaseData resultCaseData = resultCaseDetails.getData();
         final ConditionalOrder resultConditionalOrder = resultCaseData.getConditionalOrder();
 
-        assertThat(resultCaseData.getDueDate()).isEqualTo(expectedDate);
+        assertThat(resultCaseData.getDueDate()).isEqualTo(expectedFinalOrderEligibleFrom);
         assertThat(resultConditionalOrder.getOutcomeCase()).isEqualTo(YES);
-        assertThat(resultConditionalOrder.getGrantedDate()).isEqualTo(localDate);
-        assertThat(resultCaseData.getFinalOrder().getDateFinalOrderEligibleFrom()).isEqualTo(expectedDate);
+        assertThat(resultConditionalOrder.getGrantedDate()).isEqualTo(expectedGrantedDate);
+        final FinalOrder resultFinalOrder = resultCaseData.getFinalOrder();
+        assertThat(resultFinalOrder.getDateFinalOrderEligibleFrom()).isEqualTo(expectedFinalOrderEligibleFrom);
+        assertThat(resultFinalOrder.getDateFinalOrderNoLongerEligible()).isEqualTo(expectedFinalOrderNoLongerEligible);
+        assertThat(resultFinalOrder.getDateFinalOrderEligibleToRespondent()).isEqualTo(expectedFinalOrderEligibleToRespondent);
     }
 }

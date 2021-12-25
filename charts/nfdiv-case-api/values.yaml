@@ -51,3 +51,4 @@ java:
     PAYMENT_API_BASEURL: "http://payment-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal"
     BULK_ACTION_BATCH_SIZE_MIN: 30
     BULK_ACTION_BATCH_SIZE_MAX: 50
+    CITIZEN_UPDATE_CASE_STATE_ENABLED: false

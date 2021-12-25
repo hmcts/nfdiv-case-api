@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import static java.util.Collections.emptySet;
+import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableMap;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
@@ -186,6 +187,12 @@ public class RetiredFields {
     )
     private String jurisdictionDisagreeReason;
 
+    @CCD(
+        label = "Retired clarification response",
+        typeOverride = TextArea
+    )
+    private String coClarificationResponse;
+
     @JsonIgnore
     private static final Consumer<Map<String, Object>> DO_NOTHING = data -> {
     };
@@ -252,7 +259,8 @@ public class RetiredFields {
         );
         init.put("jurisdictionDisagreeReason",
             data -> data.put("reasonCourtsOfEnglandAndWalesHaveNoJurisdiction", data.get("jurisdictionDisagreeReason")));
-
+        init.put("coClarificationResponse",
+            data -> data.put("coClarificationResponses", transformClarificationResponse(data)));
         migrations = unmodifiableMap(init);
     }
 
@@ -373,5 +381,10 @@ public class RetiredFields {
         return YES.getValue().equalsIgnoreCase(value)
             ? Set.of(CONFIRM)
             : emptySet();
+    }
+
+    private static List<ListValue<String>> transformClarificationResponse(Map<String, Object> data) {
+        String clarificationResponseText = (String) data.get("coClarificationResponse");
+        return singletonList(ListValue.<String>builder().value(clarificationResponseText).build());
     }
 }

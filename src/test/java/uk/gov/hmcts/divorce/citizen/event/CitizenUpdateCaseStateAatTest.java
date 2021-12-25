@@ -27,10 +27,10 @@ public class CitizenUpdateCaseStateAatTest {
     private CitizenUpdateCaseStateAat citizenUpdateCaseStateAat;
 
     @Test
-    void shouldAddConfigurationToConfigBuilderIfEnvironmentIsAat() throws Exception {
+    void shouldAddConfigurationToConfigBuilderIfCitizenUpdateCaseStateIsEnabled() throws Exception {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        withEnvironmentVariable("ENVIRONMENT", "aat")
+        withEnvironmentVariable("CITIZEN_UPDATE_CASE_STATE_ENABLED", "true")
             .execute(() -> citizenUpdateCaseStateAat.configure(configBuilder));
 
         assertThat(getEventsFrom(configBuilder).values())
@@ -39,21 +39,7 @@ public class CitizenUpdateCaseStateAatTest {
     }
 
     @Test
-    void shouldNotAddConfigurationToConfigBuilderIfEnvironmentIsNotAat() throws Exception {
-        final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
-
-        citizenUpdateCaseStateAat.configure(configBuilder);
-
-        withEnvironmentVariable("ENVIRONMENT", "demo")
-            .execute(() -> citizenUpdateCaseStateAat.configure(configBuilder));
-
-        assertThat(getEventsFrom(configBuilder).values())
-            .extracting(Event::getId)
-            .doesNotContain(CITIZEN_UPDATE_CASE_STATE_AAT);
-    }
-
-    @Test
-    public void shouldUpdateCaseStateWhenEnvironmentIsAat() {
+    public void shouldUpdateCaseStateWhenCitizenUpdateCaseStateIsEnabled() {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().build();

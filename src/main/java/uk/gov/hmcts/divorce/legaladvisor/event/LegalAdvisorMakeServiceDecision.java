@@ -72,13 +72,15 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
             .page("makeServiceDecision")
             .pageLabel("Approve service application")
             .complex(CaseData::getAlternativeService)
-            .mandatory(AlternativeService::getServiceApplicationGranted)
-            .readonly(AlternativeService::getAlternativeServiceType, "serviceApplicationGranted=\"NEVER_SHOW\"")
-            .mandatory(AlternativeService::getDeemedServiceDate,
+                .mandatory(AlternativeService::getServiceApplicationGranted)
+                .readonly(AlternativeService::getAlternativeServiceType, "serviceApplicationGranted=\"NEVER_SHOW\"")
+                .mandatory(AlternativeService::getDeemedServiceDate,
                 "alternativeServiceType=\"deemed\" AND serviceApplicationGranted=\"Yes\"")
+                .done()
             .page("makeServiceDecision-2")
             .showCondition("serviceApplicationGranted=\"No\"")
             .pageLabel("Reason for refusal")
+                .complex(CaseData::getAlternativeService)
                 .mandatory(AlternativeService::getServiceApplicationRefusalReason)
                 .done();
     }
