@@ -38,7 +38,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getDivorceDocumentListValue;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerAnswerReceivedTest {
+class CaseworkerAnswerReceivedTest {
 
     @Mock
     private PaymentService paymentService;

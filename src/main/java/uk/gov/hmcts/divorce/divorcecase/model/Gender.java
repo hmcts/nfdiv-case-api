@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,10 +14,8 @@ public enum Gender implements HasLabel {
     MALE("Male"),
 
     @JsonProperty("female")
-    FEMALE("Female"),
-
-    @JsonProperty("notGiven")
-    NOT_GIVEN("Not given");
+    @JsonAlias({"notGiven"})
+    FEMALE("Female");
 
     private final String label;
 }

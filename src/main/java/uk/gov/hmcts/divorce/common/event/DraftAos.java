@@ -40,7 +40,7 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
     @Autowired
     private AddMiniApplicationLink addMiniApplicationLink;
 
-    public static final List<CcdPageConfiguration> pages = asList(
+    protected static final List<CcdPageConfiguration> pages = asList(
         new Applicant2SolConfirmContactDetails(),
         new Applicant2SolReviewApplicant1Application(),
         new Applicant2HowToRespondToApplication(),
@@ -63,7 +63,6 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
             .aboutToStartCallback(this::aboutToStart)
             .showSummary()
             .endButtonLabel("Save AoS Response")
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR, APPLICANT_2)
             .grant(READ,
                 CASE_WORKER,

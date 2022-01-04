@@ -33,6 +33,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.CASEWORKER_ISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
+import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
@@ -120,7 +121,7 @@ class CaseworkerIssueApplicationTest {
                 "Applicant1FinancialOrder cannot be empty or null",
                 "Applicant2Gender cannot be empty or null",
                 "MarriageApplicant1Name cannot be empty or null",
-                "Applicant1KeepContactDetailsConfidential cannot be empty or null",
+                "Applicant1ContactDetailsType cannot be empty or null",
                 "applicant1PrayerHasBeenGivenCheckbox cannot be empty or null",
                 "MarriageDate cannot be empty or null",
                 "JurisdictionConnections cannot be empty or null",
@@ -191,7 +192,7 @@ class CaseworkerIssueApplicationTest {
             .firstName("app1FirstName")
             .lastName("app1LastName")
             .gender(Gender.MALE)
-            .keepContactDetailsConfidential(YES)
+            .contactDetailsType(PRIVATE)
             .build()
         );
 

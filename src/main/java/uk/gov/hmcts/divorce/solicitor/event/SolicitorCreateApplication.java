@@ -10,7 +10,9 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.AddSystemUpdateRole;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2ServiceDetails;
@@ -91,6 +93,12 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
 
         final CaseDetails<CaseData, State> result = solicitorCreateApplicationService.aboutToSubmit(details);
 
+        MarriageDetails marriageDetails = result.getData().getApplication().getMarriageDetails();
+
+        Applicant applicant1 = result.getData().getApplicant1();
+        Applicant applicant2 = result.getData().getApplicant2();
+        applicant2.setGender(applicant1.getPartnerGender(marriageDetails.getFormationType()));
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(result.getData())
             .build();
@@ -110,10 +118,10 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
             .name("Apply: divorce or dissolution")
             .description("Apply: divorce or dissolution")
             .showSummary()
+            .showEventNotes()
             .endButtonLabel("Save Application")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, updatedRoles.toArray(UserRole[]::new))
             .grant(READ_UPDATE, SUPER_USER)
             .grant(READ, CASE_WORKER, LEGAL_ADVISOR));

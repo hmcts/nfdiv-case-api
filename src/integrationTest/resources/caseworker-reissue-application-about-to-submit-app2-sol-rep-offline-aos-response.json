@@ -8,7 +8,7 @@
     "applicant1Email": "test@test.com",
 
     "applicant1LanguagePreferenceWelsh": "No",
-    "applicant1KeepContactDetailsConfidential": "No",
+    "applicant1ContactDetailsType": "public",
     "applicant1Gender": "female",
     "applicant1SolicitorEmail": "solicitor@test.com",
     "applicant1FinancialOrder": "No",

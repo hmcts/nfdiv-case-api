@@ -1,6 +1,6 @@
 {
   "data": {
-    "applicant1KeepContactDetailsConfidential": "Yes",
+    "applicant1ContactDetailsType": "private",
     "applicant1Email": "test@test.com",
     "applicant1FinancialOrder": "No",
     "applicant1FirstName": "test_first_name",

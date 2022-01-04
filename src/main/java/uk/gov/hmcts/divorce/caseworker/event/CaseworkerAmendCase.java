@@ -48,7 +48,7 @@ public class CaseworkerAmendCase implements CCDConfig<CaseData, State, UserRole>
             .name("Update case")
             .description("Update case")
             .showSummary()
-            .explicitGrants()
+            .showEventNotes()
             .grant(CREATE_READ_UPDATE,
                 CASE_WORKER)
             .grant(READ,

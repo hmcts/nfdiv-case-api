@@ -20,6 +20,7 @@ public class InitialiseSolicitorCreatedApplication implements CaseTask {
         final LocalDate createdDate = caseDetails.getCreatedDate().toLocalDate();
         caseDetails.getData().getApplication().setCreatedDate(createdDate);
         caseDetails.getData().getApplicant1().setSolicitorRepresented(YES);
+        caseDetails.getData().setHyphenatedCaseRef(caseDetails.getData().formatCaseRef(caseDetails.getId()));
 
         log.info("Setting application createdDate to {}, and applicant 1 SolicitorRepresented to Yes, for CaseId: {}, State: {}",
             createdDate,

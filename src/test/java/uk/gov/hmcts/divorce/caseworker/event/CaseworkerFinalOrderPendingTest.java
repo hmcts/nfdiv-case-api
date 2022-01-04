@@ -16,7 +16,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigB
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerFinalOrderPendingTest {
+class CaseworkerFinalOrderPendingTest {
 
     @InjectMocks
     private CaseworkerFinalOrderPending caseworkerFinalOrderPending;

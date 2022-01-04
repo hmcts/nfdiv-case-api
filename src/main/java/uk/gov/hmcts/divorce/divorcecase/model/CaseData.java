@@ -35,7 +35,6 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toCollection;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
-import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 
@@ -49,7 +48,7 @@ public class CaseData {
     @CCD(
         label = "Application type",
         access = {DefaultAccess.class},
-        typeOverride = FixedList,
+        typeOverride = FixedRadioList,
         typeParameterOverride = "ApplicationType"
     )
     private ApplicationType applicationType;
@@ -123,7 +122,7 @@ public class CaseData {
     private AlternativeService alternativeService = new AlternativeService();
 
     @CCD(
-        label = "Applicant 1 Documents uploaded",
+        label = "Applicant 1 uploaded documents",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
         access = {DefaultAccess.class}
@@ -220,6 +219,23 @@ public class CaseData {
     @CCD(access = {DefaultAccess.class})
     @JsonUnwrapped
     private RetiredFields retiredFields;
+
+    @CCD(
+        label = "hyphenatedCaseReference",
+        access = {CaseworkerAccess.class}
+    )
+    private String hyphenatedCaseRef;
+
+    @JsonIgnore
+    public String formatCaseRef(long caseId) {
+        String temp = String.format("%016d", caseId);
+        return String.format("%4s-%4s-%4s-%4s",
+            temp.substring(0, 4),
+            temp.substring(4, 8),
+            temp.substring(8, 12),
+            temp.substring(12, 16)
+        );
+    }
 
     @JsonIgnore
     public boolean isAmendedCase() {

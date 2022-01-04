@@ -131,6 +131,6 @@ class SetApplicant2EmailTest {
 
         final CaseDetails<CaseData, State> result = setApplicant2Email.apply(caseDetails);
 
-        assertThat(result.getData().getApplicant2().getEmail()).isEqualTo("");
+        assertThat(result.getData().getApplicant2().getEmail()).isEmpty();
     }
 }

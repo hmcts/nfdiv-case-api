@@ -8,7 +8,6 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCitizenRespondentAos
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateNoticeOfProceeding;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentSolicitorAosInvitation;
-import uk.gov.hmcts.divorce.caseworker.service.task.SendAosNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPack;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDateAfterIssue;
@@ -51,9 +50,6 @@ public class IssueApplicationService {
     private SendApplicationIssueNotifications sendApplicationIssueNotifications;
 
     @Autowired
-    private SendAosNotifications sendAosNotifications;
-
-    @Autowired
     private SetDueDateAfterIssue setDueDateAfterIssue;
 
     @Autowired
@@ -62,18 +58,17 @@ public class IssueApplicationService {
     public CaseDetails<CaseData, State> issueApplication(final CaseDetails<CaseData, State> caseDetails) {
         return caseTasks(
             setPostIssueState,
-            generateRespondentSolicitorAosInvitation,
-            generateCitizenRespondentAosInvitation,
-            divorceApplicationRemover,
-            generateDivorceApplication,
-            sendAosPack,
-            sendAosNotifications,
             setDueDateAfterIssue,
             details -> {
                 details.getData().getApplication().setIssueDate(LocalDate.now(clock));
                 return details;
             },
+            generateRespondentSolicitorAosInvitation,
+            generateCitizenRespondentAosInvitation,
+            divorceApplicationRemover,
+            generateDivorceApplication,
             generateNoticeOfProceeding,
+            sendAosPack,
             sendApplicationIssueNotifications
         ).run(caseDetails);
     }

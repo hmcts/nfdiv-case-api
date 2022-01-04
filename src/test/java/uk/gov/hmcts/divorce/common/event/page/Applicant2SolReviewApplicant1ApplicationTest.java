@@ -19,7 +19,7 @@ class Applicant2SolReviewApplicant1ApplicationTest {
     private final Applicant2SolReviewApplicant1Application page = new Applicant2SolReviewApplicant1Application();
 
     @Test
-    public void shouldPreventProgressIfRespondentHasNotReadPetition() {
+    void shouldPreventProgressIfRespondentHasNotReadPetition() {
         final CaseData caseData = caseData();
         caseData.getAcknowledgementOfService().setConfirmReadPetition(NO);
         caseData.getLabelContent().setTheApplicant2("the respondent");
@@ -37,7 +37,7 @@ class Applicant2SolReviewApplicant1ApplicationTest {
     }
 
     @Test
-    public void shouldAllowProgressIfRespondentHasReadPetition() {
+    void shouldAllowProgressIfRespondentHasReadPetition() {
         final CaseData caseData = caseData();
         caseData.getAcknowledgementOfService().setConfirmReadPetition(YES);
         caseData.getLabelContent().setTheApplicant2("respondent");

@@ -58,7 +58,7 @@ public class GeneralOrderTemplateContentIT {
             entry(GENERAL_ORDER_DETAILS, "some details"),
             entry(GENERAL_ORDER_RECITALS, "test recitals"),
             entry(JUDGE_NAME, "some name"),
-            entry(JUDGE_TYPE, "Recorder"),
+            entry(JUDGE_TYPE, "District Judge"),
             entry(PETITIONER_FULL_NAME, "pet full name"),
             entry(RESPONDENT_FULL_NAME, "resp full name"),
             entry("ctscContactDetails", ctscContactDetails)

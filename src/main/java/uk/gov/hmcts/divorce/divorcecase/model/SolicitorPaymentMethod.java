@@ -10,10 +10,10 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 public enum SolicitorPaymentMethod implements HasLabel {
 
     @JsonProperty("feePayByAccount")
-    FEE_PAY_BY_ACCOUNT("Fee account"),
+    FEE_PAY_BY_ACCOUNT("Solicitor fee account (PBA)"),
 
     @JsonProperty("feesHelpWith")
-    FEES_HELP_WITH("Help with fees");
+    FEES_HELP_WITH("Help With Fees");
 
     private final String label;
 }

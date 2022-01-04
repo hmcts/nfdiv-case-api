@@ -47,26 +47,18 @@ public class GeneralOrder {
     private String generalOrderRecitals;
 
     @CCD(
-        label = "Select Judge",
+        label = "Select Judge or Legal Advisor",
         access = {CaseworkerAccessBetaOnlyAccess.class},
         typeOverride = FixedList,
-        typeParameterOverride = "GeneralOrderJudge"
+        typeParameterOverride = "GeneralOrderJudgeOrLegalAdvisorType"
     )
-    private GeneralOrderJudge generalOrderJudgeType;
+    private GeneralOrderJudgeOrLegalAdvisorType generalOrderJudgeOrLegalAdvisorType;
 
     @CCD(
-        label = "Name of Judge",
-        hint = "Surname of Judge",
+        label = "Name Of Judge or Legal Advisor",
         access = {CaseworkerAccessBetaOnlyAccess.class}
     )
-    private String generalOrderJudgeName;
-
-    @CCD(
-        label = "Name of Legal Advisor",
-        hint = "Surname of Legal Advisor",
-        access = {CaseworkerAccessBetaOnlyAccess.class}
-    )
-    private String generalOrderLegalAdvisorName;
+    private String generalOrderJudgeOrLegalAdvisorName;
 
     @CCD(
         label = "General order details",

@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -24,7 +25,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_AC
 
 @Component
 @Slf4j
-public class ApplicationOutstandingActionNotification {
+public class ApplicationOutstandingActionNotification implements ApplicantNotification {
 
     public static final String PAPERS_SERVED_ANOTHER_WAY = "papersServedAnotherWay";
     public static final String DIVORCE_SERVED_ANOTHER_WAY = "divorceServedAnotherWay";
@@ -46,29 +47,35 @@ public class ApplicationOutstandingActionNotification {
     @Autowired
     private CommonContent commonContent;
 
-    public void sendToApplicant1(CaseData caseData, Long id) {
-        log.info("Sending application outstanding actions notification to applicant 1 for case : {}", id);
+    @Override
+    public void sendToApplicant1(final CaseData caseData, final Long id) {
+        if (caseData.getApplication().hasAwaitingApplicant1Documents()) {
+            log.info("Sending application outstanding actions notification to applicant 1 for case : {}", id);
 
-        notificationService.sendEmail(
-            caseData.getApplicant1().getEmail(),
-            OUTSTANDING_ACTIONS,
-            applicant1TemplateVars(caseData, id),
-            caseData.getApplicant1().getLanguagePreference()
-        );
+            notificationService.sendEmail(
+                caseData.getApplicant1().getEmail(),
+                OUTSTANDING_ACTIONS,
+                applicant1TemplateVars(caseData, id),
+                caseData.getApplicant1().getLanguagePreference()
+            );
+        }
     }
 
-    public void sendToApplicant2(CaseData caseData, Long id) {
-        log.info("Sending application outstanding actions notification to applicant 2 for case : {}", id);
+    @Override
+    public void sendToApplicant2(final CaseData caseData, final Long id) {
+        if (caseData.getApplication().hasAwaitingApplicant2Documents()) {
+            log.info("Sending application outstanding actions notification to applicant 2 for case : {}", id);
 
-        notificationService.sendEmail(
-            caseData.getApplicant2EmailAddress(),
-            OUTSTANDING_ACTIONS,
-            this.applicant2TemplateVars(caseData, id),
-            caseData.getApplicant1().getLanguagePreference()
-        );
+            notificationService.sendEmail(
+                caseData.getApplicant2EmailAddress(),
+                OUTSTANDING_ACTIONS,
+                this.applicant2TemplateVars(caseData, id),
+                caseData.getApplicant1().getLanguagePreference()
+            );
+        }
     }
 
-    private Map<String, String> applicant1TemplateVars(final CaseData caseData, Long id) {
+    private Map<String, String> applicant1TemplateVars(final CaseData caseData, final Long id) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
         templateVars.putAll(
             missingDocsTemplateVars(caseData, caseData.getApplication().getApplicant1CannotUploadSupportingDocument())
@@ -79,7 +86,7 @@ public class ApplicationOutstandingActionNotification {
         return templateVars;
     }
 
-    private Map<String, String> applicant2TemplateVars(final CaseData caseData, Long id) {
+    private Map<String, String> applicant2TemplateVars(final CaseData caseData, final Long id) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
         templateVars.putAll(missingDocsTemplateVars(caseData, caseData.getApplication().getApplicant2CannotUploadSupportingDocument()));
         templateVars.putAll(serveAnotherWayTemplateVars(false, caseData));
@@ -117,6 +124,6 @@ public class ApplicationOutstandingActionNotification {
         templateVars.put(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION,
             nonNullMissingDocs && missingDocTypes.contains(MARRIAGE_CERTIFICATE_TRANSLATION) && !isDivorce(caseData) ? YES : NO);
         templateVars.put(MISSING_NAME_CHANGE_PROOF, nonNullMissingDocs && missingDocTypes.contains(NAME_CHANGE_EVIDENCE) ? YES : NO);
-        return  templateVars;
+        return templateVars;
     }
 }

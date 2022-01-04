@@ -9,7 +9,7 @@
     "applicant1FirstName": "Billy",
     "applicant1MiddleName": "B",
     "applicant1LastName": "Bob",
-    "applicant1KeepContactDetailsConfidential": "Yes",
+    "applicant1ContactDetailsType": "private",
     "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
     "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
     "applicant2FirstName": "test_first_name",

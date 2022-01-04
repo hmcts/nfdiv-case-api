@@ -7,6 +7,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 
 public class AnswerReceivedPaymentSummary implements CcdPageConfiguration {
 
+    private static final String SHOW_CONDITION_FEE_METHOD_PBA = "disputingFeePaymentMethod=\"feePayByAccount\"";
+
     @Override
     public void addTo(final PageBuilder pageBuilder) {
         pageBuilder
@@ -17,15 +19,15 @@ public class AnswerReceivedPaymentSummary implements CcdPageConfiguration {
             .label(
                 "LabelAnswerReceivedPayAccountHeading",
                 "Payment Method: Fee Account",
-                "disputingFeePaymentMethod=\"feePayByAccount\"")
+                SHOW_CONDITION_FEE_METHOD_PBA)
             .label(
                 "LabelAnswerReceivedPayAccountReference1",
                 "Your pay account reference: **${disputingFeeAccountReferenceNumber}**",
-                "disputingFeePaymentMethod=\"feePayByAccount\"")
+                SHOW_CONDITION_FEE_METHOD_PBA)
             .label(
                 "LabelAnswerReceivedPayAccountReference2",
                 "Fee account number: **${disputingFeeAccountNumber}**",
-                "disputingFeePaymentMethod=\"feePayByAccount\"")
+                SHOW_CONDITION_FEE_METHOD_PBA)
             .label(
                 "LabelAnswerReceivedPayHWFHeading",
                 "Payment Method: Help with Fees",

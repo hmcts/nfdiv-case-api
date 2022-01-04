@@ -10,9 +10,8 @@
       "respondent"
     ],
     "generalOrderRecitals": "test recitals",
-    "generalOrderJudgeType": "recorder",
-    "generalOrderJudgeName": "some name",
-    "generalOrderLegalAdvisorName": "legal name",
+    "generalOrderJudgeOrLegalAdvisorType": "districtJudge",
+    "generalOrderJudgeOrLegalAdvisorName": "some name",
     "generalOrderDetails": "some details",
     "generalOrderDraft": {
       "document_url": "${json-unit.any-string}",

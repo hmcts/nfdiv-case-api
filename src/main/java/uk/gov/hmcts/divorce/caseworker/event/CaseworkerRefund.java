@@ -28,7 +28,7 @@ public class CaseworkerRefund implements CCDConfig<CaseData, State, UserRole> {
             .name("Refund")
             .description("Refund")
             .showSummary()
-            .explicitGrants()
+            .showEventNotes()
             .grant(CREATE_READ_UPDATE,
                 CASE_WORKER)
             .grant(READ,

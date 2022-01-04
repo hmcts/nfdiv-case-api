@@ -31,7 +31,6 @@ public class CaseworkerAddAdminClarification implements CCDConfig<CaseData, Stat
             .name("Add admin clarification")
             .description("Add admin clarification")
             .showEventNotes()
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grant(READ, SUPER_USER, LEGAL_ADVISOR, SOLICITOR, CITIZEN));
     }

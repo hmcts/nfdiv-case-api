@@ -207,8 +207,8 @@ public class Application {
     private String solApplicationFeeInPounds;
 
     @CCD(
-        label = "How will payment be made?",
-        typeOverride = FixedList,
+        label = "How is payment being made?",
+        typeOverride = FixedRadioList,
         typeParameterOverride = "SolicitorPaymentMethod",
         access = {DefaultAccess.class}
     )
@@ -361,10 +361,10 @@ public class Application {
     private YesOrNo applicant2ReminderSent;
 
     @CCD(
-        label = "Notification sent to Joint Applicants indicating they can apply for a Conditional Order",
+        label = "Reminder sent to Applicants indicating they can apply for Conditional Order",
         access = {DefaultAccess.class}
     )
-    private YesOrNo jointApplicantsNotifiedCanApplyForConditionalOrder;
+    private YesOrNo applicantsRemindedCanApplyForConditionalOrder;
 
     @CCD(
         label = "What would you like to reissue?",
@@ -446,11 +446,6 @@ public class Application {
     }
 
     @JsonIgnore
-    public boolean haveJointApplicantsBeenNotifiedCanApplyForConditionalOrder() {
-        return YES.equals(jointApplicantsNotifiedCanApplyForConditionalOrder);
-    }
-
-    @JsonIgnore
     public boolean hasOverdueNotificationBeenSent() {
         return YES.equals(overdueNotificationSent);
     }
@@ -472,4 +467,15 @@ public class Application {
     public boolean isSolicitorPaymentMethodPba() {
         return FEE_PAY_BY_ACCOUNT.equals(this.getSolPaymentHowToPay());
     }
+
+    @JsonIgnore
+    public boolean isApplicant1OffLine() {
+        return false;
+    }
+
+    @JsonIgnore
+    public boolean isApplicant2OffLine() {
+        return null != applicant1KnowsApplicant2EmailAddress && !applicant1KnowsApplicant2EmailAddress.toBoolean();
+    }
+
 }

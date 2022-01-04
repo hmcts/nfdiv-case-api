@@ -7,7 +7,6 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateCitizenRespondentAosInvitation;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateDivorceApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateRespondentSolicitorAosInvitation;
-import uk.gov.hmcts.divorce.caseworker.service.task.SendAosNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPack;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
@@ -45,9 +44,6 @@ public class ReIssueApplicationService {
     private SendApplicationIssueNotifications sendApplicationIssueNotifications;
 
     @Autowired
-    private SendAosNotifications sendAosNotifications;
-
-    @Autowired
     private SetReIssueAndDueDate setReIssueAndDueDate;
 
     public CaseDetails<CaseData, State> process(final CaseDetails<CaseData, State> caseDetails) {
@@ -69,7 +65,6 @@ public class ReIssueApplicationService {
             return caseTasks(
                 generateRespondentSolicitorAosInvitation,
                 generateCitizenRespondentAosInvitation,
-                sendAosNotifications,
                 setReIssueAndDueDate,
                 setPostIssueState,
                 sendApplicationIssueNotifications
@@ -90,7 +85,6 @@ public class ReIssueApplicationService {
                 generateMiniApplication,
                 generateRespondentSolicitorAosInvitation,
                 generateCitizenRespondentAosInvitation,
-                sendAosNotifications,
                 sendAosPack,
                 setReIssueAndDueDate,
                 setPostIssueState,

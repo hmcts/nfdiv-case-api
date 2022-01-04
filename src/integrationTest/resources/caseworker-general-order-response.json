@@ -6,7 +6,7 @@
     "applicant1LastName": "test_last_name",
     "applicant1Email": "test@test.com",
     "applicant1LanguagePreferenceWelsh": "No",
-    "applicant1KeepContactDetailsConfidential": "No",
+    "applicant1ContactDetailsType": "public",
     "applicant1Gender": "female",
     "applicant1FinancialOrder": "No",
     "generalOrderDate": "2021-01-01",
@@ -14,9 +14,8 @@
       "respondent"
     ],
     "generalOrderRecitals": "test recitals",
-    "generalOrderJudgeType": "recorder",
-    "generalOrderJudgeName": "some name",
-    "generalOrderLegalAdvisorName": "legal name",
+    "generalOrderJudgeOrLegalAdvisorType": "districtJudge",
+    "generalOrderJudgeOrLegalAdvisorName": "some name",
     "generalOrderDetails": "some details",
     "generalOrderDraft": {
       "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
