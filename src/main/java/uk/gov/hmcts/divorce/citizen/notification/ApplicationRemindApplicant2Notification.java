@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -23,11 +24,10 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
-public class ApplicationSentForReviewApplicant2Notification {
+public class ApplicationRemindApplicant2Notification implements ApplicantNotification {
 
     public static final String APPLICANT_2_SIGN_IN_DIVORCE_URL = "applicant2SignInDivorceUrl";
     public static final String APPLICANT_2_SIGN_IN_DISSOLUTION_URL = "applicant2SignInDissolutionUrl";
-
 
     @Autowired
     private NotificationService notificationService;
@@ -38,18 +38,8 @@ public class ApplicationSentForReviewApplicant2Notification {
     @Autowired
     private EmailTemplatesConfig config;
 
-    public void send(CaseData caseData, Long id) {
-        log.info("Sending application sent for review notification to applicant 2 for case : {}", id);
-
-        notificationService.sendEmail(
-            caseData.getApplicant2EmailAddress(),
-            JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW,
-            templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1(), false),
-            caseData.getApplicant1().getLanguagePreference()
-        );
-    }
-
-    public void sendReminder(CaseData caseData, Long id) {
+    @Override
+    public void sendToApplicant2(final CaseData caseData, final Long id) {
         log.info("Sending reminder to applicant 2 to review case : {}", id);
 
         notificationService.sendEmail(
@@ -62,7 +52,7 @@ public class ApplicationSentForReviewApplicant2Notification {
 
     private Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner, boolean isReminder) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
-        templateVars.put(IS_REMINDER, isReminder ? YES :  NO);
+        templateVars.put(IS_REMINDER, isReminder ? YES : NO);
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
         templateVars.put(ACCESS_CODE, caseData.getCaseInvite().getAccessCode());
         templateVars.put(CREATE_ACCOUNT_LINK,
