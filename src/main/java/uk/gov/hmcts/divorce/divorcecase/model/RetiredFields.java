@@ -262,6 +262,9 @@ public class RetiredFields {
     @CCD(label = "retiredCoApplyForConditionalOrder")
     private YesOrNo coApplyForConditionalOrder;
 
+    @CCD(label = "retiredCoApplicantStatementOfTruth")
+    private YesOrNo coApplicantStatementOfTruth;
+
     @CCD(
         label = "Retire select judge",
         typeOverride = FixedList,
@@ -370,6 +373,8 @@ public class RetiredFields {
             data -> data.put("coApplicant1IsEverythingInApplicationTrue", data.get("coIsEverythingInApplicationTrue")));
         init.put("coChangeOrAddToApplication",
             data -> data.put("coApplicant1ChangeOrAddToApplication", data.get("coChangeOrAddToApplication")));
+        init.put("coApplicantStatementOfTruth",
+            data -> data.put("coApplicant1StatementOfTruth", data.get("coApplicantStatementOfTruth")));
         init.put("coApplyForConditionalOrder",
             data -> data.put("coApplicant1ApplyForConditionalOrder", data.get("coApplyForConditionalOrder")));
         init.put("generalOrderJudgeType",
