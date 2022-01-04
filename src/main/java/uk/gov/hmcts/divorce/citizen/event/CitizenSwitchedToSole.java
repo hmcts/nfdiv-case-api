@@ -7,8 +7,8 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.citizen.notification.SwitchToSoleNotification;
+import uk.gov.hmcts.divorce.citizen.notification.Applicant1SwitchToSoleNotification;
+import uk.gov.hmcts.divorce.citizen.notification.Applicant2SwitchToSoleNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
@@ -35,6 +36,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Component
 public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRole> {
 
+    public static final String SWITCH_TO_SOLE = "switch-to-sole";
+
     @Autowired
     private CcdAccessService ccdAccessService;
 
@@ -42,12 +45,16 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
     private HttpServletRequest httpServletRequest;
 
     @Autowired
-    private SwitchToSoleNotification switchToSoleNotification;
+    private Applicant1SwitchToSoleNotification applicant1SwitchToSoleNotification;
 
     @Autowired
     private IdamService idamService;
 
-    public static final String SWITCH_TO_SOLE = "switch-to-sole";
+    @Autowired
+    private Applicant2SwitchToSoleNotification applicant2SwitchToSoleNotification;
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -82,14 +89,9 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
         User user = idamService.retrieveUser(httpServletRequest.getHeader(AUTHORIZATION));
 
         if (data.getCaseInvite().isApplicant2(user.getUserDetails().getId())) {
-            switchToSoleNotification.sendApplicant2SwitchToSoleNotificationToApplicant1(data, details.getId());
-            switchToSoleNotification.sendApplicant2SwitchToSoleNotificationToApplicant2(data, details.getId());
-
+            notificationDispatcher.send(applicant2SwitchToSoleNotification, data, details.getId());
         } else {
-            switchToSoleNotification.sendApplicant1SwitchToSoleNotificationToApplicant1(data, details.getId());
-            if (data.getApplication().getApplicant2ScreenHasMarriageBroken() != YesOrNo.NO) {
-                switchToSoleNotification.sendApplicant1SwitchToSoleNotificationToApplicant2(data, details.getId());
-            }
+            notificationDispatcher.send(applicant1SwitchToSoleNotification, data, details.getId());
         }
 
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);

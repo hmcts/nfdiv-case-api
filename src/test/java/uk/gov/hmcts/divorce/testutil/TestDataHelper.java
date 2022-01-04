@@ -301,6 +301,8 @@ public class TestDataHelper {
             .build());
         caseData.getApplication().setApplicant2PrayerHasBeenGiven(YES);
         caseData.getApplication().setApplicant2StatementOfTruth(YES);
+        caseData.getApplication().setApplicant2ScreenHasMarriageBroken(YES);
+
         return caseData;
     }
 

@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -29,8 +29,8 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 
-@ExtendWith(SpringExtension.class)
-class SwitchToSoleNotificationTest {
+@ExtendWith(MockitoExtension.class)
+class Applicant2Applicant1SwitchToSoleNotificationTest {
 
     @Mock
     private NotificationService notificationService;
@@ -39,104 +39,14 @@ class SwitchToSoleNotificationTest {
     private CommonContent commonContent;
 
     @InjectMocks
-    private SwitchToSoleNotification notification;
-
-    @Test
-    void shouldSendApplicant1SwitchToSoleEmailToApplicant1WithDivorceContent() {
-        CaseData data = validApplicant2CaseData();
-        final Map<String, String> templateVars = Map.of(IS_DIVORCE, YES, IS_DISSOLUTION, NO);
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
-            .thenReturn(templateVars);
-        notification.sendApplicant1SwitchToSoleNotificationToApplicant1(data, 1234567890123456L);
-
-        verify(notificationService).sendEmail(
-            eq(TEST_USER_EMAIL),
-            eq(APPLICANT_SWITCH_TO_SOLE),
-            argThat(allOf(
-                hasEntry(IS_DIVORCE, YES),
-                hasEntry(IS_DISSOLUTION, NO)
-                )),
-            eq(ENGLISH)
-        );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
-    }
-
-    @Test
-    void shouldSendApplicant1SwitchToSoleEmailToApplicant1WithDissolutionContent() {
-        CaseData data = validApplicant2CaseData();
-        data.setDivorceOrDissolution(DISSOLUTION);
-        final Map<String, String> templateVars = Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES);
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
-            .thenReturn(templateVars);
-
-        notification.sendApplicant1SwitchToSoleNotificationToApplicant1(data, 1234567890123456L);
-
-        verify(notificationService).sendEmail(
-            eq(TEST_USER_EMAIL),
-            eq(APPLICANT_SWITCH_TO_SOLE),
-            argThat(allOf(
-                hasEntry(IS_DIVORCE, NO),
-                hasEntry(IS_DISSOLUTION, YES)
-            )),
-            eq(ENGLISH)
-        );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
-
-    }
-
-    @Test
-    void shouldSendApplicant1SwitchToSoleEmailToApplicant2WithDivorceContent() {
-        CaseData data = validApplicant2CaseData();
-        data.getApplicant2().setEmail(null);
-
-        final Map<String, String> templateVars = Map.of(IS_DIVORCE, YES, IS_DISSOLUTION, NO);
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
-            .thenReturn(templateVars);
-
-        notification.sendApplicant1SwitchToSoleNotificationToApplicant2(data, 1234567890123456L);
-
-        verify(notificationService).sendEmail(
-            eq(TEST_APPLICANT_2_USER_EMAIL),
-            eq(JOINT_APPLICATION_ENDED),
-            argThat(allOf(
-                hasEntry(IS_DIVORCE, YES),
-                hasEntry(IS_DISSOLUTION, NO)
-            )),
-            eq(ENGLISH)
-        );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
-    }
-
-    @Test
-    void shouldSendApplicant1SwitchToSoleEmailToApplicant2WithDissolutionContent() {
-        CaseData data = validApplicant2CaseData();
-        data.setDivorceOrDissolution(DISSOLUTION);
-        data.getApplicant2().setEmail(null);
-
-        final Map<String, String> templateVars = Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES);
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
-            .thenReturn(templateVars);
-
-        notification.sendApplicant1SwitchToSoleNotificationToApplicant2(data, 1234567890123456L);
-
-        verify(notificationService).sendEmail(
-            eq(TEST_APPLICANT_2_USER_EMAIL),
-            eq(JOINT_APPLICATION_ENDED),
-            argThat(allOf(
-                hasEntry(IS_DIVORCE, NO),
-                hasEntry(IS_DISSOLUTION, YES)
-            )),
-            eq(ENGLISH)
-        );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
-    }
+    private Applicant2SwitchToSoleNotification applicant2SwitchToSoleNotification;
 
     @Test
     void shouldSendApplicant2SwitchToSoleEmailToApplicant1WithDivorceContent() {
         CaseData data = validApplicant2CaseData();
         final Map<String, String> templateVars = Map.of(IS_DIVORCE, YES, IS_DISSOLUTION, NO);
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
-        notification.sendApplicant2SwitchToSoleNotificationToApplicant1(data, 1234567890123456L);
+        applicant2SwitchToSoleNotification.sendToApplicant1(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -157,7 +67,7 @@ class SwitchToSoleNotificationTest {
         final Map<String, String> templateVars = Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES);
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
 
-        notification.sendApplicant2SwitchToSoleNotificationToApplicant1(data, 1234567890123456L);
+        applicant2SwitchToSoleNotification.sendToApplicant1(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -180,7 +90,7 @@ class SwitchToSoleNotificationTest {
         final Map<String, String> templateVars = Map.of(IS_DIVORCE, YES, IS_DISSOLUTION, NO);
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
 
-        notification.sendApplicant2SwitchToSoleNotificationToApplicant2(data, 1234567890123456L);
+        applicant2SwitchToSoleNotification.sendToApplicant2(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -203,7 +113,7 @@ class SwitchToSoleNotificationTest {
         final Map<String, String> templateVars = Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES);
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
 
-        notification.sendApplicant2SwitchToSoleNotificationToApplicant2(data, 1234567890123456L);
+        applicant2SwitchToSoleNotification.sendToApplicant2(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
