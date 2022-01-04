@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.citizen.notification.DisputeFormOverdueOverdueNotifi
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -33,7 +34,10 @@ class SystemNotifyApplicantDisputeFormOverdueTest {
     private HttpServletRequest httpServletRequest;
 
     @Mock
-    private DisputeFormOverdueOverdueNotification notification;
+    private DisputeFormOverdueOverdueNotification disputeFormOverdueOverdueNotification;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
 
     @InjectMocks
     private SystemNotifyApplicantDisputeFormOverdue underTest;
@@ -60,7 +64,7 @@ class SystemNotifyApplicantDisputeFormOverdueTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = underTest.aboutToSubmit(details, details);
 
-        verify(notification).send(caseData, details.getId());
+        verify(notificationDispatcher).send(disputeFormOverdueOverdueNotification, caseData, details.getId());
         assertThat(response.getData().getAcknowledgementOfService().getApplicantNotifiedDisputeFormOverdue()).isEqualTo(YesOrNo.YES);
     }
 }
