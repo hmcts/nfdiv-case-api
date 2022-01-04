@@ -11,9 +11,9 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static java.util.EnumSet.of;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
@@ -33,6 +33,9 @@ public class SystemProgressCaseToAosOverdue implements CCDConfig<CaseData, State
     @Autowired
     private AosReminderNotifications aosReminderNotifications;
 
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
@@ -49,13 +52,8 @@ public class SystemProgressCaseToAosOverdue implements CCDConfig<CaseData, State
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
         CaseData data = details.getData();
-        if (isNotBlank(data.getApplicant2EmailAddress()) && isNotBlank(data.getCaseInvite().getAccessCode())) {
-            aosReminderNotifications.sendReminderToSoleRespondent(data, details.getId());
-        }
 
-        if (!data.getApplicant1().isRepresented()) {
-            aosReminderNotifications.sendPartnerNotRespondedToSoleApplicant(data, details.getId());
-        }
+        notificationDispatcher.send(aosReminderNotifications, data, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
