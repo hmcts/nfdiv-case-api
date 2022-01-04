@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.citizen.notification.Applicant2NotBrokenNotification
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -26,6 +27,9 @@ class CitizenApplicant2NotBrokenTest {
 
     @Mock
     private Applicant2NotBrokenNotification applicant2NotBrokenNotification;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
 
     @InjectMocks
     private CitizenApplicant2NotBroken citizenApplicant2NotBroken;
@@ -52,8 +56,7 @@ class CitizenApplicant2NotBrokenTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenApplicant2NotBroken.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(applicant2NotBrokenNotification).sendToApplicant1(caseData, caseDetails.getId());
-        verify(applicant2NotBrokenNotification).sendToApplicant2(caseData, caseDetails.getId());
+        verify(notificationDispatcher).send(applicant2NotBrokenNotification, caseData, caseDetails.getId());
         assertThat(response.getState()).isEqualTo(State.AwaitingApplicant1Response);
     }
 
