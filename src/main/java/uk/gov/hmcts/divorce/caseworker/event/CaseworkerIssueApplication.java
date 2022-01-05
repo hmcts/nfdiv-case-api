@@ -24,7 +24,6 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 import java.util.List;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -60,7 +59,7 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_ISSUE_APPLICATION)
-            .forStates(Submitted, AwaitingDocuments, AwaitingAos)
+            .forStates(Submitted, AwaitingDocuments)
             .name("Application issued")
             .description("Application issued")
             .showSummary()
