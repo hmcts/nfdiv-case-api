@@ -7,10 +7,11 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewApplicant2Notification;
+import uk.gov.hmcts.divorce.citizen.notification.ApplicationRemindApplicant2Notification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
@@ -22,7 +23,10 @@ public class SystemRemindApplicant2 implements CCDConfig<CaseData, State, UserRo
     public static final String SYSTEM_REMIND_APPLICANT2 = "system-remind-applicant2";
 
     @Autowired
-    private ApplicationSentForReviewApplicant2Notification applicationSentForReviewApplicant2Notification;
+    private ApplicationRemindApplicant2Notification applicationRemindApplicant2Notification;
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -42,7 +46,7 @@ public class SystemRemindApplicant2 implements CCDConfig<CaseData, State, UserRo
 
         CaseData data = details.getData();
 
-        applicationSentForReviewApplicant2Notification.sendReminder(data, details.getId());
+        notificationDispatcher.send(applicationRemindApplicant2Notification, data, details.getId());
 
         data.getApplication().setApplicant2ReminderSent(YesOrNo.YES);
 

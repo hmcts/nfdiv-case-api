@@ -9,11 +9,11 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewApplicant1Notification;
-import uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewApplicant2Notification;
+import uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -28,10 +28,10 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseDa
 public class CitizenInviteApplicant2Test {
 
     @Mock
-    private ApplicationSentForReviewApplicant1Notification applicationSentForReviewApplicant1Notification;
+    private ApplicationSentForReviewNotification applicationSentForReviewNotification;
 
     @Mock
-    private ApplicationSentForReviewApplicant2Notification applicationSentForReviewApplicant2Notification;
+    private NotificationDispatcher notificationDispatcher;
 
     @InjectMocks
     private CitizenInviteApplicant2 citizenInviteApplicant2;
@@ -71,8 +71,7 @@ public class CitizenInviteApplicant2Test {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenInviteApplicant2.aboutToSubmit(details, details);
 
-        verifyNoInteractions(applicationSentForReviewApplicant1Notification);
-        verifyNoInteractions(applicationSentForReviewApplicant2Notification);
+        verifyNoInteractions(notificationDispatcher);
 
         assertThat(response.getErrors().size()).isEqualTo(5);
         assertThat(response.getErrors()).containsExactlyInAnyOrder(
@@ -105,8 +104,7 @@ public class CitizenInviteApplicant2Test {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenInviteApplicant2.aboutToSubmit(details, details);
 
-        verify(applicationSentForReviewApplicant1Notification).send(caseData, details.getId());
-        verify(applicationSentForReviewApplicant2Notification).send(caseData, details.getId());
+        verify(notificationDispatcher).send(applicationSentForReviewNotification, caseData, details.getId());
 
         assertThat(response.getData().getCaseInvite().getAccessCode()).isNotBlank();
         assertThat(response.getData().getCaseInvite().getAccessCode().length()).isEqualTo(8);

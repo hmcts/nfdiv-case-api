@@ -10,10 +10,11 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewApplicant2Notification;
+import uk.gov.hmcts.divorce.citizen.notification.ApplicationRemindApplicant2Notification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -33,7 +34,10 @@ public class SystemRemindApplicant2Test {
     private HttpServletRequest httpServletRequest;
 
     @Mock
-    private ApplicationSentForReviewApplicant2Notification applicationSentForReviewApplicant2Notification;
+    private ApplicationRemindApplicant2Notification applicationRemindApplicant2Notification;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
 
     @InjectMocks
     private SystemRemindApplicant2 systemRemindApplicant2;
@@ -62,7 +66,7 @@ public class SystemRemindApplicant2Test {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             systemRemindApplicant2.aboutToSubmit(details, details);
 
-        verify(applicationSentForReviewApplicant2Notification).sendReminder(caseData, details.getId());
+        verify(notificationDispatcher).send(applicationRemindApplicant2Notification, caseData, details.getId());
         assertThat(response.getData().getApplication().getApplicant2ReminderSent()).isEqualTo(YesOrNo.YES);
     }
 }

@@ -6,11 +6,13 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CREATE_ACCOUNT_LINK;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
@@ -24,7 +26,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
-public class AosReminderNotifications {
+public class AosReminderNotifications implements ApplicantNotification {
 
     private static final String RESPONDENT_SIGN_IN_DIVORCE_URL = "respondentSignInDivorceUrl";
     private static final String RESPONDENT_SIGN_IN_DISSOLUTION_URL = "respondentSignInDissolutionUrl";
@@ -38,7 +40,8 @@ public class AosReminderNotifications {
     @Autowired
     private EmailTemplatesConfig config;
 
-    public void sendPartnerNotRespondedToSoleApplicant(CaseData caseData, Long id) {
+    @Override
+    public void sendToApplicant1(final CaseData caseData, final Long id) {
         log.info("Sending the respondent has not responded notification to the applicant for case : {}", id);
 
         notificationService.sendEmail(
@@ -49,15 +52,18 @@ public class AosReminderNotifications {
         );
     }
 
-    public void sendReminderToSoleRespondent(CaseData caseData, Long id) {
-        log.info("Sending reminder to respondent to register for case : {}", id);
+    @Override
+    public void sendToApplicant2(final CaseData caseData, final Long id) {
+        if (isNotBlank(caseData.getApplicant2EmailAddress()) && isNotBlank(caseData.getCaseInvite().getAccessCode())) {
+            log.info("Sending reminder to respondent to register for case : {}", id);
 
-        notificationService.sendEmail(
-            caseData.getApplicant2EmailAddress(),
-            SOLE_RESPONDENT_APPLICATION_ACCEPTED,
-            reminderToSoleRespondentTemplateVars(caseData, id),
-            caseData.getApplicant1().getLanguagePreference()
-        );
+            notificationService.sendEmail(
+                caseData.getApplicant2EmailAddress(),
+                SOLE_RESPONDENT_APPLICATION_ACCEPTED,
+                reminderToSoleRespondentTemplateVars(caseData, id),
+                caseData.getApplicant1().getLanguagePreference()
+            );
+        }
     }
 
     private Map<String, String> reminderToSoleRespondentTemplateVars(final CaseData caseData, Long id) {

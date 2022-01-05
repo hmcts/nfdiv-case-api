@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -28,6 +29,9 @@ public class SystemProgressCaseToAosOverdueTest {
 
     @Mock
     private AosReminderNotifications aosReminderNotifications;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
 
     @InjectMocks
     private SystemProgressCaseToAosOverdue systemProgressCaseToAosOverdue;
@@ -53,8 +57,7 @@ public class SystemProgressCaseToAosOverdueTest {
 
         systemProgressCaseToAosOverdue.aboutToSubmit(details, details);
 
-        verify(aosReminderNotifications).sendReminderToSoleRespondent(caseData, 1L);
-        verify(aosReminderNotifications).sendPartnerNotRespondedToSoleApplicant(caseData, 1L);
+        verify(notificationDispatcher).send(aosReminderNotifications, caseData, 1L);
         verifyNoMoreInteractions(aosReminderNotifications);
     }
 
@@ -69,7 +72,7 @@ public class SystemProgressCaseToAosOverdueTest {
 
         systemProgressCaseToAosOverdue.aboutToSubmit(details, details);
 
-        verify(aosReminderNotifications).sendPartnerNotRespondedToSoleApplicant(caseData, 1L);
+        verify(notificationDispatcher).send(aosReminderNotifications, caseData, 1L);
         verifyNoMoreInteractions(aosReminderNotifications);
     }
 
@@ -84,7 +87,7 @@ public class SystemProgressCaseToAosOverdueTest {
 
         systemProgressCaseToAosOverdue.aboutToSubmit(details, details);
 
-        verify(aosReminderNotifications).sendPartnerNotRespondedToSoleApplicant(caseData, 1L);
+        verify(notificationDispatcher).send(aosReminderNotifications, caseData, 1L);
         verifyNoMoreInteractions(aosReminderNotifications);
     }
 
