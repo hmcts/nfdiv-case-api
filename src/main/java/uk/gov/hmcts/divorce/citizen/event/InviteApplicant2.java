@@ -49,10 +49,10 @@ public class InviteApplicant2 implements CCDConfig<CaseData, State, UserRole> {
             .forStateTransition(Draft, AwaitingApplicant2Response)
             .name("Invite Applicant 2")
             .description("Invite Applicant 2")
-            .showCondition("applicant2SolicitorRepresented=\"Yes\" AND applicationType=\"jointApplication\"")
+            .showCondition("applicationType=\"jointApplication\"")
             .showSummary()
             .showEventNotes()
-            .grant(CREATE_READ_UPDATE, CITIZEN, SOLICITOR)
+            .grant(CREATE_READ_UPDATE, CITIZEN, APPONESOLICITOR)
             .grant(READ,
                 SUPER_USER,
                 CASE_WORKER,
