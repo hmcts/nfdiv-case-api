@@ -18,6 +18,7 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
@@ -33,6 +34,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConfigTemplateVars;
@@ -60,6 +62,7 @@ class AosReminderNotificationsTest {
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
         data.getApplicant2().setEmail(null);
+        data.getCaseInvite().setAccessCode(ACCESS_CODE);
 
         Map<String, String> divorceTemplateVars = new HashMap<>();
         divorceTemplateVars.putAll(getMainTemplateVars());
@@ -68,7 +71,7 @@ class AosReminderNotificationsTest {
 
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
-        aosReminderNotifications.sendReminderToSoleRespondent(data, 1234567890123456L);
+        aosReminderNotifications.sendToApplicant2(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -91,6 +94,7 @@ class AosReminderNotificationsTest {
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
         data.getApplicant2().setEmail(null);
+        data.getCaseInvite().setAccessCode(ACCESS_CODE);
 
         Map<String, String> dissolutionTemplateVars = new HashMap<>();
         dissolutionTemplateVars.putAll(getMainTemplateVars());
@@ -100,7 +104,7 @@ class AosReminderNotificationsTest {
 
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
 
-        aosReminderNotifications.sendReminderToSoleRespondent(data, 1234567890123456L);
+        aosReminderNotifications.sendToApplicant2(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -117,6 +121,33 @@ class AosReminderNotificationsTest {
     }
 
     @Test
+    void shouldNotSendReminderEmailToSoleRespondentIfNoApplicant2Email() {
+        CaseData data = validCaseDataForIssueApplication();
+        data.setDueDate(LocalDate.now().plusDays(141));
+        data.getApplication().setIssueDate(LocalDate.now());
+        data.getApplicant2().setEmail(null);
+        data.getCaseInvite().setApplicant2InviteEmailAddress(null);
+        data.getCaseInvite().setAccessCode(ACCESS_CODE);
+
+        aosReminderNotifications.sendToApplicant2(data, 1234567890123456L);
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    void shouldNotSendReminderEmailToSoleRespondentIfNoAccessCode() {
+        CaseData data = validCaseDataForIssueApplication();
+        data.setDueDate(LocalDate.now().plusDays(141));
+        data.getApplication().setIssueDate(LocalDate.now());
+        data.getApplicant2().setEmail(null);
+        data.getCaseInvite().setAccessCode(null);
+
+        aosReminderNotifications.sendToApplicant2(data, 1234567890123456L);
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
     void shouldSendPartnerNotRespondedToSoleApplicantEmail() {
         CaseData data = validCaseDataForIssueApplication();
         data.setDueDate(LocalDate.now().plusDays(141));
@@ -126,7 +157,7 @@ class AosReminderNotificationsTest {
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(divorceTemplateVars);
 
-        aosReminderNotifications.sendPartnerNotRespondedToSoleApplicant(data, 1234567890123456L);
+        aosReminderNotifications.sendToApplicant1(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
