@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -24,7 +25,7 @@ public class CitizenUpdateApplication implements CCDConfig<CaseData, State, User
 
         configBuilder
             .event(CITIZEN_UPDATE)
-            .forStates(Draft, AwaitingApplicant1Response)
+            .forStates(Draft, AwaitingApplicant1Response, ConditionalOrderDrafted)
             .name("Patch case")
             .description("Patch a divorce or dissolution")
             .retries(120, 120)

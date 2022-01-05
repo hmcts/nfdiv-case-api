@@ -6,7 +6,6 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -14,7 +13,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -43,10 +41,9 @@ public class UpdateAos implements CCDConfig<CaseData, State, UserRole> {
             .name("Update AoS")
             .description("Update Acknowledgement of Service")
             .aboutToStartCallback(this::aboutToStart)
-            .aboutToSubmitCallback(this::aboutToSubmit)
             .showSummary()
             .endButtonLabel("Save Updated AoS Response")
-            .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR, APPLICANT_2)
+            .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
             .grant(READ,
                 CASE_WORKER,
                 SUPER_USER,
@@ -58,22 +55,6 @@ public class UpdateAos implements CCDConfig<CaseData, State, UserRole> {
             .data(addMiniApplicationLink
                 .apply(details)
                 .getData())
-            .build();
-    }
-
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
-                                                                       CaseDetails<CaseData, State> beforeDetails) {
-        CaseData data = details.getData();
-
-        if (data.getAcknowledgementOfService().getConfirmDisputeApplication() == YesOrNo.NO
-            && data.getAcknowledgementOfService().isDisputed()) {
-
-            data.getAcknowledgementOfService().setHowToRespondApplication(null);
-            data.getAcknowledgementOfService().setConfirmDisputeApplication(null);
-        }
-
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(data)
             .build();
     }
 }
