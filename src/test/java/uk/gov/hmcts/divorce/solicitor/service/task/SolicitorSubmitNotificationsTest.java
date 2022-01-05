@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.notification.SolicitorSubmittedNotification;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,6 +21,9 @@ class SolicitorSubmitNotificationsTest {
 
     @Mock
     private SolicitorSubmittedNotification solicitorSubmittedNotification;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
 
     @InjectMocks
     private SolicitorSubmitNotification solicitorSubmitNotification;
@@ -38,6 +42,6 @@ class SolicitorSubmitNotificationsTest {
 
         assertThat(result).isEqualTo(caseDetails);
 
-        verify(solicitorSubmittedNotification).send(caseData, TEST_CASE_ID);
+        verify(notificationDispatcher).send(solicitorSubmittedNotification, caseData, TEST_CASE_ID);
     }
 }

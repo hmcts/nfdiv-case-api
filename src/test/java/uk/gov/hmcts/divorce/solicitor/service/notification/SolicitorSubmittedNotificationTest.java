@@ -17,7 +17,6 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
@@ -37,7 +36,7 @@ class SolicitorSubmittedNotificationTest {
     private SolicitorSubmittedNotification solicitorSubmittedNotification;
 
     @Captor
-    private ArgumentCaptor<Map<String,String>> templateVarsCaptor;
+    private ArgumentCaptor<Map<String, String>> templateVarsCaptor;
 
     @Test
     void shouldNotifyApplicantSolicitorByApplicationSubmittedEmail() {
@@ -54,8 +53,7 @@ class SolicitorSubmittedNotificationTest {
 
         caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
 
-        solicitorSubmittedNotification.send(caseData, 1234567890123456L);
-
+        solicitorSubmittedNotification.sendToApplicant1Solicitor(caseData, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(applicant1SolicitorEmail),
@@ -63,12 +61,10 @@ class SolicitorSubmittedNotificationTest {
             templateVarsCaptor.capture(),
             eq(ENGLISH));
 
-        Map<String,String> templateVars = templateVarsCaptor.getValue();
-        assertThat(templateVars.get(APPLICATION_REFERENCE).equals("1234-5678-9012-3456"));
-        assertThat(templateVars.get(FIRST_NAME).equals("test_first_name"));
-        assertThat(templateVars.get(LAST_NAME).equals("test_last_name"));
-
-
+        Map<String, String> templateVars = templateVarsCaptor.getValue();
+        assertThat(templateVars.get(APPLICATION_REFERENCE)).isEqualTo("1234-5678-9012-3456");
+        assertThat(templateVars.get(FIRST_NAME)).isEqualTo("test_first_name");
+        assertThat(templateVars.get(LAST_NAME)).isEqualTo("test_last_name");
     }
 
     @Test
@@ -87,7 +83,7 @@ class SolicitorSubmittedNotificationTest {
 
         caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
 
-        solicitorSubmittedNotification.send(caseData, 1234567890123456L);
+        solicitorSubmittedNotification.sendToApplicant1Solicitor(caseData, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(applicant1SolicitorEmail),
@@ -95,24 +91,9 @@ class SolicitorSubmittedNotificationTest {
             templateVarsCaptor.capture(),
             eq(ENGLISH));
 
-        Map<String,String> templateVars = templateVarsCaptor.getValue();
-        assertThat(templateVars.get(APPLICATION_REFERENCE).equals("1234-5678-9012-3456"));
-        assertThat(templateVars.get(FIRST_NAME).equals("test_first_name"));
-        assertThat(templateVars.get(LAST_NAME).equals("test_last_name"));
-
-    }
-
-    @Test
-    void shouldNotNotifyApplicantSolicitorIfNoEmailSet() {
-
-        final CaseData caseData = CaseData.builder()
-            .applicant1(getApplicant())
-            .build();
-
-        caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
-
-        solicitorSubmittedNotification.send(caseData, 1L);
-
-        verifyNoInteractions(notificationService);
+        Map<String, String> templateVars = templateVarsCaptor.getValue();
+        assertThat(templateVars.get(APPLICATION_REFERENCE)).isEqualTo("1234-5678-9012-3456");
+        assertThat(templateVars.get(FIRST_NAME)).isEqualTo("test_first_name");
+        assertThat(templateVars.get(LAST_NAME)).isEqualTo("test_last_name");
     }
 }
