@@ -30,7 +30,7 @@ public class CitizenUpdateApplication implements CCDConfig<CaseData, State, User
             .name("Patch case")
             .description("Patch a divorce or dissolution")
             .retries(120, 120)
-            .grant(CREATE_READ_UPDATE, CREATOR, CITIZEN)
+            .grant(CREATE_READ_UPDATE, CREATOR)
             .grant(READ, SUPER_USER);
     }
 }
