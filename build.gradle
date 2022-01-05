@@ -474,6 +474,9 @@ task reloadCcd(type: CftlibTask, dependsOn: generateCCDConfig) {
 }
 
 generateCCDConfig.dependsOn stopCaseApiContainer
+generateCCDConfig {
+    environment 'CASE_API_URL', 'http://localhost:4013'
+}
 
 task bootXui(type: CftlibTask) {
   commandLine 'docker-compose',  '-f', 'docker-compose-xui.yml', 'up'
