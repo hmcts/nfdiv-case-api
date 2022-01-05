@@ -31,7 +31,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.util.ResourceUtils.getFile;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenInviteApplicant2.CITIZEN_INVITE_APPLICANT_2;
+import static uk.gov.hmcts.divorce.citizen.event.InviteApplicant2.INVITE_APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_ANSWERS_SENT_FOR_REVIEW;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW;
@@ -46,7 +46,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1C
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-public class CitizenInviteApplicant2IT {
+public class InviteApplicant2IT {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
@@ -74,7 +74,7 @@ public class CitizenInviteApplicant2IT {
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
             .contentType(APPLICATION_JSON)
             .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_INVITE_APPLICANT_2)))
+            .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, INVITE_APPLICANT_2)))
             .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
