@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Jurisdiction;
 import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -38,6 +39,9 @@ class CitizenApplicant2ApproveTest {
 
     @Mock
     private Applicant2ApprovedNotification applicant2ApprovedNotification;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
 
     @InjectMocks
     private CitizenApplicant2Approve citizenApplicant2Approve;
@@ -100,8 +104,7 @@ class CitizenApplicant2ApproveTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenApplicant2Approve.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(applicant2ApprovedNotification).sendToApplicant1(caseData, caseDetails.getId());
-        verify(applicant2ApprovedNotification).sendToApplicant2(caseData, caseDetails.getId());
+        verify(notificationDispatcher).send(applicant2ApprovedNotification, caseData, caseDetails.getId());
         assertThat(response.getState()).isEqualTo(State.Applicant2Approved);
     }
 
@@ -121,8 +124,7 @@ class CitizenApplicant2ApproveTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenApplicant2Approve.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(applicant2ApprovedNotification).sendToApplicant1WithDeniedHwf(caseData, caseDetails.getId());
-        verify(applicant2ApprovedNotification).sendToApplicant2(caseData, caseDetails.getId());
+        verify(notificationDispatcher).send(applicant2ApprovedNotification, caseData, caseDetails.getId());
         assertThat(response.getState()).isEqualTo(State.Applicant2Approved);
     }
 

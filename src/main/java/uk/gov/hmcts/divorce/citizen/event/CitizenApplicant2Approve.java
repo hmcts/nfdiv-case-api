@@ -11,12 +11,12 @@ import uk.gov.hmcts.divorce.citizen.notification.Applicant2ApprovedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
@@ -31,6 +31,9 @@ public class CitizenApplicant2Approve implements CCDConfig<CaseData, State, User
 
     @Autowired
     private Applicant2ApprovedNotification applicant2ApprovedNotification;
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -66,15 +69,7 @@ public class CitizenApplicant2Approve implements CCDConfig<CaseData, State, User
 
         data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
 
-        if (data.getApplication().isHelpWithFeesApplication() && data.getApplication().getApplicant2HelpWithFees().getNeedHelp() != YES) {
-            log.info("Triggering applicant 2 denied HWF notification for applicant 1");
-            applicant2ApprovedNotification.sendToApplicant1WithDeniedHwf(data, details.getId());
-        } else {
-            log.info("Triggering applicant 2 approved notification for applicant 1");
-            applicant2ApprovedNotification.sendToApplicant1(data, details.getId());
-        }
-
-        applicant2ApprovedNotification.sendToApplicant2(data, details.getId());
+        notificationDispatcher.send(applicant2ApprovedNotification, data, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
