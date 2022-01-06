@@ -73,7 +73,7 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
         CaseDetails<CaseData, State> details,
         CaseDetails<CaseData, State> detailsBefore
     ) {
-        log.info("Mid-event callback triggered for SolAboutTheSolicitor");
+        log.info("Mid-event callback triggered for SolAboutApplicant1");
 
         var data = details.getData();
         Gender app1Gender;
