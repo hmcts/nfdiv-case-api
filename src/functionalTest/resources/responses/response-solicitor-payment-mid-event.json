@@ -5,7 +5,8 @@
     "applicant1LastName": "Smith",
     "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
     "applicant1FinancialOrder": "No",
-    "applicant2Gender": "female",
+    "divorceWho": "wife",
+    "marriageFormationType": "oppositeSexCouple",
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "solPaymentHowToPay": "feePayByAccount",
     "pbaNumbers": {
