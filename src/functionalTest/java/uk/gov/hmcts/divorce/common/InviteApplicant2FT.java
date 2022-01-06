@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.citizen;
+package uk.gov.hmcts.divorce.common;
 
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,7 @@ import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
-import static uk.gov.hmcts.divorce.citizen.event.InviteApplicant2.INVITE_APPLICANT_2;
+import static uk.gov.hmcts.divorce.common.event.InviteApplicant2.INVITE_APPLICANT_2;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
