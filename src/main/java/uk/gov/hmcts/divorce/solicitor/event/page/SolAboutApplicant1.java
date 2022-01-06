@@ -34,10 +34,12 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
                 .mandatoryWithoutDefaultValue(Applicant::getNameChangedHowOtherDetails,
                 "applicant1NameChangedHow=\"other\"",
                 "If not through marriage or deed poll, please provide details of how they legally changed they name")
-                .optionalWithLabel(Applicant::getGender,
+                .mandatoryWithoutDefaultValue(Applicant::getGender, "divorceOrDissolution=\"dissolution\"",
                 "Is ${labelContentTheApplicantOrApplicant1} male or female?")
                 .done()
             .complex(CaseData::getApplication)
+                .mandatory(Application::getDivorceWho, "divorceOrDissolution=\"divorce\"", null,
+                "Who is ${labelContentTheApplicantOrApplicant1} divorcing?")
                 .complex(Application::getMarriageDetails)
                     .mandatory(MarriageDetails::getFormationType)
                     .done()
