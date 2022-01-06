@@ -152,13 +152,6 @@ public class Applicant {
     private String pcqId;
 
     @CCD(
-        label = "Spouse Type",
-        typeOverride = FixedRadioList,
-        typeParameterOverride = "WhoDivorcing"
-    )
-    private WhoDivorcing divorceWho;
-
-    @CCD(
         label = "The applicant wants to continue with their application."
     )
     private YesOrNo continueApplication;
