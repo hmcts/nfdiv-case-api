@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -22,7 +23,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
-public class Applicant2ApprovedNotification {
+public class Applicant2ApprovedNotification implements ApplicantNotification {
 
     public static final String PAYS_FEES = "paysFees";
 
@@ -32,29 +33,33 @@ public class Applicant2ApprovedNotification {
     @Autowired
     private CommonContent commonContent;
 
-    public void sendToApplicant1(CaseData caseData, Long id) {
-        log.info("Sending applicant 2 approved notification to applicant 1 for case : {}", id);
+    @Override
+    public void sendToApplicant1(final CaseData caseData, final Long id) {
 
-        notificationService.sendEmail(
-            caseData.getApplicant1().getEmail(),
-            JOINT_APPLICANT1_APPLICANT2_APPROVED,
-            applicant1TemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
-            caseData.getApplicant1().getLanguagePreference()
-        );
+        if (caseData.getApplication().isHelpWithFeesApplication()
+            && caseData.getApplication().getApplicant2HelpWithFees().getNeedHelp() != YesOrNo.YES) {
+            log.info("Sending applicant 2 denied HWF notification to applicant 1 for case : {}", id);
+
+            notificationService.sendEmail(
+                caseData.getApplicant1().getEmail(),
+                JOINT_APPLICANT1_APPLICANT2_APPROVED_WITHOUT_HWF,
+                commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
+                caseData.getApplicant1().getLanguagePreference()
+            );
+        } else {
+            log.info("Sending applicant 2 approved notification to applicant 1 for case : {}", id);
+
+            notificationService.sendEmail(
+                caseData.getApplicant1().getEmail(),
+                JOINT_APPLICANT1_APPLICANT2_APPROVED,
+                applicant1TemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
+                caseData.getApplicant1().getLanguagePreference()
+            );
+        }
     }
 
-    public void sendToApplicant1WithDeniedHwf(CaseData caseData, Long id) {
-        log.info("Sending applicant 2 denied HWF notification to applicant 1 for case : {}", id);
-
-        notificationService.sendEmail(
-            caseData.getApplicant1().getEmail(),
-            JOINT_APPLICANT1_APPLICANT2_APPROVED_WITHOUT_HWF,
-            commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
-            caseData.getApplicant1().getLanguagePreference()
-        );
-    }
-
-    public void sendToApplicant2(CaseData caseData, Long id) {
+    @Override
+    public void sendToApplicant2(final CaseData caseData, final Long id) {
         log.info("Sending applicant 2 approved notification to applicant 2 for case : {}", id);
 
         notificationService.sendEmail(

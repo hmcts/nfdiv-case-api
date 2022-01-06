@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 
@@ -31,7 +32,10 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 class SubmitConditionalOrderTest {
 
     @Mock
-    private AppliedForConditionalOrderNotification notification;
+    private AppliedForConditionalOrderNotification appliedForConditionalOrderNotification;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
 
     @Mock
     private Clock clock;
@@ -80,6 +84,6 @@ class SubmitConditionalOrderTest {
 
         submitConditionalOrder.aboutToSubmit(caseDetails, null);
 
-        verify(notification).sendToApplicant1(caseData, 1L);
+        verify(notificationDispatcher).send(appliedForConditionalOrderNotification, caseData, 1L);
     }
 }

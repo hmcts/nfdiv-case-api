@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.common.service.SubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
@@ -70,6 +71,9 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
 
     @Autowired
     private SolicitorSubmittedNotification solicitorSubmittedNotification;
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -189,8 +193,8 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
                                                CaseDetails<CaseData, State> beforeDetails) {
 
-        if (Submitted.equals(details.getState())) {
-            solicitorSubmittedNotification.send(details.getData(), details.getId());
+        if (Submitted == details.getState()) {
+            notificationDispatcher.send(solicitorSubmittedNotification, details.getData(), details.getId());
         }
 
         return SubmittedCallbackResponse.builder().build();
