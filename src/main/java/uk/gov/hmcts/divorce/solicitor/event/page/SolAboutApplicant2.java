@@ -38,6 +38,14 @@ public class SolAboutApplicant2 implements CcdPageConfiguration {
                     Applicant::getNameChangedHowOtherDetails,
                     "applicant2NameChangedHow=\"other\"",
                     "If not through marriage or deed poll, please provide details of how they legally changed they name")
+                .optionalWithLabel(Applicant::getGender,
+                        "Is ${labelContentTheApplicant2} male or female?")
+                .mandatory(
+                    Applicant::getDivorceWho,
+                    "divorceOrDissolution=\"divorce\"",
+                    null,
+                    "What is ${labelContentTheApplicant2}?"
+                )
                 .done();
     }
 }

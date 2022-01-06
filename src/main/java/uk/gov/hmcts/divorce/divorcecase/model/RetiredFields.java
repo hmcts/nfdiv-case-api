@@ -283,20 +283,6 @@ public class RetiredFields {
     )
     private String generalOrderLegalAdvisorName;
 
-    @CCD(
-        label = "Spouse Type",
-        typeOverride = FixedRadioList,
-        typeParameterOverride = "WhoDivorcing"
-    )
-    private WhoDivorcing applicant1DivorceWho;
-
-    @CCD(
-        label = "Spouse Type",
-        typeOverride = FixedRadioList,
-        typeParameterOverride = "WhoDivorcing"
-    )
-    private WhoDivorcing applicant2DivorceWho;
-
     @JsonIgnore
     private static final Consumer<Map<String, Object>> DO_NOTHING = data -> {
     };
