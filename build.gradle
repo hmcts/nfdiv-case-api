@@ -322,7 +322,7 @@ dependencies {
   functionalTestImplementation group: 'uk.gov.hmcts.reform', name: 'document-management-client', version: '7.0.0'
   functionalTestImplementation group: 'uk.gov.hmcts.reform', name: 'service-auth-provider-client', version: versions.s2sClient
 
-  cftlibImplementation 'com.github.hmcts:rse-cft-lib:0.1.0'
+  cftlibImplementation 'com.github.hmcts:rse-cft-lib:0.2.1'
 }
 
 mainClassName = 'uk.gov.hmcts.divorce.CaseApiApplication'
