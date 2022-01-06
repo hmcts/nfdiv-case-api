@@ -41,3 +41,5 @@ services:
       HEALTH_ROLE_ASSIGNMENT_API: http://host.docker.internal:4013/health
     ports:
       - 3000:3000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
