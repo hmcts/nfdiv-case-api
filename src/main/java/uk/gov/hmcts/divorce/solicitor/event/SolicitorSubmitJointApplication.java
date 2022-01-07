@@ -56,7 +56,7 @@ public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, Stat
             .forStates(AwaitingApplicant2Response, Draft)
             .name("Submit joint application")
             .description("Submit joint application")
-            .showSummary()
+            .showSummary(false)
             .endButtonLabel("Submit Application")
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR, SOLICITOR)
             .grant(READ,
