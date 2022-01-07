@@ -23,7 +23,6 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.REVIEW_DEADLINE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.isDivorce;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
@@ -138,6 +137,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
         final String email = caseData.getApplicant2().getSolicitor().getEmail();
 
+        //TODO: should not do this if solicitor service
         if (caseData.getApplicationType().isSole() && isNotBlank(email)) {
             notificationService.sendEmail(
                 email,
@@ -162,7 +162,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         templateVars.put(
             CREATE_ACCOUNT_LINK,
             config.getTemplateVars()
-                .get(isDivorce(caseData) ? RESPONDENT_SIGN_IN_DIVORCE_URL : RESPONDENT_SIGN_IN_DISSOLUTION_URL)
+                .get(caseData.isDivorce() ? RESPONDENT_SIGN_IN_DIVORCE_URL : RESPONDENT_SIGN_IN_DISSOLUTION_URL)
         );
         templateVars.put(ACCESS_CODE, caseData.getCaseInvite().getAccessCode());
         return templateVars;

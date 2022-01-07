@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.AwaitingConditionalOrderNotification;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
@@ -30,7 +31,10 @@ public class SystemProgressHeldCase implements CCDConfig<CaseData, State, UserRo
     public static final String SYSTEM_PROGRESS_HELD_CASE = "system-progress-held-case";
 
     @Autowired
-    private AwaitingConditionalOrderNotification conditionalOrderNotification;
+    private AwaitingConditionalOrderNotification awaitingConditionalOrderNotification;
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -49,10 +53,9 @@ public class SystemProgressHeldCase implements CCDConfig<CaseData, State, UserRo
         final CaseData caseData = details.getData();
         final Long caseId = details.getId();
         log.info("20wk holding period elapsed for Case({}), notifying Joint Applicants they can apply for conditional order", caseId);
-        conditionalOrderNotification.sendToApplicant1(caseData, caseId, false);
-        if (!caseData.getApplicationType().isSole()) {
-            conditionalOrderNotification.sendToApplicant2(caseData, caseId, false);
-        }
+
+        notificationDispatcher.send(awaitingConditionalOrderNotification, caseData, caseId);
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();

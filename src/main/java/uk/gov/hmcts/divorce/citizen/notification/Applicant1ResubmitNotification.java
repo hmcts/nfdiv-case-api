@@ -16,7 +16,6 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_DISSOLUTIO
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL_NOTIFY_KEY;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.isDivorce;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT1_CHANGES_MADE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -68,7 +67,7 @@ public class Applicant1ResubmitNotification implements ApplicantNotification {
 
     private Map<String, String> applicant2TemplateVars(CaseData caseData, Long id) {
         Map<String, String> templateVars = resubmitTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
-        String signInLink = configVars.getTemplateVars().get(isDivorce(caseData) ? SIGN_IN_DIVORCE_URL : SIGN_IN_DISSOLUTION_URL);
+        String signInLink = configVars.getTemplateVars().get(caseData.isDivorce() ? SIGN_IN_DIVORCE_URL : SIGN_IN_DISSOLUTION_URL);
         templateVars.put(SIGN_IN_URL_NOTIFY_KEY, signInLink + "/applicant2/check-your-joint-application");
         return templateVars;
     }

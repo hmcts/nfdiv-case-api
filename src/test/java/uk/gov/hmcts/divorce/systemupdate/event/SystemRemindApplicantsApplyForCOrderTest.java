@@ -8,21 +8,26 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
-import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.notification.AwaitingConditionalOrderNotification;
+import uk.gov.hmcts.divorce.notification.AwaitingConditionalOrderReminderNotification;
+import uk.gov.hmcts.divorce.notification.ConditionalOrderPendingReminderNotification;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicantsApplyForCOrder.SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -36,16 +41,22 @@ class SystemRemindApplicantsApplyForCOrderTest {
     private HttpServletRequest httpServletRequest;
 
     @Mock
-    private AwaitingConditionalOrderNotification notification;
+    private AwaitingConditionalOrderReminderNotification awaitingConditionalOrderReminderNotification;
+
+    @Mock
+    private ConditionalOrderPendingReminderNotification conditionalOrderPendingReminderNotification;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
 
     @InjectMocks
-    private SystemRemindApplicantsApplyForCOrder underTest;
+    private SystemRemindApplicantsApplyForCOrder systemRemindApplicantsApplyForCOrder;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        underTest.configure(configBuilder);
+        systemRemindApplicantsApplyForCOrder.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
@@ -53,72 +64,75 @@ class SystemRemindApplicantsApplyForCOrderTest {
     }
 
     @Test
-    void shouldSendNotificationToBothApplicants() {
+    void shouldSendNotificationToBothApplicantsWhenStateIsAwaitingConditionalOrderAndJointApplication() {
         final CaseData caseData = caseData();
-        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.setApplicationType(JOINT_APPLICATION);
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
-            .state(State.AwaitingConditionalOrder).id(1L).data(caseData)
+            .state(AwaitingConditionalOrder).id(1L).data(caseData)
             .build();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("auth header");
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = underTest.aboutToSubmit(details, details);
+        final var response = systemRemindApplicantsApplyForCOrder.aboutToSubmit(details, details);
 
-        verify(notification).sendToApplicant1(caseData, details.getId(), true);
-        verify(notification).sendToApplicant2(caseData, details.getId(), true);
-        assertThat(response.getData().getApplication().getApplicantsRemindedCanApplyForConditionalOrder()).isEqualTo(YesOrNo.YES);
+        verify(notificationDispatcher).send(awaitingConditionalOrderReminderNotification, caseData, details.getId());
+        verifyNoMoreInteractions(notificationDispatcher);
+        assertThat(response.getData().getApplication().getApplicantsRemindedCanApplyForConditionalOrder()).isEqualTo(YES);
     }
 
     @Test
-    void shouldSendNotificationToApplicant1WhenAwaitingCOrderAndSole() {
+    void shouldSendNotificationToApplicant1WhenStateIsAwaitingConditionalOrderAndSoleApplication() {
         final CaseData caseData = caseData();
-        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        caseData.setApplicationType(SOLE_APPLICATION);
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
-            .state(State.AwaitingConditionalOrder).id(1L).data(caseData)
+            .state(AwaitingConditionalOrder).id(1L).data(caseData)
             .build();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("auth header");
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = underTest.aboutToSubmit(details, details);
+        final var response = systemRemindApplicantsApplyForCOrder.aboutToSubmit(details, details);
 
-        verify(notification).sendToApplicant1(caseData, details.getId(), true);
-        assertThat(response.getData().getApplication().getApplicantsRemindedCanApplyForConditionalOrder()).isEqualTo(YesOrNo.YES);
+        verify(notificationDispatcher).send(awaitingConditionalOrderReminderNotification, caseData, details.getId());
+        verifyNoMoreInteractions(notificationDispatcher);
+        assertThat(response.getData().getApplication().getApplicantsRemindedCanApplyForConditionalOrder()).isEqualTo(YES);
     }
 
     @Test
-    void shouldSendNotificationToApplicant2WhenCOrderPending() {
+    void shouldSendNotificationToApplicant2WhenStateIsConditionalOrderPendingAndSubmittedDateIsSet() {
         final CaseData caseData = caseData();
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(getConditionalOrderQuestions())
             .build());
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
-            .state(State.ConditionalOrderPending).id(1L).data(caseData)
+            .state(ConditionalOrderPending).id(1L).data(caseData)
             .build();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("auth header");
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = underTest.aboutToSubmit(details, details);
+        final var response = systemRemindApplicantsApplyForCOrder.aboutToSubmit(details, details);
 
-        verify(notification).sendToApplicant2(caseData, details.getId(), true);
-        assertThat(response.getData().getApplication().getApplicantsRemindedCanApplyForConditionalOrder()).isEqualTo(YesOrNo.YES);
+        verify(notificationDispatcher).send(conditionalOrderPendingReminderNotification, caseData, details.getId());
+        verifyNoMoreInteractions(notificationDispatcher);
+        assertThat(response.getData().getApplication().getApplicantsRemindedCanApplyForConditionalOrder()).isEqualTo(YES);
     }
 
     @Test
-    void shouldSendNotificationToApplicant1WhenCOrderPending() {
+    void shouldSendNotificationToApplicant1WhenStateConditionalOrderPendingAndSubmittedDateIsNotSet() {
         final CaseData caseData = caseData();
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(getConditionalOrderQuestions())
             .build());
         caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setSubmittedDate(null);
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
-            .state(State.ConditionalOrderPending).id(1L).data(caseData)
+            .state(ConditionalOrderPending).id(1L).data(caseData)
             .build();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("auth header");
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = underTest.aboutToSubmit(details, details);
+        final var response = systemRemindApplicantsApplyForCOrder.aboutToSubmit(details, details);
 
-        verify(notification).sendToApplicant1(caseData, details.getId(), true);
-        assertThat(response.getData().getApplication().getApplicantsRemindedCanApplyForConditionalOrder()).isEqualTo(YesOrNo.YES);
+        verify(notificationDispatcher).send(conditionalOrderPendingReminderNotification, caseData, details.getId());
+        verifyNoMoreInteractions(notificationDispatcher);
+        assertThat(response.getData().getApplication().getApplicantsRemindedCanApplyForConditionalOrder()).isEqualTo(YES);
     }
 }

@@ -9,9 +9,9 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.notification.AwaitingConditionalOrderNotification;
-
-import java.util.Objects;
+import uk.gov.hmcts.divorce.notification.AwaitingConditionalOrderReminderNotification;
+import uk.gov.hmcts.divorce.notification.ConditionalOrderPendingReminderNotification;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
@@ -26,7 +26,13 @@ public class SystemRemindApplicantsApplyForCOrder implements CCDConfig<CaseData,
     public static final String SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER = "system-remind-applicants-conditional-order";
 
     @Autowired
-    private AwaitingConditionalOrderNotification notification;
+    private AwaitingConditionalOrderReminderNotification awaitingConditionalOrderReminderNotification;
+
+    @Autowired
+    private ConditionalOrderPendingReminderNotification conditionalOrderPendingReminderNotification;
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -44,18 +50,13 @@ public class SystemRemindApplicantsApplyForCOrder implements CCDConfig<CaseData,
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
         CaseData data = details.getData();
+
         if (AwaitingConditionalOrder.equals(details.getState()) || ConditionalOrderDrafted.equals(details.getState())) {
-            notification.sendToApplicant1(data, details.getId(), true);
-            if (!data.getApplicationType().isSole()) {
-                notification.sendToApplicant2(data, details.getId(), true);
-            }
+            notificationDispatcher.send(awaitingConditionalOrderReminderNotification, data, details.getId());
         } else {
-            if (Objects.isNull(data.getConditionalOrder().getConditionalOrderApplicant1Questions().getSubmittedDate())) {
-                notification.sendToApplicant1(data, details.getId(), true);
-            } else {
-                notification.sendToApplicant2(data, details.getId(), true);
-            }
+            notificationDispatcher.send(conditionalOrderPendingReminderNotification, data, details.getId());
         }
+
         data.getApplication().setApplicantsRemindedCanApplyForConditionalOrder(YES);
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
