@@ -201,11 +201,10 @@ repositories {
 }
 
 def versions = [
-  jackson           : '2.12.4',
+  jackson           : '2.13.1',
   junit             : '5.8.2',
   junitPlatform     : '1.8.2',
-  lombok            : '1.18.20',
-  reformsJavaLogging: '5.1.7',
+  lombok            : '1.18.22',
   springBoot        : springBoot.class.package.implementationVersion
 ]
 
@@ -230,7 +229,10 @@ dependencies {
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: versions.jackson
   implementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.6.0-prerelease'
   implementation group: 'com.github.hmcts', name: 'ccd-client', version: '4.8.3'
+  implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '2.0.1'
+  implementation group: 'com.github.hmcts', name: 'java-logging', version: '5.1.9'
   implementation group: 'com.github.hmcts', name: 'send-letter-client', version: '3.0.10'
+  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '4.0.2'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.17.1'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.17.1'
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.56'
@@ -246,12 +248,7 @@ dependencies {
   implementation group: 'org.springframework', name: 'spring-aspects', version: '5.3.14'
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-hystrix', version: '2.2.10.RELEASE'
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: '3.1.0'
-  implementation group: 'uk.gov.hmcts.reform', name: 'logging', version: versions.reformsJavaLogging
-  implementation group: 'uk.gov.hmcts.reform', name: 'logging-appinsights', version: versions.reformsJavaLogging
-  implementation group: 'uk.gov.hmcts.reform', name: 'logging-spring', version: versions.reformsJavaLogging
-  implementation group: 'uk.gov.hmcts.reform', name: 'idam-client', version: '2.0.0'
   implementation group: 'uk.gov.service.notify', name: 'notifications-java-client', version: '3.17.2-RELEASE'
-  implementation group: 'uk.gov.hmcts.reform', name: 'service-auth-provider-client', version: '4.0.0'
 
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
