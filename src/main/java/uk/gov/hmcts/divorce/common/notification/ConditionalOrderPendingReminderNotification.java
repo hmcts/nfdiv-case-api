@@ -11,7 +11,6 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
@@ -31,7 +30,7 @@ public class ConditionalOrderPendingReminderNotification implements ApplicantNot
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
-        if (isNull(caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getSubmittedDate())) {
+        if (caseData.getConditionalOrder().isConditionalOrderPending()) {
             log.info("Notifying applicant 1 that they can apply for a conditional order: {}", id);
 
             final Applicant applicant1 = caseData.getApplicant1();
@@ -51,7 +50,7 @@ public class ConditionalOrderPendingReminderNotification implements ApplicantNot
 
     @Override
     public void sendToApplicant1Solicitor(final CaseData caseData, final Long id) {
-        if (isNull(caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getSubmittedDate())) {
+        if (caseData.getConditionalOrder().isConditionalOrderPending()) {
             final Applicant applicant = caseData.getApplicant1();
 
             final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, id);
@@ -69,7 +68,7 @@ public class ConditionalOrderPendingReminderNotification implements ApplicantNot
 
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
-        if (!isNull(caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getSubmittedDate())
+        if (!caseData.getConditionalOrder().isConditionalOrderPending()
             && nonNull(caseData.getApplicant2().getEmail())) {
             log.info("Notifying applicant 2 that they can apply for a conditional order: {}", id);
             final Applicant applicant2 = caseData.getApplicant2();
@@ -89,7 +88,7 @@ public class ConditionalOrderPendingReminderNotification implements ApplicantNot
 
     @Override
     public void sendToApplicant2Solicitor(final CaseData caseData, final Long id) {
-        if (!isNull(caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getSubmittedDate())) {
+        if (!caseData.getConditionalOrder().isConditionalOrderPending()) {
             final Applicant applicant2 = caseData.getApplicant2();
 
             final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, id);

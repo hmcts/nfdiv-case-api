@@ -57,7 +57,6 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
             templateVars,
             applicant1.getLanguagePreference()
         );
-        log.info("Successfully sent awaiting conditional order notification for case : {}", id);
     }
 
     @Override
