@@ -137,7 +137,6 @@ public class CaseData {
     )
     private List<ListValue<DivorceDocument>> applicant2DocumentsUploaded;
 
-
     @CCD(
         label = "RDC",
         hint = "Regional divorce unit",
