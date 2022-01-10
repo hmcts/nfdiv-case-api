@@ -256,13 +256,13 @@ public class PaymentService {
 
         creditAccountPaymentRequest.setOrganisationName(solicitor.getOrganisationPolicy().getOrganisation().getOrganisationName());
 
-        creditAccountPaymentRequest.setCustomerReference(solicitor.getReference());
+        creditAccountPaymentRequest.setCustomerReference(orderSummary.getPaymentReference());
 
         final Fee fee = getFeeValue(orderSummary);
         creditAccountPaymentRequest.setDescription(fee.getDescription());
 
         creditAccountPaymentRequest.setAmount(orderSummary.getPaymentTotal());
-        creditAccountPaymentRequest.setCcdCaseNumber(orderSummary.getPaymentReference());
+        creditAccountPaymentRequest.setCcdCaseNumber(String.valueOf(caseId));
 
         List<PaymentItem> paymentItemList = populateFeesPaymentItems(
             caseId,
