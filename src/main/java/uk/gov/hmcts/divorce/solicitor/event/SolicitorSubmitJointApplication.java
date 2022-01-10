@@ -51,6 +51,9 @@ public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, Stat
     private MarriageIrretrievablyBrokenForApplicant2 marriageIrretrievablyBrokenForApplicant2;
 
     @Autowired
+    private HelpWithFeesPageForApplicant2  helpWithFeesPageForApplicant2;
+
+    @Autowired
     private CcdUpdateService ccdUpdateService;
 
     @Autowired
@@ -67,7 +70,7 @@ public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, Stat
         final List<CcdPageConfiguration> pages = asList(
             marriageIrretrievablyBrokenForApplicant2,
             new FinancialOrdersForApplicant2(),
-            new HelpWithFeesPageForApplicant2(),
+            helpWithFeesPageForApplicant2,
             new CheckApplicant1SolicitorAnswers()
         );
 

@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.solicitor.event.page.HelpWithFeesPageForApplicant2;
 import uk.gov.hmcts.divorce.solicitor.event.page.MarriageIrretrievablyBrokenForApplicant2;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -52,6 +53,9 @@ class SolicitorSubmitJointApplicationTest {
 
     @Mock
     private MarriageIrretrievablyBrokenForApplicant2 marriageIrretrievablyBrokenForApplicant2;
+
+    @Mock
+    private HelpWithFeesPageForApplicant2 helpWithFeesPageForApplicant2;
 
     @InjectMocks
     private SolicitorSubmitJointApplication solicitorSubmitJointApplication;
