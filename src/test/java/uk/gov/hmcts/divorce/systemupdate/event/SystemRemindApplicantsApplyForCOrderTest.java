@@ -8,12 +8,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
+import uk.gov.hmcts.divorce.common.notification.AwaitingConditionalOrderReminderNotification;
+import uk.gov.hmcts.divorce.common.notification.ConditionalOrderPendingReminderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.notification.AwaitingConditionalOrderReminderNotification;
-import uk.gov.hmcts.divorce.notification.ConditionalOrderPendingReminderNotification;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import javax.servlet.http.HttpServletRequest;

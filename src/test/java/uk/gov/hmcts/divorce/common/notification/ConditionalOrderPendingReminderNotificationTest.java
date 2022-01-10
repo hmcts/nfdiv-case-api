@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.notification;
+package uk.gov.hmcts.divorce.common.notification;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -6,10 +6,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.common.notification.ConditionalOrderPendingReminderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.notification.CommonContent;
+import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.HashMap;
 
@@ -20,8 +23,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
-import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
-import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
@@ -44,7 +45,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConditionalOrderQuestions;
 
 @ExtendWith(MockitoExtension.class)
-class AwaitingConditionalOrderReminderNotificationTest {
+class ConditionalOrderPendingReminderNotificationTest {
 
     @Mock
     private CommonContent commonContent;
@@ -53,11 +54,15 @@ class AwaitingConditionalOrderReminderNotificationTest {
     private NotificationService notificationService;
 
     @InjectMocks
-    private AwaitingConditionalOrderReminderNotification awaitingConditionalOrderReminderNotification;
+    private ConditionalOrderPendingReminderNotification conditionalOrderPendingReminderNotification;
 
     @Test
-    void shouldSendNotificationToApplicant1() {
+    void shouldSendNotificationToApplicant1WhenSubmittedDateIsNotSet() {
         final CaseData caseData = caseData();
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .conditionalOrderApplicant1Questions(getConditionalOrderQuestions())
+            .build());
+        caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setSubmittedDate(null);
 
         when(commonContent
             .conditionalOrderTemplateVars(
@@ -67,7 +72,7 @@ class AwaitingConditionalOrderReminderNotificationTest {
                 caseData.getApplicant2()))
             .thenReturn(new HashMap<>());
 
-        awaitingConditionalOrderReminderNotification.sendToApplicant1(caseData, 1234567890123456L);
+        conditionalOrderPendingReminderNotification.sendToApplicant1(caseData, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -80,7 +85,19 @@ class AwaitingConditionalOrderReminderNotificationTest {
     }
 
     @Test
-    void shouldSendNotificationToApplicant1Solicitor() {
+    void shouldNotSendNotificationToApplicant1WhenSubmittedDateIsSet() {
+        final CaseData caseData = caseData();
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .conditionalOrderApplicant1Questions(getConditionalOrderQuestions())
+            .build());
+
+        conditionalOrderPendingReminderNotification.sendToApplicant1(caseData, 1234567890123456L);
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendNotificationToApplicant1SolicitorWhenSubmittedDateIsNotSet() {
         final Applicant applicant = getApplicant();
         applicant.setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).name(TEST_SOLICITOR_NAME).build());
         applicant.setSolicitorRepresented(YesOrNo.YES);
@@ -88,10 +105,11 @@ class AwaitingConditionalOrderReminderNotificationTest {
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(getConditionalOrderQuestions())
             .build());
+        caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setSubmittedDate(null);
 
         when(commonContent.basicTemplateVars(caseData, 1234567890123456L)).thenReturn(getBasicTemplateVars());
 
-        awaitingConditionalOrderReminderNotification.sendToApplicant1Solicitor(caseData, 1234567890123456L);
+        conditionalOrderPendingReminderNotification.sendToApplicant1Solicitor(caseData, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
@@ -107,10 +125,27 @@ class AwaitingConditionalOrderReminderNotificationTest {
     }
 
     @Test
-    void shouldSendNotificationToApplicant2IfJointApplication() {
+    void shouldNotSendNotificationToApplicant1SolicitorWhenSubmittedDateIsSet() {
+        final Applicant applicant = getApplicant();
+        applicant.setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).name(TEST_SOLICITOR_NAME).build());
+        applicant.setSolicitorRepresented(YesOrNo.YES);
+        final var caseData = CaseData.builder().applicant1(applicant).build();
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .conditionalOrderApplicant1Questions(getConditionalOrderQuestions())
+            .build());
+
+        conditionalOrderPendingReminderNotification.sendToApplicant1Solicitor(caseData, 1234567890123456L);
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendNotificationToApplicant2WhenSubmittedDateIsSet() {
         final CaseData caseData = caseData();
-        caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .conditionalOrderApplicant1Questions(getConditionalOrderQuestions())
+            .build());
 
         when(commonContent
             .conditionalOrderTemplateVars(
@@ -120,7 +155,7 @@ class AwaitingConditionalOrderReminderNotificationTest {
                 caseData.getApplicant1()))
             .thenReturn(new HashMap<>());
 
-        awaitingConditionalOrderReminderNotification.sendToApplicant2(caseData, 1234567890123456L);
+        conditionalOrderPendingReminderNotification.sendToApplicant2(caseData, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -133,30 +168,61 @@ class AwaitingConditionalOrderReminderNotificationTest {
     }
 
     @Test
-    void shouldNotSendNotificationToApplicant2IfSoleApplication() {
+    void shouldNotSendNotificationToApplicant2WhenSubmittedDateIsNotSet() {
         final CaseData caseData = caseData();
-        caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .conditionalOrderApplicant1Questions(getConditionalOrderQuestions())
+            .build());
+        caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setSubmittedDate(null);
 
-        awaitingConditionalOrderReminderNotification.sendToApplicant2(caseData, 1234567890123456L);
+        conditionalOrderPendingReminderNotification.sendToApplicant2(caseData, 1234567890123456L);
 
         verifyNoInteractions(notificationService);
     }
 
     @Test
-    void shouldSendNotificationToApplicant2SolicitorIfJointApplication() {
+    void shouldNotSendNotificationToApplicant2WhenApplicant2EmailNotSet() {
+        final CaseData caseData = caseData();
+        caseData.getApplicant2().setEmail(null);
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .conditionalOrderApplicant1Questions(getConditionalOrderQuestions())
+            .build());
+
+        conditionalOrderPendingReminderNotification.sendToApplicant2(caseData, 1234567890123456L);
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    void shouldNotSendNotificationToApplicant2SolicitorWhenSubmittedDateIsNotSet() {
         final Applicant applicant = getApplicant();
         applicant.setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).name(TEST_SOLICITOR_NAME).build());
         applicant.setSolicitorRepresented(YesOrNo.YES);
         final var caseData = CaseData.builder().applicant2(applicant).build();
-        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .conditionalOrderApplicant1Questions(getConditionalOrderQuestions())
+            .build());
+        caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setSubmittedDate(null);
+
+        conditionalOrderPendingReminderNotification.sendToApplicant2Solicitor(caseData, 1234567890123456L);
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendNotificationToApplicant2SolicitorWhenSubmittedDateIsSet() {
+        final Applicant applicant = getApplicant();
+        applicant.setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).name(TEST_SOLICITOR_NAME).build());
+        applicant.setSolicitorRepresented(YesOrNo.YES);
+        final var caseData = CaseData.builder().applicant2(applicant).build();
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(getConditionalOrderQuestions())
             .build());
 
         when(commonContent.basicTemplateVars(caseData, 1234567890123456L)).thenReturn(getBasicTemplateVars());
 
-        awaitingConditionalOrderReminderNotification.sendToApplicant2Solicitor(caseData, 1234567890123456L);
+        conditionalOrderPendingReminderNotification.sendToApplicant2Solicitor(caseData, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
@@ -169,21 +235,5 @@ class AwaitingConditionalOrderReminderNotificationTest {
             )),
             eq(ENGLISH)
         );
-    }
-
-    @Test
-    void shouldNotSendNotificationToApplicant2SolicitorIfSoleApplication() {
-        final Applicant applicant = getApplicant();
-        applicant.setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).name(TEST_SOLICITOR_NAME).build());
-        applicant.setSolicitorRepresented(YesOrNo.YES);
-        final var caseData = CaseData.builder().applicant2(applicant).build();
-        caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.setConditionalOrder(ConditionalOrder.builder()
-            .conditionalOrderApplicant1Questions(getConditionalOrderQuestions())
-            .build());
-
-        awaitingConditionalOrderReminderNotification.sendToApplicant2Solicitor(caseData, 1234567890123456L);
-
-        verifyNoInteractions(notificationService);
     }
 }
