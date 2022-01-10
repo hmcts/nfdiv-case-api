@@ -262,9 +262,14 @@ public class PaymentService {
         creditAccountPaymentRequest.setDescription(fee.getDescription());
 
         creditAccountPaymentRequest.setAmount(orderSummary.getPaymentTotal());
-        creditAccountPaymentRequest.setCcdCaseNumber(String.valueOf(caseId));
+        creditAccountPaymentRequest.setCcdCaseNumber(orderSummary.getPaymentReference());
 
-        List<PaymentItem> paymentItemList = populateFeesPaymentItems(caseId, orderSummary.getPaymentTotal(), fee, solicitor.getReference());
+        List<PaymentItem> paymentItemList = populateFeesPaymentItems(
+            caseId,
+            orderSummary.getPaymentTotal(),
+            fee,
+            orderSummary.getPaymentReference()
+        );
 
         creditAccountPaymentRequest.setFees(paymentItemList);
 
