@@ -17,8 +17,7 @@ public class CheckApplicant1SolicitorAnswers implements CcdPageConfiguration {
                 .mandatory(Application::getApplicant1SolicitorAnswersLink)
                 .mandatoryWithLabel(
                     Application::getApplicant2ConfirmApplicant1Information,
-                    "Are any corrections needed to the answers applicant 1 has provided?"
-                )
+                    "Are any corrections needed to the answers applicant 1 has provided?")
             .done()
             .page("additionalInformation")
             .showCondition("applicant2ConfirmApplicant1Information=\"No\"")
