@@ -11,7 +11,6 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
-import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
@@ -127,11 +126,10 @@ public class CcdUpdateService {
         final CaseData caseData = caseDetailsUpdater.updateCaseData(caseTask, startEventResponse).getData();
 
         //TODO: Remove temp logging for tracking certificate of entitlement
-        final DivorceDocument certificateOfEntitlementDocument = caseData.getConditionalOrder().getCertificateOfEntitlementDocument();
         log.info(
-            "****** After CaseData updated for case id: {}, certificate of entitlement: {}",
+            "****** After CaseData updated for case id: {}, conditional order: {}",
             caseId,
-            certificateOfEntitlementDocument);
+            caseData.getConditionalOrder());
 
         final CaseDataContent caseDataContent = ccdCaseDataContentProvider.createCaseDataContent(
             startEventResponse,
