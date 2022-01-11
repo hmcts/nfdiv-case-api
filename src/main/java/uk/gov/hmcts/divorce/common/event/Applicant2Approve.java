@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.citizen.event;
+package uk.gov.hmcts.divorce.common.event;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,28 +7,30 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.citizen.notification.Applicant2RequestChangesNotification;
+import uk.gov.hmcts.divorce.citizen.notification.Applicant2ApprovedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant2RequestChanges;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant2BasicCase;
 
 @Slf4j
 @Component
-public class CitizenApplicant2RequestChanges implements CCDConfig<CaseData, State, UserRole> {
+public class Applicant2Approve implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String CITIZEN_APPLICANT_2_REQUEST_CHANGES = "applicant2-request-changes";
+    public static final String APPLICANT_2_APPROVE = "applicant2-approve";
 
     @Autowired
-    private Applicant2RequestChangesNotification applicant2RequestChangesNotification;
+    private Applicant2ApprovedNotification applicant2ApprovedNotification;
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
@@ -37,10 +39,10 @@ public class CitizenApplicant2RequestChanges implements CCDConfig<CaseData, Stat
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         configBuilder
-            .event(CITIZEN_APPLICANT_2_REQUEST_CHANGES)
-            .forStateTransition(AwaitingApplicant2Response, AwaitingApplicant1Response)
-            .name("Applicant 2 Request Changes")
-            .description("Applicant 2 Requests changes to be made by Applicant 1")
+            .event(APPLICANT_2_APPROVE)
+            .forStateTransition(AwaitingApplicant2Response, Applicant2Approved)
+            .name("Applicant 2 approve")
+            .description("Applicant 2 has approved")
             .grant(CREATE_READ_UPDATE, APPLICANT_2)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
@@ -48,11 +50,12 @@ public class CitizenApplicant2RequestChanges implements CCDConfig<CaseData, Stat
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Citizen applicant 2 request changes about to submit callback invoked");
+        log.info("Applicant 2 approve about to submit callback invoked");
+
         CaseData data = details.getData();
 
         log.info("Validating case data");
-        final List<String> validationErrors = validateApplicant2RequestChanges(data.getApplication());
+        final List<String> validationErrors = validateApplicant2BasicCase(data);
 
         if (!validationErrors.isEmpty()) {
             log.info("Validation errors: {} ", validationErrors);
@@ -60,15 +63,18 @@ public class CitizenApplicant2RequestChanges implements CCDConfig<CaseData, Stat
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(data)
                 .errors(validationErrors)
-                .state(AwaitingApplicant2Response)
+                .state(details.getState())
                 .build();
         }
 
-        notificationDispatcher.send(applicant2RequestChangesNotification, data, details.getId());
+        data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
+
+        notificationDispatcher.send(applicant2ApprovedNotification, data, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
-            .state(AwaitingApplicant1Response)
+            .state(Applicant2Approved)
             .build();
     }
+
 }

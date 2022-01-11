@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.divorce.common.ConditionalOrderCourtDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -42,6 +43,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableConfigurationProperties
 @AutoConfigureMockMvc
+@DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
 class CertificateOfEntitlementContentIT {
 
     @Autowired

@@ -29,7 +29,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class ServiceOrderTemplateContentTest {
+public class ServiceOrderTemplateContentIT {
 
     @Autowired
     private ServiceOrderTemplateContent serviceOrderTemplateContent;
