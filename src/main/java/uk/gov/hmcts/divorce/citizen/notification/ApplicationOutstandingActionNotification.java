@@ -20,7 +20,6 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFIC
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
-import static uk.gov.hmcts.divorce.notification.CommonContent.isDivorce;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_ACTIONS;
 
 @Component
@@ -97,12 +96,12 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
         Map<String, String> templateVars = new HashMap<>();
 
         templateVars.put(PAPERS_SERVED_ANOTHER_WAY, soleServingAnotherWay ? YES : NO);
-        templateVars.put(DIVORCE_SERVED_ANOTHER_WAY, soleServingAnotherWay && isDivorce(caseData) ? YES : NO);
+        templateVars.put(DIVORCE_SERVED_ANOTHER_WAY, soleServingAnotherWay && caseData.isDivorce() ? YES : NO);
         templateVars.put(SERVE_WIFE_ANOTHER_WAY,
-            soleServingAnotherWay && isDivorce(caseData) && caseData.getApplicant2().getGender().equals(Gender.FEMALE) ? YES : NO);
+            soleServingAnotherWay && caseData.isDivorce() && caseData.getApplicant2().getGender().equals(Gender.FEMALE) ? YES : NO);
         templateVars.put(SERVE_HUSBAND_ANOTHER_WAY,
-            soleServingAnotherWay && isDivorce(caseData) && caseData.getApplicant2().getGender().equals(Gender.MALE) ? YES : NO);
-        templateVars.put(DISSOLUTION_SERVED_ANOTHER_WAY, soleServingAnotherWay && !isDivorce(caseData) ? YES : NO);
+            soleServingAnotherWay && caseData.isDivorce() && caseData.getApplicant2().getGender().equals(Gender.MALE) ? YES : NO);
+        templateVars.put(DISSOLUTION_SERVED_ANOTHER_WAY, soleServingAnotherWay && !caseData.isDivorce() ? YES : NO);
         return templateVars;
     }
 
@@ -112,17 +111,17 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
         boolean nonNullMissingDocs = missingDocTypes != null && !missingDocTypes.isEmpty();
         boolean ukMarriage = caseData.getApplication().getMarriageDetails().getMarriedInUk().toBoolean();
         templateVars.put(MISSING_MARRIAGE_CERTIFICATE,
-            nonNullMissingDocs && missingDocTypes.contains(MARRIAGE_CERTIFICATE) && ukMarriage && isDivorce(caseData) ? YES : NO);
+            nonNullMissingDocs && missingDocTypes.contains(MARRIAGE_CERTIFICATE) && ukMarriage && caseData.isDivorce() ? YES : NO);
         templateVars.put(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE,
-            nonNullMissingDocs && missingDocTypes.contains(MARRIAGE_CERTIFICATE) && ukMarriage && !isDivorce(caseData) ? YES : NO);
+            nonNullMissingDocs && missingDocTypes.contains(MARRIAGE_CERTIFICATE) && ukMarriage && !caseData.isDivorce() ? YES : NO);
         templateVars.put(MISSING_FOREIGN_MARRIAGE_CERTIFICATE,
-            nonNullMissingDocs && missingDocTypes.contains(MARRIAGE_CERTIFICATE) && !ukMarriage && isDivorce(caseData) ? YES : NO);
+            nonNullMissingDocs && missingDocTypes.contains(MARRIAGE_CERTIFICATE) && !ukMarriage && caseData.isDivorce() ? YES : NO);
         templateVars.put(MISSING_FOREIGN_CIVIL_PARTNERSHIP_CERTIFICATE,
-            nonNullMissingDocs && missingDocTypes.contains(MARRIAGE_CERTIFICATE) && !ukMarriage && !isDivorce(caseData) ? YES : NO);
+            nonNullMissingDocs && missingDocTypes.contains(MARRIAGE_CERTIFICATE) && !ukMarriage && !caseData.isDivorce() ? YES : NO);
         templateVars.put(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION,
-            nonNullMissingDocs && missingDocTypes.contains(MARRIAGE_CERTIFICATE_TRANSLATION) && isDivorce(caseData) ? YES : NO);
+            nonNullMissingDocs && missingDocTypes.contains(MARRIAGE_CERTIFICATE_TRANSLATION) && caseData.isDivorce() ? YES : NO);
         templateVars.put(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION,
-            nonNullMissingDocs && missingDocTypes.contains(MARRIAGE_CERTIFICATE_TRANSLATION) && !isDivorce(caseData) ? YES : NO);
+            nonNullMissingDocs && missingDocTypes.contains(MARRIAGE_CERTIFICATE_TRANSLATION) && !caseData.isDivorce() ? YES : NO);
         templateVars.put(MISSING_NAME_CHANGE_PROOF, nonNullMissingDocs && missingDocTypes.contains(NAME_CHANGE_EVIDENCE) ? YES : NO);
         return templateVars;
     }

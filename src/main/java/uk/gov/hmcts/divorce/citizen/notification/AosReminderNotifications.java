@@ -19,7 +19,6 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.REVIEW_DEADLINE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
-import static uk.gov.hmcts.divorce.notification.CommonContent.isDivorce;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_PARTNER_HAS_NOT_RESPONDED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -54,6 +53,7 @@ public class AosReminderNotifications implements ApplicantNotification {
 
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
+        //TODO: Don't send reminder if a Solicitor Service
         if (isNotBlank(caseData.getApplicant2EmailAddress()) && isNotBlank(caseData.getCaseInvite().getAccessCode())) {
             log.info("Sending reminder to respondent to register for case : {}", id);
 
@@ -72,7 +72,7 @@ public class AosReminderNotifications implements ApplicantNotification {
         templateVars.put(
             CREATE_ACCOUNT_LINK,
             config.getTemplateVars()
-                .get(isDivorce(caseData) ? RESPONDENT_SIGN_IN_DIVORCE_URL : RESPONDENT_SIGN_IN_DISSOLUTION_URL)
+                .get(caseData.isDivorce() ? RESPONDENT_SIGN_IN_DIVORCE_URL : RESPONDENT_SIGN_IN_DISSOLUTION_URL)
         );
         templateVars.put(ACCESS_CODE, caseData.getCaseInvite().getAccessCode());
         templateVars.put(IS_REMINDER, YES);
