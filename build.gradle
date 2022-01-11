@@ -322,15 +322,15 @@ dependencies {
   functionalTestImplementation group: 'uk.gov.hmcts.reform', name: 'document-management-client', version: '7.0.0'
   functionalTestImplementation group: 'uk.gov.hmcts.reform', name: 'service-auth-provider-client', version: versions.s2sClient
 
-  cftlibImplementation 'com.github.hmcts:rse-cft-lib:0.2.1'
+  cftlibImplementation 'com.github.hmcts:rse-cft-lib:0.1.0'
 }
 
 mainClassName = 'uk.gov.hmcts.divorce.CaseApiApplication'
 
-ext.getVaultSecret = { String secretName ->
+ext.getVaultSecret = { String secretName, vaultName = 'nfdiv-aat' ->
   new ByteArrayOutputStream().withStream { os ->
     exec {
-      commandLine 'az', 'keyvault', 'secret', 'show', '--vault-name', 'nfdiv-aat', '-o', 'tsv', '--query', 'value', '--name', secretName
+      commandLine 'az', 'keyvault', 'secret', 'show', '--vault-name', vaultName, '-o', 'tsv', '--query', 'value', '--name', secretName
       standardOutput = os
     }
     return os.toString().replace('\n', '')
@@ -472,6 +472,14 @@ task libRun(type: org.springframework.boot.gradle.tasks.run.BootRun) {
         if (System.getenv("IDAM_API_BASEURL") == null) {
             println("Loading secrets from vault")
 
+            project.file('../.env').readLines().each() {
+                def (key, value) = it.tokenize('=')
+                environment key, value
+            }
+            environment 'IDAM_API_URL_BASE', 'https://idam-api.aat.platform.hmcts.net'
+            environment 'DEFINITION_STORE_URL_BASE', 'http://localhost:4013'
+            environment 'CCD_USER_PROFILE_URL', 'http://localhost:4013'
+
             systemProperty 'IDAM_API_BASEURL', 'https://idam-api.aat.platform.hmcts.net'
 
             systemProperty 'UK_GOV_NOTIFY_API_KEY', getVaultSecret('uk-gov-notify-api-key')
@@ -484,22 +492,23 @@ task libRun(type: org.springframework.boot.gradle.tasks.run.BootRun) {
             systemProperty 'IDAM_SOLICITOR_PASSWORD', getVaultSecret('idam-solicitor-password')
             systemProperty 'IDAM_CLIENT_SECRET', getVaultSecret('idam-secret')
 
+            systemProperty 'IDAM_DATA_STORE_SYSTEM_USER_USERNAME', '${CCD_SYSTEM_UPDATE_USERNAME}'
+            systemProperty 'IDAM_DATA_STORE_SYSTEM_USER_PASSWORD', '${CCD_SYSTEM_UPDATE_PASSWORD}'
             if (System.getenv("BOOT_RUN_DOCKER")) {
                 systemProperty 'IDAM_API_BASEURL', 'http://localhost:5000'
                 systemProperty 'CASE_DATA_STORE_BASEURL', 'http://localhost:4452'
             }
 
             // CCD config
-            systemProperty 'IDAM_OAUTH2_DATA_STORE_CLIENT_SECRET', getVaultSecret('idam-secret')
+            systemProperty 'IDAM_OAUTH2_DATA_STORE_CLIENT_SECRET', getVaultSecret('idam-data-store-client-secret', 'ccd-aat')
             systemProperty 'IDAM_API_BASE_URL', 'https://idam-api.aat.platform.hmcts.net'
             systemProperty 'IDAM_S2S_URL', 'http://rpe-service-auth-provider-aat.service.core-compute-aat.internal'
             systemProperty 'IDAM_CLIENT_ID', 'nfdiv_case_api'
+            systemProperty 'CASE_DOCUMENT_AM_URL', 'http://ccd-case-document-am-api-aat.service.core-compute-aat.internal'
 
-            // from nfdiv-dev-env/.env (also in the vault)
-            systemProperty 'DATA_STORE_IDAM_KEY', ''
-            systemProperty 'DEFINITION_STORE_IDAM_KEY', ''
 
-            systemProperty 'S2S_AUTHORISED_SERVICES', 'ccd_data,xui_webapp,nfdiv_case_api,ccd_gw'
+            systemProperty 'S2S_AUTHORISED_SERVICES', 'ccd_definition,ccd_data,xui_webapp,nfdiv_case_api,ccd_gw'
         }
     }
 }
+
