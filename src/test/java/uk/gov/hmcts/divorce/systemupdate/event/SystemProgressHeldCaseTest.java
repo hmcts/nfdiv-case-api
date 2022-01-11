@@ -8,26 +8,28 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
+import uk.gov.hmcts.divorce.common.notification.AwaitingConditionalOrderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.notification.AwaitingConditionalOrderNotification;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedBySolicitor;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 
 @ExtendWith(MockitoExtension.class)
 public class SystemProgressHeldCaseTest {
 
     @Mock
-    private AwaitingConditionalOrderNotification notification;
+    private AwaitingConditionalOrderNotification awaitingConditionalOrderNotification;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
 
     @InjectMocks
     private SystemProgressHeldCase underTest;
@@ -44,7 +46,7 @@ public class SystemProgressHeldCaseTest {
     }
 
     @Test
-    void shouldSendNotificationToSolicitor() {
+    void shouldSendNotifications() {
         final CaseData caseData = caseData();
         caseData.setApplicant1(applicantRepresentedBySolicitor());
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
@@ -52,32 +54,6 @@ public class SystemProgressHeldCaseTest {
 
         underTest.aboutToSubmit(details, details);
 
-        verify(notification).sendToApplicant1(caseData, details.getId(), false);
-    }
-
-    @Test
-    void shouldSendNotificationToBothApplicants() {
-        final CaseData caseData = caseData();
-        caseData.setApplicant1(getApplicant());
-        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
-        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().data(caseData).build();
-
-        underTest.aboutToSubmit(details, details);
-
-        verify(notification).sendToApplicant1(caseData, details.getId(), false);
-        verify(notification).sendToApplicant2(caseData, details.getId(), false);
-    }
-
-    @Test
-    void shouldSendNotificationOnlyToApplicant1() {
-        final CaseData caseData = caseData();
-        caseData.setApplicant1(getApplicant());
-        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
-        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().data(caseData).build();
-
-        underTest.aboutToSubmit(details, details);
-
-        verify(notification).sendToApplicant1(caseData, details.getId(), false);
-        verifyNoMoreInteractions(notification);
+        verify(notificationDispatcher).send(awaitingConditionalOrderNotification, caseData, details.getId());
     }
 }

@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
@@ -212,5 +213,10 @@ public class ConditionalOrder {
         this.setRefusalRejectionReason(null);
         this.setRefusalRejectionAdditionalInfo(null);
 
+    }
+
+    @JsonIgnore
+    public boolean isConditionalOrderPending() {
+        return isNull(conditionalOrderApplicant1Questions.getSubmittedDate());
     }
 }
