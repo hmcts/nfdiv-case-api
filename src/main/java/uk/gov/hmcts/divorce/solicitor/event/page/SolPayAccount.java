@@ -18,8 +18,8 @@ public class SolPayAccount implements CcdPageConfiguration {
             .complex(CaseData::getApplication)
                 .mandatoryWithLabel(Application::getPbaNumbers, "Select your account number")
                 .complex(Application::getApplicationFeeOrderSummary)
-                .mandatoryWithLabel(OrderSummary::getPaymentReference, "Enter your payment reference")
-                .done()
-            .done();
+                    .mandatoryWithLabel(OrderSummary::getPaymentReference, "Enter your payment reference")
+                    .done()
+                .done();
     }
 }
