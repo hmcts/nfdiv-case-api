@@ -256,7 +256,7 @@ public class PaymentService {
 
         creditAccountPaymentRequest.setOrganisationName(solicitor.getOrganisationPolicy().getOrganisation().getOrganisationName());
 
-        creditAccountPaymentRequest.setCustomerReference(orderSummary.getPaymentReference());
+        creditAccountPaymentRequest.setCustomerReference(caseData.getApplication().getFeeAccountReference());
 
         final Fee fee = getFeeValue(orderSummary);
         creditAccountPaymentRequest.setDescription(fee.getDescription());
@@ -268,7 +268,7 @@ public class PaymentService {
             caseId,
             orderSummary.getPaymentTotal(),
             fee,
-            orderSummary.getPaymentReference()
+            caseData.getApplication().getFeeAccountReference()
         );
 
         creditAccountPaymentRequest.setFees(paymentItemList);

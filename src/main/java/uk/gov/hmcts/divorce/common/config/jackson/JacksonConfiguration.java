@@ -19,7 +19,7 @@ public class JacksonConfiguration {
     @Primary
     @Bean
     public ObjectMapper getMapper() {
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
         mapper.configure(ACCEPT_CASE_INSENSITIVE_ENUMS, true);
         mapper.enable(INFER_BUILDER_TYPE_BINDINGS);
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
