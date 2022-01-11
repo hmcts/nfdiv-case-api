@@ -40,12 +40,9 @@ public class SolicitorSubmitJointApplicationService {
     public void submitEventForApprovalOrRequestingChanges(CaseDetails<CaseData, State> details) {
         final Application application = details.getData().getApplication();
 
-        String eventId;
-        if (YES.equals(application.getApplicant2ConfirmApplicant1Information())) {
-            eventId = APPLICANT_2_REQUEST_CHANGES;
-        } else {
-            eventId = APPLICANT_2_APPROVE;
-        }
+        String eventId = YES.equals(application.getApplicant2ConfirmApplicant1Information())
+            ? APPLICANT_2_REQUEST_CHANGES
+            : APPLICANT_2_APPROVE;
 
         String solicitorAuthToken = httpServletRequest.getHeader(AUTHORIZATION);
         User solUser = idamService.retrieveUser(solicitorAuthToken);
