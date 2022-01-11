@@ -177,6 +177,12 @@ public class ConditionalOrder {
     private String pronouncementJudge;
 
     @CCD(
+        label = "Conditional Order pronounced date"
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate pronouncedDate;
+
+    @CCD(
         label = "Grant Cost Order?",
         typeOverride = FixedRadioList,
         typeParameterOverride = "JudgeCostsClaimGranted"

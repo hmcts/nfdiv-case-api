@@ -26,6 +26,9 @@ public class UpdateCasePronouncementJudgeProvider implements BulkActionCaseTaskP
             conditionalOrder.setPronouncementJudge(
                 bulkActionCaseData.getPronouncementJudge()
             );
+            conditionalOrder.setPronouncedDate(
+                bulkActionCaseData.getPronouncedDate()
+            );
             return mainCaseDetails;
         };
     }

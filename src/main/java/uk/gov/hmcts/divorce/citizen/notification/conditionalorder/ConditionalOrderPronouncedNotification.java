@@ -35,7 +35,7 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
             CITIZEN_CONDITIONAL_ORDER_PRONOUNCED,
-            commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
+            templateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
             caseData.getApplicant1().getLanguagePreference()
         );
     }
