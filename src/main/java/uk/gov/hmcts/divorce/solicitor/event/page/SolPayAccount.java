@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.solicitor.event.page;
 
+import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
@@ -16,7 +17,9 @@ public class SolPayAccount implements CcdPageConfiguration {
             .showCondition("solPaymentHowToPay=\"feePayByAccount\"")
             .complex(CaseData::getApplication)
                 .mandatoryWithLabel(Application::getPbaNumbers, "Select your account number")
-                .mandatoryWithLabel(Application::getFeeAccountReference, "Enter your payment reference")
-                .done();
+                .complex(Application::getApplicationFeeOrderSummary)
+                .mandatoryWithLabel(OrderSummary::getPaymentReference, "Enter your payment reference")
+                .done()
+            .done();
     }
 }

@@ -221,13 +221,6 @@ public class Application {
     private DynamicList pbaNumbers;
 
     @CCD(
-        label = "Fee account reference",
-        hint = "This will appear on your statement to help you identify this payment",
-        access = {DefaultAccess.class}
-    )
-    private String feeAccountReference;
-
-    @CCD(
         label = "Here are your order details",
         access = {DefaultAccess.class}
     )

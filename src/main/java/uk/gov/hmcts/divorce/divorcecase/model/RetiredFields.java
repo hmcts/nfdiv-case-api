@@ -297,6 +297,9 @@ public class RetiredFields {
     )
     private WhoDivorcing applicant2DivorceWho;
 
+    @CCD(label = "Fee account reference")
+    private String feeAccountReference;
+
     @JsonIgnore
     private static final Consumer<Map<String, Object>> DO_NOTHING = data -> {
     };
