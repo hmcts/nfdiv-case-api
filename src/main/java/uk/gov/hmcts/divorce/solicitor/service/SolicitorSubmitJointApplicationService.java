@@ -17,8 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenApplicant2Approve.APPLICANT_2_APPROVE;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenApplicant2RequestChanges.CITIZEN_APPLICANT_2_REQUEST_CHANGES;
+import static uk.gov.hmcts.divorce.common.event.Applicant2Approve.APPLICANT_2_APPROVE;
+import static uk.gov.hmcts.divorce.common.event.Applicant2RequestChanges.APPLICANT_2_REQUEST_CHANGES;
 
 @Service
 @Slf4j
@@ -42,7 +42,7 @@ public class SolicitorSubmitJointApplicationService {
 
         String eventId;
         if (YES.equals(application.getApplicant2ConfirmApplicant1Information())) {
-            eventId = CITIZEN_APPLICANT_2_REQUEST_CHANGES;
+            eventId = APPLICANT_2_REQUEST_CHANGES;
         } else {
             eventId = APPLICANT_2_APPROVE;
         }

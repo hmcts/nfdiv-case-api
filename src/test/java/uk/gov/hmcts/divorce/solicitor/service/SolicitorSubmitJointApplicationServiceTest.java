@@ -21,8 +21,8 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenApplicant2Approve.APPLICANT_2_APPROVE;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenApplicant2RequestChanges.CITIZEN_APPLICANT_2_REQUEST_CHANGES;
+import static uk.gov.hmcts.divorce.common.event.Applicant2Approve.APPLICANT_2_APPROVE;
+import static uk.gov.hmcts.divorce.common.event.Applicant2RequestChanges.APPLICANT_2_REQUEST_CHANGES;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -62,7 +62,7 @@ public class SolicitorSubmitJointApplicationServiceTest {
 
         solicitorSubmitJointApplicationService.submitEventForApprovalOrRequestingChanges(caseDetails);
 
-        verify(ccdUpdateService).submitEvent(caseDetails, CITIZEN_APPLICANT_2_REQUEST_CHANGES, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(caseDetails, APPLICANT_2_REQUEST_CHANGES, user, SERVICE_AUTHORIZATION);
     }
 
     @Test

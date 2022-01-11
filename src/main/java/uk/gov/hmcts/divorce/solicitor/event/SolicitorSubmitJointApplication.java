@@ -86,5 +86,4 @@ public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, Stat
 
         return SubmittedCallbackResponse.builder().build();
     }
-
 }
