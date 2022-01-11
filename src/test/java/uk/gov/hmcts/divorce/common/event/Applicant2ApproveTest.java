@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.citizen.event;
+package uk.gov.hmcts.divorce.common.event;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.Applicant2ApprovedNotification;
+import uk.gov.hmcts.divorce.common.event.Applicant2Approve;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.Jurisdiction;
@@ -26,7 +27,7 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenApplicant2Approve.APPLICANT_2_APPROVE;
+import static uk.gov.hmcts.divorce.common.event.Applicant2Approve.APPLICANT_2_APPROVE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -35,7 +36,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 
 @ExtendWith(MockitoExtension.class)
-class CitizenApplicant2ApproveTest {
+class Applicant2ApproveTest {
 
     @Mock
     private Applicant2ApprovedNotification applicant2ApprovedNotification;
@@ -44,13 +45,13 @@ class CitizenApplicant2ApproveTest {
     private NotificationDispatcher notificationDispatcher;
 
     @InjectMocks
-    private CitizenApplicant2Approve citizenApplicant2Approve;
+    private Applicant2Approve applicant2Approve;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        citizenApplicant2Approve.configure(configBuilder);
+        applicant2Approve.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
@@ -65,7 +66,7 @@ class CitizenApplicant2ApproveTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenApplicant2Approve.aboutToSubmit(caseDetails, caseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = applicant2Approve.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getErrors().size()).isEqualTo(5);
         assertThat(response.getErrors().get(0)).isEqualTo("Applicant2FirstName cannot be empty or null");
@@ -78,7 +79,7 @@ class CitizenApplicant2ApproveTest {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenApplicant2Approve.aboutToSubmit(details, details);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = applicant2Approve.aboutToSubmit(details, details);
 
         assertThat(response.getErrors().size()).isEqualTo(5);
         assertThat(response.getErrors()).containsExactlyInAnyOrder(
@@ -102,7 +103,7 @@ class CitizenApplicant2ApproveTest {
 
         caseDetails.setState(State.AwaitingApplicant2Response);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenApplicant2Approve.aboutToSubmit(caseDetails, caseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = applicant2Approve.aboutToSubmit(caseDetails, caseDetails);
 
         verify(notificationDispatcher).send(applicant2ApprovedNotification, caseData, caseDetails.getId());
         assertThat(response.getState()).isEqualTo(State.Applicant2Approved);
@@ -122,7 +123,7 @@ class CitizenApplicant2ApproveTest {
 
         caseDetails.setState(State.AwaitingApplicant2Response);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenApplicant2Approve.aboutToSubmit(caseDetails, caseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = applicant2Approve.aboutToSubmit(caseDetails, caseDetails);
 
         verify(notificationDispatcher).send(applicant2ApprovedNotification, caseData, caseDetails.getId());
         assertThat(response.getState()).isEqualTo(State.Applicant2Approved);

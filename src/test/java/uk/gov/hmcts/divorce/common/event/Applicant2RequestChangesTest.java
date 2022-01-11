@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.citizen.event;
+package uk.gov.hmcts.divorce.common.event;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +19,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenApplicant2RequestChanges.CITIZEN_APPLICANT_2_REQUEST_CHANGES;
+import static uk.gov.hmcts.divorce.common.event.Applicant2RequestChanges.APPLICANT_2_REQUEST_CHANGES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -27,7 +27,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
-public class CitizenApplicant2RequestChangesTest {
+public class Applicant2RequestChangesTest {
 
     @Mock
     private Applicant2RequestChangesNotification applicant2RequestChangesNotification;
@@ -36,17 +36,17 @@ public class CitizenApplicant2RequestChangesTest {
     private NotificationDispatcher notificationDispatcher;
 
     @InjectMocks
-    private CitizenApplicant2RequestChanges citizenApplicant2RequestChanges;
+    private Applicant2RequestChanges applicant2RequestChanges;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        citizenApplicant2RequestChanges.configure(configBuilder);
+        applicant2RequestChanges.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(CITIZEN_APPLICANT_2_REQUEST_CHANGES);
+            .contains(APPLICANT_2_REQUEST_CHANGES);
     }
 
     @Test
@@ -58,7 +58,7 @@ public class CitizenApplicant2RequestChangesTest {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenApplicant2RequestChanges.aboutToSubmit(details, details);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = applicant2RequestChanges.aboutToSubmit(details, details);
 
         verify(notificationDispatcher).send(applicant2RequestChangesNotification, caseData, details.getId());
         assertThat(response.getState()).isEqualTo(AwaitingApplicant1Response);
@@ -71,7 +71,7 @@ public class CitizenApplicant2RequestChangesTest {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenApplicant2RequestChanges.aboutToSubmit(details, details);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = applicant2RequestChanges.aboutToSubmit(details, details);
 
         verifyNoInteractions(notificationDispatcher);
         assertThat(response.getState()).isEqualTo(AwaitingApplicant2Response);

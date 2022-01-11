@@ -137,7 +137,6 @@ public class CaseData {
     )
     private List<ListValue<DivorceDocument>> applicant2DocumentsUploaded;
 
-
     @CCD(
         label = "RDC",
         hint = "Regional divorce unit",
@@ -417,5 +416,10 @@ public class CaseData {
         } else {
             documents.add(0, listValue); // always add to start top of list
         }
+    }
+
+    @JsonIgnore
+    public boolean isDivorce() {
+        return divorceOrDissolution.isDivorce();
     }
 }

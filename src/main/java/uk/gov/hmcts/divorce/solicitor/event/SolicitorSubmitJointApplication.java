@@ -4,15 +4,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.solicitor.event.page.CheckApplicant1SolicitorAnswers;
 import uk.gov.hmcts.divorce.solicitor.event.page.FinancialOrdersForApplicant2;
 import uk.gov.hmcts.divorce.solicitor.event.page.HelpWithFeesPageForApplicant2;
 import uk.gov.hmcts.divorce.solicitor.event.page.MarriageIrretrievablyBrokenForApplicant2;
+import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitJointApplicationService;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.List;
 
@@ -36,12 +40,19 @@ public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, Stat
     @Autowired
     private MarriageIrretrievablyBrokenForApplicant2 marriageIrretrievablyBrokenForApplicant2;
 
+    @Autowired
+    private HelpWithFeesPageForApplicant2  helpWithFeesPageForApplicant2;
+
+    @Autowired
+    private SolicitorSubmitJointApplicationService solicitorSubmitJointApplicationService;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final List<CcdPageConfiguration> pages = asList(
             marriageIrretrievablyBrokenForApplicant2,
             new FinancialOrdersForApplicant2(),
-            new HelpWithFeesPageForApplicant2()
+            helpWithFeesPageForApplicant2,
+            new CheckApplicant1SolicitorAnswers()
         );
 
         final PageBuilder pageBuilder = addEventConfig(configBuilder);
@@ -55,6 +66,7 @@ public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, Stat
             .forStates(AwaitingApplicant2Response, Draft)
             .name("Submit joint application")
             .description("Submit joint application")
+            .submittedCallback(this::submitted)
             .showSummary(false)
             .endButtonLabel("Submit Application")
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
@@ -63,5 +75,15 @@ public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, Stat
                 CASE_WORKER,
                 SUPER_USER,
                 LEGAL_ADVISOR));
+    }
+
+    public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,
+                                               final CaseDetails<CaseData, State> beforeDetails) {
+
+        log.info("Solicitor submit joint application submitted callback invoked for case id: {}", details.getId());
+
+        solicitorSubmitJointApplicationService.submitEventForApprovalOrRequestingChanges(details);
+
+        return SubmittedCallbackResponse.builder().build();
     }
 }

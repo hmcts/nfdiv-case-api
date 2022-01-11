@@ -3,6 +3,8 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 
 class CaseDataTest {
@@ -53,5 +55,25 @@ class CaseDataTest {
             .build();
 
         assertThat(caseData.getApplicant2EmailAddress()).isNull();
+    }
+
+    @Test
+    void shouldReturnTrueIfCaseDataIsDivorce() {
+
+        final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
+            .build();
+
+        assertThat(caseData.isDivorce()).isTrue();
+    }
+
+    @Test
+    void shouldReturnFalseIfCaseDataIsDissolution() {
+
+        final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DISSOLUTION)
+            .build();
+
+        assertThat(caseData.isDivorce()).isFalse();
     }
 }

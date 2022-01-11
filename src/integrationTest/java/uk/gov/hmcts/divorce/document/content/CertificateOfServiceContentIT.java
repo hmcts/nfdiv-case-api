@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
@@ -14,34 +13,26 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.GENERAL_ORDER_DATE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.GENERAL_ORDER_DETAILS;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.GENERAL_ORDER_RECITALS;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.JUDGE_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.JUDGE_TYPE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PETITIONER_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_FULL_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getGeneralOrder;
 
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-@DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
-public class GeneralOrderTemplateContentTest {
+public class CertificateOfServiceContentIT {
 
     @Autowired
-    private GeneralOrderTemplateContent generalOrderTemplateContent;
+    private CertificateOfServiceContent certificateOfServiceContent;
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForGeneratingGeneralOrderDocument() {
+    public void shouldSuccessfullyApplyContentFromCaseDataForGeneratingCertificateOfServiceDocument() {
         CaseData caseData = caseData();
-        caseData.setGeneralOrder(getGeneralOrder());
         caseData.getApplication().getMarriageDetails().setApplicant1Name("pet full name");
         caseData.getApplication().getMarriageDetails().setApplicant2Name("resp full name");
 
-        Map<String, Object> templateContent = generalOrderTemplateContent.apply(caseData, TEST_CASE_ID);
+        Map<String, Object> templateContent = certificateOfServiceContent.apply(caseData, TEST_CASE_ID);
 
         var ctscContactDetails = CtscContactDetails
             .builder()
@@ -56,11 +47,6 @@ public class GeneralOrderTemplateContentTest {
 
         assertThat(templateContent).contains(
             entry(CASE_REFERENCE, 1616591401473378L),
-            entry(GENERAL_ORDER_DATE, "1 January 2021"),
-            entry(GENERAL_ORDER_DETAILS, "some details"),
-            entry(GENERAL_ORDER_RECITALS, "test recitals"),
-            entry(JUDGE_NAME, "some name"),
-            entry(JUDGE_TYPE, "District Judge"),
             entry(PETITIONER_FULL_NAME, "pet full name"),
             entry(RESPONDENT_FULL_NAME, "resp full name"),
             entry("ctscContactDetails", ctscContactDetails)
