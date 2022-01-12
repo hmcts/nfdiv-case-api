@@ -24,6 +24,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
@@ -73,6 +74,7 @@ import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
@@ -417,6 +419,17 @@ public class TestDataHelper {
         caseData.getAcknowledgementOfService().setJurisdictionAgree(YES);
         caseData.getAcknowledgementOfService().setPrayerHasBeenGiven(YES);
         caseData.getAcknowledgementOfService().setStatementOfTruth(YES);
+
+        return caseData;
+    }
+
+    public static CaseData validCaseWithCourtHearing() {
+        final LocalDateTime localDateTime = LocalDateTime.of(2021, 11, 8, 14, 56);
+        final CaseData caseData = validApplicant1CaseData();
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .dateAndTimeOfHearing(localDateTime)
+            .court(BURY_ST_EDMUNDS)
+            .build());
 
         return caseData;
     }
