@@ -18,9 +18,9 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 @Slf4j
 public class ConditionalOrderPronouncedNotification implements ApplicantNotification {
 
-    private static final String CO_PRONOUNCEMENT_DATE_PLUS_43 = "CO pronouncement date plus 43 days";
-    private static final String COURT_NAME = "court name";
-    private static final String HEARING_DATE = "date of hearing";
+    static final String CO_PRONOUNCEMENT_DATE_PLUS_43 = "CO pronouncement date plus 43 days";
+    static final String COURT_NAME = "court name";
+    static final String HEARING_DATE = "date of hearing";
 
     @Autowired
     private NotificationService notificationService;
@@ -36,13 +36,13 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
             caseData.getApplicant2EmailAddress(),
             SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED,
             templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
-            caseData.getApplicant1().getLanguagePreference()
+            caseData.getApplicant2().getLanguagePreference()
         );
     }
 
     private Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
-        templateVars.put(COURT_NAME, "what is the court name"); //TODO: court name
+        templateVars.put(COURT_NAME, caseData.getConditionalOrder().getCourt().getLabel());
         templateVars.put(HEARING_DATE, caseData.getConditionalOrder().getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER));
         templateVars.put(CO_PRONOUNCEMENT_DATE_PLUS_43,
             caseData.getConditionalOrder().getGrantedDate().plusDays(43).format(DATE_TIME_FORMATTER));
