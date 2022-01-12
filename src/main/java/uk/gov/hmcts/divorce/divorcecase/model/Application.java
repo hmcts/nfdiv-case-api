@@ -17,6 +17,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
+import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2ReadAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
@@ -159,7 +160,7 @@ public class Application {
             + " and have decided how money and property will be split (\"financial order\").",
         access = {Applicant2Access.class}
     )
-    private YesOrNo applicant2PrayerHasBeenGiven;
+    private Set<ThePrayer> applicant2PrayerHasBeenGivenCheckbox;
 
     @CCD(
         label = "The applicant believes that the facts stated in this application are true.",
@@ -207,7 +208,7 @@ public class Application {
         label = "Name of your firm",
         access = {DefaultAccess.class}
     )
-    private String  applicant2SolStatementOfReconciliationFirm;
+    private String applicant2SolStatementOfReconciliationFirm;
 
     @CCD(
         label = "Additional comments",
@@ -223,7 +224,7 @@ public class Application {
         typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
-    private String  applicant2StatementOfReconciliationComments;
+    private String applicant2StatementOfReconciliationComments;
 
     // TODO move to OrderSummary?
     @CCD(
@@ -407,7 +408,7 @@ public class Application {
 
     @CCD(
         label = "Link to applicant 1 solicitors answers",
-        access = {Applicant2Access.class}
+        access = {Applicant2ReadAccess.class}
     )
     private Document applicant1SolicitorAnswersLink;
 

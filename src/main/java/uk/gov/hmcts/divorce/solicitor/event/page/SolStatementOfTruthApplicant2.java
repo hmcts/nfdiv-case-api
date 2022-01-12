@@ -21,18 +21,9 @@ public class SolStatementOfTruthApplicant2 implements CcdPageConfiguration {
             .complex(CaseData::getApplicant2)
                 .readonlyNoSummary(Applicant::getFinancialOrder, ALWAYS_HIDE)
                 .done()
-            .label("LabelApp2SolServiceMethod", "## Service method")
             .complex(CaseData::getApplication)
                 .label("LabelPrayer", "## The prayer ##")
-                .mandatory(Application::getApplicant2PrayerHasBeenGiven)
-                .label("LabelApp2SolStatementOTruth-PrayerDivorceBullet",
-                    "- dissolve their marriage (get a divorce)",
-                    "divorceOrDissolution=\"divorce\"")
-                .label("LabelApp2SolStatementOTruth-PrayerCivilBullet",
-                    "- end their civil partnership",
-                    "divorceOrDissolution=\"dissolution\"")
-                .label("LabelApp2SolStatementOTruth-PrayerBullet",
-                    "- The applicant wishes to apply for a financial order", "applicant2FinancialOrder=\"Yes\"")
+                .mandatory(Application::getApplicant2PrayerHasBeenGivenCheckbox)
                 .label("LabelApp2SolStatementOfTruth-SOT", "## Statement of truth ##")
                 .mandatory(Application::getApplicant2StatementOfTruth)
                 .mandatory(Application::getApplicant2SolSignStatementOfTruth)
