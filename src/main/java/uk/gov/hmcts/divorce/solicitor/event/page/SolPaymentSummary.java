@@ -4,8 +4,11 @@ import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 
 public class SolPaymentSummary implements CcdPageConfiguration {
+
+    private static final String ALWAYS_HIDE = "applicationFeeOrderSummary=\"ALWAYS_HIDE\"";
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {
@@ -36,6 +39,11 @@ public class SolPaymentSummary implements CcdPageConfiguration {
                 "LabelHelpWithFeesReferenceNumber-Applicant1",
                 "Applicant 1 Help with fee reference: **${applicant1HWFReferenceNumber}**",
                 "solPaymentHowToPay=\"feesHelpWith\" AND applicationType=\"jointApplication\"")
+            .complex(CaseData::getApplication)
+                .complex(Application::getApplicant2HelpWithFees)
+                .readonlyNoSummary(HelpWithFees::getReferenceNumber, ALWAYS_HIDE)
+                .done()
+            .done()
             .label(
                 "LabelHelpWithFeesReferenceNumber-Applicant2",
                 "Applicant 2 Help with fee reference: **${applicant2HWFReferenceNumber}**",
