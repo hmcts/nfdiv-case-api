@@ -180,10 +180,22 @@ public class Application {
     private YesOrNo solSignStatementOfTruth;
 
     @CCD(
+        label = "I am duly authorised by the applicant to sign this statement.",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo applicant2SolSignStatementOfTruth;
+
+    @CCD(
         label = "Your name",
         access = {DefaultAccess.class}
     )
     private String solStatementOfReconciliationName;
+
+    @CCD(
+        label = "Your name",
+        access = {DefaultAccess.class}
+    )
+    private String applicant2SolStatementOfReconciliationName;
 
     @CCD(
         label = "Name of your firm",
@@ -192,12 +204,26 @@ public class Application {
     private String solStatementOfReconciliationFirm;
 
     @CCD(
+        label = "Name of your firm",
+        access = {DefaultAccess.class}
+    )
+    private String  applicant2SolStatementOfReconciliationFirm;
+
+    @CCD(
         label = "Additional comments",
         hint = "For the attention of court staff. These comments will not form part of the application",
         typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
     private String statementOfReconciliationComments;
+
+    @CCD(
+        label = "Additional comments",
+        hint = "For the attention of court staff. These comments will not form part of the application",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
+    )
+    private String  applicant2StatementOfReconciliationComments;
 
     // TODO move to OrderSummary?
     @CCD(
