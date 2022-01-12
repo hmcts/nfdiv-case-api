@@ -13,6 +13,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
+import java.time.LocalDate;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithPronouncementJudge.SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE;
 
@@ -29,10 +31,11 @@ class UpdateCasePronouncementJudgeProviderTest {
 
     @Test
     void shouldReturnSystemUpdateCasePronouncementJudgeCaseTask() {
-
+        final LocalDate pronouncedDate = LocalDate.of(2021, 8, 10);
         final var bulkActionCaseData = BulkActionCaseData
             .builder()
             .pronouncementJudge("The Judge")
+            .pronouncedDate(pronouncedDate)
             .build();
 
         final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails = new CaseDetails<>();
@@ -51,5 +54,6 @@ class UpdateCasePronouncementJudgeProviderTest {
         final ConditionalOrder resultConditionalOrder = resultCaseDetails.getData().getConditionalOrder();
 
         assertThat(resultConditionalOrder.getPronouncementJudge()).isEqualTo("The Judge");
+        assertThat(resultConditionalOrder.getPronouncedDate()).isEqualTo(pronouncedDate);
     }
 }
