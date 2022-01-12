@@ -75,18 +75,6 @@ public class Solicitor {
     )
     private OrganisationPolicy<UserRole> organisationPolicy;
 
-    @CCD(
-        label = "Solicitor’s firm"
-    )
-    private String firm;
-
-    @CCD(
-        label = "Additional Comments",
-        hint = "For the attention of court staff",
-        typeOverride = TextArea
-    )
-    private String additionalComments;
-
     @JsonIgnore
     public boolean hasOrgId() {
         if (null != organisationPolicy && null != organisationPolicy.getOrganisation()) {
