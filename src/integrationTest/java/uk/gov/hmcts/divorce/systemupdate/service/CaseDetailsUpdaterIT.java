@@ -75,7 +75,8 @@ public class CaseDetailsUpdaterIT {
             caseDetailsIn -> caseDetailsIn,
             startEventResponse);
 
-        final DivorceDocument certificateOfEntitlementDocument = updatedCaseDetails.getData().getConditionalOrder().getCertificateOfEntitlementDocument();
+        final DivorceDocument certificateOfEntitlementDocument =
+            updatedCaseDetails.getData().getConditionalOrder().getCertificateOfEntitlementDocument();
         assertThat(certificateOfEntitlementDocument.getDocumentFileName())
             .isEqualTo("certificateOfEntitlement-1641906321238843-2022-01-11:13:06.pdf");
         assertThat(certificateOfEntitlementDocument.getDocumentType())
