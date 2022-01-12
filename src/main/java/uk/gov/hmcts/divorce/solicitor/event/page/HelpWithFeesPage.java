@@ -19,6 +19,9 @@ public class HelpWithFeesPage implements CcdPageConfiguration {
                 .complex(Application::getApplicant1HelpWithFees)
                     .mandatory(HelpWithFees::getReferenceNumber)
                     .done()
-                .done();
+            .done()
+            .label("LabelHWFPage-Applicant2HWFRef",
+                "applicationType=\"jointApplication\" AND applicant2HWFReferenceNumber=\"*\"",
+                "**Applicant 2 Help with fee reference:**  \n**£${applicant2HWFReferenceNumber}**");
     }
 }

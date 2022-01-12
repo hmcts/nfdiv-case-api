@@ -31,6 +31,16 @@ public class SolPaymentSummary implements CcdPageConfiguration {
             .label(
                 "LabelHelpWithFeesReferenceNumber",
                 "Help with fee reference: **${applicant1HWFReferenceNumber}**",
-                "solPaymentHowToPay=\"feesHelpWith\"");
+                "solPaymentHowToPay=\"feesHelpWith\" AND applicationType=\"soleApplication\"")
+            .label(
+                "LabelHelpWithFeesReferenceNumber-Applicant1",
+                "Applicant 1 Help with fee reference: **${applicant1HWFReferenceNumber}**",
+                "solPaymentHowToPay=\"feesHelpWith\" AND applicationType=\"jointApplication\"")
+            .label(
+                "LabelHelpWithFeesReferenceNumber-Applicant2",
+                "Applicant 2 Help with fee reference: **${applicant2HWFReferenceNumber}**",
+                "solPaymentHowToPay=\"feesHelpWith\" "
+                    + "AND applicationType=\"jointApplication\" "
+                    + "AND applicant2HWFReferenceNumber=\"*\"");
     }
 }
