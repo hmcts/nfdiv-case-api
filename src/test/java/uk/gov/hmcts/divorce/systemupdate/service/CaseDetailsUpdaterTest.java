@@ -1,11 +1,9 @@
 package uk.gov.hmcts.divorce.systemupdate.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.map.HashedMap;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -19,9 +17,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 class CaseDetailsUpdaterTest {
-
-    @Spy
-    private ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
 
     @InjectMocks
     private CaseDetailsUpdater caseDetailsUpdater;
