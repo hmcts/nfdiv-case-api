@@ -53,7 +53,7 @@ public class SystemPronounceCaseTest {
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().data(caseData).build();
 
-        systemPronounceCase.submitted(details, details);
+        systemPronounceCase.aboutToSubmit(details, details);
 
         verify(notificationDispatcher).send(conditionalOrderPronouncedNotification, caseData, details.getId());
     }
