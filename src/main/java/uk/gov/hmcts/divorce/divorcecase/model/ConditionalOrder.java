@@ -189,6 +189,7 @@ public class ConditionalOrder {
     )
     private String judgeCostsOrderAdditionalInfo;
 
+    @JsonUnwrapped()
     @CCD(
         label = "Link to certificate of entitlement",
         access = {CaseworkerAccess.class}
