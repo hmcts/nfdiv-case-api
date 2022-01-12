@@ -11,17 +11,28 @@ import uk.gov.hmcts.divorce.citizen.notification.Applicant2ApprovedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.DivorceApplicationJointTemplateContent;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import static java.time.LocalDateTime.now;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant2BasicCase;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JOINT_DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_APPLICATION_JOINT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_POSTAL_ADDRESS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_POSTAL_ADDRESS;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 
 @Slf4j
 @Component
@@ -34,6 +45,15 @@ public class CitizenApplicant2Approve implements CCDConfig<CaseData, State, User
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
+
+    @Autowired
+    private CaseDataDocumentService caseDataDocumentService;
+
+    @Autowired
+    private DivorceApplicationJointTemplateContent divorceApplicationJointTemplateContent;
+
+    @Autowired
+    private Clock clock;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -71,10 +91,35 @@ public class CitizenApplicant2Approve implements CCDConfig<CaseData, State, User
 
         notificationDispatcher.send(applicant2ApprovedNotification, data, details.getId());
 
+        generateJointApplication(details, data);
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
             .state(Applicant2Approved)
             .build();
     }
 
+    private void generateJointApplication(CaseDetails<CaseData, State> details, CaseData data) {
+        final long caseId = details.getId();
+        final LocalDate createdDate = details.getCreatedDate().toLocalDate();
+        final var templateVars = divorceApplicationJointTemplateContent.apply(data, caseId, createdDate);
+
+        if (!isBlank(data.getApplicant1().getSolicitor().getAddress())) {
+            templateVars.put(APPLICANT_1_POSTAL_ADDRESS, data.getApplicant1().getSolicitor().getAddress());
+        }
+
+        if (!isBlank(data.getApplicant2().getSolicitor().getAddress())) {
+            templateVars.put(APPLICANT_2_POSTAL_ADDRESS, data.getApplicant2().getSolicitor().getAddress());
+        }
+
+        caseDataDocumentService.renderDocumentAndUpdateCaseData(
+            data,
+            APPLICATION,
+            templateVars,
+            caseId,
+            DIVORCE_APPLICATION_JOINT,
+            data.getApplicant1().getLanguagePreference(),
+            formatDocumentName(caseId, JOINT_DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME, now(clock))
+        );
+    }
 }
