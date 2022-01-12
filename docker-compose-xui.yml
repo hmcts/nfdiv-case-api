@@ -13,8 +13,8 @@ services:
       PROTOCOL: http
       XUI_ENV: local
       DEBUG: '*:*'
-      SERVICES_DOCUMENTS_API: http://host.docker.internal:4013
-      SERVICES_PAYMENTS_URL: http://host.docker.internal:4013
+      SERVICES_DOCUMENTS_API: http://dm-store-aat.service.core-compute-aat.internal
+      SERVICES_PAYMENTS_URL: http://payment-api-aat.service.core-compute-aat.internal
       SERVICES_EM_ANNO_API: http://host.docker.internal:4013
       SERVICES_CCD_COMPONENT_API: http://host.docker.internal:4013
       SERVICES_CCD_DATA_STORE_API: http://host.docker.internal:4013
@@ -23,9 +23,8 @@ services:
       SERVICES_IDAM_LOGIN_URL: https://idam-web-public.aat.platform.hmcts.net
       SERVICES_IDAM_INDEX_URL: /
       SERVICES_IDAM_OAUTH_CALLBACK_URL: /oauth2/callback
-      SERVICES_EM_DOCASSEMBLY_API: https://idam-web-public.aat.platform.hmcts.net
-      HEALTH_EM_DOCASSEMBLY_API: https://idam-web-public.aat.platform.hmcts.net/health
-
+      SERVICES_EM_DOCASSEMBLY_API: http://dg-docassembly-aat.service.core-compute-aat.internal
+      HEALTH_EM_DOCASSEMBLY_API: http://dg-docassembly-aat.service.core-compute-aat.internal/health
       SERVICES_S2S: http://rpe-service-auth-provider-aat.service.core-compute-aat.internal
       SYSTEM_USER_NAME: "${XUI_SYSTEM_USER_NAME}"
       SYSTEM_USER_PASSWORD: "${XUI_SYSTEM_USER_PASSWORD}"
