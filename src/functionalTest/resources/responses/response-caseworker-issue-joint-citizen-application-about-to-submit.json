@@ -45,7 +45,7 @@
     ],
     "applicant1PrayerHasBeenGivenCheckbox": ["Yes"],
     "applicant1StatementOfTruth": "Yes",
-    "applicant2PrayerHasBeenGiven": "Yes",
+    "applicant2PrayerHasBeenGivenCheckbox": ["Yes"],
     "applicant2StatementOfTruth": "Yes"
   },
   "state": "Holding"

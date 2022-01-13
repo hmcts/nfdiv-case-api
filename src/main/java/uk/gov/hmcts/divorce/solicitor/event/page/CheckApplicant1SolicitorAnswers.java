@@ -20,7 +20,7 @@ public class CheckApplicant1SolicitorAnswers implements CcdPageConfiguration {
                     "Are any corrections needed to the answers applicant 1 has provided?")
             .done()
             .page("additionalInformation")
-            .showCondition("applicant2ConfirmApplicant1Information=\"No\"")
+            .showCondition("applicant2ConfirmApplicant1Information=\"Yes\"")
             .pageLabel("Additional information")
             .complex(CaseData::getApplication)
                 .mandatoryWithLabel(Application::getApplicant2ExplainsApplicant1IncorrectInformation,"Additional information")
