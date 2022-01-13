@@ -77,12 +77,11 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
         log.info("Submit conditional order about to submit callback invoked for case id: {}", details.getId());
         CaseData data = details.getData();
         data.getConditionalOrder().getConditionalOrderApplicant1Questions().setSubmittedDate(LocalDateTime.now(clock));
-        var state = details.getData().getApplicationType().isSole() ? AwaitingLegalAdvisorReferral
+        var state = details.getData().getApplicationType().isSole()
+            ? AwaitingLegalAdvisorReferral
             : beforeDetails.getState() == ConditionalOrderDrafted ? ConditionalOrderPending : AwaitingLegalAdvisorReferral;
 
-        if (state == AwaitingLegalAdvisorReferral) {
-            notificationDispatcher.send(appliedForConditionalOrderNotification, data, details.getId());
-        }
+        notificationDispatcher.send(appliedForConditionalOrderNotification, data, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
