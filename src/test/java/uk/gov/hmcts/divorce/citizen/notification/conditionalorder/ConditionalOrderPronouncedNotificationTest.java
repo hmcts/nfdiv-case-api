@@ -159,7 +159,7 @@ class ConditionalOrderPronouncedNotificationTest {
         final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
-            .thenReturn(getMainTemplateVars());
+            .thenReturn(templateVars);
 
         notification.sendToApplicant2(data, 1234567890123456L);
 
