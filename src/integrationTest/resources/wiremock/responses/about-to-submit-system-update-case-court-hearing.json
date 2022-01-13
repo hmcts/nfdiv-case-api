@@ -15,7 +15,7 @@
     "applicant2LanguagePreferenceWelsh": "No",
     "applicant2LastName": "test_last_name",
     "applicant2MiddleName": "test_middle_name",
-    "applicant2PrayerHasBeenGiven": "Yes",
+    "applicant2PrayerHasBeenGivenCheckbox": ["Yes"],
     "applicant2StatementOfTruth": "Yes",
     "divorceOrDissolution": "divorce",
     "jurisdictionApplicant1Residence": "Yes",
