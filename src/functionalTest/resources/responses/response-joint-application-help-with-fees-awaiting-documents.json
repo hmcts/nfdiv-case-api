@@ -30,7 +30,7 @@
     "applicant1HWFNeedHelp": "Yes",
     "applicant2HWFNeedHelp": "Yes",
     "applicant1PrayerHasBeenGivenCheckbox": ["Yes"],
-    "applicant2PrayerHasBeenGiven": "Yes",
+    "applicant2PrayerHasBeenGivenCheckbox": ["Yes"],
     "applicant1StatementOfTruth": "Yes",
     "applicant2StatementOfTruth": "Yes",
     "applicant1CannotUploadSupportingDocument": [

@@ -239,7 +239,7 @@ public class TestDataHelper {
         caseData.getCaseInvite().setApplicant2InviteEmailAddress(TEST_APPLICANT_2_USER_EMAIL);
         caseData.setApplicant2(getApplicant(MALE));
         caseData.getApplication().setApplicant2StatementOfTruth(YES);
-        caseData.getApplication().setApplicant2PrayerHasBeenGiven(YES);
+        caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
 
         return caseData;
     }
@@ -299,7 +299,7 @@ public class TestDataHelper {
         caseData.getApplication().setApplicant2HelpWithFees(HelpWithFees.builder()
             .needHelp(NO)
             .build());
-        caseData.getApplication().setApplicant2PrayerHasBeenGiven(YES);
+        caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
         caseData.getApplication().setApplicant2StatementOfTruth(YES);
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(YES);
 

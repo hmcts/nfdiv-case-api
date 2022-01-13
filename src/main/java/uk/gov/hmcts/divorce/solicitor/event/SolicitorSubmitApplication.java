@@ -20,6 +20,7 @@ import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.solicitor.event.page.HelpWithFeesPage;
+import uk.gov.hmcts.divorce.solicitor.event.page.SolConfirmJointApplication;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayAccount;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayment;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPaymentSummary;
@@ -78,6 +79,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final List<CcdPageConfiguration> pages = asList(
+            new SolConfirmJointApplication(),
             new SolStatementOfTruth(),
             solPayment,
             new HelpWithFeesPage(),

@@ -48,6 +48,7 @@ class RetiredFieldsTest {
         data.put("serviceApplicationType", "type");
         data.put("coCourtName", "serviceCentre");
         data.put("applicant1PrayerHasBeenGiven", "Yes");
+        data.put("applicant2PrayerHasBeenGiven", "Yes");
         data.put("coAddNewDocuments", "YES");
         data.put("coDocumentsUploaded", Collections.emptyList());
         data.put("coIsEverythingInPetitionTrue", "YES");
@@ -90,6 +91,7 @@ class RetiredFieldsTest {
             entry("coCourtName", null),
             entry("coCourt", BURY_ST_EDMUNDS.getCourtId()),
             entry("applicant1PrayerHasBeenGivenCheckbox", Set.of(I_CONFIRM)),
+            entry("applicant2PrayerHasBeenGivenCheckbox", Set.of(I_CONFIRM)),
             entry("coAddNewDocuments", "YES"),
             entry("coDocumentsUploaded", emptyList()),
             entry("coIsEverythingInPetitionTrue", null),
