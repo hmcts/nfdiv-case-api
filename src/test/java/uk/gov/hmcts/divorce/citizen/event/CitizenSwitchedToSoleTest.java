@@ -26,6 +26,7 @@ import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,6 +38,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSwitchedToSole.SWITCH_TO_SOLE;
+import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
@@ -293,7 +295,7 @@ class CitizenSwitchedToSoleTest {
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(YES);
         caseData.getApplication().setApplicant2HelpWithFees(HelpWithFees.builder().build());
         caseData.getApplication().setApplicant2StatementOfTruth(YES);
-        caseData.getApplication().setApplicant2PrayerHasBeenGiven(YES);
+        caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
         caseData.getApplication().setApplicant2AgreeToReceiveEmails(YES);
         caseData.getApplication().setApplicant2CannotUploadSupportingDocument(new HashSet<>());
         caseData.getApplication().setApplicant2ConfirmApplicant1Information(YES);
@@ -334,7 +336,7 @@ class CitizenSwitchedToSoleTest {
         assertThat(response.getData().getApplication().getApplicant2ScreenHasMarriageBroken()).isNull();
         assertThat(response.getData().getApplication().getApplicant2HelpWithFees()).isNull();
         assertThat(response.getData().getApplication().getApplicant2StatementOfTruth()).isNull();
-        assertThat(response.getData().getApplication().getApplicant2PrayerHasBeenGiven()).isNull();
+        assertThat(response.getData().getApplication().getApplicant2PrayerHasBeenGivenCheckbox()).isNull();
         assertThat(response.getData().getApplication().getApplicant2AgreeToReceiveEmails()).isNull();
         assertThat(response.getData().getApplication().getApplicant2CannotUploadSupportingDocument()).isNull();
         assertThat(response.getData().getApplication().getApplicant2CannotUploadSupportingDocument()).isNull();
