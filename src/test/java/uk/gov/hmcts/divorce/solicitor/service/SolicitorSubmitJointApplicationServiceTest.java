@@ -14,11 +14,8 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
-import javax.servlet.http.HttpServletRequest;
-
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.Applicant2Approve.APPLICANT_2_APPROVE;
@@ -39,16 +36,11 @@ public class SolicitorSubmitJointApplicationServiceTest {
     @Mock
     private AuthTokenGenerator authTokenGenerator;
 
-    @Mock
-    private HttpServletRequest httpServletRequest;
-
     @InjectMocks
     private SolicitorSubmitJointApplicationService solicitorSubmitJointApplicationService;
 
     @Test
     void shouldSubmitCcdApplicant2RequestChangesEventOnSubmittedCallbackIfApp2SolicitorHasRequestedChanges() {
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
-
         final User user = new User(TEST_AUTHORIZATION_TOKEN, UserDetails.builder().build());
         when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN)).thenReturn(user);
 
@@ -60,15 +52,13 @@ public class SolicitorSubmitJointApplicationServiceTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
-        solicitorSubmitJointApplicationService.submitEventForApprovalOrRequestingChanges(caseDetails);
+        solicitorSubmitJointApplicationService.submitEventForApprovalOrRequestingChanges(caseDetails, TEST_AUTHORIZATION_TOKEN);
 
         verify(ccdUpdateService).submitEvent(caseDetails, APPLICANT_2_REQUEST_CHANGES, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
     void shouldSubmitCcdApplicant2ApproveEventOnSubmittedCallbackIfApp2SolicitorHasNotRequestedChanges() {
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
-
         final User user = new User(TEST_AUTHORIZATION_TOKEN, UserDetails.builder().build());
         when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN)).thenReturn(user);
 
@@ -80,7 +70,7 @@ public class SolicitorSubmitJointApplicationServiceTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
-        solicitorSubmitJointApplicationService.submitEventForApprovalOrRequestingChanges(caseDetails);
+        solicitorSubmitJointApplicationService.submitEventForApprovalOrRequestingChanges(caseDetails, TEST_AUTHORIZATION_TOKEN);
 
         verify(ccdUpdateService).submitEvent(caseDetails, APPLICANT_2_APPROVE, user, SERVICE_AUTHORIZATION);
     }
