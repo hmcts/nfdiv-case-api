@@ -115,7 +115,7 @@ class ConditionalOrderPronouncedNotificationTest {
     }
 
     @Test
-    void shouldSendEmailToApplicant2WhileInAwaitingApplicant2ResponseState() {
+    void shouldSendEmailToApplicant2WithDivorceContent() {
         LocalDateTime now = LocalDateTime.now();
         CaseData data = caseData();
         data.setApplicant2(getApplicant(Gender.MALE));
@@ -134,6 +134,40 @@ class ConditionalOrderPronouncedNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED),
             argThat(allOf(
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMIGHAM.getLabel()),
+                hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER)),
+                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER))
+            )),
+            eq(ENGLISH)
+        );
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldSendEmailToApplicant2WithDissolutionContent() {
+        LocalDateTime now = LocalDateTime.now();
+        CaseData data = caseData();
+        data.setApplicant2(getApplicant(Gender.MALE));
+        data.setConditionalOrder(ConditionalOrder.builder()
+            .court(ConditionalOrderCourt.BIRMIGHAM)
+            .dateAndTimeOfHearing(now)
+            .grantedDate(now.toLocalDate())
+            .build()
+        );
+
+        final Map<String, String> templateVars = getMainTemplateVars();
+        templateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(getMainTemplateVars());
+
+        notification.sendToApplicant2(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED),
+            argThat(allOf(
+                hasEntry(IS_DISSOLUTION, YES),
                 hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMIGHAM.getLabel()),
                 hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER)),
                 hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER))
