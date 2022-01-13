@@ -136,7 +136,7 @@ class CitizenSubmitApplicationTest {
         caseData.getApplicant2().setFirstName("App");
         caseData.getApplicant2().setLastName("Two");
         caseData.getApplication().setApplicant2StatementOfTruth(YES);
-        caseData.getApplication().setApplicant2PrayerHasBeenGiven(YES);
+        caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
         caseData.getApplication().getMarriageDetails().setApplicant2Name("App Two");
 
         caseDetails.setData(caseData);
@@ -196,7 +196,7 @@ class CitizenSubmitApplicationTest {
                 .build()
         );
         caseData.getApplication().setApplicant2StatementOfTruth(YES);
-        caseData.getApplication().setApplicant2PrayerHasBeenGiven(YES);
+        caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
         caseData.getApplication().getMarriageDetails().setApplicant2Name("App Two");
 
         caseDetails.setData(caseData);
