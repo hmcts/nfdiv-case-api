@@ -24,6 +24,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
@@ -73,6 +74,7 @@ import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
@@ -417,6 +419,22 @@ public class TestDataHelper {
         caseData.getAcknowledgementOfService().setJurisdictionAgree(YES);
         caseData.getAcknowledgementOfService().setPrayerHasBeenGiven(YES);
         caseData.getAcknowledgementOfService().setStatementOfTruth(YES);
+
+        return caseData;
+    }
+
+    public static CaseData validCaseWithCourtHearing() {
+        final CaseData caseData = validApplicant2CaseData();
+        caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+
+        final LocalDateTime testHearingDateAndTime = LocalDateTime.of(2021, 11, 8, 14, 56);
+        final LocalDate testDecisionDate = LocalDate.of(2020, 3, 8);
+
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .dateAndTimeOfHearing(testHearingDateAndTime)
+            .court(BURY_ST_EDMUNDS)
+            .decisionDate(testDecisionDate)
+            .build());
 
         return caseData;
     }

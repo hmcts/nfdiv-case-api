@@ -1,0 +1,13 @@
+{
+  "data": {
+    "coCertificateOfEntitlementDocument": {
+      "documentFileName": "${json-unit.any-string}",
+      "documentType": "certificateOfEntitlement",
+      "documentLink": {
+        "document_url": "${json-unit.any-string}",
+        "document_filename": "${json-unit.any-string}",
+        "document_binary_url": "${json-unit.any-string}"
+      }
+    }
+  }
+}
