@@ -56,6 +56,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 
@@ -71,6 +72,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
     @Test
     public void shouldSuccessfullyApplyContentFromCaseDataForDivorce() {
         CaseData caseData = caseData();
+        caseData.getApplication().setIssueDate(LOCAL_DATE);
         caseData.getApplicant1().setFinancialOrder(NO);
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
@@ -108,6 +110,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
     public void shouldSuccessfullyApplyContentFromCaseDataForDissolution() {
         CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DISSOLUTION);
+        caseData.getApplication().setIssueDate(LOCAL_DATE);
         caseData.getApplicant1().setFinancialOrder(NO);
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
