@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.citizen.notification.Applicant1ResubmitNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -30,6 +31,9 @@ public class CitizenApplicant1Resubmit implements CCDConfig<CaseData, State, Use
 
     @Autowired
     private Applicant1ResubmitNotification applicant1ResubmitNotification;
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -67,8 +71,7 @@ public class CitizenApplicant1Resubmit implements CCDConfig<CaseData, State, Use
         data.getApplication().setApplicant2ConfirmApplicant1Information(null);
         data.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation(null);
 
-        applicant1ResubmitNotification.sendToApplicant1(data, details.getId());
-        applicant1ResubmitNotification.sendToApplicant2(data, details.getId());
+        notificationDispatcher.send(applicant1ResubmitNotification, data, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)

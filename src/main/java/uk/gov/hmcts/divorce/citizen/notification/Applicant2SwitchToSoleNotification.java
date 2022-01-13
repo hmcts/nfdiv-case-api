@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -12,7 +13,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICAT
 
 @Component
 @Slf4j
-public class SwitchToSoleNotification {
+public class Applicant2SwitchToSoleNotification implements ApplicantNotification {
 
     @Autowired
     private NotificationService notificationService;
@@ -20,29 +21,8 @@ public class SwitchToSoleNotification {
     @Autowired
     private CommonContent commonContent;
 
-    public void sendApplicant1SwitchToSoleNotificationToApplicant1(CaseData caseData, Long id) {
-        log.info("Sending applicant 1 switch to sole notification to applicant 1 for case : {}", id);
-
-        notificationService.sendEmail(
-            caseData.getApplicant1().getEmail(),
-            APPLICANT_SWITCH_TO_SOLE,
-            commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
-            caseData.getApplicant1().getLanguagePreference()
-        );
-    }
-
-    public void sendApplicant1SwitchToSoleNotificationToApplicant2(CaseData caseData, Long id) {
-        log.info("Sending applicant 1 switch to sole notification to applicant 2 for case : {}", id);
-
-        notificationService.sendEmail(
-            caseData.getApplicant2EmailAddress(),
-            JOINT_APPLICATION_ENDED,
-            commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
-            caseData.getApplicant1().getLanguagePreference()
-        );
-    }
-
-    public void sendApplicant2SwitchToSoleNotificationToApplicant1(CaseData caseData, Long id) {
+    @Override
+    public void sendToApplicant1(final CaseData caseData, final Long id) {
         log.info("Sending applicant 2 switch to sole notification to applicant 1 for case : {}", id);
 
         notificationService.sendEmail(
@@ -53,7 +33,8 @@ public class SwitchToSoleNotification {
         );
     }
 
-    public void sendApplicant2SwitchToSoleNotificationToApplicant2(CaseData caseData, Long id) {
+    @Override
+    public void sendToApplicant2(CaseData caseData, Long id) {
         log.info("Sending applicant 2 switch to sole notification to applicant 2 for case : {}", id);
 
         notificationService.sendEmail(

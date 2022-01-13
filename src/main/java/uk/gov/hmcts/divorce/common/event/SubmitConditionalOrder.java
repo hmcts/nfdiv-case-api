@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -36,7 +37,10 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
     public static final String SUBMIT_CONDITIONAL_ORDER = "submit-conditional-order";
 
     @Autowired
-    private AppliedForConditionalOrderNotification notification;
+    private AppliedForConditionalOrderNotification appliedForConditionalOrderNotification;
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
 
     @Autowired
     private Clock clock;
@@ -75,9 +79,10 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
         var state = details.getData().getApplicationType().isSole() ? AwaitingLegalAdvisorReferral
             : beforeDetails.getState() == ConditionalOrderDrafted ? ConditionalOrderPending : AwaitingLegalAdvisorReferral;
 
-        if (state == AwaitingLegalAdvisorReferral && !data.getApplicant1().isRepresented()) {
-            notification.sendToApplicant1(data, details.getId());
+        if (state == AwaitingLegalAdvisorReferral) {
+            notificationDispatcher.send(appliedForConditionalOrderNotification, data, details.getId());
         }
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
             .state(state)
