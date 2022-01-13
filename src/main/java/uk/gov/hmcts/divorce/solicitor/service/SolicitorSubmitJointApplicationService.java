@@ -13,9 +13,6 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
-import javax.servlet.http.HttpServletRequest;
-
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.Applicant2Approve.APPLICANT_2_APPROVE;
 import static uk.gov.hmcts.divorce.common.event.Applicant2RequestChanges.APPLICANT_2_REQUEST_CHANGES;
@@ -33,19 +30,16 @@ public class SolicitorSubmitJointApplicationService {
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
-    @Autowired
-    private HttpServletRequest httpServletRequest;
-
     @Async
-    public void submitEventForApprovalOrRequestingChanges(CaseDetails<CaseData, State> details) {
+    public void submitEventForApprovalOrRequestingChanges(final CaseDetails<CaseData, State> details,
+                                                          final String authToken) {
         final Application application = details.getData().getApplication();
 
         String eventId = YES.equals(application.getApplicant2ConfirmApplicant1Information())
             ? APPLICANT_2_REQUEST_CHANGES
             : APPLICANT_2_APPROVE;
 
-        String solicitorAuthToken = httpServletRequest.getHeader(AUTHORIZATION);
-        User solUser = idamService.retrieveUser(solicitorAuthToken);
+        User solUser = idamService.retrieveUser(authToken);
 
         final String serviceAuthorization = authTokenGenerator.generate();
 
