@@ -35,7 +35,7 @@ public class CaseworkerPaymentMade implements CCDConfig<CaseData, State, UserRol
             .name("Payment made")
             .description("Payment made")
             .showEventNotes()
-            .grant(CREATE_READ_UPDATE, CASE_WORKER, CITIZEN)
+            .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grant(READ, SUPER_USER, LEGAL_ADVISOR));
     }
 }
