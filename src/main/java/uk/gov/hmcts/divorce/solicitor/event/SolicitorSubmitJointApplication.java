@@ -19,9 +19,11 @@ import uk.gov.hmcts.divorce.solicitor.event.page.SolStatementOfTruthApplicant2;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitJointApplicationService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
@@ -42,10 +44,13 @@ public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, Stat
     private MarriageIrretrievablyBrokenForApplicant2 marriageIrretrievablyBrokenForApplicant2;
 
     @Autowired
-    private HelpWithFeesPageForApplicant2  helpWithFeesPageForApplicant2;
+    private HelpWithFeesPageForApplicant2 helpWithFeesPageForApplicant2;
 
     @Autowired
     private SolicitorSubmitJointApplicationService solicitorSubmitJointApplicationService;
+
+    @Autowired
+    private HttpServletRequest httpServletRequest;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -84,7 +89,7 @@ public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, Stat
 
         log.info("Solicitor submit joint application submitted callback invoked for case id: {}", details.getId());
 
-        solicitorSubmitJointApplicationService.submitEventForApprovalOrRequestingChanges(details);
+        solicitorSubmitJointApplicationService.submitEventForApprovalOrRequestingChanges(details,httpServletRequest.getHeader(AUTHORIZATION));
 
         return SubmittedCallbackResponse.builder().build();
     }

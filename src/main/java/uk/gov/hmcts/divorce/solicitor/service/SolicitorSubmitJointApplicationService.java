@@ -33,19 +33,16 @@ public class SolicitorSubmitJointApplicationService {
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
-    @Autowired
-    private HttpServletRequest httpServletRequest;
-
     @Async
-    public void submitEventForApprovalOrRequestingChanges(CaseDetails<CaseData, State> details) {
+    public void submitEventForApprovalOrRequestingChanges(final CaseDetails<CaseData, State> details,
+                                                          final String authToken) {
         final Application application = details.getData().getApplication();
 
         String eventId = YES.equals(application.getApplicant2ConfirmApplicant1Information())
             ? APPLICANT_2_REQUEST_CHANGES
             : APPLICANT_2_APPROVE;
 
-        String solicitorAuthToken = httpServletRequest.getHeader(AUTHORIZATION);
-        User solUser = idamService.retrieveUser(solicitorAuthToken);
+        User solUser = idamService.retrieveUser(authToken);
 
         final String serviceAuthorization = authTokenGenerator.generate();
 
