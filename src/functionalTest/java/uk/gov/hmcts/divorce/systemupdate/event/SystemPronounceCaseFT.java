@@ -17,15 +17,15 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 @SpringBootTest
 public class SystemPronounceCaseFT extends FunctionalTestSuite {
 
-    private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata-system-pronounce-case.json";
+    private static final String REQUEST =
+        "classpath:request/casedata/ccd-callback-casedata-system-pronounce-case.json";
 
     @Test
-    public void shouldPassValidationAndSendEmailsToApplicantAndRespondent() throws IOException {
+    public void shouldSendPronouncementNotificationToApplicant() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
 
         Response response = triggerCallback(request, SYSTEM_PRONOUNCE_CASE, ABOUT_TO_SUBMIT_URL);
 
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
     }
-
 }

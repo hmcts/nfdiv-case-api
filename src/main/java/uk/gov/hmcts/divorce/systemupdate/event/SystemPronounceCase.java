@@ -53,7 +53,8 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
         final CaseData caseData = details.getData();
         final Long caseId = details.getId();
-        log.info("Conditional order pronounced for Case({}), notifying Applicant 1 their conditional order has been pronounced", caseId);
+
+        log.info("Conditional order pronounced for Case({}), notifying Applicants their conditional order has been pronounced", caseId);
         notificationDispatcher.send(conditionalOrderPronouncedNotification, caseData, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
