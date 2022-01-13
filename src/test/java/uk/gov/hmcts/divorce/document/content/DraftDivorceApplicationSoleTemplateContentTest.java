@@ -56,7 +56,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 
@@ -77,7 +76,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
         );
 
-        Map<String, Object> templateContent = draftApplicationTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
+        Map<String, Object> templateContent = draftApplicationTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).contains(
             entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
@@ -114,7 +113,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
         );
 
-        Map<String, Object> templateContent = draftApplicationTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
+        Map<String, Object> templateContent = draftApplicationTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).contains(
             entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
@@ -155,7 +154,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
             Solicitor.builder().address(LINE_1_LINE_2_CITY_POSTCODE).build()
         );
 
-        Map<String, Object> templateContent = draftApplicationTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
+        Map<String, Object> templateContent = draftApplicationTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).contains(
             entry(MARRIAGE_DATE, "4 June 2019")
@@ -181,7 +180,7 @@ public class DraftDivorceApplicationSoleTemplateContentTest {
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.getApplicant1().setFinancialOrder(NO);
 
-        Map<String, Object> templateContent = draftApplicationTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
+        Map<String, Object> templateContent = draftApplicationTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).contains(
             entry(APPLICANT_2_POSTAL_ADDRESS, "221b\nBaker Street\nLondon\nGreater London\nNW1 6XE\nUnited Kingdom")
