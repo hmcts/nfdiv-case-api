@@ -424,11 +424,16 @@ public class TestDataHelper {
     }
 
     public static CaseData validCaseWithCourtHearing() {
-        final LocalDateTime localDateTime = LocalDateTime.of(2021, 11, 8, 14, 56);
-        final CaseData caseData = validApplicant1CaseData();
+        final CaseData caseData = validApplicant2CaseData();
+        caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+
+        final LocalDateTime testHearingDateAndTime = LocalDateTime.of(2021, 11, 8, 14, 56);
+        final LocalDate testDecisionDate = LocalDate.of(2020, 3, 8);
+
         caseData.setConditionalOrder(ConditionalOrder.builder()
-            .dateAndTimeOfHearing(localDateTime)
+            .dateAndTimeOfHearing(testHearingDateAndTime)
             .court(BURY_ST_EDMUNDS)
+            .decisionDate(testDecisionDate)
             .build());
 
         return caseData;

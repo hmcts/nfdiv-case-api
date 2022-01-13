@@ -48,9 +48,9 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
         log.info("Sending entitlement granted on conditional order notification to applicant 2 for case : {}", id);
 
         notificationService.sendEmail(
-            caseData.getApplicant2().getEmail(),
+            caseData.getApplicant2EmailAddress(),
             ENTITLEMENT_GRANTED_CONDITIONAL_ORDER,
-            templateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
+            templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
             caseData.getApplicant2().getLanguagePreference());
     }
 
