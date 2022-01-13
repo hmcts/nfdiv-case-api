@@ -297,6 +297,11 @@ public class RetiredFields {
     )
     private WhoDivorcing applicant2DivorceWho;
 
+    @CCD(
+        label = "Retire applicant 2 prayer"
+    )
+    private YesOrNo applicant2PrayerHasBeenGiven;
+
     @JsonIgnore
     private static final Consumer<Map<String, Object>> DO_NOTHING = data -> {
     };
@@ -334,7 +339,13 @@ public class RetiredFields {
         init.put("coCourtName",
             data -> data.put("coCourt", BURY_ST_EDMUNDS.getCourtId()));
         init.put("applicant1PrayerHasBeenGiven",
-            data -> data.put("applicant1PrayerHasBeenGivenCheckbox", transformApplicant1PrayerHasBeenGivenField(data)));
+            data -> data.put("applicant1PrayerHasBeenGivenCheckbox",
+                transformApplicantPrayerHasBeenGivenField(data,"applicant1PrayerHasBeenGiven"))
+        );
+        init.put("applicant2PrayerHasBeenGiven",
+            data -> data.put("applicant2PrayerHasBeenGivenCheckbox",
+                transformApplicantPrayerHasBeenGivenField(data,"applicant2PrayerHasBeenGiven"))
+        );
         init.put("coIsEverythingInPetitionTrue",
             data -> data.put("coIsEverythingInApplicationTrue", data.get("coIsEverythingInPetitionTrue")));
         init.put("alternativeServiceApplications",
@@ -430,8 +441,8 @@ public class RetiredFields {
         return ConfidentialAddress.KEEP.getLabel().equalsIgnoreCase(confidentialFieldValue) ? YES.getValue() : NO.getValue();
     }
 
-    private static Set<ThePrayer> transformApplicant1PrayerHasBeenGivenField(Map<String, Object> data) {
-        String value = (String) data.get("applicant1PrayerHasBeenGiven");
+    private static Set<ThePrayer> transformApplicantPrayerHasBeenGivenField(Map<String, Object> data, String field) {
+        String value = (String) data.get(field);
         return YES.getValue().equalsIgnoreCase(value)
             ? Set.of(I_CONFIRM)
             : emptySet();

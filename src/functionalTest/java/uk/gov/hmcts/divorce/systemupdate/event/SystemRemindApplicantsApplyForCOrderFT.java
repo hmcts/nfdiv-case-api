@@ -2,8 +2,8 @@ package uk.gov.hmcts.divorce.systemupdate.event;
 
 import io.restassured.response.Response;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
@@ -62,8 +62,7 @@ public class SystemRemindApplicantsApplyForCOrderFT extends FunctionalTestSuite 
     }
 
     @Test
-    @Disabled
-    // @EnabledIfEnvironmentVariable(named = "ELASTIC_SEARCH_ENABLED", matches = "true")
+    @EnabledIfEnvironmentVariable(named = "ELASTIC_SEARCH_ENABLED", matches = "true")
     public void shouldSearchForCasesReadyToApplyForConditionalOrder() {
         final BoolQueryBuilder query = boolQuery()
             .must(
