@@ -57,7 +57,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 
 @ExtendWith(MockitoExtension.class)
 public class DivorceApplicationSoleTemplateContentTest {
@@ -104,7 +103,7 @@ public class DivorceApplicationSoleTemplateContentTest {
         caseData.getApplication().getMarriageDetails().setApplicant1Name(TEST_LAST_NAME);
         caseData.getApplication().getMarriageDetails().setApplicant2Name(TEST_LAST_NAME);
 
-        final Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
+        final Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(result).contains(
             entry(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, "for a final order of divorce from"),
@@ -171,7 +170,7 @@ public class DivorceApplicationSoleTemplateContentTest {
         caseData.getApplication().getMarriageDetails().setApplicant1Name(TEST_LAST_NAME);
         caseData.getApplication().getMarriageDetails().setApplicant2Name(TEST_LAST_NAME);
 
-        final Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
+        final Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(result).contains(
             entry(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, "for the dissolution of the civil partnership with"),
