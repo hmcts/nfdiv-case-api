@@ -11,6 +11,8 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.solicitor.event.page.HelpWithFeesPageForApplicant2;
+import uk.gov.hmcts.divorce.solicitor.event.page.MarriageIrretrievablyBrokenForApplicant2;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitJointApplicationService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +30,12 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
 class SolicitorSubmitJointApplicationTest {
+
+    @Mock
+    private MarriageIrretrievablyBrokenForApplicant2 marriageIrretrievablyBrokenForApplicant2;
+
+    @Mock
+    private HelpWithFeesPageForApplicant2 helpWithFeesPageForApplicant2;
 
     @Mock
     private SolicitorSubmitJointApplicationService solicitorSubmitJointApplicationService;

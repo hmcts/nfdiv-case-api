@@ -19,8 +19,8 @@ import uk.gov.hmcts.divorce.solicitor.event.page.SolStatementOfTruthApplicant2;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitJointApplicationService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Arrays.asList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -89,7 +89,10 @@ public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, Stat
 
         log.info("Solicitor submit joint application submitted callback invoked for case id: {}", details.getId());
 
-        solicitorSubmitJointApplicationService.submitEventForApprovalOrRequestingChanges(details,httpServletRequest.getHeader(AUTHORIZATION));
+        solicitorSubmitJointApplicationService.submitEventForApprovalOrRequestingChanges(
+            details,
+            httpServletRequest.getHeader(AUTHORIZATION)
+        );
 
         return SubmittedCallbackResponse.builder().build();
     }
