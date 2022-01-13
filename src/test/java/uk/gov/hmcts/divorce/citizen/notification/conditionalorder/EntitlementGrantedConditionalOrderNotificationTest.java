@@ -83,6 +83,6 @@ class EntitlementGrantedConditionalOrderNotificationTest {
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
 }

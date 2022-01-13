@@ -27,7 +27,7 @@ public class SystemUpdateCaseWithCourtHearingFT extends FunctionalTestSuite {
     private static final String RESPONSE = "classpath:responses/response-system-update-case-with-court-hearing.json";
 
     @Test
-    public void shouldSendEmailsToApplicantAndRespondentAndCreateCOEDocument() throws IOException {
+    public void shouldSendEmailsToApplicantAndRespondentAndCreateCertificateOfEntitlementDocument() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
 
         Response response = triggerCallback(request, SYSTEM_UPDATE_CASE_COURT_HEARING, ABOUT_TO_SUBMIT_URL);
