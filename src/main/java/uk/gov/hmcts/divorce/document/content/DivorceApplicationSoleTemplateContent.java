@@ -9,7 +9,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.content.provider.ApplicantTemplateDataProvider;
 import uk.gov.hmcts.divorce.document.content.provider.ApplicationTemplateDataProvider;
 
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,6 +34,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_FINANCIAL_ORDER_APPLICANT_1;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_OTHER_COURT_CASES_APPLICANT_1;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE_POPULATED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
@@ -54,9 +54,7 @@ public class DivorceApplicationSoleTemplateContent {
     @Autowired
     private ApplicationTemplateDataProvider applicationTemplateDataProvider;
 
-    public Map<String, Object> apply(final CaseData caseData,
-                                     final Long caseId,
-                                     final LocalDate createdDate) {
+    public Map<String, Object> apply(final CaseData caseData, final Long caseId) {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
@@ -81,7 +79,10 @@ public class DivorceApplicationSoleTemplateContent {
         }
 
         templateContent.put(CCD_CASE_REFERENCE, formatId(caseId));
-        templateContent.put(ISSUE_DATE, createdDate.format(DATE_TIME_FORMATTER));
+        if (application.getIssueDate() != null) {
+            templateContent.put(ISSUE_DATE, application.getIssueDate().format(DATE_TIME_FORMATTER));
+        }
+        templateContent.put(ISSUE_DATE_POPULATED, application.getIssueDate() != null);
 
         templateContent.put(APPLICANT_1_FIRST_NAME, applicant1.getFirstName());
         templateContent.put(APPLICANT_1_MIDDLE_NAME, applicant1.getMiddleName());

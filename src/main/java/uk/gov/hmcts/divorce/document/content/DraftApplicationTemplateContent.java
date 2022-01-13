@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -37,6 +36,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HAS_FINANCIAL_ORDERS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE_POPULATED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
@@ -51,9 +51,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 @Slf4j
 public class DraftApplicationTemplateContent {
 
-    public Map<String, Object> apply(final CaseData caseData,
-                                     final Long ccdCaseReference,
-                                     final LocalDate createdDate) {
+    public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
 
         final var application = caseData.getApplication();
         final var applicant1 = caseData.getApplicant1();
@@ -80,7 +78,10 @@ public class DraftApplicationTemplateContent {
         }
 
         templateContent.put(CCD_CASE_REFERENCE, ccdCaseReference);
-        templateContent.put(ISSUE_DATE, createdDate.format(DATE_TIME_FORMATTER));
+        if (application.getIssueDate() != null) {
+            templateContent.put(ISSUE_DATE, application.getIssueDate().format(DATE_TIME_FORMATTER));
+        }
+        templateContent.put(ISSUE_DATE_POPULATED, application.getIssueDate() != null);
 
         templateContent.put(APPLICANT_1_FIRST_NAME, applicant1.getFirstName());
         templateContent.put(APPLICANT_1_MIDDLE_NAME, applicant1.getMiddleName());
