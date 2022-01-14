@@ -147,8 +147,8 @@ withPipeline(type, product, component) {
     }
 
     after('checkout') {
-      // builder.gradle('generateCCDConfig')
-      // generateDefinitions()
+      sh './gradlew generateCCDConfig --no-daemon'
+      generateDefinitions()
     }
 
     onPR {
