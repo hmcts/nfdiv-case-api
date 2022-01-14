@@ -57,7 +57,7 @@ class ConditionalOrderPronouncedNotificationTest {
         LocalDateTime now = LocalDateTime.now();
         CaseData data = caseData();
         data.setConditionalOrder(ConditionalOrder.builder()
-            .court(ConditionalOrderCourt.BIRMIGHAM)
+            .court(ConditionalOrderCourt.BIRMINGHAM)
             .dateAndTimeOfHearing(now)
             .grantedDate(now.toLocalDate())
             .build()
@@ -73,7 +73,7 @@ class ConditionalOrderPronouncedNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(IS_DIVORCE, YES),
-                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMIGHAM.getLabel()),
+                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
                 hasEntry(DATE_OF_HEARING, data.getConditionalOrder().getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER)),
                 hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER))
             )),
@@ -87,7 +87,7 @@ class ConditionalOrderPronouncedNotificationTest {
         LocalDateTime now = LocalDateTime.now();
         CaseData data = caseData();
         data.setConditionalOrder(ConditionalOrder.builder()
-            .court(ConditionalOrderCourt.BIRMIGHAM)
+            .court(ConditionalOrderCourt.BIRMINGHAM)
             .dateAndTimeOfHearing(now)
             .grantedDate(now.toLocalDate())
             .build()
@@ -106,7 +106,7 @@ class ConditionalOrderPronouncedNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(IS_DISSOLUTION, YES),
-                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMIGHAM.getLabel()),
+                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
                 hasEntry(DATE_OF_HEARING, data.getConditionalOrder().getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER)),
                 hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER))
             )),
@@ -122,7 +122,7 @@ class ConditionalOrderPronouncedNotificationTest {
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
         data.setApplicant2(getApplicant(Gender.MALE));
         data.setConditionalOrder(ConditionalOrder.builder()
-            .court(ConditionalOrderCourt.BIRMIGHAM)
+            .court(ConditionalOrderCourt.BIRMINGHAM)
             .dateAndTimeOfHearing(now)
             .grantedDate(now.toLocalDate())
             .build()
@@ -137,7 +137,7 @@ class ConditionalOrderPronouncedNotificationTest {
             eq(SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED),
             argThat(allOf(
                 hasEntry(IS_DIVORCE, YES),
-                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMIGHAM.getLabel()),
+                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
                 hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER)),
                 hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER))
             )),
@@ -153,7 +153,7 @@ class ConditionalOrderPronouncedNotificationTest {
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
         data.setApplicant2(getApplicant(Gender.MALE));
         data.setConditionalOrder(ConditionalOrder.builder()
-            .court(ConditionalOrderCourt.BIRMIGHAM)
+            .court(ConditionalOrderCourt.BIRMINGHAM)
             .dateAndTimeOfHearing(now)
             .grantedDate(now.toLocalDate())
             .build()
@@ -171,7 +171,7 @@ class ConditionalOrderPronouncedNotificationTest {
             eq(SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED),
             argThat(allOf(
                 hasEntry(IS_DISSOLUTION, YES),
-                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMIGHAM.getLabel()),
+                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
                 hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER)),
                 hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER))
             )),
@@ -187,7 +187,7 @@ class ConditionalOrderPronouncedNotificationTest {
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
         data.setApplicant2(getApplicant(Gender.MALE));
         data.setConditionalOrder(ConditionalOrder.builder()
-            .court(ConditionalOrderCourt.BIRMIGHAM)
+            .court(ConditionalOrderCourt.BIRMINGHAM)
             .dateAndTimeOfHearing(now)
             .grantedDate(now.toLocalDate())
             .build()
@@ -202,7 +202,7 @@ class ConditionalOrderPronouncedNotificationTest {
             eq(CITIZEN_CONDITIONAL_ORDER_PRONOUNCED),
             argThat(allOf(
                 hasEntry(IS_DIVORCE, YES),
-                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMIGHAM.getLabel()),
+                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
                 hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER)),
                 hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER))
             )),
@@ -218,7 +218,7 @@ class ConditionalOrderPronouncedNotificationTest {
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
         data.setApplicant2(getApplicant(Gender.MALE));
         data.setConditionalOrder(ConditionalOrder.builder()
-            .court(ConditionalOrderCourt.BIRMIGHAM)
+            .court(ConditionalOrderCourt.BIRMINGHAM)
             .dateAndTimeOfHearing(now)
             .grantedDate(now.toLocalDate())
             .build()
@@ -236,7 +236,7 @@ class ConditionalOrderPronouncedNotificationTest {
             eq(CITIZEN_CONDITIONAL_ORDER_PRONOUNCED),
             argThat(allOf(
                 hasEntry(IS_DISSOLUTION, YES),
-                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMIGHAM.getLabel()),
+                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
                 hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER)),
                 hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER))
             )),
