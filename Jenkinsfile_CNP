@@ -147,8 +147,8 @@ withPipeline(type, product, component) {
     }
 
     after('checkout') {
-      builder.gradle('generateCCDConfig')
-      generateDefinitions()
+      // builder.gradle('generateCCDConfig')
+      // generateDefinitions()
     }
 
     onPR {
