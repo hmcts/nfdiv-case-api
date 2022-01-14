@@ -11,7 +11,7 @@ public class FinancialOrdersForApplicant2 implements CcdPageConfiguration {
     public void addTo(final PageBuilder pageBuilder) {
 
         pageBuilder
-            .page("FinancialOrders")
+            .page("FinancialOrdersForApplicant2")
             .pageLabel("Financial orders")
             .complex(CaseData::getApplicant2)
                 .mandatoryWithLabel(Applicant::getFinancialOrder,"Does Applicant 2 wish to apply for a financial order?")

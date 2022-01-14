@@ -24,21 +24,12 @@ public class UpdateCasePronouncementJudgeProvider implements BulkActionCaseTaskP
         final BulkActionCaseData bulkActionCaseData = bulkCaseDetails.getData();
 
         return mainCaseDetails -> {
+            log.info("Updating case data for Case Id: {} Event: {}", mainCaseDetails.getId(), getEventId());
             final var conditionalOrder = mainCaseDetails.getData().getConditionalOrder();
-
-            log.info(
-                "****** About to update CaseData for case id: {}, conditional order: {}",
-                mainCaseDetails.getId(),
-                conditionalOrder);
 
             conditionalOrder.setPronouncementJudge(
                 bulkActionCaseData.getPronouncementJudge()
             );
-
-            log.info(
-                "****** Finished update CaseData for case id: {}, conditional order: {}",
-                mainCaseDetails.getId(),
-                mainCaseDetails.getData().getConditionalOrder());
 
             return mainCaseDetails;
         };
