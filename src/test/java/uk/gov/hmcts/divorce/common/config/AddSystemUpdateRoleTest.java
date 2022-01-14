@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.common.AddSystemUpdateRole;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.util.List;
+import java.util.random.RandomGeneratorFactory;
 
 import static com.github.stefanbirkner.systemlambda.SystemLambda.withEnvironmentVariable;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,6 +23,11 @@ public class AddSystemUpdateRoleTest {
 
     @Test
     public void shouldAddSystemUpdateRoleWhenEnvironmentIsAat() throws Exception {
+
+        var derp = RandomGeneratorFactory.of("Random")
+            .create()
+            .ints(5, 0,100);
+        System.out.println(derp);
         List<UserRole> actualRoles =
             withEnvironmentVariable("ENVIRONMENT", "aat")
                 .execute(() -> addSystemUpdateRole.addIfConfiguredForEnvironment(List.of(CITIZEN))
