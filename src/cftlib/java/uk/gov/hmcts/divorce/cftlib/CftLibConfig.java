@@ -1,8 +1,12 @@
 package uk.gov.hmcts.divorce.cftlib;
 
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import org.apache.commons.io.IOUtils;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLib;
 import uk.gov.hmcts.rse.ccd.lib.api.CFTLibConfigurer;
@@ -37,6 +41,10 @@ public class CftLibConfig implements CFTLibConfigurer {
         "pui-organisation-manager",
         "pui-user-manager"
     );
+    ResourceLoader resourceLoader = new DefaultResourceLoader();
+    var json = IOUtils.toString(resourceLoader.getResource("classpath:cftlib-am-role-assignments.json").getInputStream(), Charset.defaultCharset());
+    lib.configureRoleAssignments(json);
+
     var def = Files.readAllBytes(Path.of("build/ccd-config/ccd-NFD-dev.xlsx"));
     lib.importDefinition(def);
   }
