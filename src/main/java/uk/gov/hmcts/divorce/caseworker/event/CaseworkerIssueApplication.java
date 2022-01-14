@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.caseworker.service.IssueApplicationService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -23,7 +24,6 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 import java.util.List;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -41,6 +41,8 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
 
     public static final String CASEWORKER_ISSUE_APPLICATION = "caseworker-issue-application";
 
+    private static final String ALWAYS_HIDE = "marriageApplicant1Name=\"ALWAYS_HIDE\"";
+
     @Autowired
     private IssueApplicationService issueApplicationService;
 
@@ -57,11 +59,11 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_ISSUE_APPLICATION)
-            .forStates(Submitted, AwaitingDocuments, AwaitingAos)
+            .forStates(Submitted, AwaitingDocuments)
             .name("Application issued")
             .description("Application issued")
             .showSummary()
-            .explicitGrants()
+            .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE,
@@ -72,6 +74,9 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
                 LEGAL_ADVISOR))
             .page("issueApplication")
             .pageLabel("Issue Divorce Application")
+            .complex(CaseData::getLabelContent)
+                .readonlyNoSummary(LabelContent::getMarriageOrCivilPartnership, ALWAYS_HIDE)
+            .done()
             .complex(CaseData::getApplication)
                 .complex(Application::getMarriageDetails)
                     .optional(MarriageDetails::getDate)

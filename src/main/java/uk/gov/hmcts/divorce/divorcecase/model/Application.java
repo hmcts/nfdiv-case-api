@@ -17,6 +17,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
+import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2ReadAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
@@ -49,7 +50,7 @@ public class Application {
     private static final int SUBMISSION_RESPONSE_DAYS = 14;
 
     @CCD(
-        label = "Has the applicant's marriage broken down irretrievably?",
+        label = "Has the applicant's ${labelContentMarriageOrCivilPartnership} broken down irretrievably?",
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant1ScreenHasMarriageBroken;
@@ -159,7 +160,7 @@ public class Application {
             + " and have decided how money and property will be split (\"financial order\").",
         access = {Applicant2Access.class}
     )
-    private YesOrNo applicant2PrayerHasBeenGiven;
+    private Set<ThePrayer> applicant2PrayerHasBeenGivenCheckbox;
 
     @CCD(
         label = "The applicant believes that the facts stated in this application are true.",
@@ -180,16 +181,34 @@ public class Application {
     private YesOrNo solSignStatementOfTruth;
 
     @CCD(
+        label = "I am duly authorised by the applicant to sign this statement.",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo applicant2SolSignStatementOfTruth;
+
+    @CCD(
         label = "Your name",
         access = {DefaultAccess.class}
     )
     private String solStatementOfReconciliationName;
 
     @CCD(
+        label = "Your name",
+        access = {DefaultAccess.class}
+    )
+    private String applicant2SolStatementOfReconciliationName;
+
+    @CCD(
         label = "Name of your firm",
         access = {DefaultAccess.class}
     )
     private String solStatementOfReconciliationFirm;
+
+    @CCD(
+        label = "Name of your firm",
+        access = {DefaultAccess.class}
+    )
+    private String applicant2SolStatementOfReconciliationFirm;
 
     @CCD(
         label = "Additional comments",
@@ -199,6 +218,14 @@ public class Application {
     )
     private String statementOfReconciliationComments;
 
+    @CCD(
+        label = "Additional comments",
+        hint = "For the attention of court staff. These comments will not form part of the application",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
+    )
+    private String applicant2StatementOfReconciliationComments;
+
     // TODO move to OrderSummary?
     @CCD(
         label = "Solicitor application fee (in pounds)",
@@ -207,8 +234,8 @@ public class Application {
     private String solApplicationFeeInPounds;
 
     @CCD(
-        label = "How will payment be made?",
-        typeOverride = FixedList,
+        label = "How is payment being made?",
+        typeOverride = FixedRadioList,
         typeParameterOverride = "SolicitorPaymentMethod",
         access = {DefaultAccess.class}
     )
@@ -361,10 +388,10 @@ public class Application {
     private YesOrNo applicant2ReminderSent;
 
     @CCD(
-        label = "Notification sent to Joint Applicants indicating they can apply for a Conditional Order",
+        label = "Reminder sent to Applicants indicating they can apply for Conditional Order",
         access = {DefaultAccess.class}
     )
-    private YesOrNo jointApplicantsNotifiedCanApplyForConditionalOrder;
+    private YesOrNo applicantsRemindedCanApplyForConditionalOrder;
 
     @CCD(
         label = "What would you like to reissue?",
@@ -373,6 +400,17 @@ public class Application {
     )
     private ReissueOption reissueOption;
 
+    @CCD(
+        label = "Does Applicant 2 needs help with fees?",
+        access = {Applicant2Access.class}
+    )
+    private YesOrNo applicant2NeedsHelpWithFees;
+
+    @CCD(
+        label = "Link to applicant 1 solicitors answers",
+        access = {Applicant2ReadAccess.class}
+    )
+    private Document applicant1SolicitorAnswersLink;
 
     @JsonIgnore
     public boolean hasBeenPaidFor() {
@@ -446,11 +484,6 @@ public class Application {
     }
 
     @JsonIgnore
-    public boolean haveJointApplicantsBeenNotifiedCanApplyForConditionalOrder() {
-        return YES.equals(jointApplicantsNotifiedCanApplyForConditionalOrder);
-    }
-
-    @JsonIgnore
     public boolean hasOverdueNotificationBeenSent() {
         return YES.equals(overdueNotificationSent);
     }
@@ -472,4 +505,15 @@ public class Application {
     public boolean isSolicitorPaymentMethodPba() {
         return FEE_PAY_BY_ACCOUNT.equals(this.getSolPaymentHowToPay());
     }
+
+    @JsonIgnore
+    public boolean isApplicant1OffLine() {
+        return false;
+    }
+
+    @JsonIgnore
+    public boolean isApplicant2OffLine() {
+        return null != applicant1KnowsApplicant2EmailAddress && !applicant1KnowsApplicant2EmailAddress.toBoolean();
+    }
+
 }

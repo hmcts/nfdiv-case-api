@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -15,14 +16,13 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_DISSOLUTIO
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL_NOTIFY_KEY;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.isDivorce;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT1_CHANGES_MADE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
-public class Applicant1ResubmitNotification {
+public class Applicant1ResubmitNotification implements ApplicantNotification {
 
     public static final String THEIR_EMAIL_ADDRESS = "their email address";
 
@@ -35,7 +35,8 @@ public class Applicant1ResubmitNotification {
     @Autowired
     private EmailTemplatesConfig configVars;
 
-    public void sendToApplicant1(CaseData caseData, Long id) {
+    @Override
+    public void sendToApplicant1(final CaseData caseData, final Long id) {
         log.info("Sending applicant 1 made changes notification to applicant 1 for case : {}", id);
 
         notificationService.sendEmail(
@@ -46,7 +47,8 @@ public class Applicant1ResubmitNotification {
         );
     }
 
-    public void sendToApplicant2(CaseData caseData, Long id) {
+    @Override
+    public void sendToApplicant2(final CaseData caseData, final Long id) {
         log.info("Sending applicant 1 made changes notification to applicant 2 for case : {}", id);
 
         notificationService.sendEmail(
@@ -65,7 +67,7 @@ public class Applicant1ResubmitNotification {
 
     private Map<String, String> applicant2TemplateVars(CaseData caseData, Long id) {
         Map<String, String> templateVars = resubmitTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
-        String signInLink = configVars.getTemplateVars().get(isDivorce(caseData) ? SIGN_IN_DIVORCE_URL : SIGN_IN_DISSOLUTION_URL);
+        String signInLink = configVars.getTemplateVars().get(caseData.isDivorce() ? SIGN_IN_DIVORCE_URL : SIGN_IN_DISSOLUTION_URL);
         templateVars.put(SIGN_IN_URL_NOTIFY_KEY, signInLink + "/applicant2/check-your-joint-application");
         return templateVars;
     }

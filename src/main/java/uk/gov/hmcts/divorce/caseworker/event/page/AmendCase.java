@@ -5,47 +5,45 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 
 public class AmendCase implements CcdPageConfiguration {
+    private static final String ALWAYS_HIDE = "marriageCountryOfMarriage=\"ALWAYS_HIDE\"";
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
         pageBuilder.page("amendCase")
+            .complex(CaseData::getLabelContent)
+                .readonlyNoSummary(LabelContent::getMarriageOrCivilPartnership, ALWAYS_HIDE)
+                .readonlyNoSummary(LabelContent::getApplicantsOrApplicant1s, ALWAYS_HIDE)
+                .readonlyNoSummary(LabelContent::getRespondentsOrApplicant2s, ALWAYS_HIDE)
+            .done()
             .complex(CaseData::getApplication)
                 .complex(Application::getMarriageDetails)
-                    .optional(MarriageDetails::getDate)
+                    .optionalWithLabel(MarriageDetails::getDate,
+                        "Date of ${labelContentMarriageOrCivilPartnership}")
+                    .optionalWithLabel(MarriageDetails::getPlaceOfMarriage,
+                        "Place of ${labelContentMarriageOrCivilPartnership}")
+                    .optionalWithLabel(MarriageDetails::getCountryOfMarriage,
+                        "Country of ${labelContentMarriageOrCivilPartnership}")
                 .done()
             .done()
             .complex(CaseData::getApplicant1)
-                .optional(Applicant::getFirstName)
-                .optional(Applicant::getMiddleName)
-                .optional(Applicant::getLastName)
-                .mandatory(Applicant::getHomeAddress)
-                .optional(Applicant::getCorrespondenceAddress)
-                .optional(Applicant::getPhoneNumber)
-                .optional(Applicant::getEmail)
+                .optionalWithLabel(Applicant::getFirstName,
+                    "${labelContentApplicantsOrApplicant1s} first name")
+                .optionalWithLabel(Applicant::getMiddleName,
+                    "${labelContentApplicantsOrApplicant1s} middle name")
+                .optionalWithLabel(Applicant::getLastName,
+                    "${labelContentApplicantsOrApplicant1s} last name")
             .done()
             .complex(CaseData::getApplicant2)
                 .optionalWithLabel(Applicant::getFirstName,
-                    "Respondent's first name")
+                    "${labelContentRespondentsOrApplicant2s} first name")
                 .optionalWithLabel(Applicant::getMiddleName,
-                    "Respondent's middle name(s)")
+                    "${labelContentRespondentsOrApplicant2s} middle name")
                 .optionalWithLabel(Applicant::getLastName,
-                    "Respondent's last name")
-                .mandatoryWithLabel(Applicant::getHomeAddress,
-                    "Respondent's home address")
-                .optionalWithLabel(Applicant::getCorrespondenceAddress,
-                    "Respondent's service address")
-                .optionalWithLabel(Applicant::getEmail,
-                    "Respondent's email address")
-                .optionalWithLabel(Applicant::getPhoneNumber,
-                    "Respondent's phone number")
-            .done()
-            .complex(CaseData::getApplication)
-                .complex(Application::getMarriageDetails)
-                    .optional(MarriageDetails::getPlaceOfMarriage)
-                .done()
+                    "${labelContentRespondentsOrApplicant2s} last name")
             .done();
     }
 }

@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorClarificationSubmittedNotification;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -42,6 +43,9 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
     private LegalAdvisorClarificationSubmittedNotification notification;
 
     @Autowired
+    private NotificationDispatcher notificationDispatcher;
+
+    @Autowired
     private Clock clock;
 
     @Override
@@ -52,10 +56,10 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .name("Make a decision")
             .description("Grant Conditional Order")
             .endButtonLabel("Submit")
+            .aboutToStartCallback(this::aboutToStart)
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, LEGAL_ADVISOR)
             .grant(READ,
                 CASE_WORKER,
@@ -65,13 +69,6 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .pageLabel("Grant Conditional Order")
             .complex(CaseData::getConditionalOrder)
                 .mandatory(ConditionalOrder::getGranted)
-                .mandatory(ConditionalOrder::getClaimsGranted, "coGranted=\"Yes\"")
-                .done()
-            .page("conditionalOrderMakeCostsOrder")
-            .pageLabel("Make a costs order")
-            .showCondition("coClaimsGranted=\"Yes\"")
-            .complex(CaseData::getConditionalOrder)
-                .mandatory(ConditionalOrder::getClaimsCostsOrderInformation)
                 .done()
             .page("makeRefusalOrder")
             .pageLabel("Make a refusal order")
@@ -90,7 +87,7 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .pageLabel("Admin error - Make a Decision")
             .showCondition("coRefusalDecision=\"adminError\" AND coGranted=\"No\"")
             .complex(CaseData::getConditionalOrder)
-                .mandatory(ConditionalOrder::getRefusalRejectionAdditionalInfo)
+                .mandatory(ConditionalOrder::getRefusalAdminErrorInfo)
             .done()
             .page("amendApplication")
             .pageLabel("Request amended application - Make a Decision")
@@ -98,10 +95,16 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .complex(CaseData::getConditionalOrder)
                 .mandatory(ConditionalOrder::getRefusalRejectionReason)
                 .mandatory(ConditionalOrder::getRefusalRejectionAdditionalInfo,
-                "coRefusalRejectionReason=\"other\" "
-                    + "OR coRefusalRejectionReason=\"noCriteria\"" // added for backward compatibility
-                    + " OR coRefusalRejectionReason=\"insufficentDetails\"") // added for backward compatibility
+                "coRefusalRejectionReasonCONTAINS \"other\" "
+                    + "OR coRefusalRejectionReasonCONTAINS \"noCriteria\" " // added for backward compatibility
+                    + "OR coRefusalRejectionReasonCONTAINS \"insufficentDetails\"") // added for backward compatibility
             .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+        CaseData caseData = details.getData();
+        caseData.getConditionalOrder().resetRefusalFields();
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder().data(caseData).build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
@@ -122,9 +125,7 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
         } else if (ADMIN_ERROR.equals(conditionalOrder.getRefusalDecision())) {
             endState = AwaitingAdminClarification;
         } else if (MORE_INFO.equals(conditionalOrder.getRefusalDecision())) {
-            if (caseData.getApplication().isSolicitorApplication()) {
-                notification.send(caseData, details.getId());
-            }
+            notificationDispatcher.send(notification, caseData, details.getId());
             endState = AwaitingClarification;
         } else {
             endState = AwaitingAmendedApplication;

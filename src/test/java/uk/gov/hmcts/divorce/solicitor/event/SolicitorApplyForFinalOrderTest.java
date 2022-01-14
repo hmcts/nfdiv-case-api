@@ -22,7 +22,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class SolicitorApplyForFinalOrderTest {
+class SolicitorApplyForFinalOrderTest {
 
     @InjectMocks
     private SolicitorApplyForFinalOrder solicitorApplyForFinalOrder;
@@ -39,7 +39,7 @@ public class SolicitorApplyForFinalOrderTest {
     }
 
     @Test
-    public void shouldReturnErrorWhenApplyForFinalOrderIsNoAndMidEventIsInvoked() {
+    void shouldReturnErrorWhenApplyForFinalOrderIsNoAndMidEventIsInvoked() {
         final CaseData caseData = caseData();
         caseData.getFinalOrder().setDoesApplicantWantToApplyForFinalOrder(NO);
 
@@ -54,7 +54,7 @@ public class SolicitorApplyForFinalOrderTest {
     }
 
     @Test
-    public void shouldNotReturnErrorWhenApplyForFinalOrderIsYesAndMidEventIsInvoked() {
+    void shouldNotReturnErrorWhenApplyForFinalOrderIsYesAndMidEventIsInvoked() {
         final CaseData caseData = caseData();
         caseData.getFinalOrder().setDoesApplicantWantToApplyForFinalOrder(YES);
 

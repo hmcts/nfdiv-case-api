@@ -24,6 +24,7 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGeneralEmail.CASEWORKER_CREATE_GENERAL_EMAIL;
 import static uk.gov.hmcts.divorce.caseworker.service.notification.GeneralEmailNotification.GENERAL_EMAIL_DETAILS;
 import static uk.gov.hmcts.divorce.caseworker.service.notification.GeneralEmailNotification.GENERAL_OTHER_RECIPIENT_NAME;
@@ -126,6 +127,7 @@ public class CaseworkerGeneralEmailIT {
 
         final var applicant1 = getApplicant();
         applicant1.setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).name(TEST_SOLICITOR_NAME).build());
+        applicant1.setSolicitorRepresented(YES);
         caseData.setApplicant1(applicant1);
         caseData.setApplicant2(Applicant.builder().firstName(APPLICANT_2_FIRST_NAME).lastName(APPLICANT_2_LAST_NAME).build());
 
@@ -211,6 +213,7 @@ public class CaseworkerGeneralEmailIT {
         final var caseData = caseData();
         final var applicant2 = getApplicant();
         applicant2.setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).name(TEST_SOLICITOR_NAME).build());
+        applicant2.setSolicitorRepresented(YES);
         applicant2.setFirstName(APPLICANT_2_FIRST_NAME);
         applicant2.setLastName(APPLICANT_2_LAST_NAME);
         caseData.setApplicant2(applicant2);

@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.systemupdate.schedule;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -51,6 +52,9 @@ public class SystemNotifyApplicantDisputeFormOverdueTask implements Runnable {
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
 
+    @Value("${submit_aos.dispute_offset_days}")
+    private int disputeDueDateOffsetDays;
+
     @Override
     public void run() {
         log.info("NotifyApplicantDisputeFormOverdue scheduled task started");
@@ -63,7 +67,7 @@ public class SystemNotifyApplicantDisputeFormOverdueTask implements Runnable {
                 boolQuery()
                     .must(matchQuery(STATE, Holding))
                     .must(matchQuery(AOS_RESPONSE, DISPUTE_DIVORCE.getType()))
-                    .filter(rangeQuery(ISSUE_DATE).lte(LocalDate.now().minusDays(37)))
+                    .filter(rangeQuery(ISSUE_DATE).lte(LocalDate.now().minusDays(disputeDueDateOffsetDays)))
                     .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YesOrNo.YES));
 
             ccdSearchService.searchForAllCasesWithQuery(Holding, query, user, serviceAuth)

@@ -5,7 +5,10 @@
     "applicant1LastName": "Smith",
     "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
     "applicant1SolicitorRepresented": "Yes",
+    "applicant1Gender": "male",
     "applicant2Gender": "female",
+    "divorceWho": "wife",
+    "marriageFormationType": "oppositeSexCouple",
     "applicant1FinancialOrder": "No",
     "divorceUnit": "serviceCentre",
     "documentsGenerated": [

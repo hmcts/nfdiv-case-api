@@ -4,100 +4,92 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 
 import java.time.LocalDate;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
+@Builder
 public class MarriageDetails {
 
     @CCD(
         label = "The applicant's full name as on marriage certificate",
-        hint = "Enter the applicant's name exactly as it appears on the marriage certificate. "
-            + " Include any extra text such as \"formerly known as\"",
-        access = {DefaultAccess.class}
+        hint = "Exactly as it appears on the certificate. Include any additional text such as 'formally known as'."
     )
     private String applicant1Name;
 
     @CCD(
         label = "${labelContentTheApplicant2UC} full name as on marriage certificate",
-        hint = "Enter ${labelContentTheApplicant2}'s name exactly as it appears on the marriage certificate. "
-            + " Include any extra text such as \"formerly known as\"",
-        access = {DefaultAccess.class}
+        hint = "Exactly as it appears on the certificate. Include any additional text such as 'formally known as'."
     )
     private String applicant2Name;
 
     @CCD(
-        label = "Did the marriage take place in the UK?",
-        access = {DefaultAccess.class}
+        label = "Did the marriage take place in the UK?"
     )
+
     private YesOrNo marriedInUk;
 
     @CCD(
-        label = "Marriage certificate in English?",
-        access = {DefaultAccess.class}
+        label = "Marriage certificate in English?"
     )
     private YesOrNo certificateInEnglish;
 
     @CCD(
-        label = "Marriage certificate translation",
-        access = {DefaultAccess.class}
+        label = "Marriage certificate translation"
     )
     private YesOrNo certifiedTranslation;
 
     @CCD(
-        label = "Country of marriage",
-        hint = "Enter the country in which the marriage took place",
-        access = {DefaultAccess.class}
+        label = "Country of ${labelContentMarriageOrCivilPartnership}",
+        hint = "Enter the country in which the ${labelContentMarriageOrCivilPartnership} took place"
     )
     private String countryOfMarriage;
 
     @CCD(
-        label = "Place of marriage",
-        hint = "Enter the place of marriage as it appears on the marriage certificate",
-        access = {DefaultAccess.class}
+        label = "Place of ${labelContentMarriageOrCivilPartnership}",
+        hint = "Enter the place of ${labelContentMarriageOrCivilPartnership} as it appears on the certificate"
     )
     private String placeOfMarriage;
 
     @CCD(
         label = "Marriage date",
-        typeOverride = Date,
-        access = {DefaultAccess.class}
+        typeOverride = Date
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
 
     @CCD(
-        label = "Were the applicant and ${labelContentTheApplicant2} a same-sex couple when they got married?",
-        access = {DefaultAccess.class}
+        label = "Were ${labelContentTheApplicantOrApplicant1} and ${labelContentTheApplicant2} a same-sex couple when "
+            + "they ${labelContentGotMarriedOrFormedCivilPartnership}?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "MarriageFormation"
     )
-    private YesOrNo isSameSexCouple;
+    private MarriageFormation formationType;
 
     @CCD(
-        label = "Is the marriage certificate correct?",
-        access = {DefaultAccess.class}
+        label = "Is the marriage certificate correct?"
     )
     private YesOrNo certifyMarriageCertificateIsCorrect;
 
     @CCD(
         label = "Why is the Marriage certification incorrect",
-        hint = "e.g. wrong names, misspellings, poor quality photo or scan, damaged, or missing entirely",
-        access = {DefaultAccess.class}
+        hint = "e.g. wrong names, misspellings, poor quality photo or scan, damaged, or missing entirely"
     )
     private String marriageCertificateIsIncorrectDetails;
 
     @CCD(
-        label = "Issue application anyway?",
-        access = {DefaultAccess.class}
+        label = "Issue application anyway?"
     )
     private YesOrNo issueApplicationWithoutMarriageCertificate;
 }

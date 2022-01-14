@@ -25,14 +25,15 @@ public class Applicant2SolReviewApplicant1Application implements CcdPageConfigur
                 .readonly(Application::getMiniApplicationLink)
                 .done()
             .label("LabelRespSol-AOSRespond",
-                "### Respond to ${labelContentDivorceOrCivilPartnershipApplication} \n\n"
+                "### Respond to ${labelContentDivorceOrCivilPartnershipApplication}\n\n"
                     + "# Reference number\n"
                     + "${[CASE_REFERENCE]}\n\n"
                     + "# ${labelContentApplicant2UC}\n"
                     + "${applicant2FirstName} ${applicant2LastName}\n\n"
                     + "You must respond to this application within 14 days of ${labelContentTheApplicant2} receiving the letter "
                     + "from the courts."
-                    + " If you don't, the applicant can ask the court to move the divorce forwards without ${labelContentTheApplicant2}. "
+                    + " If you don't, the applicant can ask the court to move the ${labelContentDivorceOrCivilPartnership} "
+                    + "forwards without ${labelContentTheApplicant2}. "
                     + "${labelContentTheApplicant2UC} may have to pay extra fees if this happens.\n\n")
             .complex(CaseData::getAcknowledgementOfService)
             .mandatory(AcknowledgementOfService::getConfirmReadPetition)

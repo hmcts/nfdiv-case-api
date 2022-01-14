@@ -65,22 +65,7 @@ public class SystemProgressCasesToAwaitingFinalOrderTask implements Runnable {
                 ccdSearchService.searchForAllCasesWithQuery(ConditionalOrderPronounced, query, user, serviceAuth);
 
             for (final CaseDetails caseDetails : casesInConditionalOrderPronouncedState) {
-                try {
-                    Map<String, Object> caseDataMap = caseDetails.getData();
-                    String dateFinalOrderEligibleFrom = (String) caseDataMap.getOrDefault(DATE_FINAL_ORDER_ELIGIBLE_FROM, null);
-
-                    if (dateFinalOrderEligibleFrom != null) {
-                        LocalDate parsedDateFinalOrderEligibleFrom = LocalDate.parse(dateFinalOrderEligibleFrom);
-
-                        if (!parsedDateFinalOrderEligibleFrom.isAfter(LocalDate.now())) {
-                            ccdUpdateService.submitEvent(caseDetails, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, serviceAuth);
-                        }
-                    }
-                } catch (final CcdManagementException e) {
-                    log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
-                } catch (final IllegalArgumentException e) {
-                    log.error("Deserialization failed for case id: {}, continuing to next case", caseDetails.getId());
-                }
+                progressCaseToAwaitingFinalOrderIfEligible(user, serviceAuth, caseDetails);
             }
 
             log.info("System progress cases to Awaiting Final Order scheduled task complete.");
@@ -90,6 +75,25 @@ public class SystemProgressCasesToAwaitingFinalOrderTask implements Runnable {
             log.info("System progress cases to Awaiting Final Order scheduled task stopping "
                 + "due to conflict with another running Awaiting Final Order task"
             );
+        }
+    }
+
+    private void progressCaseToAwaitingFinalOrderIfEligible(User user, String serviceAuth, CaseDetails caseDetails) {
+        try {
+            Map<String, Object> caseDataMap = caseDetails.getData();
+            String dateFinalOrderEligibleFrom = (String) caseDataMap.getOrDefault(DATE_FINAL_ORDER_ELIGIBLE_FROM, null);
+
+            if (dateFinalOrderEligibleFrom != null) {
+                LocalDate parsedDateFinalOrderEligibleFrom = LocalDate.parse(dateFinalOrderEligibleFrom);
+
+                if (!parsedDateFinalOrderEligibleFrom.isAfter(LocalDate.now())) {
+                    ccdUpdateService.submitEvent(caseDetails, SYSTEM_PROGRESS_CASE_TO_AWAITING_FINAL_ORDER, user, serviceAuth);
+                }
+            }
+        } catch (final CcdManagementException e) {
+            log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
+        } catch (final IllegalArgumentException e) {
+            log.error("Deserialization failed for case id: {}, continuing to next case", caseDetails.getId());
         }
     }
 }

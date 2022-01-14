@@ -22,7 +22,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getCommonTemplateVars;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 
 @ExtendWith(MockitoExtension.class)
 class DisputeFormOverdueOverdueNotificationTest {
@@ -41,9 +41,9 @@ class DisputeFormOverdueOverdueNotificationTest {
         CaseData data = caseData();
         data.setDueDate(LOCAL_DATE);
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
-            .thenReturn(getCommonTemplateVars());
+            .thenReturn(getMainTemplateVars());
 
-        notification.send(data, 1234567890123456L);
+        notification.sendToApplicant1(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),

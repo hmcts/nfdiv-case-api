@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -9,6 +10,9 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor.Prayer;
+import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessBetaOnlyAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.lang.reflect.Field;
@@ -25,7 +29,9 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import static java.util.Collections.emptySet;
+import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableMap;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
@@ -35,8 +41,12 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer;
 import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
+import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.MarriageFormation.OPPOSITE_SEX_COUPLE;
+import static uk.gov.hmcts.divorce.divorcecase.model.MarriageFormation.SAME_SEX_COUPLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Solicitor.Prayer.CONFIRM;
 
 @Data
@@ -186,6 +196,112 @@ public class RetiredFields {
     )
     private String jurisdictionDisagreeReason;
 
+    @CCD(
+        label = "Retired clarification response",
+        typeOverride = TextArea
+    )
+    private String coClarificationResponse;
+
+    @CCD(
+        label = "Retire same sex couple",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo marriageIsSameSexCouple;
+
+    @CCD(label = "Retired applicant 1 keep contact details private")
+    private YesOrNo applicant1KeepContactDetailsConfidential;
+
+    @CCD(
+        label = "Retired applicant 1 Keep contact details private",
+        access = {DefaultAccess.class, Applicant2Access.class}
+    )
+    private YesOrNo applicant2KeepContactDetailsConfidential;
+
+    @CCD(
+        label = "Retired flag indicating notification to applicant 1 they can apply for a Conditional Order already sent",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo applicant1NotifiedCanApplyForConditionalOrder;
+
+    @CCD(
+        label = "Retired flag indicating notification to joint applicants they can apply for a Conditional Order already sent",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo jointApplicantsNotifiedCanApplyForConditionalOrder;
+
+    @CCD(
+        label = "Retired flag indicating reminder to joint applicants they can apply for a Conditional Order already sent",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo jointApplicantsRemindedCanApplyForConditionalOrder;
+
+    @CCD(
+        label = "Retired Date Conditional Order submitted to HMCTS, split into applicant1 and applicant2 submission dates"
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
+    private LocalDateTime coDateSubmitted;
+
+    @CCD(label = "retiredApplicant1ApplyForConditionalOrderStarted")
+    private YesOrNo applicant1ApplyForConditionalOrderStarted;
+
+    @CCD(label = "retiredApplicant2ApplyForConditionalOrderStarted")
+    private YesOrNo applicant2ApplyForConditionalOrderStarted;
+
+    @CCD(label = "retiredApplicant1ContinueApplication")
+    private YesOrNo applicant1ContinueApplication;
+
+    @CCD(label = "retiredApplicant2ContinueApplication")
+    private YesOrNo applicant2ContinueApplication;
+
+    @CCD(label = "retiredCoIsEverythingInApplicationTrue")
+    private YesOrNo coIsEverythingInApplicationTrue;
+
+    @CCD(label = "retiredCoChangeOrAddToApplication")
+    private YesOrNo coChangeOrAddToApplication;
+
+    @CCD(label = "retiredCoApplyForConditionalOrder")
+    private YesOrNo coApplyForConditionalOrder;
+
+    @CCD(label = "retiredCoApplicantStatementOfTruth")
+    private YesOrNo coApplicantStatementOfTruth;
+
+    @CCD(
+        label = "Retire select judge",
+        typeOverride = FixedList,
+        typeParameterOverride = "GeneralOrderJudgeOrLegalAdvisorType"
+    )
+    private GeneralOrderJudgeOrLegalAdvisorType generalOrderJudgeType;
+
+    @CCD(
+        label = "Retire name of Judge",
+        access = {CaseworkerAccessBetaOnlyAccess.class}
+    )
+    private String generalOrderJudgeName;
+
+    @CCD(
+        label = "Retire name of Legal Advisor"
+    )
+    private String generalOrderLegalAdvisorName;
+
+    @CCD(
+        label = "Spouse Type",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "WhoDivorcing"
+    )
+    private WhoDivorcing applicant1DivorceWho;
+
+    @CCD(
+        label = "Spouse Type",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "WhoDivorcing"
+    )
+    private WhoDivorcing applicant2DivorceWho;
+
+    @CCD(
+        label = "Retire applicant 2 prayer"
+    )
+    private YesOrNo applicant2PrayerHasBeenGiven;
+
     @JsonIgnore
     private static final Consumer<Map<String, Object>> DO_NOTHING = data -> {
     };
@@ -211,7 +327,7 @@ public class RetiredFields {
         init.put("applicant1FinancialOrderForRemoved", DO_NOTHING);
         init.put("applicant2FinancialOrderForRemoved", DO_NOTHING);
         init.put("dateConditionalOrderSubmitted",
-            data -> data.put("coDateSubmitted", data.get("dateConditionalOrderSubmitted")));
+            data -> data.put("coApplicant1SubmittedDate", data.get("dateConditionalOrderSubmitted")));
         init.put("legalProceedingsExist",
             data -> data.put("applicant2LegalProceedings", data.get("legalProceedingsExist")));
         init.put("legalProceedingsDescription",
@@ -223,7 +339,13 @@ public class RetiredFields {
         init.put("coCourtName",
             data -> data.put("coCourt", BURY_ST_EDMUNDS.getCourtId()));
         init.put("applicant1PrayerHasBeenGiven",
-            data -> data.put("applicant1PrayerHasBeenGivenCheckbox", transformApplicant1PrayerHasBeenGivenField(data)));
+            data -> data.put("applicant1PrayerHasBeenGivenCheckbox",
+                transformApplicantPrayerHasBeenGivenField(data,"applicant1PrayerHasBeenGiven"))
+        );
+        init.put("applicant2PrayerHasBeenGiven",
+            data -> data.put("applicant2PrayerHasBeenGivenCheckbox",
+                transformApplicantPrayerHasBeenGivenField(data,"applicant2PrayerHasBeenGiven"))
+        );
         init.put("coIsEverythingInPetitionTrue",
             data -> data.put("coIsEverythingInApplicationTrue", data.get("coIsEverythingInPetitionTrue")));
         init.put("alternativeServiceApplications",
@@ -252,6 +374,46 @@ public class RetiredFields {
         );
         init.put("jurisdictionDisagreeReason",
             data -> data.put("reasonCourtsOfEnglandAndWalesHaveNoJurisdiction", data.get("jurisdictionDisagreeReason")));
+        init.put("coClarificationResponse",
+            data -> data.put("coClarificationResponses", transformClarificationResponse(data)));
+        init.put("applicant1KeepContactDetailsConfidential",
+            data -> data.put("applicant1ContactDetailsType", transformContactDetails(data, "applicant1KeepContactDetailsConfidential")));
+        init.put("applicant2KeepContactDetailsConfidential",
+            data -> data.put("applicant2ContactDetailsType", transformContactDetails(data, "applicant2KeepContactDetailsConfidential")));
+        init.put("marriageIsSameSexCouple",
+            data -> data.put("marriageFormationType", transformSameSexToMarriageFormation(data)));
+        init.put("coDateSubmitted",
+            data -> data.put("coApplicant1SubmittedDate", data.get("coDateSubmitted")));
+        init.put("jointApplicantsRemindedCanApplyForConditionalOrder", data ->
+            data.put("applicantsRemindedCanApplyForConditionalOrder", data.get("jointApplicantsRemindedCanApplyForConditionalOrder")));
+        init.put("applicant1ApplyForConditionalOrderStarted",
+            data -> data.put("coApplicant1ApplyForConditionalOrderStarted", data.get("applicant1ApplyForConditionalOrderStarted")));
+        init.put("applicant2ApplyForConditionalOrderStarted",
+            data -> data.put("coApplicant2ApplyForConditionalOrderStarted", data.get("applicant2ApplyForConditionalOrderStarted")));
+        init.put("applicant1ContinueApplication",
+            data -> data.put("coApplicant1ContinueApplication", data.get("applicant1ContinueApplication")));
+        init.put("applicant2ContinueApplication",
+            data -> data.put("coApplicant2ContinueApplication", data.get("applicant2ContinueApplication")));
+        init.put("coIsEverythingInApplicationTrue",
+            data -> data.put("coApplicant1IsEverythingInApplicationTrue", data.get("coIsEverythingInApplicationTrue")));
+        init.put("coChangeOrAddToApplication",
+            data -> data.put("coApplicant1ChangeOrAddToApplication", data.get("coChangeOrAddToApplication")));
+        init.put("coApplicantStatementOfTruth",
+            data -> data.put("coApplicant1StatementOfTruth", data.get("coApplicantStatementOfTruth")));
+        init.put("coApplyForConditionalOrder",
+            data -> data.put("coApplicant1ApplyForConditionalOrder", data.get("coApplyForConditionalOrder")));
+        init.put("generalOrderJudgeType",
+            data -> data.put("generalOrderJudgeOrLegalAdvisorType", data.get("generalOrderJudgeType")));
+        init.put("generalOrderJudgeName",
+            data -> data.put("generalOrderJudgeOrLegalAdvisorName",
+                transformJudgeOrLegalAdvisorName(data, "generalOrderJudgeName")
+            )
+        );
+        init.put("generalOrderLegalAdvisorName",
+            data -> data.put("generalOrderJudgeOrLegalAdvisorName",
+                transformJudgeOrLegalAdvisorName(data, "generalOrderLegalAdvisorName")
+            )
+        );
 
         migrations = unmodifiableMap(init);
     }
@@ -274,13 +436,13 @@ public class RetiredFields {
         return migrations.size();
     }
 
-    private static YesOrNo transformContactDetailsConfidentialField(String confidentialFieldName, Map<String, Object> data) {
+    private static String transformContactDetailsConfidentialField(String confidentialFieldName, Map<String, Object> data) {
         String confidentialFieldValue = (String) data.get(confidentialFieldName);
-        return ConfidentialAddress.KEEP.getLabel().equalsIgnoreCase(confidentialFieldValue) ? YES : NO;
+        return ConfidentialAddress.KEEP.getLabel().equalsIgnoreCase(confidentialFieldValue) ? YES.getValue() : NO.getValue();
     }
 
-    private static Set<ThePrayer> transformApplicant1PrayerHasBeenGivenField(Map<String, Object> data) {
-        String value = (String) data.get("applicant1PrayerHasBeenGiven");
+    private static Set<ThePrayer> transformApplicantPrayerHasBeenGivenField(Map<String, Object> data, String field) {
+        String value = (String) data.get(field);
         return YES.getValue().equalsIgnoreCase(value)
             ? Set.of(I_CONFIRM)
             : emptySet();
@@ -373,5 +535,35 @@ public class RetiredFields {
         return YES.getValue().equalsIgnoreCase(value)
             ? Set.of(CONFIRM)
             : emptySet();
+    }
+
+    private static List<ListValue<String>> transformClarificationResponse(Map<String, Object> data) {
+        String clarificationResponseText = (String) data.get("coClarificationResponse");
+        return singletonList(ListValue.<String>builder().value(clarificationResponseText).build());
+    }
+
+    private static String transformContactDetails(Map<String, Object> data, String contactDetailsField) {
+        String value = (String) data.get(contactDetailsField);
+        return YES.getValue().equalsIgnoreCase(value)
+            ? PRIVATE.getType()
+            : PUBLIC.getType();
+    }
+
+    private static String transformSameSexToMarriageFormation(Map<String, Object> data) {
+        String value = (String) data.get("marriageIsSameSexCouple");
+        return YES.getValue().equalsIgnoreCase(value)
+            ? SAME_SEX_COUPLE.getType()
+            : OPPOSITE_SEX_COUPLE.getType();
+    }
+
+
+    private static String transformJudgeOrLegalAdvisorName(Map<String, Object> data, String retiredField) {
+        String newJudgeOrLaFieldNameValue = (String) data.get("generalOrderJudgeOrLegalAdvisorName");
+        String retiredJudgeOrLaFieldNameValue = (String) data.get(retiredField);
+
+        if (isNotEmpty(newJudgeOrLaFieldNameValue)) {
+            return newJudgeOrLaFieldNameValue + " " + retiredJudgeOrLaFieldNameValue;
+        }
+        return retiredJudgeOrLaFieldNameValue;
     }
 }

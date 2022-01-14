@@ -1,6 +1,9 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 
 import java.time.LocalDate;
@@ -13,9 +16,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
@@ -35,12 +41,14 @@ class RetiredFieldsTest {
         data.put("applicant1FinancialOrderForRemoved", "value");
         data.put("applicant2FinancialOrderForRemoved", "value");
         data.put("dateConditionalOrderSubmitted", "2021-11-11");
+        data.put("coDateSubmitted", "2021-11-13");
         data.put("legalProceedingsExist", "YES");
         data.put("legalProceedingsDescription", "value");
         data.put("doYouAgreeCourtHasJurisdiction", "YES");
         data.put("serviceApplicationType", "type");
         data.put("coCourtName", "serviceCentre");
         data.put("applicant1PrayerHasBeenGiven", "Yes");
+        data.put("applicant2PrayerHasBeenGiven", "Yes");
         data.put("coAddNewDocuments", "YES");
         data.put("coDocumentsUploaded", Collections.emptyList());
         data.put("coIsEverythingInPetitionTrue", "YES");
@@ -49,6 +57,16 @@ class RetiredFieldsTest {
         data.put("disputeApplication", "YES");
         data.put("applicant1SolicitorAgreeToReceiveEmails", "Yes");
         data.put("applicant2SolicitorAgreeToReceiveEmails", "No");
+        data.put("coClarificationResponse", "some text");
+        data.put("marriageIsSameSexCouple", "Yes");
+        data.put("applicant2KeepContactDetailsConfidential", "Yes");
+        data.put("jointApplicantsRemindedCanApplyForConditionalOrder", "Yes");
+        data.put("applicant1ApplyForConditionalOrderStarted", "YES");
+        data.put("applicant2ApplyForConditionalOrderStarted", "YES");
+        data.put("applicant1ContinueApplication", "YES");
+        data.put("applicant2ContinueApplication", "YES");
+        data.put("coChangeOrAddToApplication", "YES");
+        data.put("coApplyForConditionalOrder", "YES");
 
         final var result = RetiredFields.migrate(data);
 
@@ -61,7 +79,7 @@ class RetiredFieldsTest {
             entry("applicant1FinancialOrderForRemoved", null),
             entry("applicant2FinancialOrderForRemoved", null),
             entry("dateConditionalOrderSubmitted", null),
-            entry("coDateSubmitted", "2021-11-11"),
+            entry("coApplicant1SubmittedDate", "2021-11-13"),
             entry("legalProceedingsExist", null),
             entry("applicant2LegalProceedings", "YES"),
             entry("legalProceedingsDescription", null),
@@ -73,6 +91,7 @@ class RetiredFieldsTest {
             entry("coCourtName", null),
             entry("coCourt", BURY_ST_EDMUNDS.getCourtId()),
             entry("applicant1PrayerHasBeenGivenCheckbox", Set.of(I_CONFIRM)),
+            entry("applicant2PrayerHasBeenGivenCheckbox", Set.of(I_CONFIRM)),
             entry("coAddNewDocuments", "YES"),
             entry("coDocumentsUploaded", emptyList()),
             entry("coIsEverythingInPetitionTrue", null),
@@ -81,7 +100,17 @@ class RetiredFieldsTest {
             entry("coIsEverythingInApplicationTrue", "YES"),
             entry("alternativeServiceApplications", null),
             entry("applicant1SolicitorAgreeToReceiveEmailsCheckbox", Set.of(CONFIRM)),
-            entry("applicant2SolicitorAgreeToReceiveEmailsCheckbox", emptySet())
+            entry("applicant2SolicitorAgreeToReceiveEmailsCheckbox", emptySet()),
+            entry("coClarificationResponses", singletonList(ListValue.<String>builder().value("some text").build())),
+            entry("marriageFormationType", "sameSexCouple"),
+            entry("coApplicant1ApplyForConditionalOrderStarted", "YES"),
+            entry("coApplicant2ApplyForConditionalOrderStarted", "YES"),
+            entry("coApplicant1ContinueApplication", "YES"),
+            entry("coApplicant2ContinueApplication", "YES"),
+            entry("coApplicant1IsEverythingInApplicationTrue", "YES"),
+            entry("coApplicant1ChangeOrAddToApplication", "YES"),
+            entry("coApplicant1ApplyForConditionalOrder", "YES"),
+            entry("applicantsRemindedCanApplyForConditionalOrder", "Yes")
         );
     }
 
@@ -170,43 +199,16 @@ class RetiredFieldsTest {
     }
 
 
-    @Test
-    void shouldMigrateGeneralReferralJudgeAndLegalAdvisorDetailsWhenBothValuesArePresent() {
-        final var data = new HashMap<String, Object>();
-        data.put("generalReferralJudgeDetails", "judge");
-        data.put("generalReferralLegalAdvisorDetails", "la");
+    @ParameterizedTest
+    @MethodSource("judgeAndLaParametersWithOutput")
+    void shouldMigrateGeneralReferralJudgeAndLegalAdvisorDetails(
+        Map<String, Object> inputData, String output
+    ) {
 
-        RetiredFields.migrate(data);
+        RetiredFields.migrate(inputData);
 
-        assertThat(data).contains(
-            entry("generalReferralJudgeOrLegalAdvisorDetails", "judge la")
-        );
-    }
-
-    @Test
-    void shouldMigrateGeneralReferralJudgeAndLegalAdvisorDetailsWhenJudgeDetailsIsNull() {
-        final var data = new HashMap<String, Object>();
-        data.put("generalReferralJudgeDetails", null);
-        data.put("generalReferralLegalAdvisorDetails", "la");
-
-        RetiredFields.migrate(data);
-
-        assertThat(data).contains(
-            entry("generalReferralJudgeOrLegalAdvisorDetails", "la")
-        );
-    }
-
-
-    @Test
-    void shouldMigrateGeneralReferralJudgeAndLegalAdvisorDetailsWhenLegalAdvisorDetailsIsNull() {
-        final var data = new HashMap<String, Object>();
-        data.put("generalReferralJudgeDetails", "judge");
-        data.put("generalReferralLegalAdvisorDetails", null);
-
-        RetiredFields.migrate(data);
-
-        assertThat(data).contains(
-            entry("generalReferralJudgeOrLegalAdvisorDetails", "judge")
+        assertThat(inputData).contains(
+            entry("generalReferralJudgeOrLegalAdvisorDetails", output)
         );
     }
 
@@ -259,4 +261,50 @@ class RetiredFieldsTest {
             entry("reasonCourtsOfEnglandAndWalesHaveNoJurisdiction", "Jurisdiction Disagree Reason")
         );
     }
+
+    @Test
+    void shouldMigrateGeneralOrderJudgeNameWhenLaNameIsNotPresent() {
+        final var data = new HashMap<String, Object>();
+        data.put("generalOrderJudgeName", "some judge name");
+
+        final var result = RetiredFields.migrate(data);
+
+        assertThat(result).contains(
+            entry("generalOrderJudgeOrLegalAdvisorName", "some judge name")
+        );
+    }
+
+    @Test
+    void shouldMigrateGeneralOrderJudgeAndLaNameWhenBothLaAndJudgeNamesArePresent() {
+        final var data = new TreeMap<String, Object>();
+        data.put("generalOrderJudgeName", "judge");
+        data.put("generalOrderLegalAdvisorName", "la");
+
+        final var result = RetiredFields.migrate(data);
+
+        assertThat(result).contains(
+            entry("generalOrderJudgeOrLegalAdvisorName", "la judge")
+        );
+    }
+
+    private static Stream<Arguments> judgeAndLaParametersWithOutput() {
+        final var judgeAndLaDataMap = new HashMap<String, Object>();
+        judgeAndLaDataMap.put("generalReferralJudgeDetails", "judge");
+        judgeAndLaDataMap.put("generalReferralLegalAdvisorDetails", "la");
+
+        final var onlyLaMap = new HashMap<String, Object>();
+        onlyLaMap.put("generalReferralJudgeDetails", null);
+        onlyLaMap.put("generalReferralLegalAdvisorDetails", "la");
+
+        final var onlyJudgeMap = new HashMap<String, Object>();
+        onlyJudgeMap.put("generalReferralJudgeDetails", "judge");
+        onlyJudgeMap.put("generalReferralLegalAdvisorDetails", null);
+
+        return Stream.of(
+            Arguments.of(judgeAndLaDataMap, "judge la"),
+            Arguments.of(onlyLaMap, "la"),
+            Arguments.of(onlyJudgeMap, "judge")
+        );
+    }
+
 }

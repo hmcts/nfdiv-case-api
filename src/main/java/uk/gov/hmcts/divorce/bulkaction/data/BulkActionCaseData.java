@@ -14,6 +14,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
 import uk.gov.hmcts.divorce.divorcecase.model.access.BulkCaseListAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.BulkCaseRemovalAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
@@ -120,7 +121,7 @@ public class BulkActionCaseData {
         label = "Cases accepted to list for hearing",
         typeOverride = Collection,
         typeParameterOverride = "CaseLink",
-        access = {CaseworkerAccess.class}
+        access = {BulkCaseRemovalAccess.class}
     )
     private List<ListValue<CaseLink>> casesAcceptedToListForHearing;
 

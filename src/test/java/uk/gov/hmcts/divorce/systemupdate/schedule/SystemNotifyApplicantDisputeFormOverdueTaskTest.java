@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
@@ -46,8 +47,9 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 
 @ExtendWith(MockitoExtension.class)
-public class SystemNotifyApplicantDisputeFormOverdueTaskTest {
+class SystemNotifyApplicantDisputeFormOverdueTaskTest {
 
+    private static final int DISPUTE_DUE_DATE_OFFSET_DAYS = 37;
     @Mock
     private CcdSearchService ccdSearchService;
     @Mock
@@ -66,7 +68,7 @@ public class SystemNotifyApplicantDisputeFormOverdueTaskTest {
         boolQuery()
             .must(matchQuery(STATE, Holding))
             .must(matchQuery(AOS_RESPONSE, DISPUTE_DIVORCE.getType()))
-            .filter(rangeQuery(ISSUE_DATE).lte(LocalDate.now().minus(37, DAYS)))
+            .filter(rangeQuery(ISSUE_DATE).lte(LocalDate.now().minus(DISPUTE_DUE_DATE_OFFSET_DAYS, DAYS)))
             .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YES));
 
     @BeforeEach
@@ -74,6 +76,7 @@ public class SystemNotifyApplicantDisputeFormOverdueTaskTest {
         user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
+        ReflectionTestUtils.setField(underTest, "disputeDueDateOffsetDays", DISPUTE_DUE_DATE_OFFSET_DAYS);
     }
 
     @Test

@@ -112,10 +112,17 @@ public class SystemCreateBulkCaseListTaskTest {
             bulkListCaseDetailsListValue("app1fname2 app1lname2 vs app2fname2 app2lname2", 2L);
         final List<ListValue<BulkListCaseDetails>> bulkCases = List.of(bulkListCaseDetails1, bulkListCaseDetails2);
 
+        final var caseAcceptedToHearing1 =
+            caseLinkListValue(bulkListCaseDetails1.getValue().getCaseReference(), "1");
+        final var caseAcceptedToHearing2 =
+            caseLinkListValue(bulkListCaseDetails2.getValue().getCaseReference(), "2");
+        final List<ListValue<CaseLink>> casesAcceptedToHearing = List.of(caseAcceptedToHearing1, caseAcceptedToHearing2);
+
         final CaseDetails<BulkActionCaseData, BulkActionState> bulkActionCaseDetails = new CaseDetails<>();
         bulkActionCaseDetails.setCaseTypeId(BulkActionCaseTypeConfig.CASE_TYPE);
         bulkActionCaseDetails.setData(BulkActionCaseData.builder()
             .bulkListCaseDetails(bulkCases)
+            .casesAcceptedToListForHearing(casesAcceptedToHearing)
             .build());
 
         final CaseDetails<BulkActionCaseData, BulkActionState> createdCaseDetails = new CaseDetails<>();
@@ -203,17 +210,34 @@ public class SystemCreateBulkCaseListTaskTest {
         final var bulkListCaseDetails4 =
             bulkListCaseDetailsListValue("app1fname4 app1lname4 vs app2fname4 app2lname4", 4L);
 
+        final var caseAcceptedToHearing1 =
+            caseLinkListValue(bulkListCaseDetails1.getValue().getCaseReference(), "1");
+        final var caseAcceptedToHearing2 =
+            caseLinkListValue(bulkListCaseDetails2.getValue().getCaseReference(), "2");
+
+        final List<ListValue<CaseLink>> casesAcceptedToHearing1 = List.of(caseAcceptedToHearing1, caseAcceptedToHearing2);
+
+        final var caseAcceptedToHearing3 =
+            caseLinkListValue(bulkListCaseDetails3.getValue().getCaseReference(), "1");
+        final var caseAcceptedToHearing4 =
+            caseLinkListValue(bulkListCaseDetails4.getValue().getCaseReference(), "2");
+
+        final List<ListValue<CaseLink>> casesAcceptedToHearing2 = List.of(caseAcceptedToHearing3, caseAcceptedToHearing4);
+
+
         final List<ListValue<BulkListCaseDetails>> bulkCases1 = List.of(bulkListCaseDetails1, bulkListCaseDetails2);
         final CaseDetails<BulkActionCaseData, BulkActionState> bulkActionCaseDetails1 = new CaseDetails<>();
         bulkActionCaseDetails1.setCaseTypeId(BulkActionCaseTypeConfig.CASE_TYPE);
         bulkActionCaseDetails1.setData(BulkActionCaseData.builder()
             .bulkListCaseDetails(bulkCases1)
+            .casesAcceptedToListForHearing(casesAcceptedToHearing1)
             .build());
 
         final CaseDetails<BulkActionCaseData, BulkActionState> createdCaseDetails1 = new CaseDetails<>();
         createdCaseDetails1.setId(5L);
         createdCaseDetails1.setData(BulkActionCaseData.builder()
             .bulkListCaseDetails(bulkCases1)
+            .casesAcceptedToListForHearing(casesAcceptedToHearing1)
             .build());
 
         final CaseDetails<BulkActionCaseData, BulkActionState> bulkActionCaseDetails2 = new CaseDetails<>();
@@ -221,12 +245,14 @@ public class SystemCreateBulkCaseListTaskTest {
         final List<ListValue<BulkListCaseDetails>> bulkCases2 = List.of(bulkListCaseDetails3, bulkListCaseDetails4);
         bulkActionCaseDetails2.setData(BulkActionCaseData.builder()
             .bulkListCaseDetails(bulkCases2)
+            .casesAcceptedToListForHearing(casesAcceptedToHearing2)
             .build());
 
         final CaseDetails<BulkActionCaseData, BulkActionState> createdCaseDetails2 = new CaseDetails<>();
         createdCaseDetails2.setId(6L);
         createdCaseDetails2.setData(BulkActionCaseData.builder()
             .bulkListCaseDetails(bulkCases2)
+            .casesAcceptedToListForHearing(casesAcceptedToHearing2)
             .build());
 
         final CaseTask caseTask1 = mock(CaseTask.class);
@@ -330,16 +356,26 @@ public class SystemCreateBulkCaseListTaskTest {
 
         final var bulkCaseList = new ArrayList<>(asList(bulkListCaseDetails1, bulkListCaseDetails2));
 
+        final var caseAcceptedToHearing1 =
+            caseLinkListValue(bulkListCaseDetails1.getValue().getCaseReference(), "1");
+        final var caseAcceptedToHearing2 =
+            caseLinkListValue(bulkListCaseDetails2.getValue().getCaseReference(), "2");
+
+        final List<ListValue<CaseLink>> casesAcceptedToHearing = List.of(caseAcceptedToHearing1, caseAcceptedToHearing2);
+
+
         final CaseDetails<BulkActionCaseData, BulkActionState> bulkActionCaseDetails = new CaseDetails<>();
         bulkActionCaseDetails.setCaseTypeId(BulkActionCaseTypeConfig.CASE_TYPE);
         bulkActionCaseDetails.setData(BulkActionCaseData.builder()
             .bulkListCaseDetails(bulkCaseList)
+            .casesAcceptedToListForHearing(casesAcceptedToHearing)
             .build());
 
         final CaseDetails<BulkActionCaseData, BulkActionState> createdCaseDetails = new CaseDetails<>();
         createdCaseDetails.setId(3L);
         createdCaseDetails.setData(BulkActionCaseData.builder()
             .bulkListCaseDetails(bulkCaseList)
+            .casesAcceptedToListForHearing(casesAcceptedToHearing)
             .build());
 
         final CaseTask caseTask = mock(CaseTask.class);
@@ -402,10 +438,14 @@ public class SystemCreateBulkCaseListTaskTest {
         final var bulkListCaseDetails1 =
             bulkListCaseDetailsListValue("app1fname1 app1lname1 vs app2fname1 app2lname1", 1L);
 
+        final var caseAcceptedToHearing1 =
+            caseLinkListValue(bulkListCaseDetails1.getValue().getCaseReference(), "1");
+
         final CaseDetails<BulkActionCaseData, BulkActionState> bulkActionCaseDetails = new CaseDetails<>();
         bulkActionCaseDetails.setCaseTypeId(BulkActionCaseTypeConfig.CASE_TYPE);
         bulkActionCaseDetails.setData(BulkActionCaseData.builder()
             .bulkListCaseDetails(List.of(bulkListCaseDetails1))
+            .casesAcceptedToListForHearing(List.of(caseAcceptedToHearing1))
             .build());
 
         when(ccdSearchService.searchAwaitingPronouncementCasesAllPages(user, SERVICE_AUTHORIZATION))
@@ -458,6 +498,15 @@ public class SystemCreateBulkCaseListTaskTest {
             ListValue
                 .<BulkListCaseDetails>builder()
                 .value(bulkCaseDetails)
+                .build();
+    }
+
+    private ListValue<CaseLink> caseLinkListValue(final CaseLink caseLink, final String id) {
+        return
+            ListValue
+                .<CaseLink>builder()
+                .id(id)
+                .value(caseLink)
                 .build();
     }
 }

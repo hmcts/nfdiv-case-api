@@ -32,6 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -95,15 +96,26 @@ public class SystemMigrateBulkCasesTaskTest {
 
     @Test
     void shouldContinueProcessingIfThereIsConflictDuringSubmission() {
-        final CaseDetails caseDetails1 = mock(CaseDetails.class);
-        final CaseDetails caseDetails2 = mock(CaseDetails.class);
+        final CaseDetails caseDetails1 =
+            CaseDetails.builder()
+                .id(1L)
+                .data(new HashMap<>())
+                .build();
+
+        final CaseDetails caseDetails2 =
+            CaseDetails.builder()
+                .id(2L)
+                .data(new HashMap<>())
+                .build();
+
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
         when(ccdSearchService.searchForBulkCasesWithVersionLessThan(BulkCaseRetiredFields.getVersion(), user, SERVICE_AUTHORIZATION))
             .thenReturn(caseDetailsList);
 
         doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_BULK_CASE, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService)
+            .updateBulkCaseWithRetries(caseDetails1, SYSTEM_MIGRATE_BULK_CASE, user, SERVICE_AUTHORIZATION, caseDetails1.getId());
 
         systemMigrateBulkCasesTask.run();
 
@@ -115,8 +127,17 @@ public class SystemMigrateBulkCasesTaskTest {
 
     @Test
     void shouldContinueToNextCaseIfExceptionIsThrownWhileProcessingPreviousCase() {
-        final CaseDetails caseDetails1 = mock(CaseDetails.class);
-        final CaseDetails caseDetails2 = mock(CaseDetails.class);
+        final CaseDetails caseDetails1 =
+            CaseDetails.builder()
+                .id(1L)
+                .data(new HashMap<>())
+                .build();
+
+        final CaseDetails caseDetails2 =
+            CaseDetails.builder()
+                .id(2L)
+                .data(new HashMap<>())
+                .build();
 
         final List<CaseDetails> caseDetailsList = List.of(caseDetails1, caseDetails2);
 
@@ -125,11 +146,12 @@ public class SystemMigrateBulkCasesTaskTest {
 
         doThrow(new CcdManagementException("Failed processing of case", mock(FeignException.class)))
             .doNothing()
-            .when(ccdUpdateService).submitEvent(caseDetails1, SYSTEM_MIGRATE_BULK_CASE, user, SERVICE_AUTHORIZATION);
+            .when(ccdUpdateService)
+            .updateBulkCaseWithRetries(caseDetails1, SYSTEM_MIGRATE_BULK_CASE, user, SERVICE_AUTHORIZATION, caseDetails1.getId());
 
         systemMigrateBulkCasesTask.run();
 
-        verify(ccdUpdateService)
+        verify(ccdUpdateService, times(2))
             .updateBulkCaseWithRetries(caseDetails1, SYSTEM_MIGRATE_BULK_CASE, user, SERVICE_AUTHORIZATION, caseDetails1.getId());
         verify(ccdUpdateService)
             .updateBulkCaseWithRetries(caseDetails2, SYSTEM_MIGRATE_BULK_CASE, user, SERVICE_AUTHORIZATION, caseDetails2.getId());
@@ -150,6 +172,28 @@ public class SystemMigrateBulkCasesTaskTest {
 
         when(objectMapper.convertValue(eq(caseDetails1.getData()), eq(BulkActionCaseData.class)))
             .thenThrow(new IllegalArgumentException("Failed to deserialize"));
+
+        systemMigrateBulkCasesTask.run();
+
+        assertThat(caseDetails1.getData()).isEqualTo(Map.of("bulkCaseDataVersion", 0));
+    }
+
+    @Test
+    void shouldSetDataVersionToZeroIfExceptionIsThrownWhilstSubmittingCcdUpdateEvent() {
+        final CaseDetails caseDetails1 =
+            CaseDetails.builder()
+                .data(new HashMap<>())
+                .build();
+
+        final List<CaseDetails> caseDetailsList = List.of(caseDetails1);
+
+        when(ccdSearchService.searchForBulkCasesWithVersionLessThan(BulkCaseRetiredFields.getVersion(), user, SERVICE_AUTHORIZATION))
+            .thenReturn(caseDetailsList);
+
+        doThrow(new CcdManagementException("Failed processing of case", mock(FeignException.class)))
+            .doNothing()
+            .when(ccdUpdateService)
+            .updateBulkCaseWithRetries(caseDetails1, SYSTEM_MIGRATE_BULK_CASE, user, SERVICE_AUTHORIZATION, caseDetails1.getId());
 
         systemMigrateBulkCasesTask.run();
 

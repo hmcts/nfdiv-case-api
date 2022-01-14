@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorClarificationSubmittedNotification;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 
@@ -41,6 +42,9 @@ class LegalAdvisorMakeDecisionTest {
 
     @Mock
     private LegalAdvisorClarificationSubmittedNotification notification;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
 
     @Mock
     private Clock clock;
@@ -143,7 +147,7 @@ class LegalAdvisorMakeDecisionTest {
 
         legalAdvisorMakeDecision.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(notification).send(caseData, 12345L);
+        verify(notificationDispatcher).send(notification, caseData, 12345L);
     }
 
     @Test
@@ -159,5 +163,30 @@ class LegalAdvisorMakeDecisionTest {
         legalAdvisorMakeDecision.aboutToSubmit(caseDetails, caseDetails);
 
         verifyNoInteractions(notification);
+    }
+
+    @Test
+    void shouldResetConditionalOrderRefusalFieldsWhenAboutToStartCallbackIsInvoked() {
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(
+                ConditionalOrder
+                    .builder()
+                    .granted(NO)
+                    .refusalDecision(MORE_INFO)
+                    .refusalClarificationAdditionalInfo("some info")
+                    .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            legalAdvisorMakeDecision.aboutToStart(caseDetails);
+
+        ConditionalOrder actualConditionalOrder = response.getData().getConditionalOrder();
+        assertThat(actualConditionalOrder.getRefusalDecision()).isNull();
+        assertThat(actualConditionalOrder.getRefusalClarificationAdditionalInfo()).isNull();
+        assertThat(actualConditionalOrder.getGranted()).isNull();
     }
 }

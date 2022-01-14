@@ -16,7 +16,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2ServiceDetails;
 import uk.gov.hmcts.divorce.solicitor.event.page.FinancialOrders;
 import uk.gov.hmcts.divorce.solicitor.event.page.JurisdictionApplyForDivorce;
-import uk.gov.hmcts.divorce.solicitor.event.page.LanguagePreference;
 import uk.gov.hmcts.divorce.solicitor.event.page.MarriageCertificateDetails;
 import uk.gov.hmcts.divorce.solicitor.event.page.MarriageIrretrievablyBroken;
 import uk.gov.hmcts.divorce.solicitor.event.page.OtherLegalProceedings;
@@ -80,8 +79,7 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
             new JurisdictionApplyForDivorce(),
             new OtherLegalProceedings(),
             new FinancialOrders(),
-            new UploadDocument(),
-            new LanguagePreference()
+            new UploadDocument()
         );
 
         pages.forEach(page -> page.addTo(pageBuilder));
@@ -112,10 +110,10 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
             .name("Apply: divorce or dissolution")
             .description("Apply: divorce or dissolution")
             .showSummary()
+            .showEventNotes()
             .endButtonLabel("Save Application")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, updatedRoles.toArray(UserRole[]::new))
             .grant(READ_UPDATE, SUPER_USER)
             .grant(READ, CASE_WORKER, LEGAL_ADVISOR));

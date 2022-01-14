@@ -17,13 +17,13 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class AnswerReceivedUploadDocumentTest {
+class AnswerReceivedUploadDocumentTest {
 
     @InjectMocks
     private AnswerReceivedUploadDocument page;
 
     @Test
-    public void shouldNotReturnErrorsIfDocumentUploadedIsD11Type() {
+    void shouldNotReturnErrorsIfDocumentUploadedIsD11Type() {
         final CaseData caseData = caseData();
         caseData.setD11Document(
             DivorceDocument.builder()
@@ -42,7 +42,7 @@ public class AnswerReceivedUploadDocumentTest {
     }
 
     @Test
-    public void shouldReturnErrorsIfDocumentUploadedIsNotD11Type() {
+    void shouldReturnErrorsIfDocumentUploadedIsNotD11Type() {
         final CaseData caseData = caseData();
         caseData.setD11Document(
             DivorceDocument.builder()

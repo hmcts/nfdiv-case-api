@@ -26,9 +26,9 @@ public class CaseworkerApplicantResponded implements CCDConfig<CaseData, State, 
         new PageBuilder(configBuilder
             .event(CASEWORKER_APPLICANT_RESPONDED)
             .forStateTransition(AwaitingDocuments, Submitted)
+            .showEventNotes()
             .name("Applicant responded")
             .description("Applicant responded")
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE,
                 CASE_WORKER)
             .grant(READ,

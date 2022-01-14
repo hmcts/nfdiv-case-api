@@ -70,6 +70,7 @@ public class SolicitorSubmitApplicationFT extends FunctionalTestSuite {
      * For Payment Account support call 01633 652125 (Option 3) or email MiddleOffice.DDServices@liberata.com."]>.
      **/
     @Test
+    @Disabled
     public void shouldChangeStateToSubmittedIfPaymentProcessed() throws Exception {
         CallbackRequest request = CallbackRequest
             .builder()

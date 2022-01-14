@@ -122,25 +122,6 @@ class Applicant2ApprovedNotificationTest {
     }
 
     @Test
-    void shouldSendEmailToApplicant1WithDivorceContentWithApplicant2HelpWithFeesNo() {
-        CaseData data = validApplicant2CaseData();
-        data.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
-        data.getApplication().getApplicant2HelpWithFees().setNeedHelp(YesOrNo.NO);
-        data.setDueDate(LOCAL_DATE);
-
-        notification.sendToApplicant1(data, 1234567890123456L);
-
-        verify(notificationService).sendEmail(
-            eq(TEST_USER_EMAIL),
-            eq(JOINT_APPLICANT1_APPLICANT2_APPROVED),
-            argThat(allOf(
-                hasEntry(PAYS_FEES, YES)
-            )),
-            eq(ENGLISH)
-        );
-    }
-
-    @Test
     void shouldSendEmailToApplicant2WithDivorceContentWithApplicant2HelpWithFeesNo() {
         CaseData data = validApplicant2CaseData();
         data.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
@@ -168,7 +149,7 @@ class Applicant2ApprovedNotificationTest {
         data.getApplication().getApplicant2HelpWithFees().setNeedHelp(YesOrNo.NO);
         data.setDueDate(LOCAL_DATE);
 
-        notification.sendToApplicant1WithDeniedHwf(data, 1234567890123456L);
+        notification.sendToApplicant1(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -186,7 +167,7 @@ class Applicant2ApprovedNotificationTest {
         data.getApplication().getApplicant2HelpWithFees().setNeedHelp(YesOrNo.NO);
         data.setDueDate(LOCAL_DATE);
 
-        notification.sendToApplicant1WithDeniedHwf(data, 1234567890123456L);
+        notification.sendToApplicant1(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),

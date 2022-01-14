@@ -34,6 +34,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SubmitAos.SUBMIT_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
@@ -148,6 +149,7 @@ public class SubmitAosIT {
         data.getApplication().setIssueDate(LOCAL_DATE);
         data.getAcknowledgementOfService().setHowToRespondApplication(WITHOUT_DISPUTE_DIVORCE);
         data.getApplicant1().setSolicitor(null);
+        data.getApplicant1().setSolicitorRepresented(NO);
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -186,6 +188,7 @@ public class SubmitAosIT {
         data.getApplication().setIssueDate(LOCAL_DATE);
         data.getAcknowledgementOfService().setHowToRespondApplication(DISPUTE_DIVORCE);
         data.getApplicant1().setSolicitor(null);
+        data.getApplicant1().setSolicitorRepresented(NO);
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);

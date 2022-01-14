@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
@@ -27,6 +28,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getGeneralOrder;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
+@DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
 public class GeneralOrderTemplateContentIT {
 
     @Autowired
@@ -43,7 +45,7 @@ public class GeneralOrderTemplateContentIT {
 
         var ctscContactDetails = CtscContactDetails
             .builder()
-            .centreName("HMCTS Digital Divorce")
+            .centreName("HMCTS Digital Divorce and Dissolution")
             .emailAddress("divorcecase@justice.gov.uk")
             .serviceCentre("Courts and Tribunals Service Centre")
             .poBox("PO Box 12706")
@@ -58,7 +60,7 @@ public class GeneralOrderTemplateContentIT {
             entry(GENERAL_ORDER_DETAILS, "some details"),
             entry(GENERAL_ORDER_RECITALS, "test recitals"),
             entry(JUDGE_NAME, "some name"),
-            entry(JUDGE_TYPE, "Recorder"),
+            entry(JUDGE_TYPE, "District Judge"),
             entry(PETITIONER_FULL_NAME, "pet full name"),
             entry(RESPONDENT_FULL_NAME, "resp full name"),
             entry("ctscContactDetails", ctscContactDetails)

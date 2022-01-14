@@ -15,7 +15,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.Applicant2ServiceDetails;
 import uk.gov.hmcts.divorce.solicitor.event.page.FinancialOrders;
 import uk.gov.hmcts.divorce.solicitor.event.page.JurisdictionApplyForDivorce;
-import uk.gov.hmcts.divorce.solicitor.event.page.LanguagePreference;
 import uk.gov.hmcts.divorce.solicitor.event.page.MarriageCertificateDetails;
 import uk.gov.hmcts.divorce.solicitor.event.page.MarriageIrretrievablyBroken;
 import uk.gov.hmcts.divorce.solicitor.event.page.OtherLegalProceedings;
@@ -29,6 +28,7 @@ import uk.gov.hmcts.divorce.solicitor.service.SolicitorUpdateApplicationService;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -65,7 +65,6 @@ public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, Us
             new OtherLegalProceedings(),
             new FinancialOrders(),
             new UploadDocument(),
-            new LanguagePreference(),
             new JurisdictionApplyForDivorce()
         );
 
@@ -91,12 +90,12 @@ public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, Us
 
         return new PageBuilder(configBuilder
             .event(SOLICITOR_UPDATE)
-            .forState(Draft)
+            .forStates(Draft, AwaitingApplicant1Response)
             .name("Amend divorce application")
             .description("Amend divorce application")
             .showSummary()
+            .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, SOLICITOR)
             .grant(READ_UPDATE, SUPER_USER)
             .grant(READ,

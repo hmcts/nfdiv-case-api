@@ -1,16 +1,18 @@
 {
   "data": {
+    "applicationType": "soleApplication",
     "applicant1Email": "test@test.com",
     "applicant1FinancialOrder": "No",
     "applicant1FirstName": "test_first_name",
     "applicant1Gender": "female",
-    "applicant1KeepContactDetailsConfidential": "No",
+    "applicant1ContactDetailsType": "public",
     "applicant1LanguagePreferenceWelsh": "No",
     "applicant1LastName": "test_last_name",
     "applicant1LegalProceedings": "No",
     "applicant1MiddleName": "test_middle_name",
     "applicant1PrayerHasBeenGivenCheckbox": ["Yes"],
     "applicant1StatementOfTruth": "Yes",
+    "applicant1SolicitorRepresented": "No",
     "applicant2Email": "applicant2@test.com",
     "applicant2FinancialOrder": "No",
     "applicant2FirstName": "test_first_name",
@@ -18,7 +20,8 @@
     "applicant2HomeAddress": {
       "AddressLine1": "line 1",
       "PostCode": "postcode",
-      "PostTown": "town"
+      "PostTown": "town",
+      "Country": "UK"
     },
     "applicant2InviteEmailAddress": "applicant2@test.com",
     "applicant2LanguagePreferenceWelsh": "No",
@@ -40,7 +43,6 @@
       }
     ],
     "accessCode": "1234-1234-1234-1234",
-    "applicationType": "soleApplication",
     "divorceOrDissolution": "divorce",
     "documentUploadComplete": "Yes",
     "dueDate": "2021-04-28",

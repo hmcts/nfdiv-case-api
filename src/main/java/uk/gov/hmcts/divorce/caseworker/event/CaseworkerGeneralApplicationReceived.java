@@ -25,7 +25,7 @@ public class CaseworkerGeneralApplicationReceived implements CCDConfig<CaseData,
             .forAllStates()
             .name("General application received")
             .description("General application received")
-            .explicitGrants()
+            .showEventNotes()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grant(READ, SUPER_USER, LEGAL_ADVISOR));
     }

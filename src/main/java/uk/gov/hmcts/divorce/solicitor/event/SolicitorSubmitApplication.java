@@ -15,10 +15,12 @@ import uk.gov.hmcts.divorce.common.service.SubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.solicitor.event.page.HelpWithFeesPage;
+import uk.gov.hmcts.divorce.solicitor.event.page.SolConfirmJointApplication;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayAccount;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayment;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPaymentSummary;
@@ -38,6 +40,7 @@ import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -70,9 +73,13 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
     @Autowired
     private SolicitorSubmittedNotification solicitorSubmittedNotification;
 
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final List<CcdPageConfiguration> pages = asList(
+            new SolConfirmJointApplication(),
             new SolStatementOfTruth(),
             solPayment,
             new HelpWithFeesPage(),
@@ -172,7 +179,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             application.setApplicationPayments(payments);
         } else {
             application.getApplicationPayments()
-                .add(new ListValue<Payment>(UUID.randomUUID().toString(), payment));
+                .add(new ListValue<>(UUID.randomUUID().toString(), payment));
         }
     }
 
@@ -188,8 +195,8 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
                                                CaseDetails<CaseData, State> beforeDetails) {
 
-        if (Submitted.equals(details.getState())) {
-            solicitorSubmittedNotification.send(details.getData(), details.getId());
+        if (Submitted == details.getState()) {
+            notificationDispatcher.send(solicitorSubmittedNotification, details.getData(), details.getId());
         }
 
         return SubmittedCallbackResponse.builder().build();
@@ -198,15 +205,16 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
     private PageBuilder addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         return new PageBuilder(configBuilder.event(SOLICITOR_SUBMIT)
-            .forStates(Draft)
-            .name("Case submission")
+            .forStates(Draft, Applicant2Approved)
+            .name("Sign and submit")
             .description("Agree statement of truth, pay & submit")
             .showSummary()
+            .showEventNotes()
+            .showCondition("applicationType=\"soleApplication\" OR [STATE]=\"Applicant2Approved\"")
             .endButtonLabel("Submit Application")
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, SOLICITOR)
             .grant(READ,
                 CASE_WORKER,

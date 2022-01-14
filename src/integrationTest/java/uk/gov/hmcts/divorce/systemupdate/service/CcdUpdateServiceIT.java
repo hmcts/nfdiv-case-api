@@ -314,6 +314,7 @@ public class CcdUpdateServiceIT {
         return StartEventResponse.builder()
             .eventId(CREATE_BULK_LIST)
             .token("startEventToken")
+            .caseDetails(CaseDetails.builder().data(new HashMap<>()).build())
             .build();
     }
 }

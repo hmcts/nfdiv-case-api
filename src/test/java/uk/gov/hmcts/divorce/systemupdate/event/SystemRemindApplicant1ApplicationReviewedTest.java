@@ -10,10 +10,11 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.citizen.notification.JointApplicationOverdueNotification;
+import uk.gov.hmcts.divorce.citizen.notification.JointApplicationApprovedReminder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -33,7 +34,10 @@ public class SystemRemindApplicant1ApplicationReviewedTest {
     private HttpServletRequest httpServletRequest;
 
     @Mock
-    private JointApplicationOverdueNotification jointApplicationOverdueNotification;
+    private JointApplicationApprovedReminder jointApplicationApprovedReminder;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
 
     @InjectMocks
     private SystemRemindApplicant1ApplicationReviewed systemRemindApplicant1ApplicationReviewed;
@@ -62,7 +66,7 @@ public class SystemRemindApplicant1ApplicationReviewedTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             systemRemindApplicant1ApplicationReviewed.aboutToSubmit(details, details);
 
-        verify(jointApplicationOverdueNotification).sendApplicationApprovedReminderToApplicant1(caseData, details.getId());
+        verify(notificationDispatcher).send(jointApplicationApprovedReminder, caseData, details.getId());
         assertThat(response.getData().getApplication().getApplicant1ReminderSent()).isEqualTo(YesOrNo.YES);
     }
 }

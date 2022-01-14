@@ -28,6 +28,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_PARTNER_HAS_NOT_RESPONDED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLICATION_ACCEPTED;
@@ -74,6 +75,7 @@ public class SystemProgressCaseToAosOverdueIT {
     public void givenValidCitizenCaseDataWhenCallbackIsInvokedThenSendEmailToApplicantAndRespondent() throws Exception {
         CaseData data = validCaseDataForIssueApplication();
         data.getApplicant1().setSolicitor(null);
+        data.getApplicant1().setSolicitorRepresented(NO);
         data.getApplication().setSolSignStatementOfTruth(null);
         data.setDueDate(LOCAL_DATE);
         data.getApplication().setIssueDate(LOCAL_DATE);

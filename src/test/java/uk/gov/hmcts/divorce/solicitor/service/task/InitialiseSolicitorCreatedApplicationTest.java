@@ -28,10 +28,26 @@ class InitialiseSolicitorCreatedApplicationTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
         caseDetails.setData(caseData);
+        caseDetails.setId(0L);
 
         final CaseDetails<CaseData, State> result = initialiseSolicitorCreatedApplication.apply(caseDetails);
 
         assertThat(result.getData().getApplication().getCreatedDate()).isEqualTo(LOCAL_DATE);
         assertThat(result.getData().getApplicant1().getSolicitorRepresented()).isEqualTo(YES);
+    }
+
+    @Test
+    void shouldFormatCaseIdToHyphenated16DigitNumber() {
+
+        final CaseData caseData = caseData();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+        caseDetails.setData(caseData);
+        caseDetails.setId(1L);
+
+        final CaseDetails<CaseData, State> result = initialiseSolicitorCreatedApplication.apply(caseDetails);
+
+        assertThat(result.getData().getHyphenatedCaseRef()).isEqualTo("0000-0000-0000-0001");
     }
 }

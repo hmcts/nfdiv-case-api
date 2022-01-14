@@ -30,7 +30,7 @@ public class SolicitorSubmitClarification implements CCDConfig<CaseData, State, 
             .name("Submit clarification for CO")
             .description("Submit clarification for conditional order")
             .showSummary()
-            .explicitGrants()
+            .showEventNotes()
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
             .grant(READ,
                 CASE_WORKER,
@@ -42,8 +42,8 @@ public class SolicitorSubmitClarification implements CCDConfig<CaseData, State, 
                 .readonly(ConditionalOrder::getRefusalDecision)
                 .readonly(ConditionalOrder::getRefusalRejectionReason)
                 .readonly(ConditionalOrder::getRefusalClarificationAdditionalInfo)
-                .mandatory(ConditionalOrder::getClarificationResponse)
-                .mandatory(ConditionalOrder::getClarificationUploadDocuments)
+                .mandatory(ConditionalOrder::getClarificationResponses)
+                .optional(ConditionalOrder::getClarificationUploadDocuments)
             .done();
     }
 

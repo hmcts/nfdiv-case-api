@@ -4,6 +4,7 @@ import io.restassured.response.Response;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -41,6 +42,8 @@ public class SystemNotifyApplicantDisputeFormOverdueFT extends FunctionalTestSui
         "classpath:request/casedata/ccd-callback-casedata-system-notify-applicant-dispute-form-overdue.json";
     private static final String RESPONSE = "classpath:responses/response-system-notify-applicant-dispute-form-overdue.json";
 
+    @Value("${submit_aos.dispute_offset_days}")
+    private int disputeDueDateOffsetDays;
 
     @Test
     public void shouldNotifyApplicantIfDisputeFormOverdue() throws IOException {
@@ -62,7 +65,7 @@ public class SystemNotifyApplicantDisputeFormOverdueFT extends FunctionalTestSui
         final BoolQueryBuilder query = boolQuery()
             .must(matchQuery(STATE, Holding))
             .must(matchQuery(AOS_RESPONSE, DISPUTE_DIVORCE.getType()))
-            .filter(rangeQuery(ISSUE_DATE).lte(LocalDate.now().minusDays(10)))
+            .filter(rangeQuery(ISSUE_DATE).lte(LocalDate.now().minusDays(disputeDueDateOffsetDays)))
             .mustNot(matchQuery(String.format(DATA, NOTIFICATION_SENT_FLAG), YesOrNo.YES));
 
         searchForCasesWithQuery(query)

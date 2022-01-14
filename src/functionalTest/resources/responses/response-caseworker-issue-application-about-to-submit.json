@@ -1,6 +1,6 @@
 {
   "data": {
-    "applicant1KeepContactDetailsConfidential": "No",
+    "applicant1ContactDetailsType": "public",
     "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
     "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
     "applicant1FirstName": "test_first_name",
@@ -17,7 +17,7 @@
         "OrganisationID": "ABC456"
       }
     },
-    "applicant2KeepContactDetailsConfidential": "No",
+    "applicant2ContactDetailsType": "public",
     "applicant2Email": "applicant2@example.com",
     "applicant2FirstName": "test_first_name",
     "applicant2Gender": "female",

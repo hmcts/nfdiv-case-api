@@ -53,6 +53,7 @@ public class PaymentService {
     public static final String KEYWORD_BAILIFF = "BailiffServeDoc";
     public static final String KEYWORD_DEEMED = "GeneralAppWithoutNotice";
     public static final String KEYWORD_DIVORCE = "DivorceCivPart";
+    public static final String KEYWORD_DEF = "DEF";
 
     private static final String FAMILY = "family";
     private static final String FAMILY_COURT = "family court";
@@ -255,7 +256,7 @@ public class PaymentService {
 
         creditAccountPaymentRequest.setOrganisationName(solicitor.getOrganisationPolicy().getOrganisation().getOrganisationName());
 
-        creditAccountPaymentRequest.setCustomerReference(solicitor.getReference());
+        creditAccountPaymentRequest.setCustomerReference(caseData.getApplication().getFeeAccountReference());
 
         final Fee fee = getFeeValue(orderSummary);
         creditAccountPaymentRequest.setDescription(fee.getDescription());
@@ -263,7 +264,12 @@ public class PaymentService {
         creditAccountPaymentRequest.setAmount(orderSummary.getPaymentTotal());
         creditAccountPaymentRequest.setCcdCaseNumber(String.valueOf(caseId));
 
-        List<PaymentItem> paymentItemList = populateFeesPaymentItems(caseId, orderSummary.getPaymentTotal(), fee, solicitor.getReference());
+        List<PaymentItem> paymentItemList = populateFeesPaymentItems(
+            caseId,
+            orderSummary.getPaymentTotal(),
+            fee,
+            caseData.getApplication().getFeeAccountReference()
+        );
 
         creditAccountPaymentRequest.setFees(paymentItemList);
 

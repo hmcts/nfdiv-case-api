@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,8 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
@@ -20,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
@@ -33,11 +37,15 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 public class ConditionalOrder {
 
-    @CCD(
-        label = "Date Conditional Order submitted to HMCTS"
-    )
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
-    private LocalDateTime dateSubmitted;
+    @JsonUnwrapped(prefix = "Applicant1")
+    @Builder.Default
+    @CCD(access = {DefaultAccess.class})
+    private ConditionalOrderQuestions conditionalOrderApplicant1Questions = new ConditionalOrderQuestions();
+
+    @JsonUnwrapped(prefix = "Applicant2")
+    @Builder.Default
+    @CCD(access = {DefaultAccess.class, Applicant2Access.class})
+    private ConditionalOrderQuestions conditionalOrderApplicant2Questions = new ConditionalOrderQuestions();
 
     @CCD(
         label = "Link to respondent answers"
@@ -45,26 +53,9 @@ public class ConditionalOrder {
     private Document respondentAnswersLink;
 
     @CCD(
-        label = "Does the applicant want to continue with the divorce and apply for a conditional order?"
-    )
-    private YesOrNo applyForConditionalOrder;
-
-    @CCD(
         label = "Link to online petition"
     )
     private Document onlinePetitionLink;
-
-    @CCD(
-        label = "Do you need to change your application or add anything?",
-        hint = "If you change or add anything which means your application has to be sent to your "
-            + "husband/wife again you may have to pay a £95 fee"
-    )
-    private YesOrNo changeOrAddToApplication;
-
-    @CCD(
-        label = "Is everything stated in this divorce application true?"
-    )
-    private YesOrNo isEverythingInApplicationTrue;
 
     @CCD(
         label = "Solicitor’s name"
@@ -152,12 +143,13 @@ public class ConditionalOrder {
 
     @CCD(
         label = "List of responses for Conditional Order clarification",
-        typeOverride = TextArea
+        typeOverride = Collection,
+        typeParameterOverride = "TextArea"
     )
-    private String clarificationResponse;
+    private List<ListValue<String>> clarificationResponses;
 
     @CCD(
-        label = "Upload any other documents per Clarification?",
+        label = "Documents uploaded for the Conditional Order Clarification",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument"
     )
@@ -198,15 +190,10 @@ public class ConditionalOrder {
     private String judgeCostsOrderAdditionalInfo;
 
     @CCD(
-        label = "Link to certificate of entitlement"
+        label = "Link to certificate of entitlement",
+        access = {CaseworkerAccess.class}
     )
     private DivorceDocument certificateOfEntitlementDocument;
-
-    @CCD(
-        label = "The applicant believes that the facts stated in this application are true.",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo applicantStatementOfTruth;
 
     @JsonIgnore
     public boolean areClaimsGranted() {
@@ -216,5 +203,22 @@ public class ConditionalOrder {
     @JsonIgnore
     public boolean hasConditionalOrderBeenGranted() {
         return YesOrNo.YES.equals(granted);
+    }
+
+    @JsonIgnore
+    public void resetRefusalFields() {
+        this.setGranted(null);
+        this.setRefusalDecision(null);
+        this.setRefusalClarificationReason(null);
+        this.setRefusalClarificationAdditionalInfo(null);
+        this.setRefusalAdminErrorInfo(null);
+        this.setRefusalRejectionReason(null);
+        this.setRefusalRejectionAdditionalInfo(null);
+
+    }
+
+    @JsonIgnore
+    public boolean isConditionalOrderPending() {
+        return isNull(conditionalOrderApplicant1Questions.getSubmittedDate());
     }
 }

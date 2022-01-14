@@ -253,7 +253,7 @@ class CcdSearchServiceTest {
                     )
             )
             .from(0)
-            .size(2000);
+            .size(500);
 
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
@@ -286,7 +286,7 @@ class CcdSearchServiceTest {
                     )
             )
             .from(0)
-            .size(2000);
+            .size(500);
 
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,

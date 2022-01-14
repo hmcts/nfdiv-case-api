@@ -22,6 +22,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_COURT_CASE_DETAILS;
@@ -60,7 +61,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 
 @ExtendWith(MockitoExtension.class)
 class DivorceApplicationJointTemplateContentTest {
@@ -84,7 +84,7 @@ class DivorceApplicationJointTemplateContentTest {
             .financialOrder(NO)
             .legalProceedings(NO)
             .email(TEST_USER_EMAIL)
-            .keepContactDetailsConfidential(NO)
+            .contactDetailsType(PUBLIC)
             .build();
         final Applicant applicant2 = Applicant.builder()
             .firstName(TEST_FIRST_NAME)
@@ -93,7 +93,7 @@ class DivorceApplicationJointTemplateContentTest {
             .financialOrder(NO)
             .legalProceedings(NO)
             .email(TEST_USER_EMAIL)
-            .keepContactDetailsConfidential(NO)
+            .contactDetailsType(PUBLIC)
             .build();
 
         final CaseData caseData = CaseData.builder()
@@ -109,7 +109,7 @@ class DivorceApplicationJointTemplateContentTest {
         caseData.getApplication().getMarriageDetails().setApplicant1Name(TEST_LAST_NAME);
         caseData.getApplication().getMarriageDetails().setApplicant2Name(TEST_LAST_NAME);
 
-        final Map<String, Object> result = divorceApplicationJointTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
+        final Map<String, Object> result = divorceApplicationJointTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(result).contains(
             entry(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, "for a final order of divorce."),
@@ -155,7 +155,7 @@ class DivorceApplicationJointTemplateContentTest {
             .financialOrder(NO)
             .legalProceedings(NO)
             .email(TEST_USER_EMAIL)
-            .keepContactDetailsConfidential(NO)
+            .contactDetailsType(PUBLIC)
             .build();
         final Applicant applicant2 = Applicant.builder()
             .firstName(TEST_FIRST_NAME)
@@ -164,7 +164,7 @@ class DivorceApplicationJointTemplateContentTest {
             .financialOrder(NO)
             .legalProceedings(NO)
             .email(TEST_USER_EMAIL)
-            .keepContactDetailsConfidential(NO)
+            .contactDetailsType(PUBLIC)
             .build();
 
         final CaseData caseData = CaseData.builder()
@@ -180,7 +180,7 @@ class DivorceApplicationJointTemplateContentTest {
         caseData.getApplication().getMarriageDetails().setApplicant1Name(TEST_LAST_NAME);
         caseData.getApplication().getMarriageDetails().setApplicant2Name(TEST_LAST_NAME);
 
-        final Map<String, Object> result = divorceApplicationJointTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE);
+        final Map<String, Object> result = divorceApplicationJointTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(result).contains(
             entry(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, "for the dissolution of their civil partnership."),

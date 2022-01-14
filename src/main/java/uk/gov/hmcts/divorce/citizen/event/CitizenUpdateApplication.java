@@ -8,11 +8,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 public class CitizenUpdateApplication implements CCDConfig<CaseData, State, UserRole> {
@@ -24,11 +23,9 @@ public class CitizenUpdateApplication implements CCDConfig<CaseData, State, User
 
         configBuilder
             .event(CITIZEN_UPDATE)
-            .forStates(Draft, AwaitingApplicant1Response)
+            .forStates(Draft, AwaitingApplicant1Response, ConditionalOrderDrafted)
             .name("Patch case")
             .description("Patch a divorce or dissolution")
-            .retries(120, 120)
-            .grant(CREATE_READ_UPDATE, CREATOR)
-            .grant(READ, SUPER_USER);
+            .grant(CREATE_READ_UPDATE, CREATOR);
     }
 }

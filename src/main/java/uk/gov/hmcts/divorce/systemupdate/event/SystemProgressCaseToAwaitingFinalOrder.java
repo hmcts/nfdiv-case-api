@@ -30,7 +30,6 @@ public class SystemProgressCaseToAwaitingFinalOrder implements CCDConfig<CaseDat
             .forStateTransition(ConditionalOrderPronounced, AwaitingFinalOrder)
             .name("Awaiting Final Order")
             .description("Progress case to Awaiting Final Order")
-            .explicitGrants()
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .grant(READ, SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR));
     }

@@ -11,6 +11,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 @Component
 public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
 
+    private static final String APPLICANT_2_CONTACT_DETAILS_TYPE_PRIVATE = "applicant2ContactDetailsType!=\"private\"";
+    private static final String APPLICANT_1_CONTACT_DETAILS_TYPE_PUBLIC = "applicant1ContactDetailsType=\"public\"";
+    private static final String APPLICATION_TYPE_NEVER_SHOW = "applicationType=\"NEVER_SHOW\"";
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final Tab.TabBuilder<CaseData, UserRole> tabBuilder = configBuilder.tab("applicationDetails", "Application");
@@ -33,7 +37,8 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field(CaseData::getApplicationType)
             .field(CaseData::getDivorceOrDissolution)
             .field(CaseData::getDivorceUnit)
-            .field(CaseData::getBulkListCaseReference);
+            .field(CaseData::getBulkListCaseReference)
+            .field(CaseData::getHyphenatedCaseRef, APPLICATION_TYPE_NEVER_SHOW);
     }
 
     private void addApplicant1(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
@@ -46,20 +51,20 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1NameDifferentToMarriageCertificate")
             .field("applicant1NameChangedHow", "applicant1NameDifferentToMarriageCertificate=\"Yes\"")
             .field("applicant1NameChangedHowOtherDetails", "applicant1NameChangedHow=\"other\"")
-            .field("applicant1KeepContactDetailsConfidential", "applicationType=\"NEVER_SHOW\"")
+            .field("applicant1ContactDetailsType", APPLICATION_TYPE_NEVER_SHOW)
             .field("divorceWho")
             .field("applicant1ScreenHasMarriageBroken")
             .field("applicant1PcqId")
             .label("LabelApplicant1DetailsAreConfidential-Heading",
-                "applicant1KeepContactDetailsConfidential=\"Yes\"",
+                "applicant1ContactDetailsType=\"private\"",
                 "#### The applicant's contact details are confidential")
-            .field("applicant1PhoneNumber", "applicant1KeepContactDetailsConfidential=\"No\"")
-            .field("applicant1Email", "applicant1KeepContactDetailsConfidential=\"No\"")
-            .field("applicant1HomeAddress", "applicant1KeepContactDetailsConfidential=\"No\"")
-            .field("applicant1CorrespondenceAddress", "applicant1KeepContactDetailsConfidential=\"No\"")
+            .field("applicant1PhoneNumber", APPLICANT_1_CONTACT_DETAILS_TYPE_PUBLIC)
+            .field("applicant1Email", APPLICANT_1_CONTACT_DETAILS_TYPE_PUBLIC)
+            .field("applicant1HomeAddress", APPLICANT_1_CONTACT_DETAILS_TYPE_PUBLIC)
+            .field("applicant1CorrespondenceAddress", APPLICANT_1_CONTACT_DETAILS_TYPE_PUBLIC)
 
             //Applicant 1 Solicitor
-            .field("applicant1SolicitorRepresented", "applicationType=\"NEVER_SHOW\"")
+            .field("applicant1SolicitorRepresented", APPLICATION_TYPE_NEVER_SHOW)
             .label("LabelApplicant1sSolicitor-Heading",
                 "applicant1SolicitorRepresented=\"Yes\"",
                 "#### The applicant's solicitor")
@@ -83,21 +88,21 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2ScreenHasMarriageBroken")
             .field("applicant2NameChangedHow", "applicant2NameDifferentToMarriageCertificate=\"Yes\"")
             .field("applicant2NameChangedHowOtherDetails", "applicant2NameChangedHow=\"other\"")
-            .field("applicant2KeepContactDetailsConfidential", "applicationType=\"NEVER_SHOW\"")
+            .field("applicant2ContactDetailsType", APPLICATION_TYPE_NEVER_SHOW)
             .label("LabelApplicant2DetailsAreConfidential-Heading",
-                "applicant2KeepContactDetailsConfidential=\"Yes\"",
+                "applicant2ContactDetailsType=\"private\"",
                 "#### ${labelContentTheApplicant2UC}'s contact details are confidential")
             .label("LabelApplicant2DetailsAreShareable-Heading",
-                "applicant2KeepContactDetailsConfidential!=\"Yes\"",
+                APPLICANT_2_CONTACT_DETAILS_TYPE_PRIVATE,
                 "#### ${labelContentTheApplicant2UC}'s contact details may be shared")
-            .field("applicant2PhoneNumber", "applicant2KeepContactDetailsConfidential!=\"Yes\"")
-            .field("applicant2Email", "applicant2KeepContactDetailsConfidential!=\"Yes\"")
-            .field("applicant2HomeAddress", "applicant2KeepContactDetailsConfidential!=\"Yes\"")
-            .field("applicant2CorrespondenceAddress", "applicant2KeepContactDetailsConfidential!=\"Yes\"")
+            .field("applicant2PhoneNumber", APPLICANT_2_CONTACT_DETAILS_TYPE_PRIVATE)
+            .field("applicant2Email", APPLICANT_2_CONTACT_DETAILS_TYPE_PRIVATE)
+            .field("applicant2HomeAddress", APPLICANT_2_CONTACT_DETAILS_TYPE_PRIVATE)
+            .field("applicant2CorrespondenceAddress", APPLICANT_2_CONTACT_DETAILS_TYPE_PRIVATE)
             .field("applicant2AgreedToReceiveEmails")
 
             //Applicant 2 Solicitor
-            .field("applicant2SolicitorRepresented", "applicationType=\"NEVER_SHOW\"")
+            .field("applicant2SolicitorRepresented", APPLICATION_TYPE_NEVER_SHOW)
             .label("LabelApplicant2sSolicitor-Heading",
                 "applicant2SolicitorRepresented=\"Yes\"",
                 "#### ${labelContentTheApplicant2UC}'s solicitor")
@@ -113,12 +118,12 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
     private void addMarriageAndCertificate(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
         tabBuilder
             .label("LabelMarriage-Heading", null, "### Marriage and certificate")
-            .field("labelContentTheApplicant2UC", "applicationType=\"NEVER_SHOW\"")
-            .field("labelContentTheApplicant2", "applicationType=\"NEVER_SHOW\"")
+            .field("labelContentTheApplicant2UC", APPLICATION_TYPE_NEVER_SHOW)
+            .field("labelContentTheApplicant2", APPLICATION_TYPE_NEVER_SHOW)
             .field("marriageDate")
             .field("marriageApplicant1Name")
             .field("marriageApplicant2Name")
-            .field("marriageIsSameSexCouple")
+            .field("marriageFormationType")
             .field("marriageMarriedInUk")
             .field("marriagePlaceOfMarriage", "marriageMarriedInUk=\"No\"")
             .field("marriageCountryOfMarriage", "marriageMarriedInUk=\"No\"")

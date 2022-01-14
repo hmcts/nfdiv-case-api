@@ -24,7 +24,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
-import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedBeingThe;
@@ -33,7 +33,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedWhere;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderDivorceParties;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderJudge;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderJudgeOrLegalAdvisorType;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.Jurisdiction;
 import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
@@ -61,22 +61,26 @@ import java.util.UUID;
 
 import static feign.Request.HttpMethod.GET;
 import static java.lang.String.format;
+import static java.lang.String.join;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewApplicant2Notification.APPLICANT_2_SIGN_IN_DISSOLUTION_URL;
-import static uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewApplicant2Notification.APPLICANT_2_SIGN_IN_DIVORCE_URL;
+import static uk.gov.hmcts.divorce.citizen.notification.ApplicationRemindApplicant2Notification.APPLICANT_2_SIGN_IN_DISSOLUTION_URL;
+import static uk.gov.hmcts.divorce.citizen.notification.ApplicationRemindApplicant2Notification.APPLICANT_2_SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_JOINT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
+import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FIRST_NAME;
@@ -84,9 +88,12 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_DIVORCE_URL;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DIVORCE_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
@@ -128,7 +135,7 @@ public class TestDataHelper {
             .email(TEST_USER_EMAIL)
             .gender(gender)
             .languagePreferenceWelsh(NO)
-            .keepContactDetailsConfidential(NO)
+            .contactDetailsType(PUBLIC)
             .financialOrder(NO)
             .build();
     }
@@ -145,6 +152,7 @@ public class TestDataHelper {
                 .addressLine1("line 1")
                 .postTown("town")
                 .postCode("postcode")
+                .country("UK")
                 .build())
             .build();
     }
@@ -179,6 +187,7 @@ public class TestDataHelper {
             .name(TEST_SOLICITOR_NAME)
             .email(TEST_SOLICITOR_EMAIL)
             .build());
+        applicant.setSolicitorRepresented(YES);
         return applicant;
     }
 
@@ -197,6 +206,7 @@ public class TestDataHelper {
             .email(TEST_SOLICITOR_EMAIL)
             .organisationPolicy(organisationPolicy())
             .build());
+        applicant.setSolicitorRepresented(YES);
         return applicant;
     }
 
@@ -229,7 +239,7 @@ public class TestDataHelper {
         caseData.getCaseInvite().setApplicant2InviteEmailAddress(TEST_APPLICANT_2_USER_EMAIL);
         caseData.setApplicant2(getApplicant(MALE));
         caseData.getApplication().setApplicant2StatementOfTruth(YES);
-        caseData.getApplication().setApplicant2PrayerHasBeenGiven(YES);
+        caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
 
         return caseData;
     }
@@ -247,7 +257,7 @@ public class TestDataHelper {
         jurisdiction.setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
 
         var applicant1 = getApplicant();
-        applicant1.setKeepContactDetailsConfidential(YES);
+        applicant1.setContactDetailsType(PRIVATE);
         applicant1.setFinancialOrder(NO);
         applicant1.setLegalProceedings(NO);
 
@@ -289,8 +299,10 @@ public class TestDataHelper {
         caseData.getApplication().setApplicant2HelpWithFees(HelpWithFees.builder()
             .needHelp(NO)
             .build());
-        caseData.getApplication().setApplicant2PrayerHasBeenGiven(YES);
+        caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
         caseData.getApplication().setApplicant2StatementOfTruth(YES);
+        caseData.getApplication().setApplicant2ScreenHasMarriageBroken(YES);
+
         return caseData;
     }
 
@@ -309,6 +321,7 @@ public class TestDataHelper {
 
         var applicant1 = getApplicant();
         applicant1.setSolicitor(Solicitor.builder().email(TEST_SOLICITOR_EMAIL).build());
+        applicant1.setSolicitorRepresented(YES);
 
         var application = Application.builder()
             .solSignStatementOfTruth(YES)
@@ -321,6 +334,7 @@ public class TestDataHelper {
 
         return CaseData
             .builder()
+            .applicationType(SOLE_APPLICATION)
             .applicant1(applicant1)
             .applicant2(getApplicant2(FEMALE))
             .divorceOrDissolution(DIVORCE)
@@ -360,15 +374,14 @@ public class TestDataHelper {
         return solicitorService;
     }
 
-    public static ConditionalOrder getConditionalOrder() {
-        final ConditionalOrder conditionalOrder = new ConditionalOrder();
-        conditionalOrder.setDateSubmitted(LocalDateTime.now());
-        conditionalOrder.setApplyForConditionalOrder(YES);
-        conditionalOrder.setChangeOrAddToApplication(NO);
-        conditionalOrder.setIsEverythingInApplicationTrue(YES);
-        return conditionalOrder;
+    public static ConditionalOrderQuestions getConditionalOrderQuestions() {
+        final ConditionalOrderQuestions conditionalOrderQuestions = new ConditionalOrderQuestions();
+        conditionalOrderQuestions.setSubmittedDate(LocalDateTime.now());
+        conditionalOrderQuestions.setApplyForConditionalOrder(YES);
+        conditionalOrderQuestions.setChangeOrAddToApplication(NO);
+        conditionalOrderQuestions.setIsEverythingInApplicationTrue(YES);
+        return conditionalOrderQuestions;
     }
-
 
     public static CaseData validCaseDataForIssueApplication() {
         final MarriageDetails marriageDetails = new MarriageDetails();
@@ -575,7 +588,7 @@ public class TestDataHelper {
         );
     }
 
-    public static Map<String, String> getCommonTemplateVars() {
+    public static Map<String, String> getMainTemplateVars() {
         Map<String, String> templateVars = new HashMap<>();
         templateVars.put(APPLICATION_REFERENCE, "1234-5678-9012-3456");
         templateVars.put(IS_DIVORCE, CommonContent.YES);
@@ -587,17 +600,25 @@ public class TestDataHelper {
         return templateVars;
     }
 
+    public static Map<String, String> getBasicTemplateVars() {
+        Map<String, String> templateVars = new HashMap<>();
+        templateVars.put(APPLICATION_REFERENCE, "1234-5678-9012-3456");
+        templateVars.put(SOLICITOR_NAME, TEST_SOLICITOR_NAME);
+        templateVars.put(APPLICANT_NAME, join(" ", TEST_FIRST_NAME, TEST_LAST_NAME));
+        templateVars.put(RESPONDENT_NAME, join(" ", APPLICANT_2_FIRST_NAME, APPLICANT_2_LAST_NAME));
+        return templateVars;
+    }
+
     public static GeneralOrder getGeneralOrder(Document ccdDocument) {
         return GeneralOrder
             .builder()
             .generalOrderDate(LocalDate.of(2021, 1, 1))
             .generalOrderDetails("some details")
             .generalOrderDivorceParties(Set.of(GeneralOrderDivorceParties.RESPONDENT))
-            .generalOrderJudgeType(GeneralOrderJudge.RECORDER)
+            .generalOrderJudgeOrLegalAdvisorType(GeneralOrderJudgeOrLegalAdvisorType.DISTRICT_JUDGE)
             .generalOrderRecitals("test recitals")
             .generalOrderDraft(ccdDocument)
-            .generalOrderJudgeName("some name")
-            .generalOrderLegalAdvisorName("legal name")
+            .generalOrderJudgeOrLegalAdvisorName("some name")
             .build();
     }
 

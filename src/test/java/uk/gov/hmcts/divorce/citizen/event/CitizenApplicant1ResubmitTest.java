@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.citizen.notification.Applicant1ResubmitNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -31,6 +32,9 @@ public class CitizenApplicant1ResubmitTest {
 
     @Mock
     private Applicant1ResubmitNotification applicant1ResubmitNotification;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
 
     @InjectMocks
     private CitizenApplicant1Resubmit citizenApplicant1Resubmit;
@@ -57,8 +61,7 @@ public class CitizenApplicant1ResubmitTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenApplicant1Resubmit.aboutToSubmit(details, details);
 
-        verify(applicant1ResubmitNotification).sendToApplicant1(caseData, details.getId());
-        verify(applicant1ResubmitNotification).sendToApplicant2(caseData, details.getId());
+        verify(notificationDispatcher).send(applicant1ResubmitNotification, caseData, details.getId());
 
         assertThat(response.getState()).isEqualTo(AwaitingApplicant2Response);
         assertThat(response.getData().getApplication().getApplicant2ConfirmApplicant1Information()).isEqualTo(null);
@@ -74,7 +77,7 @@ public class CitizenApplicant1ResubmitTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenApplicant1Resubmit.aboutToSubmit(details, details);
 
-        verifyNoInteractions(applicant1ResubmitNotification);
+        verifyNoInteractions(notificationDispatcher);
         assertThat(response.getState()).isEqualTo(AwaitingApplicant1Response);
     }
 }

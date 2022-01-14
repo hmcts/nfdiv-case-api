@@ -11,14 +11,13 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 
 import java.util.Set;
 
 import static java.util.Objects.nonNull;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
-import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -34,7 +33,10 @@ public class Applicant {
     @CCD(label = "First name")
     private String firstName;
 
-    @CCD(label = "Middle name(s)")
+    @CCD(
+        label = "Middle name(s)",
+        hint = "If they have a middle name then you must enter it to avoid amendments later."
+    )
     private String middleName;
 
     @CCD(label = "Last name")
@@ -57,11 +59,6 @@ public class Applicant {
     private YesOrNo confirmReceipt;
 
     @CCD(
-        label = "Has the applicant started the process to apply for conditional order?"
-    )
-    private YesOrNo applyForConditionalOrderStarted;
-
-    @CCD(
         label = "Is the language preference Welsh?",
         hint = "Select \"No\" for English or \"Yes\" for bilingual"
     )
@@ -73,9 +70,7 @@ public class Applicant {
     private YesOrNo lastNameChangedWhenMarried;
 
     @CCD(
-        label = "Have they changed their name since they got married?",
-        hint = "Is their current name different to their married name or the name shown on their "
-            + "marriage certificate?"
+        label = "Have they changed their name since they got married?"
     )
     private YesOrNo nameDifferentToMarriageCertificate;
 
@@ -97,17 +92,20 @@ public class Applicant {
     )
     private String phoneNumber;
 
-
-    @CCD(label = "Keep contact details private?")
-    private YesOrNo keepContactDetailsConfidential;
-
     @CCD(
         label = "Gender",
-        hint = "Gender is collected for statistical purposes only.",
-        typeOverride = FixedList,
+        hint = "Gender is only collected for statistical purposes.",
+        typeOverride = FixedRadioList,
         typeParameterOverride = "Gender"
     )
     private Gender gender;
+
+    @CCD(
+        label = "Should ${labelContentApplicantOrApplicant1} contact details be kept private?",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "ContactDetailsType"
+    )
+    private ContactDetailsType contactDetailsType;
 
     @CCD(
         label = "Service address",
@@ -120,24 +118,27 @@ public class Applicant {
     private YesOrNo solicitorRepresented;
 
     @JsonUnwrapped(prefix = "Solicitor")
-    @CCD(access = {DefaultAccess.class})
     private Solicitor solicitor;
 
     @CCD(
-        label = "Do they wish to apply for a financial order?",
-        hint = "The court will not start processing your request for a financial order until you submit the separate "
-            + "application and pay the fee."
+        label = "Does ${labelContentTheApplicantOrApplicant1} wish to apply for a financial order?"
     )
     private YesOrNo financialOrder;
 
     @CCD(
-        label = "Are there any existing or previous court proceedings relating to the marriage?"
+        label = "Who are the financial orders for?"
+    )
+    private Set<FinancialOrderFor> financialOrdersFor;
+
+    @CCD(
+        label = "Are there any existing or previous court proceedings relating to the ${labelContentMarriageOrCivilPartnership}?"
     )
     private YesOrNo legalProceedings;
 
     @CCD(
-        label = "Legal proceeding details",
-        hint = "Include the case number(s), if known.",
+        label = "Provide details of the other legal proceedings",
+        hint = "Provide as much information as possible, such as the case number(s); "
+            + "the names of the people involved and if the proceedings are ongoing or if they’ve finished.",
         typeOverride = TextArea
     )
     private String legalProceedingsDetails;
@@ -146,6 +147,11 @@ public class Applicant {
         label = "PCQ ID"
     )
     private String pcqId;
+
+    @CCD(
+        label = "The applicant wants to continue with their application."
+    )
+    private YesOrNo continueApplication;
 
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
@@ -156,21 +162,25 @@ public class Applicant {
 
     @JsonIgnore
     public boolean isRepresented() {
-        return null != solicitor && isNotEmpty(solicitor.getEmail());
+        return null != solicitorRepresented && solicitorRepresented.toBoolean();
     }
 
     @JsonIgnore
     public boolean isConfidentialContactDetails() {
-        return null != keepContactDetailsConfidential && keepContactDetailsConfidential.toBoolean();
+        return ContactDetailsType.PRIVATE.equals(contactDetailsType);
     }
 
     @JsonIgnore
     public boolean isBasedOverseas() {
-        return !("UK").equalsIgnoreCase(homeAddress.getCountry());
+        return nonNull(homeAddress)
+            && !isBlank(homeAddress.getCountry())
+            && !("UK").equalsIgnoreCase(homeAddress.getCountry())
+            && !("United Kingdom").equalsIgnoreCase(homeAddress.getCountry());
     }
 
     @JsonIgnore
     public boolean appliedForFinancialOrder() {
         return nonNull(financialOrder) && financialOrder.toBoolean();
     }
+
 }

@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.citizen.notification.Applicant2NotBrokenNotification
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
@@ -25,6 +26,9 @@ public class CitizenApplicant2NotBroken implements CCDConfig<CaseData, State, Us
 
     @Autowired
     private Applicant2NotBrokenNotification applicant2NotBrokenNotification;
+
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -45,8 +49,7 @@ public class CitizenApplicant2NotBroken implements CCDConfig<CaseData, State, Us
 
         CaseData data = details.getData();
 
-        applicant2NotBrokenNotification.sendToApplicant1(data, details.getId());
-        applicant2NotBrokenNotification.sendToApplicant2(data, details.getId());
+        notificationDispatcher.send(applicant2NotBrokenNotification, data, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)

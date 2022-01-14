@@ -6,12 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.divorce.common.ConditionalOrderCourtDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -22,6 +24,9 @@ import static org.assertj.core.api.Assertions.entry;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
+import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.HUSBAND;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
@@ -38,10 +43,14 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableConfigurationProperties
 @AutoConfigureMockMvc
+@DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
 class CertificateOfEntitlementContentIT {
 
     @Autowired
     private CertificateOfEntitlementContent certificateOfEntitlementContent;
+
+    @Autowired
+    private CommonContent commonContent;
 
     @Test
     void shouldReturnTemplateSetFromCaseDataAndCourtDetailsConfig() {
@@ -49,15 +58,18 @@ class CertificateOfEntitlementContentIT {
         final LocalDateTime localDateTime = LocalDateTime.of(2021, 11, 8, 14, 56);
         final LocalDate localDate = LocalDate.of(2021, 11, 8);
         final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
             .applicationType(SOLE_APPLICATION)
             .applicant1(Applicant.builder()
                 .firstName("John")
                 .lastName("Smith")
                 .financialOrder(YES)
+                .gender(FEMALE)
                 .build())
             .applicant2(Applicant.builder()
                 .firstName("Jane")
                 .lastName("Jones")
+                .gender(MALE)
                 .build())
             .conditionalOrder(ConditionalOrder.builder()
                 .court(BURY_ST_EDMUNDS)
