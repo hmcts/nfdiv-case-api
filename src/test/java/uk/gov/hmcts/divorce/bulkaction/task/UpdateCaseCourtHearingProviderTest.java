@@ -14,7 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMIGHAM;
+import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMINGHAM;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
 
@@ -36,7 +36,7 @@ class UpdateCaseCourtHearingProviderTest {
         final var bulkActionCaseData = BulkActionCaseData
             .builder()
             .dateAndTimeOfHearing(localDateTime)
-            .court(BIRMIGHAM)
+            .court(BIRMINGHAM)
             .build();
 
         final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails = new CaseDetails<>();
@@ -55,6 +55,6 @@ class UpdateCaseCourtHearingProviderTest {
         final ConditionalOrder resultConditionalOrder = resultCaseDetails.getData().getConditionalOrder();
 
         assertThat(resultConditionalOrder.getDateAndTimeOfHearing()).isEqualTo(localDateTime);
-        assertThat(resultConditionalOrder.getCourt()).isEqualTo(BIRMIGHAM);
+        assertThat(resultConditionalOrder.getCourt()).isEqualTo(BIRMINGHAM);
     }
 }
