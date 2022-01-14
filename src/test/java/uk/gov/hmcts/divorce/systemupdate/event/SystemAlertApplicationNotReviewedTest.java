@@ -10,10 +10,11 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.citizen.notification.JointApplicationOverdueNotification;
+import uk.gov.hmcts.divorce.citizen.notification.JointApplicationNotReviewedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -33,7 +34,10 @@ public class SystemAlertApplicationNotReviewedTest {
     private HttpServletRequest httpServletRequest;
 
     @Mock
-    private JointApplicationOverdueNotification jointApplicationOverdueNotification;
+    private JointApplicationNotReviewedNotification jointApplicationNotReviewedNotification;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
 
     @InjectMocks
     private SystemAlertApplicationNotReviewed systemAlertApplicationNotReviewed;
@@ -61,7 +65,7 @@ public class SystemAlertApplicationNotReviewedTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = systemAlertApplicationNotReviewed.aboutToSubmit(details, details);
 
-        verify(jointApplicationOverdueNotification).sendApplicationNotReviewedEmail(caseData, details.getId());
+        verify(notificationDispatcher).send(jointApplicationNotReviewedNotification, caseData, details.getId());
         assertThat(response.getData().getApplication().getOverdueNotificationSent()).isEqualTo(YesOrNo.YES);
     }
 }

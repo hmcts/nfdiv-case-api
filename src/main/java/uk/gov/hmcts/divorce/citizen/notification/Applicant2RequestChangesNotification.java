@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -14,7 +15,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICAN
 
 @Component
 @Slf4j
-public class Applicant2RequestChangesNotification {
+public class Applicant2RequestChangesNotification implements ApplicantNotification {
 
     public static final String APPLICANT_2_COMMENTS = "applicant 2 comments";
 
@@ -24,7 +25,8 @@ public class Applicant2RequestChangesNotification {
     @Autowired
     private CommonContent commonContent;
 
-    public void sendToApplicant1(CaseData caseData, Long id) {
+    @Override
+    public void sendToApplicant1(final CaseData caseData, final Long id) {
         Map<String, String> templateVars =
             commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
 
@@ -40,7 +42,8 @@ public class Applicant2RequestChangesNotification {
         );
     }
 
-    public void sendToApplicant2(CaseData caseData, Long id) {
+    @Override
+    public void sendToApplicant2(final CaseData caseData, final Long id) {
         log.info("Sending notification to applicant 2 to confirm their request for changes: {}", id);
 
         notificationService.sendEmail(

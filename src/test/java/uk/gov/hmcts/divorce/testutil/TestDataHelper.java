@@ -67,8 +67,8 @@ import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewApplicant2Notification.APPLICANT_2_SIGN_IN_DISSOLUTION_URL;
-import static uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewApplicant2Notification.APPLICANT_2_SIGN_IN_DIVORCE_URL;
+import static uk.gov.hmcts.divorce.citizen.notification.ApplicationRemindApplicant2Notification.APPLICANT_2_SIGN_IN_DISSOLUTION_URL;
+import static uk.gov.hmcts.divorce.citizen.notification.ApplicationRemindApplicant2Notification.APPLICANT_2_SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
@@ -301,6 +301,8 @@ public class TestDataHelper {
             .build());
         caseData.getApplication().setApplicant2PrayerHasBeenGiven(YES);
         caseData.getApplication().setApplicant2StatementOfTruth(YES);
+        caseData.getApplication().setApplicant2ScreenHasMarriageBroken(YES);
+
         return caseData;
     }
 

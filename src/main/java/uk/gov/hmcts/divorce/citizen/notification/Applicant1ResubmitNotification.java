@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -22,7 +23,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
-public class Applicant1ResubmitNotification {
+public class Applicant1ResubmitNotification implements ApplicantNotification {
 
     public static final String THEIR_EMAIL_ADDRESS = "their email address";
 
@@ -35,7 +36,8 @@ public class Applicant1ResubmitNotification {
     @Autowired
     private EmailTemplatesConfig configVars;
 
-    public void sendToApplicant1(CaseData caseData, Long id) {
+    @Override
+    public void sendToApplicant1(final CaseData caseData, final Long id) {
         log.info("Sending applicant 1 made changes notification to applicant 1 for case : {}", id);
 
         notificationService.sendEmail(
@@ -46,7 +48,8 @@ public class Applicant1ResubmitNotification {
         );
     }
 
-    public void sendToApplicant2(CaseData caseData, Long id) {
+    @Override
+    public void sendToApplicant2(final CaseData caseData, final Long id) {
         log.info("Sending applicant 1 made changes notification to applicant 2 for case : {}", id);
 
         notificationService.sendEmail(

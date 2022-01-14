@@ -19,6 +19,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
@@ -34,7 +35,6 @@ import java.util.UUID;
 import static java.lang.Integer.parseInt;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -78,6 +78,9 @@ public class SolicitorSubmitApplicationTest {
 
     @Mock
     private SolPayment solPayment;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
 
     @InjectMocks
     private SolicitorSubmitApplication solicitorSubmitApplication;
@@ -490,11 +493,9 @@ public class SolicitorSubmitApplicationTest {
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
-        doNothing().when(solicitorSubmittedNotification).send(caseData, TEST_CASE_ID);
-
         solicitorSubmitApplication.submitted(caseDetails, beforeCaseDetails);
 
-        verify(solicitorSubmittedNotification).send(caseData, TEST_CASE_ID);
+        verify(notificationDispatcher).send(solicitorSubmittedNotification, caseData, TEST_CASE_ID);
     }
 
     @Test

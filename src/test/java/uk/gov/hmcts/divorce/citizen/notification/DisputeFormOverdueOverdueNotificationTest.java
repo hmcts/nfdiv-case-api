@@ -43,7 +43,7 @@ class DisputeFormOverdueOverdueNotificationTest {
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        notification.send(data, 1234567890123456L);
+        notification.sendToApplicant1(data, 1234567890123456L);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),

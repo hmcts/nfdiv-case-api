@@ -39,6 +39,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.divorce.divorcecase.model.MarriageFormation.OPPOSITE_SEX_COUPLE;
+import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreateApplication.SOLICITOR_CREATE;
 import static uk.gov.hmcts.divorce.testutil.CaseDataWireMock.stubForCaseAssignmentRoles;
 import static uk.gov.hmcts.divorce.testutil.CaseDataWireMock.stubForCcdCaseRolesUpdateFailure;
@@ -230,6 +232,8 @@ class SolicitorCreateApplicationIT {
 
     private static CaseData caseDataWithApplicant1AndApplicant2Org() {
         CaseData caseData = caseData();
+        caseData.getApplication().setDivorceWho(WIFE);
+        caseData.getApplication().getMarriageDetails().setFormationType(OPPOSITE_SEX_COUPLE);
         caseData.getApplicant1().setSolicitor(Solicitor.builder()
             .organisationPolicy(organisationPolicy())
             .email("sol1@example.com")
