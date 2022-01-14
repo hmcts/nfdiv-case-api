@@ -26,7 +26,7 @@ public class CaseworkerWithdrawn implements CCDConfig<CaseData, State, UserRole>
         new PageBuilder(configBuilder
             .event(CASEWORKER_WITHDRAWN)
             .forStateTransition(allOf(State.class), Withdrawn)
-            .name("Withdrawn")
+            .name("Withdraw")
             .description("Withdrawn")
             .showEventNotes()
             .grant(CREATE_READ_UPDATE,
