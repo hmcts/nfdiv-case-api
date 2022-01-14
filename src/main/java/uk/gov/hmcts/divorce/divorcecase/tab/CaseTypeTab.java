@@ -17,6 +17,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -103,7 +104,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void buildConfidentialApplicantTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("ConfidentialApplicant", "Confidential Applicant")
-            .forRoles(CASE_WORKER, LEGAL_ADVISOR, SOLICITOR)
+            .forRoles(CASE_WORKER, LEGAL_ADVISOR, APPLICANT_1_SOLICITOR, SUPER_USER)
             .showCondition("applicant1ContactDetailsType=\"private\"")
             .field("applicant1CorrespondenceAddress")
             .field("applicant1PhoneNumber")
@@ -113,7 +114,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void buildConfidentialRespondentTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("ConfidentialRespondent", "Confidential Respondent")
-            .forRoles(CASE_WORKER, LEGAL_ADVISOR)
+            .forRoles(CASE_WORKER, LEGAL_ADVISOR, APPLICANT_2_SOLICITOR, SUPER_USER)
             .showCondition("applicant2ContactDetailsType=\"private\"")
             .field("applicant2CorrespondenceAddress")
             .field("applicant2PhoneNumber")
