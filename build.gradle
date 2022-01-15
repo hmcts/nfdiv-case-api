@@ -198,6 +198,10 @@ dependencyUpdates {
 dependencyManagement {
   dependencies {
     dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.70'
+    // TODO: Remove once ES client is shaded into cftlib.
+    dependency group: 'org.elasticsearch.client', name: 'elasticsearch-rest-client', version: '6.8.17'
+    dependency group: 'org.elasticsearch.client', name: 'elasticsearch-rest-high-level-client', version: '6.5.0'
+    dependency group: 'org.elasticsearch', name: 'jna', version: '5.5.0'
     // CVE-2018-10237 - Unbounded memory allocation
     dependencySet(group: 'com.google.guava', version: '31.0.1-jre') {
       entry 'guava'
@@ -251,7 +255,8 @@ dependencies {
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.17.1'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.17.1'
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.56'
-  implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.16.1'
+  // TODO: remove once ES client shaded into cftlib
+  implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '6.8.17'
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.4'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
@@ -298,7 +303,7 @@ dependencies {
   functionalTestImplementation group: 'uk.gov.hmcts.reform', name: 'document-management-client', version: '7.0.0'
   functionalTestImplementation group: 'uk.gov.hmcts.reform', name: 'service-auth-provider-client', version: versions.s2sClient
 
-  cftlibImplementation 'com.github.hmcts:rse-cft-lib:0.3.0'
+  cftlibImplementation 'com.github.hmcts:rse-cft-lib:0.4.0'
 }
 
 mainClassName = 'uk.gov.hmcts.divorce.CaseApiApplication'
