@@ -19,9 +19,7 @@ import java.time.LocalDate;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
@@ -48,9 +46,7 @@ public class LegalAdvisorGeneralConsideration implements CCDConfig<CaseData, Sta
             .grant(CREATE_READ_UPDATE, LEGAL_ADVISOR)
             .grant(READ,
                 CASE_WORKER,
-                SUPER_USER,
-                SOLICITOR,
-                CITIZEN))
+                SUPER_USER))
             .page("generalConsiderationResponse")
             .pageLabel("General consideration response")
             .complex(CaseData::getGeneralReferral)
