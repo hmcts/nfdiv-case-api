@@ -249,7 +249,9 @@ dependencies {
   implementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.0'
   implementation group: 'com.github.hmcts', name: 'ccd-client', version: '4.8.3'
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '2.0.1'
-  implementation group: 'com.github.hmcts', name: 'java-logging', version: '6.0.0'
+  implementation group: 'com.github.hmcts', name: 'java-logging', version: '5.1.9'
+  // TODO: fix missing WebMvcAutoConfiguration
+  // implementation group: 'com.github.hmcts', name: 'java-logging', version: '6.0.0'
   implementation group: 'com.github.hmcts', name: 'send-letter-client', version: '3.0.10'
   implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '4.0.2'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.17.1'
@@ -412,19 +414,7 @@ task bootXui(type: CftlibTask, group: 'ccd tasks') {
   commandLine 'docker-compose',  '-f', 'docker-compose-xui.yml', 'up'
 }
 
-task addRoles(type: CftlibTask, group: 'ccd tasks') {
-  commandLine 'bin/add-roles.sh'
-}
-
-task addProfiles(type: CftlibTask, group: 'ccd tasks') {
-  commandLine 'bin/add-ccd-user-profiles.sh'
-}
-
-task importCcdDefinition(type: CftlibTask, dependsOn: [addRoles, addProfiles], group: 'ccd tasks') {
-  commandLine 'bin/ccd-import-definition.sh', 'build/ccd-config/ccd-NFD-dev.xlsx'
-}
-
-task bootWithCcd(type: org.springframework.boot.gradle.tasks.run.BootRun, group: 'ccd tasks') {
+task bootWithCcd(type: org.springframework.boot.gradle.tasks.run.BootRun, dependsOn: [buildCCDXlsx], group: 'ccd tasks') {
     classpath sourceSets.cftlib.runtimeClasspath
     mainClass = tasks.bootRun.mainClass
     doFirst() {
