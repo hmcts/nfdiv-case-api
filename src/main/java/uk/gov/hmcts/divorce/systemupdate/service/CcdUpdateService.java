@@ -18,6 +18,8 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
+import java.util.Map;
+
 import static java.lang.String.format;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
@@ -113,11 +115,27 @@ public class CcdUpdateService {
             caseId,
             eventId);
 
+        final Map<String, Object> data = startEventResponse.getCaseDetails().getData();
+
+        //TODO: Remove temp logging for tracking certificate of entitlement
+        log.info(
+            "****** Start event response for case id: {}, certificate of entitlement: {}",
+            caseId,
+            data.get("coCertificateOfEntitlementDocument"));
+
+        final CaseData caseData = caseDetailsUpdater.updateCaseData(caseTask, startEventResponse).getData();
+
+        //TODO: Remove temp logging for tracking certificate of entitlement
+        log.info(
+            "****** After CaseData updated for case id: {}, conditional order: {}",
+            caseId,
+            caseData.getConditionalOrder());
+
         final CaseDataContent caseDataContent = ccdCaseDataContentProvider.createCaseDataContent(
             startEventResponse,
             DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY,
             DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION,
-            caseDetailsUpdater.updateCaseData(caseTask, startEventResponse).getData());
+            caseData);
 
         coreCaseDataApi.submitEventForCaseWorker(
             authorization,

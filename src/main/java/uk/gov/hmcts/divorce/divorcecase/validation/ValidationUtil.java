@@ -86,7 +86,7 @@ public final class ValidationUtil {
             notNull(caseData.getApplicant2().getFirstName(), "Applicant2FirstName"),
             notNull(caseData.getApplicant2().getLastName(), "Applicant2LastName"),
             notNull(caseData.getApplication().getApplicant2StatementOfTruth(), "Applicant2StatementOfTruth"),
-            notNull(caseData.getApplication().getApplicant2PrayerHasBeenGiven(), "Applicant2PrayerHasBeenGiven"),
+            notNull(caseData.getApplication().getApplicant2PrayerHasBeenGivenCheckbox(), "Applicant2PrayerHasBeenGiven"),
             notNull(caseData.getApplication().getMarriageDetails().getApplicant2Name(), "MarriageApplicant2Name")
         );
     }

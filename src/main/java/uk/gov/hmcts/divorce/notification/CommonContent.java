@@ -5,12 +5,13 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static java.lang.String.join;
+import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
+import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
@@ -47,21 +48,29 @@ public class CommonContent {
 
     public static final String REVIEW_DEADLINE_DATE = "review deadline date";
 
+    public static final String JOINT_CONDITIONAL_ORDER = "joint conditional order";
+    public static final String HUSBAND_JOINT = "husbandJoint";
+    public static final String WIFE_JOINT = "wifeJoint";
+    public static final String CIVIL_PARTNER_JOINT = "civilPartnerJoint";
+
     @Autowired
     private EmailTemplatesConfig config;
 
-    public Map<String, String> mainTemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
+    public Map<String, String> mainTemplateVars(final CaseData caseData,
+                                                final Long id,
+                                                final Applicant applicant,
+                                                final Applicant partner) {
         Map<String, String> templateVars = new HashMap<>();
         templateVars.put(APPLICATION_REFERENCE, id != null ? formatId(id) : null);
-        templateVars.put(IS_DIVORCE, isDivorce(caseData) ? YES : NO);
-        templateVars.put(IS_DISSOLUTION, !isDivorce(caseData) ? YES : NO);
+        templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
+        templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
         templateVars.put(FIRST_NAME, applicant.getFirstName());
         templateVars.put(LAST_NAME, applicant.getLastName());
-        templateVars.put(PARTNER, isDivorce(caseData) ? partner.getGender() == Gender.MALE ? "husband" : "wife" : "civil partner");
+        templateVars.put(PARTNER, caseData.isDivorce() ? partner.getGender() == MALE ? "husband" : "wife" : "civil partner");
         templateVars.put(COURT_EMAIL,
-            config.getTemplateVars().get(isDivorce(caseData) ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
+            config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
         templateVars.put(SIGN_IN_URL_NOTIFY_KEY,
-            config.getTemplateVars().get(isDivorce(caseData) ? SIGN_IN_DIVORCE_URL : SIGN_IN_DISSOLUTION_URL));
+            config.getTemplateVars().get(caseData.isDivorce() ? SIGN_IN_DIVORCE_URL : SIGN_IN_DISSOLUTION_URL));
         return templateVars;
     }
 
@@ -78,11 +87,30 @@ public class CommonContent {
         return templateVars;
     }
 
-    public static boolean isDivorce(CaseData caseData) {
-        return caseData.getDivorceOrDissolution().isDivorce();
+    public String getPartner(CaseData caseData, Applicant partner) {
+        return caseData.isDivorce() ? partner.getGender() == MALE ? "husband" : "wife" : "civil partner";
     }
 
-    public String getPartner(CaseData caseData, Applicant partner) {
-        return isDivorce(caseData) ? partner.getGender() == Gender.MALE ? "husband" : "wife" : "civil partner";
+    public Map<String, String> conditionalOrderTemplateVars(final CaseData caseData,
+                                                            final Long id,
+                                                            final Applicant applicant,
+                                                            final Applicant partner) {
+        final Map<String, String> templateVars = mainTemplateVars(caseData, id, applicant, partner);
+        final boolean jointApplication = !caseData.getApplicationType().isSole();
+
+        templateVars.put(JOINT_CONDITIONAL_ORDER, jointApplication ? YES : NO);
+        templateVars.put(HUSBAND_JOINT, jointApplication
+            && caseData.isDivorce()
+            && partner.getGender().equals(MALE)
+            ? YES : NO);
+        templateVars.put(WIFE_JOINT, jointApplication
+            && caseData.isDivorce()
+            && partner.getGender().equals(FEMALE)
+            ? YES : NO);
+        templateVars.put(CIVIL_PARTNER_JOINT, jointApplication
+            && !caseData.isDivorce()
+            ? YES : NO);
+
+        return templateVars;
     }
 }

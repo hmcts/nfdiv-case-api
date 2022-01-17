@@ -76,7 +76,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class NoticeOfProceedingContentTest {
+public class NoticeOfProceedingContentIT {
 
     @Autowired
     private CommonContent commonContent;

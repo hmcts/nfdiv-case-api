@@ -14,6 +14,7 @@ import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
@@ -22,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
@@ -188,7 +190,8 @@ public class ConditionalOrder {
     private String judgeCostsOrderAdditionalInfo;
 
     @CCD(
-        label = "Link to certificate of entitlement"
+        label = "Link to certificate of entitlement",
+        access = {CaseworkerAccess.class}
     )
     private DivorceDocument certificateOfEntitlementDocument;
 
@@ -212,5 +215,10 @@ public class ConditionalOrder {
         this.setRefusalRejectionReason(null);
         this.setRefusalRejectionAdditionalInfo(null);
 
+    }
+
+    @JsonIgnore
+    public boolean isConditionalOrderPending() {
+        return isNull(conditionalOrderApplicant1Questions.getSubmittedDate());
     }
 }

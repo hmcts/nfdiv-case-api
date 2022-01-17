@@ -20,7 +20,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.PaymentService;
-import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitApplicationService;
+import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitJointApplicationService;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -47,7 +47,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 class CitizenSubmitApplicationTest {
 
     @Mock
-    private SolicitorSubmitApplicationService solicitorSubmitApplicationService;
+    private SolicitorSubmitJointApplicationService solicitorSubmitJointApplicationService;
 
     @Mock
     private PaymentService paymentService;
@@ -136,7 +136,7 @@ class CitizenSubmitApplicationTest {
         caseData.getApplicant2().setFirstName("App");
         caseData.getApplicant2().setLastName("Two");
         caseData.getApplication().setApplicant2StatementOfTruth(YES);
-        caseData.getApplication().setApplicant2PrayerHasBeenGiven(YES);
+        caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
         caseData.getApplication().getMarriageDetails().setApplicant2Name("App Two");
 
         caseDetails.setData(caseData);
@@ -196,7 +196,7 @@ class CitizenSubmitApplicationTest {
                 .build()
         );
         caseData.getApplication().setApplicant2StatementOfTruth(YES);
-        caseData.getApplication().setApplicant2PrayerHasBeenGiven(YES);
+        caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
         caseData.getApplication().getMarriageDetails().setApplicant2Name("App Two");
 
         caseDetails.setData(caseData);

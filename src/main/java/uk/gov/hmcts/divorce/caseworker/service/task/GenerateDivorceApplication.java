@@ -12,7 +12,6 @@ import uk.gov.hmcts.divorce.document.content.DivorceApplicationJointTemplateCont
 import uk.gov.hmcts.divorce.document.content.DivorceApplicationSoleTemplateContent;
 
 import java.time.Clock;
-import java.time.LocalDate;
 import java.util.Map;
 
 import static java.time.LocalDateTime.now;
@@ -43,7 +42,6 @@ public class GenerateDivorceApplication implements CaseTask {
 
         final Long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
-        final LocalDate createdDate = caseDetails.getCreatedDate().toLocalDate();
 
         log.info("Executing handler for generating divorce application for case id {} ", caseId);
 
@@ -51,10 +49,10 @@ public class GenerateDivorceApplication implements CaseTask {
         final String templateId;
 
         if (caseData.getApplicationType().isSole()) {
-            templateContent = divorceApplicationSoleTemplateContent.apply(caseData, caseId, createdDate);
+            templateContent = divorceApplicationSoleTemplateContent.apply(caseData, caseId);
             templateId = DIVORCE_APPLICATION_SOLE;
         } else {
-            templateContent = divorceApplicationJointTemplateContent.apply(caseData, caseId, createdDate);
+            templateContent = divorceApplicationJointTemplateContent.apply(caseData, caseId);
             templateId = DIVORCE_APPLICATION_JOINT;
         }
 
