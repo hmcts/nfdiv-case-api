@@ -19,9 +19,13 @@ import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant2BasicCase;
 
 @Slf4j
@@ -45,6 +49,10 @@ public class Applicant2Approve implements CCDConfig<CaseData, State, UserRole> {
             .name("Applicant 2 approve")
             .description("Applicant 2 has approved")
             .grant(CREATE_READ_UPDATE, APPLICANT_2, SYSTEMUPDATE)
+            .grant(READ,
+                APPLICANT_1_SOLICITOR,
+                CASE_WORKER,
+                SUPER_USER)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
