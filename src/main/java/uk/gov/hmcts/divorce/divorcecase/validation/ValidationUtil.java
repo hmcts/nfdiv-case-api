@@ -49,7 +49,7 @@ public final class ValidationUtil {
             hasStatementOfTruth(caseData.getApplication()),
             validatePrayer(caseData.getApplication().getApplicant1PrayerHasBeenGivenCheckbox()),
             validateMarriageDate(caseData.getApplication().getMarriageDetails().getDate(), "MarriageDate"),
-            validateJurisdictionConnections(caseData.getApplication())
+            validateJurisdictionConnections(caseData)
         );
     }
 
@@ -77,7 +77,7 @@ public final class ValidationUtil {
             notNull(caseData.getApplicant2().getGender(), "Applicant2Gender"),
             notNull(caseData.getApplication().getMarriageDetails().getApplicant1Name(), "MarriageApplicant1Name"),
             validateMarriageDate(caseData.getApplication().getMarriageDetails().getDate(), "MarriageDate"),
-            caseData.getApplication().getJurisdiction().validate()
+            validateJurisdictionConnections(caseData)
         );
     }
 
@@ -115,14 +115,14 @@ public final class ValidationUtil {
         return emptyList();
     }
 
-    public static List<String> validateJurisdictionConnections(Application application) {
-        if (application.isSolicitorApplication()) {
-            if (isEmpty(application.getJurisdiction().getConnections())) {
+    public static List<String> validateJurisdictionConnections(CaseData caseData) {
+        if (caseData.getApplication().isSolicitorApplication() || caseData.getApplicant1().isRepresented()) {
+            if (isEmpty(caseData.getApplication().getJurisdiction().getConnections())) {
                 return List.of("JurisdictionConnections" + EMPTY);
             }
             return emptyList();
         }
-        return application.getJurisdiction().validate();
+        return caseData.getApplication().getJurisdiction().validate();
     }
 
     public static List<String> validateCasesAcceptedToListForHearing(BulkActionCaseData caseData) {
