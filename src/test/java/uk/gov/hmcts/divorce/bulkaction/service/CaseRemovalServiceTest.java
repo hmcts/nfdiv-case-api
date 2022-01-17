@@ -30,7 +30,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
-import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMIGHAM;
+import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMINGHAM;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemoveBulkCase.SYSTEM_REMOVE_BULK_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
@@ -188,7 +188,7 @@ public class CaseRemovalServiceTest {
         var bulkActionCaseData = BulkActionCaseData
             .builder()
             .dateAndTimeOfHearing(LocalDateTime.of(2021, 11, 10, 0, 0, 0))
-            .court(BIRMIGHAM)
+            .court(BIRMINGHAM)
             .bulkListCaseDetails(List.of(getBulkListCaseDetailsListValue("1")))
             .casesAcceptedToListForHearing(
                 List.of(
@@ -259,7 +259,7 @@ public class CaseRemovalServiceTest {
         var bulkActionCaseData = BulkActionCaseData
             .builder()
             .dateAndTimeOfHearing(LocalDateTime.of(2021, 11, 10, 0, 0, 0))
-            .court(BIRMIGHAM)
+            .court(BIRMINGHAM)
             .bulkListCaseDetails(List.of(getBulkListCaseDetailsListValue("1"), getBulkListCaseDetailsListValue("2")))
             .casesAcceptedToListForHearing(List.of(getCaseLinkListValue("1")))
             .build();

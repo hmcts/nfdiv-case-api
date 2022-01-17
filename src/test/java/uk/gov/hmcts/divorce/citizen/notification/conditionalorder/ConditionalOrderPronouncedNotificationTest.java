@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
@@ -56,7 +57,7 @@ class ConditionalOrderPronouncedNotificationTest {
         LocalDateTime now = LocalDateTime.now();
         CaseData data = caseData();
         data.setConditionalOrder(ConditionalOrder.builder()
-            .court(ConditionalOrderCourt.BIRMIGHAM)
+            .court(ConditionalOrderCourt.BIRMINGHAM)
             .dateAndTimeOfHearing(now)
             .grantedDate(now.toLocalDate())
             .build()
@@ -72,7 +73,7 @@ class ConditionalOrderPronouncedNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(IS_DIVORCE, YES),
-                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMIGHAM.getLabel()),
+                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
                 hasEntry(DATE_OF_HEARING, data.getConditionalOrder().getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER)),
                 hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER))
             )),
@@ -86,7 +87,7 @@ class ConditionalOrderPronouncedNotificationTest {
         LocalDateTime now = LocalDateTime.now();
         CaseData data = caseData();
         data.setConditionalOrder(ConditionalOrder.builder()
-            .court(ConditionalOrderCourt.BIRMIGHAM)
+            .court(ConditionalOrderCourt.BIRMINGHAM)
             .dateAndTimeOfHearing(now)
             .grantedDate(now.toLocalDate())
             .build()
@@ -105,7 +106,7 @@ class ConditionalOrderPronouncedNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(IS_DISSOLUTION, YES),
-                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMIGHAM.getLabel()),
+                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
                 hasEntry(DATE_OF_HEARING, data.getConditionalOrder().getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER)),
                 hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER))
             )),
@@ -115,12 +116,13 @@ class ConditionalOrderPronouncedNotificationTest {
     }
 
     @Test
-    void shouldSendEmailToApplicant2WithDivorceContent() {
+    void shouldSendEmailToApplicant2WithDivorceContentForSoleApplication() {
         LocalDateTime now = LocalDateTime.now();
         CaseData data = caseData();
+        data.setApplicationType(ApplicationType.SOLE_APPLICATION);
         data.setApplicant2(getApplicant(Gender.MALE));
         data.setConditionalOrder(ConditionalOrder.builder()
-            .court(ConditionalOrderCourt.BIRMIGHAM)
+            .court(ConditionalOrderCourt.BIRMINGHAM)
             .dateAndTimeOfHearing(now)
             .grantedDate(now.toLocalDate())
             .build()
@@ -135,7 +137,7 @@ class ConditionalOrderPronouncedNotificationTest {
             eq(SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED),
             argThat(allOf(
                 hasEntry(IS_DIVORCE, YES),
-                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMIGHAM.getLabel()),
+                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
                 hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER)),
                 hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER))
             )),
@@ -145,12 +147,13 @@ class ConditionalOrderPronouncedNotificationTest {
     }
 
     @Test
-    void shouldSendEmailToApplicant2WithDissolutionContent() {
+    void shouldSendEmailToApplicant2WithDissolutionContentForSoleApplication() {
         LocalDateTime now = LocalDateTime.now();
         CaseData data = caseData();
+        data.setApplicationType(ApplicationType.SOLE_APPLICATION);
         data.setApplicant2(getApplicant(Gender.MALE));
         data.setConditionalOrder(ConditionalOrder.builder()
-            .court(ConditionalOrderCourt.BIRMIGHAM)
+            .court(ConditionalOrderCourt.BIRMINGHAM)
             .dateAndTimeOfHearing(now)
             .grantedDate(now.toLocalDate())
             .build()
@@ -168,7 +171,72 @@ class ConditionalOrderPronouncedNotificationTest {
             eq(SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED),
             argThat(allOf(
                 hasEntry(IS_DISSOLUTION, YES),
-                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMIGHAM.getLabel()),
+                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
+                hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER)),
+                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER))
+            )),
+            eq(ENGLISH)
+        );
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldSendEmailToApplicant2WithDivorceContentForJointApplication() {
+        LocalDateTime now = LocalDateTime.now();
+        CaseData data = caseData();
+        data.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        data.setApplicant2(getApplicant(Gender.MALE));
+        data.setConditionalOrder(ConditionalOrder.builder()
+            .court(ConditionalOrderCourt.BIRMINGHAM)
+            .dateAndTimeOfHearing(now)
+            .grantedDate(now.toLocalDate())
+            .build()
+        );
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(getMainTemplateVars());
+
+        notification.sendToApplicant2(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(CITIZEN_CONDITIONAL_ORDER_PRONOUNCED),
+            argThat(allOf(
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
+                hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER)),
+                hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER))
+            )),
+            eq(ENGLISH)
+        );
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldSendEmailToApplicant2WithDissolutionContentForJointApplication() {
+        LocalDateTime now = LocalDateTime.now();
+        CaseData data = caseData();
+        data.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        data.setApplicant2(getApplicant(Gender.MALE));
+        data.setConditionalOrder(ConditionalOrder.builder()
+            .court(ConditionalOrderCourt.BIRMINGHAM)
+            .dateAndTimeOfHearing(now)
+            .grantedDate(now.toLocalDate())
+            .build()
+        );
+
+        final Map<String, String> templateVars = getMainTemplateVars();
+        templateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(templateVars);
+
+        notification.sendToApplicant2(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(CITIZEN_CONDITIONAL_ORDER_PRONOUNCED),
+            argThat(allOf(
+                hasEntry(IS_DISSOLUTION, YES),
+                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
                 hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER)),
                 hasEntry(CO_PRONOUNCEMENT_DATE_PLUS_43, now.plusDays(43).format(DATE_TIME_FORMATTER))
             )),

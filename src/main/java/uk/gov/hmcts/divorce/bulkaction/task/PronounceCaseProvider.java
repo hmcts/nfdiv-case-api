@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.bulkaction.task;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
@@ -10,6 +11,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 
 @Component
+@Slf4j
 public class PronounceCaseProvider implements BulkActionCaseTaskProvider {
 
     @Override
@@ -23,6 +25,7 @@ public class PronounceCaseProvider implements BulkActionCaseTaskProvider {
         final BulkActionCaseData bulkActionCaseData = bulkCaseDetails.getData();
 
         return mainCaseDetails -> {
+            log.info("Updating case data for Case Id: {} Event: {}", mainCaseDetails.getId(), getEventId());
             final var conditionalOrder = mainCaseDetails.getData().getConditionalOrder();
             final var finalOrder = mainCaseDetails.getData().getFinalOrder();
 
