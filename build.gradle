@@ -334,11 +334,6 @@ bootRun {
       systemProperty 'IDAM_SOLICITOR_USERNAME', getVaultSecret('idam-solicitor-username')
       systemProperty 'IDAM_SOLICITOR_PASSWORD', getVaultSecret('idam-solicitor-password')
       systemProperty 'IDAM_CLIENT_SECRET', getVaultSecret('idam-secret')
-
-      if (System.getenv("BOOT_RUN_DOCKER")) {
-        systemProperty 'IDAM_API_BASEURL', 'http://localhost:5000'
-        systemProperty 'CASE_DATA_STORE_BASEURL', 'http://localhost:4452'
-      }
     }
   }
 }
@@ -397,17 +392,6 @@ ccd {
   configDir = file('build/definitions')
 }
 
-tasks.register('stopCaseApiContainer') {
-  group = 'ccd tasks'
-
-  doFirst {
-    exec {
-      executable "sh"
-      args "-c", "docker stop nfdiv-case-api || exit 0"
-    }
-  }
-}
-
 class CftlibTask extends Exec {
   CftlibTask() {
       project.file('../.env').readLines().each() {
@@ -420,70 +404,60 @@ class CftlibTask extends Exec {
     }
 }
 
-task reloadCcd(type: CftlibTask, dependsOn: generateCCDConfig) {
-  group = 'ccd tasks'
-  commandLine './bin/process-and-import-ccd-definition.sh'
-}
-
-generateCCDConfig.dependsOn stopCaseApiContainer
 generateCCDConfig {
     environment 'CASE_API_URL', 'http://localhost:4013'
 }
 
-task bootXui(type: CftlibTask) {
+task bootXui(type: CftlibTask, group: 'ccd tasks') {
   commandLine 'docker-compose',  '-f', 'docker-compose-xui.yml', 'up'
 }
 
-task addRoles(type: CftlibTask) {
+task addRoles(type: CftlibTask, group: 'ccd tasks') {
   commandLine 'bin/add-roles.sh'
 }
 
-task addProfiles(type: CftlibTask) {
+task addProfiles(type: CftlibTask, group: 'ccd tasks') {
   commandLine 'bin/add-ccd-user-profiles.sh'
 }
 
-task importDef(type: CftlibTask, dependsOn: [addRoles, addProfiles]) {
+task importCcdDefinition(type: CftlibTask, dependsOn: [addRoles, addProfiles], group: 'ccd tasks') {
   commandLine 'bin/ccd-import-definition.sh', 'build/ccd-config/ccd-NFD-dev.xlsx'
 }
 
-task libRun(type: org.springframework.boot.gradle.tasks.run.BootRun) {
+task bootWithCcd(type: org.springframework.boot.gradle.tasks.run.BootRun, group: 'ccd tasks') {
     classpath sourceSets.cftlib.runtimeClasspath
     mainClass = tasks.bootRun.mainClass
     doFirst() {
-        if (System.getenv("IDAM_API_BASEURL") == null) {
-            println("Loading secrets from vault")
+        println("Loading secrets from vault")
 
-            project.file('../.env').readLines().each() {
-                def (key, value) = it.tokenize('=')
-                environment key, value
-            }
-            environment 'IDAM_API_URL_BASE', 'https://idam-api.aat.platform.hmcts.net'
-            environment 'DEFINITION_STORE_URL_BASE', 'http://localhost:4013'
-            environment 'CCD_USER_PROFILE_URL', 'http://localhost:4013'
-
-            systemProperty 'IDAM_API_BASEURL', 'https://idam-api.aat.platform.hmcts.net'
-
-            systemProperty 'IDAM_SOLICITOR_USERNAME', getVaultSecret('idam-solicitor-username')
-            systemProperty 'IDAM_SOLICITOR_PASSWORD', getVaultSecret('idam-solicitor-password')
-            systemProperty 'IDAM_CLIENT_SECRET', getVaultSecret('idam-secret')
-
-            systemProperty 'IDAM_DATA_STORE_SYSTEM_USER_USERNAME', '${CCD_SYSTEM_UPDATE_USERNAME}'
-            systemProperty 'IDAM_DATA_STORE_SYSTEM_USER_PASSWORD', '${CCD_SYSTEM_UPDATE_PASSWORD}'
-            if (System.getenv("BOOT_RUN_DOCKER")) {
-                systemProperty 'IDAM_API_BASEURL', 'http://localhost:5000'
-                systemProperty 'CASE_DATA_STORE_BASEURL', 'http://localhost:4452'
-            }
-
-            // CCD config
-            systemProperty 'IDAM_OAUTH2_DATA_STORE_CLIENT_SECRET', getVaultSecret('idam-data-store-client-secret', 'ccd-aat')
-            systemProperty 'IDAM_API_BASE_URL', 'https://idam-api.aat.platform.hmcts.net'
-            systemProperty 'IDAM_S2S_URL', 'http://rpe-service-auth-provider-aat.service.core-compute-aat.internal'
-            systemProperty 'IDAM_CLIENT_ID', 'nfdiv_case_api'
-            systemProperty 'CASE_DOCUMENT_AM_URL', 'http://ccd-case-document-am-api-aat.service.core-compute-aat.internal'
-
-
-            systemProperty 'S2S_AUTHORISED_SERVICES', 'ccd_definition,ccd_data,xui_webapp,nfdiv_case_api,ccd_gw'
+        project.file('../.env').readLines().each() {
+            def (key, value) = it.tokenize('=')
+            environment key, value
         }
+        environment 'IDAM_API_URL_BASE', 'https://idam-api.aat.platform.hmcts.net'
+        environment 'DEFINITION_STORE_URL_BASE', 'http://localhost:4013'
+        environment 'CCD_USER_PROFILE_URL', 'http://localhost:4013'
+
+        systemProperty 'IDAM_API_BASEURL', 'https://idam-api.aat.platform.hmcts.net'
+
+        systemProperty 'IDAM_SOLICITOR_USERNAME', getVaultSecret('idam-solicitor-username')
+        systemProperty 'IDAM_SOLICITOR_PASSWORD', getVaultSecret('idam-solicitor-password')
+        systemProperty 'IDAM_CLIENT_SECRET', getVaultSecret('idam-secret')
+
+        systemProperty 'IDAM_DATA_STORE_SYSTEM_USER_USERNAME', '${CCD_SYSTEM_UPDATE_USERNAME}'
+        systemProperty 'IDAM_DATA_STORE_SYSTEM_USER_PASSWORD', '${CCD_SYSTEM_UPDATE_PASSWORD}'
+
+        // CCD config
+        systemProperty 'IDAM_OAUTH2_DATA_STORE_CLIENT_SECRET', getVaultSecret('idam-data-store-client-secret', 'ccd-aat')
+        systemProperty 'IDAM_API_BASE_URL', 'https://idam-api.aat.platform.hmcts.net'
+        systemProperty 'IDAM_S2S_URL', 'http://rpe-service-auth-provider-aat.service.core-compute-aat.internal'
+        systemProperty 'IDAM_CLIENT_ID', 'nfdiv_case_api'
+        systemProperty 'CASE_DOCUMENT_AM_URL', 'http://ccd-case-document-am-api-aat.service.core-compute-aat.internal'
+
+        systemProperty 'S2S_AUTHORISED_SERVICES', 'ccd_definition,ccd_data,xui_webapp,nfdiv_case_api,ccd_gw'
+
+        systemProperty 'LD_SDK_KEY', '${AM_LD_SDK_KEY}'
+
     }
 }
 
