@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
@@ -76,7 +77,8 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
 
         log.info("Submit conditional order about to submit callback invoked for case id: {}", details.getId());
         CaseData data = details.getData();
-        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setSubmittedDate(LocalDateTime.now(clock));
+        setSubmittedDate(data.getConditionalOrder().getConditionalOrderApplicant1Questions());
+        setSubmittedDate(data.getConditionalOrder().getConditionalOrderApplicant2Questions());
         var state = details.getData().getApplicationType().isSole()
             ? AwaitingLegalAdvisorReferral
             : beforeDetails.getState() == ConditionalOrderDrafted ? ConditionalOrderPending : AwaitingLegalAdvisorReferral;
@@ -87,5 +89,12 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             .data(details.getData())
             .state(state)
             .build();
+    }
+
+    private void setSubmittedDate(ConditionalOrderQuestions conditionalOrderQuestions) {
+        if (Objects.isNull(conditionalOrderQuestions.getSubmittedDate())) {
+            conditionalOrderQuestions
+                .setSubmittedDate(conditionalOrderQuestions.getStatementOfTruth().toBoolean() ? LocalDateTime.now(clock) : null);
+        }
     }
 }
