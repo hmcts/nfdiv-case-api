@@ -275,6 +275,13 @@ public enum State {
     BulkCaseReject("BulkCaseReject"),
 
     @CCD(
+        name = "General consideration complete",
+        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    GeneralConsiderationComplete("GeneralConsiderationComplete"),
+
+    @CCD(
         name = "Submitted",
         label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n\n"
     )
