@@ -16,6 +16,7 @@ import java.util.Map;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.CO_PRONOUNCEMENT_DATE_PLUS_43;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_HEARING;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_HEARING_MINUS_SEVEN_DAYS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.TIME_OF_HEARING;
@@ -69,6 +70,7 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
         templateVars.put(COURT_NAME, conditionalOrder.getCourt().getLabel());
         templateVars.put(DATE_OF_HEARING, dateAndTimeOfHearing.format(DATE_TIME_FORMATTER));
         templateVars.put(TIME_OF_HEARING, dateAndTimeOfHearing.format(TIME_FORMATTER));
+        templateVars.put(CO_PRONOUNCEMENT_DATE_PLUS_43, dateAndTimeOfHearing.plusDays(43).format(DATE_TIME_FORMATTER));
         templateVars.put(DATE_OF_HEARING_MINUS_SEVEN_DAYS, dateAndTimeOfHearing.minus(7, DAYS).format(DATE_TIME_FORMATTER));
 
         return templateVars;
