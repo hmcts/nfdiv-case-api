@@ -5,6 +5,7 @@ import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
@@ -132,7 +133,7 @@ public class CaseValidationTest {
 
         caseData.getApplication().getJurisdiction().setConnections(Collections.emptySet());
 
-        List<String> errors = validateJurisdictionConnections(caseData.getApplication());
+        List<String> errors = validateJurisdictionConnections(caseData);
 
         assertThat(errors).containsOnly("JurisdictionConnections" + ValidationUtil.EMPTY);
     }
@@ -146,7 +147,7 @@ public class CaseValidationTest {
 
         caseData.getApplication().getJurisdiction().setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
 
-        List<String> errors = validateJurisdictionConnections(caseData.getApplication());
+        List<String> errors = validateJurisdictionConnections(caseData);
 
         assertThat(errors).isEmpty();
     }
@@ -160,7 +161,49 @@ public class CaseValidationTest {
 
         caseData.getApplication().getJurisdiction().setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
 
-        List<String> errors = validateJurisdictionConnections(caseData.getApplication());
+        List<String> errors = validateJurisdictionConnections(caseData);
+
+        assertThat(errors).contains(CONNECTION + JurisdictionConnections.APP_1_APP_2_RESIDENT + CANNOT_EXIST);
+    }
+
+    @Test
+    public void shouldOnlyValidateEmptyJurisdictionConnectionsWhenApplicant1Represented() {
+        final CaseData caseData = caseData();
+        caseData.setApplicant1(Applicant.builder()
+            .solicitorRepresented(YES)
+            .build());
+
+        caseData.getApplication().getJurisdiction().setConnections(Collections.emptySet());
+
+        List<String> errors = validateJurisdictionConnections(caseData);
+
+        assertThat(errors).containsOnly("JurisdictionConnections" + ValidationUtil.EMPTY);
+    }
+
+    @Test
+    public void shouldReturnEmptyListForNonEmptyJurisdictionConnectionsWhenApplicant1Represented() {
+        final CaseData caseData = caseData();
+        caseData.setApplicant1(Applicant.builder()
+            .solicitorRepresented(YES)
+            .build());
+
+        caseData.getApplication().getJurisdiction().setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
+
+        List<String> errors = validateJurisdictionConnections(caseData);
+
+        assertThat(errors).isEmpty();
+    }
+
+    @Test
+    public void shouldValidateJurisdictionConnectionsWhenApplicant1IsNotRepresented() {
+        final CaseData caseData = caseData();
+        caseData.setApplicant1(Applicant.builder()
+            .solicitorRepresented(NO)
+            .build());
+
+        caseData.getApplication().getJurisdiction().setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
+
+        List<String> errors = validateJurisdictionConnections(caseData);
 
         assertThat(errors).contains(CONNECTION + JurisdictionConnections.APP_1_APP_2_RESIDENT + CANNOT_EXIST);
     }
