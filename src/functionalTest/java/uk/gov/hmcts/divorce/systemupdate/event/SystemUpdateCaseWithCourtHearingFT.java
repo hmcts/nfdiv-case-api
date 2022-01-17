@@ -24,11 +24,27 @@ public class SystemUpdateCaseWithCourtHearingFT extends FunctionalTestSuite {
 
     private static final String REQUEST =
         "classpath:request/casedata/ccd-callback-casedata-system-update-case-with-court-hearing.json";
+    private static final String JOINT_REQUEST =
+        "classpath:request/casedata/ccd-callback-casedata-system-update-case-with-court-hearing-joint.json";
     private static final String RESPONSE = "classpath:responses/response-system-update-case-with-court-hearing.json";
 
     @Test
     public void shouldSendEmailsToApplicantAndRespondentAndCreateCertificateOfEntitlementDocument() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
+
+        Response response = triggerCallback(request, SYSTEM_UPDATE_CASE_COURT_HEARING, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+
+        assertThatJson(response.asString())
+            .when(IGNORING_EXTRA_FIELDS)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(RESPONSE)));
+    }
+
+    @Test
+    public void shouldSendEmailsToApplicantsAndCreateCertificateOfEntitlementDocument() throws IOException {
+        Map<String, Object> request = caseData(JOINT_REQUEST);
 
         Response response = triggerCallback(request, SYSTEM_UPDATE_CASE_COURT_HEARING, ABOUT_TO_SUBMIT_URL);
 

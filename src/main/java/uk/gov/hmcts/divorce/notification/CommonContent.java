@@ -56,6 +56,7 @@ public class CommonContent {
     public static final String DATE_OF_HEARING = "date of hearing";
     public static final String TIME_OF_HEARING = "time of hearing";
     public static final String DATE_OF_HEARING_MINUS_SEVEN_DAYS = "date of hearing minus seven days";
+    public static final String CO_PRONOUNCEMENT_DATE_PLUS_43 = "CO pronouncement date plus 43 days";
 
     @Autowired
     private EmailTemplatesConfig config;
