@@ -44,7 +44,7 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
 
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
-        log.info("Notifying respondent that their conditional order application has been granted: {}", id);
+        log.info("Notifying applicant 2 that their conditional order application has been granted: {}", id);
 
         EmailTemplateName emailTemplateName =
             caseData.getApplicationType().isSole() ? SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED : CITIZEN_CONDITIONAL_ORDER_PRONOUNCED;

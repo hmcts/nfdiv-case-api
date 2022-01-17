@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
+import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.time.LocalDateTime;
@@ -18,7 +19,8 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_HEARING;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_HEARING_MINUS_SEVEN_DAYS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.TIME_OF_HEARING;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.ENTITLEMENT_GRANTED_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.TIME_FORMATTER;
 
@@ -38,7 +40,7 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
 
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
-            ENTITLEMENT_GRANTED_CONDITIONAL_ORDER,
+            CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED,
             templateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
             caseData.getApplicant1().getLanguagePreference());
     }
@@ -47,9 +49,13 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
     public void sendToApplicant2(final CaseData caseData, final Long id) {
         log.info("Sending entitlement granted on conditional order notification to applicant 2 for case : {}", id);
 
+        EmailTemplateName emailTemplateName =
+            caseData.getApplicationType().isSole()
+                ? SOLE_RESPONDENT_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED : CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
+
         notificationService.sendEmail(
             caseData.getApplicant2EmailAddress(),
-            ENTITLEMENT_GRANTED_CONDITIONAL_ORDER,
+            emailTemplateName,
             templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
             caseData.getApplicant2().getLanguagePreference());
     }
