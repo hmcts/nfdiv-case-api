@@ -50,9 +50,9 @@ public class LegalAdvisorGeneralConsideration implements CCDConfig<CaseData, Sta
             .page("generalConsiderationResponse")
             .pageLabel("General consideration response")
             .complex(CaseData::getGeneralReferral)
-            .mandatory(GeneralReferral::getGeneralReferralDecision)
-            .mandatory(GeneralReferral::getGeneralReferralDecisionReason)
-            .done();
+                .mandatory(GeneralReferral::getGeneralReferralDecision)
+                .mandatory(GeneralReferral::getGeneralReferralDecisionReason)
+                .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
