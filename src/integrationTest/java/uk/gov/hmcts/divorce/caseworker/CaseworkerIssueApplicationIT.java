@@ -362,6 +362,7 @@ public class CaseworkerIssueApplicationIT {
                 .organisationPolicy(organisationPolicy())
                 .build()
         );
+        caseData.getApplication().setSolServiceMethod(SOLICITOR_SERVICE);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
