@@ -21,20 +21,22 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static java.time.LocalDateTime.now;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant2BasicCase;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.JOINT_DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_APPLICATION_JOINT;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JOINT_DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_POSTAL_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_POSTAL_ADDRESS;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
@@ -68,7 +70,7 @@ public class Applicant2Approve implements CCDConfig<CaseData, State, UserRole> {
             .forStateTransition(AwaitingApplicant2Response, Applicant2Approved)
             .name("Applicant 2 approve")
             .description("Applicant 2 has approved")
-            .grant(CREATE_READ_UPDATE, APPLICANT_2, SYSTEMUPDATE)
+            .grant(CREATE_READ_UPDATE, APPLICANT_2, APPLICANT_2_SOLICITOR, SYSTEMUPDATE)
             .grant(READ,
                 APPLICANT_1_SOLICITOR,
                 CASE_WORKER,
@@ -110,14 +112,13 @@ public class Applicant2Approve implements CCDConfig<CaseData, State, UserRole> {
 
     private void generateJointApplication(CaseDetails<CaseData, State> details, CaseData data) {
         final long caseId = details.getId();
-        final LocalDate createdDate = details.getCreatedDate().toLocalDate();
-        final var templateVars = divorceApplicationJointTemplateContent.apply(data, caseId, createdDate);
+        final var templateVars = divorceApplicationJointTemplateContent.apply(data, caseId);
 
-        if (!isBlank(data.getApplicant1().getSolicitor().getAddress())) {
+        if (nonNull(data.getApplicant1().getSolicitor()) && !isBlank(data.getApplicant1().getSolicitor().getAddress())) {
             templateVars.put(APPLICANT_1_POSTAL_ADDRESS, data.getApplicant1().getSolicitor().getAddress());
         }
 
-        if (!isBlank(data.getApplicant2().getSolicitor().getAddress())) {
+        if (nonNull(data.getApplicant2().getSolicitor()) && !isBlank(data.getApplicant2().getSolicitor().getAddress())) {
             templateVars.put(APPLICANT_2_POSTAL_ADDRESS, data.getApplicant2().getSolicitor().getAddress());
         }
 

@@ -17,8 +17,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.Jurisdiction;
 import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.DivorceApplicationJointTemplateContent;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Set;
@@ -30,6 +33,7 @@ import static uk.gov.hmcts.divorce.common.event.Applicant2Approve.APPLICANT_2_AP
 import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -43,6 +47,15 @@ class Applicant2ApproveTest {
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
+
+    @Mock
+    private CaseDataDocumentService caseDataDocumentService;
+
+    @Mock
+    private DivorceApplicationJointTemplateContent divorceApplicationJointTemplateContent;
+
+    @Mock
+    private Clock clock;
 
     @InjectMocks
     private Applicant2Approve applicant2Approve;
@@ -93,6 +106,7 @@ class Applicant2ApproveTest {
 
     @Test
     void givenEventStartedWithValidCaseThenChangeStateApplicant2ApprovedAndSendEmailToApplicant1AndApplicant2() {
+        setMockClock(clock);
         final long caseId = 2L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = CaseData.builder().build();
@@ -111,6 +125,7 @@ class Applicant2ApproveTest {
 
     @Test
     void givenEventStartedWithValidCaseThenChangeStateApplicant2ApprovedAndSendEmailToApplicant1AndApplicant2WithDeniedHwf() {
+        setMockClock(clock);
         final long caseId = 2L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = CaseData.builder().build();
