@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.task.DivorceApplicationRemover;
 import uk.gov.hmcts.divorce.solicitor.service.task.DivorceApplicationDraft;
 import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicant1SolicitorAddress;
+import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicantGender;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -31,6 +32,9 @@ class SolicitorUpdateApplicationApplicationServiceTest {
     @Mock
     private SetApplicant1SolicitorAddress setApplicant1SolicitorAddress;
 
+    @Mock
+    private SetApplicantGender setApplicantGender;
+
     @InjectMocks
     private SolicitorUpdateApplicationService solicitorUpdateApplicationService;
 
@@ -46,6 +50,7 @@ class SolicitorUpdateApplicationApplicationServiceTest {
         when(setApplicant1SolicitorAddress.apply(caseDetails)).thenReturn(caseDetails);
         when(divorceApplicationRemover.apply(caseDetails)).thenReturn(caseDetails);
         when(divorceApplicationDraft.apply(caseDetails)).thenReturn(caseDetails);
+        when(setApplicantGender.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> result = solicitorUpdateApplicationService.aboutToSubmit(caseDetails);
 
