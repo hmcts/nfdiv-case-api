@@ -151,7 +151,10 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("generalReferralType")
             .field("alternativeServiceMedium")
             .field("generalReferralJudgeOrLegalAdvisorDetails")
-            .field("generalReferralFeeRequired");
+            .field("generalReferralFeeRequired")
+            .field("generalReferralDecision")
+            .field("generalReferralDecisionReason")
+            .field("generalReferralDecisionDate");
     }
 
     private void buildConfidentialDocumentsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
