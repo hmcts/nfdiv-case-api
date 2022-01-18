@@ -42,7 +42,7 @@ public class SolicitorSubmitJointApplicationServiceTest {
     @Test
     void shouldSubmitCcdApplicant2RequestChangesEventOnSubmittedCallbackIfApp2SolicitorHasRequestedChanges() {
         final User user = new User(TEST_AUTHORIZATION_TOKEN, UserDetails.builder().build());
-        when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN)).thenReturn(user);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
 
@@ -52,7 +52,7 @@ public class SolicitorSubmitJointApplicationServiceTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
-        solicitorSubmitJointApplicationService.submitEventForApprovalOrRequestingChanges(caseDetails, TEST_AUTHORIZATION_TOKEN);
+        solicitorSubmitJointApplicationService.submitEventForApprovalOrRequestingChanges(caseDetails);
 
         verify(ccdUpdateService).submitEvent(caseDetails, APPLICANT_2_REQUEST_CHANGES, user, SERVICE_AUTHORIZATION);
     }
@@ -60,7 +60,7 @@ public class SolicitorSubmitJointApplicationServiceTest {
     @Test
     void shouldSubmitCcdApplicant2ApproveEventOnSubmittedCallbackIfApp2SolicitorHasNotRequestedChanges() {
         final User user = new User(TEST_AUTHORIZATION_TOKEN, UserDetails.builder().build());
-        when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN)).thenReturn(user);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
 
@@ -70,7 +70,7 @@ public class SolicitorSubmitJointApplicationServiceTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
-        solicitorSubmitJointApplicationService.submitEventForApprovalOrRequestingChanges(caseDetails, TEST_AUTHORIZATION_TOKEN);
+        solicitorSubmitJointApplicationService.submitEventForApprovalOrRequestingChanges(caseDetails);
 
         verify(ccdUpdateService).submitEvent(caseDetails, APPLICANT_2_APPROVE, user, SERVICE_AUTHORIZATION);
     }

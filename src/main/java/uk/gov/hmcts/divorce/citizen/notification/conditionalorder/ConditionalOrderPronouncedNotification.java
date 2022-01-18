@@ -7,6 +7,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
+import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
@@ -45,9 +46,11 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
     public void sendToApplicant2(final CaseData caseData, final Long id) {
         log.info("Notifying respondent that their conditional order application has been granted: {}", id);
 
+        EmailTemplateName emailTemplateName =
+            caseData.getApplicationType().isSole() ? SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED : CITIZEN_CONDITIONAL_ORDER_PRONOUNCED;
         notificationService.sendEmail(
             caseData.getApplicant2EmailAddress(),
-            SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED,
+            emailTemplateName,
             templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
             caseData.getApplicant2().getLanguagePreference()
         );
