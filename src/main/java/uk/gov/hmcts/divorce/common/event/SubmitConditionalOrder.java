@@ -14,12 +14,16 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.reform.idam.client.models.User;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
@@ -46,6 +50,12 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
 
     @Autowired
     private Clock clock;
+
+    @Autowired
+    private HttpServletRequest request;
+
+    @Autowired
+    private IdamService idamService;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -83,6 +93,8 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             ? AwaitingLegalAdvisorReferral
             : beforeDetails.getState() == ConditionalOrderDrafted ? ConditionalOrderPending : AwaitingLegalAdvisorReferral;
 
+        User user = idamService.retrieveUser(request.getHeader(AUTHORIZATION));
+        appliedForConditionalOrderNotification.setSubmittingUserId(user.getUserDetails().getId());
         notificationDispatcher.send(appliedForConditionalOrderNotification, data, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

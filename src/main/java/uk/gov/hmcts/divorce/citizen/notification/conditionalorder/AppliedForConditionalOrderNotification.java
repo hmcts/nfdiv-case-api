@@ -6,11 +6,12 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
+import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
-import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -33,7 +34,12 @@ public class AppliedForConditionalOrderNotification implements ApplicantNotifica
     private static final String HUSBAND_DID_NOT_APPLY = "husbandDidNotApply";
     private static final String CIVIL_PARTNER_DID_NOT_APPLY = "civilPartnerDidNotApply";
     private static final String PARTNER_DID_NOT_APPLY = "partnerDidNotApply";
-    private static final String PLUS_21_DUE_DATE_DUPLICATED = "date plus three weeks";//TODO: check is same date as sole above
+    private static final String PARTNER_DID_NOT_APPLY_DUE_DATE = "partnerDidNotApply due date";
+
+    private static final String APPLICANT1 = "applicant 1";
+    private static final String APPLICANT2 = "applicant 2";
+
+    private String submittingUserId;
 
     @Autowired
     private NotificationService notificationService;
@@ -43,102 +49,104 @@ public class AppliedForConditionalOrderNotification implements ApplicantNotifica
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
-        EmailTemplateName templateName;
-        Map<String, String> templateVars;
-        boolean partnerAlsoApplied =
-            Objects.isNull(caseData.getConditionalOrder().getConditionalOrderApplicant2Questions().getSubmittedDate());
-
-        if (applicantApplyingForCOrder(caseData.getConditionalOrder().getConditionalOrderApplicant1Questions(),
-            caseData.getConditionalOrder().getConditionalOrderApplicant2Questions())) {
+        if (!applicant2SubmittedOrder(caseData)) {
             log.info("Notifying applicant 1 that their conditional order application has been submitted: {}", id);
-            if (caseData.getApplicationType().isSole()) {
-                templateName = CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER;
-                templateVars = soleTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
-            } else {
-                templateName = JOINT_APPLIED_FOR_CONDITIONAL_ORDER;
-                templateVars = jointTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2(), partnerAlsoApplied);
-            }
-        } else {
-            if (Objects.isNull(caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getSubmittedDate()))
+            notificationService.sendEmail(
+                caseData.getApplicant1().getEmail(),
+                caseData.getApplicationType().isSole() ? CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER : JOINT_APPLIED_FOR_CONDITIONAL_ORDER,
+                templateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2(), APPLICANT1),
+                caseData.getApplicant1().getLanguagePreference()
+            );
+        } else if (!alreadyApplied(caseData, APPLICANT1)) {
             log.info("Notifying applicant 1 that their partner has submitted a conditional order application: {}", id);
-            templateName = JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER;
-            templateVars = partnerAppliedTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2(),
-                caseData.getConditionalOrder().getConditionalOrderApplicant2Questions());
+            notificationService.sendEmail(
+                caseData.getApplicant1().getEmail(),
+                JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER,
+                partnerTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2(), APPLICANT2),
+                caseData.getApplicant1().getLanguagePreference()
+            );
         }
-        notificationService.sendEmail(
-            caseData.getApplicant1().getEmail(),
-            templateName,
-            templateVars,
-            caseData.getApplicant1().getLanguagePreference()
-        );
     }
 
     @Override
-    public void sendToApplicant2(final CaseData caseData, final Long id) {
-        EmailTemplateName templateName;
-        Map<String, String> templateVars;
-        boolean partnerAlsoApplied =
-            Objects.isNull(caseData.getConditionalOrder().getConditionalOrderApplicant2Questions().getSubmittedDate());
-        if (applicantApplyingForCOrder(caseData.getConditionalOrder().getConditionalOrderApplicant2Questions(),
-            caseData.getConditionalOrder().getConditionalOrderApplicant1Questions())) {
+    public void sendToApplicant2(final CaseData data, final Long id) {
+        if (applicant2SubmittedOrder(data)) {
             log.info("Notifying applicant 2 that their conditional order application has been submitted: {}", id);
-            templateName = JOINT_APPLIED_FOR_CONDITIONAL_ORDER;
-            templateVars = jointTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1(), partnerAlsoApplied);
-        } else {
-            if (caseData.getApplicationType().isSole()) {
-                return;
-            }
+            notificationService.sendEmail(
+                data.getApplicant2().getEmail(),
+                JOINT_APPLIED_FOR_CONDITIONAL_ORDER,
+                templateVars(data, id, data.getApplicant2(), data.getApplicant1(), APPLICANT2),
+                data.getApplicant2().getLanguagePreference()
+            );
+        } else if (!data.getApplicationType().isSole() && !alreadyApplied(data, APPLICANT2)) {
             log.info("Notifying applicant 2 that their partner has submitted a conditional order application: {}", id);
-            templateName = JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER;
-            templateVars = partnerAppliedTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1(),
-                caseData.getConditionalOrder().getConditionalOrderApplicant1Questions());
+            notificationService.sendEmail(
+                data.getApplicant2().getEmail(),
+                JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER,
+                partnerTemplateVars(data, id, data.getApplicant2(), data.getApplicant1(), APPLICANT1),
+                data.getApplicant2().getLanguagePreference()
+            );
         }
-        notificationService.sendEmail(
-            caseData.getApplicant2().getEmail(),
-            templateName,
-            templateVars,
-            caseData.getApplicant2().getLanguagePreference()
-        );
     }
 
-    private boolean applicantApplyingForCOrder(ConditionalOrderQuestions applicantQuestions, ConditionalOrderQuestions partnerQuestions) {
-        return Objects.nonNull(applicantQuestions.getSubmittedDate()) &&
-            (Objects.isNull(partnerQuestions.getSubmittedDate()) ||
-                applicantQuestions.getSubmittedDate().isAfter(partnerQuestions.getSubmittedDate()));
-    }
-
-    private Map<String, String> soleTemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
+    private Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner, String whichApplicant) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
         templateVars.put(PLUS_21_DUE_DATE,
-            caseData.getConditionalOrder()
-                .getConditionalOrderApplicant1Questions()
-                .getSubmittedDate()
-                .plusDays(21).format(DATE_TIME_FORMATTER));
+            coQuestions(caseData, whichApplicant).getSubmittedDate().plusDays(21).format(DATE_TIME_FORMATTER));
+        if (!caseData.getApplicationType().isSole()) {
+            templateVars.putAll(jointTemplateVars(caseData, partner, whichApplicant));
+        }
         return templateVars;
     }
 
-    private Map<String, String> jointTemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner, boolean partnerApplied) {
-        Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
-        templateVars.put(WIFE_APPLIED, "");
-        templateVars.put(HUSBAND_APPLIED, "");
-        templateVars.put(CIVIL_PARTNER_APPLIED, "");
-        templateVars.put(PARTNER_APPLIED, "");
-        templateVars.put(WIFE_DID_NOT_APPLY, "");
-        templateVars.put(HUSBAND_DID_NOT_APPLY, "");
-        templateVars.put(CIVIL_PARTNER_DID_NOT_APPLY, "");
-        templateVars.put(PARTNER_DID_NOT_APPLY, "");
-        templateVars.put(PLUS_21_DUE_DATE_DUPLICATED,
-            caseData.getConditionalOrder()
-                .getConditionalOrderApplicant1Questions()
-                .getSubmittedDate()
-                .plusDays(21).format(DATE_TIME_FORMATTER));
+    private Map<String, String> partnerTemplateVars(CaseData data, Long id, Applicant applicant, Applicant partner, String whichPartner) {
+        Map<String, String> templateVars = commonContent.mainTemplateVars(data, id, applicant, partner);
+        templateVars.put(PLUS_14_DUE_DATE,
+            coQuestions(data, whichPartner).getSubmittedDate().plusDays(14).format(DATE_TIME_FORMATTER));
         return templateVars;
     }
 
-    private Map<String, String> partnerAppliedTemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner,
-                                                           ConditionalOrderQuestions conditionalOrderQuestions) {
-        Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
-        templateVars.put(PLUS_14_DUE_DATE, conditionalOrderQuestions.getSubmittedDate().plusDays(14).format(DATE_TIME_FORMATTER));
+    private Map<String, String> jointTemplateVars(CaseData data, Applicant partner, String whichApplicant) {
+        boolean partnerApplied = alreadyApplied(data, whichPartner(whichApplicant));
+        Map<String, String> templateVars = new HashMap<>();
+        templateVars.put(WIFE_APPLIED, yesNo(partnerApplied && data.isDivorce() && Gender.FEMALE.equals(partner.getGender())));
+        templateVars.put(HUSBAND_APPLIED, yesNo(partnerApplied && data.isDivorce() && Gender.MALE.equals(partner.getGender())));
+        templateVars.put(CIVIL_PARTNER_APPLIED, yesNo(partnerApplied && !data.isDivorce()));
+        templateVars.put(PARTNER_APPLIED, yesNo(partnerApplied));
+        templateVars.put(WIFE_DID_NOT_APPLY,
+            yesNo(!partnerApplied && data.isDivorce() && Gender.FEMALE.equals(partner.getGender())));
+        templateVars.put(HUSBAND_DID_NOT_APPLY,
+            yesNo(!partnerApplied && data.isDivorce() && Gender.MALE.equals(partner.getGender())));
+        templateVars.put(CIVIL_PARTNER_DID_NOT_APPLY, yesNo(!partnerApplied && !data.isDivorce()));
+        templateVars.put(PARTNER_DID_NOT_APPLY, yesNo(!partnerApplied));
+        templateVars.put(PARTNER_DID_NOT_APPLY_DUE_DATE,
+            !partnerApplied ? coQuestions(data, whichApplicant).getSubmittedDate().plusDays(14).format(DATE_TIME_FORMATTER) : "");
         return templateVars;
+    }
+
+    private boolean applicant2SubmittedOrder(final CaseData caseData) {
+        return caseData.getCaseInvite().isApplicant2(submittingUserId);
+    }
+
+    private boolean alreadyApplied(CaseData caseData, String whichApplicant) {
+        return Objects.nonNull(coQuestions(caseData, whichApplicant).getSubmittedDate());
+    }
+
+    private ConditionalOrderQuestions coQuestions(CaseData caseData, String whichApplicant) {
+        return whichApplicant.equalsIgnoreCase(APPLICANT1)
+            ? caseData.getConditionalOrder().getConditionalOrderApplicant1Questions()
+            : caseData.getConditionalOrder().getConditionalOrderApplicant2Questions();
+    }
+
+    private String whichPartner(String whichApplicant) {
+        return whichApplicant.equalsIgnoreCase(APPLICANT1) ? APPLICANT2 : APPLICANT1;
+    }
+
+    private String yesNo(boolean condition) {
+        return condition ? "yes" : "no";
+    }
+
+    public void setSubmittingUserId(String userId) {
+        submittingUserId = userId;
     }
 }
