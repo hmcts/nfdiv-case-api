@@ -176,7 +176,7 @@ public enum State {
         access = {CaseAccessAdministrator.class}
     )
     AwaitingJudgeClarification("AwaitingJudgeClarification"),
-    
+
     @CCD(
         name = "Awaiting legal advisor referral",
         label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
