@@ -53,8 +53,9 @@ public class AosReminderNotifications implements ApplicantNotification {
 
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
-        //TODO: Don't send reminder if a Solicitor Service
-        if (isNotBlank(caseData.getApplicant2EmailAddress()) && isNotBlank(caseData.getCaseInvite().getAccessCode())) {
+        if (isNotBlank(caseData.getApplicant2EmailAddress())
+            && isNotBlank(caseData.getCaseInvite().getAccessCode())
+            && !caseData.getApplication().isSolicitorServiceMethod()) {
             log.info("Sending reminder to respondent to register for case : {}", id);
 
             notificationService.sendEmail(
