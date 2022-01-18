@@ -20,7 +20,6 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -52,7 +51,7 @@ class LegalAdvisorClarificationSubmittedNotificationTest {
     private LegalAdvisorClarificationSubmittedNotification notification;
 
     @Test
-    void shouldSendClarificationSubmittedEmailToSolicitorIfSolicitorApplication() {
+    void shouldSendClarificationSubmittedEmailToSolicitor() {
 
         var data = CaseData.builder()
             .application(Application.builder()
@@ -105,38 +104,5 @@ class LegalAdvisorClarificationSubmittedNotificationTest {
             )),
             eq(ENGLISH)
         );
-    }
-
-    @Test
-    void shouldNotSendClarificationSubmittedEmailToSolicitorIfNotSolicitorApplication() {
-
-        var data = CaseData.builder()
-            .applicant1(
-                Applicant
-                    .builder()
-                    .firstName(TEST_FIRST_NAME)
-                    .lastName(TEST_LAST_NAME)
-                    .languagePreferenceWelsh(NO)
-                    .solicitor(
-                        Solicitor
-                            .builder()
-                            .email(TEST_SOLICITOR_EMAIL)
-                            .name(TEST_SOLICITOR_NAME)
-                            .build()
-                    )
-                    .build()
-            )
-            .applicant2(
-                Applicant
-                    .builder()
-                    .firstName(APPLICANT_2_FIRST_NAME)
-                    .lastName(APPLICANT_2_LAST_NAME)
-                    .build()
-            )
-            .build();
-
-        notification.sendToApplicant1Solicitor(data, 1234567890123456L);
-
-        verifyNoInteractions(notificationService, commonContent);
     }
 }
