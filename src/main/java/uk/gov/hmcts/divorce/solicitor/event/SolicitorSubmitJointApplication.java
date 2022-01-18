@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.solicitor.event.page.CheckApplicant1SolicitorAnswers
 import uk.gov.hmcts.divorce.solicitor.event.page.FinancialOrdersForApplicant2;
 import uk.gov.hmcts.divorce.solicitor.event.page.HelpWithFeesPageForApplicant2;
 import uk.gov.hmcts.divorce.solicitor.event.page.MarriageIrretrievablyBrokenForApplicant2;
+import uk.gov.hmcts.divorce.solicitor.event.page.SolStatementOfTruthApplicant2;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitJointApplicationService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
@@ -41,7 +42,7 @@ public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, Stat
     private MarriageIrretrievablyBrokenForApplicant2 marriageIrretrievablyBrokenForApplicant2;
 
     @Autowired
-    private HelpWithFeesPageForApplicant2  helpWithFeesPageForApplicant2;
+    private HelpWithFeesPageForApplicant2 helpWithFeesPageForApplicant2;
 
     @Autowired
     private SolicitorSubmitJointApplicationService solicitorSubmitJointApplicationService;
@@ -52,7 +53,8 @@ public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, Stat
             marriageIrretrievablyBrokenForApplicant2,
             new FinancialOrdersForApplicant2(),
             helpWithFeesPageForApplicant2,
-            new CheckApplicant1SolicitorAnswers()
+            new CheckApplicant1SolicitorAnswers(),
+            new SolStatementOfTruthApplicant2()
         );
 
         final PageBuilder pageBuilder = addEventConfig(configBuilder);
@@ -67,7 +69,7 @@ public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, Stat
             .name("Submit joint application")
             .description("Submit joint application")
             .submittedCallback(this::submitted)
-            .showSummary(false)
+            .showSummary()
             .endButtonLabel("Submit Application")
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
             .grant(READ,

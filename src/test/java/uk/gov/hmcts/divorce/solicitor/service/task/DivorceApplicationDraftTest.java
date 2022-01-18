@@ -24,7 +24,6 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_DRAFT_APPL
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 
 @ExtendWith(MockitoExtension.class)
@@ -55,7 +54,7 @@ public class DivorceApplicationDraftTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(draftApplicationTemplateContent.apply(caseData, TEST_CASE_ID, LOCAL_DATE)).thenReturn(templateContent);
+        when(draftApplicationTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
 
         final var result = divorceApplicationDraft.apply(caseDetails);
 

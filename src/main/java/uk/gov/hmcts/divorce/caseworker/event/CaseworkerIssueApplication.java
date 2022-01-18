@@ -60,7 +60,7 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
         new PageBuilder(configBuilder
             .event(CASEWORKER_ISSUE_APPLICATION)
             .forStates(Submitted, AwaitingDocuments)
-            .name("Application issued")
+            .name("Application issue")
             .description("Application issued")
             .showSummary()
             .showEventNotes()

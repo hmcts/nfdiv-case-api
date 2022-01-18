@@ -14,11 +14,8 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
-import javax.servlet.http.HttpServletRequest;
-
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.Applicant2Approve.APPLICANT_2_APPROVE;
@@ -39,18 +36,13 @@ public class SolicitorSubmitJointApplicationServiceTest {
     @Mock
     private AuthTokenGenerator authTokenGenerator;
 
-    @Mock
-    private HttpServletRequest httpServletRequest;
-
     @InjectMocks
     private SolicitorSubmitJointApplicationService solicitorSubmitJointApplicationService;
 
     @Test
     void shouldSubmitCcdApplicant2RequestChangesEventOnSubmittedCallbackIfApp2SolicitorHasRequestedChanges() {
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
-
         final User user = new User(TEST_AUTHORIZATION_TOKEN, UserDetails.builder().build());
-        when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN)).thenReturn(user);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
 
@@ -67,10 +59,8 @@ public class SolicitorSubmitJointApplicationServiceTest {
 
     @Test
     void shouldSubmitCcdApplicant2ApproveEventOnSubmittedCallbackIfApp2SolicitorHasNotRequestedChanges() {
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
-
         final User user = new User(TEST_AUTHORIZATION_TOKEN, UserDetails.builder().build());
-        when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN)).thenReturn(user);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
 
