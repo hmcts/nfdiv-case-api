@@ -23,6 +23,8 @@ import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
@@ -57,10 +59,11 @@ class AosReminderNotificationsTest {
     private AosReminderNotifications aosReminderNotifications;
 
     @Test
-    void shouldSendReminderEmailToSoleRespondentWithDivorceContent() {
+    void shouldSendReminderEmailToSoleRespondentWithDivorceContentIfNotSolicitorService() {
         CaseData data = validCaseDataForIssueApplication();
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
+        data.getApplication().setSolServiceMethod(COURT_SERVICE);
         data.getApplicant2().setEmail(null);
         data.getCaseInvite().setAccessCode(ACCESS_CODE);
 
@@ -88,11 +91,12 @@ class AosReminderNotificationsTest {
     }
 
     @Test
-    void shouldSendReminderEmailToSoleRespondentWithDissolutionContent() {
+    void shouldSendReminderEmailToSoleRespondentWithDissolutionContentIfNotSolicitorService() {
         CaseData data = validCaseDataForIssueApplication();
         data.setDivorceOrDissolution(DISSOLUTION);
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
+        data.getApplication().setSolServiceMethod(COURT_SERVICE);
         data.getApplicant2().setEmail(null);
         data.getCaseInvite().setAccessCode(ACCESS_CODE);
 
@@ -118,6 +122,25 @@ class AosReminderNotificationsTest {
             eq(ENGLISH)
         );
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldNotSendReminderEmailToSoleRespondentIfSolicitorService() {
+        CaseData data = validCaseDataForIssueApplication();
+        data.setDivorceOrDissolution(DISSOLUTION);
+        data.setDueDate(LocalDate.now().plusDays(141));
+        data.getApplication().setIssueDate(LocalDate.now());
+        data.getApplication().setSolServiceMethod(SOLICITOR_SERVICE);
+        data.getApplicant2().setEmail(null);
+        data.getCaseInvite().setAccessCode(ACCESS_CODE);
+
+        Map<String, String> dissolutionTemplateVars = new HashMap<>();
+        dissolutionTemplateVars.putAll(getMainTemplateVars());
+        dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
+
+        aosReminderNotifications.sendToApplicant2(data, 1234567890123456L);
+
+        verifyNoInteractions(notificationService, commonContent);
     }
 
     @Test
