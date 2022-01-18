@@ -17,7 +17,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CLAR
 
 @Component
 @Slf4j
-public class LegalAdvisorClarificationSubmittedNotification implements ApplicantNotification {
+public class LegalAdvisorMoreInfoDecisionNotification implements ApplicantNotification {
 
     @Autowired
     private NotificationService notificationService;

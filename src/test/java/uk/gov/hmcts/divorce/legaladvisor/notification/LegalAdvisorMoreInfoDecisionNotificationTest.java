@@ -42,7 +42,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant2;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 
 @ExtendWith(MockitoExtension.class)
-class LegalAdvisorClarificationSubmittedNotificationTest {
+class LegalAdvisorMoreInfoDecisionNotificationTest {
 
     @Mock
     private NotificationService notificationService;
@@ -51,7 +51,7 @@ class LegalAdvisorClarificationSubmittedNotificationTest {
     private CommonContent commonContent;
 
     @InjectMocks
-    private LegalAdvisorClarificationSubmittedNotification notification;
+    private LegalAdvisorMoreInfoDecisionNotification notification;
 
     @Test
     void shouldSendConditionalOrderRefusedEmailToApplicant1IfNotRepresented() {
