@@ -11,15 +11,12 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
-import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
 import uk.gov.hmcts.reform.idam.client.models.User;
-
-import java.util.Map;
 
 import static java.lang.String.format;
 import static org.springframework.http.HttpStatus.CONFLICT;
@@ -104,6 +101,8 @@ public class CcdUpdateService {
                                      final User user,
                                      final String serviceAuth) {
 
+        log.info("Submit event with retry for Case ID: {}, Event ID: {}", caseId, eventId);
+
         final String userId = user.getUserDetails().getId();
         final String authorization = user.getAuthToken();
 
@@ -116,28 +115,11 @@ public class CcdUpdateService {
             caseId,
             eventId);
 
-        final Map<String, Object> data = startEventResponse.getCaseDetails().getData();
-
-        //TODO: Remove temp logging for tracking certificate of entitlement
-        log.info(
-            "****** Start event response for case id: {}, certificate of entitlement: {}",
-            caseId,
-            data.get("coCertificateOfEntitlementDocument"));
-
-        final CaseData caseData = caseDetailsUpdater.updateCaseData(caseTask, startEventResponse).getData();
-
-        //TODO: Remove temp logging for tracking certificate of entitlement
-        final DivorceDocument certificateOfEntitlementDocument = caseData.getConditionalOrder().getCertificateOfEntitlementDocument();
-        log.info(
-            "****** After CaseData updated for case id: {}, certificate of entitlement: {}",
-            caseId,
-            certificateOfEntitlementDocument);
-
         final CaseDataContent caseDataContent = ccdCaseDataContentProvider.createCaseDataContent(
             startEventResponse,
             DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY,
             DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION,
-            caseData);
+            caseDetailsUpdater.updateCaseData(caseTask, startEventResponse).getData());
 
         coreCaseDataApi.submitEventForCaseWorker(
             authorization,
@@ -194,6 +176,20 @@ public class CcdUpdateService {
         }
     }
 
+    public void submitBulkActionEvent(final uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState> caseDetails,
+                                      final String eventId,
+                                      final User user,
+                                      final String serviceAuth) {
+
+        updateBulkCaseWithRetries(
+            caseDetailsConverter.convertToReformModelFromBulkActionCaseDetails(caseDetails),
+            eventId,
+            user,
+            serviceAuth,
+            caseDetails.getId()
+        );
+    }
+
     private void startAndSubmitEventForCaseworkers(final CaseDetails caseDetails,
                                                    final String eventId,
                                                    final String serviceAuth,
@@ -225,19 +221,5 @@ public class CcdUpdateService {
             caseId,
             true,
             caseDataContent);
-    }
-
-    public void submitBulkActionEvent(final uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState> caseDetails,
-                                      final String eventId,
-                                      final User user,
-                                      final String serviceAuth) {
-
-        updateBulkCaseWithRetries(
-            caseDetailsConverter.convertToReformModelFromBulkActionCaseDetails(caseDetails),
-            eventId,
-            user,
-            serviceAuth,
-            caseDetails.getId()
-        );
     }
 }

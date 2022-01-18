@@ -21,12 +21,12 @@ plugins {
   id 'idea'
   id 'pmd'
   id 'jacoco'
-  id 'org.owasp.dependencycheck' version '6.5.2.1'
+  id 'org.owasp.dependencycheck' version '6.5.3'
   id 'org.sonarqube' version '3.3'
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'org.springframework.boot' version '2.6.2'
   id 'com.github.ben-manes.versions' version '0.41.0'
-  id 'hmcts.ccd.sdk' version '0.24.11'
+  id 'hmcts.ccd.sdk' version '0.25.2'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -227,8 +227,8 @@ dependencies {
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: versions.jackson
-  implementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.0'
-  implementation group: 'com.github.hmcts', name: 'ccd-client', version: '4.8.3'
+  implementation group: 'com.github.hmcts', name: 'befta-fw', version: '8.7.1'
+  implementation group: 'com.github.hmcts', name: 'ccd-client', version: '4.8.4'
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '2.0.1'
   implementation group: 'com.github.hmcts', name: 'java-logging', version: '5.1.9'
   implementation group: 'com.github.hmcts', name: 'send-letter-client', version: '3.0.10'
@@ -236,7 +236,7 @@ dependencies {
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.17.1'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.17.1'
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.56'
-  implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.16.1'
+  implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.16.3'
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.4'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'

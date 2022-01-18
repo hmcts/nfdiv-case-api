@@ -19,8 +19,9 @@ public class CaseDetailsUpdater {
     public CaseDetails<CaseData, State> updateCaseData(final CaseTask caseTask,
                                                        final StartEventResponse startEventResponse) {
 
+        final uk.gov.hmcts.reform.ccd.client.model.CaseDetails initCaseDetails = startEventResponse.getCaseDetails();
         final CaseDetails<CaseData, State> caseDetails = objectMapper
-            .convertValue(startEventResponse.getCaseDetails(), new TypeReference<>() {
+            .convertValue(initCaseDetails, new TypeReference<>() {
             });
 
         return caseTask.apply(caseDetails);

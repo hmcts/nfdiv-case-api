@@ -130,6 +130,13 @@ public enum State {
     AwaitingConditionalOrder("AwaitingConditionalOrder"),
 
     @CCD(
+        name = "Awaiting DWP response",
+        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    AwaitingDwpResponse("AwaitingDWPResponse"),
+
+    @CCD(
         name = "Awaiting Final Order",
         label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {CaseAccessAdministrator.class}
@@ -162,6 +169,13 @@ public enum State {
         access = {CaseAccessAdministrator.class}
     )
     ConditionalOrderPending("ConditionalOrderPending"),
+
+    @CCD(
+        name = "Awaiting judge clarification",
+        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    AwaitingJudgeClarification("AwaitingJudgeClarification"),
 
     @CCD(
         name = "Awaiting legal advisor referral",
@@ -252,6 +266,13 @@ public enum State {
         access = {CaseAccessAdministrator.class}
     )
     FinalOrderRequested("FinalOrderRequested"),
+
+    @CCD(
+        name = "General consideration complete",
+        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {CaseAccessAdministrator.class}
+    )
+    GeneralConsiderationComplete("GeneralConsiderationComplete"),
 
     @CCD(
         name = "Issued To bailiff",

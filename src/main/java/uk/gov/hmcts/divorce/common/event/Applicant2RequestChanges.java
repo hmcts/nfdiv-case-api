@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.citizen.event;
+package uk.gov.hmcts.divorce.common.event;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,15 +17,20 @@ import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant2RequestChanges;
 
 @Slf4j
 @Component
-public class CitizenApplicant2RequestChanges implements CCDConfig<CaseData, State, UserRole> {
+public class Applicant2RequestChanges implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String CITIZEN_APPLICANT_2_REQUEST_CHANGES = "applicant2-request-changes";
+    public static final String APPLICANT_2_REQUEST_CHANGES = "applicant2-request-changes";
 
     @Autowired
     private Applicant2RequestChangesNotification applicant2RequestChangesNotification;
@@ -37,18 +42,22 @@ public class CitizenApplicant2RequestChanges implements CCDConfig<CaseData, Stat
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         configBuilder
-            .event(CITIZEN_APPLICANT_2_REQUEST_CHANGES)
+            .event(APPLICANT_2_REQUEST_CHANGES)
             .forStateTransition(AwaitingApplicant2Response, AwaitingApplicant1Response)
             .name("Applicant 2 Request Changes")
             .description("Applicant 2 Requests changes to be made by Applicant 1")
-            .grant(CREATE_READ_UPDATE, APPLICANT_2)
+            .grant(CREATE_READ_UPDATE, APPLICANT_2, SYSTEMUPDATE)
+            .grant(READ,
+                APPLICANT_1_SOLICITOR,
+                CASE_WORKER,
+                SUPER_USER)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Citizen applicant 2 request changes about to submit callback invoked");
+        log.info("Applicant 2 request changes about to submit callback invoked");
         CaseData data = details.getData();
 
         log.info("Validating case data");

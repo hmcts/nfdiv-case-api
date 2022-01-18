@@ -159,7 +159,7 @@ public class Application {
             + " and have decided how money and property will be split (\"financial order\").",
         access = {Applicant2Access.class}
     )
-    private YesOrNo applicant2PrayerHasBeenGiven;
+    private Set<ThePrayer> applicant2PrayerHasBeenGivenCheckbox;
 
     @CCD(
         label = "The applicant believes that the facts stated in this application are true.",
@@ -180,10 +180,22 @@ public class Application {
     private YesOrNo solSignStatementOfTruth;
 
     @CCD(
+        label = "I am duly authorised by the applicant to sign this statement.",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo applicant2SolSignStatementOfTruth;
+
+    @CCD(
         label = "Your name",
         access = {DefaultAccess.class}
     )
     private String solStatementOfReconciliationName;
+
+    @CCD(
+        label = "Your name",
+        access = {DefaultAccess.class}
+    )
+    private String applicant2SolStatementOfReconciliationName;
 
     @CCD(
         label = "Name of your firm",
@@ -192,12 +204,26 @@ public class Application {
     private String solStatementOfReconciliationFirm;
 
     @CCD(
+        label = "Name of your firm",
+        access = {DefaultAccess.class}
+    )
+    private String applicant2SolStatementOfReconciliationFirm;
+
+    @CCD(
         label = "Additional comments",
         hint = "For the attention of court staff. These comments will not form part of the application",
         typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
     private String statementOfReconciliationComments;
+
+    @CCD(
+        label = "Additional comments",
+        hint = "For the attention of court staff. These comments will not form part of the application",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
+    )
+    private String applicant2StatementOfReconciliationComments;
 
     // TODO move to OrderSummary?
     @CCD(
@@ -378,6 +404,12 @@ public class Application {
         access = {Applicant2Access.class}
     )
     private YesOrNo applicant2NeedsHelpWithFees;
+
+    @CCD(
+        label = "Link to applicant 1 solicitors answers",
+        access = {CaseworkerAccess.class}
+    )
+    private Document applicant1SolicitorAnswersLink;
 
     @JsonIgnore
     public boolean hasBeenPaidFor() {

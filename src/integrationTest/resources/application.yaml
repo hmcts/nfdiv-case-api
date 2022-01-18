@@ -118,7 +118,7 @@ court:
   locations:
     serviceCentre:
       serviceCentreName: 'Courts and Tribunals Service Centre'
-      centreName: 'HMCTS Digital Divorce'
+      centreName: 'HMCTS Digital Divorce and Dissolution'
       town: 'Harlow'
       poBox: 'PO Box 12706'
       postCode: 'CM20 9QT'

@@ -17,7 +17,7 @@
   "applicant2FinancialOrder": "NO",
   "applicant1PrayerHasBeenGivenCheckbox": ["Yes"],
   "applicant1StatementOfTruth": "YES",
-  "applicant2PrayerHasBeenGiven": "YES",
+  "applicant2PrayerHasBeenGivenCheckbox": ["Yes"],
   "applicant2StatementOfTruth": "YES",
   "jurisdictionApplicant1Residence": "YES",
   "jurisdictionApplicant2Residence": "YES",

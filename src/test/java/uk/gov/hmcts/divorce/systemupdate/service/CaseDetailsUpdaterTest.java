@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class CaseDetailsUpdaterTest {
 
     @Spy
-    private ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     @InjectMocks
     private CaseDetailsUpdater caseDetailsUpdater;
