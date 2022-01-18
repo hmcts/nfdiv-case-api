@@ -176,11 +176,6 @@ public class Applicant2ApproveIT {
 
     @Test
     public void givenInvalidCaseDataThenReturnResponseWithErrors() throws Exception {
-        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
-        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(DIVORCE_APPLICATION_JOINT, "NFD_CP_Application_Joint.docx");
-
         CaseData data = invalidCaseData();
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
