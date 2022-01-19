@@ -22,7 +22,7 @@ import java.util.List;
 
 import static java.time.LocalDateTime.now;
 import static java.util.Objects.nonNull;
-import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
@@ -116,11 +116,11 @@ public class Applicant2Approve implements CCDConfig<CaseData, State, UserRole> {
         final long caseId = details.getId();
         final var templateVars = divorceApplicationJointTemplateContent.apply(data, caseId);
 
-        if (nonNull(data.getApplicant1().getSolicitor()) && !isBlank(data.getApplicant1().getSolicitor().getAddress())) {
+        if (nonNull(data.getApplicant1().getSolicitor()) && isNotBlank(data.getApplicant1().getSolicitor().getAddress())) {
             templateVars.put(APPLICANT_1_POSTAL_ADDRESS, data.getApplicant1().getSolicitor().getAddress());
         }
 
-        if (nonNull(data.getApplicant2().getSolicitor()) && !isBlank(data.getApplicant2().getSolicitor().getAddress())) {
+        if (nonNull(data.getApplicant2().getSolicitor()) && isNotBlank(data.getApplicant2().getSolicitor().getAddress())) {
             templateVars.put(APPLICANT_2_POSTAL_ADDRESS, data.getApplicant2().getSolicitor().getAddress());
         }
 
