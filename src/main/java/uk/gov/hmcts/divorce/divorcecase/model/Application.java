@@ -401,7 +401,7 @@ public class Application {
     private ReissueOption reissueOption;
 
     @CCD(
-        label = "Does Applicant 2 needs help with fees?",
+        label = "Does Applicant 2 need help with fees?",
         access = {Applicant2Access.class}
     )
     private YesOrNo applicant2NeedsHelpWithFees;
