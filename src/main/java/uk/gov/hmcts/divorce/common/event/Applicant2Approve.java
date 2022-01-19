@@ -102,7 +102,9 @@ public class Applicant2Approve implements CCDConfig<CaseData, State, UserRole> {
 
         notificationDispatcher.send(applicant2ApprovedNotification, data, details.getId());
 
-        generateJointApplication(details, data);
+        if (data.getApplicant1().isRepresented() && data.getApplicant2().isRepresented()) {
+            generateJointApplication(details, data);
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
