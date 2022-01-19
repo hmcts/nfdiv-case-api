@@ -51,6 +51,7 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .showEventNotes()
+            .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE))
             .page("removeCasesFromBulkList", this::midEvent)
             .pageLabel("Remove cases from bulk list")
