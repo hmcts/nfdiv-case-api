@@ -18,7 +18,6 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.util.EnumSet;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
@@ -50,7 +49,7 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(SUBMIT_CONDITIONAL_ORDER)
-            .forStateTransition(EnumSet.of(ConditionalOrderDrafted, ConditionalOrderPending), AwaitingLegalAdvisorReferral)
+            .forStates(ConditionalOrderDrafted, ConditionalOrderPending)
             .name("Submit Conditional Order")
             .description("Submit Conditional Order")
             .endButtonLabel("Save Conditional Order")
