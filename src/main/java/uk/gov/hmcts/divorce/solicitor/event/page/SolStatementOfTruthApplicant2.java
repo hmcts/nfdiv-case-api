@@ -12,7 +12,7 @@ public class SolStatementOfTruthApplicant2 implements CcdPageConfiguration {
 
         pageBuilder
             .page("SolStatementOfTruthApplicant2")
-            .showCondition("applicant2ConfirmApplicant1Information=\"Yes\"")
+            .showCondition("applicant2ConfirmApplicant1Information=\"No\"")
             .pageLabel("Statement of truth and reconciliation")
             .complex(CaseData::getApplication)
                 .label("LabelPrayer", "## The prayer ##")
