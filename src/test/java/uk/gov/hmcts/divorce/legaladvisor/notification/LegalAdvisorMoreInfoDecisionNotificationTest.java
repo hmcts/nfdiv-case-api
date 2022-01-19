@@ -5,10 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
-import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -22,24 +19,29 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CONDITIONAL_ORDER_REFUSED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CLARIFICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithStatementOfTruth;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant2;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 
 @ExtendWith(MockitoExtension.class)
-class LegalAdvisorClarificationSubmittedNotificationTest {
+class LegalAdvisorMoreInfoDecisionNotificationTest {
 
     @Mock
     private NotificationService notificationService;
@@ -48,38 +50,40 @@ class LegalAdvisorClarificationSubmittedNotificationTest {
     private CommonContent commonContent;
 
     @InjectMocks
-    private LegalAdvisorClarificationSubmittedNotification notification;
+    private LegalAdvisorMoreInfoDecisionNotification notification;
+
+    @Test
+    void shouldSendConditionalOrderRefusedEmailToApplicant1IfNotRepresented() {
+
+        final var data = caseData();
+        final var applicant2 = getApplicant2(MALE);
+        data.setApplicant2(applicant2);
+
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getMainTemplateVars());
+
+        notification.sendToApplicant1(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(CITIZEN_CONDITIONAL_ORDER_REFUSED),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(IS_DIVORCE, CommonContent.YES),
+                hasEntry(IS_DISSOLUTION, CommonContent.NO)
+            )),
+            eq(ENGLISH)
+        );
+        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+    }
 
     @Test
     void shouldSendClarificationSubmittedEmailToSolicitor() {
 
-        var data = CaseData.builder()
-            .application(Application.builder()
-                .solSignStatementOfTruth(YES)
-                .build())
-            .applicant1(
-                Applicant
-                    .builder()
-                    .firstName(TEST_FIRST_NAME)
-                    .lastName(TEST_LAST_NAME)
-                    .languagePreferenceWelsh(NO)
-                    .solicitor(
-                        Solicitor
-                            .builder()
-                            .email(TEST_SOLICITOR_EMAIL)
-                            .name(TEST_SOLICITOR_NAME)
-                            .build()
-                    )
-                    .build()
-            )
-            .applicant2(
-                Applicant
-                    .builder()
-                    .firstName(APPLICANT_2_FIRST_NAME)
-                    .lastName(APPLICANT_2_LAST_NAME)
-                    .build()
-            )
-            .build();
+        final CaseData data = caseDataWithStatementOfTruth();
+        data.getApplicant2().setFirstName(APPLICANT_2_FIRST_NAME);
+        data.getApplicant2().setLastName(APPLICANT_2_LAST_NAME);
+        data.getApplicant1().getSolicitor().setName(TEST_SOLICITOR_NAME);
 
         Map<String, String> templateVars = new HashMap<>();
         templateVars.put(APPLICANT_NAME,
