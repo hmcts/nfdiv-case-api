@@ -64,6 +64,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.CASEWORKER_ISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
@@ -350,7 +351,7 @@ public class CaseworkerIssueApplicationIT {
     }
 
     @Test
-    void shouldGenerateAosPackAndPostAosPackAndSendEmailsWhenRespondentIsRepresented() throws Exception {
+    void shouldGenerateAosPackAndPostAosPackAndSendEmailsWhenRespondentIsRepresentedAndCourtService() throws Exception {
         final CaseData caseData = validCaseDataForIssueApplication();
         caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitor(
@@ -362,6 +363,7 @@ public class CaseworkerIssueApplicationIT {
                 .organisationPolicy(organisationPolicy())
                 .build()
         );
+        caseData.getApplication().setSolServiceMethod(COURT_SERVICE);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Respondent Invitation").thenReturn("Divorce application");
@@ -506,13 +508,6 @@ public class CaseworkerIssueApplicationIT {
             .sendEmail(
                 eq(TEST_SOLICITOR_EMAIL),
                 eq(APPLICANT_SOLICITOR_SERVICE),
-                anyMap(),
-                eq(ENGLISH));
-
-        verify(notificationService)
-            .sendEmail(
-                eq(TEST_SOLICITOR_EMAIL),
-                eq(RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS),
                 anyMap(),
                 eq(ENGLISH));
 

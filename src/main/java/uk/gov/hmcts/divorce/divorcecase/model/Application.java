@@ -323,7 +323,8 @@ public class Application {
 
     @CCD(
         label = "Explain what is incorrect or needs changing.",
-        access = {Applicant2Access.class}
+        access = {Applicant2Access.class},
+        typeOverride = TextArea
     )
     private String applicant2ExplainsApplicant1IncorrectInformation;
 
@@ -400,7 +401,7 @@ public class Application {
     private ReissueOption reissueOption;
 
     @CCD(
-        label = "Does Applicant 2 needs help with fees?",
+        label = "Does Applicant 2 need help with fees?",
         access = {Applicant2Access.class}
     )
     private YesOrNo applicant2NeedsHelpWithFees;
