@@ -49,7 +49,7 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(SUBMIT_CONDITIONAL_ORDER)
-            .forStateTransition(ConditionalOrderDrafted, AwaitingLegalAdvisorReferral)
+            .forStates(ConditionalOrderDrafted, ConditionalOrderPending)
             .name("Submit Conditional Order")
             .description("Submit Conditional Order")
             .endButtonLabel("Save Conditional Order")

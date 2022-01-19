@@ -323,7 +323,8 @@ public class Application {
 
     @CCD(
         label = "Explain what is incorrect or needs changing.",
-        access = {Applicant2Access.class}
+        access = {Applicant2Access.class},
+        typeOverride = TextArea
     )
     private String applicant2ExplainsApplicant1IncorrectInformation;
 
