@@ -11,22 +11,35 @@ import uk.gov.hmcts.divorce.citizen.notification.Applicant2ApprovedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.DivorceApplicationJointTemplateContent;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import static java.time.LocalDateTime.now;
+import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant2BasicCase;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_APPLICATION_JOINT;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JOINT_DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_POSTAL_ADDRESS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_POSTAL_ADDRESS;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 
 @Slf4j
 @Component
@@ -40,6 +53,15 @@ public class Applicant2Approve implements CCDConfig<CaseData, State, UserRole> {
     @Autowired
     private NotificationDispatcher notificationDispatcher;
 
+    @Autowired
+    private CaseDataDocumentService caseDataDocumentService;
+
+    @Autowired
+    private DivorceApplicationJointTemplateContent divorceApplicationJointTemplateContent;
+
+    @Autowired
+    private Clock clock;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
@@ -48,7 +70,7 @@ public class Applicant2Approve implements CCDConfig<CaseData, State, UserRole> {
             .forStateTransition(AwaitingApplicant2Response, Applicant2Approved)
             .name("Applicant 2 approve")
             .description("Applicant 2 has approved")
-            .grant(CREATE_READ_UPDATE, APPLICANT_2, SYSTEMUPDATE)
+            .grant(CREATE_READ_UPDATE, APPLICANT_2, APPLICANT_2_SOLICITOR, SYSTEMUPDATE)
             .grant(READ,
                 APPLICANT_1_SOLICITOR,
                 CASE_WORKER,
@@ -80,10 +102,36 @@ public class Applicant2Approve implements CCDConfig<CaseData, State, UserRole> {
 
         notificationDispatcher.send(applicant2ApprovedNotification, data, details.getId());
 
+        if (data.getApplicant1().isRepresented() && data.getApplicant2().isRepresented()) {
+            generateJointApplication(details, data);
+        }
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
             .state(Applicant2Approved)
             .build();
     }
 
+    private void generateJointApplication(CaseDetails<CaseData, State> details, CaseData data) {
+        final long caseId = details.getId();
+        final var templateVars = divorceApplicationJointTemplateContent.apply(data, caseId);
+
+        if (nonNull(data.getApplicant1().getSolicitor()) && isNotBlank(data.getApplicant1().getSolicitor().getAddress())) {
+            templateVars.put(APPLICANT_1_POSTAL_ADDRESS, data.getApplicant1().getSolicitor().getAddress());
+        }
+
+        if (nonNull(data.getApplicant2().getSolicitor()) && isNotBlank(data.getApplicant2().getSolicitor().getAddress())) {
+            templateVars.put(APPLICANT_2_POSTAL_ADDRESS, data.getApplicant2().getSolicitor().getAddress());
+        }
+
+        caseDataDocumentService.renderDocumentAndUpdateCaseData(
+            data,
+            APPLICATION,
+            templateVars,
+            caseId,
+            DIVORCE_APPLICATION_JOINT,
+            data.getApplicant1().getLanguagePreference(),
+            formatDocumentName(caseId, JOINT_DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME, now(clock))
+        );
+    }
 }
