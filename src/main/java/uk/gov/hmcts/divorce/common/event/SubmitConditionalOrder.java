@@ -87,8 +87,7 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
 
         log.info("Submit conditional order about to submit callback invoked for case id: {}", details.getId());
         CaseData data = details.getData();
-        setSubmittedDate(data.getConditionalOrder().getConditionalOrderApplicant1Questions());
-        setSubmittedDate(data.getConditionalOrder().getConditionalOrderApplicant2Questions());
+        setSubmittedDate(data.getConditionalOrder());
         var state = details.getData().getApplicationType().isSole()
             ? AwaitingLegalAdvisorReferral
             : beforeDetails.getState() == ConditionalOrderDrafted ? ConditionalOrderPending : AwaitingLegalAdvisorReferral;
@@ -103,10 +102,15 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             .build();
     }
 
-    private void setSubmittedDate(ConditionalOrderQuestions conditionalOrderQuestions) {
-        if (Objects.isNull(conditionalOrderQuestions.getSubmittedDate())) {
-            conditionalOrderQuestions
-                .setSubmittedDate(conditionalOrderQuestions.getStatementOfTruth().toBoolean() ? LocalDateTime.now(clock) : null);
+    private void setSubmittedDate(ConditionalOrder conditionalOrder) {
+        ConditionalOrderQuestions app1Questions = conditionalOrder.getConditionalOrderApplicant1Questions();
+        ConditionalOrderQuestions app2Questions = conditionalOrder.getConditionalOrderApplicant2Questions();
+        if (app1Questions.getStatementOfTruth().toBoolean() && Objects.isNull(app1Questions.getSubmittedDate())) {
+            app1Questions.setSubmittedDate(LocalDateTime.now(clock));
+        }
+        if (Objects.nonNull(app2Questions.getStatementOfTruth()) && app2Questions.getStatementOfTruth().toBoolean()
+            && Objects.isNull(app2Questions.getSubmittedDate())) {
+            app2Questions.setSubmittedDate(LocalDateTime.now(clock));
         }
     }
 }
