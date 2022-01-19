@@ -30,6 +30,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
@@ -331,12 +332,15 @@ public class ApplicationIssuedNotificationTest {
     }
 
     @Test
-    void shouldSendNotificationToRespondentSolicitorIfSoleApplication() {
+    void shouldSendNotificationToRespondentSolicitorIfSoleApplicationAndNotSolicitorService() {
 
         final CaseData caseData = CaseData.builder()
             .applicationType(SOLE_APPLICATION)
             .applicant1(getApplicant())
             .applicant2(respondentWithDigitalSolicitor())
+            .application(Application.builder()
+                .solServiceMethod(COURT_SERVICE)
+                .build())
             .build();
 
         when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID))
@@ -364,6 +368,28 @@ public class ApplicationIssuedNotificationTest {
             .applicationType(SOLE_APPLICATION)
             .applicant1(getApplicant())
             .applicant2(applicant2)
+            .application(Application.builder()
+                .solServiceMethod(SOLICITOR_SERVICE)
+                .build())
+            .build();
+
+        notification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    void shouldNotSendNotificationToRespondentSolicitorIfSolicitorService() {
+
+        final Applicant applicant2 = getApplicant2(FEMALE);
+        applicant2.setSolicitor(Solicitor.builder().build());
+        final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .applicant1(getApplicant())
+            .applicant2(respondentWithDigitalSolicitor())
+            .application(Application.builder()
+                .solServiceMethod(SOLICITOR_SERVICE)
+                .build())
             .build();
 
         notification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);

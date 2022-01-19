@@ -46,21 +46,19 @@ public class LegalAdvisorMoreInfoDecisionNotification implements ApplicantNotifi
     @Override
     public void sendToApplicant1Solicitor(final CaseData caseData, final Long caseId) {
 
-        if (caseData.getApplication().isSolicitorApplication()) {
-            final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
+        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
 
-            templateVars.put(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
+        templateVars.put(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
 
-            log.info("Sending Clarification Submitted notification for case : {}", caseId);
+        log.info("Sending Clarification Submitted notification for case : {}", caseId);
 
-            notificationService.sendEmail(
-                caseData.getApplicant1().getSolicitor().getEmail(),
-                SOLICITOR_CLARIFICATION_SUBMITTED,
-                templateVars,
-                caseData.getApplicant1().getLanguagePreference()
-            );
+        notificationService.sendEmail(
+            caseData.getApplicant1().getSolicitor().getEmail(),
+            SOLICITOR_CLARIFICATION_SUBMITTED,
+            templateVars,
+            caseData.getApplicant1().getLanguagePreference()
+        );
 
-            log.info("Successfully sent Clarification Submitted notification for case : {}", caseId);
-        }
+        log.info("Successfully sent Clarification Submitted notification for case : {}", caseId);
     }
 }

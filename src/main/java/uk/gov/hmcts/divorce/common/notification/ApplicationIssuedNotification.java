@@ -137,8 +137,9 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
         final String email = caseData.getApplicant2().getSolicitor().getEmail();
 
-        //TODO: should not do this if solicitor service
-        if (caseData.getApplicationType().isSole() && isNotBlank(email)) {
+        if (caseData.getApplicationType().isSole()
+            && !caseData.getApplication().isSolicitorServiceMethod()
+            && isNotBlank(email)) {
             notificationService.sendEmail(
                 email,
                 RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
