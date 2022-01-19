@@ -22,20 +22,19 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 @Slf4j
-public class SystemIssueSolicitorAosDisputed implements CCDConfig<CaseData, State, UserRole> {
+public class SystemIssueAosDisputed implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String SYSTEM_ISSUE_SOLICITOR_AOS_DISPUTED = "system-issue-solicitor-aos-disputed";
+    public static final String SYSTEM_ISSUE_AOS_DISPUTED = "system-issue-aos-disputed";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         new PageBuilder(configBuilder
-            .event(SYSTEM_ISSUE_SOLICITOR_AOS_DISPUTED)
+            .event(SYSTEM_ISSUE_AOS_DISPUTED)
             .forStates(AwaitingAos, Holding, AosOverdue)
             .name("AoS disputed")
             .description("AoS disputed")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
-            .grant(READ, SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR)
-            .retries(120, 120));
+            .grant(READ, SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR));
     }
 }

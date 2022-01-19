@@ -11,24 +11,24 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorAosUnDisputed.SYSTEM_ISSUE_SOLICITOR_AOS_UNDISPUTED;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueAosDisputed.SYSTEM_ISSUE_AOS_DISPUTED;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(SpringExtension.class)
-public class SystemIssueSolicitorAosUnDisputedTest {
+public class SystemIssueAosDisputedTest {
 
     @InjectMocks
-    private SystemIssueSolicitorAosUnDisputed systemIssueSolicitorAosUnDisputed;
+    private SystemIssueAosDisputed systemIssueAosDisputed;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        systemIssueSolicitorAosUnDisputed.configure(configBuilder);
+        systemIssueAosDisputed.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(SYSTEM_ISSUE_SOLICITOR_AOS_UNDISPUTED);
+            .contains(SYSTEM_ISSUE_AOS_DISPUTED);
     }
 }
