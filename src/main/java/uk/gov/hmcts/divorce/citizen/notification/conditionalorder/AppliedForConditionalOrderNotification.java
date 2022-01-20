@@ -24,20 +24,20 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 @Slf4j
 public class AppliedForConditionalOrderNotification implements ApplicantNotification {
 
-    private static final String PLUS_21_DUE_DATE = "date email received plus 21 days";
-    private static final String PLUS_14_DUE_DATE = "application for CO date plus 14 days";
-    private static final String WIFE_APPLIED = "wifeApplied";
-    private static final String HUSBAND_APPLIED = "husbandApplied";
-    private static final String CIVIL_PARTNER_APPLIED = "civilPartnerApplied";
-    private static final String PARTNER_APPLIED = "partnerApplied";
-    private static final String WIFE_DID_NOT_APPLY = "wifeDidNotApply";
-    private static final String HUSBAND_DID_NOT_APPLY = "husbandDidNotApply";
-    private static final String CIVIL_PARTNER_DID_NOT_APPLY = "civilPartnerDidNotApply";
-    private static final String PARTNER_DID_NOT_APPLY = "partnerDidNotApply";
-    private static final String PARTNER_DID_NOT_APPLY_DUE_DATE = "partnerDidNotApply due date";
+    static final String PLUS_21_DUE_DATE = "date email received plus 21 days";
+    static final String PLUS_14_DUE_DATE = "application for CO date plus 14 days";
+    static final String WIFE_APPLIED = "wifeApplied";
+    static final String HUSBAND_APPLIED = "husbandApplied";
+    static final String CIVIL_PARTNER_APPLIED = "civilPartnerApplied";
+    static final String PARTNER_APPLIED = "partnerApplied";
+    static final String WIFE_DID_NOT_APPLY = "wifeDidNotApply";
+    static final String HUSBAND_DID_NOT_APPLY = "husbandDidNotApply";
+    static final String CIVIL_PARTNER_DID_NOT_APPLY = "civilPartnerDidNotApply";
+    static final String PARTNER_DID_NOT_APPLY = "partnerDidNotApply";
+    static final String PARTNER_DID_NOT_APPLY_DUE_DATE = "partnerDidNotApply due date";
 
-    private static final String APPLICANT1 = "applicant 1";
-    private static final String APPLICANT2 = "applicant 2";
+    static final String APPLICANT1 = "applicant 1";
+    static final String APPLICANT2 = "applicant 2";
 
     private String submittingUserId;
 
