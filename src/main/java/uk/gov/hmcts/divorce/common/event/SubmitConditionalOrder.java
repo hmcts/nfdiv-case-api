@@ -105,7 +105,8 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
     private void setSubmittedDate(ConditionalOrder conditionalOrder) {
         ConditionalOrderQuestions app1Questions = conditionalOrder.getConditionalOrderApplicant1Questions();
         ConditionalOrderQuestions app2Questions = conditionalOrder.getConditionalOrderApplicant2Questions();
-        if (app1Questions.getStatementOfTruth().toBoolean() && Objects.isNull(app1Questions.getSubmittedDate())) {
+        if (Objects.nonNull(app2Questions.getStatementOfTruth()) && app1Questions.getStatementOfTruth().toBoolean()
+            && Objects.isNull(app1Questions.getSubmittedDate())) {
             app1Questions.setSubmittedDate(LocalDateTime.now(clock));
         }
         if (Objects.nonNull(app2Questions.getStatementOfTruth()) && app2Questions.getStatementOfTruth().toBoolean()
