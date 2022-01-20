@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
-import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessBetaOnlyAccess;
 
@@ -74,40 +73,15 @@ public class AlternativeService {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfPayment;
 
-    @CCD(
-        label = "How will payment be made?",
-        hint = "How will payment be made?",
-        typeOverride = FixedList,
-        typeParameterOverride = "ServicePaymentMethod"
-    )
-    private ServicePaymentMethod paymentMethod;
-
-    @CCD(
-        label = "Enter your account number",
-        hint = "Example: PBA0896366"
-    )
-    private String feeAccountNumber;
-
-    @CCD(
-        label = "Enter your reference",
-        hint = "This will appear on your statement to help you identify this payment"
-    )
-    private String feeAccountReferenceNumber;
-
-    @CCD(
-        label = "Help with Fees reference"
-    )
-    private String helpWithFeesReferenceNumber;
-
-    @CCD(
-        label = "Here are your order details"
-    )
-    private OrderSummary servicePaymentFeeOrderSummary;
-
     @JsonUnwrapped
     @Builder.Default
     @CCD(access = {CaseworkerAccessBetaOnlyAccess.class})
     private Bailiff bailiff = new Bailiff();
+
+    @JsonUnwrapped(prefix = "servicePaymentFee")
+    @Builder.Default
+    @CCD(access = {CaseworkerAccessBetaOnlyAccess.class})
+    private FeeDetails servicePaymentFee = new FeeDetails();
 
     @SuppressWarnings("PMD")
     @JsonIgnore
@@ -116,7 +90,7 @@ public class AlternativeService {
             .alternativeServiceType(alternativeServiceType)
             .receivedServiceApplicationDate(receivedServiceApplicationDate)
             .receivedServiceAddedDate(receivedServiceAddedDate)
-            .paymentMethod(paymentMethod)
+            .paymentMethod(servicePaymentFee.getPaymentMethod())
             .serviceApplicationGranted(serviceApplicationGranted)
             .serviceApplicationRefusalReason(serviceApplicationRefusalReason)
             .serviceApplicationDecisionDate(serviceApplicationDecisionDate)

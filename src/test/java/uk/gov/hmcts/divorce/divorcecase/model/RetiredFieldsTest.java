@@ -5,6 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -284,6 +285,26 @@ class RetiredFieldsTest {
 
         assertThat(result).contains(
             entry("generalOrderJudgeOrLegalAdvisorName", "la judge")
+        );
+    }
+
+    @Test
+    void shouldMigratePaymentFields() {
+        final var data = new TreeMap<String, Object>();
+        data.put("disputingFee", OrderSummary.builder().build());
+        data.put("paymentMethod", ServicePaymentMethod.FEE_PAY_BY_HWF);
+        data.put("feeAccountNumber", "12345");
+        data.put("feeAccountReferenceNumber", "REF001");
+        data.put("helpWithFeesReferenceNumber", "HWF1234");
+
+        final var result = RetiredFields.migrate(data);
+
+        assertThat(result).contains(
+            entry("disputingFeeOrderSummary", OrderSummary.builder().build()),
+            entry("servicePaymentFeePaymentMethod", ServicePaymentMethod.FEE_PAY_BY_HWF),
+            entry("servicePaymentFeeAccountNumber", "12345"),
+            entry("servicePaymentFeeAccountReferenceNumber", "REF001"),
+            entry("servicePaymentFeeHelpWithFeesReferenceNumber", "HWF1234")
         );
     }
 
