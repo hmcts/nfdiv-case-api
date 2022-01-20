@@ -2,12 +2,12 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
-import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.AosAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessBetaOnlyAccess;
@@ -17,7 +17,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import java.time.LocalDateTime;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
-import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
@@ -128,39 +127,10 @@ public class AcknowledgementOfService {
     )
     private String additionalComments;
 
-    @CCD(
-        label = "How will payment be made?",
-        hint = "How will payment be made?",
-        typeOverride = FixedList,
-        typeParameterOverride = "ServicePaymentMethod",
-        access = {CaseworkerAccessBetaOnlyAccess.class}
-    )
-    private ServicePaymentMethod disputingFeePaymentMethod;
-
-    @CCD(
-        label = "Enter your account number",
-        hint = "Example: PBA0896366",
-        access = {CaseworkerAccessBetaOnlyAccess.class}
-    )
-    private String disputingFeeAccountNumber;
-
-    @CCD(
-        label = "Enter your reference",
-        access = {CaseworkerAccessBetaOnlyAccess.class}
-    )
-    private String disputingFeeAccountReferenceNumber;
-
-    @CCD(
-        label = "Help with Fees reference",
-        access = {CaseworkerAccessBetaOnlyAccess.class}
-    )
-    private String disputingFeeHelpWithFeesReferenceNumber;
-
-    @CCD(
-        label = "Here are your order details",
-        access = {CaseworkerAccessBetaOnlyAccess.class}
-    )
-    private OrderSummary disputingFee;
+    @JsonUnwrapped(prefix = "disputingFee")
+    @Builder.Default
+    @CCD(access = {CaseworkerAccessBetaOnlyAccess.class})
+    private FeeDetails disputingFee = new FeeDetails();
 
     @JsonIgnore
     public void setNoticeOfProceedings(final Solicitor solicitor) {

@@ -1,9 +1,9 @@
 {
   "data": {
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
-    "paymentMethod": "feePayByAccount",
-    "feeAccountNumber": "FEE0233",
-    "feeAccountReferenceNumber": "Ref1",
+    "servicePaymentFeePaymentMethod": "feePayByAccount",
+    "servicePaymentFeeAccountNumber": "FEE0233",
+    "servicePaymentFeeAccountReferenceNumber": "Ref1",
     "documentsUploaded": [
       {
         "id": "${json-unit.any-string}",

@@ -16,6 +16,7 @@ import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
@@ -91,9 +92,13 @@ public class CaseworkerAnswerReceivedIT {
             .d11Document(d11)
             .alternativeService(
                 AlternativeService.builder()
-                    .paymentMethod(FEE_PAY_BY_ACCOUNT)
-                    .feeAccountNumber("FEE0233")
-                    .feeAccountReferenceNumber("Ref1")
+                    .servicePaymentFee(
+                        FeeDetails.builder()
+                            .paymentMethod(FEE_PAY_BY_ACCOUNT)
+                            .accountNumber("FEE0233")
+                            .accountReferenceNumber("Ref1")
+                            .build()
+                    )
                     .build()
             )
             .build();

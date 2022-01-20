@@ -83,7 +83,7 @@ public class CaseworkerAlternativeServicePayment implements CCDConfig<CaseData, 
         } else {
             orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_DEEMED);
         }
-        caseData.getAlternativeService().setServicePaymentFeeOrderSummary(orderSummary);
+        caseData.getAlternativeService().getServicePaymentFee().setOrderSummary(orderSummary);
 
         for (ListValue<Fee> entry : orderSummary.getFees()) {
             Fee fee = entry.getValue();
