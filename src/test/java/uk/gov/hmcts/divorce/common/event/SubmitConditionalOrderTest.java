@@ -23,7 +23,6 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.Clock;
 
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,7 +31,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.common.event.SubmitConditionalOrder.SUBMIT_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
-import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
@@ -47,9 +45,6 @@ class SubmitConditionalOrderTest {
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
-
-    @Mock
-    private Clock clock;
 
     @Mock
     private IdamService idamService;
@@ -74,7 +69,13 @@ class SubmitConditionalOrderTest {
     @Test
     void shouldSetDateSubmittedOnAboutToSubmit() {
         setupMocks();
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData()).build();
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(ConditionalOrder.builder()
+                .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder().submittedDate(getExpectedLocalDateTime()).build())
+                .build())
+            .applicationType(ApplicationType.SOLE_APPLICATION)
+            .build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, null);
 
@@ -116,7 +117,6 @@ class SubmitConditionalOrderTest {
     }
 
     private void setupMocks() {
-        setMockClock(clock);
         when(request.getHeader(eq(AUTHORIZATION))).thenReturn(DUMMY_AUTH_TOKEN);
         when(idamService.retrieveUser(DUMMY_AUTH_TOKEN))
             .thenReturn(new User(DUMMY_AUTH_TOKEN, UserDetails.builder().id(DUMMY_USER_ID).build()));

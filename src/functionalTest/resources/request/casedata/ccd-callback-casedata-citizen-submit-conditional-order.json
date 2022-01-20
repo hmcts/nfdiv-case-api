@@ -1,12 +1,13 @@
 {
   "divorceOrDissolution": "divorce",
   "applicationType": "jointApplication",
-  "coDateSubmitted": null,
+  "coApplicant1SubmittedDate": "2022-01-18T12:12:12.123",
   "applicant1Solicitor": null,
-  "applicant1Email": "test@email.com",
+  "applicant1Email": "app1Test@email.com",
   "applicant1FirstName": "John",
   "applicant1LastName": "Smith",
   "applicant1languagePreferenceWelsh": "No",
+  "applicant2Email": "app2Test@email.com",
   "applicant2FirstName": "Olive",
   "applicant2LastName": "Oil",
   "applicant2Gender": "female"
