@@ -89,7 +89,7 @@ public class CaseworkerConfirmServicePaymentIT {
         caseData.getApplication().setIssueDate(serviceDate);
 
         caseData.getAlternativeService().setAlternativeServiceType(AlternativeServiceType.DEEMED);
-        caseData.getAlternativeService().setPaymentMethod(ServicePaymentMethod.FEE_PAY_BY_PHONE);
+        caseData.getAlternativeService().getServicePaymentFee().setPaymentMethod(ServicePaymentMethod.FEE_PAY_BY_PHONE);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=AltPaymentSummary")
                 .contentType(APPLICATION_JSON)
@@ -118,7 +118,7 @@ public class CaseworkerConfirmServicePaymentIT {
         caseData.getApplication().setIssueDate(serviceDate);
 
         caseData.getAlternativeService().setAlternativeServiceType(AlternativeServiceType.BAILIFF);
-        caseData.getAlternativeService().setPaymentMethod(ServicePaymentMethod.FEE_PAY_BY_PHONE);
+        caseData.getAlternativeService().getServicePaymentFee().setPaymentMethod(ServicePaymentMethod.FEE_PAY_BY_PHONE);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=AltPaymentSummary")
                 .contentType(APPLICATION_JSON)

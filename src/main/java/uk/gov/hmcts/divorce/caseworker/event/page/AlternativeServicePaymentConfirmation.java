@@ -4,6 +4,7 @@ import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 
 public class AlternativeServicePaymentConfirmation implements CcdPageConfiguration  {
 
@@ -13,10 +14,12 @@ public class AlternativeServicePaymentConfirmation implements CcdPageConfigurati
         pageBuilder.page("alternativeServicePayment")
             .pageLabel("Payment - service application payment")
             .complex(CaseData::getAlternativeService)
-                .mandatory(AlternativeService::getPaymentMethod)
-                .mandatory(AlternativeService::getFeeAccountNumber, "paymentMethod = \"feePayByAccount\"")
-                .optional(AlternativeService::getFeeAccountReferenceNumber, "paymentMethod = \"feePayByAccount\"")
-                .mandatory(AlternativeService::getHelpWithFeesReferenceNumber, "paymentMethod = \"feePayByHelp\"")
+                .complex(AlternativeService::getServicePaymentFee)
+                .mandatory(FeeDetails::getPaymentMethod)
+                .mandatory(FeeDetails::getAccountNumber, "servicePaymentFeePaymentMethod = \"feePayByAccount\"")
+                .optional(FeeDetails::getAccountReferenceNumber, "servicePaymentFeePaymentMethod = \"feePayByAccount\"")
+                .mandatory(FeeDetails::getHelpWithFeesReferenceNumber, "servicePaymentFeePaymentMethod = \"feePayByHelp\"")
+                .done()
             .done();
     }
 }
