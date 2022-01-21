@@ -4,6 +4,7 @@ import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 
 public class AnswerReceivedPaymentSummary implements CcdPageConfiguration {
 
@@ -14,7 +15,9 @@ public class AnswerReceivedPaymentSummary implements CcdPageConfiguration {
         pageBuilder
             .page("AnswerReceivedPaymentSummary")
             .complex(CaseData::getAcknowledgementOfService)
-            .mandatoryNoSummary(AcknowledgementOfService::getDisputingFee)
+                .complex(AcknowledgementOfService::getDisputingFee)
+                .mandatoryNoSummary(FeeDetails::getOrderSummary)
+                .done()
             .done()
             .label(
                 "LabelAnswerReceivedPayAccountHeading",

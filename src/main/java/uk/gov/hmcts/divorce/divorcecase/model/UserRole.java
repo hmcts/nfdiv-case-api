@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.HasRole;
 public enum UserRole implements HasRole {
 
     CASE_WORKER("caseworker-divorce-courtadmin_beta", "CRU"),
+    CASE_WORKER_BULK_SCAN("caseworker-divorce-bulkscan", "CRU"),
     LEGAL_ADVISOR("caseworker-divorce-courtadmin-la", "CRU"),
     SUPER_USER("caseworker-divorce-superuser", "CRU"),
     SYSTEMUPDATE("caseworker-divorce-systemupdate", "CRU"),

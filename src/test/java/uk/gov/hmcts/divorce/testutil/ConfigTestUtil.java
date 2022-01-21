@@ -11,6 +11,8 @@ import uk.gov.hmcts.ccd.sdk.api.WorkBasket;
 import uk.gov.hmcts.ccd.sdk.api.WorkBasket.WorkBasketBuilder;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
+import uk.gov.hmcts.divorce.bulkscan.ccd.ExceptionRecordState;
+import uk.gov.hmcts.divorce.bulkscan.data.ExceptionRecord;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -35,6 +37,15 @@ public final class ConfigTestUtil {
             UserRole.class,
             new HashMap<>(),
             ImmutableSet.copyOf(State.class.getEnumConstants())));
+    }
+
+    public static ConfigBuilderImpl<ExceptionRecord, ExceptionRecordState, UserRole> createExceptionRecordConfigBuilder() {
+        return new ConfigBuilderImpl<>(new ResolvedCCDConfig<>(
+            ExceptionRecord.class,
+            ExceptionRecordState.class,
+            UserRole.class,
+            new HashMap<>(),
+            ImmutableSet.copyOf(ExceptionRecordState.class.getEnumConstants())));
     }
 
     public static ConfigBuilderImpl<BulkActionCaseData, BulkActionState, UserRole> createBulkActionConfigBuilder() {

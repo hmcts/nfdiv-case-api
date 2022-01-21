@@ -1,4 +1,6 @@
 {
+  "divorceOrDissolution": "divorce",
+  "applicationType": "soleApplication",
   "coGranted": "No",
   "coRefusalDecision": "moreInfo",
   "solSignStatementOfTruth": "Yes",
@@ -6,6 +8,7 @@
   "applicant1LastName": "Smith",
   "applicant2FirstName": "Olive",
   "applicant2LastName": "Oil",
+  "applicant1SolicitorRepresented": "Yes",
   "applicant1SolicitorName": "Applicant 1 Solicitor",
   "applicant1SolicitorEmail": "applicant1.solicitor@example.com",
   "applicant1LanguagePreferenceWelsh": "No"
