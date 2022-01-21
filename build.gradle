@@ -308,14 +308,25 @@ dependencies {
 
 mainClassName = 'uk.gov.hmcts.divorce.CaseApiApplication'
 
-ext.getVaultSecret = { String vaultName = 'nfdiv-aat' ->
-  new ByteArrayOutputStream().withStream { os ->
-    exec {
-      commandLine 'az', 'keyvault', 'secret', 'show', '--vault-name', vaultName, '-o', 'tsv', '--query', 'value', '--name', 'nfdiv-case-api-dot-env'
-      standardOutput = os
+task loadEnvSecrets() {
+  doLast {
+    if (!project.file('./.aat-env').exists()) {
+      new ByteArrayOutputStream().withStream { os ->
+        exec {
+          commandLine 'az', 'keyvault', 'secret', 'show', '--vault-name', 'nfdiv-aat', '-o', 'tsv', '--query', 'value', '--name', 'nfdiv-case-api-dot-env'
+          standardOutput = os
+        }
+        project.file('./.aat-env').write(new String(os.toString().replace('\n', '').decodeBase64(), java.nio.charset.StandardCharsets.UTF_8))
+      }
     }
-    project.file('./.aat-env').write(new String(os.toString().replace('\n', '').decodeBase64(), java.nio.charset.StandardCharsets.UTF_8))
   }
+}
+
+task reloadEnvSecrets(group: 'ccd tasks') {
+  if (project.file('./.aat-env').exists()) {
+    project.file('./.aat-env').delete()
+  }
+  dependsOn loadEnvSecrets
 }
 
 bootRun {
@@ -323,14 +334,14 @@ bootRun {
     if (System.getenv("IDAM_API_BASEURL") == null) {
       println("Loading secrets from vault")
 
-      if (!project.file('./.aat-env').exists()) {
-        getVaultSecret()
-      }
-
+      dependsOn loadEnvSecrets
       project.file('./.aat-env').readLines().each() {
-        def (key, value) = it.tokenize('=')
+        def index = it.indexOf("=")
+        def key = it.substring(0, index)
+        def value = it.substring(index + 1)
         environment key, value
       }
+
     }
   }
 }
@@ -349,17 +360,14 @@ functional {
   doFirst() {
     if (System.getenv("OAUTH2_CLIENT_SECRET") == null) {
       println("Loading secrets from vault")
-
-      if (!project.file('./.aat-env').exists()) {
-        getVaultSecret()
-      }
-
+      dependsOn loadEnvSecrets
       project.file('./.aat-env').readLines().each() {
         def index = it.indexOf("=")
         def key = it.substring(0, index)
         def value = it.substring(index + 1)
         environment key, value
       }
+
     }
   }
 }
@@ -388,37 +396,27 @@ ccd {
   configDir = file('build/definitions')
 }
 
-class CftlibTask extends Exec {
-  CftlibTask() {
-    if (!project.file('./.aat-env').exists()) {
-      getVaultSecret()
-    }
+generateCCDConfig {
+  environment 'CASE_API_URL', 'http://localhost:4013'
+}
 
+task bootXui(group: 'ccd tasks', dependsOn: [loadEnvSecrets]) {
+  doLast {
     project.file('./.aat-env').readLines().each() {
       def index = it.indexOf("=")
       def key = it.substring(0, index)
       def value = it.substring(index + 1)
       environment key, value
     }
+
+    commandLine 'docker-compose',  '-f', 'docker-compose-xui.yml', 'up'
   }
 }
 
-generateCCDConfig {
-    environment 'CASE_API_URL', 'http://localhost:4013'
-}
-
-task bootXui(type: CftlibTask, group: 'ccd tasks') {
-  commandLine 'docker-compose',  '-f', 'docker-compose-xui.yml', 'up'
-}
-
-task bootWithCcd(type: org.springframework.boot.gradle.tasks.run.BootRun, dependsOn: [buildCCDXlsx], group: 'ccd tasks') {
+task bootWithCcd(type: org.springframework.boot.gradle.tasks.run.BootRun, dependsOn: [loadEnvSecrets, buildCCDXlsx], group: 'ccd tasks') {
     classpath sourceSets.cftlib.runtimeClasspath
     mainClass = tasks.bootRun.mainClass
     doFirst() {
-        println("Loading secrets from vault")
-        if (!project.file('./.aat-env').exists()) {
-          getVaultSecret()
-        }
 
         project.file('./.aat-env').readLines().each() {
           def index = it.indexOf("=")
