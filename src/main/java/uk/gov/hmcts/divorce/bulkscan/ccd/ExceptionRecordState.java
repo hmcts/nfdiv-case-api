@@ -31,7 +31,12 @@ public enum ExceptionRecordState {
     @CCD(
         name = "The scanned record has been handled by CW manually"
     )
-    ScannedRecordManuallyHandled("ScannedRecordManuallyHandled");
+    ScannedRecordManuallyHandled("ScannedRecordManuallyHandled"),
+
+    @CCD(
+        name = "Offline Document Received by CW"
+    )
+    OfflineDocumentReceived("OfflineDocumentReceived");
 
     private final String name;
 }

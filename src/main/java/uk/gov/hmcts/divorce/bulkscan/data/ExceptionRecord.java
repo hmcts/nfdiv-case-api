@@ -155,4 +155,9 @@ public class ExceptionRecord {
         hint = "The case reference to attach the envelope to"
     )
     private String searchCaseReference;
+
+    @CCD(
+        label = "Bulk Scan state to transition to"
+    )
+    private String stateToTransitionTo;
 }
