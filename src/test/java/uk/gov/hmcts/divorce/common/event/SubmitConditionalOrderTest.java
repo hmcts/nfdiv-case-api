@@ -22,6 +22,8 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
+import java.time.Clock;
+import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
@@ -30,7 +32,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.common.event.SubmitConditionalOrder.SUBMIT_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
@@ -52,6 +56,9 @@ class SubmitConditionalOrderTest {
     @Mock
     private HttpServletRequest request;
 
+    @Mock
+    private Clock clock;
+
     @InjectMocks
     private SubmitConditionalOrder submitConditionalOrder;
 
@@ -68,10 +75,15 @@ class SubmitConditionalOrderTest {
 
     @Test
     void shouldSetDateSubmittedOnAboutToSubmit() {
-        setupMocks();
+        setupMocks(clock);
         final CaseData caseData = CaseData.builder()
             .conditionalOrder(ConditionalOrder.builder()
-                .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder().submittedDate(getExpectedLocalDateTime()).build())
+                .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
+                    .statementOfTruth(YesOrNo.YES)
+                    .build())
+                .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
+                    .statementOfTruth(YesOrNo.YES)
+                    .build())
                 .build())
             .applicationType(ApplicationType.SOLE_APPLICATION)
             .build();
@@ -82,12 +94,23 @@ class SubmitConditionalOrderTest {
         assertThat(response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getSubmittedDate())
             .isEqualTo(getExpectedLocalDateTime());
         assertThat(response.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getSubmittedDate())
-            .isNull();
+            .isEqualTo(getExpectedLocalDateTime());
     }
 
     @Test
-    void shouldSetDateSubmittingUserIdOnAboutToSubmit() {
-        setupMocks();
+    void shouldSetStateOnAboutToSubmit() {
+        setupMocks(null);
+        final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .data(caseData).state(State.ConditionalOrderDrafted).build();
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
+        assertThat(response.getState()).isEqualTo(ConditionalOrderPending);
+    }
+
+    @Test
+    void shouldSetSubmittingUserIdOnAboutToSubmit() {
+        setupMocks(clock);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData()).build();
 
         submitConditionalOrder.aboutToSubmit(caseDetails, null);
@@ -97,7 +120,7 @@ class SubmitConditionalOrderTest {
 
     @Test
     void shouldSendEmailOnAboutToSubmitIfApplicantIsNotRepresented() {
-        setupMocks();
+        setupMocks(clock);
         CaseData caseData = caseData();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(1L).data(caseData).build();
 
@@ -116,7 +139,10 @@ class SubmitConditionalOrderTest {
         return caseData;
     }
 
-    private void setupMocks() {
+    private void setupMocks(Clock mockClock) {
+        if (Objects.nonNull(mockClock)) {
+            setMockClock(mockClock);
+        }
         when(request.getHeader(eq(AUTHORIZATION))).thenReturn(DUMMY_AUTH_TOKEN);
         when(idamService.retrieveUser(DUMMY_AUTH_TOKEN))
             .thenReturn(new User(DUMMY_AUTH_TOKEN, UserDetails.builder().id(DUMMY_USER_ID).build()));
