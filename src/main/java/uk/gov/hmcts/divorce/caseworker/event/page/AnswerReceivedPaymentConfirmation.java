@@ -4,6 +4,7 @@ import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 
 public class AnswerReceivedPaymentConfirmation implements CcdPageConfiguration {
 
@@ -12,13 +13,15 @@ public class AnswerReceivedPaymentConfirmation implements CcdPageConfiguration {
         pageBuilder.page("answerReceivedPayment")
             .pageLabel("Payment - answer application payment")
             .complex(CaseData::getAcknowledgementOfService)
-            .mandatory(AcknowledgementOfService::getDisputingFeePaymentMethod)
-            .mandatory(AcknowledgementOfService::getDisputingFeeAccountNumber,
-                "disputingFeePaymentMethod = \"feePayByAccount\"")
-            .optional(AcknowledgementOfService::getDisputingFeeAccountReferenceNumber,
-                "disputingFeePaymentMethod = \"feePayByAccount\"")
-            .mandatory(AcknowledgementOfService::getDisputingFeeHelpWithFeesReferenceNumber,
-                "disputingFeePaymentMethod = \"feePayByHelp\"")
+                .complex(AcknowledgementOfService::getDisputingFee)
+                .mandatory(FeeDetails::getPaymentMethod)
+                .mandatory(FeeDetails::getAccountNumber,
+                    "disputingFeePaymentMethod = \"feePayByAccount\"")
+                .optional(FeeDetails::getAccountReferenceNumber,
+                    "disputingFeePaymentMethod = \"feePayByAccount\"")
+                .mandatory(FeeDetails::getHelpWithFeesReferenceNumber,
+                    "disputingFeePaymentMethod = \"feePayByHelp\"")
+                .done()
             .done();
     }
 }

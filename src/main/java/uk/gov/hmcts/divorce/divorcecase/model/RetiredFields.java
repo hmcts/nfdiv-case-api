@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.collections4.map.HashedMap;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor.Prayer;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
@@ -302,6 +303,31 @@ public class RetiredFields {
     )
     private YesOrNo applicant2PrayerHasBeenGiven;
 
+    @CCD(
+        label = "Retire disputing fee"
+    )
+    private OrderSummary disputingFee;
+
+    @CCD(
+        label = "Retire payment method"
+    )
+    private ServicePaymentMethod paymentMethod;
+
+    @CCD(
+        label = "Retire fee account"
+    )
+    private String feeAccountNumber;
+
+    @CCD(
+        label = "Retire fee account reference number"
+    )
+    private String feeAccountReferenceNumber;
+
+    @CCD(
+        label = "Retire help with fees reference number"
+    )
+    private String helpWithFeesReferenceNumber;
+
     @JsonIgnore
     private static final Consumer<Map<String, Object>> DO_NOTHING = data -> {
     };
@@ -414,6 +440,16 @@ public class RetiredFields {
                 transformJudgeOrLegalAdvisorName(data, "generalOrderLegalAdvisorName")
             )
         );
+        init.put("disputingFee",
+            data -> data.put("disputingFeeOrderSummary", data.get("disputingFee")));
+        init.put("paymentMethod",
+            data -> data.put("servicePaymentFeePaymentMethod", data.get("paymentMethod")));
+        init.put("feeAccountNumber",
+            data -> data.put("servicePaymentFeeAccountNumber", data.get("feeAccountNumber")));
+        init.put("feeAccountReferenceNumber",
+            data -> data.put("servicePaymentFeeAccountReferenceNumber", data.get("feeAccountReferenceNumber")));
+        init.put("helpWithFeesReferenceNumber",
+            data -> data.put("servicePaymentFeeHelpWithFeesReferenceNumber", data.get("helpWithFeesReferenceNumber")));
 
         migrations = unmodifiableMap(init);
     }

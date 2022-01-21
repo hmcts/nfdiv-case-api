@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.systemupdate.event;
+package uk.gov.hmcts.divorce.caseworker.event;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -9,33 +9,36 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAlternativeService;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 
 @Component
 @Slf4j
-public class SystemIssueSolicitorAosUnDisputed implements CCDConfig<CaseData, State, UserRole> {
+public class CaseworkerServeByAlternativeMethod implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String SYSTEM_ISSUE_SOLICITOR_AOS_UNDISPUTED = "system-issue-solicitor-aos-undisputed";
+    public static final String CASEWORKER_SERVE_BY_ALTERNATIVE_METHOD = "caseworker-serve-by-alternative-method";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-
         new PageBuilder(configBuilder
-            .event(SYSTEM_ISSUE_SOLICITOR_AOS_UNDISPUTED)
-            .forStates(AwaitingAos, Holding, AosOverdue)
-            .name("AoS undisputed")
-            .description("AoS undisputed")
-            .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
-            .grant(READ, SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR)
-            .retries(120, 120));
+            .event(CASEWORKER_SERVE_BY_ALTERNATIVE_METHOD)
+            .forStateTransition(GeneralConsiderationComplete, AwaitingAlternativeService)
+            .name("Serve by alternative method")
+            .description("Serve by alternative method")
+            .showEventNotes()
+            .grant(CREATE_READ_UPDATE,
+                CASE_WORKER)
+            .grant(READ,
+                SUPER_USER,
+                SOLICITOR,
+                LEGAL_ADVISOR,
+                CITIZEN));
     }
 }

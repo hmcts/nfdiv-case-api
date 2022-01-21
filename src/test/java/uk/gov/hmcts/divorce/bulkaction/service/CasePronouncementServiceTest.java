@@ -28,7 +28,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
-import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMIGHAM;
+import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMINGHAM;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
@@ -64,7 +64,7 @@ public class CasePronouncementServiceTest {
         var bulkActionCaseData = BulkActionCaseData
             .builder()
             .dateAndTimeOfHearing(LocalDateTime.of(2021, 11, 10, 0, 0, 0))
-            .court(BIRMIGHAM)
+            .court(BIRMINGHAM)
             .bulkListCaseDetails(List.of(getBulkListCaseDetailsListValue("1")))
             .build();
 
@@ -114,7 +114,7 @@ public class CasePronouncementServiceTest {
         var bulkActionCaseData = BulkActionCaseData
             .builder()
             .dateAndTimeOfHearing(LocalDateTime.of(2021, 11, 10, 0, 0, 0))
-            .court(BIRMIGHAM)
+            .court(BIRMINGHAM)
             .bulkListCaseDetails(List.of(
                 bulkListCaseDetailsListValue1,
                 bulkListCaseDetailsListValue2
@@ -176,7 +176,7 @@ public class CasePronouncementServiceTest {
         var bulkActionCaseData = BulkActionCaseData
             .builder()
             .dateAndTimeOfHearing(LocalDateTime.of(2021, 11, 10, 0, 0, 0))
-            .court(BIRMIGHAM)
+            .court(BIRMINGHAM)
             .bulkListCaseDetails(List.of(
                 bulkListCaseDetailsListValue1,
                 bulkListCaseDetailsListValue2

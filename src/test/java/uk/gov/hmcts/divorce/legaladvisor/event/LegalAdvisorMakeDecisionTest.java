@@ -14,7 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorClarificationSubmittedNotification;
+import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorMoreInfoDecisionNotification;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
@@ -41,7 +41,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 class LegalAdvisorMakeDecisionTest {
 
     @Mock
-    private LegalAdvisorClarificationSubmittedNotification notification;
+    private LegalAdvisorMoreInfoDecisionNotification notification;
 
     @Mock
     private NotificationDispatcher notificationDispatcher;

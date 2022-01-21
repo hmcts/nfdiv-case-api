@@ -47,6 +47,7 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
+            .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE))
             .page("scheduleForListing")
             .pageLabel("Schedule cases for listing")

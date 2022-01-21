@@ -19,10 +19,21 @@ public class SystemPronounceCaseFT extends FunctionalTestSuite {
 
     private static final String REQUEST =
         "classpath:request/casedata/ccd-callback-casedata-system-pronounce-case.json";
+    private static final String JOINT_REQUEST =
+        "classpath:request/casedata/ccd-callback-casedata-system-pronounce-case-joint-application.json";
 
     @Test
     public void shouldSendPronouncementNotificationToApplicant() throws IOException {
         Map<String, Object> request = caseData(REQUEST);
+
+        Response response = triggerCallback(request, SYSTEM_PRONOUNCE_CASE, ABOUT_TO_SUBMIT_URL);
+
+        assertThat(response.getStatusCode()).isEqualTo(OK.value());
+    }
+
+    @Test
+    public void shouldSendPronouncementNotificationToJointApplicant() throws IOException {
+        Map<String, Object> request = caseData(JOINT_REQUEST);
 
         Response response = triggerCallback(request, SYSTEM_PRONOUNCE_CASE, ABOUT_TO_SUBMIT_URL);
 

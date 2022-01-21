@@ -7,10 +7,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
+import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
+import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.CO_PRONOUNCEMENT_DATE_PLUS_43;
+import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_HEARING;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CONDITIONAL_ORDER_PRONOUNCED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -18,10 +22,6 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 @Component
 @Slf4j
 public class ConditionalOrderPronouncedNotification implements ApplicantNotification {
-
-    static final String CO_PRONOUNCEMENT_DATE_PLUS_43 = "CO pronouncement date plus 43 days";
-    static final String COURT_NAME = "court name";
-    static final String DATE_OF_HEARING = "date of hearing";
 
     @Autowired
     private NotificationService notificationService;
@@ -43,11 +43,13 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
 
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
-        log.info("Notifying respondent that their conditional order application has been granted: {}", id);
+        log.info("Notifying applicant 2 that their conditional order application has been granted: {}", id);
 
+        EmailTemplateName emailTemplateName =
+            caseData.getApplicationType().isSole() ? SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED : CITIZEN_CONDITIONAL_ORDER_PRONOUNCED;
         notificationService.sendEmail(
             caseData.getApplicant2EmailAddress(),
-            SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED,
+            emailTemplateName,
             templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
             caseData.getApplicant2().getLanguagePreference()
         );

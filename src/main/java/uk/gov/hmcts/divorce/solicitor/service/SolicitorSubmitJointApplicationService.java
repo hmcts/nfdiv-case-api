@@ -31,15 +31,14 @@ public class SolicitorSubmitJointApplicationService {
     private AuthTokenGenerator authTokenGenerator;
 
     @Async
-    public void submitEventForApprovalOrRequestingChanges(final CaseDetails<CaseData, State> details,
-                                                          final String authToken) {
+    public void submitEventForApprovalOrRequestingChanges(final CaseDetails<CaseData, State> details) {
         final Application application = details.getData().getApplication();
 
         String eventId = YES.equals(application.getApplicant2ConfirmApplicant1Information())
             ? APPLICANT_2_REQUEST_CHANGES
             : APPLICANT_2_APPROVE;
 
-        User solUser = idamService.retrieveUser(authToken);
+        User solUser = idamService.retrieveSystemUpdateUserDetails();
 
         final String serviceAuthorization = authTokenGenerator.generate();
 

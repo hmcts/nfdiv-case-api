@@ -1,9 +1,9 @@
-package uk.gov.hmcts.divorce.systemupdate.event;
+package uk.gov.hmcts.divorce.caseworker.event;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -11,24 +11,23 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorAosUnDisputed.SYSTEM_ISSUE_SOLICITOR_AOS_UNDISPUTED;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestDwpDisclosure.CASEWORKER_REQUEST_DWP_DISCLOSURE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
-@ExtendWith(SpringExtension.class)
-public class SystemIssueSolicitorAosUnDisputedTest {
-
+@ExtendWith(MockitoExtension.class)
+class CaseworkerRequestDwpDisclosureTest {
     @InjectMocks
-    private SystemIssueSolicitorAosUnDisputed systemIssueSolicitorAosUnDisputed;
+    private CaseworkerRequestDwpDisclosure caseworkerRequestDwpDisclosure;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        systemIssueSolicitorAosUnDisputed.configure(configBuilder);
+        caseworkerRequestDwpDisclosure.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(SYSTEM_ISSUE_SOLICITOR_AOS_UNDISPUTED);
+            .contains(CASEWORKER_REQUEST_DWP_DISCLOSURE);
     }
 }
