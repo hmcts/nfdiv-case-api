@@ -412,6 +412,12 @@ public class Application {
     )
     private Document applicant1SolicitorAnswersLink;
 
+    @CCD(
+        label = "Link to applicant 2 solicitors answers",
+        access = {CaseworkerAccess.class}
+    )
+    private Document applicant2SolicitorAnswersLink;
+
     @JsonIgnore
     public boolean hasBeenPaidFor() {
         return null != applicationFeeOrderSummary

@@ -13,7 +13,7 @@ import static uk.gov.hmcts.divorce.bulkscan.ccd.ExceptionRecordState.ScannedReco
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER_BULK_SCAN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
 
 @Component
 public class RejectExceptionRecord implements CCDConfig<ExceptionRecord, ExceptionRecordState, UserRole> {
@@ -28,7 +28,7 @@ public class RejectExceptionRecord implements CCDConfig<ExceptionRecord, Excepti
             .name("Reject record")
             .description("Reject record")
             .showEventNotes()
-            .grant(CREATE_READ_UPDATE, CASE_WORKER_BULK_SCAN, CASE_WORKER, SYSTEMUPDATE))
+            .grant(CREATE_READ_UPDATE_DELETE, CASE_WORKER_BULK_SCAN, CASE_WORKER, SYSTEMUPDATE))
             .page("createNewCase")
             .pageLabel("Correspondence")
             .mandatory(ExceptionRecord::getScannedDocuments);
