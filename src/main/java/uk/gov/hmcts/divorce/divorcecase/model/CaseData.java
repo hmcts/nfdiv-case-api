@@ -34,7 +34,10 @@ import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toCollection;
 import static org.springframework.util.CollectionUtils.isEmpty;
-import static uk.gov.hmcts.ccd.sdk.type.FieldType.*;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
