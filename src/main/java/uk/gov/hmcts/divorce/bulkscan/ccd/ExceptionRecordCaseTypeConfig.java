@@ -9,7 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 @Component
 public class ExceptionRecordCaseTypeConfig implements CCDConfig<ExceptionRecord, ExceptionRecordState, UserRole> {
 
-    public static final String CASE_TYPE = "NO_FAULT_DIVORCE_ExceptionRecord";
+    public static final String CASE_TYPE = "NFD_ExceptionRecord";
     public static final String JURISDICTION = "DIVORCE";
 
     @Override
