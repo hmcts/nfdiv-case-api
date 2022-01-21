@@ -15,22 +15,22 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static com.github.stefanbirkner.systemlambda.SystemLambda.withEnvironmentVariable;
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenUpdateCaseStateAat.CITIZEN_UPDATE_CASE_STATE_AAT;
+import static uk.gov.hmcts.divorce.citizen.event.CitizenUpdateCaseAat.CITIZEN_UPDATE_CASE_STATE_AAT;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-class CitizenUpdateCaseStateAatTest {
+class CitizenUpdateCaseAatTest {
 
     @InjectMocks
-    private CitizenUpdateCaseStateAat citizenUpdateCaseStateAat;
+    private CitizenUpdateCaseAat citizenUpdateCaseAat;
 
     @Test
     void shouldAddConfigurationToConfigBuilderIfCitizenUpdateCaseStateIsEnabled() throws Exception {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         withEnvironmentVariable("CITIZEN_UPDATE_CASE_STATE_ENABLED", "true")
-            .execute(() -> citizenUpdateCaseStateAat.configure(configBuilder));
+            .execute(() -> citizenUpdateCaseAat.configure(configBuilder));
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
@@ -48,7 +48,7 @@ class CitizenUpdateCaseStateAatTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenUpdateCaseStateAat.aboutToSubmit(caseDetails, caseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenUpdateCaseAat.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getState()).isEqualTo(State.Holding);
         assertThat(response.getData().getApplicant2().getMiddleName()).isEmpty();
