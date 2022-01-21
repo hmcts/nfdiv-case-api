@@ -355,7 +355,9 @@ functional {
       }
 
       project.file('./.aat-env').readLines().each() {
-        def (key, value) = it.tokenize('=')
+        def index = it.indexOf("=")
+        def key = it.substring(0, index)
+        def value = it.substring(index + 1)
         environment key, value
       }
     }
@@ -393,7 +395,9 @@ class CftlibTask extends Exec {
     }
 
     project.file('./.aat-env').readLines().each() {
-      def (key, value) = it.tokenize('=')
+      def index = it.indexOf("=")
+      def key = it.substring(0, index)
+      def value = it.substring(index + 1)
       environment key, value
     }
   }
@@ -417,8 +421,10 @@ task bootWithCcd(type: org.springframework.boot.gradle.tasks.run.BootRun, depend
         }
 
         project.file('./.aat-env').readLines().each() {
-            def (key, value) = it.tokenize('=')
-            environment key, value
+          def index = it.indexOf("=")
+          def key = it.substring(0, index)
+          def value = it.substring(index + 1)
+          environment key, value
         }
     }
 }
