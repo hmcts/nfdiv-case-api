@@ -94,10 +94,10 @@ public class CaseworkerConfirmServicePaymentTest {
         AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
             alternativeServicePayment.aboutToStart(details);
 
-        assertThat(aboutToStartOrSubmitResponse.getData().getAlternativeService().getServicePaymentFeeOrderSummary())
+        assertThat(aboutToStartOrSubmitResponse.getData().getAlternativeService().getServicePaymentFee().getOrderSummary())
             .isEqualTo(orderSummaryBailiff);
 
-        assertThat(aboutToStartOrSubmitResponse.getData().getAlternativeService().getServicePaymentFeeOrderSummary().getFees())
+        assertThat(aboutToStartOrSubmitResponse.getData().getAlternativeService().getServicePaymentFee().getOrderSummary().getFees())
             .isEqualTo(orderSummaryFees);
 
     }
@@ -133,10 +133,10 @@ public class CaseworkerConfirmServicePaymentTest {
         AboutToStartOrSubmitResponse<CaseData, State> aboutToStartOrSubmitResponse =
             alternativeServicePayment.aboutToStart(details);
 
-        assertThat(aboutToStartOrSubmitResponse.getData().getAlternativeService().getServicePaymentFeeOrderSummary())
+        assertThat(aboutToStartOrSubmitResponse.getData().getAlternativeService().getServicePaymentFee().getOrderSummary())
             .isEqualTo(orderSummaryDeemedDispensed);
 
-        assertThat(aboutToStartOrSubmitResponse.getData().getAlternativeService().getServicePaymentFeeOrderSummary().getFees())
+        assertThat(aboutToStartOrSubmitResponse.getData().getAlternativeService().getServicePaymentFee().getOrderSummary().getFees())
             .isEqualTo(orderSummaryFees);
     }
 }

@@ -81,7 +81,7 @@ public class CaseworkerAnswerReceived implements CCDConfig<CaseData, State, User
         final CaseData caseData = details.getData();
 
         OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_ISSUE, KEYWORD_DEF);
-        caseData.getAcknowledgementOfService().setDisputingFee(orderSummary);
+        caseData.getAcknowledgementOfService().getDisputingFee().setOrderSummary(orderSummary);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

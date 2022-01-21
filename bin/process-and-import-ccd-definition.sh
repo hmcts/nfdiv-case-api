@@ -12,5 +12,9 @@ build_dir=${root_dir}/build/ccd-config
 for dir in $(find ${root_dir}/build/definitions/ -maxdepth 1 -mindepth  1 -type d -exec basename {} \;)
 do
   definitionOutputFile=${build_dir}/ccd-$dir-${CCD_DEF_NAME:-dev}.xlsx
-  ${scriptPath}/ccd-import-definition.sh $definitionOutputFile
+  # skip uploading of exception record as it is managed separately
+  if [[ ${definitionOutputFile} != *"ExceptionRecord"* ]];
+  then
+     ${scriptPath}/ccd-import-definition.sh $definitionOutputFile
+  fi
 done

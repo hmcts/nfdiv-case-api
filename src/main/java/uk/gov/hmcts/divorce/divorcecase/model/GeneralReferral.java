@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -71,6 +72,10 @@ public class GeneralReferral {
     )
     private YesOrNo generalReferralFeeRequired;
 
+    @JsonUnwrapped(prefix = "generalReferralFee")
+    @Builder.Default
+    private FeeDetails generalReferralFee = new FeeDetails();
+
     @CCD(
         label = "Approve general consideration?",
         typeOverride = FixedRadioList,
@@ -83,7 +88,6 @@ public class GeneralReferral {
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate generalReferralDecisionDate;
-
 
     @CCD(
         label = "Please provide further details",
