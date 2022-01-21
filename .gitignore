@@ -29,7 +29,3 @@ yarn-error.log
 
 ### Generated CCD Json Definition ###
 ccd-definitions/definitions/development
-
-### aat env file ###
-.aat-env
-

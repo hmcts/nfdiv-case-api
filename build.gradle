@@ -308,13 +308,13 @@ dependencies {
 
 mainClassName = 'uk.gov.hmcts.divorce.CaseApiApplication'
 
-ext.getVaultSecret = { String vaultName = 'nfdiv-aat' ->
+ext.getVaultSecret = { String secretName, vaultName = 'nfdiv-aat' ->
   new ByteArrayOutputStream().withStream { os ->
     exec {
-      commandLine 'az', 'keyvault', 'secret', 'show', '--vault-name', vaultName, '-o', 'tsv', '--query', 'value', '--name', 'nfdiv-case-api-dot-env'
+      commandLine 'az', 'keyvault', 'secret', 'show', '--vault-name', vaultName, '-o', 'tsv', '--query', 'value', '--name', secretName
       standardOutput = os
     }
-    project.file('./.aat-env').write(new String(os.toString().replace('\n', '').decodeBase64(), java.nio.charset.StandardCharsets.UTF_8))
+    return os.toString().replace('\n', '')
   }
 }
 
@@ -323,14 +323,17 @@ bootRun {
     if (System.getenv("IDAM_API_BASEURL") == null) {
       println("Loading secrets from vault")
 
-      if (!project.file('./.aat-env').exists()) {
-        getVaultSecret()
-      }
+      systemProperty 'IDAM_API_BASEURL', 'https://idam-api.aat.platform.hmcts.net'
 
-      project.file('./.aat-env').readLines().each() {
-        def (key, value) = it.tokenize('=')
-        environment key, value
-      }
+      systemProperty 'UK_GOV_NOTIFY_API_KEY', getVaultSecret('uk-gov-notify-api-key')
+      systemProperty 'S2S_SECRET', getVaultSecret('s2s-case-api-secret')
+      systemProperty 'IDAM_CASEWORKER_USERNAME', getVaultSecret('idam-caseworker-username')
+      systemProperty 'IDAM_CASEWORKER_PASSWORD', getVaultSecret('idam-caseworker-password')
+      systemProperty 'IDAM_SYSTEM_UPDATE_USERNAME', getVaultSecret('idam-systemupdate-username')
+      systemProperty 'IDAM_SYSTEM_UPDATE_PASSWORD', getVaultSecret('idam-systemupdate-password')
+      systemProperty 'IDAM_SOLICITOR_USERNAME', getVaultSecret('idam-solicitor-username')
+      systemProperty 'IDAM_SOLICITOR_PASSWORD', getVaultSecret('idam-solicitor-password')
+      systemProperty 'IDAM_CLIENT_SECRET', getVaultSecret('idam-secret')
     }
   }
 }
@@ -350,14 +353,17 @@ functional {
     if (System.getenv("OAUTH2_CLIENT_SECRET") == null) {
       println("Loading secrets from vault")
 
-      if (!project.file('./.aat-env').exists()) {
-        getVaultSecret()
-      }
+      systemProperty 'IDAM_API_BASEURL', 'https://idam-api.aat.platform.hmcts.net'
 
-      project.file('./.aat-env').readLines().each() {
-        def (key, value) = it.tokenize('=')
-        environment key, value
-      }
+      systemProperty 'UK_GOV_NOTIFY_API_KEY', getVaultSecret('uk-gov-notify-api-key')
+      systemProperty 'S2S_SECRET', getVaultSecret('s2s-case-api-secret')
+      systemProperty 'IDAM_CASEWORKER_USERNAME', getVaultSecret('idam-caseworker-username')
+      systemProperty 'IDAM_CASEWORKER_PASSWORD', getVaultSecret('idam-caseworker-password')
+      systemProperty 'IDAM_SYSTEM_UPDATE_USERNAME', getVaultSecret('idam-systemupdate-username')
+      systemProperty 'IDAM_SYSTEM_UPDATE_PASSWORD', getVaultSecret('idam-systemupdate-password')
+      systemProperty 'IDAM_SOLICITOR_USERNAME', getVaultSecret('idam-solicitor-username')
+      systemProperty 'IDAM_SOLICITOR_PASSWORD', getVaultSecret('idam-solicitor-password')
+      systemProperty 'OAUTH2_CLIENT_SECRET', getVaultSecret('idam-secret')
     }
   }
 }
@@ -388,15 +394,14 @@ ccd {
 
 class CftlibTask extends Exec {
   CftlibTask() {
-    if (!project.file('./.aat-env').exists()) {
-      getVaultSecret()
+      project.file('../.env').readLines().each() {
+        def (key, value) = it.tokenize('=')
+        environment key, value
+      }
+      environment 'IDAM_API_URL_BASE', 'https://idam-api.aat.platform.hmcts.net'
+      environment 'DEFINITION_STORE_URL_BASE', 'http://localhost:4013'
+      environment 'CCD_USER_PROFILE_URL', 'http://localhost:4013'
     }
-
-    project.file('./.aat-env').readLines().each() {
-      def (key, value) = it.tokenize('=')
-      environment key, value
-    }
-  }
 }
 
 generateCCDConfig {
@@ -412,14 +417,35 @@ task bootWithCcd(type: org.springframework.boot.gradle.tasks.run.BootRun, depend
     mainClass = tasks.bootRun.mainClass
     doFirst() {
         println("Loading secrets from vault")
-        if (!project.file('./.aat-env').exists()) {
-          getVaultSecret()
-        }
 
-        project.file('./.aat-env').readLines().each() {
+        project.file('../.env').readLines().each() {
             def (key, value) = it.tokenize('=')
             environment key, value
         }
+        environment 'IDAM_API_URL_BASE', 'https://idam-api.aat.platform.hmcts.net'
+        environment 'DEFINITION_STORE_URL_BASE', 'http://localhost:4013'
+        environment 'CCD_USER_PROFILE_URL', 'http://localhost:4013'
+
+        systemProperty 'IDAM_API_BASEURL', 'https://idam-api.aat.platform.hmcts.net'
+
+        systemProperty 'IDAM_SOLICITOR_USERNAME', getVaultSecret('idam-solicitor-username')
+        systemProperty 'IDAM_SOLICITOR_PASSWORD', getVaultSecret('idam-solicitor-password')
+        systemProperty 'IDAM_CLIENT_SECRET', getVaultSecret('idam-secret')
+
+        systemProperty 'IDAM_DATA_STORE_SYSTEM_USER_USERNAME', '${CCD_SYSTEM_UPDATE_USERNAME}'
+        systemProperty 'IDAM_DATA_STORE_SYSTEM_USER_PASSWORD', '${CCD_SYSTEM_UPDATE_PASSWORD}'
+
+        // CCD config
+        systemProperty 'IDAM_OAUTH2_DATA_STORE_CLIENT_SECRET', getVaultSecret('idam-data-store-client-secret', 'ccd-aat')
+        systemProperty 'IDAM_API_BASE_URL', 'https://idam-api.aat.platform.hmcts.net'
+        systemProperty 'IDAM_S2S_URL', 'http://rpe-service-auth-provider-aat.service.core-compute-aat.internal'
+        systemProperty 'IDAM_CLIENT_ID', 'nfdiv_case_api'
+        systemProperty 'CASE_DOCUMENT_AM_URL', 'http://ccd-case-document-am-api-aat.service.core-compute-aat.internal'
+
+        systemProperty 'S2S_AUTHORISED_SERVICES', 'ccd_definition,ccd_data,xui_webapp,nfdiv_case_api,ccd_gw'
+
+        systemProperty 'LD_SDK_KEY', '${AM_LD_SDK_KEY}'
+
     }
 }
 
