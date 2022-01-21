@@ -14,7 +14,7 @@ public class ExceptionRecordCaseTypeConfig implements CCDConfig<ExceptionRecord,
 
     @Override
     public void configure(final ConfigBuilder<ExceptionRecord, ExceptionRecordState, UserRole> configBuilder) {
-        configBuilder.caseType(CASE_TYPE, "Exception record", "Exception record for new law case");
+        configBuilder.caseType(CASE_TYPE, "New law case exception record", "Exception record for new law case");
         configBuilder.jurisdiction(JURISDICTION, "Family Divorce", "Manage new law case exception records");
     }
 }
