@@ -29,7 +29,7 @@ public class CommonContent {
     public static final String NO = "no";
 
     public static final String CREATE_ACCOUNT_LINK = "create account link";
-    public static final String SIGN_IN_URL_NOTIFY_KEY = "signin url";
+    public static final String SIGN_IN_URL = "signin url";
     public static final String SIGN_IN_DIVORCE_URL = "signInDivorceUrl";
     public static final String SIGN_IN_DISSOLUTION_URL = "signInDissolutionUrl";
     public static final String DIVORCE_COURT_EMAIL = "divorceCourtEmail";
@@ -74,7 +74,7 @@ public class CommonContent {
         templateVars.put(PARTNER, caseData.isDivorce() ? partner.getGender() == MALE ? "husband" : "wife" : "civil partner");
         templateVars.put(COURT_EMAIL,
             config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
-        templateVars.put(SIGN_IN_URL_NOTIFY_KEY,
+        templateVars.put(SIGN_IN_URL,
             config.getTemplateVars().get(caseData.isDivorce() ? SIGN_IN_DIVORCE_URL : SIGN_IN_DISSOLUTION_URL));
         return templateVars;
     }

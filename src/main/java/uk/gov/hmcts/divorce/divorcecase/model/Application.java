@@ -362,6 +362,13 @@ public class Application {
     private State previousState;
 
     @CCD(
+        label = "Bulk Scan state to transition to",
+        typeOverride = FixedList,
+        typeParameterOverride = "State"
+    )
+    private State stateToTransitionApplicationTo;
+
+    @CCD(
         label = "Payments",
         typeOverride = Collection,
         typeParameterOverride = "Payment",

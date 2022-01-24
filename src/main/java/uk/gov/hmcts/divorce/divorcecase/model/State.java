@@ -302,6 +302,11 @@ public enum State {
     NewPaperCase("NewPaperCase"),
 
     @CCD(
+        name = "Offline document received by CW"
+    )
+    OfflineDocumentReceived("OfflineDocumentReceived"),
+
+    @CCD(
         name = "Removed from bulk case",
         label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {CaseAccessAdministrator.class}
