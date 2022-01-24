@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ProgressPaperCase;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -37,13 +38,17 @@ public class CaseworkerProgressPaperCaseTest {
 
     @Test
     void shouldUpdateCaseStateWhenCaseworkerSelectsAwaitingPayment() {
+
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        final CaseData caseData = CaseData.builder().build();
+        CaseData caseData = CaseData.builder()
+            .application(Application.builder()
+                .progressPaperCase(ProgressPaperCase.AWAITING_PAYMENT)
+                .build())
+            .build();
 
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
-        caseData.setProgressPaperCase(ProgressPaperCase.AWAITING_PAYMENT);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerProgressPaperCase.aboutToSubmit(caseDetails, caseDetails);
 
@@ -54,11 +59,14 @@ public class CaseworkerProgressPaperCaseTest {
     void shouldUpdateCaseStateWhenCaseworkerSelectsAwaitingDocuments() {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        final CaseData caseData = CaseData.builder().build();
+        CaseData caseData = CaseData.builder()
+            .application(Application.builder()
+                .progressPaperCase(ProgressPaperCase.AWAITING_DOCUMENTS)
+                .build())
+            .build();
 
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
-        caseData.setProgressPaperCase(ProgressPaperCase.AWAITING_DOCUMENT);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerProgressPaperCase.aboutToSubmit(caseDetails, caseDetails);
 
@@ -69,11 +77,14 @@ public class CaseworkerProgressPaperCaseTest {
     void shouldUpdateCaseStateWhenCaseworkerSelectsSubmitted() {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        final CaseData caseData = CaseData.builder().build();
+        CaseData caseData = CaseData.builder()
+            .application(Application.builder()
+                .progressPaperCase(ProgressPaperCase.SUBMITTED)
+                .build())
+            .build();
 
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
-        caseData.setProgressPaperCase(ProgressPaperCase.SUBMITTED);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerProgressPaperCase.aboutToSubmit(caseDetails, caseDetails);
 

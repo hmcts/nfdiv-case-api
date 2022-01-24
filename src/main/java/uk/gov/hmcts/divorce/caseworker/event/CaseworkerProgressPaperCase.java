@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ProgressPaperCase;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -48,7 +49,9 @@ public class CaseworkerProgressPaperCase implements CCDConfig<CaseData, State, U
                 LEGAL_ADVISOR))
             .page("Progress paper case")
             .pageLabel("Progress paper case")
-            .mandatory(CaseData::getProgressPaperCase)
+            .complex(CaseData::getApplication)
+                .mandatory(Application::getProgressPaperCase)
+                .done()
             .done();
     }
 
@@ -58,12 +61,12 @@ public class CaseworkerProgressPaperCase implements CCDConfig<CaseData, State, U
 
         var caseData = details.getData();
 
-        if (caseData.getProgressPaperCase().equals(ProgressPaperCase.SUBMITTED)) {
+        if (caseData.getApplication().getProgressPaperCase().equals(ProgressPaperCase.SUBMITTED)) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .state(Submitted)
                 .build();
-        } else if (caseData.getProgressPaperCase().equals(ProgressPaperCase.AWAITING_DOCUMENT)) {
+        } else if (caseData.getApplication().getProgressPaperCase().equals(ProgressPaperCase.AWAITING_DOCUMENTS)) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .state(AwaitingDocuments)
