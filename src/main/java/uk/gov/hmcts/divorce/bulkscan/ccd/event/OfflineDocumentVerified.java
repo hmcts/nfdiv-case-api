@@ -5,28 +5,26 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.bulkscan.ccd.ExceptionRecordPageBuilder;
-import uk.gov.hmcts.divorce.bulkscan.ccd.ExceptionRecordState;
-import uk.gov.hmcts.divorce.bulkscan.data.ExceptionRecord;
+import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import java.util.List;
-
-import static org.apache.commons.lang3.EnumUtils.isValidEnum;
-import static uk.gov.hmcts.divorce.bulkscan.ccd.ExceptionRecordState.OfflineDocumentReceived;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER_BULK_SCAN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
-public class OfflineDocumentVerified implements CCDConfig<ExceptionRecord, ExceptionRecordState, UserRole> {
+public class OfflineDocumentVerified implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_OFFLINE_DOCUMENT_VERIFIED = "caseworker-offline-document-verified";
 
     @Override
-    public void configure(final ConfigBuilder<ExceptionRecord, ExceptionRecordState, UserRole> configBuilder) {
-        new ExceptionRecordPageBuilder(configBuilder
+    public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        new PageBuilder(configBuilder
             .event(CASEWORKER_OFFLINE_DOCUMENT_VERIFIED)
             .initialState(OfflineDocumentReceived)
             .name("Offline Document Verified")
@@ -35,28 +33,21 @@ public class OfflineDocumentVerified implements CCDConfig<ExceptionRecord, Excep
             .grant(CREATE_READ_UPDATE, CASE_WORKER_BULK_SCAN, CASE_WORKER, SUPER_USER))
             .page("Update case state")
             .pageLabel("Update case state")
-            .mandatory(ExceptionRecord::getStateToTransitionTo);
+            .complex(CaseData::getApplication)
+            .mandatory(Application::getStateToTransitionApplicationTo)
+            .done();
     }
 
-    public AboutToStartOrSubmitResponse<ExceptionRecord, ExceptionRecordState> aboutToSubmit(
-        CaseDetails<ExceptionRecord, ExceptionRecordState> details,
-        CaseDetails<ExceptionRecord, ExceptionRecordState> beforeDetails
-    ) {
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
+                                                                       CaseDetails<CaseData, State> beforeDetails) {
 
-        ExceptionRecord data = details.getData();
-        if (isValidEnum(ExceptionRecordState.class, data.getStateToTransitionTo())) {
-            ExceptionRecordState state = ExceptionRecordState.valueOf(data.getStateToTransitionTo());
-            data.setStateToTransitionTo("");
+        final CaseData data = details.getData();
+        final State state = data.getApplication().getStateToTransitionApplicationTo();
+        data.getApplication().setStateToTransitionApplicationTo(null);
 
-            return AboutToStartOrSubmitResponse.<ExceptionRecord, ExceptionRecordState>builder()
-                .data(data)
-                .state(state)
-                .build();
-        }
-
-        return AboutToStartOrSubmitResponse.<ExceptionRecord, ExceptionRecordState>builder()
-            .state(details.getState())
-            .errors(List.of("State entered is not a valid Exception Record State"))
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(data)
+            .state(state)
             .build();
     }
 }

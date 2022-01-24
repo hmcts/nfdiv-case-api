@@ -10,13 +10,16 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.bulkscan.ccd.ExceptionRecordState;
 import uk.gov.hmcts.divorce.bulkscan.data.ExceptionRecord;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.bulkscan.ccd.ExceptionRecordState.ScannedRecordCaseCreated;
 import static uk.gov.hmcts.divorce.bulkscan.ccd.ExceptionRecordState.ScannedRecordManuallyHandled;
 import static uk.gov.hmcts.divorce.bulkscan.ccd.event.OfflineDocumentVerified.CASEWORKER_OFFLINE_DOCUMENT_VERIFIED;
-import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createExceptionRecordConfigBuilder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAmendedApplication;
+import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,7 +30,7 @@ public class OfflineDocumentVerifiedTest {
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
-        final ConfigBuilderImpl<ExceptionRecord, ExceptionRecordState, UserRole> configBuilder = createExceptionRecordConfigBuilder();
+        final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         offlineDocumentVerified.configure(configBuilder);
 
@@ -38,33 +41,18 @@ public class OfflineDocumentVerifiedTest {
 
     @Test
     void shouldSetStateToUserValueProvided() {
-        final CaseDetails<ExceptionRecord, ExceptionRecordState> details = new CaseDetails<>();
-        ExceptionRecord exceptionRecord = ExceptionRecord.builder()
-            .stateToTransitionTo("ScannedRecordManuallyHandled")
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        CaseData caseData = CaseData.builder()
+            .application(Application.builder()
+                .stateToTransitionApplicationTo(AwaitingAmendedApplication)
+                .build())
             .build();
-        details.setData(exceptionRecord);
+        details.setData(caseData);
 
-        AboutToStartOrSubmitResponse<ExceptionRecord, ExceptionRecordState> response =
+        AboutToStartOrSubmitResponse<CaseData, State> response =
             offlineDocumentVerified.aboutToSubmit(details, details);
 
-        assertThat(response.getData().getStateToTransitionTo()).isBlank();
-        assertThat(response.getState()).isEqualTo(ScannedRecordManuallyHandled);
-    }
-
-    @Test
-    void shouldHandleInvalidStateProvided() {
-        final CaseDetails<ExceptionRecord, ExceptionRecordState> details = new CaseDetails<>();
-        ExceptionRecord exceptionRecord = ExceptionRecord.builder()
-            .stateToTransitionTo("InvalidState")
-            .build();
-        details.setData(exceptionRecord);
-        details.setState(ScannedRecordCaseCreated);
-
-        AboutToStartOrSubmitResponse<ExceptionRecord, ExceptionRecordState> response =
-            offlineDocumentVerified.aboutToSubmit(details, details);
-
-        assertThat(response.getState()).isEqualTo(ScannedRecordCaseCreated);
-        assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains("State entered is not a valid Exception Record State");
+        assertThat(response.getData().getApplication().getStateToTransitionApplicationTo()).isNull();
+        assertThat(response.getState().getName()).isEqualTo(AwaitingAmendedApplication.getName());
     }
 }
