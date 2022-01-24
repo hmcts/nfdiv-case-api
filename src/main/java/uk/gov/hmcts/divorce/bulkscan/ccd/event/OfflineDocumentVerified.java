@@ -30,6 +30,7 @@ public class OfflineDocumentVerified implements CCDConfig<CaseData, State, UserR
             .name("Offline Document Verified")
             .description("Offline Document Verified")
             .showEventNotes()
+            .showSummary()
             .grant(CREATE_READ_UPDATE, CASE_WORKER_BULK_SCAN, CASE_WORKER, SUPER_USER))
             .page("Update case state")
             .pageLabel("Update case state")
@@ -43,7 +44,6 @@ public class OfflineDocumentVerified implements CCDConfig<CaseData, State, UserR
 
         final CaseData data = details.getData();
         final State state = data.getApplication().getStateToTransitionApplicationTo();
-        data.getApplication().setStateToTransitionApplicationTo(null);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)

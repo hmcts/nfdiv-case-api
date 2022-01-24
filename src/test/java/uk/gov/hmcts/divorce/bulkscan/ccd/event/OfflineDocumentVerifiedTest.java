@@ -49,7 +49,6 @@ public class OfflineDocumentVerifiedTest {
         AboutToStartOrSubmitResponse<CaseData, State> response =
             offlineDocumentVerified.aboutToSubmit(details, details);
 
-        assertThat(response.getData().getApplication().getStateToTransitionApplicationTo()).isNull();
         assertThat(response.getState().getName()).isEqualTo(AwaitingAmendedApplication.getName());
     }
 }
