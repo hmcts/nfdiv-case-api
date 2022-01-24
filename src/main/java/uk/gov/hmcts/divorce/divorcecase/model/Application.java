@@ -425,6 +425,13 @@ public class Application {
     )
     private Document applicant2SolicitorAnswersLink;
 
+    @CCD(
+        label = "Progress paper case",
+        typeOverride = FixedList,
+        typeParameterOverride = "ProgressPaperCase"
+    )
+    private ProgressPaperCase progressPaperCase;
+
     @JsonIgnore
     public boolean hasBeenPaidFor() {
         return null != applicationFeeOrderSummary
