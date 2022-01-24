@@ -20,7 +20,8 @@ bin/main/application.yaml
 *.ipr
 
 .DS_Store
-
+applicationinsights-agent-*.jar
+*.log
 .vscode/
 node_modules/
 *.xls
