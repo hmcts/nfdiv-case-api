@@ -303,7 +303,7 @@ dependencies {
   functionalTestImplementation group: 'com.github.hmcts', name: 'document-management-client', version: '7.0.1'
   functionalTestImplementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '4.0.2'
 
-  cftlibImplementation 'com.github.hmcts:rse-cft-lib:0.5.6'
+  cftlibImplementation 'com.github.hmcts:rse-cft-lib:0.6.0'
 }
 
 mainClassName = 'uk.gov.hmcts.divorce.CaseApiApplication'
