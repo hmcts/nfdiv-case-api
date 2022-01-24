@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.bulkscan.ccd.event;
+package uk.gov.hmcts.divorce.caseworker.event;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,28 +8,29 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.event.CaseworkerOfflineDocumentVerified;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.bulkscan.ccd.event.OfflineDocumentVerified.CASEWORKER_OFFLINE_DOCUMENT_VERIFIED;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerOfflineDocumentVerified.CASEWORKER_OFFLINE_DOCUMENT_VERIFIED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAmendedApplication;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-public class OfflineDocumentVerifiedTest {
+public class CaseworkerOfflineDocumentVerifiedTest {
 
     @InjectMocks
-    private OfflineDocumentVerified offlineDocumentVerified;
+    private CaseworkerOfflineDocumentVerified caseworkerOfflineDocumentVerified;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        offlineDocumentVerified.configure(configBuilder);
+        caseworkerOfflineDocumentVerified.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
@@ -47,7 +48,7 @@ public class OfflineDocumentVerifiedTest {
         details.setData(caseData);
 
         AboutToStartOrSubmitResponse<CaseData, State> response =
-            offlineDocumentVerified.aboutToSubmit(details, details);
+            caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
 
         assertThat(response.getState().getName()).isEqualTo(AwaitingAmendedApplication.getName());
     }
