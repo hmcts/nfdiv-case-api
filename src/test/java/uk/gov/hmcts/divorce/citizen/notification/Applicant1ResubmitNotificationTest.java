@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.citizen.notification.Applicant1ResubmitNotification.THEIR_EMAIL_ADDRESS;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL_NOTIFY_KEY;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT1_CHANGES_MADE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE;
@@ -109,7 +109,7 @@ class Applicant1ResubmitNotificationTest {
             eq(JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE),
             argThat(allOf(
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER)),
-                hasEntry(SIGN_IN_URL_NOTIFY_KEY, SIGN_IN_DIVORCE_TEST_URL + app2CheckJointAnswers)
+                hasEntry(SIGN_IN_URL, SIGN_IN_DIVORCE_TEST_URL + app2CheckJointAnswers)
             )),
             eq(ENGLISH)
         );
@@ -130,7 +130,7 @@ class Applicant1ResubmitNotificationTest {
             eq(JOINT_APPLICANT2_APPLICANT1_CHANGES_MADE),
             argThat(allOf(
                 hasEntry(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER)),
-                hasEntry(SIGN_IN_URL_NOTIFY_KEY, SIGN_IN_DISSOLUTION_TEST_URL + app2CheckJointAnswers)
+                hasEntry(SIGN_IN_URL, SIGN_IN_DISSOLUTION_TEST_URL + app2CheckJointAnswers)
             )),
             eq(ENGLISH)
         );
