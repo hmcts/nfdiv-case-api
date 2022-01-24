@@ -12,9 +12,9 @@ public class SearchResultFields implements CCDConfig<CaseData, State, UserRole> 
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-
         configBuilder
             .searchResultFields()
-            .caseReferenceField();
+            .caseReferenceField()
+            .field("evidenceHandled","Supplementary evidence handled");
     }
 }
