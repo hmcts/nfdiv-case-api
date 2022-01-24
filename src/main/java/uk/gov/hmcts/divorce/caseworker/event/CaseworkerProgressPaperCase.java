@@ -39,6 +39,7 @@ public class CaseworkerProgressPaperCase implements CCDConfig<CaseData, State, U
             .name("Progress paper case")
             .description("Progress paper case")
             .showEventNotes()
+            .showSummary()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE,
                 CASE_WORKER)
