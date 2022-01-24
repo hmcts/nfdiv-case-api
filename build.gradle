@@ -329,12 +329,12 @@ task reloadEnvSecrets(group: 'ccd tasks') {
   dependsOn loadEnvSecrets
 }
 
+tasks.bootRun.dependsOn loadEnvSecrets
 bootRun {
   doFirst() {
     if (System.getenv("IDAM_API_BASEURL") == null) {
       println("Loading secrets from vault")
 
-      dependsOn loadEnvSecrets
       project.file('./.aat-env').readLines().each() {
         def index = it.indexOf("=")
         def key = it.substring(0, index)
