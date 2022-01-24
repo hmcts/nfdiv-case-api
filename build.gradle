@@ -402,14 +402,15 @@ generateCCDConfig {
 
 task bootXui(group: 'ccd tasks', dependsOn: [loadEnvSecrets]) {
   doLast {
-    project.file('./.aat-env').readLines().each() {
-      def index = it.indexOf("=")
-      def key = it.substring(0, index)
-      def value = it.substring(index + 1)
-      environment key, value
+    exec {
+      project.file('./.aat-env').readLines().each() {
+        def index = it.indexOf("=")
+        def key = it.substring(0, index)
+        def value = it.substring(index + 1)
+        environment key, value
+      }
+      commandLine 'docker-compose',  '-f', 'docker-compose-xui.yml', 'up'
     }
-
-    commandLine 'docker-compose',  '-f', 'docker-compose-xui.yml', 'up'
   }
 }
 
