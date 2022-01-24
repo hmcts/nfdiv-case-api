@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER;
@@ -107,20 +109,55 @@ public class AppliedForConditionalOrderNotification implements ApplicantNotifica
     }
 
     private Map<String, String> jointTemplateVars(CaseData data, Applicant partner, String whichApplicant) {
-        boolean partnerApplied = alreadyApplied(data, whichPartner(whichApplicant));
+        Map<String, String> templateVars = defaultJointTemplateVars();
+        if (alreadyApplied(data, whichPartner(whichApplicant))) {
+            templateVars.putAll(divorceDissolutionJointTemplateVars(
+                partner,
+                data.isDivorce(),
+                WIFE_APPLIED,
+                HUSBAND_APPLIED,
+                CIVIL_PARTNER_APPLIED
+            ));
+            templateVars.put(PARTNER_APPLIED, YES);
+        } else {
+            templateVars.putAll(divorceDissolutionJointTemplateVars(
+                partner,
+                data.isDivorce(),
+                WIFE_DID_NOT_APPLY,
+                HUSBAND_DID_NOT_APPLY,
+                CIVIL_PARTNER_DID_NOT_APPLY
+            ));
+            templateVars.put(PARTNER_DID_NOT_APPLY, YES);
+            templateVars.put(PARTNER_DID_NOT_APPLY_DUE_DATE,
+                coQuestions(data, whichApplicant).getSubmittedDate().plusDays(14).format(DATE_TIME_FORMATTER));
+        }
+        return templateVars;
+    }
+
+    private Map<String, String> divorceDissolutionJointTemplateVars(
+        Applicant partner, boolean isDivorce, String wifeVar, String husbandVar, String civilPartnerVar
+    ) {
         Map<String, String> templateVars = new HashMap<>();
-        templateVars.put(WIFE_APPLIED, yesNo(partnerApplied && data.isDivorce() && Gender.FEMALE.equals(partner.getGender())));
-        templateVars.put(HUSBAND_APPLIED, yesNo(partnerApplied && data.isDivorce() && Gender.MALE.equals(partner.getGender())));
-        templateVars.put(CIVIL_PARTNER_APPLIED, yesNo(partnerApplied && !data.isDivorce()));
-        templateVars.put(PARTNER_APPLIED, yesNo(partnerApplied));
-        templateVars.put(WIFE_DID_NOT_APPLY,
-            yesNo(!partnerApplied && data.isDivorce() && Gender.FEMALE.equals(partner.getGender())));
-        templateVars.put(HUSBAND_DID_NOT_APPLY,
-            yesNo(!partnerApplied && data.isDivorce() && Gender.MALE.equals(partner.getGender())));
-        templateVars.put(CIVIL_PARTNER_DID_NOT_APPLY, yesNo(!partnerApplied && !data.isDivorce()));
-        templateVars.put(PARTNER_DID_NOT_APPLY, yesNo(!partnerApplied));
-        templateVars.put(PARTNER_DID_NOT_APPLY_DUE_DATE,
-            !partnerApplied ? coQuestions(data, whichApplicant).getSubmittedDate().plusDays(14).format(DATE_TIME_FORMATTER) : "");
+        if (isDivorce) {
+            templateVars.put(wifeVar, Gender.FEMALE.equals(partner.getGender()) ? YES : NO);
+            templateVars.put(husbandVar, Gender.MALE.equals(partner.getGender()) ? YES : NO);
+        } else {
+            templateVars.put(civilPartnerVar, YES);
+        }
+        return templateVars;
+    }
+
+    private Map<String, String> defaultJointTemplateVars() {
+        Map<String, String> templateVars = new HashMap<>();
+        templateVars.put(WIFE_APPLIED, NO);
+        templateVars.put(HUSBAND_APPLIED, NO);
+        templateVars.put(CIVIL_PARTNER_APPLIED, NO);
+        templateVars.put(PARTNER_APPLIED, NO);
+        templateVars.put(WIFE_DID_NOT_APPLY, NO);
+        templateVars.put(HUSBAND_DID_NOT_APPLY, NO);
+        templateVars.put(CIVIL_PARTNER_DID_NOT_APPLY, NO);
+        templateVars.put(PARTNER_DID_NOT_APPLY, NO);
+        templateVars.put(PARTNER_DID_NOT_APPLY_DUE_DATE, "");
         return templateVars;
     }
 
@@ -140,10 +177,6 @@ public class AppliedForConditionalOrderNotification implements ApplicantNotifica
 
     private String whichPartner(String whichApplicant) {
         return whichApplicant.equalsIgnoreCase(APPLICANT1) ? APPLICANT2 : APPLICANT1;
-    }
-
-    private String yesNo(boolean condition) {
-        return condition ? "yes" : "no";
     }
 
     public void setSubmittingUserId(String userId) {
