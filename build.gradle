@@ -26,7 +26,7 @@ plugins {
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'org.springframework.boot' version '2.6.3'
   id 'com.github.ben-manes.versions' version '0.41.0'
-  id 'hmcts.ccd.sdk' version '0.25.2'
+  id 'hmcts.ccd.sdk' version '0.25.5'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -279,7 +279,7 @@ dependencies {
 
   functionalTestImplementation sourceSets.main.runtimeClasspath
   functionalTestImplementation sourceSets.test.runtimeClasspath
-  functionalTestImplementation group: 'uk.gov.hmcts.reform', name: 'document-management-client', version: '7.0.0'
+  functionalTestImplementation group: 'com.github.hmcts', name: 'document-management-client', version: '7.0.1'
 }
 
 mainClassName = 'uk.gov.hmcts.divorce.CaseApiApplication'
