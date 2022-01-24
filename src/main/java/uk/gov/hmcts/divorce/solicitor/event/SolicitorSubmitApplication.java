@@ -15,7 +15,6 @@ import uk.gov.hmcts.divorce.common.service.SubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
@@ -25,8 +24,6 @@ import uk.gov.hmcts.divorce.solicitor.event.page.SolPayAccount;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayment;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPaymentSummary;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolStatementOfTruth;
-import uk.gov.hmcts.divorce.solicitor.service.notification.SolicitorSubmittedNotification;
-import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
@@ -42,7 +39,6 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
@@ -69,12 +65,6 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
 
     @Autowired
     private SubmissionService submissionService;
-
-    @Autowired
-    private SolicitorSubmittedNotification solicitorSubmittedNotification;
-
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -192,16 +182,6 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         }
     }
 
-    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
-                                               CaseDetails<CaseData, State> beforeDetails) {
-
-        if (Submitted == details.getState()) {
-            notificationDispatcher.send(solicitorSubmittedNotification, details.getData(), details.getId());
-        }
-
-        return SubmittedCallbackResponse.builder().build();
-    }
-
     private PageBuilder addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         return new PageBuilder(configBuilder.event(SOLICITOR_SUBMIT)
@@ -214,7 +194,6 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             .endButtonLabel("Submit Application")
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, SOLICITOR)
             .grant(READ,
                 CASE_WORKER,
