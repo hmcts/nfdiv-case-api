@@ -56,12 +56,6 @@ public enum State {
     AwaitingPayment("AwaitingPayment"),
 
     @CCD(
-        name = "New paper case",
-        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
-    )
-    NewPaperCase("NewPaperCase"),
-
-    @CCD(
         name = "Application rejected",
         label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {CaseAccessAdministrator.class}
@@ -300,6 +294,12 @@ public enum State {
         access = {CaseAccessAdministrator.class}
     )
     AwaitingPronouncement("AwaitingPronouncement"),
+
+    @CCD(
+        name = "New paper case",
+        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+    )
+    NewPaperCase("NewPaperCase"),
 
     @CCD(
         name = "Removed from bulk case",
