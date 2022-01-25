@@ -19,5 +19,5 @@ public class OcrDataValidationRequest {
 
     @NotEmpty
     @JsonProperty("ocr_data_fields")
-    private List<ListValue<KeyValue>> ocrDataFields;
+    private List<KeyValue> ocrDataFields;
 }

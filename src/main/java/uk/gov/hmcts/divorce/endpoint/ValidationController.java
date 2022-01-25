@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.endpoint;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -7,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriUtils;
+import uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator;
 import uk.gov.hmcts.divorce.endpoint.data.*;
 
 import javax.validation.Valid;
@@ -17,6 +19,9 @@ import static org.apache.commons.lang3.EnumUtils.isValidEnum;
 
 @RestController
 public class ValidationController {
+
+    @Autowired
+    private OcrValidator validator;
 
     @PostMapping(
         value = "/forms/{form-type}/validate-ocr",
@@ -39,10 +44,9 @@ public class ValidationController {
         // Is s2s required
         // configure http controllers in config
         // Required: s2s token
-        // Write handle validation function
 
-        ValidationResult result = handleValidation(requestBody);
+        OcrValidationResponse result = validator.validateExceptionRecord(requestBody);
 
-        return ResponseEntity.ok().body(new OcrValidationResponse(result.getWarnings(), result.getErrors(), result.getStatus()));
+        return ResponseEntity.ok().body(result);
     }
 }
