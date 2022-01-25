@@ -63,11 +63,18 @@ class CommonContentTest {
     @Test
     void shouldGetPartner() {
         CaseData caseData = caseData();
+        caseData.getApplicant2().setGender(FEMALE);
         assertThat(commonContent.getPartner(caseData, caseData.getApplicant2())).isEqualTo("wife");
 
+        caseData = caseData();
         caseData.getApplicant2().setGender(Gender.MALE);
         assertThat(commonContent.getPartner(caseData, caseData.getApplicant2())).isEqualTo("husband");
 
+        caseData = caseData();
+        caseData.getApplicant2().setGender(null);
+        assertThat(commonContent.getPartner(caseData, caseData.getApplicant2())).isEqualTo("wife");
+
+        caseData = caseData();
         caseData.setDivorceOrDissolution(DISSOLUTION);
         assertThat(commonContent.getPartner(caseData, caseData.getApplicant2())).isEqualTo("civil partner");
     }
