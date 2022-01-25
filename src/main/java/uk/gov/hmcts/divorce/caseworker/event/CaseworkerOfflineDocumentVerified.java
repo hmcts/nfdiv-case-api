@@ -26,7 +26,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_OFFLINE_DOCUMENT_VERIFIED)
-            .initialState(OfflineDocumentReceived)
+            .forState(OfflineDocumentReceived)
             .name("Offline Document Verified")
             .description("Offline Document Verified")
             .showEventNotes()
