@@ -200,13 +200,17 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("conditionalOrder", "Conditional Order")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, SOLICITOR, SUPER_USER)
             .showCondition("coApplicant1SubmittedDate=\"*\"")
-            .label("labelConditionalOrderDetails-Applicant1", "applicationType=\"jointApplication\" AND coApplicant1ApplyForConditionalOrderStarted=\"*\"", "### Applicant 1")
+            .label("labelConditionalOrderDetails-Applicant1",
+                "applicationType=\"jointApplication\" AND coApplicant1ApplyForConditionalOrderStarted=\"*\"",
+                "### Applicant 1")
             .field("coApplicant1ApplyForConditionalOrder")
             .field("coApplicant1ConfirmInformationStillCorrect")
             .field("coApplicant1SubmittedDate")
             .field("coApplicant1ChangeOrAddToApplication")
             .field("coApplicant1StatementOfTruth")
-            .label("labelConditionalOrderDetails-Applicant2", "applicationType=\"jointApplication\" AND coApplicant2ApplyForConditionalOrderStarted=\"*\"", "### Applicant 2")
+            .label("labelConditionalOrderDetails-Applicant2",
+                "applicationType=\"jointApplication\" AND coApplicant2ApplyForConditionalOrderStarted=\"*\"",
+                "### Applicant 2")
             .field("coApplicant2ApplyForConditionalOrder")
             .field("coApplicant1ConfirmInformationStillCorrect")
             .field("coApplicant2SubmittedDate")
