@@ -17,7 +17,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.Label;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ScannedDocument {
+public class ExceptionRecordScannedDocument {
 
     @CCD(
         label = "Scanned Records",
