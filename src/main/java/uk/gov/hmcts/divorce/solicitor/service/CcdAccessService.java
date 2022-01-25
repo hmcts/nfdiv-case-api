@@ -14,7 +14,6 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesRequest;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.List;
-import java.util.Set;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
@@ -37,13 +36,10 @@ public class CcdAccessService {
     public void addApplicant1SolicitorRole(String solicitorIdamToken, Long caseId, String orgId) {
         User solicitorUser = idamService.retrieveUser(solicitorIdamToken);
         User systemUpdateUser = idamService.retrieveSystemUpdateUserDetails();
-
-        Set<String> caseRoles = Set.of(APPLICANT_1_SOLICITOR.getRole());
-
         String solicitorUserId = solicitorUser.getUserDetails().getId();
 
         log.info("Adding roles {} to case Id {} and user Id {}",
-            caseRoles,
+            APPLICANT_1_SOLICITOR,
             caseId,
             solicitorUserId
         );
@@ -64,6 +60,23 @@ public class CcdAccessService {
         );
 
         log.info("Successfully added the applicant's solicitor roles to case Id {} ", caseId);
+    }
+
+    @Retryable(value = {FeignException.class, RuntimeException.class})
+    public void addRoleToCase(String userId, Long caseId, String orgId, UserRole role) {
+        log.info("Adding roles {} to case Id {} and user Id {}", role, caseId, userId);
+
+        User systemUpdateUser = idamService.retrieveSystemUpdateUserDetails();
+        String idamToken = systemUpdateUser.getAuthToken();
+        String s2sToken = authTokenGenerator.generate();
+
+        caseAssignmentApi.addCaseUserRoles(
+            idamToken,
+            s2sToken,
+            getCaseAssignmentRequest(caseId, userId, orgId, role)
+        );
+
+        log.info("Successfully added the role to case Id {} ", caseId);
     }
 
     @Retryable(value = {FeignException.class, RuntimeException.class})
