@@ -11,7 +11,7 @@ public enum UserRole implements HasRole {
 
     CASE_WORKER("caseworker-divorce-courtadmin_beta", "CRU"),
     CASE_WORKER_BULK_SCAN("caseworker-divorce-bulkscan", "CRU"),
-    CASE_WORKER_BSP_SYSTEMUPDATE("caseworker-bsp-systemupdate", "CRU"),
+    CASE_WORKER_DIVORCE_SYSTEMUPDATE("caseworker-divorce-systemupdate", "CRU"),
     LEGAL_ADVISOR("caseworker-divorce-courtadmin-la", "CRU"),
     SUPER_USER("caseworker-divorce-superuser", "CRU"),
     SYSTEMUPDATE("caseworker-divorce-systemupdate", "CRU"),
