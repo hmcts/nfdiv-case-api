@@ -13,10 +13,8 @@ import java.util.Map;
 
 import static java.util.Objects.nonNull;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
-import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLY_FOR_CONDITIONAL_ORDER;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_AWAITING_CONDITIONAL_ORDER;
 
 @Component
 @Slf4j
@@ -49,24 +47,6 @@ public class ConditionalOrderPendingReminderNotification implements ApplicantNot
     }
 
     @Override
-    public void sendToApplicant1Solicitor(final CaseData caseData, final Long id) {
-        if (caseData.getConditionalOrder().isConditionalOrderPending()) {
-            final Applicant applicant = caseData.getApplicant1();
-
-            final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, id);
-            templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
-
-            notificationService.sendEmail(
-                applicant.getSolicitor().getEmail(),
-                SOLICITOR_AWAITING_CONDITIONAL_ORDER,
-                templateVars,
-                applicant.getLanguagePreference()
-            );
-            log.info("Successfully sent conditional order pending notification for case : {}", id);
-        }
-    }
-
-    @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
         if (!caseData.getConditionalOrder().isConditionalOrderPending()
             && nonNull(caseData.getApplicant2().getEmail())) {
@@ -83,24 +63,6 @@ public class ConditionalOrderPendingReminderNotification implements ApplicantNot
                 templateVars,
                 applicant2.getLanguagePreference()
             );
-        }
-    }
-
-    @Override
-    public void sendToApplicant2Solicitor(final CaseData caseData, final Long id) {
-        if (!caseData.getConditionalOrder().isConditionalOrderPending()) {
-            final Applicant applicant2 = caseData.getApplicant2();
-
-            final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, id);
-            templateVars.put(SOLICITOR_NAME, applicant2.getSolicitor().getName());
-
-            notificationService.sendEmail(
-                applicant2.getSolicitor().getEmail(),
-                SOLICITOR_AWAITING_CONDITIONAL_ORDER,
-                templateVars,
-                applicant2.getLanguagePreference()
-            );
-            log.info("Successfully sent conditional order pending notification for case : {}", id);
         }
     }
 }
