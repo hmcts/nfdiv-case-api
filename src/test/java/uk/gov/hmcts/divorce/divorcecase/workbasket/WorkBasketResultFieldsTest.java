@@ -48,6 +48,10 @@ class WorkBasketResultFieldsTest {
                 tuple("applicant2LastName",
                     "Respondent's Last Name",
                     null,
+                    null),
+                tuple("evidenceHandled",
+                    "Supplementary evidence handled",
+                    null,
                     null)
             );
     }
