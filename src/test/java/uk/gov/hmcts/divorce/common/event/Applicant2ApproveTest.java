@@ -9,6 +9,8 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.Applicant2ApprovedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -20,12 +22,15 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.DivorceApplicationJointTemplateContent;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -161,6 +166,9 @@ class Applicant2ApproveTest {
 
         caseDetails.setState(State.AwaitingApplicant2Response);
 
+        final List<ListValue<DivorceDocument>> documentsGenerated = new ArrayList<>();
+        caseData.setDocumentsGenerated(documentsGenerated);
+
         final Map<String, Object> expectedTemplateContent = new HashMap<>();
         expectedTemplateContent.put(APPLICANT_1_POSTAL_ADDRESS, "App1 Sol Address");
         expectedTemplateContent.put(APPLICANT_2_POSTAL_ADDRESS, "App2 Sol Address");
@@ -229,6 +237,21 @@ class Applicant2ApproveTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
+        final Document document = Document.builder()
+            .filename("test.pdf")
+            .url("testDocUrl.com")
+            .build();
+        final List<ListValue<DivorceDocument>> documentsGenerated = new ArrayList<>();
+        documentsGenerated.add(
+            ListValue.<DivorceDocument>builder()
+                .value(
+                    DivorceDocument.builder()
+                        .documentType(APPLICATION)
+                        .documentLink(document)
+                        .build())
+                .build());
+        caseData.setDocumentsGenerated(documentsGenerated);
+
         caseDetails.setState(State.AwaitingApplicant2Response);
 
         when(divorceApplicationJointTemplateContent.apply(caseData, caseId)).thenReturn(templateContent);
@@ -237,7 +260,7 @@ class Applicant2ApproveTest {
         expectedTemplateContent.put(APPLICANT_1_POSTAL_ADDRESS, "App1 Sol Address");
         expectedTemplateContent.put(APPLICANT_2_POSTAL_ADDRESS, "App2 Sol Address");
 
-        applicant2Approve.aboutToSubmit(caseDetails, caseDetails);
+        AboutToStartOrSubmitResponse<CaseData, State> response = applicant2Approve.aboutToSubmit(caseDetails, caseDetails);
 
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(
@@ -249,6 +272,7 @@ class Applicant2ApproveTest {
                 caseData.getApplicant1().getLanguagePreference(),
                 formatDocumentName(caseId, JOINT_DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME, now(clock))
             );
+        assertThat(response.getData().getApplication().getApplicant2SolicitorAnswersLink()).isEqualTo(document);
     }
 
     @Test
@@ -265,6 +289,9 @@ class Applicant2ApproveTest {
         caseData.getApplication().getApplicant2HelpWithFees().setNeedHelp(YesOrNo.NO);
         caseData.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
         caseData.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
+
+        final List<ListValue<DivorceDocument>> documentsGenerated = new ArrayList<>();
+        caseData.setDocumentsGenerated(documentsGenerated);
 
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);

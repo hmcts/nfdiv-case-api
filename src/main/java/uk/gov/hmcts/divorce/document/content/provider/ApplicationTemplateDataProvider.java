@@ -20,6 +20,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_DOMICILED;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_LAST_RESIDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_RESIDENT;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_JOINT;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_SIX_MONTHS;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_TWELVE_MONTHS;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.RESIDUAL_JURISDICTION;
@@ -35,7 +36,8 @@ public class ApplicationTemplateDataProvider {
         APP_1_RESIDENT_TWELVE_MONTHS,
         APP_1_RESIDENT_SIX_MONTHS,
         APP_1_APP_2_DOMICILED,
-        RESIDUAL_JURISDICTION
+        RESIDUAL_JURISDICTION,
+        APP_1_RESIDENT_JOINT
     );
 
     private static final Map<JurisdictionConnections, String> JOINT_DESCRIPTIONS = Map.ofEntries(
@@ -50,7 +52,8 @@ public class ApplicationTemplateDataProvider {
         entry(RESIDUAL_JURISDICTION, "the applicants are registered as civil partners of each other in "
             + "England or Wales or, in the case of a same sex couple, married each other under the law of England "
             + "and Wales and it would be in the interests of justice for the court to assume jurisdiction in this "
-            + "case")
+            + "case"),
+        entry(APP_1_RESIDENT_JOINT, "the applicant habitually resides in England and Wales (Joint Application Only)")
     );
 
     private static final Map<JurisdictionConnections, String> SOLE_DESCRIPTIONS = Map.ofEntries(

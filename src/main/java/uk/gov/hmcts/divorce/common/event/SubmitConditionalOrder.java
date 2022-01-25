@@ -14,11 +14,16 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.Objects;
+import javax.servlet.http.HttpServletRequest;
 
+import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
@@ -45,6 +50,12 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
 
     @Autowired
     private Clock clock;
+
+    @Autowired
+    private HttpServletRequest request;
+
+    @Autowired
+    private IdamService idamService;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -76,17 +87,31 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
 
         log.info("Submit conditional order about to submit callback invoked for case id: {}", details.getId());
         CaseData data = details.getData();
-        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setSubmittedDate(LocalDateTime.now(clock));
-        var state = details.getData().getApplicationType().isSole() ? AwaitingLegalAdvisorReferral
+        setSubmittedDate(data.getConditionalOrder());
+        var state = details.getData().getApplicationType().isSole()
+            ? AwaitingLegalAdvisorReferral
             : beforeDetails.getState() == ConditionalOrderDrafted ? ConditionalOrderPending : AwaitingLegalAdvisorReferral;
 
-        if (state == AwaitingLegalAdvisorReferral) {
-            notificationDispatcher.send(appliedForConditionalOrderNotification, data, details.getId());
-        }
+        User user = idamService.retrieveUser(request.getHeader(AUTHORIZATION));
+        appliedForConditionalOrderNotification.setSubmittingUserId(user.getUserDetails().getId());
+        notificationDispatcher.send(appliedForConditionalOrderNotification, data, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
             .state(state)
             .build();
+    }
+
+    private void setSubmittedDate(ConditionalOrder conditionalOrder) {
+        ConditionalOrderQuestions app1Questions = conditionalOrder.getConditionalOrderApplicant1Questions();
+        ConditionalOrderQuestions app2Questions = conditionalOrder.getConditionalOrderApplicant2Questions();
+        if (Objects.nonNull(app1Questions.getStatementOfTruth()) && app1Questions.getStatementOfTruth().toBoolean()
+            && Objects.isNull(app1Questions.getSubmittedDate())) {
+            app1Questions.setSubmittedDate(LocalDateTime.now(clock));
+        }
+        if (Objects.nonNull(app2Questions.getStatementOfTruth()) && app2Questions.getStatementOfTruth().toBoolean()
+            && Objects.isNull(app2Questions.getSubmittedDate())) {
+            app2Questions.setSubmittedDate(LocalDateTime.now(clock));
+        }
     }
 }
