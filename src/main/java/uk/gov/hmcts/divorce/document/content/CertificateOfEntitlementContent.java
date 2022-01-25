@@ -3,16 +3,20 @@ package uk.gov.hmcts.divorce.document.content;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.common.ConditionalOrderCourtDetails;
 import uk.gov.hmcts.divorce.common.config.ConditionalOrderCourtDetailsConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.util.Objects.nonNull;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
@@ -44,9 +48,19 @@ public class CertificateOfEntitlementContent {
         final Applicant applicant2 = caseData.getApplicant2();
         final ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
 
+        final ConditionalOrderCourt conditionalOrderCourt = conditionalOrder.getCourt();
+        final ConditionalOrderCourtDetails conditionalOrderCourtDetails = nonNull(conditionalOrderCourt)
+            ? conditionalOrderCourtDetailsConfig.get(conditionalOrderCourt.getCourtId())
+            : null;
+
+        final LocalDate decisionDate = conditionalOrder.getDecisionDate();
+        final String approvalDate = nonNull(decisionDate)
+            ? decisionDate.format(DATE_TIME_FORMATTER)
+            : null;
+
         templateContent.put(CCD_CASE_REFERENCE, formatId(caseId));
-        templateContent.put("courtDetails", conditionalOrderCourtDetailsConfig.get(conditionalOrder.getCourt().getCourtId()));
-        templateContent.put("approvalDate", conditionalOrder.getDecisionDate().format(DATE_TIME_FORMATTER));
+        templateContent.put("courtDetails", conditionalOrderCourtDetails);
+        templateContent.put("approvalDate", approvalDate);
 
         templateContent.put(APPLICANT_1_FIRST_NAME, applicant1.getFirstName());
         templateContent.put(APPLICANT_1_LAST_NAME, applicant1.getLastName());
@@ -58,8 +72,11 @@ public class CertificateOfEntitlementContent {
         templateContent.put("isJoint", !caseData.getApplicationType().isSole());
 
         final LocalDateTime dateAndTimeOfHearing = conditionalOrder.getDateAndTimeOfHearing();
-        templateContent.put(DATE_OF_HEARING, dateAndTimeOfHearing.format(DATE_TIME_FORMATTER));
-        templateContent.put(TIME_OF_HEARING, dateAndTimeOfHearing.format(TIME_FORMATTER));
+        final String dateOfHearing = nonNull(dateAndTimeOfHearing) ? dateAndTimeOfHearing.format(DATE_TIME_FORMATTER) : null;
+        final String timeOfHearing = nonNull(dateAndTimeOfHearing) ? dateAndTimeOfHearing.format(TIME_FORMATTER) : null;
+
+        templateContent.put(DATE_OF_HEARING, dateOfHearing);
+        templateContent.put(TIME_OF_HEARING, timeOfHearing);
 
         templateContent.put(HAS_FINANCIAL_ORDERS, applicant1.appliedForFinancialOrder());
 
