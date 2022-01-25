@@ -12,6 +12,7 @@ import org.apache.groovy.parser.antlr4.util.StringUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
@@ -224,6 +225,18 @@ public class CaseData {
         access = {CaseworkerAccess.class}
     )
     private String hyphenatedCaseRef;
+
+    @CCD(
+        label = "Scanned documents",
+        typeOverride = Collection,
+        typeParameterOverride = "ScannedDocument"
+    )
+    private List<ListValue<ScannedDocument>> scannedDocuments;
+
+    @CCD(
+        label = "Supplementary evidence handled"
+    )
+    private YesOrNo evidenceHandled;
 
     @JsonIgnore
     public String formatCaseRef(long caseId) {

@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.bulkscan.ccd.event;
+package uk.gov.hmcts.divorce.caseworker.event;
 
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -18,7 +18,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
-public class OfflineDocumentVerified implements CCDConfig<CaseData, State, UserRole> {
+public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_OFFLINE_DOCUMENT_VERIFIED = "caseworker-offline-document-verified";
 
@@ -26,7 +26,7 @@ public class OfflineDocumentVerified implements CCDConfig<CaseData, State, UserR
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_OFFLINE_DOCUMENT_VERIFIED)
-            .initialState(OfflineDocumentReceived)
+            .forState(OfflineDocumentReceived)
             .name("Offline Document Verified")
             .description("Offline Document Verified")
             .showEventNotes()

@@ -232,7 +232,7 @@ dependencies {
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '2.0.1'
   implementation group: 'com.github.hmcts', name: 'java-logging', version: '5.1.9'
   implementation group: 'com.github.hmcts', name: 'send-letter-client', version: '3.0.10'
-  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '4.0.2'
+  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '4.0.3'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.17.1'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.17.1'
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.56'
@@ -268,7 +268,7 @@ dependencies {
   testImplementation group: 'org.assertj', name: 'assertj-guava', version: '3.4.0'
   testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '3.1.0'
   testImplementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
-  testImplementation group: 'org.mockito', name: 'mockito-inline', version: '4.1.0'
+  testImplementation group: 'org.mockito', name: 'mockito-inline', version: '4.3.0'
   testImplementation group: 'io.github.openfeign', name: 'feign-jackson', version: '11.8'
   testImplementation group: 'io.rest-assured', name: 'rest-assured'
 

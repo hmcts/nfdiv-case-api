@@ -296,6 +296,12 @@ public enum State {
     AwaitingPronouncement("AwaitingPronouncement"),
 
     @CCD(
+        name = "New paper case",
+        label = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n"
+    )
+    NewPaperCase("NewPaperCase"),
+
+    @CCD(
         name = "Offline document received by CW"
     )
     OfflineDocumentReceived("OfflineDocumentReceived"),
