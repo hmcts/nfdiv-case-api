@@ -139,6 +139,38 @@ public class CertificateOfEntitlementContentTest {
         );
     }
 
+    @Test
+    void shouldSetValuesToNullIfNotSetInCaseData() {
+
+        final CaseData caseData = getCaseDataFor(SOLE_APPLICATION);
+        caseData.getApplicant1().setFinancialOrder(null);
+        caseData.getConditionalOrder().setClaimsGranted(null);
+        caseData.getConditionalOrder().setCourt(null);
+        caseData.getConditionalOrder().setDecisionDate(null);
+        caseData.getConditionalOrder().setDateAndTimeOfHearing(null);
+
+        when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("husband");
+
+        final Map<String, Object> contentMap = certificateOfEntitlementContent.apply(caseData, TEST_CASE_ID);
+
+        assertThat(contentMap).contains(
+            entry(CCD_CASE_REFERENCE, "1616-5914-0147-3378"),
+            entry("courtDetails", null),
+            entry("approvalDate", null),
+            entry(APPLICANT_1_FIRST_NAME, "John"),
+            entry(APPLICANT_1_LAST_NAME, "Smith"),
+            entry(APPLICANT_2_FIRST_NAME, "Jane"),
+            entry(APPLICANT_2_LAST_NAME, "Jones"),
+            entry("isSole", true),
+            entry("isJoint", false),
+            entry(DATE_OF_HEARING, null),
+            entry(TIME_OF_HEARING, null),
+            entry(HAS_FINANCIAL_ORDERS, false),
+            entry(COSTS_GRANTED, false),
+            entry("divorceWho", "husband")
+        );
+    }
+
     private CaseData getCaseDataFor(final ApplicationType soleApplication) {
         final LocalDateTime localDateTime = LocalDateTime.of(2021, 11, 8, 14, 56);
         final LocalDate localDate = LocalDate.of(2021, 11, 8);
