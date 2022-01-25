@@ -201,7 +201,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, SOLICITOR, SUPER_USER)
             .showCondition("coApplicant1SubmittedDate=\"*\"")
             .label("labelConditionalOrderDetails-Applicant1",
-                "applicationType=\"jointApplication\" AND coApplicant1ApplyForConditionalOrderStarted=\"*\"",
+                "applicationType=\"jointApplication\" AND coApplicant1ApplyForConditionalOrder=\"*\"",
                 "### Applicant 1")
             .field("coApplicant1ApplyForConditionalOrder")
             .field("coApplicant1ConfirmInformationStillCorrect")
@@ -209,7 +209,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("coApplicant1ChangeOrAddToApplication")
             .field("coApplicant1StatementOfTruth")
             .label("labelConditionalOrderDetails-Applicant2",
-                "applicationType=\"jointApplication\" AND coApplicant2ApplyForConditionalOrderStarted=\"*\"",
+                "applicationType=\"jointApplication\" AND coApplicant2ApplyForConditionalOrder=\"*\"",
                 "### Applicant 2")
             .field("coApplicant2ApplyForConditionalOrder")
             .field("coApplicant1ConfirmInformationStillCorrect")
