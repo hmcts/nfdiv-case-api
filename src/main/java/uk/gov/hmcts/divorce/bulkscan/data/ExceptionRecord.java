@@ -63,7 +63,7 @@ public class ExceptionRecord {
         typeOverride = Collection,
         typeParameterOverride = "ScannedDocument"
     )
-    private List<ListValue<ScannedDocument>> scannedDocuments;
+    private List<ListValue<ExceptionRecordScannedDocument>> scannedDocuments;
 
     @CCD(
         label = "Form OCR data",
