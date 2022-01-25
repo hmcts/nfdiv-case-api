@@ -9,11 +9,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriUtils;
 import uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator;
-import uk.gov.hmcts.divorce.endpoint.data.*;
+import uk.gov.hmcts.divorce.endpoint.data.FormType;
+import uk.gov.hmcts.divorce.endpoint.data.OcrDataValidationRequest;
+import uk.gov.hmcts.divorce.endpoint.data.OcrValidationResponse;
+import uk.gov.hmcts.divorce.endpoint.data.ValidationStatus;
 
-import javax.validation.Valid;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import javax.validation.Valid;
 
 import static org.apache.commons.lang3.EnumUtils.isValidEnum;
 
