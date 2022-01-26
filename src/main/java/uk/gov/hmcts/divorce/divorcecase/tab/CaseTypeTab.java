@@ -212,7 +212,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 "applicationType=\"jointApplication\" AND coApplicant2ApplyForConditionalOrder=\"*\"",
                 "### Applicant 2")
             .field("coApplicant2ApplyForConditionalOrder")
-            .field("coApplicant1ConfirmInformationStillCorrect")
+            .field("coApplicant2ConfirmInformationStillCorrect")
             .field("coApplicant2SubmittedDate")
             .field("coApplicant2ChangeOrAddToApplication")
             .field("coApplicant2StatementOfTruth")
