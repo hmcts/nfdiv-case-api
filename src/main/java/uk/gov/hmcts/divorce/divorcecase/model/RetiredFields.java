@@ -327,6 +327,10 @@ public class RetiredFields {
         label = "Retire help with fees reference number"
     )
     private String helpWithFeesReferenceNumber;
+    @CCD(
+        label = "Retire label content"
+    )
+    private String labelContentTheApplicantsOrApplicant1s;
 
     @JsonIgnore
     private static final Consumer<Map<String, Object>> DO_NOTHING = data -> {
