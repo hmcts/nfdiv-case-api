@@ -19,13 +19,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.hmcts.divorce.payment.model.PaymentStatus;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayment;
-import uk.gov.hmcts.divorce.solicitor.service.notification.SolicitorSubmittedNotification;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -36,8 +34,6 @@ import static java.lang.Integer.parseInt;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
@@ -74,13 +70,7 @@ public class SolicitorSubmitApplicationTest {
     private SubmissionService submissionService;
 
     @Mock
-    private SolicitorSubmittedNotification solicitorSubmittedNotification;
-
-    @Mock
     private SolPayment solPayment;
-
-    @Mock
-    private NotificationDispatcher notificationDispatcher;
 
     @InjectMocks
     private SolicitorSubmitApplication solicitorSubmitApplication;
@@ -481,36 +471,6 @@ public class SolicitorSubmitApplicationTest {
             solicitorSubmitApplication.aboutToSubmit(caseDetails, beforeCaseDetails);
 
         assertThat(response.getErrors()).containsExactly("Account balance insufficient");
-    }
-
-    @Test
-    void shouldSendEmailsInPostSubmitEvent() {
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
-
-        final CaseData caseData = validApplicant1CaseData();
-        caseDetails.setState(Submitted);
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-
-        solicitorSubmitApplication.submitted(caseDetails, beforeCaseDetails);
-
-        verify(notificationDispatcher).send(solicitorSubmittedNotification, caseData, TEST_CASE_ID);
-    }
-
-    @Test
-    void shouldNotSendEmailsInPostSubmitEventIfCaseNotSubmitted() {
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
-
-        final CaseData caseData = validApplicant1CaseData();
-        caseDetails.setState(AwaitingPayment);
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-
-        solicitorSubmitApplication.submitted(caseDetails, beforeCaseDetails);
-
-        verifyNoInteractions(solicitorSubmittedNotification);
     }
 
     private void mockExpectedCaseDetails(CaseDetails<CaseData, State> caseDetails, CaseData caseData, State state) {

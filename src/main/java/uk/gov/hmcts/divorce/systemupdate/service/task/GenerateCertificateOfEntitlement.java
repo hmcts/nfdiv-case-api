@@ -58,6 +58,8 @@ public class GenerateCertificateOfEntitlement implements CaseTask {
 
         caseData.getConditionalOrder().setCertificateOfEntitlementDocument(coeDivorceDocument);
 
+        log.info("Completed generating certificate of entitlement pdf for CaseID: {}", caseDetails.getId());
+
         return caseDetails;
     }
 }

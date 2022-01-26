@@ -158,6 +158,7 @@ project.tasks['sonarqube'].dependsOn jacocoTestReport
 
 def sonarExclusions = [
   '**/uk/gov/hmcts/divorce/common/ccd/**',
+  '**/uk/gov/hmcts/divorce/common/event/CreateTestCase.java',
   '**/uk/gov/hmcts/divorce/CaseApiApplication.java',
   '**/uk/gov/hmcts/divorce/common/config/**'
 ]
@@ -238,7 +239,7 @@ dependencies {
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.56'
   implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.16.3'
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
-  implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.4'
+  implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.5'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
@@ -268,7 +269,7 @@ dependencies {
   testImplementation group: 'org.assertj', name: 'assertj-guava', version: '3.4.0'
   testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '3.1.0'
   testImplementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
-  testImplementation group: 'org.mockito', name: 'mockito-inline', version: '4.3.0'
+  testImplementation group: 'org.mockito', name: 'mockito-inline', version: '4.3.1'
   testImplementation group: 'io.github.openfeign', name: 'feign-jackson', version: '11.8'
   testImplementation group: 'io.rest-assured', name: 'rest-assured'
 
