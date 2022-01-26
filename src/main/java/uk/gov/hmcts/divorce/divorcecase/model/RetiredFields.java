@@ -327,6 +327,7 @@ public class RetiredFields {
         label = "Retire help with fees reference number"
     )
     private String helpWithFeesReferenceNumber;
+
     @CCD(
         label = "Retire label content"
     )
