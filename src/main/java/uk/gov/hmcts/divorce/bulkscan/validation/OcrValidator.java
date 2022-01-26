@@ -21,6 +21,8 @@ import static uk.gov.hmcts.divorce.endpoint.data.ValidationStatus.WARNINGS;
 @Slf4j
 public class OcrValidator {
 
+    private static final String WARNING_NOT_APPLYING_FINANCIAL_ORDER = "Field must be empty as not applying for financial order: %s";
+
     public OcrValidationResponse validateExceptionRecord(OcrDataValidationRequest ocrDataValidationRequest) {
 
         List<String> warnings = new ArrayList<>();
@@ -34,8 +36,7 @@ public class OcrValidator {
         validateJurisdiction(data, warnings, errors);
         validateStatementOfIrretrievableBreakdown(data, warnings, errors);
         validateExistingCourtCases(data, warnings, errors);
-        validateMoneyAndProperty(data, warnings, errors);
-        validatePrayer(data, warnings, errors);
+        validateMoneyPropertyAndPrayer(data, warnings, errors);
         validateSoT(data, warnings, errors);
 
         return OcrValidationResponse.builder()
@@ -84,46 +85,29 @@ public class OcrValidator {
     private void validateAboutTheRespondent(Map<String, Object> data, List<String> warnings, List<String> errors) {
 
         Map<String, String> validateFields = new HashMap<>();
-
         validateFields.put("respondentOrApplicant2FirstName", (String) data.get("respondentOrApplicant2FirstName"));
-        validateFields.put("respondentOrApplicant2MiddleName", (String) data.get("respondentOrApplicant2MiddleName"));
         validateFields.put("respondentOrApplicant2LastName", (String) data.get("respondentOrApplicant2LastName"));
         validateFields.put("respondentOrApplicant2MarriedName", (String) data.get("respondentOrApplicant2MarriedName"));
-        validateFields.put("respondentOrApplicant2WhyMarriedNameChanged", (String) data.get("respondentOrApplicant2WhyMarriedNameChanged"));
-        validateFields.put("respondentOrApplicant2BuildingAndStreet", (String) data.get("respondentOrApplicant2BuildingAndStreet"));
-        validateFields.put("respondentOrApplicant2SecondLineOfAddress", (String) data.get("respondentOrApplicant2SecondLineOfAddress"));
-        validateFields.put("respondentOrApplicant2TownOrCity", (String) data.get("respondentOrApplicant2TownOrCity"));
-        validateFields.put("respondentOrApplicant2County", (String) data.get("respondentOrApplicant2County"));
-        validateFields.put("respondentOrApplicant2Country", (String) data.get("respondentOrApplicant2Country"));
-        validateFields.put("respondentOrApplicant2Postcode", (String) data.get("respondentOrApplicant2Postcode"));
-        validateFields.put("respondentOrApplicant2PhoneNo", (String) data.get("respondentOrApplicant2PhoneNo"));
-        validateFields.put("respondentOrApplicant2Email", (String) data.get("respondentOrApplicant2Email"));
-        validateFields.put("respondentEmailAccess", (String) data.get("respondentEmailAccess"));
 
-        //        if (is a joint application please go to respondentOrApplicant2SolicitorName and skip:
-        //        respondentDifferentServiceAddress, serveOutOfUK, respondentServePostOnly, applicantWillServeApplication) {
-        //
-        //        }
+        if (!isEmpty(data.get("respondentOrApplicant2MarriedName"))
+            && (((String) data.get("respondentOrApplicant2MarriedName")).equalsIgnoreCase("yes"))
+        ) {
+            validateFields.put("respondentOrApplicant2WhyMarriedNameChanged", (String) data.get("respondentOrApplicant2WhyMarriedNameChanged"));
+        }
 
-        validateFields.put("serveOutOfUK", (String) data.get("serveOutOfUK"));
-        validateFields.put("respondentServePostOnly", (String) data.get("respondentServePostOnly"));
-        validateFields.put("applicantWillServeApplication", (String) data.get("applicantWillServeApplication"));
-        validateFields.put("respondentDifferentServiceAddress", (String) data.get("respondentDifferentServiceAddress"));
+        if (!isEmpty(data.get("respondentOrApplicant2Email"))) {
+            validateFields.put("respondentEmailAccess", (String) data.get("respondentEmailAccess"));
+        }
 
+        if (isEmpty(data.get("aSoleApplication")) && isEmpty(data.get("aJointApplication"))) {
+            validateFields.put("serveOutOfUK", (String) data.get("serveOutOfUK"));
+            validateFields.put("respondentDifferentServiceAddress", (String) data.get("respondentDifferentServiceAddress"));
 
-        validateFields.put("respondentOrApplicant2SolicitorName", (String) data.get("respondentOrApplicant2SolicitorName"));
-        validateFields.put("respondentOrApplicant2SolicitorRefNo", (String) data.get("respondentOrApplicant2SolicitorRefNo"));
-        validateFields.put("respondentOrApplicant2SolicitorFirm", (String) data.get("respondentOrApplicant2SolicitorFirm"));
-        validateFields.put("respondentOrApplicant2SolicitorBuildingAndStreet",
-            (String) data.get("respondentOrApplicant2SolicitorBuildingAndStreet"));
-        validateFields.put("respondentOrApplicant2SolicitorSecondLineOfAddress",
-            (String) data.get("respondentOrApplicant2SolicitorSecondLineOfAddress"));
-        validateFields.put("respondentOrApplicant2SolicitorTownOrCity", (String) data.get("respondentOrApplicant2SolicitorTownOrCity"));
-        validateFields.put("respondentOrApplicant2SolicitorCounty", (String) data.get("respondentOrApplicant2SolicitorCounty"));
-        validateFields.put("respondentOrApplicant2SolicitorCountry", (String) data.get("respondentOrApplicant2SolicitorCountry"));
-        validateFields.put("respondentOrApplicant2SolicitorPostcode", (String) data.get("respondentOrApplicant2SolicitorPostcode"));
-        validateFields.put("respondentOrApplicant2SolicitorDX", (String) data.get("respondentOrApplicant2SolicitorDX"));
-        validateFields.put("applicant2SolicitorPhone", (String) data.get("applicant2SolicitorPhone"));
+            if (isEmpty(data.get("respondentServePostOnly")) && isEmpty(data.get("applicantWillServeApplication"))) {
+                validateFields.put("respondentServePostOnly", (String) data.get("respondentServePostOnly"));
+                validateFields.put("applicantWillServeApplication", (String) data.get("applicantWillServeApplication"));
+            }
+        }
 
         validateFields.entrySet().stream()
             .filter(e -> isEmpty(e.getValue()))
@@ -199,7 +183,7 @@ public class OcrValidator {
         }
     }
 
-    private void validateMoneyAndProperty(Map<String, Object> data, List<String> warnings, List<String> errors) {
+    private void validateMoneyPropertyAndPrayer(Map<String, Object> data, List<String> warnings, List<String> errors) {
 
         Map<String, String> validateFields = new HashMap<>();
 
@@ -215,20 +199,33 @@ public class OcrValidator {
             validateFields.put("applicant2FinancialOrderFor", (String) data.get("applicant2FinancialOrderFor"));
         }
 
-        validateFields.entrySet().stream()
-            .filter(e -> isEmpty(e.getValue()))
-            .forEach(e -> warnings.add(String.format("Field is empty or missing: %s", e.getKey())));
-    }
+        if (isEmpty(data.get("prayerMarriageDissolved")) && isEmpty(data.get("prayerCivilPartnershipDissolved"))) {
+            warnings.add("One of prayerMarriageDissolved or prayerCivilPartnershipDissolved must be populated");
+        }
 
-    private void validatePrayer(Map<String, Object> data, List<String> warnings, List<String> errors) {
-
-        Map<String, String> validateFields = new HashMap<>();
-        validateFields.put("prayerMarriageDissolved", (String) data.get("prayerMarriageDissolved"));
-        validateFields.put("prayerCivilPartnershipDissolved", (String) data.get("prayerCivilPartnershipDissolved"));
-        validateFields.put("soleOrApplicant1prayerFinancialOrder", (String) data.get("soleOrApplicant1prayerFinancialOrder"));
-        validateFields.put("soleOrApplicant1prayerFinancialOrderFor", (String) data.get("soleOrApplicant1prayerFinancialOrderFor"));
-        validateFields.put("applicant2PrayerFinancialOrder", (String) data.get("applicant2PrayerFinancialOrder"));
-        validateFields.put("applicant2PrayerFinancialOrderFor", (String) data.get("applicant2PrayerFinancialOrderFor"));
+        if (!isEmpty(data.get("soleOrApplicant1FinancialOrder"))
+            && ((String) data.get("soleOrApplicant1FinancialOrder")).equalsIgnoreCase("yes")
+        ) {
+            validateFields.put("soleOrApplicant1prayerFinancialOrder", (String) data.get("soleOrApplicant1prayerFinancialOrder"));
+            validateFields.put("soleOrApplicant1prayerFinancialOrderFor", (String) data.get("soleOrApplicant1prayerFinancialOrderFor"));
+            validateFields.put("applicant2PrayerFinancialOrder", (String) data.get("applicant2PrayerFinancialOrder"));
+            validateFields.put("applicant2PrayerFinancialOrderFor", (String) data.get("applicant2PrayerFinancialOrderFor"));
+        } else if (!isEmpty(data.get("soleOrApplicant1FinancialOrder"))
+            && ((String) data.get("soleOrApplicant1FinancialOrder")).equalsIgnoreCase("no")
+        ) {
+            if (!isEmpty(data.get("soleOrApplicant1prayerFinancialOrder"))) {
+                warnings.add(String.format(WARNING_NOT_APPLYING_FINANCIAL_ORDER, "soleOrApplicant1prayerFinancialOrder"));
+            }
+            if (!isEmpty(data.get("soleOrApplicant1prayerFinancialOrderFor"))) {
+                warnings.add(String.format(WARNING_NOT_APPLYING_FINANCIAL_ORDER, "soleOrApplicant1prayerFinancialOrderFor"));
+            }
+            if (!isEmpty(data.get("applicant2PrayerFinancialOrder"))) {
+                warnings.add(String.format(WARNING_NOT_APPLYING_FINANCIAL_ORDER, "applicant2PrayerFinancialOrder"));
+            }
+            if (!isEmpty(data.get("applicant2PrayerFinancialOrderFor"))) {
+                warnings.add(String.format(WARNING_NOT_APPLYING_FINANCIAL_ORDER, "applicant2PrayerFinancialOrderFor"));
+            }
+        }
 
         validateFields.entrySet().stream()
             .filter(e -> isEmpty(e.getValue()))
