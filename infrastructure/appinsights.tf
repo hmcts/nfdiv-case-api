@@ -18,7 +18,7 @@ data "azurerm_key_vault" "key_vault" {
 }
 
 resource "azurerm_key_vault_secret" "app_insights_config" {
-  name         = "${var.component}-app-insights-config"
+  name         = "${var.product}-${var.component}-app-insights-config"
   value        = local.app_insights_config
   key_vault_id = data.azurerm_key_vault.key_vault.id
 }
