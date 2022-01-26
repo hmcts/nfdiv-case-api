@@ -13,8 +13,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.ccd.sdk.api.Event.ATTACH_SCANNED_DOCS;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemAttachScannedDocuments.ATTACH_SCANNED_DOCS;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;

@@ -3,7 +3,7 @@ package uk.gov.hmcts.divorce.bulkscan.ccd;
 import uk.gov.hmcts.ccd.sdk.api.Event.EventBuilder;
 import uk.gov.hmcts.ccd.sdk.api.FieldCollection.FieldCollectionBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.MidEvent;
-import uk.gov.hmcts.divorce.bulkscan.data.ExceptionRecord;
+import uk.gov.hmcts.ccd.sdk.type.ExceptionRecord;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 public class ExceptionRecordPageBuilder {

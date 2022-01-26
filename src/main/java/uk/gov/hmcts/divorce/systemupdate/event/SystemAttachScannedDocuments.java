@@ -19,15 +19,11 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.UPDATE_D
 @Component
 public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String ATTACH_SCANNED_DOCS = "attachScannedDocs";
-
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(ATTACH_SCANNED_DOCS)
+            .attachScannedDocEvent()
             .forAllStates()
-            .name("Attach scanned docs")
-            .description("Attach scanned docs")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .grant(UPDATE_DELETE, CASE_WORKER))
