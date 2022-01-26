@@ -362,6 +362,13 @@ public class Application {
     private State previousState;
 
     @CCD(
+        label = "Bulk Scan state to transition to",
+        typeOverride = FixedList,
+        typeParameterOverride = "State"
+    )
+    private State stateToTransitionApplicationTo;
+
+    @CCD(
         label = "Payments",
         typeOverride = Collection,
         typeParameterOverride = "Payment",
@@ -411,6 +418,19 @@ public class Application {
         access = {CaseworkerAccess.class}
     )
     private Document applicant1SolicitorAnswersLink;
+
+    @CCD(
+        label = "Link to applicant 2 solicitors answers",
+        access = {CaseworkerAccess.class}
+    )
+    private Document applicant2SolicitorAnswersLink;
+
+    @CCD(
+        label = "Progress paper case",
+        typeOverride = FixedList,
+        typeParameterOverride = "ProgressPaperCase"
+    )
+    private ProgressPaperCase progressPaperCase;
 
     @JsonIgnore
     public boolean hasBeenPaidFor() {

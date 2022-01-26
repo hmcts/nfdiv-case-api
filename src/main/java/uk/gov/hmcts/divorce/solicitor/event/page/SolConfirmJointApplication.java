@@ -2,6 +2,8 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 
 public class SolConfirmJointApplication implements CcdPageConfiguration {
 
@@ -10,8 +12,9 @@ public class SolConfirmJointApplication implements CcdPageConfiguration {
         pageBuilder
             .page("ConfirmJointApplication")
             .pageLabel("Confirm Joint Application")
-            .showCondition("applicationType=\"jointApplication\"");
-        // link to the PDF document that was generated (with all the information) to go here
-        // document generation will be part of another ticket
+            .showCondition("applicationType=\"jointApplication\"")
+            .complex(CaseData::getApplication)
+            .readonly(Application::getApplicant2SolicitorAnswersLink)
+            .done();
     }
 }

@@ -12,12 +12,11 @@ import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInf
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.util.List;
-import java.util.stream.Stream;
 import javax.servlet.http.HttpServletRequest;
 
-import static java.util.stream.Collectors.joining;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.util.ObjectUtils.isEmpty;
+import static uk.gov.hmcts.divorce.divorcecase.util.SolicitorAddressPopulator.populateSolicitorAddress;
 
 @Component
 @Slf4j
@@ -42,17 +41,7 @@ public class SetApplicant1SolicitorAddress implements CaseTask {
 
             if (!isEmpty(contactInformation)) {
                 final OrganisationContactInformation organisationContactInformation = contactInformation.get(0);
-
-                final String solicitorAddress = Stream.of(
-                        organisationContactInformation.getAddressLine1(),
-                        organisationContactInformation.getAddressLine2(),
-                        organisationContactInformation.getAddressLine3(),
-                        organisationContactInformation.getTownCity(),
-                        organisationContactInformation.getCounty(),
-                        organisationContactInformation.getPostCode(),
-                        organisationContactInformation.getCountry())
-                    .filter(value -> !isEmpty(value))
-                    .collect(joining("\n"));
+                final String solicitorAddress = populateSolicitorAddress(organisationContactInformation);
 
                 log.info("Setting Applicant 1 solicitor address.  Case ID: {}", caseDetails.getId());
                 caseDetails.getData().getApplicant1().getSolicitor().setAddress(solicitorAddress);

@@ -60,8 +60,8 @@ public class CaseworkerGeneralReferralPayment implements CCDConfig<CaseData, Sta
             .showSummary()
             .showEventNotes()
             .aboutToStartCallback(this::aboutToStart)
-            .grant(CREATE_READ_UPDATE, CASE_WORKER, LEGAL_ADVISOR)
-            .grant(READ, SUPER_USER, SOLICITOR, CITIZEN));
+            .grant(CREATE_READ_UPDATE, CASE_WORKER)
+            .grant(READ, SUPER_USER, SOLICITOR, CITIZEN, LEGAL_ADVISOR));
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
