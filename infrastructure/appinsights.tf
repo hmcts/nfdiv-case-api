@@ -1,8 +1,7 @@
 data "azurerm_application_insights" "ai" {
-  name                = "${var.product}-${var.env}"
+  name                = "${var.product}-appinsights-${var.env}"
   resource_group_name = "${var.product}-${var.env}"
 }
-
 
 locals {
   app_insights_config = jsonencode(
