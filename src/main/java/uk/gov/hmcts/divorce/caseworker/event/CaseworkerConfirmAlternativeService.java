@@ -17,7 +17,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAlternativeService;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -42,7 +42,7 @@ public class CaseworkerConfirmAlternativeService implements CCDConfig<CaseData, 
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_CONFIRM_ALTERNATIVE_SERVICE)
-            .forStateTransition(AwaitingAlternativeService, AwaitingAos)
+            .forStateTransition(AwaitingAlternativeService, Holding)
             .name("Confirm alternative service")
             .description("Confirm alternative service")
             .showEventNotes()
