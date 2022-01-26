@@ -21,6 +21,7 @@ import static uk.gov.hmcts.divorce.endpoint.data.ValidationStatus.WARNINGS;
 @Slf4j
 public class OcrValidator {
 
+    private static final String FIELD_EMPTY_OR_MISSING = "Field is empty or missing: %s";
     private static final String WARNING_NOT_APPLYING_FINANCIAL_ORDER = "Field must be empty as not applying for financial order: %s";
 
     public OcrValidationResponse validateExceptionRecord(OcrDataValidationRequest ocrDataValidationRequest) {
@@ -49,16 +50,16 @@ public class OcrValidator {
     private void validateYourApplication(Map<String, Object> data, List<String> warnings, List<String> errors) {
 
         if (isEmpty(data.get("applicationForDivorce")) && isEmpty(data.get("applicationForDissolution"))) {
-            warnings.add("Field is empty or missing: applicationForDivorce");
+            warnings.add(String.format(FIELD_EMPTY_OR_MISSING, "applicationForDivorce"));
         }
         if (isEmpty(data.get("aSoleApplication")) && isEmpty(data.get("aJointApplication"))) {
-            warnings.add("Field is empty or missing: aSoleApplication");
+            warnings.add(String.format(FIELD_EMPTY_OR_MISSING, "aSoleApplication"));
         }
         if (isEmpty(data.get("marriageOrCivilPartnershipCertificate"))) {
-            warnings.add("Field is empty or missing: marriageOrCivilPartnershipCertificate");
+            warnings.add(String.format(FIELD_EMPTY_OR_MISSING, "marriageOrCivilPartnershipCertificate"));
         }
         if (isEmpty(data.get("translation"))) {
-            warnings.add("Field is empty or missing: translation");
+            warnings.add(String.format(FIELD_EMPTY_OR_MISSING, "translation"));
         }
     }
 
@@ -79,7 +80,7 @@ public class OcrValidator {
 
         validateFields.entrySet().stream()
             .filter(e -> isEmpty(e.getValue()))
-            .forEach(e -> warnings.add(String.format("Field is empty or missing: %s", e.getKey())));
+            .forEach(e -> warnings.add(String.format(FIELD_EMPTY_OR_MISSING, e.getKey())));
     }
 
     private void validateAboutTheRespondent(Map<String, Object> data, List<String> warnings, List<String> errors) {
@@ -111,7 +112,7 @@ public class OcrValidator {
 
         validateFields.entrySet().stream()
             .filter(e -> isEmpty(e.getValue()))
-            .forEach(e -> warnings.add(String.format("Field is empty or missing: %s", e.getKey())));
+            .forEach(e -> warnings.add(String.format(FIELD_EMPTY_OR_MISSING, e.getKey())));
     }
 
     private void validateDetailsOfUnion(Map<String, Object> data, List<String> warnings, List<String> errors) {
@@ -131,7 +132,7 @@ public class OcrValidator {
 
         validateFields.entrySet().stream()
             .filter(e -> isEmpty(e.getValue()))
-            .forEach(e -> warnings.add(String.format("Field is empty or missing: %s", e.getKey())));
+            .forEach(e -> warnings.add(String.format(FIELD_EMPTY_OR_MISSING, e.getKey())));
     }
 
     private void validateJurisdiction(Map<String, Object> data, List<String> warnings, List<String> errors) {
@@ -153,7 +154,7 @@ public class OcrValidator {
 
         validateFields.entrySet().stream()
             .filter(e -> isEmpty(e.getValue()))
-            .forEach(e -> warnings.add(String.format("Field is empty or missing: %s", e.getKey())));
+            .forEach(e -> warnings.add(String.format(FIELD_EMPTY_OR_MISSING, e.getKey())));
     }
 
     private void validateStatementOfIrretrievableBreakdown(Map<String, Object> data, List<String> warnings, List<String> errors) {
@@ -164,7 +165,7 @@ public class OcrValidator {
 
         validateFields.entrySet().stream()
             .filter(e -> isEmpty(e.getValue()))
-            .forEach(e -> warnings.add(String.format("Field is empty or missing: %s", e.getKey())));
+            .forEach(e -> warnings.add(String.format(FIELD_EMPTY_OR_MISSING, e.getKey())));
     }
 
     private void validateExistingCourtCases(Map<String, Object> data, List<String> warnings, List<String> errors) {
@@ -179,7 +180,7 @@ public class OcrValidator {
 
             validateFields.entrySet().stream()
                 .filter(e -> isEmpty(e.getValue()))
-                .forEach(e -> warnings.add(String.format("Field is empty or missing: %s", e.getKey())));
+                .forEach(e -> warnings.add(String.format(FIELD_EMPTY_OR_MISSING, e.getKey())));
         }
     }
 
@@ -229,7 +230,7 @@ public class OcrValidator {
 
         validateFields.entrySet().stream()
             .filter(e -> isEmpty(e.getValue()))
-            .forEach(e -> warnings.add(String.format("Field is empty or missing: %s", e.getKey())));
+            .forEach(e -> warnings.add(String.format(FIELD_EMPTY_OR_MISSING, e.getKey())));
     }
 
     private void validateSoT(Map<String, Object> data, List<String> warnings, List<String> errors) {
@@ -278,7 +279,7 @@ public class OcrValidator {
 
         validateFields.entrySet().stream()
             .filter(e -> isEmpty(e.getValue()))
-            .forEach(e -> warnings.add(String.format("Field is empty or missing: %s", e.getKey())));
+            .forEach(e -> warnings.add(String.format(FIELD_EMPTY_OR_MISSING, e.getKey())));
     }
 
 
