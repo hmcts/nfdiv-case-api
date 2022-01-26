@@ -13,6 +13,11 @@ locals {
   )
 }
 
+data "azurerm_key_vault" "key_vault" {
+  name                = "${var.product}-${var.env}"
+  resource_group_name = "${var.product}-${var.env}"
+}
+
 resource "azurerm_key_vault_secret" "app_insights_config" {
   name         = "${var.component}-app-insights-config"
   value        = local.app_insights_config
