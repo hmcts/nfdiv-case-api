@@ -239,7 +239,7 @@ dependencies {
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.56'
   implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.16.3'
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
-  implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.4'
+  implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.5'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
