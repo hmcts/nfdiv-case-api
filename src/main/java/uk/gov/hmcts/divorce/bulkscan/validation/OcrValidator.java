@@ -2,7 +2,7 @@ package uk.gov.hmcts.divorce.bulkscan.validation;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.divorce.bulkscan.data.KeyValue;
+import uk.gov.hmcts.ccd.sdk.type.KeyValue;
 import uk.gov.hmcts.divorce.endpoint.data.OcrDataValidationRequest;
 import uk.gov.hmcts.divorce.endpoint.data.OcrValidationResponse;
 import uk.gov.hmcts.divorce.endpoint.data.ValidationStatus;
