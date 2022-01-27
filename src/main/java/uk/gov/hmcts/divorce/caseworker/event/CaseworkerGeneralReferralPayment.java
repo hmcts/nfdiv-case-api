@@ -19,8 +19,8 @@ import uk.gov.hmcts.divorce.payment.PaymentService;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralReferralPayment;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -35,10 +35,9 @@ import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 @Component
 public class CaseworkerGeneralReferralPayment implements CCDConfig<CaseData, State, UserRole> {
 
+    public static final String CASEWORKER_GENERAL_REFERRAL_PAYMENT = "caseworker-general-referral-payment";
     @Autowired
     private PaymentService paymentService;
-
-    public static final String CASEWORKER_GENERAL_REFERRAL_PAYMENT = "caseworker-general-referral-payment";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -54,7 +53,7 @@ public class CaseworkerGeneralReferralPayment implements CCDConfig<CaseData, Sta
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(CASEWORKER_GENERAL_REFERRAL_PAYMENT)
-            .forStateTransition(AwaitingGeneralReferralPayment, AwaitingServiceConsideration)
+            .forStateTransition(AwaitingGeneralReferralPayment, AwaitingGeneralConsideration)
             .name("General referral payment")
             .description("General referral payment")
             .showSummary()
