@@ -84,16 +84,20 @@ import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.CIVIL_PARTNER_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FIRST_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.HUSBAND_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.JOINT_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.WIFE_JOINT;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL;
@@ -615,6 +619,21 @@ public class TestDataHelper {
         templateVars.put(LAST_NAME, TEST_LAST_NAME);
         templateVars.put(PARTNER, "partner");
         templateVars.put(COURT_EMAIL, "courtEmail");
+        return templateVars;
+    }
+    public static Map<String, String> getConditionalOrderTemplateVarsSole() {
+        Map<String, String> templateVars = getMainTemplateVars();
+        templateVars.put(JOINT_CONDITIONAL_ORDER, CommonContent.NO);
+        templateVars.put(WIFE_JOINT, CommonContent.NO);
+        templateVars.put(HUSBAND_JOINT, CommonContent.NO);
+        templateVars.put(CIVIL_PARTNER_JOINT, CommonContent.NO);
+        return templateVars;
+    }
+
+    public static Map<String, String> getConditionalOrderTemplateVarsJoint() {
+        Map<String, String> templateVars = getConditionalOrderTemplateVarsSole();
+        templateVars.put(JOINT_CONDITIONAL_ORDER, CommonContent.YES);
+        templateVars.put(WIFE_JOINT, CommonContent.YES);
         return templateVars;
     }
 
