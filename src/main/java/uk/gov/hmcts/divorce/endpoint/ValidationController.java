@@ -44,7 +44,7 @@ public class ValidationController {
             ));
         }
 
-        OcrValidationResponse result = validator.validateExceptionRecord(requestBody);
+        OcrValidationResponse result = validator.validateExceptionRecord(encodedFormType, requestBody);
 
         return ResponseEntity.ok().body(result);
     }

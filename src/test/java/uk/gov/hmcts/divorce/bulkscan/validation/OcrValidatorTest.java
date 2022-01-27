@@ -13,6 +13,7 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator.FIELD_EMPTY_OR_MISSING;
 import static uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator.WARNING_NOT_APPLYING_FINANCIAL_ORDER;
+import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8;
 import static uk.gov.hmcts.divorce.endpoint.data.ValidationStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.endpoint.data.ValidationStatus.WARNINGS;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.populateD8OcrDataFields;
@@ -30,7 +31,7 @@ public class OcrValidatorTest {
             .ocrDataFields(populateD8OcrDataFields())
             .build();
 
-        OcrValidationResponse response = validator.validateExceptionRecord(request);
+        OcrValidationResponse response = validator.validateExceptionRecord(D8.getName(), request);
 
         assertThat(response.getErrors()).hasSize(0);
         assertThat(response.getWarnings()).hasSize(0);
@@ -43,7 +44,7 @@ public class OcrValidatorTest {
             .ocrDataFields(emptyList())
             .build();
 
-        OcrValidationResponse response = validator.validateExceptionRecord(request);
+        OcrValidationResponse response = validator.validateExceptionRecord(D8.getName(), request);
 
         assertThat(response.getErrors()).hasSize(0);
         assertThat(response.getWarnings()).hasSize(28);
@@ -56,7 +57,7 @@ public class OcrValidatorTest {
             .ocrDataFields(emptyList())
             .build();
 
-        OcrValidationResponse response = validator.validateExceptionRecord(request);
+        OcrValidationResponse response = validator.validateExceptionRecord(D8.getName(), request);
 
         assertThat(response.getWarnings())
             .contains(String.format(FIELD_EMPTY_OR_MISSING, "applicationForDivorce"));
@@ -74,7 +75,7 @@ public class OcrValidatorTest {
             .ocrDataFields(List.of(populateKeyValue("soleOrApplicant1Solicitor", "Yes")))
             .build();
 
-        OcrValidationResponse response = validator.validateExceptionRecord(request);
+        OcrValidationResponse response = validator.validateExceptionRecord(D8.getName(), request);
 
         assertThat(response.getWarnings())
             .contains(String.format(FIELD_EMPTY_OR_MISSING, "soleOrApplicant1SolicitorName"));
@@ -95,7 +96,7 @@ public class OcrValidatorTest {
             )
             .build();
 
-        OcrValidationResponse response = validator.validateExceptionRecord(request);
+        OcrValidationResponse response = validator.validateExceptionRecord(D8.getName(), request);
 
         assertThat(response.getWarnings())
             .contains(String.format(FIELD_EMPTY_OR_MISSING, "respondentOrApplicant2WhyMarriedNameChanged"));
@@ -122,7 +123,7 @@ public class OcrValidatorTest {
             )
             .build();
 
-        OcrValidationResponse response = validator.validateExceptionRecord(request);
+        OcrValidationResponse response = validator.validateExceptionRecord(D8.getName(), request);
 
         assertThat(response.getWarnings())
             .contains("Additional D11 application should be filed with additional fee when applying without certificate");
@@ -156,7 +157,7 @@ public class OcrValidatorTest {
             )
             .build();
 
-        OcrValidationResponse response = validator.validateExceptionRecord(request);
+        OcrValidationResponse response = validator.validateExceptionRecord(D8.getName(), request);
 
         assertThat(response.getWarnings())
             .contains("Additional D11 application should be filed with additional fee when applying without certificate");
@@ -178,7 +179,7 @@ public class OcrValidatorTest {
             .ocrDataFields(emptyList())
             .build();
 
-        OcrValidationResponse response = validator.validateExceptionRecord(request);
+        OcrValidationResponse response = validator.validateExceptionRecord(D8.getName(), request);
 
         assertThat(response.getWarnings())
             .contains("Invalid jurisdiction: jurisdiction connection has not been selected");
@@ -194,7 +195,7 @@ public class OcrValidatorTest {
             )
             .build();
 
-        OcrValidationResponse response = validator.validateExceptionRecord(request);
+        OcrValidationResponse response = validator.validateExceptionRecord(D8.getName(), request);
 
         assertThat(response.getWarnings())
             .contains(String.format(FIELD_EMPTY_OR_MISSING, "soleOrApplicant1ConfirmationOfBreakdown"));
@@ -208,7 +209,7 @@ public class OcrValidatorTest {
             .ocrDataFields(List.of(populateKeyValue("aJointApplication", "true")))
             .build();
 
-        OcrValidationResponse response = validator.validateExceptionRecord(request);
+        OcrValidationResponse response = validator.validateExceptionRecord(D8.getName(), request);
 
         assertThat(response.getWarnings())
             .contains(String.format(FIELD_EMPTY_OR_MISSING, "soleOrApplicant1ConfirmationOfBreakdown"));
@@ -223,7 +224,7 @@ public class OcrValidatorTest {
             .ocrDataFields(List.of(populateKeyValue("existingOrPreviousCourtCases", "Yes")))
             .build();
 
-        OcrValidationResponse response = validator.validateExceptionRecord(request);
+        OcrValidationResponse response = validator.validateExceptionRecord(D8.getName(), request);
 
         assertThat(response.getWarnings())
             .contains(String.format(FIELD_EMPTY_OR_MISSING, "existingOrPreviousCourtCaseNumbers"));
@@ -241,7 +242,7 @@ public class OcrValidatorTest {
             )
             .build();
 
-        OcrValidationResponse response = validator.validateExceptionRecord(request);
+        OcrValidationResponse response = validator.validateExceptionRecord(D8.getName(), request);
 
         assertThat(response.getWarnings())
             .contains(String.format(FIELD_EMPTY_OR_MISSING, "soleOrApplicant1FinancialOrderFor"));
@@ -273,7 +274,7 @@ public class OcrValidatorTest {
             )
             .build();
 
-        OcrValidationResponse response = validator.validateExceptionRecord(request);
+        OcrValidationResponse response = validator.validateExceptionRecord(D8.getName(), request);
 
         assertThat(response.getWarnings())
             .contains(String.format(WARNING_NOT_APPLYING_FINANCIAL_ORDER, "soleOrApplicant1prayerFinancialOrder"));
@@ -296,7 +297,7 @@ public class OcrValidatorTest {
             )
             .build();
 
-        OcrValidationResponse response = validator.validateExceptionRecord(request);
+        OcrValidationResponse response = validator.validateExceptionRecord(D8.getName(), request);
 
         assertThat(response.getWarnings())
             .contains(String.format(FIELD_EMPTY_OR_MISSING, "soleApplicantOrApplicant1StatementOfTruth"));
