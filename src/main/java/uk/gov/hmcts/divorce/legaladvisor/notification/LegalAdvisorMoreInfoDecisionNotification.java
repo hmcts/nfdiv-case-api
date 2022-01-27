@@ -54,7 +54,7 @@ public class LegalAdvisorMoreInfoDecisionNotification implements ApplicantNotifi
         if (!caseData.getApplicationType().isSole()) {
             log.info("Sending Conditional order refused notification to applicant 2 for case : {}", caseId);
             notificationService.sendEmail(
-                caseData.getApplicant2().getEmail(),
+                caseData.getApplicant2EmailAddress(),
                 CITIZEN_CONDITIONAL_ORDER_REFUSED,
                 templateVars,
                 caseData.getApplicant2().getLanguagePreference()
