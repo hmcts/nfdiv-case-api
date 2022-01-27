@@ -31,7 +31,7 @@ public class LegalAdvisorMoreInfoDecisionNotification implements ApplicantNotifi
         final Applicant applicant1 = caseData.getApplicant1();
         final Applicant applicant2 = caseData.getApplicant2();
 
-        final Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, caseId, applicant1, applicant2);
+        final Map<String, String> templateVars = commonContent.conditionalOrderTemplateVars(caseData, caseId, applicant1, applicant2);
 
         log.info("Sending Conditional order refused notification to applicant 1 for case : {}", caseId);
 
@@ -41,6 +41,25 @@ public class LegalAdvisorMoreInfoDecisionNotification implements ApplicantNotifi
             templateVars,
             caseData.getApplicant1().getLanguagePreference()
         );
+    }
+
+    @Override
+    public void sendToApplicant2(CaseData caseData, Long caseId) {
+
+        final Applicant applicant1 = caseData.getApplicant1();
+        final Applicant applicant2 = caseData.getApplicant2();
+
+        final Map<String, String> templateVars = commonContent.conditionalOrderTemplateVars(caseData, caseId, applicant2, applicant1);
+
+        if (!caseData.getApplicationType().isSole()) {
+            log.info("Sending Conditional order refused notification to applicant 2 for case : {}", caseId);
+            notificationService.sendEmail(
+                caseData.getApplicant2().getEmail(),
+                CITIZEN_CONDITIONAL_ORDER_REFUSED,
+                templateVars,
+                caseData.getApplicant2().getLanguagePreference()
+            );
+        }
     }
 
     @Override
