@@ -22,6 +22,7 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -621,19 +622,18 @@ public class TestDataHelper {
         templateVars.put(COURT_EMAIL, "courtEmail");
         return templateVars;
     }
-    public static Map<String, String> getConditionalOrderTemplateVarsSole() {
+
+    public static Map<String, String> getConditionalOrderTemplateVars(ApplicationType applicationType) {
         Map<String, String> templateVars = getMainTemplateVars();
         templateVars.put(JOINT_CONDITIONAL_ORDER, CommonContent.NO);
         templateVars.put(WIFE_JOINT, CommonContent.NO);
         templateVars.put(HUSBAND_JOINT, CommonContent.NO);
         templateVars.put(CIVIL_PARTNER_JOINT, CommonContent.NO);
-        return templateVars;
-    }
 
-    public static Map<String, String> getConditionalOrderTemplateVarsJoint() {
-        Map<String, String> templateVars = getConditionalOrderTemplateVarsSole();
-        templateVars.put(JOINT_CONDITIONAL_ORDER, CommonContent.YES);
-        templateVars.put(WIFE_JOINT, CommonContent.YES);
+        if (applicationType.equals(JOINT_APPLICATION)) {
+            templateVars.put(JOINT_CONDITIONAL_ORDER, CommonContent.YES);
+            templateVars.put(WIFE_JOINT, CommonContent.YES);
+        }
         return templateVars;
     }
 

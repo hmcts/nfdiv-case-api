@@ -20,6 +20,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_FIRST_NAME;
@@ -39,8 +40,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithStatementOfTruth;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConditionalOrderTemplateVarsJoint;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConditionalOrderTemplateVarsSole;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConditionalOrderTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
@@ -64,7 +64,7 @@ class LegalAdvisorMoreInfoDecisionNotificationTest {
         final var data = validApplicant1CaseData();
 
         when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
-            .thenReturn(getConditionalOrderTemplateVarsSole());
+            .thenReturn(getConditionalOrderTemplateVars(SOLE_APPLICATION));
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
@@ -88,7 +88,7 @@ class LegalAdvisorMoreInfoDecisionNotificationTest {
         final var data = validJointApplicant1CaseData();
 
         when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
-            .thenReturn(getConditionalOrderTemplateVarsJoint());
+            .thenReturn(getConditionalOrderTemplateVars(JOINT_APPLICATION));
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
@@ -112,7 +112,7 @@ class LegalAdvisorMoreInfoDecisionNotificationTest {
         final var data = validJointApplicant1CaseData();
 
         when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
-            .thenReturn(getConditionalOrderTemplateVarsJoint());
+            .thenReturn(getConditionalOrderTemplateVars(JOINT_APPLICATION));
 
         notification.sendToApplicant2(data, 1234567890123456L);
 
