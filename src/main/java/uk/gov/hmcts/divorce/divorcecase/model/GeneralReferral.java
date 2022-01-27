@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -95,4 +96,22 @@ public class GeneralReferral {
         typeOverride = TextArea
     )
     private String generalReferralDecisionReason;
+
+    @JsonIgnore
+    public GeneralReferral copy() {
+        return GeneralReferral.builder()
+            .generalReferralReason(generalReferralReason)
+            .generalApplicationFrom(generalApplicationFrom)
+            .generalApplicationReferralDate(generalApplicationReferralDate)
+            .generalApplicationAddedDate(generalApplicationAddedDate)
+            .generalReferralType(generalReferralType)
+            .alternativeServiceMedium(alternativeServiceMedium)
+            .generalReferralJudgeOrLegalAdvisorDetails(generalReferralJudgeOrLegalAdvisorDetails)
+            .generalReferralFeeRequired(generalReferralFeeRequired)
+            .generalReferralFee(generalReferralFee)
+            .generalReferralDecision(generalReferralDecision)
+            .generalReferralDecisionDate(generalReferralDecisionDate)
+            .generalReferralDecisionReason(generalReferralDecisionReason)
+            .build();
+    }
 }

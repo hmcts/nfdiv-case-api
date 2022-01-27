@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
@@ -15,7 +16,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.UUID;
 
+import static java.util.Collections.singletonList;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -61,9 +65,22 @@ public class LegalAdvisorGeneralConsideration implements CCDConfig<CaseData, Sta
         log.info("Legal advisor general consideration about to submit callback invoked. CaseID: {}", details.getId());
 
         final CaseData caseData = details.getData();
-        final GeneralReferral generalReferral = caseData.getGeneralReferral();
+        final GeneralReferral copyOfGeneralReferral = caseData.getGeneralReferral().copy();
 
-        generalReferral.setGeneralReferralDecisionDate(LocalDate.now(clock));
+        copyOfGeneralReferral.setGeneralReferralDecisionDate(LocalDate.now(clock));
+
+        final ListValue<GeneralReferral> generalReferralListValue = ListValue.<GeneralReferral>builder()
+            .id(UUID.randomUUID().toString())
+            .value(copyOfGeneralReferral)
+            .build();
+
+        if (isEmpty(caseData.getGeneralReferrals())) {
+            caseData.setGeneralReferrals(singletonList(generalReferralListValue));
+        } else {
+            caseData.getGeneralReferrals().add(0, generalReferralListValue);
+        }
+
+        caseData.setGeneralReferral(null);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
