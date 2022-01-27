@@ -6,8 +6,8 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.Event;
+import uk.gov.hmcts.ccd.sdk.type.ExceptionRecord;
 import uk.gov.hmcts.divorce.bulkscan.ccd.ExceptionRecordState;
-import uk.gov.hmcts.divorce.bulkscan.data.ExceptionRecord;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;

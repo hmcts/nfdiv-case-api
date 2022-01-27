@@ -3,7 +3,7 @@ package uk.gov.hmcts.divorce.bulkscan.ccd;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
-import uk.gov.hmcts.divorce.bulkscan.data.ExceptionRecord;
+import uk.gov.hmcts.ccd.sdk.type.ExceptionRecord;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 @Component
