@@ -82,4 +82,24 @@ public class ValidationControllerIT {
             .andDo(MockMvcResultHandlers.print())
             .andExpect(content().json(expectedResponse("classpath:bulk-scan-d8-validation-warning-response.json")));
     }
+
+    @Test
+    public void givenInvalidFormTypeThenValidationErrors() throws Exception {
+        mockMvc.perform(post("/forms/invalid/validate-ocr")
+            .contentType(APPLICATION_JSON)
+            .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
+            .content(OBJECT_MAPPER.writeValueAsString(
+                OcrDataValidationRequest.builder()
+                    .ocrDataFields(
+                        List.of(
+                            populateKeyValue("applicationForDivorce", "true"),
+                            populateKeyValue("aSoleApplication", "true")
+                        )
+                    )
+                    .build()))
+            .accept(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(content().json(expectedResponse("classpath:bulk-scan-d8-validation-error-response.json")));
+    }
 }
