@@ -15,8 +15,8 @@ import static uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator.FIELD_EMPTY_
 import static uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator.WARNING_NOT_APPLYING_FINANCIAL_ORDER;
 import static uk.gov.hmcts.divorce.endpoint.data.ValidationStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.endpoint.data.ValidationStatus.WARNINGS;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.populateKeyValue;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.populateD8OcrDataFields;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.populateKeyValue;
 
 @ExtendWith(MockitoExtension.class)
 public class OcrValidatorTest {
