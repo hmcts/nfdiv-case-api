@@ -20,6 +20,7 @@ import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
+import uk.gov.hmcts.divorce.bulkscan.data.KeyValue;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -44,6 +45,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.SolicitorService;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.endpoint.data.OcrDataValidationRequest;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
 import uk.gov.hmcts.divorce.payment.model.Payment;
@@ -54,11 +56,7 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static feign.Request.HttpMethod.GET;
 import static java.lang.String.format;
@@ -758,6 +756,62 @@ public class TestDataHelper {
         return ListValue
             .<CaseLink>builder()
             .value(caseLink)
+            .build();
+    }
+
+    public static OcrDataValidationRequest ocrDataValidationRequest() {
+        return OcrDataValidationRequest.builder()
+            .ocrDataFields(
+                List.of(
+                    KeyValue.builder()
+                        .key("applicant1Name")
+                        .value("bob")
+                        .build())
+            )
+            .build();
+    }
+
+    public static List<KeyValue> populateD8OcrDataFields() {
+        List<KeyValue> kv = new ArrayList<>();
+        kv.add(populateKeyValue("applicationForDivorce", "true"));
+        kv.add(populateKeyValue("aSoleApplication", "true"));
+        kv.add(populateKeyValue("marriageOrCivilPartnershipCertificate", "true"));
+        kv.add(populateKeyValue("translation", "true"));
+        kv.add(populateKeyValue("soleOrApplicant1FirstName", "bob"));
+        kv.add(populateKeyValue("soleApplicantOrApplicant1LastName", "builder"));
+        kv.add(populateKeyValue("respondentOrApplicant2FirstName", "the"));
+        kv.add(populateKeyValue("respondentOrApplicant2LastName", "respondent"));
+        kv.add(populateKeyValue("respondentOrApplicant2MarriedName", "No"));
+        kv.add(populateKeyValue("serveOutOfUK", "Yes"));
+        kv.add(populateKeyValue("respondentServePostOnly", "true"));
+        kv.add(populateKeyValue("respondentDifferentServiceAddress", "No"));
+        kv.add(populateKeyValue("marriageOutsideOfUK", "No"));
+        kv.add(populateKeyValue("dateOfMarriageOrCivilPartnershipDay", "01"));
+        kv.add(populateKeyValue("dateOfMarriageOrCivilPartnershipMonth", "01"));
+        kv.add(populateKeyValue("dateOfMarriageOrCivilPartnershipYear", "1990"));
+        kv.add(populateKeyValue("soleOrApplicant1FullNameAsOnCert", "bob builder"));
+        kv.add(populateKeyValue("respondentOrApplicant2FullNameAsOnCert", "the respondent"));
+        kv.add(populateKeyValue("detailsOnCertCorrect", "Yes"));
+        kv.add(populateKeyValue("jurisdictionReasonsBothPartiesHabitual", "true"));
+        kv.add(populateKeyValue("soleOrApplicant1ConfirmationOfBreakdown", "true"));
+        kv.add(populateKeyValue("prayerMarriageDissolved", "true"));
+        kv.add(populateKeyValue("soleApplicantOrApplicant1StatementOfTruth", "true"));
+        kv.add(populateKeyValue("soleApplicantOrApplicant1LegalRepStatementOfTruth", "true"));
+        kv.add(populateKeyValue("soleApplicantOrApplicant1OrLegalRepSignature", "signed"));
+        kv.add(populateKeyValue("soleApplicantOrApplicant1Signing", "true"));
+        kv.add(populateKeyValue("legalRepSigning", "false"));
+        kv.add(populateKeyValue("statementOfTruthDateDay", "01"));
+        kv.add(populateKeyValue("statementOfTruthDateMonth", "01"));
+        kv.add(populateKeyValue("statementOfTruthDateYear", "2022"));
+        kv.add(populateKeyValue("soleApplicantOrApplicant1OrLegalRepFullName", "bob builder"));
+        kv.add(populateKeyValue("soleOrApplicant1HWFNo", "HWF123"));
+        return kv;
+    }
+
+    public static KeyValue populateKeyValue(String key, String value) {
+        return KeyValue.builder()
+            .key(key)
+            .value(value)
             .build();
     }
 }
