@@ -39,7 +39,7 @@ public class ValidationControllerTest {
             .status(SUCCESS)
             .build();
 
-        when(validator.validateExceptionRecord(request)).thenReturn(expectedResponse);
+        when(validator.validateExceptionRecord(D8.getName(), request)).thenReturn(expectedResponse);
 
         ResponseEntity<OcrValidationResponse> response = controller.validate(D8.getName(), request);
 
@@ -57,7 +57,7 @@ public class ValidationControllerTest {
             .status(SUCCESS)
             .build();
 
-        when(validator.validateExceptionRecord(request)).thenReturn(expectedResponse);
+        when(validator.validateExceptionRecord(D8S.getName(), request)).thenReturn(expectedResponse);
 
         ResponseEntity<OcrValidationResponse> response = controller.validate(D8S.getName(), request);
 
