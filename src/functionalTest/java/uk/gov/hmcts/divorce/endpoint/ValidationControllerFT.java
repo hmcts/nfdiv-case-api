@@ -38,8 +38,8 @@ public class ValidationControllerFT {
     protected ObjectMapper objectMapper;
 
     private static final String RESPONSE_SUCCESS = "classpath:responses/response-bulk-scan-d8-validation-success.json";
-    private static final String RESPONSE_WARNINGS = "classpath:responses/response-bulk-scan-d8-validation-error.json";
-    private static final String RESPONSE_ERRORS = "classpath:responses/response-bulk-scan-d8-validation-warning.json";
+    private static final String RESPONSE_WARNINGS = "classpath:responses/response-bulk-scan-d8-validation-warning.json";
+    private static final String RESPONSE_ERRORS = "classpath:responses/response-bulk-scan-d8-validation-error.json";
 
     @Test
     public void shouldPassValidationGivenValidOcrDataProvided() throws IOException {
