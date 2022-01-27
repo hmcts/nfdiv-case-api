@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.endpoint;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
@@ -33,9 +32,6 @@ public class ValidationControllerFT {
 
     @Autowired
     protected ServiceAuthenticationGenerator serviceAuthenticationGenerator;
-
-    @Autowired
-    protected ObjectMapper objectMapper;
 
     private static final String RESPONSE_SUCCESS = "classpath:responses/response-bulk-scan-d8-validation-success.json";
     private static final String RESPONSE_WARNINGS = "classpath:responses/response-bulk-scan-d8-validation-warning.json";
