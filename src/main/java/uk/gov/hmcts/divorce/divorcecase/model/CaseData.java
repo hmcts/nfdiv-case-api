@@ -284,7 +284,7 @@ public class CaseData {
 
         if (StringUtils.isEmpty(applicant2Email)) {
             if (nonNull(caseInvite)) {
-                return caseInvite.getApplicant2InviteEmailAddress();
+                return caseInvite.applicant2InviteEmailAddress();
             } else {
                 return null;
             }

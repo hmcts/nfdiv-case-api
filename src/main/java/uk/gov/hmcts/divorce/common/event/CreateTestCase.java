@@ -84,7 +84,7 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
             .complex(CaseData::getCaseInvite)
                 .label("userIdLabel", "<pre>Use ./bin/get-user-id-by-email.sh [email] to get an ID"
                     + ".\n\nTEST_SOLICITOR@mailinator.com is 93b108b7-4b26-41bf-ae8f-6e356efb11b3 in AAT.\n</pre>")
-                .mandatoryWithLabel(CaseInvite::getApplicant2UserId, "Applicant 2 user ID")
+                .mandatoryWithLabel(CaseInvite::applicant2UserId, "Applicant 2 user ID")
                 .done()
             .complex(CaseData::getApplication)
                 .mandatoryWithLabel(Application::getStateToTransitionApplicationTo, "Case state")
@@ -102,7 +102,7 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
 
         fixture.getApplicant1().setSolicitorRepresented(details.getData().getApplicant1().getSolicitorRepresented());
         fixture.getApplicant2().setSolicitorRepresented(details.getData().getApplicant2().getSolicitorRepresented());
-        fixture.getCaseInvite().setApplicant2UserId(details.getData().getCaseInvite().getApplicant2UserId());
+        fixture.setCaseInvite(details.getData().getCaseInvite());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(fixture)
@@ -114,7 +114,7 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details, CaseDetails<CaseData, State> before) {
         var data = details.getData();
         var caseId = details.getId();
-        var app2Id = data.getCaseInvite().getApplicant2UserId();
+        var app2Id = data.getCaseInvite().applicant2UserId();
         var auth = httpServletRequest.getHeader(AUTHORIZATION);
 
         if (data.getApplicant1().isRepresented()) {
