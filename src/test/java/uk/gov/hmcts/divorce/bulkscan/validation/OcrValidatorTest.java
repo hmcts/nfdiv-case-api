@@ -14,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator.FIELD_EMPTY_OR_MISSING;
 import static uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator.WARNING_NOT_APPLYING_FINANCIAL_ORDER;
 import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8;
+import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8S;
 import static uk.gov.hmcts.divorce.endpoint.data.ValidationStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.endpoint.data.ValidationStatus.WARNINGS;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.populateD8OcrDataFields;
@@ -52,7 +53,7 @@ public class OcrValidatorTest {
     }
 
     @Test
-    void shouldReturnWarningsIfValidateYourApplicationValidationFails() {
+    void shouldReturnWarningsIfValidateYourApplicationD8ValidationFails() {
         final OcrDataValidationRequest request = OcrDataValidationRequest.builder()
             .ocrDataFields(emptyList())
             .build();
@@ -61,6 +62,22 @@ public class OcrValidatorTest {
 
         assertThat(response.getWarnings())
             .contains(String.format(FIELD_EMPTY_OR_MISSING, "applicationForDivorce"));
+        assertThat(response.getWarnings())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING, "aSoleApplication"));
+        assertThat(response.getWarnings())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING, "marriageOrCivilPartnershipCertificate"));
+        assertThat(response.getWarnings())
+            .contains(String.format(FIELD_EMPTY_OR_MISSING, "translation"));
+    }
+
+    @Test
+    void shouldReturnWarningsIfValidateYourApplicationD8SValidationFails() {
+        final OcrDataValidationRequest request = OcrDataValidationRequest.builder()
+            .ocrDataFields(emptyList())
+            .build();
+
+        OcrValidationResponse response = validator.validateExceptionRecord(D8S.getName(), request);
+
         assertThat(response.getWarnings())
             .contains(String.format(FIELD_EMPTY_OR_MISSING, "aSoleApplication"));
         assertThat(response.getWarnings())
