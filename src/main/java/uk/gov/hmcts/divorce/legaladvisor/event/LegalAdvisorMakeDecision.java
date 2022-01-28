@@ -7,16 +7,22 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusalContent;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.legaladvisor.notification.LegalAdvisorMoreInfoDecisionNotification;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.UUID;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.ADMIN_ERROR;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
@@ -32,6 +38,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_CLARIFICATION_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.REFUSAL_ORDER_CLARIFICATION_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_REFUSAL;
 
 @Component
 @Slf4j
@@ -41,6 +50,12 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
 
     @Autowired
     private LegalAdvisorMoreInfoDecisionNotification notification;
+
+    @Autowired
+    private CaseDataDocumentService caseDataDocumentService;
+
+    @Autowired
+    private ConditionalOrderRefusalContent conditionalOrderRefusalContent;
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
@@ -128,6 +143,10 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             notificationDispatcher.send(notification, caseData, details.getId());
             endState = AwaitingClarification;
         } else {
+            generateAndSetConditionalOrderRefusedDocument(
+                caseData,
+                details.getId()
+            );
             endState = AwaitingAmendedApplication;
         }
 
@@ -136,4 +155,34 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             .state(endState)
             .build();
     }
+
+    private void generateAndSetConditionalOrderRefusedDocument(final CaseData caseData,
+                                                               final Long caseId) {
+
+        log.info("Generating conditional order refused document for templateId : {} caseId: {}", REFUSAL_ORDER_CLARIFICATION_TEMPLATE_ID, caseId);
+
+        Document document = caseDataDocumentService.renderDocument(
+            conditionalOrderRefusalContent.apply(caseData, caseId),
+            caseId,
+            REFUSAL_ORDER_CLARIFICATION_TEMPLATE_ID,
+            caseData.getApplicant1().getLanguagePreference(),
+            REFUSAL_ORDER_CLARIFICATION_DOCUMENT_NAME
+        );
+
+        var refusalConditionalOrderDoc = DivorceDocument
+            .builder()
+            .documentLink(document)
+            .documentFileName(document.getFilename())
+            .documentType(CONDITIONAL_ORDER_REFUSAL)
+            .build();
+
+        caseData.addToDocumentsGenerated(
+            ListValue
+                .<DivorceDocument>builder()
+                .id(UUID.randomUUID().toString())
+                .value(refusalConditionalOrderDoc)
+                .build()
+        );
+    }
 }
+
