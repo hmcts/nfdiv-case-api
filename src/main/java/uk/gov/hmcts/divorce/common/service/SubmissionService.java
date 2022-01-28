@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.common.service.task.SendCitizenSubmissionNotifications;
 import uk.gov.hmcts.divorce.common.service.task.SetApplicant2Email;
+import uk.gov.hmcts.divorce.common.service.task.SetApplicantOfflineStatus;
 import uk.gov.hmcts.divorce.common.service.task.SetDateSubmitted;
 import uk.gov.hmcts.divorce.common.service.task.SetStateAfterSubmission;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -21,6 +22,9 @@ public class SubmissionService {
     private SetDateSubmitted setDateSubmitted;
 
     @Autowired
+    private SetApplicantOfflineStatus setApplicantOfflineStatus;
+
+    @Autowired
     private SetApplicant2Email setApplicant2Email;
 
     @Autowired
@@ -32,6 +36,7 @@ public class SubmissionService {
             setStateAfterSubmission,
             setDateSubmitted,
             setApplicant2Email,
+            setApplicantOfflineStatus,
             sendCitizenSubmissionNotifications
         ).run(caseDetails);
     }
