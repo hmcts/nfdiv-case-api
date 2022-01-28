@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.EnumUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -40,12 +41,16 @@ public class CitizenUpdateCaseStateAat implements CCDConfig<CaseData, State, Use
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
-        log.info("Citizen update case state in AAT about to submit callback invoked");
+        log.info("Citizen update case in AAT about to submit callback invoked");
 
         CaseData data = details.getData();
+        if (EnumUtils.isValidEnum(State.class, data.getApplicant2().getMiddleName())) {
+            details.setState(State.valueOf(data.getApplicant2().getMiddleName()));
+            data.getApplicant2().setMiddleName("");
+            log.info("Case state to be changed from {} to {}", details.getState(), data.getApplicant2().getMiddleName());
+        }
 
-        State state = State.valueOf(data.getApplicant2().getMiddleName());
-        data.getApplicant2().setMiddleName("");
+        State state = details.getState();
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
