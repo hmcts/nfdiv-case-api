@@ -239,6 +239,13 @@ public class CaseData {
     )
     private YesOrNo evidenceHandled;
 
+    @CCD(
+        label = "Supplementary evidence handled",
+        access = {CaseworkerAccess.class}
+    )
+    @JsonUnwrapped(prefix = "noc")
+    private NoticeOfChange noticeOfChange;
+
     @JsonIgnore
     public String formatCaseRef(long caseId) {
         String temp = String.format("%016d", caseId);
