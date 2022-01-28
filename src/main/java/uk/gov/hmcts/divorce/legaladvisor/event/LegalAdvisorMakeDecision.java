@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
@@ -24,6 +25,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.ADMIN_ERROR;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAdminClarification;
@@ -161,11 +163,13 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
 
         log.info("Generating conditional order refused document for templateId : {} caseId: {}", REFUSAL_ORDER_CLARIFICATION_TEMPLATE_ID, caseId);
 
+        var templateContents = conditionalOrderRefusalContent.apply(caseData, caseId);
+
         Document document = caseDataDocumentService.renderDocument(
-            conditionalOrderRefusalContent.apply(caseData, caseId),
+            templateContents,
             caseId,
             REFUSAL_ORDER_CLARIFICATION_TEMPLATE_ID,
-            caseData.getApplicant1().getLanguagePreference(),
+            ENGLISH,
             REFUSAL_ORDER_CLARIFICATION_DOCUMENT_NAME
         );
 
