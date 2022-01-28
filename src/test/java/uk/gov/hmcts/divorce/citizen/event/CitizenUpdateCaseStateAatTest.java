@@ -90,7 +90,7 @@ class CitizenUpdateCaseStateAatTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenUpdateCaseStateAat.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getData().getApplicant2().getMiddleName()).isEqualTo(EMPTY_STRING);
+        assertThat(response.getData().getApplicant2().getMiddleName()).isEmpty();
     }
 
     @Test
