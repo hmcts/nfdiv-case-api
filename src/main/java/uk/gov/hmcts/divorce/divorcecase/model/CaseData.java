@@ -113,6 +113,13 @@ public class CaseData {
     private GeneralReferral generalReferral = new GeneralReferral();
 
     @CCD(
+        label = "General Referrals",
+        typeOverride = Collection,
+        typeParameterOverride = "GeneralReferral"
+    )
+    private List<ListValue<GeneralReferral>> generalReferrals;
+
+    @CCD(
         label = "Previous Service Applications",
         typeOverride = Collection,
         typeParameterOverride = "AlternativeServiceOutcome",
