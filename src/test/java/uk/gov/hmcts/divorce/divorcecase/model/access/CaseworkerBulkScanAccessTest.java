@@ -11,6 +11,7 @@ import static uk.gov.hmcts.ccd.sdk.api.Permission.C;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.D;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.R;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.U;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER_BULK_SCAN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
@@ -22,9 +23,12 @@ public class CaseworkerBulkScanAccessTest {
         final SetMultimap<HasRole, Permission> grants = new CaseworkerBulkScanAccess().getGrants();
 
         assertThat(grants)
-            .hasSize(8)
+            .hasSize(11)
             .contains(
                 entry(SUPER_USER, R),
+                entry(CASE_WORKER, C),
+                entry(CASE_WORKER, R),
+                entry(CASE_WORKER, U),
                 entry(CASE_WORKER_BULK_SCAN, C),
                 entry(CASE_WORKER_BULK_SCAN, R),
                 entry(CASE_WORKER_BULK_SCAN, U),
