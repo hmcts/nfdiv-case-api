@@ -59,6 +59,9 @@ class CitizenUpdateCaseStateAatTest {
         final long caseId = 1L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().build();
+
+        final State originalState = caseDetails.getState();
+
         caseData.setApplicant2(new Applicant());
         caseData.getApplicant2().setMiddleName("invalidState");
 
@@ -67,7 +70,7 @@ class CitizenUpdateCaseStateAatTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenUpdateCaseStateAat.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getState()).isNotEqualTo(State.Holding);
+        assertThat(response.getState()).isEqualTo(originalState);
         assertThat(response.getData().getApplicant2().getMiddleName()).isNotEmpty();
     }
 }
