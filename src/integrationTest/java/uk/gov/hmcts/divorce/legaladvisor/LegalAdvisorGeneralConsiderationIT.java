@@ -50,7 +50,8 @@ public class LegalAdvisorGeneralConsiderationIT {
     private WebMvcConfig webMvcConfig;
 
     @Test
-    public void shouldSetGeneralReferralDecisionDateWhenAboutToSubmitIsInvoked() throws Exception {
+    public void shouldSetGeneralReferralDecisionDateAndCreateGeneralReferralsAndRemoveGeneralReferralFieldsWhenAboutToSubmitIsInvoked()
+        throws Exception {
 
         setMockClock(clock);
 
@@ -72,8 +73,13 @@ public class LegalAdvisorGeneralConsiderationIT {
             .andDo(print())
             .andExpect(
                 status().isOk())
-            .andExpect(
-                jsonPath("$.data.generalReferralDecisionDate").value(getExpectedLocalDate().toString())
+            .andExpectAll(
+                jsonPath("$.data.generalReferrals[0].value.generalReferralDecisionDate").value(getExpectedLocalDate().toString()),
+                jsonPath("$.data.generalReferrals[0].value.generalReferralDecision").value("approve"),
+                jsonPath("$.data.generalReferrals[0].value.generalReferralDecisionReason").value("approved"),
+                jsonPath("$.data.generalReferralDecision").doesNotExist(),
+                jsonPath("$.data.generalReferralDecisionReason").doesNotExist(),
+                jsonPath("$.data.generalReferralDecisionDate").doesNotExist()
             );
     }
 }
