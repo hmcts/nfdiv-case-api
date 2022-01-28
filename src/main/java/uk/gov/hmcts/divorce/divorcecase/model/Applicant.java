@@ -153,6 +153,11 @@ public class Applicant {
     )
     private YesOrNo continueApplication;
 
+    @CCD(
+        label = "The applicant is offline."
+    )
+    private YesOrNo offline;
+
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
         return languagePreferenceWelsh == null || languagePreferenceWelsh.equals(NO)
@@ -183,4 +188,8 @@ public class Applicant {
         return nonNull(financialOrder) && financialOrder.toBoolean();
     }
 
+    @JsonIgnore
+    public boolean isOffline() {
+        return offline != null && offline.toBoolean();
+    }
 }
