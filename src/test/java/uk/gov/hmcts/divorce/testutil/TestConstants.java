@@ -65,6 +65,8 @@ public final class TestConstants {
     public static final String SIGN_IN_DISSOLUTION_TEST_URL = "dissolutionTestUrl";
     public static final String APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL = "applicant2DissolutionTestUrl";
 
+    public static final String EMPTY_STRING = "";
+
     private TestConstants() {
     }
 }
