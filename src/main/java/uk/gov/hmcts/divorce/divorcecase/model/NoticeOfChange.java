@@ -32,6 +32,12 @@ public class NoticeOfChange {
     )
     private YesOrNo areTheyRepresented;
 
+    @CCD(
+        label = "Is the solicitor digital?",
+        access = {CaseworkerAccess.class}
+    )
+    private YesOrNo areTheyDigital;
+
     @Getter
     @AllArgsConstructor
     public enum WhichApplicant implements HasLabel {

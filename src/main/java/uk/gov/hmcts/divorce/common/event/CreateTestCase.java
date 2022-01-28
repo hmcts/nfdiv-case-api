@@ -84,7 +84,7 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
             .complex(CaseData::getCaseInvite)
                 .label("userIdLabel", "<pre>Use ./bin/get-user-id-by-email.sh [email] to get an ID"
                     + ".\n\nTEST_SOLICITOR@mailinator.com is 93b108b7-4b26-41bf-ae8f-6e356efb11b3 in AAT.\n</pre>")
-                .mandatoryWithLabel(CaseInvite::getApplicant2UserId, "Applicant 2 user ID")
+                .optionalWithLabel(CaseInvite::getApplicant2UserId, "Applicant 2 user ID")
                 .done()
             .complex(CaseData::getApplication)
                 .mandatoryWithLabel(Application::getStateToTransitionApplicationTo, "Case state")
@@ -103,6 +103,7 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
         fixture.getApplicant1().setSolicitorRepresented(details.getData().getApplicant1().getSolicitorRepresented());
         fixture.getApplicant2().setSolicitorRepresented(details.getData().getApplicant2().getSolicitorRepresented());
         fixture.getCaseInvite().setApplicant2UserId(details.getData().getCaseInvite().getApplicant2UserId());
+        fixture.setHyphenatedCaseRef(fixture.formatCaseRef(details.getId()));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(fixture)
@@ -129,7 +130,7 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
             ccdAccessService.addApplicant1SolicitorRole(auth, caseId, orgId);
         }
 
-        if (data.getApplicant2().isRepresented()) {
+        if (data.getCaseInvite().getApplicant2UserId() != null && data.getApplicant2().isRepresented()) {
             var orgId = details
                 .getData()
                 .getApplicant2()
@@ -139,7 +140,7 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
                 .getOrganisationId();
 
             ccdAccessService.addRoleToCase(app2Id, caseId, orgId, APPLICANT_1_SOLICITOR);
-        } else {
+        } else if (data.getCaseInvite().getApplicant2UserId() != null) {
             ccdAccessService.linkRespondentToApplication(auth, caseId, app2Id);
         }
 
