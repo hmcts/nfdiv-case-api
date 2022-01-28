@@ -526,14 +526,4 @@ public class Application {
         return FEE_PAY_BY_ACCOUNT.equals(this.getSolPaymentHowToPay());
     }
 
-    @JsonIgnore
-    public boolean isApplicant1OffLine() {
-        return false;
-    }
-
-    @JsonIgnore
-    public boolean isApplicant2OffLine() {
-        return null != applicant1KnowsApplicant2EmailAddress && !applicant1KnowsApplicant2EmailAddress.toBoolean();
-    }
-
 }

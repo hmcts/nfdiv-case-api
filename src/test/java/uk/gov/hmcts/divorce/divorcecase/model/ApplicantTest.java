@@ -159,4 +159,17 @@ class ApplicantTest {
 
         assertThat(applicant.isBasedOverseas()).isFalse();
     }
+
+    @Test
+    void shouldReturnTrueForIs2Offline() {
+        assertThat(Applicant.builder().offline(YES).build()
+            .isOffline()).isTrue();
+    }
+
+    @Test
+    void shouldReturnFalseForIsOffline() {
+        assertThat(Applicant.builder().offline(NO).build()
+            .isOffline()).isFalse();
+    }
+
 }
