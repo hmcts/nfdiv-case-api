@@ -65,7 +65,7 @@ public class LegalAdvisorGeneralConsideration implements CCDConfig<CaseData, Sta
         log.info("Legal advisor general consideration about to submit callback invoked. CaseID: {}", details.getId());
 
         final CaseData caseData = details.getData();
-        final GeneralReferral copyOfGeneralReferral = caseData.getGeneralReferral().copy();
+        final GeneralReferral copyOfGeneralReferral = caseData.getGeneralReferral().toBuilder().build();
 
         copyOfGeneralReferral.setGeneralReferralDecisionDate(LocalDate.now(clock));
 

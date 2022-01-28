@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +18,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 public class GeneralReferral {
 
     @CCD(
@@ -96,22 +95,4 @@ public class GeneralReferral {
         typeOverride = TextArea
     )
     private String generalReferralDecisionReason;
-
-    @JsonIgnore
-    public GeneralReferral copy() {
-        return GeneralReferral.builder()
-            .generalReferralReason(generalReferralReason)
-            .generalApplicationFrom(generalApplicationFrom)
-            .generalApplicationReferralDate(generalApplicationReferralDate)
-            .generalApplicationAddedDate(generalApplicationAddedDate)
-            .generalReferralType(generalReferralType)
-            .alternativeServiceMedium(alternativeServiceMedium)
-            .generalReferralJudgeOrLegalAdvisorDetails(generalReferralJudgeOrLegalAdvisorDetails)
-            .generalReferralFeeRequired(generalReferralFeeRequired)
-            .generalReferralFee(generalReferralFee)
-            .generalReferralDecision(generalReferralDecision)
-            .generalReferralDecisionDate(generalReferralDecisionDate)
-            .generalReferralDecisionReason(generalReferralDecisionReason)
-            .build();
-    }
 }
