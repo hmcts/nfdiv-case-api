@@ -67,7 +67,7 @@ public class ConditionalOrderRefusalContent {
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CIVIL_PARTNERSHIP_CASE_JUSTICE_GOV_UK);
         }
 
-        templateContent.put("hasLegalAdvisorComments", conditionalOrder.getRefusalRejectionAdditionalInfo());
+        templateContent.put("hasLegalAdvisorComments", conditionalOrder.getRefusalRejectionAdditionalInfo() != null);
         if (conditionalOrder.getRefusalRejectionAdditionalInfo() != null) {
             templateContent.put("legalAdvisorComments", conditionalOrder.getRefusalRejectionAdditionalInfo());
         }
