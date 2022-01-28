@@ -11,6 +11,7 @@ import java.util.List;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator.FIELDS_CANNOT_MATCH;
 import static uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator.FIELD_EMPTY_OR_MISSING;
 import static uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator.WARNING_NOT_APPLYING_FINANCIAL_ORDER;
 import static uk.gov.hmcts.divorce.endpoint.data.FormType.D8;
@@ -66,8 +67,25 @@ public class OcrValidatorTest {
             .contains(String.format(FIELD_EMPTY_OR_MISSING, "aSoleApplication"));
         assertThat(response.getWarnings())
             .contains(String.format(FIELD_EMPTY_OR_MISSING, "marriageOrCivilPartnershipCertificate"));
+    }
+
+    @Test
+    void shouldReturnWarningsIfDuplicateValuesPassedToValidateYourApplication() {
+        final OcrDataValidationRequest request = OcrDataValidationRequest.builder()
+            .ocrDataFields(List.of(
+                populateKeyValue("aSoleApplication", "true"),
+                populateKeyValue("aJointApplication", "true"),
+                populateKeyValue("marriageOrCivilPartnershipCertificate", "true"),
+                populateKeyValue("translation", "true"))
+            )
+            .build();
+
+        OcrValidationResponse response = validator.validateExceptionRecord(D8.getName(), request);
+
         assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "translation"));
+            .contains(String.format(FIELDS_CANNOT_MATCH, "aSoleApplication", "aJointApplication"));
+        assertThat(response.getWarnings())
+            .contains(String.format(FIELDS_CANNOT_MATCH, "marriageOrCivilPartnershipCertificate", "translation"));
     }
 
     @Test
@@ -82,8 +100,6 @@ public class OcrValidatorTest {
             .contains(String.format(FIELD_EMPTY_OR_MISSING, "aSoleApplication"));
         assertThat(response.getWarnings())
             .contains(String.format(FIELD_EMPTY_OR_MISSING, "marriageOrCivilPartnershipCertificate"));
-        assertThat(response.getWarnings())
-            .contains(String.format(FIELD_EMPTY_OR_MISSING, "translation"));
     }
 
     @Test

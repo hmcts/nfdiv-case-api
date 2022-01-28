@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -30,6 +31,7 @@ public class OcrValidator {
 
     public static final String FIELD_EMPTY_OR_MISSING = "Mandatory field '%s' is missing";
     public static final String WARNING_NOT_APPLYING_FINANCIAL_ORDER = "Field must be empty as not applying for financial order: %s";
+    public static final String FIELDS_CANNOT_MATCH = "Fields cannot have the same value: %s, %s";
 
     public OcrValidationResponse validateExceptionRecord(String formType, OcrDataValidationRequest ocrDataValidationRequest) {
         if (D8.getName().equals(formType) || D8S.getName().equals(formType)) {
@@ -76,12 +78,15 @@ public class OcrValidator {
         }
         if (isEmpty(data.getSoleApplication()) && isEmpty(data.getJointApplication())) {
             warnings.add(String.format(FIELD_EMPTY_OR_MISSING, "aSoleApplication"));
+        } else if (Objects.equals(data.getSoleApplication(), data.getJointApplication())) {
+            warnings.add(String.format(FIELDS_CANNOT_MATCH, "aSoleApplication", "aJointApplication"));
         }
         if (isEmpty(data.getMarriageOrCivilPartnershipCertificate())) {
             warnings.add(String.format(FIELD_EMPTY_OR_MISSING, "marriageOrCivilPartnershipCertificate"));
         }
-        if (isEmpty(data.getTranslation())) {
-            warnings.add(String.format(FIELD_EMPTY_OR_MISSING, "translation"));
+
+        if (Objects.equals(data.getMarriageOrCivilPartnershipCertificate(), data.getTranslation())) {
+            warnings.add(String.format(FIELDS_CANNOT_MATCH, "marriageOrCivilPartnershipCertificate", "translation"));
         }
     }
 

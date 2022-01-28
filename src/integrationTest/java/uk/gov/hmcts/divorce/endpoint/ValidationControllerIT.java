@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.endpoint.data.OcrDataValidationRequest;
@@ -58,6 +59,7 @@ public class ValidationControllerIT {
                     .ocrDataFields(populateD8OcrDataFields())
                     .build()))
             .accept(APPLICATION_JSON))
+            .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isOk())
             .andExpect(content().json(expectedResponse("classpath:bulk-scan-d8-validation-success-response.json")));
     }
@@ -77,6 +79,7 @@ public class ValidationControllerIT {
                     )
                     .build()))
             .accept(APPLICATION_JSON))
+            .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isOk())
             .andExpect(content().json(expectedResponse("classpath:bulk-scan-d8-validation-warning-response.json")));
     }
@@ -96,6 +99,7 @@ public class ValidationControllerIT {
                     )
                     .build()))
             .accept(APPLICATION_JSON))
+            .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isOk())
             .andExpect(content().json(expectedResponse("classpath:bulk-scan-d8-validation-error-response.json")));
     }

@@ -782,7 +782,7 @@ public class TestDataHelper {
         kv.add(populateKeyValue("applicationForDivorce", "true"));
         kv.add(populateKeyValue("aSoleApplication", "true"));
         kv.add(populateKeyValue("marriageOrCivilPartnershipCertificate", "true"));
-        kv.add(populateKeyValue("translation", "true"));
+        kv.add(populateKeyValue("translation", "false"));
         kv.add(populateKeyValue("soleApplicantOrApplicant1FirstName", "bob"));
         kv.add(populateKeyValue("soleApplicantOrApplicant1LastName", "builder"));
         kv.add(populateKeyValue("respondentOrApplicant2FirstName", "the"));
