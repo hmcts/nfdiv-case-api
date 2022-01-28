@@ -9,17 +9,16 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CaseAssignmentApi;
-import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRoleWithOrganisation;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesRequest;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.List;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.*;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.fromString;
 
 @Service
 @Slf4j
@@ -129,7 +128,7 @@ public class CcdAccessService {
         response.getCaseAssignmentUserRoles()
             .stream()
             .filter(assignment -> roles.contains(assignment.getCaseRole()))
-            .map(a -> getCaseAssignmentRequest(caseId, a.getUserId(), null, valueOf(a.getCaseRole())))
+            .map(a -> getCaseAssignmentRequest(caseId, a.getUserId(), null, fromString(a.getCaseRole())))
             .forEach(request -> caseAssignmentApi.removeCaseUserRoles(auth, s2sToken, request));
     }
 }
