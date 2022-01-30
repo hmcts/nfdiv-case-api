@@ -80,7 +80,7 @@ public class SystemProgressCaseToAosOverdueIT {
         data.getApplication().setSolSignStatementOfTruth(null);
         data.setDueDate(LOCAL_DATE);
         data.getApplication().setIssueDate(LOCAL_DATE);
-        data.setCaseInvite(new CaseInvite(null, "1234-1234-1234-1234", null));
+        data.setCaseInvite(new CaseInvite(TEST_APPLICANT_2_USER_EMAIL, "1234-1234-1234-1234", null));
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
