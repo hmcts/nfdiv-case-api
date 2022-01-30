@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.groovy.parser.antlr4.util.StringUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.BulkScanEnvelope;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
@@ -19,6 +20,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessBetaOnlyAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAndSuperUserAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerBulkScanAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerCourtAdminWithSolicitorAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
@@ -109,6 +111,13 @@ public class CaseData {
     @JsonUnwrapped
     @Builder.Default
     private GeneralReferral generalReferral = new GeneralReferral();
+
+    @CCD(
+        label = "General Referrals",
+        typeOverride = Collection,
+        typeParameterOverride = "GeneralReferral"
+    )
+    private List<ListValue<GeneralReferral>> generalReferrals;
 
     @CCD(
         label = "Previous Service Applications",
@@ -238,6 +247,20 @@ public class CaseData {
         label = "Supplementary evidence handled"
     )
     private YesOrNo evidenceHandled;
+
+    @CCD(
+        label = "Bulk Scan Envelopes",
+        typeOverride = Collection,
+        typeParameterOverride = "BulkScanEnvelope",
+        access = {CaseworkerBulkScanAccess.class}
+    )
+    private List<ListValue<BulkScanEnvelope>> bulkScanEnvelopes;
+
+    @CCD(
+        label = "Exception record reference",
+        access = {CaseworkerBulkScanAccess.class}
+    )
+    private String bulkScanCaseReference;
 
     @JsonIgnore
     public String formatCaseRef(long caseId) {
