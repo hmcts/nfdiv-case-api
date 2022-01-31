@@ -16,8 +16,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 import static java.util.Collections.singletonList;
@@ -83,12 +81,6 @@ public class LegalAdvisorGeneralConsideration implements CCDConfig<CaseData, Sta
         }
 
         caseData.setGeneralReferral(null);
-
-        //TODO: Remove temp logging to trace general referrals list
-        final List<ListValue<GeneralReferral>> generalReferrals = caseData.getGeneralReferrals();
-        log.info("Legal advisor general consideration CaseID: {} Referrals list size {}",
-            details.getId(),
-            Objects.nonNull(generalReferrals) ? generalReferrals.size() : 0);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
