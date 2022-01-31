@@ -107,30 +107,38 @@ public class CcdUpdateService {
         final String userId = user.getUserDetails().getId();
         final String authorization = user.getAuthToken();
 
-        final StartEventResponse startEventResponse = coreCaseDataApi.startEventForCaseWorker(
-            authorization,
-            serviceAuth,
-            userId,
-            JURISDICTION,
-            CASE_TYPE,
-            caseId,
-            eventId);
+        try {
+            final StartEventResponse startEventResponse = coreCaseDataApi.startEventForCaseWorker(
+                authorization,
+                serviceAuth,
+                userId,
+                JURISDICTION,
+                CASE_TYPE,
+                caseId,
+                eventId);
 
-        final CaseDataContent caseDataContent = ccdCaseDataContentProvider.createCaseDataContent(
-            startEventResponse,
-            DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY,
-            DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION,
-            caseDetailsUpdater.updateCaseData(caseTask, startEventResponse).getData());
+            final CaseDataContent caseDataContent = ccdCaseDataContentProvider.createCaseDataContent(
+                startEventResponse,
+                DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY,
+                DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION,
+                caseDetailsUpdater.updateCaseData(caseTask, startEventResponse).getData());
 
-        coreCaseDataApi.submitEventForCaseWorker(
-            authorization,
-            serviceAuth,
-            userId,
-            JURISDICTION,
-            CASE_TYPE,
-            caseId,
-            true,
-            caseDataContent);
+            coreCaseDataApi.submitEventForCaseWorker(
+                authorization,
+                serviceAuth,
+                userId,
+                JURISDICTION,
+                CASE_TYPE,
+                caseId,
+                true,
+                caseDataContent);
+        } catch (FeignException e) {
+            final String message = format("Submit Event Failed for Case ID: %s, Event ID: %s", caseId, eventId);
+            log.info(message, e);
+            log.info(e.contentUTF8());
+
+            throw new CcdManagementException(message, e);
+        }
     }
 
     @Retryable(value = {FeignException.class, RuntimeException.class})
@@ -172,6 +180,7 @@ public class CcdUpdateService {
         } catch (final FeignException e) {
             final String message = format("Submit Event Failed for Case ID: %s, Event ID: %s", caseId, eventId);
             log.info(message, e);
+            log.info(e.contentUTF8());
 
             throw new CcdManagementException(message, e);
         }
