@@ -156,6 +156,12 @@ public class ConditionalOrder {
     private List<ListValue<DivorceDocument>> clarificationUploadDocuments;
 
     @CCD(
+        label = "Applicant cannot upload all or some Conditional Order Clarification documents",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo cannotUploadClarificationDocuments;
+
+    @CCD(
         label = "Case on digital Conditional Order Outcome"
     )
     private YesOrNo outcomeCase;
