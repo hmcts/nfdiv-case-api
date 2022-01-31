@@ -59,6 +59,7 @@ public class CcdUpdateService {
 
             final String message = format("Submit Event Failed for Case ID: %s, Event ID: %s", caseId, eventId);
             log.info(message, e);
+            log.info(e.contentUTF8());
 
             if (e.status() == CONFLICT.value()) {
                 throw new CcdConflictException(message, e);
