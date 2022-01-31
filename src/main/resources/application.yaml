@@ -120,7 +120,7 @@ uk:
             JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER: '32778ad1-0315-41cc-927b-2c008be35435'
 
 s2s-authorised:
-  services: ${S2S_AUTHORISED_SERVICES:ccd_data}
+  services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator}
 
 idam:
   s2s-auth:
