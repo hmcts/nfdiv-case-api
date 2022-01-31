@@ -1,6 +1,8 @@
 {
   "divorceOrDissolution": "divorce",
   "applicationType": "soleApplication",
+  "applicant1Offline": "No",
+  "applicant2Offline": "No",
   "applicant1FirstName": "test_first_name",
   "applicant1MiddleName": "test_middle_name",
   "applicant1LastName": "test_last_name",
@@ -31,7 +33,7 @@
   "applicant1SolicitorOrganisationPolicy": {
     "Organisation": {
       "OrganisationName": "Test 1 Organisation",
-      "OrganisationID": "ABC456"
+      "OrganisationID": "0FA7S8S"
     }
   },
   "applicant2FirstName": "test_first_name",
@@ -47,7 +49,7 @@
   "applicant2SolicitorOrganisationPolicy": {
     "Organisation": {
       "OrganisationName": "Test 2 Organisation",
-      "OrganisationID": "ABC123"
+      "OrganisationID": "N5AFUXG"
     }
   },
   "marriageApplicant1Name": "test_first_name test_last_name",
