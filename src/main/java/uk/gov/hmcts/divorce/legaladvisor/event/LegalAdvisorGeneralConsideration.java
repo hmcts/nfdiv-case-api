@@ -16,10 +16,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import static java.util.Collections.singletonList;
-import static org.springframework.util.CollectionUtils.isEmpty;
+import static java.util.Objects.isNull;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -74,13 +76,19 @@ public class LegalAdvisorGeneralConsideration implements CCDConfig<CaseData, Sta
             .value(copyOfGeneralReferral)
             .build();
 
-        if (isEmpty(caseData.getGeneralReferrals())) {
+        if (isNull(caseData.getGeneralReferrals())) {
             caseData.setGeneralReferrals(singletonList(generalReferralListValue));
         } else {
             caseData.getGeneralReferrals().add(0, generalReferralListValue);
         }
 
         caseData.setGeneralReferral(null);
+
+        //TODO: Remove temp logging to trace general referrals list
+        final List<ListValue<GeneralReferral>> generalReferrals = caseData.getGeneralReferrals();
+        log.info("Legal advisor general consideration CaseID: {} Referrals list size {}",
+            details.getId(),
+            Objects.nonNull(generalReferrals) ? generalReferrals.size() : 0);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
