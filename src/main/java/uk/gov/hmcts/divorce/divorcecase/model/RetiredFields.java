@@ -148,16 +148,6 @@ public class RetiredFields {
     private YesOrNo coIsEverythingInPetitionTrue;
 
     @CCD(
-        label = "Retired applicant 1 who is the financial order for?"
-    )
-    private Set<FinancialOrderFor> applicant1FinancialOrderFor;
-
-    @CCD(
-        label = "Retired applicant 2 who is the financial order for?"
-    )
-    private Set<FinancialOrderFor> applicant2FinancialOrderFor;
-
-    @CCD(
         label = "Previous Service Applications",
         typeOverride = Collection,
         typeParameterOverride = "AlternativeService"
@@ -355,8 +345,6 @@ public class RetiredFields {
                 "applicant2KeepContactDetailsConfidential",
                 transformContactDetailsConfidentialField("applicant2ContactDetailsConfidential", data)
             ));
-        init.put("applicant1FinancialOrderForRemoved", DO_NOTHING);
-        init.put("applicant2FinancialOrderForRemoved", DO_NOTHING);
         init.put("dateConditionalOrderSubmitted",
             data -> data.put("coApplicant1SubmittedDate", data.get("dateConditionalOrderSubmitted")));
         init.put("legalProceedingsExist",

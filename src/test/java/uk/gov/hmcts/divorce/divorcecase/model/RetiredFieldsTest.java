@@ -39,8 +39,6 @@ class RetiredFieldsTest {
         data.put("applicant1LastName", "This will be left alone");
         data.put("applicant1ContactDetailsConfidential", "keep");
         data.put("applicant2ContactDetailsConfidential", "share");
-        data.put("applicant1FinancialOrderForRemoved", "value");
-        data.put("applicant2FinancialOrderForRemoved", "value");
         data.put("dateConditionalOrderSubmitted", "2021-11-11");
         data.put("coDateSubmitted", "2021-11-13");
         data.put("legalProceedingsExist", "YES");
@@ -77,8 +75,6 @@ class RetiredFieldsTest {
             entry("applicant1LastName", "This will be left alone"),
             entry("applicant1ContactDetailsConfidential", null),
             entry("applicant2ContactDetailsConfidential", null),
-            entry("applicant1FinancialOrderForRemoved", null),
-            entry("applicant2FinancialOrderForRemoved", null),
             entry("dateConditionalOrderSubmitted", null),
             entry("coApplicant1SubmittedDate", "2021-11-13"),
             entry("legalProceedingsExist", null),
