@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
@@ -15,6 +16,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Objects;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralReferralPayment;
@@ -63,18 +66,24 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails
     ) {
-        log.info("Caseworker general referral about to submit callback invoked");
+        log.info("Caseworker general referral about to submit callback invoked. CaseID: {}", details.getId());
 
-        var caseDataCopy = details.getData().toBuilder().build();
+        final CaseData caseData = details.getData();
 
-        State endState = caseDataCopy.getGeneralReferral().getGeneralReferralFeeRequired().toBoolean()
+        State endState = caseData.getGeneralReferral().getGeneralReferralFeeRequired().toBoolean()
             ? AwaitingGeneralReferralPayment
             : AwaitingGeneralConsideration;
 
-        caseDataCopy.getGeneralReferral().setGeneralApplicationAddedDate(LocalDate.now(clock));
+        caseData.getGeneralReferral().setGeneralApplicationAddedDate(LocalDate.now(clock));
+
+        //TODO: Remove temp logging to trace general referrals list
+        final List<ListValue<GeneralReferral>> generalReferrals = caseData.getGeneralReferrals();
+        log.info("Caseworker general referral. CaseID: {} Referrals list size {}",
+            details.getId(),
+            Objects.nonNull(generalReferrals) ? generalReferrals.size() : 0);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseDataCopy)
+            .data(caseData)
             .state(endState)
             .build();
     }
