@@ -103,6 +103,7 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
         fixture.getApplicant1().setSolicitorRepresented(details.getData().getApplicant1().getSolicitorRepresented());
         fixture.getApplicant2().setSolicitorRepresented(details.getData().getApplicant2().getSolicitorRepresented());
         fixture.setCaseInvite(details.getData().getCaseInvite());
+        fixture.setHyphenatedCaseRef(fixture.formatCaseRef(details.getId()));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(fixture)
@@ -129,7 +130,7 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
             ccdAccessService.addApplicant1SolicitorRole(auth, caseId, orgId);
         }
 
-        if (data.getApplicant2().isRepresented()) {
+        if (data.getCaseInvite().applicant2UserId() != null && data.getApplicant2().isRepresented()) {
             var orgId = details
                 .getData()
                 .getApplicant2()
@@ -139,7 +140,7 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
                 .getOrganisationId();
 
             ccdAccessService.addRoleToCase(app2Id, caseId, orgId, APPLICANT_1_SOLICITOR);
-        } else {
+        } else if (data.getCaseInvite().applicant2UserId() != null) {
             ccdAccessService.linkRespondentToApplication(auth, caseId, app2Id);
         }
 

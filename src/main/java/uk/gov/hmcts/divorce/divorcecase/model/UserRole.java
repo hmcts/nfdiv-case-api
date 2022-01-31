@@ -28,4 +28,13 @@ public enum UserRole implements HasRole {
     private final String role;
     private final String caseTypePermissions;
 
+    public static UserRole fromString(String value) {
+        for (UserRole role : UserRole.values()) {
+            if (role.getRole().equals(value)) {
+                return role;
+            }
+        }
+        return null;
+    }
+
 }

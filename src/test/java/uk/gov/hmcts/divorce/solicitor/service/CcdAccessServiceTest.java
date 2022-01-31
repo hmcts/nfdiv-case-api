@@ -10,14 +10,20 @@ import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.authorisation.exceptions.InvalidTokenException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CaseAssignmentApi;
+import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRole;
+import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRoleWithOrganisation;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesRequest;
+import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesResource;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesResponse;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
@@ -242,6 +248,57 @@ public class CcdAccessServiceTest {
                 eq(SYSTEM_UPDATE_AUTH_TOKEN),
                 eq(TEST_SERVICE_AUTH_TOKEN),
                 any(CaseAssignmentUserRolesRequest.class)
+            );
+
+        verifyNoMoreInteractions(idamService, authTokenGenerator, caseAssignmentApi);
+    }
+
+    @Test
+    public void shouldNotThrowAnyExceptionWhenRemoveRolesIsCalled() {
+        when(authTokenGenerator.generate())
+            .thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+
+        var response = CaseAssignmentUserRolesResource.builder()
+            .caseAssignmentUserRoles(List.of(
+                CaseAssignmentUserRole.builder().userId("1").caseRole("NOT_THIS_ONE").build(),
+                CaseAssignmentUserRole.builder().userId("2").caseRole("[CREATOR]").build()
+            ))
+            .build();
+
+        when(caseAssignmentApi.getUserRoles(
+                eq(SYSTEM_UPDATE_AUTH_TOKEN),
+                eq(TEST_SERVICE_AUTH_TOKEN),
+                anyList()
+            )
+        ).thenReturn(response);
+
+        assertThatCode(() -> ccdAccessService.removeUsersWithRole(SYSTEM_UPDATE_AUTH_TOKEN, TEST_CASE_ID, List.of("[CREATOR]")))
+            .doesNotThrowAnyException();
+
+        var request = CaseAssignmentUserRolesRequest.builder()
+            .caseAssignmentUserRolesWithOrganisation(List.of(
+                CaseAssignmentUserRoleWithOrganisation.builder()
+                    .organisationId(null)
+                    .caseDataId("1616591401473378")
+                    .caseRole("[CREATOR]")
+                    .userId("2")
+                    .build()))
+            .build();
+
+        verify(authTokenGenerator).generate();
+        verify(caseAssignmentApi)
+            .getUserRoles(
+                eq(SYSTEM_UPDATE_AUTH_TOKEN),
+                eq(TEST_SERVICE_AUTH_TOKEN),
+                anyList()
+            );
+
+        verify(caseAssignmentApi)
+            .removeCaseUserRoles(
+                eq(SYSTEM_UPDATE_AUTH_TOKEN),
+                eq(TEST_SERVICE_AUTH_TOKEN),
+                eq(request)
             );
 
         verifyNoMoreInteractions(idamService, authTokenGenerator, caseAssignmentApi);
