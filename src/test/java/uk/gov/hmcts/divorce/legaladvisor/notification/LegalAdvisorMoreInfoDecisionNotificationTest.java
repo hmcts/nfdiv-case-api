@@ -17,9 +17,11 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
-import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_LAST_NAME;
@@ -27,18 +29,21 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.JOINT_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CONDITIONAL_ORDER_REFUSED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CLARIFICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithStatementOfTruth;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant2;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConditionalOrderTemplateVars;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
 class LegalAdvisorMoreInfoDecisionNotificationTest {
@@ -52,15 +57,14 @@ class LegalAdvisorMoreInfoDecisionNotificationTest {
     @InjectMocks
     private LegalAdvisorMoreInfoDecisionNotification notification;
 
+
     @Test
     void shouldSendConditionalOrderRefusedEmailToApplicant1IfNotRepresented() {
 
-        final var data = caseData();
-        final var applicant2 = getApplicant2(MALE);
-        data.setApplicant2(applicant2);
+        final var data = validApplicant1CaseData();
 
-        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
-            .thenReturn(getMainTemplateVars());
+        when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getConditionalOrderTemplateVars(SOLE_APPLICATION));
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
@@ -70,11 +74,71 @@ class LegalAdvisorMoreInfoDecisionNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
                 hasEntry(IS_DIVORCE, CommonContent.YES),
-                hasEntry(IS_DISSOLUTION, CommonContent.NO)
+                hasEntry(IS_DISSOLUTION, CommonContent.NO),
+                hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.NO)
             )),
             eq(ENGLISH)
         );
-        verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+    }
+
+    @Test
+    void shouldSendConditionalOrderRefusedEmailToApplicant1IfJoint() {
+
+        final var data = validJointApplicant1CaseData();
+
+        when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getConditionalOrderTemplateVars(JOINT_APPLICATION));
+
+        notification.sendToApplicant1(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(CITIZEN_CONDITIONAL_ORDER_REFUSED),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(IS_DIVORCE, CommonContent.YES),
+                hasEntry(IS_DISSOLUTION, CommonContent.NO),
+                hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES)
+            )),
+            eq(ENGLISH)
+        );
+        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2());
+    }
+
+    @Test
+    void shouldSendConditionalOrderRefusedEmailToApplicant2IfJoint() {
+
+        final var data = validJointApplicant1CaseData();
+
+        when(commonContent.conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(getConditionalOrderTemplateVars(JOINT_APPLICATION));
+
+        notification.sendToApplicant2(data, 1234567890123456L);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(CITIZEN_CONDITIONAL_ORDER_REFUSED),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(1234567890123456L)),
+                hasEntry(IS_DIVORCE, CommonContent.YES),
+                hasEntry(IS_DISSOLUTION, CommonContent.NO),
+                hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.YES)
+            )),
+            eq(ENGLISH)
+        );
+        verify(commonContent).conditionalOrderTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldNotSendConditionalOrderRefusedEmailToApplicant2IfSole() {
+
+        final var data = validApplicant2CaseData();
+        data.setApplicationType(SOLE_APPLICATION);
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+
+        notification.sendToApplicant2(data, 1234567890123456L);
+        verifyNoInteractions(notificationService);
     }
 
     @Test

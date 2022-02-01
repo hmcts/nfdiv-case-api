@@ -78,6 +78,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISAT
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -159,7 +160,7 @@ public class LegalAdvisorMakeDecisionIT {
     public void shouldSetStateToAwaitingClarificationIfConditionalOrderIsNotGrantedAndRefusalIsDueToMoreInformationRequired()
         throws Exception {
 
-        final CaseData caseData = caseData();
+        final CaseData caseData = validApplicant1CaseData();
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .granted(NO)
             .refusalDecision(MORE_INFO)
@@ -188,7 +189,7 @@ public class LegalAdvisorMakeDecisionIT {
     public void givenConditionalOrderIsNotGrantedAndRefusalIsDueToMoreInformationRequiredThenShouldSendNotification()
         throws Exception {
 
-        final CaseData caseData = caseData();
+        final CaseData caseData = validApplicant1CaseData();
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .granted(NO)
             .refusalDecision(MORE_INFO)
