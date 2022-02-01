@@ -7,20 +7,17 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.caseworker.event.page.GeneralReferralPaymentConfirmation;
 import uk.gov.hmcts.divorce.caseworker.event.page.GeneralReferralPaymentSummary;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.PaymentService;
 
 import java.util.List;
-import java.util.Objects;
 
 import static java.util.Arrays.asList;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
@@ -76,12 +73,6 @@ public class CaseworkerGeneralReferralPayment implements CCDConfig<CaseData, Sta
 
         final OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_DEEMED);
         caseData.getGeneralReferral().getGeneralReferralFee().setOrderSummary(orderSummary);
-
-        //TODO: Remove temp logging to trace general referrals list
-        final List<ListValue<GeneralReferral>> generalReferrals = caseData.getGeneralReferrals();
-        log.info("Caseworker general referral payment. CaseID: {} Referrals list size {}",
-            details.getId(),
-            Objects.nonNull(generalReferrals) ? generalReferrals.size() : 0);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
