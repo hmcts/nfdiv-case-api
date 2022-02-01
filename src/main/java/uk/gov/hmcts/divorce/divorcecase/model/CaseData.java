@@ -249,6 +249,13 @@ public class CaseData {
     private YesOrNo evidenceHandled;
 
     @CCD(
+        label = "Supplementary evidence handled",
+        access = {CaseworkerAccess.class}
+    )
+    @JsonUnwrapped(prefix = "noc")
+    private NoticeOfChange noticeOfChange;
+
+    @CCD(
         label = "Bulk Scan Envelopes",
         typeOverride = Collection,
         typeParameterOverride = "BulkScanEnvelope",
