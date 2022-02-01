@@ -20,6 +20,7 @@ import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -29,6 +30,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_1_SOL_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_2_CITIZEN_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
@@ -44,8 +46,6 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.feignException;
 
 @ExtendWith(MockitoExtension.class)
 public class CcdAccessServiceTest {
-    @InjectMocks
-    private CcdAccessService ccdAccessService;
 
     @Mock
     private CaseAssignmentApi caseAssignmentApi;
@@ -55,6 +55,9 @@ public class CcdAccessServiceTest {
 
     @Mock
     private AuthTokenGenerator authTokenGenerator;
+
+    @InjectMocks
+    private CcdAccessService ccdAccessService;
 
     @Test
     public void shouldNotThrowAnyExceptionWhenAddApplicant1RoleIsInvoked() {
@@ -302,6 +305,24 @@ public class CcdAccessServiceTest {
             );
 
         verifyNoMoreInteractions(idamService, authTokenGenerator, caseAssignmentApi);
+    }
+
+    @Test
+    public void shouldReturnTrueWhenUserHasCreatorRole() {
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(caseAssignmentApi.getUserRoles(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            TEST_SERVICE_AUTH_TOKEN,
+            List.of(TEST_CASE_ID.toString()))
+        ).thenReturn(CaseAssignmentUserRolesResource.builder()
+            .caseAssignmentUserRoles(List.of(
+                CaseAssignmentUserRole.builder().caseRole(CREATOR.getRole()).build()
+            )).build()
+        );
+
+        boolean expected = ccdAccessService.isApplicant1(SYSTEM_UPDATE_AUTH_TOKEN, TEST_CASE_ID);
+
+        assertThat(expected).isTrue();
     }
 
     private User getIdamUser(String authToken, String userId, String email) {

@@ -14,9 +14,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
-import uk.gov.hmcts.reform.idam.client.models.User;
+import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -55,7 +54,7 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
     private HttpServletRequest request;
 
     @Autowired
-    private IdamService idamService;
+    private CcdAccessService ccdAccessService;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -92,8 +91,8 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
             ? AwaitingLegalAdvisorReferral
             : beforeDetails.getState() == ConditionalOrderDrafted ? ConditionalOrderPending : AwaitingLegalAdvisorReferral;
 
-        User user = idamService.retrieveUser(request.getHeader(AUTHORIZATION));
-        appliedForConditionalOrderNotification.setSubmittingUserId(user.getUserDetails().getId());
+        boolean isApplicant1 = ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), details.getId());
+        appliedForConditionalOrderNotification.setSubmittingUser(isApplicant1);
         notificationDispatcher.send(appliedForConditionalOrderNotification, data, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

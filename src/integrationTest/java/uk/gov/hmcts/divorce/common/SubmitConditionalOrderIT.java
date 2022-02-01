@@ -21,10 +21,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 
 import java.time.Clock;
 
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -58,6 +62,8 @@ public class SubmitConditionalOrderIT {
 
     @MockBean
     private WebMvcConfig webMvcConfig;
+    @MockBean
+    private CcdAccessService ccdAccessService;
 
     @MockBean
     private NotificationService notificationService;
@@ -77,9 +83,9 @@ public class SubmitConditionalOrderIT {
 
     @Test
     void shouldSetDateSubmitted() throws Exception {
-
         setMockClock(clock);
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
+        when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(true);
 
         final CaseData caseData = caseData();
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);

@@ -41,7 +41,7 @@ public class AppliedForConditionalOrderNotification implements ApplicantNotifica
     static final String APPLICANT1 = "applicant 1";
     static final String APPLICANT2 = "applicant 2";
 
-    private String submittingUserId;
+    private String submittingUser;
 
     @Autowired
     private NotificationService notificationService;
@@ -51,7 +51,7 @@ public class AppliedForConditionalOrderNotification implements ApplicantNotifica
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
-        if (!applicant2SubmittedOrder(caseData)) {
+        if (APPLICANT1.equalsIgnoreCase(submittingUser)) {
             log.info("Notifying applicant 1 that their conditional order application has been submitted: {}", id);
             notificationService.sendEmail(
                 caseData.getApplicant1().getEmail(),
@@ -72,7 +72,7 @@ public class AppliedForConditionalOrderNotification implements ApplicantNotifica
 
     @Override
     public void sendToApplicant2(final CaseData data, final Long id) {
-        if (applicant2SubmittedOrder(data)) {
+        if (APPLICANT2.equalsIgnoreCase(submittingUser)) {
             log.info("Notifying applicant 2 that their conditional order application has been submitted: {}", id);
             notificationService.sendEmail(
                 data.getApplicant2().getEmail(),
@@ -161,10 +161,6 @@ public class AppliedForConditionalOrderNotification implements ApplicantNotifica
         return templateVars;
     }
 
-    private boolean applicant2SubmittedOrder(final CaseData caseData) {
-        return caseData.getCaseInvite().isApplicant2(submittingUserId);
-    }
-
     private boolean alreadyApplied(CaseData caseData, String whichApplicant) {
         return Objects.nonNull(coQuestions(caseData, whichApplicant).getSubmittedDate());
     }
@@ -179,7 +175,7 @@ public class AppliedForConditionalOrderNotification implements ApplicantNotifica
         return whichApplicant.equalsIgnoreCase(APPLICANT1) ? APPLICANT2 : APPLICANT1;
     }
 
-    public void setSubmittingUserId(String userId) {
-        submittingUserId = userId;
+    public void setSubmittingUser(boolean isApplicant1) {
+        submittingUser = isApplicant1 ? APPLICANT1 : APPLICANT2;
     }
 }

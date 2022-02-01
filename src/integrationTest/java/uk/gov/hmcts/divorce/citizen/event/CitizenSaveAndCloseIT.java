@@ -12,13 +12,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.citizen.notification.SaveAndSignOutNotificationHandler;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
-import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.notification.exception.NotificationException;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
+import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.service.notify.NotificationClientException;
 
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -61,20 +60,14 @@ public class CitizenSaveAndCloseIT {
     private NotificationService notificationService;
 
     @MockBean
-    private IdamService idamService;
+    private CcdAccessService ccdAccessService;
 
     @MockBean
     private WebMvcConfig webMvcConfig;
 
     @BeforeEach
     public void setUp() {
-        final var userDetails = UserDetails.builder()
-            .email("test@test.com")
-            .id("app1")
-            .build();
-
-        when(idamService.retrieveUser(anyString()))
-            .thenReturn(new User("token", userDetails));
+        when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(true);
     }
 
     @Test

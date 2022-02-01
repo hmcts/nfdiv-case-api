@@ -9,12 +9,15 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CaseAssignmentApi;
+import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRole;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRoleWithOrganisation;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesRequest;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
@@ -104,6 +107,18 @@ public class CcdAccessService {
         );
 
         log.info("Successfully unlinked applicant from case Id {} ", caseId);
+    }
+
+    @Retryable(value = {FeignException.class, RuntimeException.class})
+    public boolean isApplicant1(String userToken, Long caseId) {
+        log.info("Retrieving roles for user on case {}", caseId);
+        String s2sToken = authTokenGenerator.generate();
+        List<String> userRoles = caseAssignmentApi.getUserRoles(userToken, s2sToken, List.of(String.valueOf(caseId)))
+            .getCaseAssignmentUserRoles()
+            .stream()
+            .map(CaseAssignmentUserRole::getCaseRole)
+            .collect(Collectors.toList());
+        return userRoles.contains(CREATOR.getRole()) || userRoles.contains(APPLICANT_1_SOLICITOR.getRole());
     }
 
     private CaseAssignmentUserRolesRequest getCaseAssignmentRequest(Long caseId, String userId, String orgId, UserRole role) {

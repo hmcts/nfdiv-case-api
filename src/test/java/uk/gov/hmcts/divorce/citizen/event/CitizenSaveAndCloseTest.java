@@ -12,14 +12,12 @@ import uk.gov.hmcts.divorce.citizen.notification.SaveAndSignOutNotificationHandl
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
+import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -35,7 +33,7 @@ public class CitizenSaveAndCloseTest {
     private SaveAndSignOutNotificationHandler saveAndSignOutNotificationHandler;
 
     @Mock
-    private IdamService idamService;
+    private CcdAccessService ccdAccessService;
 
     @Mock
     private HttpServletRequest request;
@@ -59,20 +57,12 @@ public class CitizenSaveAndCloseTest {
         final var caseData = caseData();
         final var details = new CaseDetails<CaseData, State>();
         details.setData(caseData);
-
-        when(request.getHeader(AUTHORIZATION))
-            .thenReturn("token");
-
-        final var userDetails = UserDetails.builder()
-            .email("test@test.com")
-            .id("app1")
-            .build();
-
-        when(idamService.retrieveUser(anyString()))
-            .thenReturn(new User("token", userDetails));
+        details.setId(123456789L);
+        when(request.getHeader(AUTHORIZATION)).thenReturn("token");
+        when(ccdAccessService.isApplicant1(eq("token"), eq(123456789L))).thenReturn(true);
 
         citizenSaveAndClose.submitted(details, details);
 
-        verify(saveAndSignOutNotificationHandler).notifyApplicant(caseData, userDetails);
+        verify(saveAndSignOutNotificationHandler).notifyApplicant(caseData, true);
     }
 }

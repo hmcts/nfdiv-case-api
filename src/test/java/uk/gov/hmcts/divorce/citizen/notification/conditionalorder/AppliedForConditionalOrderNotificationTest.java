@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
@@ -65,7 +64,6 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseDa
 @ExtendWith(SpringExtension.class)
 class AppliedForConditionalOrderNotificationTest {
 
-    private static final String DUMMY_USER_ID = "1231231231231";
     @Mock
     private NotificationService notificationService;
 
@@ -86,6 +84,7 @@ class AppliedForConditionalOrderNotificationTest {
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
         setMockClock(clock);
+        notification.setSubmittingUser(true);
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
@@ -109,8 +108,8 @@ class AppliedForConditionalOrderNotificationTest {
         templateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(templateVars);
-
         setMockClock(clock);
+        notification.setSubmittingUser(true);
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
@@ -133,6 +132,7 @@ class AppliedForConditionalOrderNotificationTest {
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
         setMockClock(clock);
+        notification.setSubmittingUser(true);
 
         notification.sendToApplicant1(data, 1234567890123456L);
 
@@ -160,6 +160,7 @@ class AppliedForConditionalOrderNotificationTest {
         when(commonContent.mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
         setMockClock(clock);
+        notification.setSubmittingUser(true);
 
         notification.sendToApplicant1(caseData, 1234567890123456L);
 
@@ -183,8 +184,7 @@ class AppliedForConditionalOrderNotificationTest {
     @Test
     void shouldSendEmailToJointApplicant1WhoDidNotSubmitCo() {
         CaseData caseData = validApplicant1CaseData();
-        notification.setSubmittingUserId(DUMMY_USER_ID);
-        caseData.setCaseInvite(new CaseInvite(null, null, DUMMY_USER_ID));
+        notification.setSubmittingUser(false);
         setSubmittedDate(caseData, List.of(APPLICANT2));
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         when(commonContent.mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2()))
@@ -213,8 +213,7 @@ class AppliedForConditionalOrderNotificationTest {
     @Test
     void shouldNotSendEmailToJointApplicant1WhoDidNotSubmitCoButAlreadyApplied() {
         CaseData caseData = caseData(DIVORCE, ApplicationType.JOINT_APPLICATION);
-        notification.setSubmittingUserId(DUMMY_USER_ID);
-        caseData.setCaseInvite(new CaseInvite(null, null, DUMMY_USER_ID));
+        notification.setSubmittingUser(false);
         setSubmittedDate(caseData, List.of(APPLICANT2));
         when(commonContent.mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
@@ -229,8 +228,7 @@ class AppliedForConditionalOrderNotificationTest {
     void shouldSendEmailToJointApplicant2WhoSubmittedCoWhenPartnerHasNotApplied() {
         CaseData caseData = validApplicant2CaseData();
         setSubmittedDate(caseData, List.of(APPLICANT2));
-        notification.setSubmittingUserId(DUMMY_USER_ID);
-        caseData.setCaseInvite(new CaseInvite(null, null, DUMMY_USER_ID));
+        notification.setSubmittingUser(false);
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         when(commonContent.mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getMainTemplateVars());
@@ -260,8 +258,7 @@ class AppliedForConditionalOrderNotificationTest {
     void shouldSendEmailToJointApplicant2WhoSubmittedCoWhenPartnerApplied() {
         CaseData caseData = validApplicant2CaseData();
         setSubmittedDate(caseData, List.of(APPLICANT1, APPLICANT2));
-        notification.setSubmittingUserId(DUMMY_USER_ID);
-        caseData.setCaseInvite(new CaseInvite(null, null, DUMMY_USER_ID));
+        notification.setSubmittingUser(false);
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         when(commonContent.mainTemplateVars(caseData, 1234567890123456L, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getMainTemplateVars());
