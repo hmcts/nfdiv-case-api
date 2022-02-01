@@ -23,7 +23,7 @@ public class SetApplicant2Email implements CaseTask {
         final CaseInvite caseInvite = caseData.getCaseInvite();
 
         if (nonNull(caseInvite)) {
-            final String applicant2InviteEmailAddress = caseInvite.getApplicant2InviteEmailAddress();
+            final String applicant2InviteEmailAddress = caseInvite.applicant2InviteEmailAddress();
             final Applicant applicant2 = caseData.getApplicant2();
 
             if (!isEmpty(applicant2InviteEmailAddress) && isEmpty(applicant2.getEmail())) {

@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -87,7 +88,7 @@ class ApplicationIssuedOverseasNotificationTest {
         final CaseData data = validCaseDataForIssueApplication();
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
-        data.getCaseInvite().setApplicant2InviteEmailAddress(null);
+        data.setCaseInvite(new CaseInvite(null, null, null));
         data.getApplicant2().setEmail(null);
 
         final Map<String, String> divorceTemplateVars = new HashMap<>();
