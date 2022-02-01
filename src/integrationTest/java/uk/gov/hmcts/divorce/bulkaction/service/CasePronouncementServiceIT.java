@@ -37,6 +37,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
@@ -99,6 +100,19 @@ public class CasePronouncementServiceIT {
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
+        when(coreCaseDataApi.readForCaseWorker(
+            CASEWORKER_AUTH_TOKEN,
+            TEST_SERVICE_AUTH_TOKEN,
+            CASEWORKER_USER_ID,
+            JURISDICTION,
+            CASE_TYPE,
+            TEST_CASE_ID.toString()))
+            .thenReturn(
+                uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
+                    .state(AwaitingPronouncement.getName())
+                    .build()
+            );
+
         final StartEventResponse startEventResponse = StartEventResponse.builder()
             .eventId(SYSTEM_PRONOUNCE_CASE)
             .token("startEventToken")
@@ -138,6 +152,16 @@ public class CasePronouncementServiceIT {
         )).thenReturn(getCaseDetails());
 
         casePronouncementService.pronounceCases(bulkActionCaseDetails, CASEWORKER_AUTH_TOKEN);
+
+        verify(coreCaseDataApi)
+            .readForCaseWorker(
+                CASEWORKER_AUTH_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN,
+                CASEWORKER_USER_ID,
+                JURISDICTION,
+                CASE_TYPE,
+                TEST_CASE_ID.toString()
+            );
 
         verify(coreCaseDataApi)
             .startEventForCaseWorker(
