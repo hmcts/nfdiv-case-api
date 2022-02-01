@@ -16,8 +16,8 @@ services:
       SERVICES_DOCUMENTS_API: http://dm-store-aat.service.core-compute-aat.internal
       SERVICES_PAYMENTS_URL: http://payment-api-aat.service.core-compute-aat.internal
       SERVICES_EM_ANNO_API: http://host.docker.internal:4013
-      SERVICES_CCD_COMPONENT_API: http://host.docker.internal:4013
-      SERVICES_CCD_DATA_STORE_API: http://host.docker.internal:4013
+      SERVICES_CCD_COMPONENT_API: http://host.docker.internal:4452
+      SERVICES_CCD_DATA_STORE_API: http://host.docker.internal:4452
       SERVICES_IDAM_API_URL: https://idam-api.aat.platform.hmcts.net
       SERVICES_IDAM_CLIENT_ID: xuiwebapp
       SERVICES_IDAM_LOGIN_URL: https://idam-web-public.aat.platform.hmcts.net
@@ -36,8 +36,8 @@ services:
       IDAM_SECRET: "${XUI_OAUTH_SECRET}"
       S2S_SECRET: "${XUI_SERVICE_KEY}"
       LAUNCH_DARKLY_CLIENT_ID: "${XUI_LD_ID}"
-      SERVICES_ROLE_ASSIGNMENT_API: http://host.docker.internal:4013
-      HEALTH_ROLE_ASSIGNMENT_API: http://host.docker.internal:4013/health
+      SERVICES_ROLE_ASSIGNMENT_API: http://host.docker.internal:4096
+      HEALTH_ROLE_ASSIGNMENT_API: http://host.docker.internal:4096/health
     ports:
       - 3000:3000
     extra_hosts:

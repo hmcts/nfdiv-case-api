@@ -26,7 +26,7 @@ plugins {
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'org.springframework.boot' version '2.6.3'
   id 'com.github.ben-manes.versions' version '0.41.0'
-  id 'hmcts.ccd.sdk' version '0.25.5'
+  id 'hmcts.ccd.sdk' version '0.25.13'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -218,6 +218,7 @@ repositories {
   mavenLocal()
   mavenCentral()
   maven { url 'https://jitpack.io' }
+  jcenter()
 }
 
 def versions = [
@@ -304,7 +305,7 @@ dependencies {
   functionalTestImplementation group: 'com.github.hmcts', name: 'document-management-client', version: '7.0.1'
   functionalTestImplementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '4.0.2'
 
-  cftlibImplementation 'com.github.hmcts:rse-cft-lib:0.6.0'
+  cftlibImplementation 'com.github.hmcts:rse-cft-lib:0.99.0'
 }
 
 mainClassName = 'uk.gov.hmcts.divorce.CaseApiApplication'
@@ -415,9 +416,9 @@ task bootXui(group: 'ccd tasks', dependsOn: [loadEnvSecrets]) {
   }
 }
 
-task bootWithCcd(type: org.springframework.boot.gradle.tasks.run.BootRun, dependsOn: [loadEnvSecrets, buildCCDXlsx], group: 'ccd tasks') {
+task bootWithCcd(type: org.springframework.boot.gradle.tasks.run.BootRun, dependsOn: [loadEnvSecrets], group: 'ccd tasks') {
     classpath sourceSets.cftlib.runtimeClasspath
-    mainClass = tasks.bootRun.mainClass
+    mainClass = 'uk.gov.hmcts.divorce.cftlib.RunWithCFT'
     doFirst() {
 
         project.file('./.aat-env').readLines().each() {
