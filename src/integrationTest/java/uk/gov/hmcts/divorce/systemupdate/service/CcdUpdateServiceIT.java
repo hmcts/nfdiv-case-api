@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.systemupdate.service;
 
-import feign.FeignException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -219,7 +218,7 @@ public class CcdUpdateServiceIT {
             );
 
         assertThrows(
-            FeignException.class,
+            CcdManagementException.class,
             () -> ccdUpdateService.submitEventWithRetry(
                 "1",
                 CREATE_BULK_LIST,

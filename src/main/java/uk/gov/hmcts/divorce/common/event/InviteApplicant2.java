@@ -26,7 +26,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
-import static uk.gov.hmcts.divorce.divorcecase.util.AccessCodeGenerator.generateAccessCode;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant1BasicCase;
 
 @Slf4j
@@ -83,7 +82,7 @@ public class InviteApplicant2 implements CCDConfig<CaseData, State, UserRole> {
             }
 
             log.info("Generating access code to allow the respondent to access the joint application");
-            data.getCaseInvite().setAccessCode(generateAccessCode());
+            data.setCaseInvite(data.getCaseInvite().generateAccessCode());
             data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
 
             notificationDispatcher.send(applicationSentForReviewNotification, data, details.getId());

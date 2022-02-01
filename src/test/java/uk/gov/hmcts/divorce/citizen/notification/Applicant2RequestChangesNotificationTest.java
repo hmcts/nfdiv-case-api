@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -106,7 +107,8 @@ class Applicant2RequestChangesNotificationTest {
     void shouldSendEmailToApplicant2WithDivorceContent() {
         CaseData data = caseData();
         data.setApplicant2(getApplicant(Gender.FEMALE));
-        data.getCaseInvite().setApplicant2InviteEmailAddress(TEST_USER_EMAIL);
+        data.setCaseInvite(new CaseInvite(TEST_USER_EMAIL, null, null));
+
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
 
@@ -126,7 +128,8 @@ class Applicant2RequestChangesNotificationTest {
         CaseData data = caseData();
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         data.setApplicant2(getApplicant(Gender.MALE));
-        data.getCaseInvite().setApplicant2InviteEmailAddress(TEST_USER_EMAIL);
+        data.setCaseInvite(new CaseInvite(TEST_USER_EMAIL, null, null));
+
         final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
         when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1()))

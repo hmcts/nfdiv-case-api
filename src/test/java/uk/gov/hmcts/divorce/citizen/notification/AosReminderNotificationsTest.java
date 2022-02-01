@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -65,7 +66,7 @@ class AosReminderNotificationsTest {
         data.getApplication().setIssueDate(LocalDate.now());
         data.getApplication().setSolServiceMethod(COURT_SERVICE);
         data.getApplicant2().setEmail(null);
-        data.getCaseInvite().setAccessCode(ACCESS_CODE);
+        data.setCaseInvite(new CaseInvite("applicant2@test.com", ACCESS_CODE, null));
 
         Map<String, String> divorceTemplateVars = new HashMap<>();
         divorceTemplateVars.putAll(getMainTemplateVars());
@@ -98,7 +99,7 @@ class AosReminderNotificationsTest {
         data.getApplication().setIssueDate(LocalDate.now());
         data.getApplication().setSolServiceMethod(COURT_SERVICE);
         data.getApplicant2().setEmail(null);
-        data.getCaseInvite().setAccessCode(ACCESS_CODE);
+        data.setCaseInvite(new CaseInvite("applicant2@test.com", ACCESS_CODE, null));
 
         Map<String, String> dissolutionTemplateVars = new HashMap<>();
         dissolutionTemplateVars.putAll(getMainTemplateVars());
@@ -132,7 +133,7 @@ class AosReminderNotificationsTest {
         data.getApplication().setIssueDate(LocalDate.now());
         data.getApplication().setSolServiceMethod(SOLICITOR_SERVICE);
         data.getApplicant2().setEmail(null);
-        data.getCaseInvite().setAccessCode(ACCESS_CODE);
+        data.setCaseInvite(new CaseInvite(null, ACCESS_CODE, null));
 
         Map<String, String> dissolutionTemplateVars = new HashMap<>();
         dissolutionTemplateVars.putAll(getMainTemplateVars());
@@ -149,8 +150,7 @@ class AosReminderNotificationsTest {
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
         data.getApplicant2().setEmail(null);
-        data.getCaseInvite().setApplicant2InviteEmailAddress(null);
-        data.getCaseInvite().setAccessCode(ACCESS_CODE);
+        data.setCaseInvite(new CaseInvite(null, ACCESS_CODE, null));
 
         aosReminderNotifications.sendToApplicant2(data, 1234567890123456L);
 
@@ -163,7 +163,7 @@ class AosReminderNotificationsTest {
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplication().setIssueDate(LocalDate.now());
         data.getApplicant2().setEmail(null);
-        data.getCaseInvite().setAccessCode(null);
+        data.setCaseInvite(new CaseInvite(null, null, null));
 
         aosReminderNotifications.sendToApplicant2(data, 1234567890123456L);
 

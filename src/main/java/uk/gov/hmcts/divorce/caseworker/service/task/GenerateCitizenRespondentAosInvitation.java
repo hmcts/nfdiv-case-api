@@ -15,7 +15,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
-import static uk.gov.hmcts.divorce.divorcecase.util.AccessCodeGenerator.generateAccessCode;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CITIZEN_RESP_AOS_INVITATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESP_AOS_INVITATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_INVITATION;
@@ -43,7 +42,7 @@ public class GenerateCitizenRespondentAosInvitation implements CaseTask {
         final LocalDate createdDate = caseDetails.getCreatedDate().toLocalDate();
 
         log.info("Generating access code to allow the respondent to access the application");
-        caseData.getCaseInvite().setAccessCode(generateAccessCode());
+        caseData.setCaseInvite(caseData.getCaseInvite().generateAccessCode());
 
         if (caseDetails.getData().getApplication().isSolicitorApplication() && !caseData.getApplicant2().isRepresented()) {
 

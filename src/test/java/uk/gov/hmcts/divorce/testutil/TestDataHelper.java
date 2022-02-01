@@ -225,7 +225,7 @@ public class TestDataHelper {
         return CaseData.builder()
             .applicant1(getApplicant())
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
-            .caseInvite(new CaseInvite())
+            .caseInvite(new CaseInvite(null, null, null))
             .build();
     }
 
@@ -246,8 +246,7 @@ public class TestDataHelper {
     public static CaseData jointCaseDataWithOrderSummary() {
         CaseData caseData = caseDataWithOrderSummary();
         caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.setCaseInvite(new CaseInvite());
-        caseData.getCaseInvite().setApplicant2InviteEmailAddress(TEST_APPLICANT_2_USER_EMAIL);
+        caseData.setCaseInvite(new CaseInvite(TEST_APPLICANT_2_USER_EMAIL, null, null));
         caseData.setApplicant2(getApplicant(MALE));
         caseData.getApplication().setApplicant2StatementOfTruth(YES);
         caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
@@ -414,8 +413,7 @@ public class TestDataHelper {
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplicant2().setFinancialOrder(NO);
         caseData.getApplicant1().setLegalProceedings(NO);
-        caseData.setCaseInvite(new CaseInvite());
-        caseData.getCaseInvite().setApplicant2InviteEmailAddress(TEST_APPLICANT_2_USER_EMAIL);
+        caseData.setCaseInvite(new CaseInvite(TEST_APPLICANT_2_USER_EMAIL, null, null));
 
         return caseData;
     }
