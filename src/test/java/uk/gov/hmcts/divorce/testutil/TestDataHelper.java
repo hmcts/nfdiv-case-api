@@ -13,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
+import uk.gov.hmcts.ccd.sdk.type.KeyValue;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
@@ -22,6 +23,7 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -44,6 +46,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.SolicitorService;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.endpoint.data.OcrDataValidationRequest;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
 import uk.gov.hmcts.divorce.payment.model.Payment;
@@ -54,8 +57,10 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -84,16 +89,20 @@ import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.CIVIL_PARTNER_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FIRST_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.HUSBAND_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.JOINT_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.WIFE_JOINT;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL;
@@ -216,7 +225,7 @@ public class TestDataHelper {
         return CaseData.builder()
             .applicant1(getApplicant())
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
-            .caseInvite(new CaseInvite())
+            .caseInvite(new CaseInvite(null, null, null))
             .build();
     }
 
@@ -237,8 +246,7 @@ public class TestDataHelper {
     public static CaseData jointCaseDataWithOrderSummary() {
         CaseData caseData = caseDataWithOrderSummary();
         caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.setCaseInvite(new CaseInvite());
-        caseData.getCaseInvite().setApplicant2InviteEmailAddress(TEST_APPLICANT_2_USER_EMAIL);
+        caseData.setCaseInvite(new CaseInvite(TEST_APPLICANT_2_USER_EMAIL, null, null));
         caseData.setApplicant2(getApplicant(MALE));
         caseData.getApplication().setApplicant2StatementOfTruth(YES);
         caseData.getApplication().setApplicant2PrayerHasBeenGivenCheckbox(Set.of(I_CONFIRM));
@@ -405,8 +413,7 @@ public class TestDataHelper {
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplicant2().setFinancialOrder(NO);
         caseData.getApplicant1().setLegalProceedings(NO);
-        caseData.setCaseInvite(new CaseInvite());
-        caseData.getCaseInvite().setApplicant2InviteEmailAddress(TEST_APPLICANT_2_USER_EMAIL);
+        caseData.setCaseInvite(new CaseInvite(TEST_APPLICANT_2_USER_EMAIL, null, null));
 
         return caseData;
     }
@@ -618,6 +625,20 @@ public class TestDataHelper {
         return templateVars;
     }
 
+    public static Map<String, String> getConditionalOrderTemplateVars(ApplicationType applicationType) {
+        Map<String, String> templateVars = getMainTemplateVars();
+        templateVars.put(JOINT_CONDITIONAL_ORDER, CommonContent.NO);
+        templateVars.put(WIFE_JOINT, CommonContent.NO);
+        templateVars.put(HUSBAND_JOINT, CommonContent.NO);
+        templateVars.put(CIVIL_PARTNER_JOINT, CommonContent.NO);
+
+        if (applicationType.equals(JOINT_APPLICATION)) {
+            templateVars.put(JOINT_CONDITIONAL_ORDER, CommonContent.YES);
+            templateVars.put(WIFE_JOINT, CommonContent.YES);
+        }
+        return templateVars;
+    }
+
     public static Map<String, String> getBasicTemplateVars() {
         Map<String, String> templateVars = new HashMap<>();
         templateVars.put(APPLICATION_REFERENCE, "1234-5678-9012-3456");
@@ -758,6 +779,62 @@ public class TestDataHelper {
         return ListValue
             .<CaseLink>builder()
             .value(caseLink)
+            .build();
+    }
+
+    public static OcrDataValidationRequest ocrDataValidationRequest() {
+        return OcrDataValidationRequest.builder()
+            .ocrDataFields(
+                List.of(
+                    KeyValue.builder()
+                        .key("applicant1Name")
+                        .value("bob")
+                        .build())
+            )
+            .build();
+    }
+
+    public static List<KeyValue> populateD8OcrDataFields() {
+        List<KeyValue> kv = new ArrayList<>();
+        kv.add(populateKeyValue("applicationForDivorce", "true"));
+        kv.add(populateKeyValue("aSoleApplication", "true"));
+        kv.add(populateKeyValue("marriageOrCivilPartnershipCertificate", "true"));
+        kv.add(populateKeyValue("translation", "false"));
+        kv.add(populateKeyValue("soleApplicantOrApplicant1FirstName", "bob"));
+        kv.add(populateKeyValue("soleApplicantOrApplicant1LastName", "builder"));
+        kv.add(populateKeyValue("respondentOrApplicant2FirstName", "the"));
+        kv.add(populateKeyValue("respondentOrApplicant2LastName", "respondent"));
+        kv.add(populateKeyValue("respondentOrApplicant2MarriedName", "No"));
+        kv.add(populateKeyValue("serveOutOfUK", "Yes"));
+        kv.add(populateKeyValue("respondentServePostOnly", "true"));
+        kv.add(populateKeyValue("respondentDifferentServiceAddress", "No"));
+        kv.add(populateKeyValue("marriageOutsideOfUK", "No"));
+        kv.add(populateKeyValue("dateOfMarriageOrCivilPartnershipDay", "01"));
+        kv.add(populateKeyValue("dateOfMarriageOrCivilPartnershipMonth", "01"));
+        kv.add(populateKeyValue("dateOfMarriageOrCivilPartnershipYear", "1990"));
+        kv.add(populateKeyValue("soleOrApplicant1FullNameAsOnCert", "bob builder"));
+        kv.add(populateKeyValue("respondentOrApplicant2FullNameAsOnCert", "the respondent"));
+        kv.add(populateKeyValue("detailsOnCertCorrect", "Yes"));
+        kv.add(populateKeyValue("jurisdictionReasonsBothPartiesHabitual", "true"));
+        kv.add(populateKeyValue("soleOrApplicant1ConfirmationOfBreakdown", "true"));
+        kv.add(populateKeyValue("prayerMarriageDissolved", "true"));
+        kv.add(populateKeyValue("soleApplicantOrApplicant1StatementOfTruth", "true"));
+        kv.add(populateKeyValue("soleApplicantOrApplicant1LegalRepStatementOfTruth", "true"));
+        kv.add(populateKeyValue("soleApplicantOrApplicant1OrLegalRepSignature", "signed"));
+        kv.add(populateKeyValue("soleApplicantOrApplicant1Signing", "true"));
+        kv.add(populateKeyValue("legalRepSigning", "false"));
+        kv.add(populateKeyValue("statementOfTruthDateDay", "01"));
+        kv.add(populateKeyValue("statementOfTruthDateMonth", "01"));
+        kv.add(populateKeyValue("statementOfTruthDateYear", "2022"));
+        kv.add(populateKeyValue("soleApplicantOrApplicant1OrLegalRepFullName", "bob builder"));
+        kv.add(populateKeyValue("soleOrApplicant1HWFNo", "HWF123"));
+        return kv;
+    }
+
+    public static KeyValue populateKeyValue(String key, String value) {
+        return KeyValue.builder()
+            .key(key)
+            .value(value)
             .build();
     }
 }

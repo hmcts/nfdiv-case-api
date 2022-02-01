@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -33,6 +34,7 @@ import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DEEMED;
 import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 
 @Component
+@Slf4j
 public class CaseworkerGeneralReferralPayment implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_GENERAL_REFERRAL_PAYMENT = "caseworker-general-referral-payment";
@@ -65,9 +67,11 @@ public class CaseworkerGeneralReferralPayment implements CCDConfig<CaseData, Sta
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
 
+        log.info("Caseworker general referral payment about to start callback invoked. CaseID: {}", details.getId());
+
         final CaseData caseData = details.getData();
 
-        OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_DEEMED);
+        final OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_DEEMED);
         caseData.getGeneralReferral().getGeneralReferralFee().setOrderSummary(orderSummary);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

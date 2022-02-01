@@ -249,6 +249,13 @@ public class CaseData {
     private YesOrNo evidenceHandled;
 
     @CCD(
+        label = "Supplementary evidence handled",
+        access = {CaseworkerAccess.class}
+    )
+    @JsonUnwrapped(prefix = "noc")
+    private NoticeOfChange noticeOfChange;
+
+    @CCD(
         label = "Bulk Scan Envelopes",
         typeOverride = Collection,
         typeParameterOverride = "BulkScanEnvelope",
@@ -307,7 +314,7 @@ public class CaseData {
 
         if (StringUtils.isEmpty(applicant2Email)) {
             if (nonNull(caseInvite)) {
-                return caseInvite.getApplicant2InviteEmailAddress();
+                return caseInvite.applicant2InviteEmailAddress();
             } else {
                 return null;
             }

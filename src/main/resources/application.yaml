@@ -120,7 +120,7 @@ uk:
             JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER: '32778ad1-0315-41cc-927b-2c008be35435'
 
 s2s-authorised:
-  services: ${S2S_AUTHORISED_SERVICES:ccd_data}
+  services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator}
 
 idam:
   s2s-auth:
@@ -156,6 +156,7 @@ docmosis:
       DIVORCE_APPLICATION_SOLE: NFD_CP_Application_Sole.docx
       DIVORCE_APPLICATION_JOINT: NFD_CP_Application_Joint.docx
       DIVORCE_DRAFT_APPLICATION: NFD_CP_Mini_Draft_Application_Template.docx
+      REFUSAL_ORDER_CLARIFICATION: NFD_Refusal_Order_Clarification.docx
       RESP_SOLICITOR_AOS_INVITATION: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
       CITIZEN_RESP_AOS_INVITATION: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
       DIVORCE_GENERAL_ORDER: NFD_General_Order_Eng.docx #TODO: update template once available

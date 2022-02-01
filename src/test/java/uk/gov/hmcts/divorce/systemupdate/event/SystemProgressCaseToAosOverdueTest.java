@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.divorce.citizen.notification.AosReminderNotifications;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -49,8 +50,7 @@ public class SystemProgressCaseToAosOverdueTest {
     @Test
     void shouldSendBothEmailsForCitizenApplicationIfAccessCodeAndEmailAddressAreNotNull() {
         final CaseData caseData = caseData();
-        caseData.getCaseInvite().setApplicant2InviteEmailAddress("app2@email.com");
-        caseData.getCaseInvite().setAccessCode("ACCESS12");
+        caseData.setCaseInvite(new CaseInvite("app2@email.com", "ACCESS12", null));
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(1L);
         details.setData(caseData);
@@ -64,8 +64,7 @@ public class SystemProgressCaseToAosOverdueTest {
     @Test
     void shouldNotSendEmailToRespondentIfAccessCodeIsNull() {
         final CaseData caseData = caseData();
-        caseData.getCaseInvite().setApplicant2InviteEmailAddress("app2@email.com");
-        caseData.getCaseInvite().setAccessCode(null);
+        caseData.setCaseInvite(new CaseInvite("app2@email.com", null, null));
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(1L);
         details.setData(caseData);
@@ -79,8 +78,7 @@ public class SystemProgressCaseToAosOverdueTest {
     @Test
     void shouldNotSendEmailToRespondentIfApplicant2EmailAddressIsNull() {
         final CaseData caseData = caseData();
-        caseData.getCaseInvite().setApplicant2InviteEmailAddress(null);
-        caseData.getCaseInvite().setAccessCode("ACCESS12");
+        caseData.setCaseInvite(new CaseInvite(null, "ACCESS12", null));
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(1L);
         details.setData(caseData);
