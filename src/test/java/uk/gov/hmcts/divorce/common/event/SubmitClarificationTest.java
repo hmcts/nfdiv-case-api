@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor.event;
+package uk.gov.hmcts.divorce.common.event;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,24 +11,24 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorSubmitClarification.SOLICITOR_SUBMIT_CLARIFICATION;
+import static uk.gov.hmcts.divorce.common.event.SubmitClarification.SUBMIT_CLARIFICATION;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-class SolicitorSubmitClarificationTest {
+class SubmitClarificationTest {
     @InjectMocks
-    private SolicitorSubmitClarification solicitorSubmitClarification;
+    private SubmitClarification submitClarification;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        solicitorSubmitClarification.configure(configBuilder);
+        submitClarification.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(SOLICITOR_SUBMIT_CLARIFICATION);
+            .contains(SUBMIT_CLARIFICATION);
     }
 
 }
