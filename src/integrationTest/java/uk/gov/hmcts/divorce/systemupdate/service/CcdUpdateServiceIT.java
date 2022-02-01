@@ -219,7 +219,7 @@ public class CcdUpdateServiceIT {
             );
 
         assertThrows(
-            FeignException.class,
+            CcdManagementException.class,
             () -> ccdUpdateService.submitEventWithRetry(
                 "1",
                 CREATE_BULK_LIST,
