@@ -80,7 +80,7 @@ public class RespondentSolicitorAosInvitationTemplateContent {
         }
         templateContent.put(APPLICANT_2_POSTAL_ADDRESS, applicant2PostalAddress);
 
-        templateContent.put(ACCESS_CODE, caseData.getCaseInvite().getAccessCode());
+        templateContent.put(ACCESS_CODE, caseData.getCaseInvite().accessCode());
         return templateContent;
     }
 }

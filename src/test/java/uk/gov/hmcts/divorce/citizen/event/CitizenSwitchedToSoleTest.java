@@ -120,8 +120,7 @@ class CitizenSwitchedToSoleTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = validJointApplicant1CaseData();
         setValidCaseInviteData(caseData);
-        caseData.getCaseInvite().setAccessCode(ACCESS_CODE);
-        caseData.getCaseInvite().setApplicant2UserId(null);
+        caseData.setCaseInvite(new CaseInvite(null, ACCESS_CODE, null));
 
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
@@ -143,7 +142,7 @@ class CitizenSwitchedToSoleTest {
         verifyNoMoreInteractions(notificationDispatcher);
 
         assertThat(response.getData().getApplicationType()).isEqualTo(SOLE_APPLICATION);
-        assertThat(response.getData().getCaseInvite().getAccessCode()).isNull();
+        assertThat(response.getData().getCaseInvite().accessCode()).isNull();
     }
 
     @Test
@@ -270,7 +269,7 @@ class CitizenSwitchedToSoleTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = validJointApplicant1CaseData();
         setValidCaseInviteData(caseData);
-        caseData.getCaseInvite().setAccessCode(ACCESS_CODE);
+        caseData.setCaseInvite(new CaseInvite(TEST_APPLICANT_2_EMAIL, ACCESS_CODE, null));
         caseData.setApplicant2(
             Applicant.builder()
                 .firstName("Bob")

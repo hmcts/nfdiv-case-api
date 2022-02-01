@@ -165,7 +165,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
             config.getTemplateVars()
                 .get(caseData.isDivorce() ? RESPONDENT_SIGN_IN_DIVORCE_URL : RESPONDENT_SIGN_IN_DISSOLUTION_URL)
         );
-        templateVars.put(ACCESS_CODE, caseData.getCaseInvite().getAccessCode());
+        templateVars.put(ACCESS_CODE, caseData.getCaseInvite().accessCode());
         return templateVars;
     }
 

@@ -54,7 +54,7 @@ public class AosReminderNotifications implements ApplicantNotification {
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
         if (isNotBlank(caseData.getApplicant2EmailAddress())
-            && isNotBlank(caseData.getCaseInvite().getAccessCode())
+            && isNotBlank(caseData.getCaseInvite().accessCode())
             && !caseData.getApplication().isSolicitorServiceMethod()) {
             log.info("Sending reminder to respondent to register for case : {}", id);
 
@@ -75,7 +75,7 @@ public class AosReminderNotifications implements ApplicantNotification {
             config.getTemplateVars()
                 .get(caseData.isDivorce() ? RESPONDENT_SIGN_IN_DIVORCE_URL : RESPONDENT_SIGN_IN_DISSOLUTION_URL)
         );
-        templateVars.put(ACCESS_CODE, caseData.getCaseInvite().getAccessCode());
+        templateVars.put(ACCESS_CODE, caseData.getCaseInvite().accessCode());
         templateVars.put(IS_REMINDER, YES);
         return templateVars;
     }

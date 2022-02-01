@@ -54,7 +54,7 @@ class SaveAndSignOutNotificationHandlerTest {
             .build();
 
         final var caseData = caseData();
-        caseData.setCaseInvite(CaseInvite.builder().applicant2UserId("app").build());
+        caseData.setCaseInvite(new CaseInvite(null, null, "app"));
         saveAndSignOutNotificationHandler.notifyApplicant(caseData, userDetails);
 
         verify(notificationService).sendEmail(
