@@ -15,15 +15,12 @@ import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.DivorceApplicationJointTemplateContent;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
-import java.time.Clock;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-import static java.time.LocalDateTime.now;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
@@ -58,9 +55,6 @@ public class Applicant2Approve implements CCDConfig<CaseData, State, UserRole> {
 
     @Autowired
     private DivorceApplicationJointTemplateContent divorceApplicationJointTemplateContent;
-
-    @Autowired
-    private Clock clock;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -139,7 +133,7 @@ public class Applicant2Approve implements CCDConfig<CaseData, State, UserRole> {
             caseId,
             DIVORCE_APPLICATION_JOINT,
             data.getApplicant1().getLanguagePreference(),
-            formatDocumentName(caseId, JOINT_DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME, now(clock))
+            JOINT_DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME + caseId
         );
     }
 }
