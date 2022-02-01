@@ -25,7 +25,6 @@ import uk.gov.hmcts.divorce.document.content.DivorceApplicationJointTemplateCont
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
-import java.time.Clock;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -34,13 +33,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.common.event.Applicant2Approve.APPLICANT_2_APPROVE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CONFIRM;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
@@ -50,7 +47,6 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.JOINT_DIVORCE_DRAF
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_POSTAL_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_POSTAL_ADDRESS;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
-import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -70,9 +66,6 @@ class Applicant2ApproveTest {
 
     @Mock
     private DivorceApplicationJointTemplateContent divorceApplicationJointTemplateContent;
-
-    @Mock
-    private Clock clock;
 
     @InjectMocks
     private Applicant2Approve applicant2Approve;
@@ -142,8 +135,6 @@ class Applicant2ApproveTest {
 
     @Test
     void givenEventStartedWithValidCaseThenChangeStateApplicant2ApprovedAndSendEmailAndGenerateApplicationDocument() {
-        setMockClock(clock);
-
         final long caseId = 2L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = CaseData.builder().build();
@@ -184,7 +175,7 @@ class Applicant2ApproveTest {
                 caseId,
                 DIVORCE_APPLICATION_JOINT,
                 caseData.getApplicant1().getLanguagePreference(),
-                formatDocumentName(caseId, JOINT_DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME, now(clock))
+                JOINT_DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME + caseId
             );
         assertThat(response.getState()).isEqualTo(State.Applicant2Approved);
     }
@@ -211,8 +202,6 @@ class Applicant2ApproveTest {
 
     @Test
     void shouldRenderDocumentWithSolicitorAddress() {
-        setMockClock(clock);
-
         final long caseId = 2L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final Map<String, Object> templateContent = new HashMap<>();
@@ -270,15 +259,13 @@ class Applicant2ApproveTest {
                 caseId,
                 DIVORCE_APPLICATION_JOINT,
                 caseData.getApplicant1().getLanguagePreference(),
-                formatDocumentName(caseId, JOINT_DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME, now(clock))
+                JOINT_DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME + caseId
             );
         assertThat(response.getData().getApplication().getApplicant2SolicitorAnswersLink()).isEqualTo(document);
     }
 
     @Test
     void shouldRenderDocumentWithoutSolicitorAddress() {
-        setMockClock(clock);
-
         final long caseId = 2L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final Map<String, Object> templateContent = new HashMap<>();
@@ -309,7 +296,7 @@ class Applicant2ApproveTest {
                 caseId,
                 DIVORCE_APPLICATION_JOINT,
                 caseData.getApplicant1().getLanguagePreference(),
-                formatDocumentName(caseId, JOINT_DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME, now(clock))
+                JOINT_DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME + caseId
             );
     }
 
