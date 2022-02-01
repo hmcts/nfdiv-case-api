@@ -2,13 +2,13 @@ package uk.gov.hmcts.divorce.caseworker.event;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -32,8 +32,8 @@ public class CaseworkerConfirmAlternativeService implements CCDConfig<CaseData, 
 
     public static final String CASEWORKER_CONFIRM_ALTERNATIVE_SERVICE = "caseworker-confirm-alternative-service";
 
-    @Value("${aos_pack.due_date_offset_days}")
-    private long dueDateOffsetDays;
+    @Autowired
+    private HoldingPeriodService holdingPeriodService;
 
     @Autowired
     private Clock clock;
@@ -59,7 +59,7 @@ public class CaseworkerConfirmAlternativeService implements CCDConfig<CaseData, 
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
         final CaseData caseData = details.getData();
 
-        caseData.setDueDate(LocalDate.now(clock).plusDays(dueDateOffsetDays));
+        caseData.setDueDate(holdingPeriodService.getDueDateFor(LocalDate.now(clock)));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

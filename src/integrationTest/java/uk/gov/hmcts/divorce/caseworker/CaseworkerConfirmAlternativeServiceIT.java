@@ -36,6 +36,8 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 @DirtiesContext
 public class CaseworkerConfirmAlternativeServiceIT {
 
+    private static final long HOLDING_PERIOD_IN_WEEKS = 20L;
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -72,7 +74,7 @@ public class CaseworkerConfirmAlternativeServiceIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                jsonPath("$.data.dueDate").value(getExpectedLocalDate().plusDays(16).toString())
+                jsonPath("$.data.dueDate").value(getExpectedLocalDate().plusWeeks(HOLDING_PERIOD_IN_WEEKS).toString())
             );
     }
 }
