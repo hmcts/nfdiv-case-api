@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdFetchCaseService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.User;
@@ -20,7 +21,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Collections.emptyList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
@@ -29,6 +32,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMINGHAM;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.IssuedToBailiff;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
@@ -54,6 +59,9 @@ public class CasePronouncementServiceTest {
     private CcdUpdateService ccdUpdateService;
 
     @Mock
+    private CcdFetchCaseService ccdFetchCaseService;
+
+    @Mock
     private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
 
     @InjectMocks
@@ -72,6 +80,8 @@ public class CasePronouncementServiceTest {
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
+        when(ccdFetchCaseService.fetchCaseById("1", user, SERVICE_AUTHORIZATION))
+            .thenReturn(uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder().state(AwaitingPronouncement.getName()).build());
 
         var caseTask = mock(CaseTask.class);
         var bulkActionCaseDetails = CaseDetails
@@ -130,6 +140,9 @@ public class CasePronouncementServiceTest {
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
+        when(ccdFetchCaseService.fetchCaseById(anyString(), eq(user), eq(SERVICE_AUTHORIZATION)))
+            .thenReturn(uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder().state(AwaitingPronouncement.getName()).build());
+
 
         var unprocessedBulkCases = List.of(bulkListCaseDetailsListValue2);
 
@@ -170,6 +183,56 @@ public class CasePronouncementServiceTest {
     }
 
     @Test
+    void shouldSuccessfullyUpdateErrorBulkCaseListInBulkCaseWhenMainCaseIsNotInCorrectState() {
+        var bulkListCaseDetailsListValue1 = getBulkListCaseDetailsListValue("1");
+        var bulkListCaseDetailsListValue2 = getBulkListCaseDetailsListValue("2");
+        var bulkActionCaseData = BulkActionCaseData
+            .builder()
+            .dateAndTimeOfHearing(LocalDateTime.of(2021, 11, 10, 0, 0, 0))
+            .court(BIRMINGHAM)
+            .bulkListCaseDetails(List.of(
+                bulkListCaseDetailsListValue1,
+                bulkListCaseDetailsListValue2
+            ))
+            .build();
+
+        var bulkActionCaseDetails = CaseDetails
+            .<BulkActionCaseData, BulkActionState>builder()
+            .data(bulkActionCaseData)
+            .build();
+
+        var user = mock(User.class);
+
+        when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
+        when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
+        when(ccdFetchCaseService.fetchCaseById(anyString(), eq(user), eq(SERVICE_AUTHORIZATION)))
+            .thenReturn(uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder().state(IssuedToBailiff.getName()).build());
+
+        var caseTask = mock(CaseTask.class);
+        when(bulkCaseCaseTaskFactory.getCaseTask(bulkActionCaseDetails, SYSTEM_PRONOUNCE_CASE)).thenReturn(caseTask);
+
+        when(bulkTriggerService.bulkTrigger(
+            emptyList(),
+            SYSTEM_PRONOUNCE_CASE,
+            caseTask,
+            user,
+            SERVICE_AUTHORIZATION
+        )).thenReturn(emptyList());
+
+        doNothing().when(ccdUpdateService).submitBulkActionEvent(
+            bulkActionCaseDetails,
+            SYSTEM_UPDATE_BULK_CASE,
+            user,
+            SERVICE_AUTHORIZATION
+        );
+
+        casePronouncementService.pronounceCases(bulkActionCaseDetails, TEST_SYSTEM_AUTHORISATION_TOKEN);
+
+        assertThat(bulkActionCaseDetails.getData().getBulkListCaseDetails()).hasSize(0);
+        assertThat(bulkActionCaseDetails.getData().getErroredCaseDetails()).hasSize(2);
+    }
+
+    @Test
     void shouldNotUpdateErrorBulkCaseListInBulkCaseWhenCasePronouncementFailsForMainCaseAndBulkCaseUpdateThrowsError() {
         var bulkListCaseDetailsListValue1 = getBulkListCaseDetailsListValue("1");
         var bulkListCaseDetailsListValue2 = getBulkListCaseDetailsListValue("2");
@@ -192,6 +255,8 @@ public class CasePronouncementServiceTest {
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(idamService.retrieveUser(TEST_SYSTEM_AUTHORISATION_TOKEN)).thenReturn(user);
+        when(ccdFetchCaseService.fetchCaseById(anyString(), eq(user), eq(SERVICE_AUTHORIZATION)))
+            .thenReturn(uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder().state(AwaitingPronouncement.getName()).build());
 
         var unprocessedBulkCases = List.of(bulkListCaseDetailsListValue2);
         var caseTask = mock(CaseTask.class);

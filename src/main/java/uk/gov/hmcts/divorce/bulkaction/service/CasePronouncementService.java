@@ -12,13 +12,16 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdFetchCaseService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 
 @Service
@@ -35,6 +38,9 @@ public class CasePronouncementService {
     private CcdUpdateService ccdUpdateService;
 
     @Autowired
+    private CcdFetchCaseService ccdFetchCaseService;
+
+    @Autowired
     private IdamService idamService;
 
     @Autowired
@@ -47,6 +53,8 @@ public class CasePronouncementService {
 
         final User user = idamService.retrieveUser(authorization);
         final String serviceAuth = authTokenGenerator.generate();
+
+        filterCasesNotInCorrectState(bulkActionCaseData, user, serviceAuth);
 
         final List<ListValue<BulkListCaseDetails>> unprocessedBulkCases =
             bulkTriggerService.bulkTrigger(
@@ -62,7 +70,7 @@ public class CasePronouncementService {
 
         log.info("Successfully processed bulk case details list size {}", processedBulkCases.size());
 
-        bulkActionCaseData.setErroredCaseDetails(unprocessedBulkCases);
+        bulkActionCaseData.getErroredCaseDetails().addAll(unprocessedBulkCases);
         bulkActionCaseData.setProcessedCaseDetails(processedBulkCases);
 
         try {
@@ -75,5 +83,28 @@ public class CasePronouncementService {
         } catch (final FeignException e) {
             log.error("Update failed for bulk case id {} ", details.getId(), e);
         }
+    }
+
+    private void filterCasesNotInCorrectState(BulkActionCaseData bulkActionCaseData,
+                                              User user,
+                                              String serviceAuth) {
+
+        List<ListValue<BulkListCaseDetails>> casesNotInCorrectState =
+            bulkActionCaseData.getBulkListCaseDetails().stream()
+                .filter(bulkCase -> !AwaitingPronouncement.getName().equals(
+                    ccdFetchCaseService.fetchCaseById(
+                        bulkCase.getValue().getCaseReference().getCaseReference(),
+                        user,
+                        serviceAuth).getState()
+                    )
+                )
+                .collect(Collectors.toList());
+        bulkActionCaseData.setErroredCaseDetails(casesNotInCorrectState);
+
+        List<ListValue<BulkListCaseDetails>> updatedBulkListCaseDetails =
+            bulkActionCaseData.getBulkListCaseDetails().stream()
+                .filter(bulkCase -> !casesNotInCorrectState.contains(bulkCase))
+                .collect(Collectors.toList());
+        bulkActionCaseData.setBulkListCaseDetails(updatedBulkListCaseDetails);
     }
 }
