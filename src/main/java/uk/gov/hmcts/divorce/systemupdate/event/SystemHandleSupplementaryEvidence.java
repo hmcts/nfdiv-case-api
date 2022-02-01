@@ -23,6 +23,6 @@ public class SystemHandleSupplementaryEvidence implements CCDConfig<CaseData, St
             .grant(CREATE_READ_UPDATE_DELETE, SYSTEMUPDATE, CASE_WORKER))
             .page("handleEvidence")
             .pageLabel("Correspondence")
-            .mandatory(CaseData::getEvidenceHandled);
+            .mandatoryWithLabel(CaseData::getEvidenceHandled, "Supplementary evidence handled");
     }
 }
