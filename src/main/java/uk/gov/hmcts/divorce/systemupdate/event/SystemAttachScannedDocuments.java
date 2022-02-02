@@ -27,6 +27,6 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
             .page("attachScannedDocs")
             .pageLabel("Correspondence")
             .mandatory(CaseData::getScannedDocuments)
-            .mandatory(CaseData::getEvidenceHandled);
+            .mandatoryWithLabel(CaseData::getEvidenceHandled, "Supplementary evidence handled");
     }
 }
