@@ -230,10 +230,7 @@ public class CaseData {
     @JsonUnwrapped
     private RetiredFields retiredFields;
 
-    @CCD(
-        label = "hyphenatedCaseReference",
-        access = {CaseworkerAccess.class}
-    )
+    @CCD(access = {CaseworkerAccess.class})
     private String hyphenatedCaseRef;
 
     @CCD(
@@ -243,13 +240,9 @@ public class CaseData {
     )
     private List<ListValue<ScannedDocument>> scannedDocuments;
 
-    @CCD(
-        label = "Supplementary evidence handled"
-    )
     private YesOrNo evidenceHandled;
 
     @CCD(
-        label = "Supplementary evidence handled",
         access = {CaseworkerAccess.class}
     )
     @JsonUnwrapped(prefix = "noc")
