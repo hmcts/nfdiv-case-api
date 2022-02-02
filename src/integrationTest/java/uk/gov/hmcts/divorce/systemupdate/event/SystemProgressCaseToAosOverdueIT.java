@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.io.IOException;
@@ -79,7 +80,7 @@ public class SystemProgressCaseToAosOverdueIT {
         data.getApplication().setSolSignStatementOfTruth(null);
         data.setDueDate(LOCAL_DATE);
         data.getApplication().setIssueDate(LOCAL_DATE);
-        data.getCaseInvite().setAccessCode("1234-1234-1234-1234");
+        data.setCaseInvite(new CaseInvite(TEST_APPLICANT_2_USER_EMAIL, "1234-1234-1234-1234", null));
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)

@@ -10,7 +10,7 @@ public class NotificationDispatcher {
 
         if (caseData.getApplicant1().isRepresented()) {
             applicantNotification.sendToApplicant1Solicitor(caseData, caseId);
-        } else if (caseData.getApplication().isApplicant1OffLine()) {
+        } else if (caseData.getApplicant1().isOffline()) {
             applicantNotification.sendToApplicant1Offline(caseData, caseId);
         } else {
             applicantNotification.sendToApplicant1(caseData, caseId);
@@ -18,7 +18,7 @@ public class NotificationDispatcher {
 
         if (caseData.getApplicant2().isRepresented()) {
             applicantNotification.sendToApplicant2Solicitor(caseData, caseId);
-        } else if (caseData.getApplication().isApplicant2OffLine()) {
+        } else if (caseData.getApplicant2().isOffline()) {
             applicantNotification.sendToApplicant2Offline(caseData, caseId);
         } else {
             applicantNotification.sendToApplicant2(caseData, caseId);

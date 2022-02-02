@@ -73,7 +73,7 @@ class GenerateCitizenRespondentAosInvitationTest {
 
         final var result = generateCitizenRespondentAosInvitation.apply(caseDetails);
 
-        assertThat(result.getData().getCaseInvite().getAccessCode()).isEqualTo(ACCESS_CODE);
+        assertThat(result.getData().getCaseInvite().accessCode()).isEqualTo(ACCESS_CODE);
 
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(

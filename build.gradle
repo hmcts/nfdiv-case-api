@@ -26,7 +26,7 @@ plugins {
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'org.springframework.boot' version '2.6.3'
   id 'com.github.ben-manes.versions' version '0.41.0'
-  id 'hmcts.ccd.sdk' version '0.25.13'
+  id 'hmcts.ccd.sdk' version '0.25.14'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -61,6 +61,13 @@ sourceSets {
   }
 }
 
+
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(17)
+  }
+}
+
 idea {
   module {
     testSourceDirs += file('src/integrationTest/java')
@@ -79,6 +86,11 @@ configurations {
 
 tasks.withType(JavaCompile) {
   options.compilerArgs << "-Xlint:unchecked" << "-Werror"
+}
+
+// https://github.com/gradle/gradle/issues/16791
+tasks.withType(JavaExec).configureEach {
+  javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
 }
 
 tasks.withType(Test) {
@@ -129,7 +141,7 @@ task highLevelDataSetup(type: JavaExec) {
 
 checkstyle {
   maxWarnings = 0
-  toolVersion = '8.29'
+  toolVersion = '9.2.1'
   getConfigDirectory().set(new File(rootDir, 'config/checkstyle'))
 }
 
@@ -260,7 +272,7 @@ dependencies {
   // TODO: remove once ES client shaded into cftlib
   implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '6.8.17'
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
-  implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.4'
+  implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.5'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
@@ -290,7 +302,7 @@ dependencies {
   testImplementation group: 'org.assertj', name: 'assertj-guava', version: '3.4.0'
   testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '3.1.0'
   testImplementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
-  testImplementation group: 'org.mockito', name: 'mockito-inline', version: '4.3.0'
+  testImplementation group: 'org.mockito', name: 'mockito-inline', version: '4.3.1'
   testImplementation group: 'io.github.openfeign', name: 'feign-jackson', version: '11.8'
   testImplementation group: 'io.rest-assured', name: 'rest-assured'
 

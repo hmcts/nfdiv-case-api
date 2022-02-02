@@ -18,6 +18,7 @@ import java.util.List;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.fromString;
 
 @Service
 @Slf4j
@@ -118,5 +119,16 @@ public class CcdAccessService {
                 )
             )
             .build();
+    }
+
+    public void removeUsersWithRole(String auth, Long caseId, List<String> roles) {
+        final var s2sToken = authTokenGenerator.generate();
+        final var response = caseAssignmentApi.getUserRoles(auth, s2sToken, List.of(caseId.toString()));
+
+        response.getCaseAssignmentUserRoles()
+            .stream()
+            .filter(assignment -> roles.contains(assignment.getCaseRole()))
+            .map(a -> getCaseAssignmentRequest(caseId, a.getUserId(), null, fromString(a.getCaseRole())))
+            .forEach(request -> caseAssignmentApi.removeCaseUserRoles(auth, s2sToken, request));
     }
 }

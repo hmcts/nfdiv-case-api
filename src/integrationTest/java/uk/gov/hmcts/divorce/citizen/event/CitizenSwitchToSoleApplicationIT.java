@@ -161,9 +161,8 @@ public class CitizenSwitchToSoleApplicationIT {
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedForApplicant1SwitchToSoleForUnlinkedApp2ThenAccessCodeSetToNull() throws Exception {
         CaseData data = validJointApplicant1CaseData();
-        data.getCaseInvite().setAccessCode(ACCESS_CODE);
+        data.setCaseInvite(new CaseInvite(null, ACCESS_CODE, null));
         setValidCaseInviteData(data);
-        data.getCaseInvite().setApplicant2UserId(null);
 
         final var userDetails = UserDetails.builder()
             .email("test@test.com")

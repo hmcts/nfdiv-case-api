@@ -69,8 +69,6 @@ uk:
             OVERSEAS_RESPONDENT_NO_EMAIL_APPLICATION_ISSUED: 'b3be698a-d4b4-4fa8-8ed7-c1fd39827d21'
             SOLE_APPLICANT_APPLICATION_SUBMITTED: '3ecccc69-81e7-4bcd-8316-0547fd30795f'
             SOLE_APPLICANT_AMENDED_APPLICATION_SUBMITTED: 'd87e0405-15bb-405b-b277-27cec5444106'
-            SOLE_APPLICANT_SOLICITOR_APPLICATION_SUBMITTED: '97814664-95e9-457d-a40d-e062c0b6cfce'
-            SOLE_APPLICANT_SOLICITOR_AMENDED_APPLICATION_SUBMITTED: '61b44a57-4e00-40d7-bce8-205863f94230'
             SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED: '979e15bb-5033-4038-9560-5468e3d45f81'
             APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS: '841a2098-f0fe-4348-aa84-4e716b8b2c54'
             RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS: '841a2098-f0fe-4348-aa84-4e716b8b2c54'
@@ -122,7 +120,7 @@ uk:
             JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER: '32778ad1-0315-41cc-927b-2c008be35435'
 
 s2s-authorised:
-  services: ${S2S_AUTHORISED_SERVICES:ccd_data}
+  services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator}
 
 idam:
   s2s-auth:
@@ -158,6 +156,7 @@ docmosis:
       DIVORCE_APPLICATION_SOLE: NFD_CP_Application_Sole.docx
       DIVORCE_APPLICATION_JOINT: NFD_CP_Application_Joint.docx
       DIVORCE_DRAFT_APPLICATION: NFD_CP_Mini_Draft_Application_Template.docx
+      REFUSAL_ORDER_CLARIFICATION: NFD_Refusal_Order_Clarification.docx
       RESP_SOLICITOR_AOS_INVITATION: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
       CITIZEN_RESP_AOS_INVITATION: NFD_CP_Dummy_Template.docx #TODO: Set correct template when available
       DIVORCE_GENERAL_ORDER: NFD_General_Order_Eng.docx #TODO: update template once available

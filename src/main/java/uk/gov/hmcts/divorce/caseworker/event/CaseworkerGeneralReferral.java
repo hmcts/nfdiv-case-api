@@ -63,18 +63,18 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails
     ) {
-        log.info("Caseworker general referral about to submit callback invoked");
+        log.info("Caseworker general referral about to submit callback invoked. CaseID: {}", details.getId());
 
-        var caseDataCopy = details.getData().toBuilder().build();
+        final CaseData caseData = details.getData();
 
-        State endState = caseDataCopy.getGeneralReferral().getGeneralReferralFeeRequired().toBoolean()
+        State endState = caseData.getGeneralReferral().getGeneralReferralFeeRequired().toBoolean()
             ? AwaitingGeneralReferralPayment
             : AwaitingGeneralConsideration;
 
-        caseDataCopy.getGeneralReferral().setGeneralApplicationAddedDate(LocalDate.now(clock));
+        caseData.getGeneralReferral().setGeneralApplicationAddedDate(LocalDate.now(clock));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseDataCopy)
+            .data(caseData)
             .state(endState)
             .build();
     }

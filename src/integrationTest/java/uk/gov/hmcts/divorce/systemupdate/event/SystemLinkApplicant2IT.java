@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.testutil.CaseDataWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -93,8 +94,7 @@ public class SystemLinkApplicant2IT {
     @Test
     public void givenValidAccessCodeWhenCallbackIsInvokedThenAccessCodeIsRemovedAndSolicitorRolesAreSet() throws Exception {
         CaseData data = caseData();
-        data.getCaseInvite().setAccessCode("D8BC9AQR");
-        data.getCaseInvite().setApplicant2UserId("3");
+        data.setCaseInvite(new CaseInvite(null, "D8BC9AQR", "3"));
         data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, APP_2_CITIZEN_USER_ID, CITIZEN_ROLE);
@@ -141,7 +141,7 @@ public class SystemLinkApplicant2IT {
     @Test
     public void givenNoApplicant2UserIdPassedWhenCallbackIsInvokedThen404ErrorIsReturned() throws Exception {
         CaseData data = caseData();
-        data.getCaseInvite().setAccessCode("D8BC9AQR");
+        data.setCaseInvite(new CaseInvite(null, "D8BC9AQR", null));
         data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, APP_2_CITIZEN_USER_ID, CITIZEN_ROLE);
@@ -167,7 +167,7 @@ public class SystemLinkApplicant2IT {
     @Test
     public void givenNoCaseIdPassedWhenCallbackIsInvokedThen404ErrorIsReturned() throws Exception {
         CaseData data = caseData();
-        data.getCaseInvite().setAccessCode("D8BC9AQR");
+        data.setCaseInvite(new CaseInvite(null, "D8BC9AQR", null));
         data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, APP_2_CITIZEN_USER_ID, CITIZEN_ROLE);

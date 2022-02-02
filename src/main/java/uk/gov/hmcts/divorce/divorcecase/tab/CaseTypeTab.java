@@ -156,7 +156,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("generalReferralFeePaymentMethod")
             .field("generalReferralDecisionDate")
             .field("generalReferralDecision")
-            .field("generalReferralDecisionReason");
+            .field("generalReferralDecisionReason")
+            .field("generalReferrals");
     }
 
     private void buildConfidentialDocumentsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -200,10 +201,22 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("conditionalOrder", "Conditional Order")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, SOLICITOR, SUPER_USER)
             .showCondition("coApplicant1SubmittedDate=\"*\"")
+            .label("labelConditionalOrderDetails-Applicant1",
+                "applicationType=\"jointApplication\" AND coApplicant1ApplyForConditionalOrder=\"*\"",
+                "### Applicant 1")
             .field("coApplicant1ApplyForConditionalOrder")
+            .field("coApplicant1ConfirmInformationStillCorrect")
             .field("coApplicant1SubmittedDate")
             .field("coApplicant1ChangeOrAddToApplication")
             .field("coApplicant1StatementOfTruth")
+            .label("labelConditionalOrderDetails-Applicant2",
+                "applicationType=\"jointApplication\" AND coApplicant2ApplyForConditionalOrder=\"*\"",
+                "### Applicant 2")
+            .field("coApplicant2ApplyForConditionalOrder")
+            .field("coApplicant2ConfirmInformationStillCorrect")
+            .field("coApplicant2SubmittedDate")
+            .field("coApplicant2ChangeOrAddToApplication")
+            .field("coApplicant2StatementOfTruth")
             .field("coSolicitorName")
             .field("coSolicitorFirm")
             .field("coSolicitorAdditionalComments")
