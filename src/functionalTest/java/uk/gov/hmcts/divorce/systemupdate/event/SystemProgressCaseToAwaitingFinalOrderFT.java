@@ -17,7 +17,8 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 @SpringBootTest
 public class SystemProgressCaseToAwaitingFinalOrderFT extends FunctionalTestSuite {
 
-    private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata-system-progress-case-to-awaiting-final-order.json";
+    private static final String REQUEST =
+        "classpath:request/casedata/ccd-callback-casedata-system-progress-case-to-awaiting-final-order.json";
 
     @Test
     public void shouldPassValidationAndSendEmailsToApplicantAndRespondent() throws IOException {
