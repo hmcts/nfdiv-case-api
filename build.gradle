@@ -230,6 +230,7 @@ repositories {
   mavenLocal()
   mavenCentral()
   maven { url 'https://jitpack.io' }
+  jcenter()
 }
 
 def versions = [
@@ -316,7 +317,7 @@ dependencies {
   functionalTestImplementation group: 'com.github.hmcts', name: 'document-management-client', version: '7.0.1'
   functionalTestImplementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '4.0.2'
 
-  cftlibImplementation 'com.github.hmcts:rse-cft-lib:0.6.0'
+  cftlibImplementation 'com.github.hmcts:rse-cft-lib:0.7.0'
 }
 
 mainClassName = 'uk.gov.hmcts.divorce.CaseApiApplication'
@@ -413,23 +414,9 @@ generateCCDConfig {
   environment 'CASE_API_URL', 'http://localhost:4013'
 }
 
-task bootXui(group: 'ccd tasks', dependsOn: [loadEnvSecrets]) {
-  doLast {
-    exec {
-      project.file('./.aat-env').readLines().each() {
-        def index = it.indexOf("=")
-        def key = it.substring(0, index)
-        def value = it.substring(index + 1)
-        environment key, value
-      }
-      commandLine 'docker-compose',  '-f', 'docker-compose-xui.yml', 'up'
-    }
-  }
-}
-
-task bootWithCcd(type: org.springframework.boot.gradle.tasks.run.BootRun, dependsOn: [loadEnvSecrets, buildCCDXlsx], group: 'ccd tasks') {
+task bootWithCcd(type: org.springframework.boot.gradle.tasks.run.BootRun, dependsOn: [loadEnvSecrets], group: 'ccd tasks') {
     classpath sourceSets.cftlib.runtimeClasspath
-    mainClass = tasks.bootRun.mainClass
+    mainClass = 'uk.gov.hmcts.divorce.cftlib.RunWithCFT'
     doFirst() {
 
         project.file('./.aat-env').readLines().each() {
