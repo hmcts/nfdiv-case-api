@@ -99,6 +99,13 @@ public class CasePronouncementService {
                     )
                 )
                 .collect(Collectors.toList());
+
+        casesNotInCorrectState
+            .forEach(bulkCase -> log.info(
+                "Case ID {} will be skipped as not in correct state to be pronounced",
+                bulkCase.getValue().getCaseReference().getCaseReference())
+            );
+
         bulkActionCaseData.setErroredCaseDetails(casesNotInCorrectState);
 
         List<ListValue<BulkListCaseDetails>> updatedBulkListCaseDetails =
