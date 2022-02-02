@@ -85,6 +85,7 @@ public class CaseData {
     private Application application = new Application();
 
     @JsonUnwrapped()
+    @CCD(access = {DefaultAccess.class})
     private CaseInvite caseInvite;
 
     @JsonUnwrapped()
