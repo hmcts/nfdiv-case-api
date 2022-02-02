@@ -406,7 +406,9 @@ task bootWithCcd(type: org.springframework.boot.gradle.tasks.run.BootRun, depend
     classpath sourceSets.cftlib.runtimeClasspath
     mainClass = 'uk.gov.hmcts.divorce.cftlib.RunWithCFT'
     doFirst() {
-
+      // Required by Access Management
+      // https://github.com/x-stream/xstream/issues/101
+      jvmArgs('--add-opens', 'java.base/java.lang=ALL-UNNAMED');
         project.file('./.aat-env').readLines().each() {
           def index = it.indexOf("=")
           def key = it.substring(0, index)
