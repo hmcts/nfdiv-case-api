@@ -103,8 +103,7 @@ public class CasePronouncementService {
         casesNotInCorrectState
             .forEach(bulkCase -> log.info(
                 "Case ID {} will be skipped as not in correct state to be pronounced",
-                bulkCase.getValue().getCaseReference().getCaseReference())
-            );
+                bulkCase.getValue().getCaseReference().getCaseReference()));
 
         bulkActionCaseData.setErroredCaseDetails(casesNotInCorrectState);
 
