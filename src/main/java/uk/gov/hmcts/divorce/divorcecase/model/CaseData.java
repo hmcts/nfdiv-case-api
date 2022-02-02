@@ -10,14 +10,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.groovy.parser.antlr4.util.StringUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.BulkScanEnvelope;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessBetaOnlyAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAndSuperUserAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerBulkScanAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerCourtAdminWithSolicitorAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
@@ -82,6 +85,7 @@ public class CaseData {
     private Application application = new Application();
 
     @JsonUnwrapped()
+    @CCD(access = {DefaultAccess.class})
     private CaseInvite caseInvite;
 
     @JsonUnwrapped()
@@ -108,6 +112,13 @@ public class CaseData {
     @JsonUnwrapped
     @Builder.Default
     private GeneralReferral generalReferral = new GeneralReferral();
+
+    @CCD(
+        label = "General Referrals",
+        typeOverride = Collection,
+        typeParameterOverride = "GeneralReferral"
+    )
+    private List<ListValue<GeneralReferral>> generalReferrals;
 
     @CCD(
         label = "Previous Service Applications",
@@ -220,10 +231,7 @@ public class CaseData {
     @JsonUnwrapped
     private RetiredFields retiredFields;
 
-    @CCD(
-        label = "hyphenatedCaseReference",
-        access = {CaseworkerAccess.class}
-    )
+    @CCD(access = {CaseworkerAccess.class})
     private String hyphenatedCaseRef;
 
     @CCD(
@@ -233,10 +241,27 @@ public class CaseData {
     )
     private List<ListValue<ScannedDocument>> scannedDocuments;
 
-    @CCD(
-        label = "Supplementary evidence handled"
-    )
     private YesOrNo evidenceHandled;
+
+    @CCD(
+        access = {CaseworkerAccess.class}
+    )
+    @JsonUnwrapped(prefix = "noc")
+    private NoticeOfChange noticeOfChange;
+
+    @CCD(
+        label = "Bulk Scan Envelopes",
+        typeOverride = Collection,
+        typeParameterOverride = "BulkScanEnvelope",
+        access = {CaseworkerBulkScanAccess.class}
+    )
+    private List<ListValue<BulkScanEnvelope>> bulkScanEnvelopes;
+
+    @CCD(
+        label = "Exception record reference",
+        access = {CaseworkerBulkScanAccess.class}
+    )
+    private String bulkScanCaseReference;
 
     @JsonIgnore
     public String formatCaseRef(long caseId) {
@@ -283,7 +308,7 @@ public class CaseData {
 
         if (StringUtils.isEmpty(applicant2Email)) {
             if (nonNull(caseInvite)) {
-                return caseInvite.getApplicant2InviteEmailAddress();
+                return caseInvite.applicant2InviteEmailAddress();
             } else {
                 return null;
             }

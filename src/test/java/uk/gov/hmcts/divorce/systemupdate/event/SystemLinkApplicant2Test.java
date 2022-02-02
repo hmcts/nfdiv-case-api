@@ -67,7 +67,7 @@ public class SystemLinkApplicant2Test {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = systemLinkApplicant2.aboutToSubmit(details, details);
 
-        assertThat(response.getData().getCaseInvite().getAccessCode()).isNull();
+        assertThat(response.getData().getCaseInvite().accessCode()).isNull();
         verify(ccdAccessService).linkRespondentToApplication(eq("auth header"), eq(1L), eq("Applicant2Id"));
     }
 }

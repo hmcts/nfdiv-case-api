@@ -6,7 +6,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
-import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 
 import static org.mockito.Mockito.mock;
@@ -46,14 +45,12 @@ class NotificationDispatcherTest {
         final CaseData caseData = mock(CaseData.class);
         final Applicant applicant1 = mock(Applicant.class);
         final Applicant applicant2 = mock(Applicant.class);
-        final Application application = mock(Application.class);
 
         when(caseData.getApplicant1()).thenReturn(applicant1);
         when(applicant1.isRepresented()).thenReturn(false);
         when(caseData.getApplicant2()).thenReturn(applicant2);
         when(applicant2.isRepresented()).thenReturn(true);
-        when(caseData.getApplication()).thenReturn(application);
-        when(application.isApplicant1OffLine()).thenReturn(true);
+        when(applicant1.isOffline()).thenReturn(true);
 
         notificationDispatcher.send(applicantNotification, caseData, caseId);
 
@@ -96,10 +93,7 @@ class NotificationDispatcherTest {
         final long caseId = 1L;
         final CaseData caseData = CaseData.builder()
             .applicant2(Applicant.builder()
-                .solicitorRepresented(NO)
-                .build())
-            .application(Application.builder()
-                .applicant1KnowsApplicant2EmailAddress(NO)
+                .offline(YES)
                 .build())
             .build();
 

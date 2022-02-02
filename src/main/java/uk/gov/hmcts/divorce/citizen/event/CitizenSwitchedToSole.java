@@ -74,16 +74,16 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
         log.info("Citizen switched to sole about to submit callback invoked");
         CaseData data = details.getData();
 
-        if (isNull(data.getCaseInvite().getAccessCode())) {
+        if (isNull(data.getCaseInvite().accessCode())) {
             log.info("Unlinking Applicant 2 from Case");
             ccdAccessService.unlinkUserFromApplication(
                 httpServletRequest.getHeader(AUTHORIZATION),
                 details.getId(),
-                data.getCaseInvite().getApplicant2UserId()
+                data.getCaseInvite().applicant2UserId()
             );
         } else {
             log.info("Removing the case invite access code for Applicant 2");
-            data.getCaseInvite().setAccessCode(null);
+            data.setCaseInvite(data.getCaseInvite().useAccessCode());
         }
 
         User user = idamService.retrieveUser(httpServletRequest.getHeader(AUTHORIZATION));
@@ -115,9 +115,7 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
         caseData.setApplicant2(applicant2);
 
         CaseInvite caseInvite = caseData.getCaseInvite();
-        caseData.setCaseInvite(CaseInvite.builder()
-            .applicant2InviteEmailAddress(caseInvite.getApplicant2InviteEmailAddress())
-            .build());
+        caseData.setCaseInvite(new CaseInvite(caseInvite.applicant2InviteEmailAddress(), null, null));
 
         caseData.setApplicant2DocumentsUploaded(null);
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(null);

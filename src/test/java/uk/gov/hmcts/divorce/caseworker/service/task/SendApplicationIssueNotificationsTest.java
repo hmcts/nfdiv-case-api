@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.common.notification.ApplicationIssuedNotification;
 import uk.gov.hmcts.divorce.common.notification.ApplicationIssuedOverseasNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
@@ -41,7 +42,7 @@ class SendApplicationIssueNotificationsTest {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplicant2().setHomeAddress(AddressGlobalUK.builder().country("Spain").build());
-        caseData.getCaseInvite().setApplicant2InviteEmailAddress("applicant2Invite@email.com");
+        caseData.setCaseInvite(new CaseInvite("applicant2Invite@email.com", null, null));
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
         caseDetails.setState(AwaitingAos);
 
@@ -56,7 +57,7 @@ class SendApplicationIssueNotificationsTest {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplicant2().setHomeAddress(AddressGlobalUK.builder().country("Spain").build());
-        caseData.getCaseInvite().setApplicant2InviteEmailAddress("");
+        caseData.setCaseInvite(new CaseInvite("", null, null));
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
         caseDetails.setState(AwaitingService);
 
@@ -71,7 +72,7 @@ class SendApplicationIssueNotificationsTest {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplicant2().setHomeAddress(AddressGlobalUK.builder().country("UK").build());
-        caseData.getCaseInvite().setApplicant2InviteEmailAddress("");
+        caseData.setCaseInvite(new CaseInvite("", null, null));
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
         caseDetails.setState(AwaitingAos);
 
@@ -86,7 +87,7 @@ class SendApplicationIssueNotificationsTest {
         CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplicant2().setHomeAddress(AddressGlobalUK.builder().country("Spain").build());
-        caseData.getCaseInvite().setApplicant2InviteEmailAddress("");
+        caseData.setCaseInvite(new CaseInvite("", null, null));
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
         caseDetails.setState(AwaitingAos);
 

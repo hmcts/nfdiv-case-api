@@ -10,7 +10,6 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationSentForReviewNotification;
-import uk.gov.hmcts.divorce.common.event.InviteApplicant2;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
@@ -111,9 +110,9 @@ public class InviteApplicant2Test {
 
         verify(notificationDispatcher).send(applicationSentForReviewNotification, caseData, details.getId());
 
-        assertThat(response.getData().getCaseInvite().getAccessCode()).isNotBlank();
-        assertThat(response.getData().getCaseInvite().getAccessCode().length()).isEqualTo(8);
-        assertThat(response.getData().getCaseInvite().getAccessCode()).doesNotContain("I", "O", "U", "0", "1");
+        assertThat(response.getData().getCaseInvite().accessCode()).isNotBlank();
+        assertThat(response.getData().getCaseInvite().accessCode().length()).isEqualTo(8);
+        assertThat(response.getData().getCaseInvite().accessCode()).doesNotContain("I", "O", "U", "0", "1");
     }
 
     @Test

@@ -3,8 +3,8 @@ package uk.gov.hmcts.divorce.bulkscan.ccd.workbasket;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
+import uk.gov.hmcts.ccd.sdk.type.ExceptionRecord;
 import uk.gov.hmcts.divorce.bulkscan.ccd.ExceptionRecordState;
-import uk.gov.hmcts.divorce.bulkscan.data.ExceptionRecord;
 import uk.gov.hmcts.divorce.bulkscan.workbasket.ExceptionRecordWorkBasketResultFields;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 

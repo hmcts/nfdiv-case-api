@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -19,8 +20,8 @@ import uk.gov.hmcts.divorce.payment.PaymentService;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralReferralPayment;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -33,12 +34,12 @@ import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DEEMED;
 import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 
 @Component
+@Slf4j
 public class CaseworkerGeneralReferralPayment implements CCDConfig<CaseData, State, UserRole> {
 
+    public static final String CASEWORKER_GENERAL_REFERRAL_PAYMENT = "caseworker-general-referral-payment";
     @Autowired
     private PaymentService paymentService;
-
-    public static final String CASEWORKER_GENERAL_REFERRAL_PAYMENT = "caseworker-general-referral-payment";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -54,21 +55,23 @@ public class CaseworkerGeneralReferralPayment implements CCDConfig<CaseData, Sta
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(CASEWORKER_GENERAL_REFERRAL_PAYMENT)
-            .forStateTransition(AwaitingGeneralReferralPayment, AwaitingServiceConsideration)
+            .forStateTransition(AwaitingGeneralReferralPayment, AwaitingGeneralConsideration)
             .name("General referral payment")
             .description("General referral payment")
             .showSummary()
             .showEventNotes()
             .aboutToStartCallback(this::aboutToStart)
-            .grant(CREATE_READ_UPDATE, CASE_WORKER, LEGAL_ADVISOR)
-            .grant(READ, SUPER_USER, SOLICITOR, CITIZEN));
+            .grant(CREATE_READ_UPDATE, CASE_WORKER)
+            .grant(READ, SUPER_USER, SOLICITOR, CITIZEN, LEGAL_ADVISOR));
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
 
+        log.info("Caseworker general referral payment about to start callback invoked. CaseID: {}", details.getId());
+
         final CaseData caseData = details.getData();
 
-        OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_DEEMED);
+        final OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_DEEMED);
         caseData.getGeneralReferral().getGeneralReferralFee().setOrderSummary(orderSummary);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

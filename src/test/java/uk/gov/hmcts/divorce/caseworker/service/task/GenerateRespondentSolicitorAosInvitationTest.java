@@ -74,7 +74,7 @@ public class GenerateRespondentSolicitorAosInvitationTest {
 
         final var result = generateRespondentSolicitorAosInvitation.apply(caseDetails);
 
-        assertThat(result.getData().getCaseInvite().getAccessCode()).isEqualTo(ACCESS_CODE);
+        assertThat(result.getData().getCaseInvite().accessCode()).isEqualTo(ACCESS_CODE);
 
         verify(caseDataDocumentService)
             .renderDocumentAndUpdateCaseData(

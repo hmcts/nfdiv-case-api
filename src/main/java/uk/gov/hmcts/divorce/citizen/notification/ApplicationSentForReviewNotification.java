@@ -70,7 +70,7 @@ public class ApplicationSentForReviewNotification implements ApplicantNotificati
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
         templateVars.put(IS_REMINDER, isReminder ? YES :  NO);
         templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
-        templateVars.put(ACCESS_CODE, caseData.getCaseInvite().getAccessCode());
+        templateVars.put(ACCESS_CODE, caseData.getCaseInvite().accessCode());
         templateVars.put(CREATE_ACCOUNT_LINK,
             config.getTemplateVars().get(caseData.isDivorce() ? APPLICANT_2_SIGN_IN_DIVORCE_URL : APPLICANT_2_SIGN_IN_DISSOLUTION_URL));
         return templateVars;
