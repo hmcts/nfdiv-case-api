@@ -12,16 +12,18 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
 import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.divorce.systemupdate.service.CcdFetchCaseService;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.User;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 
 @Service
@@ -38,7 +40,7 @@ public class CasePronouncementService {
     private CcdUpdateService ccdUpdateService;
 
     @Autowired
-    private CcdFetchCaseService ccdFetchCaseService;
+    private CcdSearchService ccdSearchService;
 
     @Autowired
     private IdamService idamService;
@@ -71,7 +73,7 @@ public class CasePronouncementService {
         log.info("Successfully processed bulk case details list size {}", processedBulkCases.size());
 
         bulkActionCaseData.getErroredCaseDetails().addAll(unprocessedBulkCases);
-        bulkActionCaseData.setProcessedCaseDetails(processedBulkCases);
+        bulkActionCaseData.getProcessedCaseDetails().addAll(processedBulkCases);
 
         try {
             ccdUpdateService.submitBulkActionEvent(
@@ -89,28 +91,40 @@ public class CasePronouncementService {
                                               User user,
                                               String serviceAuth) {
 
-        List<ListValue<BulkListCaseDetails>> casesNotInCorrectState =
-            bulkActionCaseData.getBulkListCaseDetails().stream()
-                .filter(bulkCase -> !AwaitingPronouncement.getName().equals(
-                    ccdFetchCaseService.fetchCaseById(
-                        bulkCase.getValue().getCaseReference().getCaseReference(),
-                        user,
-                        serviceAuth).getState()
-                    )
-                )
-                .collect(Collectors.toList());
+        List<String> caseReferences = bulkActionCaseData.getBulkListCaseDetails().stream()
+            .map(bulkCase -> bulkCase.getValue().getCaseReference().getCaseReference())
+            .collect(toList());
 
-        casesNotInCorrectState
-            .forEach(bulkCase -> log.info(
-                "Case ID {} will be skipped as not in correct state to be pronounced",
-                bulkCase.getValue().getCaseReference().getCaseReference()));
+        List<String> casesToBeAddedToProcessedList = new ArrayList<>();
+        List<String> casesToBeAddedToErroredList = new ArrayList<>();
 
-        bulkActionCaseData.setErroredCaseDetails(casesNotInCorrectState);
+        ccdSearchService.searchForCases(caseReferences, user, serviceAuth)
+            .forEach(caseDetails -> {
+                if (ConditionalOrderPronounced.getName().equals(caseDetails.getState())) {
+                    log.info(
+                        "Case ID {} will be skipped and moved to processed list as already pronounced",
+                        caseDetails.getId());
+                    casesToBeAddedToProcessedList.add(String.valueOf(caseDetails.getId()));
+                } else if (!AwaitingPronouncement.getName().equals(caseDetails.getState())) {
+                    log.info(
+                        "Case ID {} will be skipped and moved to error list as not in correct state to be pronounced",
+                        caseDetails.getId());
+                    casesToBeAddedToErroredList.add(String.valueOf(caseDetails.getId()));
+                }
+            });
 
-        List<ListValue<BulkListCaseDetails>> updatedBulkListCaseDetails =
-            bulkActionCaseData.getBulkListCaseDetails().stream()
-                .filter(bulkCase -> !casesNotInCorrectState.contains(bulkCase))
-                .collect(Collectors.toList());
-        bulkActionCaseData.setBulkListCaseDetails(updatedBulkListCaseDetails);
+        List<ListValue<BulkListCaseDetails>> updatedBulkList = new ArrayList<>();
+        bulkActionCaseData.getBulkListCaseDetails()
+            .forEach(bulkCase -> {
+                if (casesToBeAddedToProcessedList.contains(bulkCase.getValue().getCaseReference().getCaseReference())) {
+                    bulkActionCaseData.getProcessedCaseDetails().add(bulkCase);
+                } else if (casesToBeAddedToErroredList.contains(bulkCase.getValue().getCaseReference().getCaseReference())) {
+                    bulkActionCaseData.getErroredCaseDetails().add(bulkCase);
+                } else {
+                    updatedBulkList.add(bulkCase);
+                }
+            });
+
+        bulkActionCaseData.setBulkListCaseDetails(updatedBulkList);
     }
 }
