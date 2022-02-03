@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.document.content.DraftApplicationTemplateContent;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_JOINT_APPLICANT_1_ANSWERS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_SOLE_APPLICANT_1_ANSWERS;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JOINT_DIVORCE_APPLICANT_1_ANSWERS_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 
 @Component
@@ -35,6 +36,9 @@ public class DivorceApplicationDraft implements CaseTask {
         String templateId = caseData.getApplicationType().isSole()
             ? DIVORCE_SOLE_APPLICANT_1_ANSWERS
             : DIVORCE_JOINT_APPLICANT_1_ANSWERS;
+        String documentName = caseData.getApplicationType().isSole()
+            ? DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME
+            : JOINT_DIVORCE_APPLICANT_1_ANSWERS_DOCUMENT_NAME;
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(
             caseData,
@@ -43,7 +47,7 @@ public class DivorceApplicationDraft implements CaseTask {
             caseId,
             templateId,
             caseData.getApplicant1().getLanguagePreference(),
-            DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME + caseId
+            documentName + caseId
         );
 
         return caseDetails;

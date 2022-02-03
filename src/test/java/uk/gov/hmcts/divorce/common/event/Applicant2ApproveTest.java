@@ -42,7 +42,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.Application.ThePrayer.I_CON
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_JOINT_APPLICANT_2_ANSWERS;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.JOINT_DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JOINT_DIVORCE_APPLICANT_2_ANSWERS_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -215,7 +215,7 @@ class Applicant2ApproveTest {
                 caseId,
                 DIVORCE_JOINT_APPLICANT_2_ANSWERS,
                 caseData.getApplicant1().getLanguagePreference(),
-                JOINT_DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME + caseId
+                JOINT_DIVORCE_APPLICANT_2_ANSWERS_DOCUMENT_NAME + caseId
             );
     }
 

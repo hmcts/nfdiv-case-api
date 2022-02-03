@@ -25,6 +25,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_JOINT_APPLICANT_1_ANSWERS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_SOLE_APPLICANT_1_ANSWERS;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JOINT_DIVORCE_APPLICANT_1_ANSWERS_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
@@ -105,7 +106,7 @@ public class DivorceApplicationDraftTest {
                 TEST_CASE_ID,
                 DIVORCE_JOINT_APPLICANT_1_ANSWERS,
                 ENGLISH,
-                DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME + TEST_CASE_ID
+                JOINT_DIVORCE_APPLICANT_1_ANSWERS_DOCUMENT_NAME + TEST_CASE_ID
             );
 
         assertThat(result.getData()).isEqualTo(caseData);

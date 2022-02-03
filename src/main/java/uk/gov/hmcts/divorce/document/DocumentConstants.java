@@ -13,11 +13,12 @@ public final class DocumentConstants {
 
     public static final String DIVORCE_DRAFT_APPLICATION = "DIVORCE_DRAFT_APPLICATION";
     public static final String DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME = "draft-divorce-application-";
-    public static final String JOINT_DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME = "joint-draft-divorce-application-";
 
     public static final String DIVORCE_SOLE_APPLICANT_1_ANSWERS = "DIVORCE_SOLE_APPLICANT_1_ANSWERS";
     public static final String DIVORCE_JOINT_APPLICANT_1_ANSWERS = "DIVORCE_JOINT_APPLICANT_1_ANSWERS";
     public static final String DIVORCE_JOINT_APPLICANT_2_ANSWERS = "DIVORCE_JOINT_APPLICANT_2_ANSWERS";
+    public static final String JOINT_DIVORCE_APPLICANT_1_ANSWERS_DOCUMENT_NAME = "joint-divorce-application-applicant-1-answers-";
+    public static final String JOINT_DIVORCE_APPLICANT_2_ANSWERS_DOCUMENT_NAME = "joint-divorce-application-applicant-2-answers-";
 
     public static final String RESP_SOLICITOR_AOS_INVITATION = "RESP_SOLICITOR_AOS_INVITATION";
     public static final String CITIZEN_RESP_AOS_INVITATION = "CITIZEN_RESP_AOS_INVITATION";

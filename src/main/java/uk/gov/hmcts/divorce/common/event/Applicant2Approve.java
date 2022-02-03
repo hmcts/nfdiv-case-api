@@ -31,7 +31,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.READ;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant2BasicCase;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_JOINT_APPLICANT_2_ANSWERS;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.JOINT_DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.JOINT_DIVORCE_APPLICANT_2_ANSWERS_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 
 @Slf4j
@@ -120,7 +120,7 @@ public class Applicant2Approve implements CCDConfig<CaseData, State, UserRole> {
             caseId,
             DIVORCE_JOINT_APPLICANT_2_ANSWERS,
             data.getApplicant1().getLanguagePreference(),
-            JOINT_DIVORCE_DRAFT_APPLICATION_DOCUMENT_NAME + caseId
+            JOINT_DIVORCE_APPLICANT_2_ANSWERS_DOCUMENT_NAME + caseId
         );
     }
 }
