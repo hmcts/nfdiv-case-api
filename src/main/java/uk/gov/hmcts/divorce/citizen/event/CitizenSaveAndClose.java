@@ -32,9 +32,6 @@ public class CitizenSaveAndClose implements CCDConfig<CaseData, State, UserRole>
     @Autowired
     private HttpServletRequest request;
 
-    @Autowired
-    private CcdAccessService ccdAccessService;
-
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
@@ -52,8 +49,7 @@ public class CitizenSaveAndClose implements CCDConfig<CaseData, State, UserRole>
                                                CaseDetails<CaseData, State> beforeDetails) {
         log.info("CitizenSaveAndClose submitted callback invoked for case id: {}", details.getId());
 
-        boolean isApplicant1 = ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), details.getId());
-        saveAndSignOutNotificationHandler.notifyApplicant(details.getData(), isApplicant1);
+        saveAndSignOutNotificationHandler.notifyApplicant(details.getData(), details.getId(), request.getHeader(AUTHORIZATION));
 
         return SubmittedCallbackResponse.builder().build();
     }

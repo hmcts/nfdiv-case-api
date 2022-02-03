@@ -17,7 +17,6 @@ import uk.gov.hmcts.reform.idam.client.models.User;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
@@ -112,8 +111,14 @@ public class CcdAccessService {
     @Retryable(value = {FeignException.class, RuntimeException.class})
     public boolean isApplicant1(String userToken, Long caseId) {
         log.info("Retrieving roles for user on case {}", caseId);
-        String s2sToken = authTokenGenerator.generate();
-        List<String> userRoles = caseAssignmentApi.getUserRoles(userToken, s2sToken, List.of(String.valueOf(caseId)))
+        User user = idamService.retrieveUser(userToken);
+        List<String> userRoles =
+            caseAssignmentApi.getUserRoles(
+                userToken,
+                authTokenGenerator.generate(),
+                List.of(String.valueOf(caseId)),
+                List.of(user.getUserDetails().getId())
+            )
             .getCaseAssignmentUserRoles()
             .stream()
             .map(CaseAssignmentUserRole::getCaseRole)

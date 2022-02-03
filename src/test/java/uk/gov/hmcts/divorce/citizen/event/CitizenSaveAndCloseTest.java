@@ -26,7 +26,6 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigB
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
-
 @ExtendWith(SpringExtension.class)
 public class CitizenSaveAndCloseTest {
     @Mock
@@ -63,6 +62,6 @@ public class CitizenSaveAndCloseTest {
 
         citizenSaveAndClose.submitted(details, details);
 
-        verify(saveAndSignOutNotificationHandler).notifyApplicant(caseData, true);
+        verify(saveAndSignOutNotificationHandler).notifyApplicant(caseData, 123456789L, "token");
     }
 }
