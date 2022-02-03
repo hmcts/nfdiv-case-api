@@ -16,6 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
@@ -28,6 +29,8 @@ import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
+import java.util.Set;
+
 import static java.util.Collections.singletonList;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
@@ -39,6 +42,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_RESIDENT_JOINT;
 import static uk.gov.hmcts.divorce.divorcecase.model.MarriageFormation.OPPOSITE_SEX_COUPLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreateApplication.SOLICITOR_CREATE;
@@ -233,6 +237,7 @@ class SolicitorCreateApplicationIT {
     private static CaseData caseDataWithApplicant1AndApplicant2Org() {
         CaseData caseData = caseData();
         caseData.getApplication().setDivorceWho(WIFE);
+        caseData.getApplication().getJurisdiction().setConnections(Set.of(APP_1_RESIDENT_JOINT));
         caseData.getApplication().getMarriageDetails().setFormationType(OPPOSITE_SEX_COUPLE);
         caseData.getApplicant1().setSolicitor(Solicitor.builder()
             .organisationPolicy(organisationPolicy())
@@ -250,6 +255,7 @@ class SolicitorCreateApplicationIT {
             .builder()
             .applicant1(applicant1)
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
+            .applicationType(ApplicationType.SOLE_APPLICATION)
             .build();
     }
 

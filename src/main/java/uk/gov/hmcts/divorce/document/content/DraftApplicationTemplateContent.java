@@ -39,7 +39,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_RELATIONSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_GIVEN;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.OF_THE_DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PLACE_OF_MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATIONSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_IS_REPRESENTED;
@@ -48,7 +47,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RE
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_SOLICITOR_FIRM_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TO_END_A_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TO_END_THE_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
@@ -148,7 +146,7 @@ public class DraftApplicationTemplateContent {
         templateContent.put(DIVORCE_OR_DISSOLUTION, "divorce application");
         templateContent.put(MARRIAGE_OR_RELATIONSHIP, MARRIAGE);
         templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE);
-        templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, OF_THE_DIVORCE);
+        templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, "the divorce");
 
         if (isSole) {
             templateContent.put(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, "for a final order of divorce from");
@@ -160,7 +158,7 @@ public class DraftApplicationTemplateContent {
     private void getDissolutionContent(Map<String, Object> templateContent, Boolean isSole) {
         templateContent.put(MARRIAGE_OR_RELATIONSHIP, RELATIONSHIP);
         templateContent.put(MARRIAGE_OR_CIVIL_PARTNERSHIP, CIVIL_PARTNERSHIP);
-        templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, TO_END_THE_CIVIL_PARTNERSHIP);
+        templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP, "ending the civil partnership");
 
         if (isSole) {
             templateContent.put(DIVORCE_OR_DISSOLUTION, TO_END_A_CIVIL_PARTNERSHIP);

@@ -184,6 +184,9 @@ docmosis:
       NOTICE_OF_PROCEEDINGS: NFD_Notice_Of_Proceedings_Sole.docx  #TODO: update content
       NOTICE_OF_PROCEEDINGS_OVERSEAS_RESP: NFD_Notice_Of_Proceedings_Overseas_Sole.docx #TODO: update content
       CERTIFICATE_OF_ENTITLEMENT: NFD_Certificate_Of_Entitlement.docx #TODO: update content
+      DIVORCE_SOLE_APPLICANT_1_ANSWERS: NFD_CP_Sole_Applicant_1_Answers.docx #TODO: update content
+      DIVORCE_JOINT_APPLICANT_1_ANSWERS: NFD_CP_Joint_Applicant_1_Answers.docx #TODO: update content
+      DIVORCE_JOINT_APPLICANT_2_ANSWERS: NFD_CP_Joint_Applicant_2_Answers.docx #TODO: update content
 
 doc_assembly:
   url: ${DOC_ASSEMBLY_URL:http://dg-docassembly-aat.service.core-compute-aat.internal}
