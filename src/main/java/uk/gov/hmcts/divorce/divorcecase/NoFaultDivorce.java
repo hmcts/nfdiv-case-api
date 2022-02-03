@@ -33,7 +33,7 @@ public class NoFaultDivorce implements CCDConfig<CaseData, State, UserRole> {
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.addPreEventHook(RetiredFields::migrate);
-        configBuilder.setCallbackHost(System.getenv().getOrDefault("CASE_API_URL", "http://nfdiv-case-api:4013"));
+        configBuilder.setCallbackHost(System.getenv().getOrDefault("CASE_API_URL", "http://localhost:4013"));
 
         configBuilder.caseType(CASE_TYPE, "New Law Case", "Handling of the dissolution of marriage");
         configBuilder.jurisdiction(JURISDICTION, "Family Divorce", "Family Divorce: dissolution of marriage");

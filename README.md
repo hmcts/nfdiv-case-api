@@ -34,20 +34,13 @@ To build the project execute the following command:
 
     ./gradlew build
 
-### Running the application
+### Running the application locally
 
-Create the image of the application by executing the following command:
+You will need access to the nfdiv-aat vault and an active VPN to run locally as it depends on services in AAT.
 
-    ./gradlew assemble
+Run the application by executing the following command:
 
-Create docker image:
-
-    docker-compose build
-
-Run the distribution (created in `build/install/nfdiv-caseapi` directory)
-by executing the following command:
-
-    docker-compose up
+    ./gradlew bootRun
 
 This will start the API container exposing the application's port
 (set to `4013` in this template app).
@@ -60,11 +53,19 @@ You should get a response similar to this:
 
     {"status":"UP","diskSpace":{"status":"UP","total":249644974080,"free":137188298752,"threshold":10485760}}
 
+### Running the application locally with CCD and XUI
+
+If you would like to run the full CCD and XUI stack locally you can use:
+
+    ./gradlew bootWithCcd
+
+Then you can access XUI on `http://localhost:3000`
+
 ### Generate CCD JSON files
 
-To generate the CCD JSON files from the Java Model run the following from the root of the project:
+Generating the CCD JSON files will happen on every `./gradlew bootWithCcd` but you can manually trigger this with:
 
-    ./gradlew ccd-definitions:generateCCDConfig
+    ./gradlew generateCCDConfig
 
 ### Generate TypeScript definitions for CCD definition
 

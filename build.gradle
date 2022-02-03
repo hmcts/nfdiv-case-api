@@ -11,7 +11,7 @@ buildscript {
 
   }
   dependencies {
-    classpath group: 'cz.habarta.typescript-generator', name: 'typescript-generator-gradle-plugin', version: '2.34.976'
+    classpath group: 'cz.habarta.typescript-generator', name: 'typescript-generator-gradle-plugin', version: '2.35.1025'
   }
 }
 
@@ -55,6 +55,10 @@ sourceSets {
       srcDir file('src/integrationTest/java')
     }
   }
+  cftlib {
+    compileClasspath += sourceSets.main.output
+    runtimeClasspath += sourceSets.main.output
+  }
 }
 
 
@@ -76,6 +80,8 @@ configurations {
   functionalTestRuntime.extendsFrom testRuntime
   integrationTestImplementation.extendsFrom testImplementation
   integrationTestRuntime.extendsFrom testRuntime
+  cftlibImplementation.extendsFrom implementation
+  cftlibRuntimeOnly.extendsFrom runtimeOnly
 }
 
 tasks.withType(JavaCompile) {
@@ -113,6 +119,11 @@ task integration(type: Test) {
   testClassesDirs = sourceSets.integrationTest.output.classesDirs
   classpath = sourceSets.integrationTest.runtimeClasspath
   failFast = true
+}
+
+task buildCCDXlsx(type: Exec, dependsOn: generateCCDConfig) {
+  group 'ccd tasks'
+  commandLine './bin/ccd-build-definition.sh'
 }
 
 task smoke(type: Test) {
@@ -200,10 +211,18 @@ dependencyUpdates {
 dependencyManagement {
   dependencies {
     dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.70'
+    // TODO: Remove once ES client is shaded into cftlib.
+    dependency group: 'org.elasticsearch.client', name: 'elasticsearch-rest-client', version: '6.8.17'
+    dependency group: 'org.elasticsearch.client', name: 'elasticsearch-rest-high-level-client', version: '6.5.0'
+    dependency group: 'org.elasticsearch', name: 'jna', version: '5.5.0'
     // CVE-2018-10237 - Unbounded memory allocation
     dependencySet(group: 'com.google.guava', version: '31.0.1-jre') {
       entry 'guava'
     }
+  }
+  // TODO - fix in the CFT lib by publishing platform information.
+  imports {
+    mavenBom 'com.fasterxml.jackson:jackson-bom:2.12.4'
   }
 }
 
@@ -211,6 +230,7 @@ repositories {
   mavenLocal()
   mavenCentral()
   maven { url 'https://jitpack.io' }
+  jcenter()
 }
 
 def versions = [
@@ -249,7 +269,8 @@ dependencies {
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.17.1'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.17.1'
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.56'
-  implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.16.3'
+  // TODO: remove once ES client shaded into cftlib
+  implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '6.8.17'
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.5'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
@@ -292,41 +313,45 @@ dependencies {
 
   functionalTestImplementation sourceSets.main.runtimeClasspath
   functionalTestImplementation sourceSets.test.runtimeClasspath
+
   functionalTestImplementation group: 'com.github.hmcts', name: 'document-management-client', version: '7.0.1'
+  functionalTestImplementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '4.0.2'
+
+  cftlibImplementation 'com.github.hmcts:rse-cft-lib:0.8.0'
 }
 
 mainClassName = 'uk.gov.hmcts.divorce.CaseApiApplication'
 
-ext.getVaultSecret = { String secretName ->
-  new ByteArrayOutputStream().withStream { os ->
-    exec {
-      commandLine 'az', 'keyvault', 'secret', 'show', '--vault-name', 'nfdiv-aat', '-o', 'tsv', '--query', 'value', '--name', secretName
-      standardOutput = os
+task loadEnvSecrets() {
+  doLast {
+    if (!project.file('./.aat-env').exists()) {
+      new ByteArrayOutputStream().withStream { os ->
+        exec {
+          commandLine 'az', 'keyvault', 'secret', 'show', '--vault-name', 'nfdiv-aat', '-o', 'tsv', '--query', 'value', '--name', 'nfdiv-case-api-dot-env'
+          standardOutput = os
+        }
+        project.file('./.aat-env').write(new String(os.toString().replace('\n', '').decodeBase64(), java.nio.charset.StandardCharsets.UTF_8))
+      }
     }
-    return os.toString().replace('\n', '')
+  }
+}
+
+task reloadEnvSecrets(group: 'ccd tasks', dependsOn: [loadEnvSecrets]) {
+  doFirst {
+    if (project.file('./.aat-env').exists()) {
+      project.file('./.aat-env').delete()
+    }
   }
 }
 
 bootRun {
   doFirst() {
-    if (System.getenv("IDAM_API_BASEURL") == null) {
-      println("Loading secrets from vault")
-
-      systemProperty 'IDAM_API_BASEURL', 'https://idam-api.aat.platform.hmcts.net'
-
-      systemProperty 'UK_GOV_NOTIFY_API_KEY', getVaultSecret('uk-gov-notify-api-key')
-      systemProperty 'S2S_SECRET', getVaultSecret('s2s-case-api-secret')
-      systemProperty 'IDAM_CASEWORKER_USERNAME', getVaultSecret('idam-caseworker-username')
-      systemProperty 'IDAM_CASEWORKER_PASSWORD', getVaultSecret('idam-caseworker-password')
-      systemProperty 'IDAM_SYSTEM_UPDATE_USERNAME', getVaultSecret('idam-systemupdate-username')
-      systemProperty 'IDAM_SYSTEM_UPDATE_PASSWORD', getVaultSecret('idam-systemupdate-password')
-      systemProperty 'IDAM_SOLICITOR_USERNAME', getVaultSecret('idam-solicitor-username')
-      systemProperty 'IDAM_SOLICITOR_PASSWORD', getVaultSecret('idam-solicitor-password')
-      systemProperty 'IDAM_CLIENT_SECRET', getVaultSecret('idam-secret')
-
-      if (System.getenv("BOOT_RUN_DOCKER")) {
-        systemProperty 'IDAM_API_BASEURL', 'http://localhost:5000'
-        systemProperty 'CASE_DATA_STORE_BASEURL', 'http://localhost:4452'
+    if (project.file('./.aat-env').exists()) {
+      project.file('./.aat-env').readLines().each() {
+        def index = it.indexOf("=")
+        def key = it.substring(0, index)
+        def value = it.substring(index + 1)
+        environment key, value
       }
     }
   }
@@ -344,20 +369,13 @@ bootJar {
 
 functional {
   doFirst() {
-    if (System.getenv("OAUTH2_CLIENT_SECRET") == null) {
-      println("Loading secrets from vault")
-
-      systemProperty 'IDAM_API_BASEURL', 'https://idam-api.aat.platform.hmcts.net'
-
-      systemProperty 'UK_GOV_NOTIFY_API_KEY', getVaultSecret('uk-gov-notify-api-key')
-      systemProperty 'S2S_SECRET', getVaultSecret('s2s-case-api-secret')
-      systemProperty 'IDAM_CASEWORKER_USERNAME', getVaultSecret('idam-caseworker-username')
-      systemProperty 'IDAM_CASEWORKER_PASSWORD', getVaultSecret('idam-caseworker-password')
-      systemProperty 'IDAM_SYSTEM_UPDATE_USERNAME', getVaultSecret('idam-systemupdate-username')
-      systemProperty 'IDAM_SYSTEM_UPDATE_PASSWORD', getVaultSecret('idam-systemupdate-password')
-      systemProperty 'IDAM_SOLICITOR_USERNAME', getVaultSecret('idam-solicitor-username')
-      systemProperty 'IDAM_SOLICITOR_PASSWORD', getVaultSecret('idam-solicitor-password')
-      systemProperty 'OAUTH2_CLIENT_SECRET', getVaultSecret('idam-secret')
+    if (project.file('./.aat-env').exists()) {
+      project.file('./.aat-env').readLines().each() {
+        def index = it.indexOf("=")
+        def key = it.substring(0, index)
+        def value = it.substring(index + 1)
+        environment key, value
+      }
     }
   }
 }
@@ -386,39 +404,24 @@ ccd {
   configDir = file('build/definitions')
 }
 
-tasks.register('stopCaseApiContainer') {
-  group = 'ccd tasks'
+task bootWithCcd(type: org.springframework.boot.gradle.tasks.run.BootRun, dependsOn: [loadEnvSecrets, buildCCDXlsx], group: 'ccd tasks') {
+    classpath sourceSets.cftlib.runtimeClasspath
+    mainClass = 'uk.gov.hmcts.divorce.cftlib.RunWithCFT'
+    doFirst() {
+      // Required by Access Management for Java 17.
+      // https://github.com/x-stream/xstream/issues/101
+      ['java.lang', 'java.util', 'java.lang.reflect', 'java.text', 'java.awt.font'].each {
+        jvmArgs('--add-opens', "java.base/${it}=ALL-UNNAMED")
+      }
+      jvmArgs('--add-opens', 'java.desktop/java.awt.font=ALL-UNNAMED')
+      jvmArgs('-XX:ReservedCodeCacheSize=64m')
 
-  doFirst {
-    exec {
-      executable "sh"
-      args "-c", "docker stop nfdiv-case-api || exit 0"
-    }
-  }
-}
-
-def reloadCcd = tasks.register('reloadCcd') {
-  group = 'ccd tasks'
-  doLast {
-    exec {
-      file('../.env').readLines().each() {
-        def (key, value) = it.tokenize('=')
+      project.file('./.aat-env').readLines().each() {
+        def index = it.indexOf("=")
+        def key = it.substring(0, index)
+        def value = it.substring(index + 1)
         environment key, value
       }
-      commandLine './bin/process-and-import-ccd-definition.sh'
     }
-    exec {
-      file('../.env').readLines().each() {
-        def (key, value) = it.tokenize('=')
-        environment key, value
-      }
-      commandLine 'docker-compose', '-f', '../docker-compose.yml', 'up', '--build', '-d', 'nfdiv-case-api'
-    }
-  }
 }
 
-reloadCcd.configure {
-  dependsOn assemble, generateCCDConfig
-}
-
-generateCCDConfig.dependsOn stopCaseApiContainer

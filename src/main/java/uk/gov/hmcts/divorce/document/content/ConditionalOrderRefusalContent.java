@@ -13,7 +13,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE_POPULATED;
@@ -26,6 +26,7 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.DI
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.END_A_CIVIL_PARTNERSHIP_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.THE_DIVORCE_SERVICE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 public class ConditionalOrderRefusalContent {
@@ -41,7 +42,7 @@ public class ConditionalOrderRefusalContent {
         final ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
         final Application application = caseData.getApplication();
 
-        templateContent.put(CASE_REFERENCE, ccdCaseReference);
+        templateContent.put(CCD_CASE_REFERENCE, formatId(ccdCaseReference));
 
         templateContent.put(ISSUE_DATE_POPULATED, application.getIssueDate() != null);
         if (application.getIssueDate() != null) {

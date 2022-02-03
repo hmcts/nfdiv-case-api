@@ -22,7 +22,7 @@ public class BulkActionCaseTypeConfig implements CCDConfig<BulkActionCaseData, B
     @Override
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
         configBuilder.addPreEventHook(BulkCaseRetiredFields::migrate);
-        configBuilder.setCallbackHost(System.getenv().getOrDefault("CASE_API_URL", "http://nfdiv-case-api:4013"));
+        configBuilder.setCallbackHost(System.getenv().getOrDefault("CASE_API_URL", "http://localhost:4013"));
 
         configBuilder.caseType(CASE_TYPE, "New Law Bulk Case", "Handling of the dissolution of marriage");
         configBuilder.jurisdiction(JURISDICTION, "Family Divorce", "Family Divorce: dissolution of marriage");
