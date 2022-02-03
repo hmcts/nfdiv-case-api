@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -28,7 +29,7 @@ public class CitizenApplicant1ConfirmReceipt implements CCDConfig<CaseData, Stat
             .forStates(Holding)
             .name("Applicant 1 Confirm Receipt")
             .description("Applicant 1 confirms receipt for joint application")
-            .grant(CREATE_READ_UPDATE, CITIZEN)
+            .grant(CREATE_READ_UPDATE, CREATOR)
             .grant(READ, SUPER_USER, LEGAL_ADVISOR, CASE_WORKER);
     }
 }
