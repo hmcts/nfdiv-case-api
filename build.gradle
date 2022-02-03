@@ -404,10 +404,6 @@ ccd {
   configDir = file('build/definitions')
 }
 
-generateCCDConfig {
-  environment 'CASE_API_URL', 'http://localhost:4013'
-}
-
 task bootWithCcd(type: org.springframework.boot.gradle.tasks.run.BootRun, dependsOn: [loadEnvSecrets, buildCCDXlsx], group: 'ccd tasks') {
     classpath sourceSets.cftlib.runtimeClasspath
     mainClass = 'uk.gov.hmcts.divorce.cftlib.RunWithCFT'
