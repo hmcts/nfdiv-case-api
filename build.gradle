@@ -26,7 +26,7 @@ plugins {
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'org.springframework.boot' version '2.6.3'
   id 'com.github.ben-manes.versions' version '0.41.0'
-  id 'hmcts.ccd.sdk' version '0.25.14'
+  id 'hmcts.ccd.sdk' version '0.25.15'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -124,6 +124,8 @@ task integration(type: Test) {
 task buildCCDXlsx(type: Exec, dependsOn: generateCCDConfig) {
   group 'ccd tasks'
   commandLine './bin/ccd-build-definition.sh'
+  inputs.dir layout.buildDirectory.dir('definitions')
+  outputs.dir layout.buildDirectory.dir('ccd-config')
 }
 
 task smoke(type: Test) {
