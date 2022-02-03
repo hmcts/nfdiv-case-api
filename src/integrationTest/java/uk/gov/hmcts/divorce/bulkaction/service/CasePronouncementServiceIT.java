@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.bulkaction.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +23,17 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdCaseDataContentProvider;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
+import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
 import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
 import uk.gov.hmcts.reform.idam.client.models.User;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
+import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
+import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -37,6 +42,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM_PRONOUNCE_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.CASEWORKER_USER_ID;
@@ -85,6 +91,8 @@ public class CasePronouncementServiceIT {
             .dateAndTimeOfHearing(dateAndTimeOfHearing)
             .court(BURY_ST_EDMUNDS)
             .bulkListCaseDetails(List.of(getBulkListCaseDetailsListValue(TEST_CASE_ID.toString())))
+            .erroredCaseDetails(new ArrayList<>())
+            .processedCaseDetails(new ArrayList<>())
             .build();
 
 
@@ -93,11 +101,34 @@ public class CasePronouncementServiceIT {
             .data(bulkActionCaseData)
             .build();
 
+        final SearchSourceBuilder searchQuery = SearchSourceBuilder
+            .searchSource()
+            .query(
+                boolQuery()
+                    .must(termsQuery("reference", List.of(TEST_CASE_ID.toString())))
+            )
+            .from(0)
+            .size(50);
+
         var userDetails = UserDetails.builder().id(CASEWORKER_USER_ID).build();
         var user = new User(CASEWORKER_AUTH_TOKEN, userDetails);
         when(idamService.retrieveUser(CASEWORKER_AUTH_TOKEN)).thenReturn(user);
-
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        when(coreCaseDataApi.searchCases(
+            CASEWORKER_AUTH_TOKEN,
+            TEST_SERVICE_AUTH_TOKEN,
+            CASE_TYPE,
+            searchQuery.toString()))
+            .thenReturn(
+                SearchResult.builder()
+                    .total(1)
+                    .cases(List.of(uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
+                        .id(TEST_CASE_ID)
+                        .state(AwaitingPronouncement.getName())
+                        .build()))
+                    .build()
+            );
 
         final StartEventResponse startEventResponse = StartEventResponse.builder()
             .eventId(SYSTEM_PRONOUNCE_CASE)

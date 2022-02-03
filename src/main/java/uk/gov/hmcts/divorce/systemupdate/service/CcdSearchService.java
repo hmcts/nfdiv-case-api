@@ -32,6 +32,7 @@ import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
+import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
 import static org.elasticsearch.search.sort.SortOrder.ASC;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
@@ -188,12 +189,14 @@ public class CcdSearchService {
         int totalResults = pageSize;
 
         final QueryBuilder stateQuery = matchQuery(STATE, state);
+        final QueryBuilder bulkCaseDetailsExist = existsQuery("data.erroredCaseDetails");
         final QueryBuilder errorCasesExist = existsQuery("data.erroredCaseDetails");
         final QueryBuilder processedCases = existsQuery("data.processedCaseDetails");
 
         final QueryBuilder query = boolQuery()
             .must(stateQuery)
             .must(boolQuery()
+                .must(boolQuery().must(bulkCaseDetailsExist))
                 .should(boolQuery().must(errorCasesExist))
                 .should(boolQuery().mustNot(processedCases)));
 
@@ -238,9 +241,11 @@ public class CcdSearchService {
 
         final QueryBuilder createdStateQuery = matchQuery(STATE, Created);
         final QueryBuilder listedStateQuery = matchQuery(STATE, Listed);
+        final QueryBuilder bulkCaseDetailsExist = existsQuery("data.erroredCaseDetails");
         final QueryBuilder casesToBeRemovedExist = existsQuery("data.casesToBeRemoved");
 
         final QueryBuilder query = boolQuery()
+            .must(boolQuery().must(bulkCaseDetailsExist))
             .must(boolQuery().must(casesToBeRemovedExist))
             .should(createdStateQuery)
             .should(listedStateQuery)
@@ -275,5 +280,28 @@ public class CcdSearchService {
         return allCaseDetails.stream()
             .map(caseDetailsConverter::convertToBulkActionCaseDetailsFromReformModel)
             .collect(toList());
+    }
+
+    public List<CaseDetails> searchForCases(
+        final List<String> caseReferences,
+        final User user,
+        final String serviceAuth) {
+
+        final QueryBuilder bulkCaseDetailsExist = termsQuery("reference", caseReferences);
+        final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+            .searchSource()
+            .query(
+                boolQuery()
+                    .must(bulkCaseDetailsExist)
+            )
+            .from(0)
+            .size(50);
+
+        return coreCaseDataApi.searchCases(
+            user.getAuthToken(),
+            serviceAuth,
+            CASE_TYPE,
+            sourceBuilder.toString()
+        ).getCases();
     }
 }

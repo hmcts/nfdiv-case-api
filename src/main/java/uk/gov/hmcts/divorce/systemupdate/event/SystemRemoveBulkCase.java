@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static java.util.EnumSet.allOf;
+import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.BulkCaseReject;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -28,6 +29,7 @@ public class SystemRemoveBulkCase implements CCDConfig<CaseData, State, UserRole
         new PageBuilder(configBuilder
             .event(SYSTEM_REMOVE_BULK_CASE)
             .forStateTransition(allOf(State.class), BulkCaseReject)
+            .showCondition(NEVER_SHOW)
             .name("System remove bulk case")
             .description("System remove bulk case")
             .grant(CREATE_READ_UPDATE_DELETE, SYSTEMUPDATE)
