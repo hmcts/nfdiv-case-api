@@ -23,7 +23,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE_POPULATED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
@@ -68,7 +68,7 @@ public class ConditionalOrderRefusalContentIT {
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
-        expectedEntries.put(CASE_REFERENCE, 1616591401473378L);
+        expectedEntries.put(CCD_CASE_REFERENCE, "1616-5914-0147-3378");
         expectedEntries.put(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME);
         expectedEntries.put(APPLICANT_1_LAST_NAME, TEST_LAST_NAME);
         expectedEntries.put(APPLICANT_2_FIRST_NAME, TEST_FIRST_NAME);
@@ -111,7 +111,7 @@ public class ConditionalOrderRefusalContentIT {
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
-        expectedEntries.put(CASE_REFERENCE, 1616591401473378L);
+        expectedEntries.put(CCD_CASE_REFERENCE, "1616-5914-0147-3378");
         expectedEntries.put(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME);
         expectedEntries.put(APPLICANT_1_LAST_NAME, TEST_LAST_NAME);
         expectedEntries.put(APPLICANT_2_FIRST_NAME, TEST_FIRST_NAME);
