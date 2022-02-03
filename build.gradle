@@ -424,12 +424,14 @@ task bootWithCcd(type: org.springframework.boot.gradle.tasks.run.BootRun, depend
         jvmArgs('--add-opens', "java.base/${it}=ALL-UNNAMED")
       }
       jvmArgs('--add-opens', 'java.desktop/java.awt.font=ALL-UNNAMED')
-        project.file('./.aat-env').readLines().each() {
-          def index = it.indexOf("=")
-          def key = it.substring(0, index)
-          def value = it.substring(index + 1)
-          environment key, value
-        }
+      jvmArgs('-XX:ReservedCodeCacheSize=64m')
+
+      project.file('./.aat-env').readLines().each() {
+        def index = it.indexOf("=")
+        def key = it.substring(0, index)
+        def value = it.substring(index + 1)
+        environment key, value
+      }
     }
 }
 
