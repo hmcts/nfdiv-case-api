@@ -413,6 +413,9 @@ public class Application {
     )
     private YesOrNo applicant2NeedsHelpWithFees;
 
+    @CCD(
+        access = {DefaultAccess.class}
+    )
     private Set<Applicant2Represented> applicant1IsApplicant2Represented;
 
     @CCD(
