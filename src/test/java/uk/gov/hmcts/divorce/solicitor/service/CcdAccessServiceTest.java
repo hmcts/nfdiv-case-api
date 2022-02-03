@@ -309,12 +309,15 @@ public class CcdAccessServiceTest {
 
     @Test
     public void shouldReturnTrueWhenUserHasCreatorRole() {
+        User user = new User(TEST_SERVICE_AUTH_TOKEN, UserDetails.builder().id("user-id").build());
+        when(idamService.retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN)).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(caseAssignmentApi.getUserRoles(
             SYSTEM_UPDATE_AUTH_TOKEN,
             TEST_SERVICE_AUTH_TOKEN,
-            List.of(TEST_CASE_ID.toString()))
-        ).thenReturn(CaseAssignmentUserRolesResource.builder()
+            List.of(TEST_CASE_ID.toString()),
+            List.of("user-id")
+        )).thenReturn(CaseAssignmentUserRolesResource.builder()
             .caseAssignmentUserRoles(List.of(
                 CaseAssignmentUserRole.builder().caseRole(CREATOR.getRole()).build()
             )).build()

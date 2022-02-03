@@ -10,7 +10,6 @@ import uk.gov.hmcts.divorce.citizen.notification.SaveAndSignOutNotificationHandl
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import javax.servlet.http.HttpServletRequest;
