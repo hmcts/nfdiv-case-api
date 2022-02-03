@@ -11,7 +11,7 @@ buildscript {
 
   }
   dependencies {
-    classpath group: 'cz.habarta.typescript-generator', name: 'typescript-generator-gradle-plugin', version: '2.34.976'
+    classpath group: 'cz.habarta.typescript-generator', name: 'typescript-generator-gradle-plugin', version: '2.35.1025'
   }
 }
 
@@ -249,7 +249,7 @@ dependencies {
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.17.1'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.17.1'
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.56'
-  implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.16.3'
+  implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.17.0'
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.5'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
