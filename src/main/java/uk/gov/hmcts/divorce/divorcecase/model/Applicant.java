@@ -158,8 +158,6 @@ public class Applicant {
     )
     private YesOrNo offline;
 
-    private Set<Applicant2Represented> isApplicant2Represented;
-
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
         return languagePreferenceWelsh == null || languagePreferenceWelsh.equals(NO)

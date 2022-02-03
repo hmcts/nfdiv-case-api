@@ -413,6 +413,8 @@ public class Application {
     )
     private YesOrNo applicant2NeedsHelpWithFees;
 
+    private Set<Applicant2Represented> applicant1IsApplicant2Represented;
+
     @CCD(
         label = "Link to applicant 1 solicitors answers",
         access = {CaseworkerAccess.class}
