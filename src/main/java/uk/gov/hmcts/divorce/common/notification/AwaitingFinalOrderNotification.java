@@ -37,7 +37,7 @@ public class AwaitingFinalOrderNotification implements ApplicantNotification {
         notificationService.sendEmail(
             applicant1.getEmail(),
             APPLICANT_APPLY_FOR_FINAL_ORDER,
-            templateVars(caseData, id, applicant1, applicant2, false),
+            templateVars(caseData, id, applicant1, applicant2),
             applicant1.getLanguagePreference()
         );
     }
@@ -53,15 +53,15 @@ public class AwaitingFinalOrderNotification implements ApplicantNotification {
             notificationService.sendEmail(
                 caseData.getApplicant2EmailAddress(),
                 APPLICANT_APPLY_FOR_FINAL_ORDER,
-                templateVars(caseData, id, applicant2, applicant1, false),
+                templateVars(caseData, id, applicant2, applicant1),
                 applicant2.getLanguagePreference()
             );
         }
     }
 
-    private Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner, boolean isReminder) {
+    private Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
         Map<String, String> templateVars = commonContent.conditionalOrderTemplateVars(caseData, id, applicant, partner);
-        templateVars.put(IS_REMINDER, isReminder ? YES :  NO);
+        templateVars.put(IS_REMINDER, NO);
         templateVars.put(DATE_FINAL_ORDER_ELIGIBLE_FROM_PLUS_3_MONTHS,
             caseData.getFinalOrder().getDateFinalOrderEligibleToRespondent().format(DATE_TIME_FORMATTER));
         return templateVars;
