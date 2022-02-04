@@ -505,6 +505,25 @@ public class TestDataHelper {
             .build();
     }
 
+    public static CallbackRequest callbackRequest(final CaseData caseData, String eventId, String state) {
+        OBJECT_MAPPER.registerModule(new JavaTimeModule());
+        return CallbackRequest
+            .builder()
+            .eventId(eventId)
+            .caseDetailsBefore(
+                caseDetailsBefore(caseData))
+            .caseDetails(
+                CaseDetails
+                    .builder()
+                    .data(OBJECT_MAPPER.convertValue(caseData, TYPE_REFERENCE))
+                    .state(state)
+                    .id(TEST_CASE_ID)
+                    .caseTypeId(CASE_TYPE)
+                    .build()
+            )
+            .build();
+    }
+
     public static CallbackRequest callbackRequestBeforeAndAfter(final CaseData caseDataBefore,
                                                                 final CaseData caseData,
                                                                 final String eventId) {
@@ -519,25 +538,6 @@ public class TestDataHelper {
                     .data(OBJECT_MAPPER.convertValue(caseData, TYPE_REFERENCE))
                     .id(TEST_CASE_ID)
                     .createdDate(LOCAL_DATE_TIME)
-                    .caseTypeId(CASE_TYPE)
-                    .build()
-            )
-            .build();
-    }
-
-    public static CallbackRequest callbackRequest(final CaseData caseData, String eventId, String state) {
-        OBJECT_MAPPER.registerModule(new JavaTimeModule());
-        return CallbackRequest
-            .builder()
-            .eventId(eventId)
-            .caseDetailsBefore(
-                caseDetailsBefore(caseData))
-            .caseDetails(
-                CaseDetails
-                    .builder()
-                    .data(OBJECT_MAPPER.convertValue(caseData, TYPE_REFERENCE))
-                    .state(state)
-                    .id(TEST_CASE_ID)
                     .caseTypeId(CASE_TYPE)
                     .build()
             )
