@@ -127,7 +127,7 @@ public class TestDataHelper {
     public static final LocalDate LOCAL_DATE = LocalDate.of(2021, 4, 28);
     public static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(2021, 4, 28, 1, 0);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().findAndRegisterModules();
-    static final TypeReference<HashMap<String, Object>> TYPE_REFERENCE = new TypeReference<>() {
+    private static final TypeReference<HashMap<String, Object>> TYPE_REFERENCE = new TypeReference<>() {
     };
 
     private TestDataHelper() {
