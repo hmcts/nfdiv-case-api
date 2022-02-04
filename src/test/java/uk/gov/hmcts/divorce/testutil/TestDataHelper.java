@@ -33,6 +33,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedBeingThe;
 import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedHow;
 import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedWhere;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderDivorceParties;
@@ -442,6 +443,18 @@ public class TestDataHelper {
             .court(BURY_ST_EDMUNDS)
             .decisionDate(testDecisionDate)
             .build());
+
+        return caseData;
+    }
+
+    public static CaseData validCaseDataForAwaitingFinalOrder() {
+        CaseData caseData = validCaseWithCourtHearing();
+        LocalDateTime dateAndTimeOfHearing = caseData.getConditionalOrder().getDateAndTimeOfHearing();
+
+        FinalOrder finalOrder = caseData.getFinalOrder();
+
+        finalOrder.setDateFinalOrderEligibleFrom(caseData.getFinalOrder().getDateFinalOrderEligibleFrom(dateAndTimeOfHearing));
+        finalOrder.setDateFinalOrderEligibleToRespondent(finalOrder.calculateDateFinalOrderEligibleToRespondent());
 
         return caseData;
     }
