@@ -124,6 +124,8 @@ task integration(type: Test) {
 task buildCCDXlsx(type: Exec, dependsOn: generateCCDConfig) {
   group 'ccd tasks'
   commandLine './bin/ccd-build-definition.sh'
+  inputs.dir layout.buildDirectory.dir('definitions')
+  outputs.dir layout.buildDirectory.dir('ccd-config')
 }
 
 task smoke(type: Test) {
