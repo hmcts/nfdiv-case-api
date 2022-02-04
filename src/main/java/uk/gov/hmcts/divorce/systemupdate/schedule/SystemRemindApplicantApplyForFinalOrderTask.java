@@ -26,15 +26,9 @@ import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyApplicantDisputeFormOverdue.SYSTEM_NOTIFY_APPLICANT_DISPUTE_FORM_OVERDUE;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicant2.SYSTEM_REMIND_APPLICANT2;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicantsApplyForFinalOrder.SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER;
-import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
-import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DUE_DATE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.FINAL_ORDER_ELIGIBLE_FROM_DATE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
@@ -92,16 +86,17 @@ public class SystemRemindApplicantApplyForFinalOrderTask implements Runnable {
             );
         }
     }
+
     private void sendReminderToApplicantsIfEligible(CaseDetails caseDetails, User user, String serviceAuthorization) {
-            try {
-                final CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
-                if (!caseData.getFinalOrder().hasFinalOrderReminderSentApplicant1()) {
-                    ccdUpdateService.submitEvent(caseDetails, SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER, user, serviceAuthorization);
-                }
-            } catch (final CcdManagementException e) {
-                log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
-            } catch (final IllegalArgumentException e) {
-                log.error("Deserialization failed for case id: {}, continuing to next case", caseDetails.getId());
+        try {
+            final CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
+            if (!caseData.getFinalOrder().hasFinalOrderReminderSentApplicant1()) {
+                ccdUpdateService.submitEvent(caseDetails, SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER, user, serviceAuthorization);
             }
+        } catch (final CcdManagementException e) {
+            log.error("Submit event failed for case id: {}, continuing to next case", caseDetails.getId());
+        } catch (final IllegalArgumentException e) {
+            log.error("Deserialization failed for case id: {}, continuing to next case", caseDetails.getId());
+        }
     }
 }
