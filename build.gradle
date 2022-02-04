@@ -214,7 +214,7 @@ dependencyManagement {
     // TODO: Remove once ES client is shaded into cftlib.
     dependency group: 'org.elasticsearch.client', name: 'elasticsearch-rest-client', version: '6.8.17'
     dependency group: 'org.elasticsearch.client', name: 'elasticsearch-rest-high-level-client', version: '7.17.0'
-    dependency group: 'org.elasticsearch', name: 'jna', version: '5.5.0'
+    dependency group: 'org.elasticsearch', name: 'jna', version: '5.7.0-1'
     // CVE-2018-10237 - Unbounded memory allocation
     dependencySet(group: 'com.google.guava', version: '31.0.1-jre') {
       entry 'guava'
