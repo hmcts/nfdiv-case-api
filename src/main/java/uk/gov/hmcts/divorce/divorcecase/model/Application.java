@@ -416,7 +416,7 @@ public class Application {
     @CCD(
         access = {DefaultAccess.class}
     )
-    private Set<Applicant2Represented> applicant1IsApplicant2Represented;
+    private Applicant2Represented applicant1IsApplicant2Represented;
 
     @CCD(
         label = "Link to applicant 1 solicitors answers",
