@@ -26,7 +26,7 @@ plugins {
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'org.springframework.boot' version '2.6.3'
   id 'com.github.ben-manes.versions' version '0.41.0'
-  id 'hmcts.ccd.sdk' version '0.25.14'
+  id 'hmcts.ccd.sdk' version '0.25.15'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -213,8 +213,8 @@ dependencyManagement {
     dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.70'
     // TODO: Remove once ES client is shaded into cftlib.
     dependency group: 'org.elasticsearch.client', name: 'elasticsearch-rest-client', version: '6.8.17'
-    dependency group: 'org.elasticsearch.client', name: 'elasticsearch-rest-high-level-client', version: '6.5.0'
-    dependency group: 'org.elasticsearch', name: 'jna', version: '5.5.0'
+    dependency group: 'org.elasticsearch.client', name: 'elasticsearch-rest-high-level-client', version: '7.17.0'
+    dependency group: 'org.elasticsearch', name: 'jna', version: '5.7.0-1'
     // CVE-2018-10237 - Unbounded memory allocation
     dependencySet(group: 'com.google.guava', version: '31.0.1-jre') {
       entry 'guava'
