@@ -127,7 +127,7 @@ public class TestDataHelper {
     public static final LocalDate LOCAL_DATE = LocalDate.of(2021, 4, 28);
     public static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(2021, 4, 28, 1, 0);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().findAndRegisterModules();
-    private static final TypeReference<HashMap<String, Object>> TYPE_REFERENCE = new TypeReference<>() {
+    static final TypeReference<HashMap<String, Object>> TYPE_REFERENCE = new TypeReference<>() {
     };
 
     private TestDataHelper() {
@@ -489,11 +489,30 @@ public class TestDataHelper {
     public static CallbackRequest callbackRequest(final CaseData caseData,
                                                   final String eventId) {
         OBJECT_MAPPER.registerModule(new JavaTimeModule());
-
         return CallbackRequest
             .builder()
             .eventId(eventId)
             .caseDetailsBefore(caseDetailsBefore(caseData))
+            .caseDetails(
+                CaseDetails
+                    .builder()
+                    .data(OBJECT_MAPPER.convertValue(caseData, TYPE_REFERENCE))
+                    .id(TEST_CASE_ID)
+                    .createdDate(LOCAL_DATE_TIME)
+                    .caseTypeId(CASE_TYPE)
+                    .build()
+            )
+            .build();
+    }
+
+    public static CallbackRequest callbackRequestBeforeAndAfter(final CaseData caseDataBefore,
+                                                                final CaseData caseData,
+                                                                final String eventId) {
+        OBJECT_MAPPER.registerModule(new JavaTimeModule());
+        return CallbackRequest
+            .builder()
+            .eventId(eventId)
+            .caseDetailsBefore(caseDetailsBefore(caseDataBefore))
             .caseDetails(
                 CaseDetails
                     .builder()
