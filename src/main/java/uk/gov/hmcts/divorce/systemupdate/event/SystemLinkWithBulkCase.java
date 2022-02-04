@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -27,6 +28,7 @@ public class SystemLinkWithBulkCase implements CCDConfig<CaseData, State, UserRo
         new PageBuilder(configBuilder
             .event(SYSTEM_LINK_WITH_BULK_CASE)
             .forStates(AwaitingPronouncement)
+            .showCondition(NEVER_SHOW)
             .name("Link with bulk case")
             .description("Linked with bulk case")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)

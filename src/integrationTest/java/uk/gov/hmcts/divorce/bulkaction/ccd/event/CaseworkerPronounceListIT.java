@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.caseworker;
+package uk.gov.hmcts.divorce.bulkaction.ccd.event;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig.CASE_TYPE;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerPronounceList.CASEWORKER_PRONOUNCE_LIST;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerPronounceList.CASEWORKER_PRONOUNCE_LIST;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.CASEWORKER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamDetails;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;

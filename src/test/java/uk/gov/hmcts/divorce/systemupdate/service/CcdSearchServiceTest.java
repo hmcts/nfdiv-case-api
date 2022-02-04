@@ -35,6 +35,7 @@ import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
+import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
 import static org.elasticsearch.search.sort.SortOrder.ASC;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -474,6 +475,42 @@ class CcdSearchServiceTest {
             "Failed to complete search for Bulk Cases with state of Pronounced");
     }
 
+    @Test
+    void shouldReturnCasesFromCcdWithMatchingCaseReferences() {
+
+        final List<String> caseReferences = List.of(
+            "1643192250866023",
+            "1627308042786515",
+            "1627504115236368",
+            "1627568021302127"
+        );
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserDetails.builder().build());
+        final SearchResult expected = SearchResult.builder()
+            .total(caseReferences.size())
+            .cases(createCaseDetailsList(caseReferences.size()))
+            .build();
+
+        SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+            .searchSource()
+            .query(
+                boolQuery()
+                    .must(termsQuery("reference", caseReferences))
+            )
+            .from(0)
+            .size(50);
+
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            CASE_TYPE,
+            sourceBuilder.toString()))
+            .thenReturn(expected);
+
+        final List<CaseDetails> searchResult = ccdSearchService.searchForCases(caseReferences, user, SERVICE_AUTHORIZATION);
+
+        assertThat(searchResult.size()).isEqualTo(4);
+    }
+
     private List<CaseDetails> createCaseDetailsList(final int size) {
 
         final List<CaseDetails> caseDetails = new ArrayList<>();
@@ -526,12 +563,14 @@ class CcdSearchServiceTest {
 
     private SearchSourceBuilder searchSourceBuilderForPronouncedCasesWithCasesInError(final int from) {
         final QueryBuilder stateQuery = matchQuery(STATE, Pronounced);
+        final QueryBuilder bulkCaseDetailsExist = existsQuery("data.erroredCaseDetails");
         final QueryBuilder errorCasesExist = existsQuery("data.erroredCaseDetails");
         final QueryBuilder processedCases = existsQuery("data.processedCaseDetails");
 
         final QueryBuilder query = boolQuery()
             .must(stateQuery)
             .must(boolQuery()
+                .must(boolQuery().must(bulkCaseDetailsExist))
                 .should(boolQuery().must(errorCasesExist))
                 .should(boolQuery().mustNot(processedCases)));
 
@@ -545,9 +584,11 @@ class CcdSearchServiceTest {
     private SearchSourceBuilder searchSourceBuilderForCreatedOrListedCasesWithCasesToBeRemoved(final int from) {
         final QueryBuilder createdStateQuery = matchQuery(STATE, Created);
         final QueryBuilder listedStateQuery = matchQuery(STATE, Listed);
+        final QueryBuilder bulkCaseDetailsExist = existsQuery("data.erroredCaseDetails");
         final QueryBuilder casesToBeRemovedExist = existsQuery("data.casesToBeRemoved");
 
         final QueryBuilder query = boolQuery()
+            .must(boolQuery().must(bulkCaseDetailsExist))
             .must(boolQuery().must(casesToBeRemovedExist))
             .should(createdStateQuery)
             .should(listedStateQuery)

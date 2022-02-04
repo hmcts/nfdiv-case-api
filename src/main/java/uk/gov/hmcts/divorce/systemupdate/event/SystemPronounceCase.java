@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
+import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPronounced;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -43,6 +44,7 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
             configBuilder
                 .event(SYSTEM_PRONOUNCE_CASE)
                 .forStateTransition(AwaitingPronouncement, ConditionalOrderPronounced)
+                .showCondition(NEVER_SHOW)
                 .name("System pronounce case")
                 .description("System pronounce case")
                 .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
