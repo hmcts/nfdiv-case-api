@@ -12,6 +12,8 @@ import uk.gov.hmcts.divorce.common.config.interceptors.UnAuthorisedServiceExcept
 import uk.gov.hmcts.divorce.document.print.exception.InvalidResourceException;
 import uk.gov.hmcts.divorce.notification.exception.NotificationException;
 import uk.gov.hmcts.reform.authorisation.exceptions.InvalidTokenException;
+import uk.gov.hmcts.reform.bsp.common.error.InvalidDataException;
+import uk.gov.hmcts.reform.bsp.common.model.shared.out.BspErrorResponse;
 import uk.gov.service.notify.NotificationClientException;
 
 @Slf4j
@@ -59,5 +61,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(
             HttpStatus.INTERNAL_SERVER_ERROR
         );
+    }
+
+    @ExceptionHandler(InvalidDataException.class)
+    ResponseEntity<Object> handleInvalidDataException(InvalidDataException exception) {
+        log.warn(exception.getMessage(), exception);
+
+        return ResponseEntity
+            .status(HttpStatus.UNPROCESSABLE_ENTITY)
+            .body(
+                BspErrorResponse.builder()
+                    .errors(exception.getErrors())
+                    .build()
+            );
     }
 }
