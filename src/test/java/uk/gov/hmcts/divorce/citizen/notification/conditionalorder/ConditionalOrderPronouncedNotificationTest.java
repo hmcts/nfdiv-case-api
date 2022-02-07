@@ -12,10 +12,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.eq;
@@ -245,4 +247,57 @@ class ConditionalOrderPronouncedNotificationTest {
         verify(commonContent).mainTemplateVars(data, 1234567890123456L, data.getApplicant2(), data.getApplicant1());
     }
 
+    @Test
+    void shouldThrowNotificationTemplateExceptionIfCourtIsNotSet() {
+
+        final LocalDateTime now = LocalDateTime.now();
+        final CaseData data = caseData();
+        data.setConditionalOrder(ConditionalOrder.builder()
+            .dateAndTimeOfHearing(now)
+            .grantedDate(now.toLocalDate())
+            .build()
+        );
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getMainTemplateVars());
+
+        assertThatExceptionOfType(NotificationTemplateException.class)
+            .isThrownBy(() -> notification.sendToApplicant1(data, 1234567890123456L))
+            .withMessage("Notification failed with missing field 'coCourt' for Case Id: 1234567890123456");
+    }
+
+    @Test
+    void shouldThrowNotificationTemplateExceptionIfDateAndTimeOfHearingIsNotSet() {
+
+        final LocalDateTime now = LocalDateTime.now();
+        final CaseData data = caseData();
+        data.setConditionalOrder(ConditionalOrder.builder()
+            .court(ConditionalOrderCourt.BIRMINGHAM)
+            .grantedDate(now.toLocalDate())
+            .build()
+        );
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getMainTemplateVars());
+
+        assertThatExceptionOfType(NotificationTemplateException.class)
+            .isThrownBy(() -> notification.sendToApplicant1(data, 1234567890123456L))
+            .withMessage("Notification failed with missing field 'coDateAndTimeOfHearing' for Case Id: 1234567890123456");
+    }
+
+    @Test
+    void shouldThrowNotificationTemplateExceptionIfGrantedDateIsNotSet() {
+
+        final LocalDateTime now = LocalDateTime.now();
+        final CaseData data = caseData();
+        data.setConditionalOrder(ConditionalOrder.builder()
+            .court(ConditionalOrderCourt.BIRMINGHAM)
+            .dateAndTimeOfHearing(now)
+            .build()
+        );
+        when(commonContent.mainTemplateVars(data, 1234567890123456L, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getMainTemplateVars());
+
+        assertThatExceptionOfType(NotificationTemplateException.class)
+            .isThrownBy(() -> notification.sendToApplicant1(data, 1234567890123456L))
+            .withMessage("Notification failed with missing field 'coGrantedDate' for Case Id: 1234567890123456");
+    }
 }
