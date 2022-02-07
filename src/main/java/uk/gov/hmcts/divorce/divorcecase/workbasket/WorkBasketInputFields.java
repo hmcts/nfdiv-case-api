@@ -19,7 +19,7 @@ public class WorkBasketInputFields implements CCDConfig<CaseData, State, UserRol
             .field("marriageDate", "Marriage Date")
             .field("applicant1HWFReferenceNumber", "HWF reference")
             .field("solUrgentCase", "Urgent case")
-            .field("", "Urgent general referral case")
+            .field("generalReferralUrgentCase", "Urgent general referral case")
             .field("applicant1SolicitorFirmName", "Solicitor firm name")
             .field("alternativeServiceType", "Type of service")
             .field("applicant1HomeAddress", "Applicant Postcode", "PostCode")
