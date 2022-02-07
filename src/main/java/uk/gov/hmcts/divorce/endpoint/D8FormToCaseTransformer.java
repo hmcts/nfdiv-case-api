@@ -37,7 +37,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.apache.commons.collections4.ListUtils.union;
 import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.StringUtils.join;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -296,6 +295,14 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
             // Set gender
             caseData.deriveAndPopulateApplicantGenderDetails();
 
+            if (!errors.isEmpty()) {
+                log.error("Errors {} and warnings {} during d8 transformation", errors, ocrValidationResponse.getWarnings());
+                throw new InvalidDataException(
+                    "Exception occurred while transforming D8 form",
+                    ocrValidationResponse.getWarnings(),
+                    errors
+                );
+            }
             return mapper.convertValue(caseData, new TypeReference<>() {
             });
         } catch (Exception exception) {
@@ -305,7 +312,7 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
             throw new InvalidDataException(
                 "Exception occurred while transforming D8 form",
                 ocrValidationResponse.getWarnings(),
-                union(errors, ocrValidationResponse.getErrors())
+                errors
             );
         }
     }
@@ -365,6 +372,11 @@ public class D8FormToCaseTransformer extends BulkScanFormTransformer {
             // only for civil partnership
             connections.add(RESIDUAL_JURISDICTION);
         }
+
+        if (connections.isEmpty()) {
+            errors.add("No jurisdiction connections were selected.");
+        }
+
         return connections;
     }
 
