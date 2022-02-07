@@ -15,10 +15,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
-import uk.gov.hmcts.reform.idam.client.models.User;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -46,9 +44,6 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
 
     @Autowired
     private Applicant1SwitchToSoleNotification applicant1SwitchToSoleNotification;
-
-    @Autowired
-    private IdamService idamService;
 
     @Autowired
     private Applicant2SwitchToSoleNotification applicant2SwitchToSoleNotification;
@@ -86,12 +81,10 @@ public class CitizenSwitchedToSole implements CCDConfig<CaseData, State, UserRol
             data.setCaseInvite(data.getCaseInvite().useAccessCode());
         }
 
-        User user = idamService.retrieveUser(httpServletRequest.getHeader(AUTHORIZATION));
-
-        if (data.getCaseInvite().isApplicant2(user.getUserDetails().getId())) {
-            notificationDispatcher.send(applicant2SwitchToSoleNotification, data, details.getId());
-        } else {
+        if (ccdAccessService.isApplicant1(httpServletRequest.getHeader(AUTHORIZATION), details.getId())) {
             notificationDispatcher.send(applicant1SwitchToSoleNotification, data, details.getId());
+        } else {
+            notificationDispatcher.send(applicant2SwitchToSoleNotification, data, details.getId());
         }
 
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);

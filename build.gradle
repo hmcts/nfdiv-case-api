@@ -26,7 +26,7 @@ plugins {
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'org.springframework.boot' version '2.6.3'
   id 'com.github.ben-manes.versions' version '0.41.0'
-  id 'hmcts.ccd.sdk' version '0.25.15'
+  id 'hmcts.ccd.sdk' version '0.25.16'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -216,7 +216,7 @@ dependencyManagement {
     // TODO: Remove once ES client is shaded into cftlib.
     dependency group: 'org.elasticsearch.client', name: 'elasticsearch-rest-client', version: '6.8.17'
     dependency group: 'org.elasticsearch.client', name: 'elasticsearch-rest-high-level-client', version: '6.5.0'
-    dependency group: 'org.elasticsearch', name: 'jna', version: '5.5.0'
+    dependency group: 'org.elasticsearch', name: 'jna', version: '5.7.0-1'
     // CVE-2018-10237 - Unbounded memory allocation
     dependencySet(group: 'com.google.guava', version: '31.0.1-jre') {
       entry 'guava'
@@ -274,7 +274,7 @@ dependencies {
   // TODO: remove once ES client shaded into cftlib
   implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '6.8.17'
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
-  implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.5'
+  implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.6'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
