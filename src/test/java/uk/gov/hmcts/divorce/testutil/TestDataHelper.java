@@ -33,6 +33,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedBeingThe;
 import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedHow;
 import uk.gov.hmcts.divorce.divorcecase.model.DocumentsServedWhere;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrderDivorceParties;
@@ -446,6 +447,18 @@ public class TestDataHelper {
         return caseData;
     }
 
+    public static CaseData validCaseDataForAwaitingFinalOrder() {
+        CaseData caseData = validCaseWithCourtHearing();
+        LocalDateTime dateAndTimeOfHearing = caseData.getConditionalOrder().getDateAndTimeOfHearing();
+
+        FinalOrder finalOrder = caseData.getFinalOrder();
+
+        finalOrder.setDateFinalOrderEligibleFrom(caseData.getFinalOrder().getDateFinalOrderEligibleFrom(dateAndTimeOfHearing));
+        finalOrder.setDateFinalOrderEligibleToRespondent(finalOrder.calculateDateFinalOrderEligibleToRespondent());
+
+        return caseData;
+    }
+
     public static CallbackRequest callbackRequest() {
         return callbackRequest(caseDataWithOrderSummary());
     }
@@ -816,6 +829,8 @@ public class TestDataHelper {
         kv.add(populateKeyValue("respondentOrApplicant2FullNameAsOnCert", "the respondent"));
         kv.add(populateKeyValue("detailsOnCertCorrect", "Yes"));
         kv.add(populateKeyValue("jurisdictionReasonsBothPartiesHabitual", "true"));
+        kv.add(populateKeyValue("existingOrPreviousCourtCases", "No"));
+        kv.add(populateKeyValue("soleOrApplicant1FinancialOrder", "No"));
         kv.add(populateKeyValue("soleOrApplicant1ConfirmationOfBreakdown", "true"));
         kv.add(populateKeyValue("prayerMarriageDissolved", "true"));
         kv.add(populateKeyValue("soleApplicantOrApplicant1StatementOfTruth", "true"));

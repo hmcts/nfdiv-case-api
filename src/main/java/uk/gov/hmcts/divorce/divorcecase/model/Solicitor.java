@@ -48,6 +48,9 @@ public class Solicitor {
     )
     private String email;
 
+    @CCD(label = "Solicitor’s Firm Name")
+    private String firmName;
+
     @CCD(
         label = "Solicitor’s firm/ DX address",
         typeOverride = TextArea
