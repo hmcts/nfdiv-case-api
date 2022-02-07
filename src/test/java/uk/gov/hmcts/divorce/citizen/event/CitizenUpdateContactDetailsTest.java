@@ -14,14 +14,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.reform.idam.client.models.User;
-import uk.gov.hmcts.reform.idam.client.models.UserDetails;
+import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenUpdateContactDetails.CITIZEN_UPDATE_CONTACT_DETAILS;
@@ -32,14 +29,13 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 @ExtendWith(MockitoExtension.class)
 public class CitizenUpdateContactDetailsTest {
 
-    @InjectMocks
-    private CitizenUpdateContactDetails citizenUpdateContactDetails;
-
     @Mock
-    private IdamService idamService;
-
+    private CcdAccessService ccdAccessService;
     @Mock
     private HttpServletRequest request;
+
+    @InjectMocks
+    private CitizenUpdateContactDetails citizenUpdateContactDetails;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
@@ -68,25 +64,11 @@ public class CitizenUpdateContactDetailsTest {
             .build();
         updatedData.getApplicant1().setHomeAddress(address);
         updatedData.getApplicant1().setContactDetailsType(PUBLIC);
-        updatedData.setCaseInvite(
-            CaseInvite.builder()
-                .applicant2UserId("app2")
-                .build()
-        );
-
         updatedCaseDetails.setData(updatedData);
+        updatedCaseDetails.setId(123456789L);
         previousCaseDetails.setData(caseData);
-
-        when(request.getHeader(AUTHORIZATION))
-            .thenReturn("token");
-
-        final var userDetails = UserDetails.builder()
-            .email("test@test.com")
-            .id("app1")
-            .build();
-
-        when(idamService.retrieveUser(anyString()))
-            .thenReturn(new User("token", userDetails));
+        when(request.getHeader(AUTHORIZATION)).thenReturn("token");
+        when(ccdAccessService.isApplicant1("token", 123456789L)).thenReturn(true);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             citizenUpdateContactDetails.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
@@ -117,20 +99,11 @@ public class CitizenUpdateContactDetailsTest {
                 .applicant2UserId("app2")
                 .build()
         );
-
         updatedCaseDetails.setData(updatedData);
+        updatedCaseDetails.setId(123456789L);
         previousCaseDetails.setData(caseData);
-
-        when(request.getHeader(AUTHORIZATION))
-            .thenReturn("token");
-
-        final var userDetails = UserDetails.builder()
-            .email("test@test.com")
-            .id("app2")
-            .build();
-
-        when(idamService.retrieveUser(anyString()))
-            .thenReturn(new User("token", userDetails));
+        when(request.getHeader(AUTHORIZATION)).thenReturn("token");
+        when(ccdAccessService.isApplicant1("token", 123456789L)).thenReturn(false);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             citizenUpdateContactDetails.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
